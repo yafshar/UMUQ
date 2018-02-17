@@ -32,8 +32,8 @@ class polynomial
         int mn;
         int mx;
         int value;
-        mn = min_value(k, n - k);
-        mx = max_value(k, n - k);
+        mn = polynomial::min_value(k, n - k);
+        mx = polynomial::max_value(k, n - k);
         value = mx + 1;
         for (int i = 2; i <= mn; i++)
         {
@@ -64,7 +64,7 @@ class polynomial
             return;
 
         int asum;
-        asum = arraysum(d, x);
+        asum = polynomial::arraysum(d, x);
 
         if (asum < 0)
         {
@@ -155,7 +155,7 @@ class polynomial
 
         if (alpha == NULL)
         {
-            n = d * binomial_coefficient(d + r, r);
+            n = d * polynomial::binomial_coefficient(d + r, r);
             try
             {
                 alpha = new int[n];
@@ -183,7 +183,7 @@ class polynomial
             if (x[0] == r)
                 break;
 
-            graded_reverse_lexicographic_order(d, r, x);
+            polynomial::graded_reverse_lexicographic_order(d, r, x);
         }
         return;
     }
@@ -204,7 +204,7 @@ class polynomial
         int n;
         T *value = NULL;
 
-        n = binomial_coefficient(d + r, r);
+        n = polynomial::binomial_coefficient(d + r, r);
         value = new T[n];
 
         T v;
