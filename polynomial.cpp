@@ -32,11 +32,11 @@ int main()
         std::cout << std::endl;
     }
 
-    double x[d]={1.0,2.0,3.0};
-    //for (i = 0; i < d; i++)
-    //{
-    //    x[i] = 2.0;
-    //}
+    double x[d];
+    for (i = 0; i < d; i++)
+    {
+        x[i] = 2.0;
+    }
 
     double *value;
     value = p.monomial_value(d, r, alpha, x);
