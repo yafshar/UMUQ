@@ -1,5 +1,6 @@
 AC_PREREQ([2.69])
 AC_INIT([DCPSE Surrogate], [1.0], [ya.afshar@gmail.com])
+AM_INIT_AUTOMAKE(dcpse, 2.6)
 AC_CONFIG_SRCDIR([src/polynomial.h])
 AC_CONFIG_HEADERS([config.h])
 
@@ -18,4 +19,4 @@ AC_C_INLINE
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
 
-AC_OUTPUT
+AC_OUTPUT(Makefile src/Makefile)
