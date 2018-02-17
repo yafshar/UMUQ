@@ -156,7 +156,14 @@ class polynomial
         if (alpha == NULL)
         {
             n = d * binomial_coefficient(d + r, r);
-            alpha = new int[n];
+            try
+            {
+                alpha = new int[n];
+            }
+            catch (const std::system_error &e)
+            {
+                std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            }
         }
 
         int x[d];
