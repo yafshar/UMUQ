@@ -972,7 +972,7 @@ m4trace:m4/m4_ax_cxx_compile_stdcxx.m4:47: -1- AC_DEFUN([AX_CXX_COMPILE_STDCXX],
   AC_SUBST(HAVE_CXX$1)
 ])
 m4trace:configure.ac:12: -1- m4_include([m4/m4_ax_eigen.m4])
-m4trace:m4/m4_ax_eigen.m4:19: -1- AC_DEFUN([AX_EIGEN], [
+m4trace:m4/m4_ax_eigen.m4:17: -1- AC_DEFUN([AX_EIGEN], [
         AC_ARG_WITH([eigen], 
                 AS_HELP_STRING([--with-eigen@<:@=DIR@:>@], 
                                [use EIGEN library (default is yes) - it is possible to specify the root directory for EIGEN (optional)]),            
@@ -990,7 +990,6 @@ m4trace:m4/m4_ax_eigen.m4:19: -1- AC_DEFUN([AX_EIGEN], [
         )
    
         if test x$want_eigen = xyes; then
-                AC_MSG_CHECKING(for eigenlib header files)
                 succeeded=no
                 
                 dnl first we check the system location for eigen libraries
@@ -1045,85 +1044,185 @@ m4trace:m4/m4_ax_eigen.m4:19: -1- AC_DEFUN([AX_EIGEN], [
                 fi
         fi
 ])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CXX$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CXXFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^LDFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^LIBS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CXX$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^ac_ct_CXX$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^EXEEXT$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^OBJEXT$])
-m4trace:configure.ac:15: -1- _AM_DEPENDENCIES([CXX])
-m4trace:configure.ac:15: -1- AM_SET_DEPDIR
-m4trace:configure.ac:15: -1- m4_pattern_allow([^DEPDIR$])
-m4trace:configure.ac:15: -1- AM_OUTPUT_DEPENDENCY_COMMANDS
-m4trace:configure.ac:15: -1- AM_MAKE_INCLUDE
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__include$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__quote$])
-m4trace:configure.ac:15: -1- AM_DEP_TRACK
-m4trace:configure.ac:15: -1- AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^AMDEP_TRUE$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^AMDEP_FALSE$])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([AMDEP_TRUE])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([AMDEP_FALSE])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^AMDEPBACKSLASH$])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([AMDEPBACKSLASH])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__nodep$])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([am__nodep])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CXXDEPMODE$])
-m4trace:configure.ac:15: -1- AM_CONDITIONAL([am__fastdepCXX], [
-  test "x$enable_dependency_tracking" != xno \
-  && test "$am_cv_CXX_dependencies_compiler_type" = gcc3])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__fastdepCXX_TRUE$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CFLAGS$])
+m4trace:configure.ac:13: -1- m4_include([m4/m4_ax_flann.m4])
+m4trace:m4/m4_ax_flann.m4:17: -1- AC_DEFUN([AX_FLANN], [
+        AC_ARG_WITH([flann], 
+                AS_HELP_STRING([--with-flann@<:@=DIR@:>@], 
+                               [use FLANN library (default is yes) - it is possible to specify the root directory for FLANN (optional)]),            
+                [ 
+                        if test x$withval = xno ; then
+                                AC_MSG_ERROR([ Unable to continue without the FLANN library !])
+                        elif test x$withval = xyes ; then
+                                want_flann="yes"
+                                ac_flann_path=""
+                        else
+                                want_flann="yes"
+                                ac_flann_path="$withval"
+                        fi
+                ], [want_flann="yes"]
+        )
+   
+        if test x$want_flann = xyes; then
+                succeeded=no
+                
+                dnl first we check the system location for flann libraries
+                if test x$ac_flann_path != x; then
+                        for ac_flann_path_tmp in $ac_flann_path $ac_flann_path/include ; do 
+                                if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
+                                        if test -f "$ac_flann_path_tmp/flann/flann.h"  && test -r "$ac_flann_path_tmp/flann/flann.h" ; then
+                                                flann_CPPFLAGS=" -I$ac_flann_path_tmp"
+                                                break;
+                                        fi
+                                fi
+                        done
+                else
+                        for ac_flann_path_tmp in /usr /usr/local /use/local/include /opt /opt/local ; do
+                                if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
+                                        if test -f "$ac_flann_path_tmp/flann/flann.h" && test -r "$ac_flann_path_tmp/flann/flann.h"; then
+                                                flann_CPPFLAGS=" -I$ac_flann_path_tmp/flann"
+                                                break;
+                                        fi
+                                fi
+                        done
+                fi
+
+                CPPFLAGS_SAVED="$CPPFLAGS"
+                LDFLAGS_SAVED="$LDFLAGS"
+
+                CPPFLAGS+="$flann_CPPFLAGS"
+
+                flann_LDFLAGS=""
+                if test x$ac_flann_path != x; then
+                        if test -d "$ac_flann_path/lib" && test -r "$ac_flann_path/lib" ; then
+                                flann_LDFLAGS=" -L$ac_flann_path/lib"   
+                        fi
+                else
+                        for ac_flann_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib ; do
+                                if test -f "$ac_flann_path_tmp/libflann.so" && test -r "$ac_flann_path_tmp/libflann.so"; then
+                                        flann_LDFLAGS=" -L$ac_flann_path_tmp" 
+                                        break;
+                                fi
+                                if test -f "$ac_flann_path_tmp/libflann.a" && test -r "$ac_flann_path_tmp/libflann.a"; then
+                                        flann_LDFLAGS=" -L$ac_flann_path_tmp" 
+                                        break;
+                                fi      
+                        done
+                fi
+
+                LDFLAGS+="$flann_LDFLAGS -lflann"
+
+                AC_LANG_PUSH(C++)
+                AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+                        @%:@include <flann/flann.h>
+                ]], [[]]
+                )], [AC_MSG_RESULT(yes)
+                succeeded=yes
+                found_system=yes
+                ],[])
+                
+                AC_CHECK_LIB( flann, flann_build_index_double, 
+                        [], [
+                        succeeded=no
+                        AC_MSG_ERROR([ Unable to continue without the FLANN library !])
+                        ]
+                )
+                
+                AC_LANG_POP([C++])
+
+                if test "x$succeeded" == "xyes" ; then
+                        AC_SUBST(CPPFLAGS)
+                        AC_SUBST(LDFLAGS)
+                        ax_flann_ok="yes"
+                else
+                        CPPFLAGS="$CPPFLAGS_SAVED"
+                        LDFLAGS="$LDFLAGS_SAVED"
+                fi
+        fi
+])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXXFLAGS$])
 m4trace:configure.ac:16: -1- m4_pattern_allow([^LDFLAGS$])
 m4trace:configure.ac:16: -1- m4_pattern_allow([^LIBS$])
 m4trace:configure.ac:16: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^ac_ct_CC$])
-m4trace:configure.ac:16: -1- _AM_PROG_CC_C_O
-m4trace:configure.ac:16: -1- AM_RUN_LOG([$CC -c conftest.$ac_ext -o conftest2.$ac_objext])
-m4trace:configure.ac:16: -1- _AM_DEPENDENCIES([CC])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^CCDEPMODE$])
-m4trace:configure.ac:16: -1- AM_CONDITIONAL([am__fastdepCC], [
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^ac_ct_CXX$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^EXEEXT$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^OBJEXT$])
+m4trace:configure.ac:16: -1- _AM_DEPENDENCIES([CXX])
+m4trace:configure.ac:16: -1- AM_SET_DEPDIR
+m4trace:configure.ac:16: -1- m4_pattern_allow([^DEPDIR$])
+m4trace:configure.ac:16: -1- AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:16: -1- AM_MAKE_INCLUDE
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__include$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__quote$])
+m4trace:configure.ac:16: -1- AM_DEP_TRACK
+m4trace:configure.ac:16: -1- AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^AMDEP_TRUE$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^AMDEP_FALSE$])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([AMDEP_TRUE])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([AMDEP_FALSE])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^AMDEPBACKSLASH$])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([AMDEPBACKSLASH])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__nodep$])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__nodep])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXXDEPMODE$])
+m4trace:configure.ac:16: -1- AM_CONDITIONAL([am__fastdepCXX], [
+  test "x$enable_dependency_tracking" != xno \
+  && test "$am_cv_CXX_dependencies_compiler_type" = gcc3])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCXX_TRUE$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CFLAGS$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^LDFLAGS$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^LIBS$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^ac_ct_CC$])
+m4trace:configure.ac:17: -1- _AM_PROG_CC_C_O
+m4trace:configure.ac:17: -1- AM_RUN_LOG([$CC -c conftest.$ac_ext -o conftest2.$ac_objext])
+m4trace:configure.ac:17: -1- _AM_DEPENDENCIES([CC])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^CCDEPMODE$])
+m4trace:configure.ac:17: -1- AM_CONDITIONAL([am__fastdepCC], [
   test "x$enable_dependency_tracking" != xno \
   && test "$am_cv_CC_dependencies_compiler_type" = gcc3])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCC_TRUE$])
-m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCC_FALSE$])
-m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_TRUE])
-m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_FALSE])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^CXXCPP$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^CXXCPP$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^GREP$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^EGREP$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^STDC_HEADERS$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^HAVE_EIGEN_DENSE$])
-m4trace:configure.ac:24: -1- AX_EIGEN
+m4trace:configure.ac:17: -1- m4_pattern_allow([^am__fastdepCC_TRUE$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^am__fastdepCC_FALSE$])
+m4trace:configure.ac:17: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_TRUE])
+m4trace:configure.ac:17: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_FALSE])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^CXXCPP$])
 m4trace:configure.ac:24: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:29: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:29: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:29: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:29: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
-m4trace:configure.ac:38: -1- AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
-m4trace:configure.ac:38: -1- m4_pattern_allow([^HAVE_CXX11$])
-m4trace:configure.ac:38: -1- m4_pattern_allow([^HAVE_CXX11$])
-m4trace:configure.ac:41: -1- m4_pattern_allow([^HAVE_POW$])
-m4trace:configure.ac:43: -1- _m4_warn([obsolete], [AC_OUTPUT should be used without arguments.
+m4trace:configure.ac:24: -1- m4_pattern_allow([^CXXCPP$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^GREP$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^EGREP$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^STDC_HEADERS$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^HAVE_EIGEN_DENSE$])
+m4trace:configure.ac:25: -1- AX_EIGEN
+m4trace:configure.ac:25: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:32: -1- m4_pattern_allow([^HAVE_FLANN_FLANN_H$])
+m4trace:configure.ac:33: -1- AX_FLANN
+m4trace:configure.ac:33: -1- m4_pattern_allow([^HAVE_LIBFLANN$])
+m4trace:configure.ac:33: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:33: -1- m4_pattern_allow([^LDFLAGS$])
+m4trace:configure.ac:38: -1- m4_pattern_allow([^CPP$])
+m4trace:configure.ac:38: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:38: -1- m4_pattern_allow([^CPP$])
+m4trace:configure.ac:38: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
+m4trace:configure.ac:47: -1- AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+m4trace:configure.ac:47: -1- m4_pattern_allow([^HAVE_CXX11$])
+m4trace:configure.ac:47: -1- m4_pattern_allow([^HAVE_CXX11$])
+m4trace:configure.ac:50: -1- m4_pattern_allow([^HAVE_POW$])
+m4trace:configure.ac:52: -1- _m4_warn([obsolete], [AC_OUTPUT should be used without arguments.
 You should run autoupdate.], [])
-m4trace:configure.ac:43: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:43: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:43: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:43: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:43: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:43: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:43: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:43: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:52: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:52: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:52: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:52: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:52: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:52: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:52: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:52: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
