@@ -9,12 +9,10 @@
 #
 #   If no path to the installed eigen library is given the macro searchs
 #   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
-#   and evaluates the $EIGEN_ROOT environment variable. 
-#   Adapted from AX_BOOST_BASE
+#   and look for header files.
 #
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
-
 
 AC_DEFUN([AX_EIGEN], [
         AC_ARG_WITH([eigen], 
@@ -34,7 +32,6 @@ AC_DEFUN([AX_EIGEN], [
         )
    
         if test x$want_eigen = xyes; then
-                AC_MSG_CHECKING(for eigenlib header files)
                 succeeded=no
                 
                 dnl first we check the system location for eigen libraries
@@ -42,7 +39,7 @@ AC_DEFUN([AX_EIGEN], [
                         for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
                                 if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
                                         if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense" ; then
-                                                EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp"
+                                                EIGEN_CPPFLAGS=" -I$ac_eigen_path_tmp"
                                                 break;
                                         fi
                                 fi
@@ -52,7 +49,7 @@ AC_DEFUN([AX_EIGEN], [
                                 if test -d "$ac_eigen_path_tmp/eigen" && test -r "$ac_eigen_path_tmp/eigen" ; then
                                         if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen"; then
                                                 if test -f "$ac_eigen_path_tmp/eigen/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/eigen/Eigen/Dense"; then
-                                                        EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp/eigen"
+                                                        EIGEN_CPPFLAGS=" -I$ac_eigen_path_tmp/eigen"
                                                         break;
                                                 fi
                                         fi
@@ -60,7 +57,7 @@ AC_DEFUN([AX_EIGEN], [
                                 if test -d "$ac_eigen_path_tmp/eigen3" && test -r "$ac_eigen_path_tmp/eigen3"; then
                                         if test -d "$ac_eigen_path_tmp/eigen3/Eigen" && test -r "$ac_eigen_path_tmp/eigen3/Eigen"; then
                                                 if test -f "$ac_eigen_path_tmp/eigen3/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/eigen3/Eigen/Dense"; then
-                                                        EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp/eigen3"
+                                                        EIGEN_CPPFLAGS=" -I$ac_eigen_path_tmp/eigen3"
                                                         break;
                                                 fi
                                         fi
