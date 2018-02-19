@@ -10,20 +10,20 @@ AC_MSG_RESULT(---------------------------------------------)
 # AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
 m4_include([m4/m4_ax_eigen.m4])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for libraries.
 
-# Checking for EIGEN
+### Checking for EIGEN
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ Checking for eigen ])
 AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok=yes], [ax_eigen_ok=no])
-AS_IF([test "x$ax_eigen_ok" != "xyes"],[ AX_EIGEN ])
-AS_IF([test "x$ax_eigen_ok" != "xyes"],[ AC_MSG_ERROR([Unable to find the eigen headers!])])
+AS_IF([test "x$ax_eigen_ok" != "xyes"], [ AX_EIGEN ])
+AS_IF([test "x$ax_eigen_ok" != "xyes"], [ AC_MSG_ERROR([ Unable to find the eigen library !])])
 AC_LANG_POP
-
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
