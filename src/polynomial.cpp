@@ -3,7 +3,8 @@
 #include <cmath>
 #include <iomanip>
 
-#include "polynomial.h"
+#include "polynomial.hpp"
+#include "eigen.hpp"
 
 int main()
 {
@@ -48,5 +49,9 @@ int main()
 
     delete[] alpha;
     delete[] value;
+
+    EMatrixXd a;
+    
+
     return 0;
 }

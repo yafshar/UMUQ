@@ -5,11 +5,11 @@ class polynomial
 {
 
   public:
-    template <class T>
+    template <typename T>
     inline T min_value(T a, T b);
-    template <class T>
+    template <typename T>
     inline T max_value(T a, T b);
-    template <class T>
+    template <typename T>
     inline T arraysum(int arraysize, T *array);
 
     int binomial_coefficient(int n, int k)
@@ -188,7 +188,7 @@ class polynomial
         return;
     }
 
-    template <class T>
+    template <typename T>
     T *monomial_value(int d, int r, int *alpha, T *x)
     {
         //******************************************************************************/
@@ -225,7 +225,7 @@ class polynomial
   private:
 };
 
-template <class T>
+template <typename T>
 inline T polynomial::min_value(T a, T b)
 {
     if (a > b)
@@ -233,7 +233,7 @@ inline T polynomial::min_value(T a, T b)
     return a;
 }
 
-template <class T>
+template <typename T>
 inline T polynomial::max_value(T a, T b)
 {
     if (b > a)
@@ -241,7 +241,7 @@ inline T polynomial::max_value(T a, T b)
     return a;
 }
 
-template <class T>
+template <typename T>
 inline T polynomial::arraysum(int arraysize, T *array)
 {
     T sum;
