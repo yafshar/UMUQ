@@ -23,23 +23,37 @@ class polynomial
         //       Input : values of n and k.
         //       Output: binomial
         //******************************************************************************/
-        if (k > n)
-            return 0;
-        if (k == n)
-            return 1;
-        if (k == 0)
-            return 1;
-        int mn;
-        int mx;
-        int value;
-        mn = polynomial::min_value(k, n - k);
-        mx = polynomial::max_value(k, n - k);
-        value = mx + 1;
-        for (int i = 2; i <= mn; i++)
+        if (k < 0 || n < 0)
         {
-            value = (value * (mx + i)) / i;
+            std::cout << std::endl;
+            std::cout << " Fatal error! k or n < 0" << std::endl;
+            exit(EXIT_FAILURE);
         }
-        return value;
+        if (k < n)
+        {
+            if (k == 0)
+                return 1;
+            if (k == 1)
+                return n;
+            int mn;
+            int mx;
+            int value;
+            mn = polynomial::min_value(k, n - k);
+            mx = polynomial::max_value(k, n - k);
+            value = mx + 1;
+            for (int i = 2; i <= mn; i++)
+            {
+                value = (value * (mx + i)) / i;
+            }
+
+            return value;
+        }
+        else if (k == n)
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     void graded_reverse_lexicographic_order(int d, int r, int *x)
@@ -142,7 +156,12 @@ class polynomial
         //       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
         //       alpha[10],[11] = 0, 2 = x^0 y^2
         //
-        //       monomial_basis(2,2) = {1, x, y, x^2, xy, y^2}
+        //       monomial_basis(2,2) = {1,    x,   y,  x^2, xy,  y^2}
+        //                     alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
+        //
+        //
+        //       monomial_basis(3,2) = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
+        //                     alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
         //
         //   Parameters:
         //     Input : d,     the spatial dimension
