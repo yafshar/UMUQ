@@ -38,87 +38,85 @@ int main()
 
     n = p.binomial_coefficient(d + r, r);
 
-    double x[d];
-    
-    EVectorXd *value;
+    double *value=NULL;
+    double *x=NULL;
+
+    x = new double[d]; 
+
     EMatrixXd A;
     A.resize(n, n);
 
-    typedef Eigen::Map<ERowVectorXd> MapType;
+    value = new double[n];
 
     for (i = 0; i < n; i++)
     {
-        if (i == 0)
+        switch (i)
         {
-            x[0] = 1; x[1]=0;
-        }
-        else if (i == 1)
-        {
-            x[0] = 0; x[1]=1;
-        }
-        else if (i == 2)
-        {
-            x[0] = -1; x[1]=0;
-        }
-        else if (i == 3)
-        {
-            x[0] = 0; x[1]=-1;
-        }
-        else if (i == 4)
-        {
-            x[0] = .70710678118654752440; x[1]=.70710678118654752440;
-        }
-        else if (i == 5)
-        {
-            x[0] = -.70710678118654752440; x[1]=-.70710678118654752440;
+        case (0):
+            x[0] = 1;
+            x[1] = 0;
+            break;
+        case (1):
+            x[0] = 0;
+            x[1] = 1;
+            break;
+        case (2):
+            x[0] = -1;
+            x[1] = 0;
+            break;
+        case (3):
+            x[0] = 0;
+            x[1] = -1;
+            break;
+        case (4):
+            x[0] = .70710678118654752440;
+            x[1] = .70710678118654752440;
+            break;
+        case (5):
+            x[0] = -.70710678118654752440;
+            x[1] = -.70710678118654752440;
         }
 
-        //value = p.monomial_value(d, r, alpha, x);
+        p.monomial_value(d, r, alpha, x, value);
 
-        // A.row(i) = Eigen::Map<>
-        // Eigen::Map<EMatrixXd> (value, n, i);
+        for (int j = 0; j < n; j++)
+        {
+            A(i,j)=value[j];
+        }
+
     }
-
-    
-
-        
-
-    // for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
-    // {
-    //     std::cout << i << " " << value[i] << std::endl;
-    // }
 
     delete[] alpha;
     delete[] value;
+    delete[] x;
 
-    // EMatrixXd A;
-    // A.resize(3, 3);
-    // A << 1, 2, 3, 4, 5, 6, 7, 8, 10;
-    // std::cout << "Here is the matrix A:" << std::endl;
-    // std::cout << A << std::endl;
+    std::cout << "Here is the matrix A:" << std::endl;
+    std::cout << A << std::endl;
 
-    // EVectorXd B;
-    // B.resize(3);
-    // B << 3, 3, 4;
-    // std::cout << "Here is the vector B:" << std::endl;
-    // std::cout << B << std::endl;
+    EVectorXd B;
+    B.resize(n);
+    for (i = 0; i < n; i++) {
+        B(i) = 1;
+    } 
+    std::cout << "Here is the vector B:" << std::endl;
+    std::cout << B << std::endl;
 
-    // EVectorXd X = A.fullPivLu().solve(B);
-    // std::cout << "The solution is: " << std::endl;
-    // std::cout << X << std::endl;
+    EVectorXd X = A.fullPivLu().solve(B);
+    std::cout << "The solution is: " << std::endl;
+    std::cout << X << std::endl;
 
-    // auto relative_error = (A * X - B).norm() / B.norm(); // norm() is L2 norm
-    // std::cout << "The relative error is:" << std::endl;
-    // std::cout << relative_error << std::endl;
+    auto relative_error = (A * X - B).norm() / B.norm(); // norm() is L2 norm
+    std::cout << "The relative error is:" << std::endl;
+    std::cout << relative_error << std::endl;
 
-    // EVectorXd Y = A.partialPivLu().solve(B);
-    // std::cout << "The solution is: " << std::endl;
-    // std::cout << Y << std::endl;
+    EVectorXd Y = A.partialPivLu().solve(B);
+    std::cout << "The solution is: " << std::endl;
+    std::cout << Y << std::endl;
 
-    // relative_error = (A * Y - B).norm() / B.norm(); // norm() is L2 norm
-    // std::cout << "The relative error is:" << std::endl;
-    // std::cout << relative_error << std::endl;
-    // std::cout << "----------------" << std::endl;
+    relative_error = (A * Y - B).norm() / B.norm(); // norm() is L2 norm
+    std::cout << "The relative error is:" << std::endl;
+    std::cout << relative_error << std::endl;
+    std::cout << "----------------" << std::endl;
 
     // EMatrixXd AA;
     // AA.resize(6, 6);

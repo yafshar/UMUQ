@@ -5,6 +5,10 @@ class polynomial
 {
 
   public:
+    polynomial() : dim(2), degree(2){};
+    inline polynomial(unsigned int dm);
+    inline polynomial(unsigned int dm, unsigned int dg);
+
     template <typename T>
     inline T min_value(T a, T b);
     template <typename T>
@@ -208,7 +212,7 @@ class polynomial
     }
 
     template <typename T>
-    T *monomial_value(int d, int r, int *alpha, T *x)
+    void monomial_value(int d, int r, int *alpha, T *x, T *&value)
     {
         //******************************************************************************/
         //   Purpose:
@@ -221,13 +225,11 @@ class polynomial
         //     Output: monomial_value, the array value of the monomial at point x
         //******************************************************************************/
         int n;
-        T *value = NULL;
-
         n = polynomial::binomial_coefficient(d + r, r);
-        value = new T[n];
 
         T v;
         int k;
+
         k = 0;
         for (int i = 0; i < n; i++)
         {
@@ -238,10 +240,11 @@ class polynomial
             }
             value[i] = v;
         }
-        return value;
     }
 
   private:
+    unsigned int dim;
+    unsigned int degree;
 };
 
 template <typename T>
@@ -272,4 +275,13 @@ inline T polynomial::arraysum(int arraysize, T *array)
     return sum;
 }
 
+inline polynomial::polynomial(unsigned int dm) {
+    polynomial::dim=dm;
+    polynomial::degree=2;
+}
+
+inline polynomial::polynomial(unsigned int dm, unsigned int dg) {
+    polynomial::dim=dm;
+    polynomial::degree=dg;
+}
 #endif
