@@ -1,11 +1,11 @@
 AC_PREREQ([2.69])
-AC_INIT([DCPSE Surrogate], [1.0], [ya.afshar@gmail.com])
+AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_TESTDIR(tests)
 AM_INIT_AUTOMAKE
 
 AC_MSG_RESULT(---------------------------------------------)
-AC_MSG_RESULT(------- Configuring DCPSE Surrogate ---------)
+AC_MSG_RESULT(------------ Configuring UMHBM --------------)
 AC_MSG_RESULT(---------------------------------------------)
 
 # AC_CONFIG_MACRO_DIR([m4])
