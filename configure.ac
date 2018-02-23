@@ -1,11 +1,11 @@
 AC_PREREQ([2.69])
-AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
+AC_INIT([UMHBM],[1.0],[ya.afshar@gmail.com])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_TESTDIR(tests)
 AM_INIT_AUTOMAKE
 
 AC_MSG_RESULT(---------------------------------------------)
-AC_MSG_RESULT(------------ Configuring UMHBM --------------)
+AC_MSG_RESULT(---------  Configuring UMich HBM  -----------)
 AC_MSG_RESULT(---------------------------------------------)
 
 # AC_CONFIG_MACRO_DIR([m4])
@@ -62,7 +62,8 @@ AX_CXX_COMPILE_STDCXX( [11], [noext], [mandatory])
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
 
-AC_OUTPUT([Makefile src/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
+AC_OUTPUT
 
 AC_MSG_RESULT([
 DCPSE Surrogate $VERSION is now configured
