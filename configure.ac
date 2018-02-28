@@ -65,6 +65,7 @@ AX_GOOGLETEST
 ### Checking for POSIX threads
 AC_MSG_CHECKING([ Checking for POSIX threads ])
 AX_PTHREAD
+AS_IF([test x$ax_pthread_ok != xyes], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
 
 ### Checking for TORC
 AC_LANG_PUSH([C])
