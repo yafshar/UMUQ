@@ -3,9 +3,9 @@
 #include <cmath>
 #include <iomanip>
 
-#include "polynomial.hpp"
-#include "eigenmatrix.hpp"
-#include "flannlib.hpp"
+#include "./numerics/polynomial.hpp"
+#include "./numerics/eigenmatrix.hpp"
+#include "./numerics/flannlib.hpp"
 #include <lapacke.h>
 
 int main()
