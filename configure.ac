@@ -1,7 +1,14 @@
 AC_PREREQ([2.69])
 AC_INIT([UMHBM],[1.0],[ya.afshar@gmail.com])
+
+AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
-AC_CONFIG_TESTDIR(tests)
+AC_CONFIG_TESTDIR([tests])
+
+AC_CANONICAL_BUILD
+
+AC_CONFIG_HEADERS(src/umhbm_config.h)
+
 AM_INIT_AUTOMAKE
 
 AC_MSG_RESULT(---------------------------------------------)
