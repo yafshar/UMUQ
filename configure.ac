@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([UMHBM],[1.0],[ya.afshar@gmail.com])
+AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
 
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
