@@ -84,11 +84,10 @@ AC_DEFUN([AX_TORC], [
 
                 LDFLAGS+="$TORC_LDFLAGS"' -ltorc '" $PTHREAD_LIBS "         
                 
-                AC_MSG_CHECKING($CFLAGS)
-                AC_MSG_CHECKING($LDFLAGS)
-
                 save_CC="$CC"
-                CC="$MPICC"
+                if test x$ax_mpi_ok = xyes; then 
+                        CC="$MPICC"
+                fi
 
                 AC_LANG_PUSH(C)
 

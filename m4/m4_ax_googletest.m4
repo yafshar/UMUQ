@@ -80,6 +80,7 @@ AC_DEFUN([AX_GOOGLETEST], [
                 LDFLAGS+="$googletest_LDFLAGS -lgtest"
 
                 AC_LANG_PUSH(C++)
+                
                 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
                         @%:@include "gtest/gtest.h"
                 ]], [[]]
@@ -106,7 +107,7 @@ AC_DEFUN([AX_GOOGLETEST], [
                 
                 AC_LANG_POP([C++])
 
-                if test "x$succeeded" == "xyes" ; then
+                if test x"$succeeded" == xyes ; then
                         GTEST_CPPFLAGS="$CPPFLAGS"
                         GTEST_CXXFLAGS="$CXXFLAGS"
                         GTEST_LDFLAGS="$LDFLAGS"                

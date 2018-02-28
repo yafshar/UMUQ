@@ -40,14 +40,14 @@
 
 AC_DEFUN([AX_MPI], [
 	ax_mpi_ok="no"
-    want_mpi="yes"
+	want_mpi="yes"
 	ac_mpi_path=""
 
 	AC_ARG_WITH([mpi], 
-        AS_HELP_STRING([--with-mpi@<:@=DIR@:>@], 
-            [use MPI library (default is yes) - it is possible to specify the root directory for MPI (optional)]),            
-        [ 
-            if test x"$withval" = xno ; then
+		AS_HELP_STRING([--with-mpi@<:@=DIR@:>@], 
+			[use MPI library (default is yes) - it is possible to specify the root directory for MPI (optional)]),            
+		[ 
+			if test x"$withval" = xno ; then
                 AC_MSG_ERROR([ Unable to continue without the MPI library !])
             elif test x"$withval" = xyes ; then
                 want_mpi="yes"
@@ -204,12 +204,9 @@ AC_DEFUN([AX_MPI], [
 	    AC_SUBST(MPILIBS)
 	
 	    # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
-	    if test x = x"$MPILIBS"; then
-			$2
-	        :
-	    else
+	    if test x != x"$MPILIBS"; then
 			ax_mpi_ok="yes"
-	        ifelse([$1], , [AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])], [$1])
+	        AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 	        :
 	    fi
 	fi
