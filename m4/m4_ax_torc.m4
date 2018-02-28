@@ -14,6 +14,7 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_TORC], [AX_TORC])
 AC_DEFUN([AX_TORC], [       
         AC_ARG_WITH([torc], 
                 AS_HELP_STRING([--with-torc@<:@=DIR@:>@], 

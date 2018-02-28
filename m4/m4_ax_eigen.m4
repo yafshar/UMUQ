@@ -14,13 +14,14 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_EIGEN], [AX_EIGEN])
 AC_DEFUN([AX_EIGEN], [
         AC_ARG_WITH([eigen], 
                 AS_HELP_STRING([--with-eigen@<:@=DIR@:>@], 
                                [use EIGEN library (default is yes) - it is possible to specify the root directory for EIGEN (optional)]),            
                 [ 
                         if test x$withval = xno ; then
-                                AC_MSG_ERROR([ Unable to continue without the eigen library !])
+                                AC_MSG_ERROR([ Unable to continue without the EIGEN library !])
                         elif test x$withval = xyes ; then
                                 want_eigen="yes"
                                 ac_eigen_path=""
@@ -81,6 +82,8 @@ AC_DEFUN([AX_EIGEN], [
                 if test "x$succeeded" == "xyes" ; then
                         AC_SUBST(CPPFLAGS)
                         ax_eigen_ok="yes"
+                        AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
+                        :
                 else
                         CPPFLAGS="$CPPFLAGS_SAVED"
                 fi

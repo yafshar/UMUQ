@@ -38,6 +38,7 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
 	ax_mpi_ok="no"
 	want_mpi="yes"

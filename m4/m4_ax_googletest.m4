@@ -14,6 +14,7 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_GOOGLETEST], [AX_GOOGLETEST])
 AC_DEFUN([AX_GOOGLETEST], [
         AC_ARG_WITH([googletest], AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], [use GOOGLETEST framework (default is no)]), 
                 [ 

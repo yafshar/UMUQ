@@ -57,6 +57,7 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
         AC_REQUIRE([AC_CANONICAL_HOST])
         AC_LANG_PUSH(C)
@@ -240,11 +241,8 @@ AC_DEFUN([AX_PTHREAD], [
 
         # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
         if test x"$ax_pthread_ok" = xyes; then
-                ifelse([$1],,AC_DEFINE(HAVE_PTHREAD,1,[Define if you have POSIX threads libraries and header files.]),[$1])
+                AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
                 :
-        else
-                ax_pthread_ok=no
-                $2
         fi
 
         AC_LANG_POP([C])

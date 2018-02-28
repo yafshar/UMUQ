@@ -14,6 +14,7 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
+AU_ALIAS([ACX_FLANN], [AX_FLANN])
 AC_DEFUN([AX_FLANN], [
         AC_ARG_WITH([flann], 
                 AS_HELP_STRING([--with-flann@<:@=DIR@:>@], 
@@ -102,9 +103,12 @@ AC_DEFUN([AX_FLANN], [
                         AC_SUBST(CPPFLAGS)
                         AC_SUBST(LDFLAGS)
                         ax_flann_ok="yes"
+                        AC_DEFINE(HAVE_FLANN, 1, [Define if you have FLANN Library.])
+                        :
                 else
                         CPPFLAGS="$CPPFLAGS_SAVED"
                         LDFLAGS="$LDFLAGS_SAVED"
+                        :
                 fi
         fi
 ])
