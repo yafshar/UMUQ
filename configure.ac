@@ -17,6 +17,9 @@ AC_MSG_RESULT(---------------------------------------------)
 
 # AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
+m4_include([m4/m4_ax_mpi.m4])
+m4_include([m4/m4_ax_pthread.m4])
+m4_include([m4/m4_ax_torc.m4])
 m4_include([m4/m4_ax_eigen.m4])
 m4_include([m4/m4_ax_flann.m4])
 m4_include([m4/m4_ax_blas.m4])
@@ -29,13 +32,18 @@ AC_PROG_CC
 
 # Checks for libraries.
 
+### Checking for MPI
+AC_MSG_CHECKING([ Checking for MPI Library ])
+AX_MPI
+AS_IF([test x$ax_mpi_ok != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])])
+
 ### Checking for EIGEN
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ Checking for EIGEN Library ])
 AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok=yes], [ax_eigen_ok=no])
 AS_IF([test x$ax_eigen_ok != xyes], [ AX_EIGEN ])
 AS_IF([test x$ax_eigen_ok != xyes], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
-AC_LANG_POP
+AC_LANG_POP([C++])
 
 ### Checking for FLANN
 AC_LANG_PUSH([C++])
@@ -43,7 +51,7 @@ AC_MSG_CHECKING([ Checking for FLANN Library ])
 AC_CHECK_HEADERS([flann/flann.h], [ax_flann_ok=yes], [ax_flann_ok=no])
 AS_IF([test x$ax_flann_ok != xyes], [ AX_FLANN ])
 AS_IF([test x$ax_flann_ok != xyes], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
-AC_LANG_POP
+AC_LANG_POP([C++])
 
 ### Checking for LAPACK
 AC_MSG_CHECKING([ Checking for LAPACK Library ])
@@ -54,8 +62,21 @@ AS_IF([test x$ax_lapack_ok != xyes], [ AC_MSG_ERROR([ Unable to find the LAPACK 
 AC_MSG_CHECKING([ Checking for GOOGLETEST Framework ])
 AX_GOOGLETEST
 
+### Checking for POSIX threads
+AC_MSG_CHECKING([ Checking for POSIX threads ])
+AX_PTHREAD
+
+### Checking for TORC
+AC_LANG_PUSH([C])
+AC_MSG_CHECKING([ Checking for TORC Library ])
+AC_CHECK_HEADERS([torc.h], [ax_torc_ok=yes], [ax_torc_ok=no])
+AS_IF([test x$ax_torc_ok != xyes], [ AX_TORC ])
+AS_IF([test x$ax_torc_ok != xyes], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
+AC_LANG_POP([C])
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([pthread.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
@@ -64,7 +85,7 @@ AC_C_INLINE
 AC_LANG([C++])
 
 # ensure we are using c11 C++ standard
-AX_CXX_COMPILE_STDCXX( [11], [noext], [mandatory])
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
