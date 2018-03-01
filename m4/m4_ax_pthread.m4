@@ -246,4 +246,4 @@ AC_DEFUN([AX_PTHREAD], [
         fi
 
         AC_LANG_POP([C])
-]) dnl AX_PTHREAD
+]) # AX_PTHREAD

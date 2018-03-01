@@ -62,177 +62,250 @@
 #   Macro released by the Autoconf Archive. When you make and distribute a
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
-
+#
 #serial 15
+#
+# ADAPTED 
+#   Yaser Afshar @ ya.afshar@gmail.com
 
 AU_ALIAS([ACX_BLAS], [AX_BLAS])
 AC_DEFUN([AX_BLAS], [
-AC_PREREQ(2.50)
-AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
-AC_REQUIRE([AC_CANONICAL_HOST])
-ax_blas_ok=no
+	AC_PREREQ(2.50)
+	AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
+	AC_REQUIRE([AC_CANONICAL_HOST])
+	ax_blas_ok=no
 
-AC_ARG_WITH(blas,
-	[AS_HELP_STRING([--with-blas=<lib>], [use BLAS library <lib>])])
-case $with_blas in
-	yes | "") ;;
-	no) ax_blas_ok=disable ;;
-	-* | */* | *.a | *.so | *.so.* | *.o) BLAS_LIBS="$with_blas" ;;
-	*) BLAS_LIBS="-l$with_blas" ;;
-esac
+	AC_ARG_WITH(blas,
+		[AS_HELP_STRING([--with-blas=<lib>], [use BLAS library <lib>])]
+	)
+	
+	case $with_blas in
+		yes | "") 
+			;;
+		no) 
+			ax_blas_ok=disable 
+			;;
+		-* | */* | *.a | *.so | *.so.* | *.o) 
+			BLAS_LIBS="$with_blas" 
+			;;
+		*) 
+			BLAS_LIBS="-l$with_blas" 
+			;;
+	esac
 
-# Get fortran linker names of BLAS functions to check for.
-AC_F77_FUNC(sgemm)
-AC_F77_FUNC(dgemm)
+	# Get fortran linker names of BLAS functions to check for.
+	AC_F77_FUNC(sgemm)
+	AC_F77_FUNC(dgemm)
 
-ax_blas_save_LIBS="$LIBS"
-LIBS="$LIBS $FLIBS"
+	ax_blas_save_LIBS="$LIBS"
+	LIBS="$LIBS $FLIBS"
 
-# First, check BLAS_LIBS environment variable
-if test $ax_blas_ok = no; then
-if test "x$BLAS_LIBS" != x; then
-	save_LIBS="$LIBS"; LIBS="$BLAS_LIBS $LIBS"
-	AC_MSG_CHECKING([for $sgemm in $BLAS_LIBS])
-	AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes], [BLAS_LIBS=""])
-	AC_MSG_RESULT($ax_blas_ok)
-	LIBS="$save_LIBS"
-fi
-fi
+	# First, check BLAS_LIBS environment variable
+	if test x"$ax_blas_ok" = xno; then
+		if test x"$BLAS_LIBS" != x; then
+			save_LIBS="$LIBS"; 
+			LIBS="$BLAS_LIBS $LIBS"
+			
+			AC_MSG_CHECKING([for $sgemm in $BLAS_LIBS])
+			AC_TRY_LINK_FUNC($sgemm, 
+				[ax_blas_ok=yes], [BLAS_LIBS=""]
+			)
+			AC_MSG_RESULT($ax_blas_ok)
 
-# BLAS linked to by default?  (happens on some supercomputers)
-if test $ax_blas_ok = no; then
-	save_LIBS="$LIBS"; LIBS="$LIBS"
-	AC_MSG_CHECKING([if $sgemm is being linked in already])
-	AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
-	AC_MSG_RESULT($ax_blas_ok)
-	LIBS="$save_LIBS"
-fi
+			LIBS="$save_LIBS"
+		fi
+	fi
 
-# BLAS in OpenBLAS library? (http://xianyi.github.com/OpenBLAS/)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(openblas, $sgemm, [ax_blas_ok=yes
-			                BLAS_LIBS="-lopenblas"])
-fi
+	# BLAS linked to by default?  (happens on some supercomputers)
+	if test x"$ax_blas_ok" = xno; then
+		save_LIBS="$LIBS"; 
+		LIBS="$LIBS"
+	
+		AC_MSG_CHECKING([if $sgemm is being linked in already])
+		AC_TRY_LINK_FUNC($sgemm, 
+			[ax_blas_ok=yes]
+		)
+		AC_MSG_RESULT($ax_blas_ok)
+		
+		LIBS="$save_LIBS"
+	fi
 
-# BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(atlas, ATL_xerbla,
-		[AC_CHECK_LIB(f77blas, $sgemm,
-		[AC_CHECK_LIB(cblas, cblas_dgemm,
+	# BLAS in OpenBLAS library? (http://xianyi.github.com/OpenBLAS/)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(openblas, $sgemm, 
 			[ax_blas_ok=yes
-			 BLAS_LIBS="-lcblas -lf77blas -latlas"],
-			[], [-lf77blas -latlas])],
-			[], [-latlas])])
-fi
+			BLAS_LIBS="-lopenblas"]
+		)
+	fi
 
-# BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(blas, $sgemm,
-		[AC_CHECK_LIB(dgemm, $dgemm,
-		[AC_CHECK_LIB(sgemm, $sgemm,
-			[ax_blas_ok=yes; BLAS_LIBS="-lsgemm -ldgemm -lblas"],
-			[], [-lblas])],
-			[], [-lblas])])
-fi
+	# BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(atlas, ATL_xerbla,
+			[AC_CHECK_LIB(f77blas, $sgemm, 
+				[AC_CHECK_LIB(cblas, cblas_dgemm, 
+					[ax_blas_ok=yes
+					BLAS_LIBS="-lcblas -lf77blas -latlas"],
+					[], [-lf77blas -latlas]
+				)],
+				[], 
+				[-latlas]
+			)]
+		)
+	fi
 
-# BLAS in Intel MKL library?
-if test $ax_blas_ok = no; then
-	# MKL for gfortran
-	if test x"$ac_cv_fc_compiler_gnu" = xyes; then
+	# BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(blas, $sgemm,
+			[AC_CHECK_LIB(dgemm, $dgemm,
+				[AC_CHECK_LIB(sgemm, $sgemm,
+					[ax_blas_ok=yes 
+					BLAS_LIBS="-lsgemm -ldgemm -lblas"],
+					[], [-lblas]
+				)], 
+				[], 
+				[-lblas]
+			)]
+		)
+	fi
+
+	# BLAS in Intel MKL library?
+	if test x"$ax_blas_ok" = xno; then
+		# MKL for gfortran
+		if test x"$ac_cv_fc_compiler_gnu" = xyes; then
 		# 64 bit
-		if test $host_cpu = x86_64; then
-			AC_CHECK_LIB(mkl_gf_lp64, $sgemm,
-			[ax_blas_ok=yes;BLAS_LIBS="-lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread"],,
-			[-lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread])
-		# 32 bit
-		elif test $host_cpu = i686; then
-			AC_CHECK_LIB(mkl_gf, $sgemm,
-				[ax_blas_ok=yes;BLAS_LIBS="-lmkl_gf -lmkl_sequential -lmkl_core -lpthread"],,
-				[-lmkl_gf -lmkl_sequential -lmkl_core -lpthread])
-		fi
-	# MKL for other compilers (Intel, PGI, ...?)
-	else
-		# 64-bit
-		if test $host_cpu = x86_64; then
-			AC_CHECK_LIB(mkl_intel_lp64, $sgemm,
-				[ax_blas_ok=yes;BLAS_LIBS="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread"],,
-				[-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread])
-		# 32-bit
-		elif test $host_cpu = i686; then
-			AC_CHECK_LIB(mkl_intel, $sgemm,
-				[ax_blas_ok=yes;BLAS_LIBS="-lmkl_intel -lmkl_sequential -lmkl_core -lpthread"],,
-				[-lmkl_intel -lmkl_sequential -lmkl_core -lpthread])
+			if test $host_cpu = x86_64; then
+				AC_CHECK_LIB(mkl_gf_lp64, $sgemm,
+					[ax_blas_ok=yes
+					BLAS_LIBS="-lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread"], , 
+					[-lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread]
+				)
+			# 32 bit
+			elif test x"$host_cpu" = xi686; then
+				AC_CHECK_LIB(mkl_gf, $sgemm,
+					[ax_blas_ok=yes
+					BLAS_LIBS="-lmkl_gf -lmkl_sequential -lmkl_core -lpthread"], ,
+					[-lmkl_gf -lmkl_sequential -lmkl_core -lpthread]
+				)
+			fi
+		# MKL for other compilers (Intel, PGI, ...?)
+		else
+			# 64-bit
+			if test x"$host_cpu" = x86_64; then
+				AC_CHECK_LIB(mkl_intel_lp64, $sgemm,
+					[ax_blas_ok=yes
+					BLAS_LIBS="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread"], ,
+					[-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread]
+				)
+			# 32-bit
+			elif test x"$host_cpu" = xi686; then
+				AC_CHECK_LIB(mkl_intel, $sgemm,
+					[ax_blas_ok=yes
+					BLAS_LIBS="-lmkl_intel -lmkl_sequential -lmkl_core -lpthread"], ,
+					[-lmkl_intel -lmkl_sequential -lmkl_core -lpthread]
+				)
+			fi
 		fi
 	fi
-fi
-# Old versions of MKL
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(mkl, $sgemm, [ax_blas_ok=yes;BLAS_LIBS="-lmkl -lguide -lpthread"],,[-lguide -lpthread])
-fi
 
-# BLAS in Apple vecLib library?
-if test $ax_blas_ok = no; then
-	save_LIBS="$LIBS"; LIBS="-framework vecLib $LIBS"
-	AC_MSG_CHECKING([for $sgemm in -framework vecLib])
-	AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes;BLAS_LIBS="-framework vecLib"])
-	AC_MSG_RESULT($ax_blas_ok)
-	LIBS="$save_LIBS"
-fi
-
-# BLAS in Alpha CXML library?
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(cxml, $sgemm, [ax_blas_ok=yes;BLAS_LIBS="-lcxml"])
-fi
-
-# BLAS in Alpha DXML library? (now called CXML, see above)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(dxml, $sgemm, [ax_blas_ok=yes;BLAS_LIBS="-ldxml"])
-fi
-
-# BLAS in Sun Performance library?
-if test $ax_blas_ok = no; then
-	if test "x$GCC" != xyes; then # only works with Sun CC
-		AC_CHECK_LIB(sunmath, acosp,
-			[AC_CHECK_LIB(sunperf, $sgemm,
-				[BLAS_LIBS="-xlic_lib=sunperf -lsunmath"
-                                 ax_blas_ok=yes],[],[-lsunmath])])
+	# Old versions of MKL
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(mkl, $sgemm, 
+			[ax_blas_ok=yes
+			BLAS_LIBS="-lmkl -lguide -lpthread"], , 
+			[-lguide -lpthread]
+		)
 	fi
-fi
 
-# BLAS in SCSL library?  (SGI/Cray Scientific Library)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(scs, $sgemm, [ax_blas_ok=yes; BLAS_LIBS="-lscs"])
-fi
+	# BLAS in Apple vecLib library?
+	if test x"$ax_blas_ok" = xno; then
+		save_LIBS="$LIBS" 
+		LIBS="-framework vecLib $LIBS"
+		
+		AC_MSG_CHECKING([for $sgemm in -framework vecLib])
+		AC_TRY_LINK_FUNC($sgemm, 
+			[ax_blas_ok=yes
+			BLAS_LIBS="-framework vecLib"]
+		)
+		AC_MSG_RESULT($ax_blas_ok)
+		
+		LIBS="$save_LIBS"
+	fi
 
-# BLAS in SGIMATH library?
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(complib.sgimath, $sgemm,
-		     [ax_blas_ok=yes; BLAS_LIBS="-lcomplib.sgimath"])
-fi
+	# BLAS in Alpha CXML library?
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(cxml, $sgemm, 
+			[ax_blas_ok=yes
+			BLAS_LIBS="-lcxml"]
+		)
+	fi
 
-# BLAS in IBM ESSL library? (requires generic BLAS lib, too)
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(blas, $sgemm,
-		[AC_CHECK_LIB(essl, $sgemm,
-			[ax_blas_ok=yes; BLAS_LIBS="-lessl -lblas"],
-			[], [-lblas $FLIBS])])
-fi
+	# BLAS in Alpha DXML library? (now called CXML, see above)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(dxml, $sgemm, 
+			[ax_blas_ok=yes
+			BLAS_LIBS="-ldxml"]
+		)
+	fi
 
-# Generic BLAS library?
-if test $ax_blas_ok = no; then
-	AC_CHECK_LIB(blas, $sgemm, [ax_blas_ok=yes; BLAS_LIBS="-lblas"])
-fi
+	# BLAS in Sun Performance library?
+	if test x"$ax_blas_ok" = xno; then
+		if test x"$GCC" != xyes; then # only works with Sun CC
+			AC_CHECK_LIB(sunmath, acosp,
+				[AC_CHECK_LIB(sunperf, $sgemm,
+					[BLAS_LIBS="-xlic_lib=sunperf -lsunmath"
+                    ax_blas_ok=yes],
+					[], [-lsunmath]
+				)]
+			)
+		fi
+	fi
 
-AC_SUBST(BLAS_LIBS)
+	# BLAS in SCSL library?  (SGI/Cray Scientific Library)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(scs, $sgemm, 
+			[ax_blas_ok=yes 
+			BLAS_LIBS="-lscs"]
+		)
+	fi
 
-LIBS="$ax_blas_save_LIBS"
+	# BLAS in SGIMATH library?
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(complib.sgimath, $sgemm,
+		     [ax_blas_ok=yes
+			 BLAS_LIBS="-lcomplib.sgimath"]
+		)
+	fi
 
-# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
-if test x"$ax_blas_ok" = xyes; then
-        ifelse([$1],,AC_DEFINE(HAVE_BLAS, 1, [Define if you have a BLAS library.]),[$1])
+	# BLAS in IBM ESSL library? (requires generic BLAS lib, too)
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(blas, $sgemm,
+			[AC_CHECK_LIB(essl, $sgemm,
+				[ax_blas_ok=yes
+				BLAS_LIBS="-lessl -lblas"],
+				[], 
+				[-lblas $FLIBS]
+			)]
+		)
+	fi
+
+	# Generic BLAS library?
+	if test x"$ax_blas_ok" = xno; then
+		AC_CHECK_LIB(blas, $sgemm, 
+			[ax_blas_ok=yes
+			BLAS_LIBS="-lblas"]
+		)
+	fi
+
+	AC_SUBST(BLAS_LIBS)
+
+	LIBS="$ax_blas_save_LIBS"
+
+	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
+	if test x"$ax_blas_ok" = xyes; then
+        AC_DEFINE(HAVE_BLAS, 1, [Define if you have a BLAS library.])
         :
-else
+	else
         ax_blas_ok=no
-        $2
-fi
-])dnl AX_BLAS
+		:
+	fi
+]) # AX_BLAS
