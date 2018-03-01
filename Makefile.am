@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = scripts src tests 
+SUBDIRS = src tests 
 
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
