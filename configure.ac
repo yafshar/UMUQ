@@ -11,10 +11,6 @@ AC_CONFIG_HEADERS(src/umhbm_config.h)
 
 AM_INIT_AUTOMAKE
 
-AC_MSG_RESULT(---------------------------------------------)
-AC_MSG_RESULT(---------  Configuring UMich HBM  -----------)
-AC_MSG_RESULT(---------------------------------------------)
-
 # AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
 m4_include([m4/m4_ax_mpi.m4])
@@ -26,6 +22,11 @@ m4_include([m4/m4_ax_blas.m4])
 m4_include([m4/m4_ax_lapack.m4])
 m4_include([m4/m4_ax_googletest.m4])
 m4_include([m4/m4_ax_doxygen.m4])
+
+# Configuring
+AC_MSG_RESULT(---------------------------------------------)
+AC_MSG_RESULT(---------  Configuring UMich HBM  -----------)
+AC_MSG_RESULT(---------------------------------------------)
 
 # Checks for programs.
 AC_PROG_CXX
@@ -95,20 +96,24 @@ AC_CHECK_FUNCS([pow])
 # Chech for Doxygen
 AX_DOXYGEN
 
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile docs/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
+AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Makefile])])
+
 AC_OUTPUT
 
 AC_MSG_RESULT([
 UMich HBM $VERSION is now configured
+
 Configure Information:
+  C preprocessor    : $CPP
+    CPPFLAGS        :   $CPPFLAGS
+
   C Compiler        : $CC
     DEFS            :   $DEFS
-    CPPFLAGS        :   $CPPFLAGS
     CFLAGS          :   $CFLAGS
 
   C++ Compiler      : $CXX
     DEFS            :   $DEFS
-    CPPFLAGS        :   $CPPFLAGS
     CXXFLAGS        :   $CXXFLAGS
 
   Linker            : $LD
