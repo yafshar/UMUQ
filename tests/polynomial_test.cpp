@@ -26,32 +26,33 @@ TEST(binomial_coefficient_test, HandlesOtherInput)
   EXPECT_EQ(10, p.binomial_coefficient(5, 2));
 }
 
-// Tests binomial coefficient c(n, k) of 0.
-//
-//   For example:
-//       d = 2
-//       r = 2
-//
-//       alpha[ 0],[ 1] = 0, 0 = x^0 y^0
-//       alpha[ 2],[ 3] = 1, 0 = x^1 y^0
-//       alpha[ 4],[ 5] = 0, 1 = x^0 y^1
-//       alpha[ 6],[ 7] = 2, 0 = x^2 y^0
-//       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
-//       alpha[10],[11] = 0, 2 = x^0 y^2
-//
-//       monomial_basis(2,2) = {1,    x,   y,  x^2, xy,  y^2}
-//                     alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
-//
-//
-//       monomial_basis(3,2) = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
-//                     alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
+/*! \brief Tests binomial coefficient c(n, k) of 0.
+*
+*   For example:
+*       d = 2
+*       r = 2
+*
+*       alpha[ 0],[ 1] = 0, 0 = x^0 y^0
+*       alpha[ 2],[ 3] = 1, 0 = x^1 y^0
+*       alpha[ 4],[ 5] = 0, 1 = x^0 y^1
+*       alpha[ 6],[ 7] = 2, 0 = x^2 y^0
+*       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
+*       alpha[10],[11] = 0, 2 = x^0 y^2
+*
+*       monomial_basis(2,2) = {1,    x,   y,  x^2, xy,  y^2}
+*                     alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
+*
+*
+*       monomial_basis(3,2) = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
+*                     alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
+*/
 TEST(monomial_basis_test, HandlesInput)
 {
   polynomial p;
 
   int dim;
   int degree;
-  int *coeff;
+  int *coeff=NULL;
   int num;
 
   dim = 2;
@@ -73,9 +74,6 @@ TEST(monomial_basis_test, HandlesInput)
   {
     EXPECT_EQ(alpha[i], coeff[i]);
   };
-
-  delete[] coeff;
-  coeff = NULL;
 
   dim = 3;
 
