@@ -20,9 +20,9 @@ AC_DEFUN([AX_FLANN], [
                 AS_HELP_STRING([--with-flann@<:@=DIR@:>@], 
                                [use FLANN library (default is yes) - it is possible to specify the root directory for FLANN (optional)]),            
                 [ 
-                        if test x$withval = xno ; then
+                        if test x"$withval" = xno ; then
                                 AC_MSG_ERROR([ Unable to continue without the FLANN library !])
-                        elif test x$withval = xyes ; then
+                        elif test x"$withval" = xyes ; then
                                 want_flann="yes"
                                 ac_flann_path=""
                         else
@@ -62,7 +62,7 @@ AC_DEFUN([AX_FLANN], [
                 CPPFLAGS+="$flann_CPPFLAGS"
 
                 flann_LDFLAGS=""
-                if test x$ac_flann_path != x; then
+                if test x"$ac_flann_path" != x; then
                         if test -d "$ac_flann_path/lib" && test -r "$ac_flann_path/lib" ; then
                                 flann_LDFLAGS=" -L$ac_flann_path/lib"   
                         fi
@@ -79,7 +79,7 @@ AC_DEFUN([AX_FLANN], [
                         done
                 fi
 
-                LDFLAGS+="$flann_LDFLAGS -lflann"
+                LDFLAGS+="$flann_LDFLAGS"' -lflann'
 
                 AC_LANG_PUSH(C++)
                 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -99,13 +99,14 @@ AC_DEFUN([AX_FLANN], [
                 
                 AC_LANG_POP([C++])
 
-                if test "x$succeeded" == "xyes" ; then
+                if test x"$succeeded" = xyes ; then
                         AC_SUBST(CPPFLAGS)
                         AC_SUBST(LDFLAGS)
                         ax_flann_ok="yes"
                         AC_DEFINE(HAVE_FLANN, 1, [Define if you have FLANN Library.])
                         :
                 else
+                        ax_flann_ok="no"
                         CPPFLAGS="$CPPFLAGS_SAVED"
                         LDFLAGS="$LDFLAGS_SAVED"
                         :
