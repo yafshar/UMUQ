@@ -48,6 +48,9 @@ inline polynomial::polynomial(unsigned int dm, unsigned int dg)
     polynomial::degree = dg;
 };
 
+/*! \fn min_value(a, b)
+*   \brief A function that returns the minimum of \a a and \a b.
+*/
 template <typename T>
 inline T polynomial::min_value(T a, T b)
 {
@@ -56,6 +59,9 @@ inline T polynomial::min_value(T a, T b)
     return a;
 };
 
+/*! \fn max_value(a, b)
+*   \brief A function that returns the maximum of \a a and \a b.
+*/
 template <typename T>
 inline T polynomial::max_value(T a, T b)
 {
@@ -64,6 +70,9 @@ inline T polynomial::max_value(T a, T b)
     return a;
 };
 
+/*! \fn arraysum(arraysize, array)
+*   \brief A function that returns the sum of an array of arraysize.
+*/
 template <typename T>
 inline T polynomial::arraysum(int arraysize, T *array)
 {
@@ -79,8 +88,8 @@ inline T polynomial::arraysum(int arraysize, T *array)
 int polynomial::binomial_coefficient(int n, int k)
 {
     /*! 
-    *   Purpose:
-    *       Computes the binomial coefficient c(n, k).  
+    *   \brief Computes the binomial coefficient c(n, k).
+    *  
     *   The formula used is:
     *       c(n,k) = n! / ( n! * (n-k)! )  
     *       $c(n,k) = \frac{n\!}{( n\! * (n-k)! )}$ 
@@ -90,7 +99,7 @@ int polynomial::binomial_coefficient(int n, int k)
     *       @param[out] binomial The binomial coefficient
     */
 
-    if (k < 0 || n < 0)
+    if ((k < 0) || (n < 0))
     {
         std::cout << std::endl;
         std::cout << " Fatal error! k or n < 0" << std::endl;
@@ -100,7 +109,7 @@ int polynomial::binomial_coefficient(int n, int k)
     {
         if (k == 0)
             return 1;
-        if (k == 1)
+        if ((k == 1) || (k == n-1))
             return n;
         int mn;
         int mx;
@@ -126,9 +135,8 @@ int polynomial::binomial_coefficient(int n, int k)
 void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
 {
     /*! 
-    *   Purpose:
-    *       Use a reverse lexicographic order for next monomial, degree between 0 and r
-    *       all monomials in a d dimensional space, with degree r.
+    *   \brief Use a reverse lexicographic order for next monomial, degree between 0 and r
+    *   all monomials in a d dimensional space, with degree r.
     *
     *   Parameters:
     *       @param[in]  d   The spatial dimension
@@ -212,8 +220,7 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
 void polynomial::monomial_basis(int d, int r, int *&alpha)
 {
     /*! 
-    *   Purpose:
-    *       All monomials in a d dimensional space, with total degree r.
+    *   \brief  All monomials in a d dimensional space, with total degree r.
     *   
     *   For example:
     *       d = 2
@@ -240,21 +247,30 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     *       @param[in]  alpha   Undefined pointer
     *       @param[out] alpha   Pointer to monomial sequence
     */
-    
+
     int j;
     int n;
 
-    if (alpha == NULL)
+    if (alpha != NULL)
     {
-        n = d * polynomial::binomial_coefficient(d + r, r);
         try
         {
-            alpha = new int[n];
+            delete[] alpha;
         }
         catch (const std::system_error &e)
         {
             std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
         }
+    }
+
+    n = d * polynomial::binomial_coefficient(d + r, r);
+    try
+    {
+        alpha = new int[n];
+    }
+    catch (const std::system_error &e)
+    {
+        std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
     }
 
     int x[d];
@@ -282,7 +298,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
 template <typename T>
 void polynomial::monomial_value(int d, int r, int *alpha, T *x, T *&value)
 {
-    /*! \breif Evaluates a monomial at a point x.
+    /*! \brief Evaluates a monomial at a point x.
     *
     *   Parameters:
     *       @param[in]  d       The spatial dimension
