@@ -15,7 +15,9 @@
 #   Yaser Afshar @ ya.afshar@gmail.com
 
 AU_ALIAS([ACX_TORC], [AX_TORC])
-AC_DEFUN([AX_TORC], [       
+AC_DEFUN([AX_TORC], [
+        AC_MSG_NOTICE()
+
         AC_ARG_WITH([torc], 
                 AS_HELP_STRING([--with-torc@<:@=DIR@:>@], 
                                [use TORC library (default is yes) - it is possible to specify the PATH for TORC (optional)]),            
@@ -120,4 +122,6 @@ AC_DEFUN([AX_TORC], [
                         LDFLAGS="$LDFLAGS_SAVED"
                 fi
         fi
+        
+        AC_MSG_RESULT()
 ])

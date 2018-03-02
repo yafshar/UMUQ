@@ -16,6 +16,8 @@
 
 AU_ALIAS([ACX_FLANN], [AX_FLANN])
 AC_DEFUN([AX_FLANN], [
+        AC_MSG_NOTICE()
+
         AC_ARG_WITH([flann], 
                 AS_HELP_STRING([--with-flann@<:@=DIR@:>@], 
                                [use FLANN library (default is yes) - it is possible to specify the root directory for FLANN (optional)]),            
@@ -84,16 +86,20 @@ AC_DEFUN([AX_FLANN], [
                 AC_LANG_PUSH(C++)
                 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
                         @%:@include <flann/flann.h>
-                ]], [[]]
-                )], [AC_MSG_RESULT(yes)
-                succeeded=yes
-                found_system=yes
-                ],[])
+                        ]], [[]]
+                        )], [
+                                AC_MSG_RESULT(checking flann/flann.h usability...  yes)
+                                AC_MSG_RESULT(checking flann/flann.h presence... yes)
+                                AC_MSG_RESULT(checking for flann/flann.h... yes)
+                                succeeded=yes
+                                found_system=yes
+                        ],      []
+                )
                 
                 AC_CHECK_LIB( flann, flann_build_index_double, 
                         [], [
-                        succeeded=no
-                        AC_MSG_ERROR([ Unable to continue without the FLANN library !])
+                                succeeded=no
+                                AC_MSG_ERROR([ Unable to continue without the FLANN library !])
                         ]
                 )
                 
@@ -112,4 +118,6 @@ AC_DEFUN([AX_FLANN], [
                         :
                 fi
         fi
+        
+        AC_MSG_RESULT()
 ])

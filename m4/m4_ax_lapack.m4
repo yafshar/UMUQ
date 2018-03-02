@@ -71,6 +71,8 @@
 
 AU_ALIAS([ACX_LAPACK], [AX_LAPACK])
 AC_DEFUN([AX_LAPACK], [
+        AC_MSG_NOTICE()
+        
         AC_REQUIRE([AX_BLAS])
         ax_lapack_ok=no
 
@@ -162,4 +164,6 @@ AC_DEFUN([AX_LAPACK], [
         else
                 ax_lapack_ok=no
         fi
+        
+        AC_MSG_RESULT()
 ]) # AX_LAPACK

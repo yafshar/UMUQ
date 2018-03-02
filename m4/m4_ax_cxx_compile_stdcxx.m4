@@ -45,144 +45,158 @@ dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
 dnl  (serial version number 13).
 
 AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
+  AC_MSG_NOTICE()
+
   m4_if([$1], [11], [],
         [$1], [14], [],
         [$1], [17], [m4_fatal([support for C++17 not yet implemented in AX_CXX_COMPILE_STDCXX])],
         [m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
+
   m4_if([$2], [], [],
         [$2], [ext], [],
         [$2], [noext], [],
         [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
+  
   m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
         [$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
         [$3], [optional], [ax_cxx_compile_cxx$1_required=false],
-        [m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])
+        [m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])dnl
+  
   AC_LANG_PUSH([C++])dnl
+
   ac_success=no
-  AC_CACHE_CHECK(whether $CXX supports C++$1 features by default,
-  ax_cv_cxx_compile_cxx$1,
-  [AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-    [ax_cv_cxx_compile_cxx$1=yes],
-    [ax_cv_cxx_compile_cxx$1=no])])
-  if test x$ax_cv_cxx_compile_cxx$1 = xyes; then
+  
+  AC_CACHE_CHECK(whether $CXX supports C++$1 features by default, 
+    ax_cv_cxx_compile_cxx$1, [
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])], 
+        [ax_cv_cxx_compile_cxx$1=yes], 
+        [ax_cv_cxx_compile_cxx$1=no]
+      )
+    ]
+  )
+  
+  if test x"$ax_cv_cxx_compile_cxx$1" = xyes; then
     ac_success=yes
   fi
 
-  m4_if([$2], [noext], [], [dnl
-  if test x$ac_success = xno; then
-    for switch in -std=gnu++$1 -std=gnu++0x; do
-      cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-      AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
-                     $cachevar,
-        [ac_save_CXX="$CXX"
-         CXX="$CXX $switch"
-         AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-          [eval $cachevar=yes],
-          [eval $cachevar=no])
-         CXX="$ac_save_CXX"])
-      if eval test x\$$cachevar = xyes; then
-        CXX="$CXX $switch"
-        if test -n "$CXXCPP" ; then
-          CXXCPP="$CXXCPP $switch"
-        fi
-        ac_success=yes
-        break
-      fi
-    done
-  fi])
+  m4_if([$2], [noext], [], 
+        [ 
+          if test x"$ac_success" = xno; then
+            for switch in -std=gnu++$1 -std=gnu++0x; do
+              cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+              AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
+                $cachevar, [
+                  ac_save_CXX="$CXX"  
+                  CXX="$CXX $switch"
+                  AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+                    [eval $cachevar=yes],
+                    [eval $cachevar=no]
+                  )
+                  CXX="$ac_save_CXX"
+                ]
+              )
+              if eval test x"\$$cachevar" = xyes; then
+                CXX="$CXX $switch"
+                if test -n "$CXXCPP" ; then
+                  CXXCPP="$CXXCPP $switch"
+                fi
+                ac_success=yes
+                break
+              fi
+            done
+          fi
+        ]
+  ) dnl
 
-  m4_if([$2], [ext], [], [dnl
-  if test x$ac_success = xno; then
-    dnl HP's aCC needs +std=c++11 according to:
-    dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
-    dnl Cray's crayCC needs "-h std=c++11"
-    for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
-      cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-      AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
-                     $cachevar,
-        [ac_save_CXX="$CXX"
-         CXX="$CXX $switch"
-         AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-          [eval $cachevar=yes],
-          [eval $cachevar=no])
-         CXX="$ac_save_CXX"])
-      if eval test x\$$cachevar = xyes; then
-        CXX="$CXX $switch"
-        if test -n "$CXXCPP" ; then
-          CXXCPP="$CXXCPP $switch"
-        fi
-        ac_success=yes
-        break
-      fi
-    done
-  fi])
+  m4_if([$2], [ext], [], 
+        [
+          if test x$ac_success = xno; then
+            dnl HP's aCC needs +std=c++11 according to:
+            dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
+            dnl Cray's crayCC needs "-h std=c++11"
+            for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
+              cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+              AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
+              $cachevar, [
+                ac_save_CXX="$CXX"
+                CXX="$CXX $switch"
+                AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+                  [eval $cachevar=yes],
+                  [eval $cachevar=no]
+                )
+                CXX="$ac_save_CXX"]
+              )
+              if eval test x"\$$cachevar" = xyes; then
+                CXX="$CXX $switch"
+                if test -n "$CXXCPP" ; then
+                  CXXCPP="$CXXCPP $switch"
+                fi
+                ac_success=yes
+                break
+              fi
+            done
+          fi
+        ]
+  ) dnl
+
   AC_LANG_POP([C++])
-  if test x$ax_cxx_compile_cxx$1_required = xtrue; then
-    if test x$ac_success = xno; then
+  
+  if test x"$ax_cxx_compile_cxx$1_required" = xtrue; then
+    if test x"$ac_success" = xno; then
       AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
     fi
   fi
-  if test x$ac_success = xno; then
+
+  if test x"$ac_success" = xno; then
     HAVE_CXX$1=0
     AC_MSG_NOTICE([No compiler with C++$1 support was found])
   else
     HAVE_CXX$1=1
-    AC_DEFINE(HAVE_CXX$1,1,
-              [define if the compiler supports basic C++$1 syntax])
+    AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports basic C++$1 syntax])
   fi
+  
   AC_SUBST(HAVE_CXX$1)
+
+  AC_MSG_RESULT()
 ])
 
-
-dnl  Test body for checking C++11 support
-
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_11],
-  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
-)
+dnl Test body for checking C++11 support
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_11], _AX_CXX_COMPILE_STDCXX_testbody_new_in_11)
 
 
 dnl  Test body for checking C++14 support
-
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14],
-  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14], 
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11 
   _AX_CXX_COMPILE_STDCXX_testbody_new_in_14
 )
 
-
 dnl  Tests for new features in C++11
-
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11], [[
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11], 
+  [[
 
 // If the compiler admits that it is not ready for C++11, why torture it?
 // Hopefully, this will speed up the test.
 
 #ifndef __cplusplus
-
 #error "This is not a C++ compiler"
-
 #elif __cplusplus < 201103L
-
 #error "This is not a C++11 compiler"
-
 #else
 
 namespace cxx11
 {
-
   namespace test_static_assert
   {
-
     template <typename T>
     struct check
     {
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
-
   }
 
   namespace test_final_override
   {
-
     struct Base
     {
       virtual void f() {}
@@ -192,12 +206,10 @@ namespace cxx11
     {
       virtual void f() override {}
     };
-
   }
 
   namespace test_double_right_angle_brackets
   {
-
     template < typename T >
     struct check {};
 
@@ -205,25 +217,20 @@ namespace cxx11
     typedef check<check<void>> double_type;
     typedef check<check<check<void>>> triple_type;
     typedef check<check<check<check<void>>>> quadruple_type;
-
   }
 
   namespace test_decltype
   {
-
-    int
-    f()
+    int f()
     {
       int a = 1;
       decltype(a) b = 2;
       return a + b;
     }
-
   }
 
   namespace test_type_deduction
   {
-
     template < typename T1, typename T2 >
     struct is_same
     {
@@ -237,14 +244,13 @@ namespace cxx11
     };
 
     template < typename T1, typename T2 >
-    auto
+    auto 
     add(T1 a1, T2 a2) -> decltype(a1 + a2)
     {
       return a1 + a2;
     }
 
-    int
-    test(const int c, volatile int v)
+    int test(const int c, volatile int v)
     {
       static_assert(is_same<int, decltype(0)>::value == true, "");
       static_assert(is_same<int, decltype(c)>::value == false, "");
@@ -260,23 +266,19 @@ namespace cxx11
       static_assert(is_same<int, decltype(add(c, v))>::value == true, "");
       return (sumf > 0.0) ? sumi : add(c, v);
     }
-
   }
 
   namespace test_noexcept
   {
-
     int f() { return 0; }
     int g() noexcept { return 0; }
 
     static_assert(noexcept(f()) == false, "");
     static_assert(noexcept(g()) == true, "");
-
   }
 
   namespace test_constexpr
   {
-
     template < typename CharT >
     unsigned long constexpr
     strlen_c_r(const CharT *const s, const unsigned long acc) noexcept
@@ -295,12 +297,10 @@ namespace cxx11
     static_assert(strlen_c("1") == 1UL, "");
     static_assert(strlen_c("example") == 7UL, "");
     static_assert(strlen_c("another\0example") == 7UL, "");
-
   }
 
   namespace test_rvalue_references
   {
-
     template < int N >
     struct answer
     {
@@ -325,7 +325,6 @@ namespace cxx11
 
   namespace test_uniform_initialization
   {
-
     struct test
     {
       static const int zero {};
@@ -334,14 +333,11 @@ namespace cxx11
 
     static_assert(test::zero == 0, "");
     static_assert(test::one == 1, "");
-
   }
 
   namespace test_lambdas
   {
-
-    void
-    test1()
+    void test1()
     {
       auto lambda1 = [](){};
       auto lambda2 = lambda1;
@@ -349,8 +345,7 @@ namespace cxx11
       lambda2();
     }
 
-    int
-    test2()
+    int test2()
     {
       auto a = [](int i, int j){ return i + j; }(1, 2);
       auto b = []() -> int { return '0'; }();
@@ -365,8 +360,7 @@ namespace cxx11
       return a + b + c + d + e;
     }
 
-    int
-    test3()
+    int test3()
     {
       const auto nullary = [](){ return 0; };
       const auto unary = [](int x){ return x; };
@@ -378,12 +372,10 @@ namespace cxx11
       };
       return higher1st(nullary) + higher2nd(nullary)(unary);
     }
-
   }
 
   namespace test_variadic_templates
   {
-
     template <int...>
     struct sum;
 
@@ -405,7 +397,6 @@ namespace cxx11
     static_assert(sum<1, 2>::value == 3, "");
     static_assert(sum<5, 5, 11>::value == 21, "");
     static_assert(sum<2, 3, 5, 7, 11, 13>::value == 41, "");
-
   }
 
   // http://stackoverflow.com/questions/13728184/template-aliases-and-sfinae
@@ -413,7 +404,6 @@ namespace cxx11
   // because of this.
   namespace test_template_alias_sfinae
   {
-
     struct foo {};
 
     template<typename T>
@@ -428,41 +418,31 @@ namespace cxx11
     void test();
 
     void test() { func<foo>(0); }
-
   }
-
 }  // namespace cxx11
 
 #endif  // __cplusplus >= 201103L
-
-]])
-
+  ]]
+) dnl
 
 dnl  Tests for new features in C++14
-
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14], [[
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14], 
+  [[
 
 // If the compiler admits that it is not ready for C++14, why torture it?
 // Hopefully, this will speed up the test.
 
 #ifndef __cplusplus
-
 #error "This is not a C++ compiler"
-
 #elif __cplusplus < 201402L
-
 #error "This is not a C++14 compiler"
-
 #else
 
 namespace cxx14
 {
-
   namespace test_polymorphic_lambdas
   {
-
-    int
-    test()
+    int test()
     {
       const auto lambda = [](auto&&... args){
         const auto istiny = [](auto x){
@@ -473,20 +453,16 @@ namespace cxx14
       };
       return lambda(1, 1L, 1.0f, '1');
     }
-
   }
 
   namespace test_binary_literals
   {
-
     constexpr auto ivii = 0b0000000000101010;
     static_assert(ivii == 42, "wrong value");
-
   }
 
   namespace test_generalized_constexpr
   {
-
     template < typename CharT >
     constexpr unsigned long
     strlen_c(const CharT *const s) noexcept
@@ -501,12 +477,10 @@ namespace cxx14
     static_assert(strlen_c("x") == 1UL, "");
     static_assert(strlen_c("test") == 4UL, "");
     static_assert(strlen_c("another\0test") == 7UL, "");
-
   }
 
   namespace test_lambda_init_capture
   {
-
     int
     test()
     {
@@ -515,20 +489,16 @@ namespace cxx14
       const auto lambda2 = [a = lambda1(x)](){ return a; };
       return lambda2();
     }
-
   }
 
   namespace test_digit_seperators
   {
-
     constexpr auto ten_million = 100'000'000;
     static_assert(ten_million == 100000000, "");
-
   }
 
   namespace test_return_type_deduction
   {
-
     auto f(int& x) { return x; }
     decltype(auto) g(int& x) { return x; }
 
@@ -544,19 +514,17 @@ namespace cxx14
       static constexpr auto value = true;
     };
 
-    int
-    test()
+    int test()
     {
       auto x = 0;
       static_assert(is_same<int, decltype(f(x))>::value, "");
       static_assert(is_same<int&, decltype(g(x))>::value, "");
       return x;
     }
-
   }
-
 }  // namespace cxx14
 
 #endif  // __cplusplus >= 201402L
 
-]])
+  ]]
+) dnl

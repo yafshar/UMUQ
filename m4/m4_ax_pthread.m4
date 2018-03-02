@@ -59,6 +59,8 @@
 
 AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
+        AC_MSG_NOTICE()
+
         AC_REQUIRE([AC_CANONICAL_HOST])
         AC_LANG_PUSH(C)
         ax_pthread_ok=no
@@ -246,4 +248,6 @@ AC_DEFUN([AX_PTHREAD], [
         fi
 
         AC_LANG_POP([C])
+
+        AC_MSG_RESULT()
 ]) # AX_PTHREAD

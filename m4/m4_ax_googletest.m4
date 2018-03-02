@@ -16,28 +16,33 @@
 
 AU_ALIAS([ACX_GOOGLETEST], [AX_GOOGLETEST])
 AC_DEFUN([AX_GOOGLETEST], [
-        AC_ARG_WITH([googletest], AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], [use GOOGLETEST framework (default is no)]), 
+        AC_MSG_NOTICE()
+
+        AC_ARG_WITH([googletest], 
+                AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], 
+                        [use GOOGLETEST framework (default is no) - it is possible to specify the root directory for GOOGLETEST (optional)]), 
                 [ 
-                        if test x$withval = xno ; then
+                        if test x"$withval" = xno ; then
                                 AC_MSG_WARN([You can not test the library without GOOGLETEST framework !!!])
-                        elif test x$withval = xyes ; then
+                        elif test x"$withval" = xyes ; then
                                 want_googletest="yes"
                                 ac_googletest_path=""
-                        elif test x$withval != x ; then
+                        elif test x"$withval" != x ; then
                                 want_googletest="yes"
                                 ac_googletest_path="$withval"
                         else 
                                 AC_MSG_WARN([You can not test the library without GOOGLETEST framework !!!])
                         fi
-                ], [want_googletest="no"
-                    ax_googletest_ok="no" ]
+                ], [want_googletest="no"]
         )
+
+        ax_googletest_ok="no"
    
-        if test x$want_googletest = xyes; then
+        if test x"$want_googletest" = xyes; then
                 succeeded=no
                 
                 dnl first we check the system location for googletest libraries
-                if test x$ac_googletest_path != x; then
+                if test x"$ac_googletest_path" != x; then
                         for ac_googletest_path_tmp in $ac_googletest_path $ac_googletest_path/include ; do 
                                 if test -d "$ac_googletest_path_tmp/gtest" && test -r "$ac_googletest_path_tmp/gtest" ; then
                                         if test -f "$ac_googletest_path_tmp/gtest/gtest.h"  && test -r "$ac_googletest_path_tmp/gtest/gtest.h" ; then
@@ -61,7 +66,7 @@ AC_DEFUN([AX_GOOGLETEST], [
                 CPPFLAGS+="$googletest_CPPFLAGS"
 
                 googletest_LDFLAGS=""
-                if test x$ac_googletest_path != x; then
+                if test x"$ac_googletest_path" != x; then
                         if test -d "$ac_googletest_path/lib" && test -r "$ac_googletest_path/lib" ; then
                                 googletest_LDFLAGS=" -L$ac_googletest_path/lib"   
                         fi
@@ -83,26 +88,29 @@ AC_DEFUN([AX_GOOGLETEST], [
                 AC_LANG_PUSH(C++)
                 
                 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-                        @%:@include "gtest/gtest.h"
-                ]], [[]]
-                )], [AC_MSG_RESULT(yes)
-                succeeded=yes
-                found_system=yes
-                ],[])
+                                @%:@include "gtest/gtest.h"
+                        ]], [[]]
+                        )], [
+                                AC_MSG_RESULT(checking gtest/gtest.h usability...  yes)
+                                AC_MSG_RESULT(checking gtest/gtest.h presence... yes)
+                                AC_MSG_RESULT(checking for gtest/gtest.h... yes)
+                                succeeded=yes
+                        ],      []
+                )
 
                 LIBS_SAVED="$LIBS"
                 
                 AC_CHECK_LIB( [pthread], [main], 
                         [], [
-                        succeeded=no
-                        AC_MSG_ERROR([ Unable to continue! pthread devel library is missing! pthread is required for this program!])
+                                succeeded=no
+                                AC_MSG_ERROR([ Unable to continue! pthread devel library is missing! pthread is required for this program!])
                         ]
                 )    
                 
                 AC_CHECK_LIB( [gtest], [main], 
                         [], [
-                        succeeded=no
-                        AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
+                                succeeded=no
+                                AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
                         ]
                 )
                 
@@ -127,4 +135,15 @@ AC_DEFUN([AX_GOOGLETEST], [
                 LIBS="$LIBS_SAVED" 
                 AC_SUBST(LIBS)
         fi
+
+        AM_CONDITIONAL([HAVE_GOOGLETEST], [test x"$ax_googletest_ok" == xyes])
+        AM_COND_IF([HAVE_GOOGLETEST], 
+                [], 
+                [
+                        AC_MSG_RESULT(Unable to locate GOOGLETEST !) 
+                        AC_MSG_RESULT(You can not test the library without GOOGLETEST framework !!!)
+                ]
+        )
+        
+        AC_MSG_RESULT()
 ])

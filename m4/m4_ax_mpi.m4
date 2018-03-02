@@ -40,6 +40,8 @@
 
 AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
+	AC_MSG_NOTICE()
+
 	ax_mpi_ok="no"
 	want_mpi="yes"
 	ac_mpi_path=""
@@ -60,7 +62,7 @@ AC_DEFUN([AX_MPI], [
         ], [want_mpi="yes"]
     )
 
-	if test x$want_mpi = xyes; then
+	if test x"$want_mpi" = xyes; then
 		ac_mpi_bin=""
     
 	    if test x"$ac_mpi_path" != x; then
@@ -211,5 +213,5 @@ AC_DEFUN([AX_MPI], [
 	        :
 	    fi
 	fi
-
+	AC_MSG_RESULT()
 ]) # AX_MPI
