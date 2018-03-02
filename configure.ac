@@ -35,44 +35,46 @@ AC_PROG_CC
 # Checks for libraries.
 
 ### Checking for MPI
-AC_MSG_CHECKING([ Checking for MPI Library ])
+AC_MSG_CHECKING([ for MPI Library - ])
 AX_MPI
 AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])])
 
 ### Checking for EIGEN
 AC_LANG_PUSH([C++])
-AC_MSG_CHECKING([ Checking for EIGEN Library ])
-AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok=yes], [ax_eigen_ok=no])
-AS_IF([test x"$ax_eigen_ok" != xyes], [ AX_EIGEN ])
-AS_IF([test x"$ax_eigen_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
+AC_MSG_CHECKING([ for EIGEN Library - ])
+AC_MSG_NOTICE()
+AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok="yes"], [ax_eigen_ok="no"])
+AS_IF([test x"$ax_eigen_ok" = xno], [ AX_EIGEN ])
+AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
 AC_LANG_POP([C++])
 
 ### Checking for FLANN
 AC_LANG_PUSH([C++])
-AC_MSG_CHECKING([ Checking for FLANN Library ])
-AC_CHECK_HEADERS([flann/flann.h], [ax_flann_ok=yes], [ax_flann_ok=no])
+AC_MSG_CHECKING([ for FLANN Library - ])
+AC_MSG_NOTICE()
+AC_CHECK_HEADERS([flann/flann.h], [ax_flann_ok="yes"], [ax_flann_ok="no"])
 AS_IF([test x"$ax_flann_ok" != xyes], [ AX_FLANN ])
 AS_IF([test x"$ax_flann_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
 AC_LANG_POP([C++])
 
 ### Checking for LAPACK
-AC_MSG_CHECKING([ Checking for LAPACK Library ])
+AC_MSG_CHECKING([ for LAPACK Library - ])
 AX_LAPACK
 AS_IF([test x"$ax_lapack_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
 
 ### Checking for GOOGLETEST
-AC_MSG_CHECKING([ Checking for GOOGLETEST Framework ])
+AC_MSG_CHECKING([ for GOOGLETEST Framework ])
 AX_GOOGLETEST
 
 ### Checking for POSIX threads
-AC_MSG_CHECKING([ Checking for POSIX threads ])
+AC_MSG_CHECKING([ for POSIX threads ])
 AX_PTHREAD
 AS_IF([test x"$ax_pthread_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
 
 ### Checking for TORC
 AC_LANG_PUSH([C])
-AC_MSG_CHECKING([ Checking for TORC Library ])
-AC_CHECK_HEADERS([torc.h], [ax_torc_ok=yes], [ax_torc_ok=no])
+AC_MSG_CHECKING([ for TORC Library ])
+AC_CHECK_HEADERS([torc.h], [ax_torc_ok="yes"], [ax_torc_ok="no"])
 AS_IF([test x"$ax_torc_ok" != xyes], [ AX_TORC ])
 AS_IF([test x"$ax_torc_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
 AC_LANG_POP([C])
@@ -84,19 +86,19 @@ AC_CHECK_HEADERS([pthread.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
 
-# Use the C++ compiler for the following checks
-AC_LANG([C++])
-
 # Ensure we are using c11 C++ standard.
+AC_LANG_PUSH([C++])
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
+AC_LANG_POP([C++])
 
 # Chech for Doxygen
 AX_DOXYGEN
 
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
+AM_COND_IF([HAVE_GOOGLETEST], [AC_CONFIG_FILES([tests/Makefile])])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Makefile])])
 
 AC_OUTPUT
