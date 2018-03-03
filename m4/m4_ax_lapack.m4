@@ -71,13 +71,14 @@
 
 AU_ALIAS([ACX_LAPACK], [AX_LAPACK])
 AC_DEFUN([AX_LAPACK], [
-        AC_MSG_NOTICE()
+        AC_MSG_NOTICE(LAPACK)
         
         AC_REQUIRE([AX_BLAS])
         ax_lapack_ok=no
 
         AC_ARG_WITH(lapack,
-                [AS_HELP_STRING([--with-lapack=<lib>], [use LAPACK library <lib>])]
+                [AS_HELP_STRING([--with-lapack=<lib>], 
+                        [use LAPACK library <lib>])]
         )
 
         case $with_lapack in

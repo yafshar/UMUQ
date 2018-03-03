@@ -10,13 +10,11 @@
 # ADAPTED 
 #   Yaser Afshar @ ya.afshar@gmail.com
 
-Doxygen is a documentation generator, a tool for writing software reference documentation.
-
 AU_ALIAS([ACX_DOXYGEN], [AX_DOXYGEN])
 AC_DEFUN([AX_DOXYGEN], [
-    AC_MSG_NOTICE()
+    AC_MSG_NOTICE(DOXYGEN)
 
-    AC_ARG_WITH([doxygen], 
+    AC_ARG_ENABLE([doxygen], 
         AS_HELP_STRING([--enable-doxygen@<:@=ARG@:>@], 
             [Enable doxygen (default is no) (optional)]), 
         [ 
@@ -39,9 +37,9 @@ AC_DEFUN([AX_DOXYGEN], [
         AC_CHECK_PROGS([DOXYGEN], [doxygen]) 
     
         AC_CHECK_PROGS([DOT], [dot])
-        if test -z "$DOT"; then
-            AC_MSG_ERROR([Doxygen needs dot, please install dot first])
-        fi
+        #if test -z "$DOT"; then
+            #AC_MSG_ERROR([Doxygen needs dot, please install dot first])
+        #fi
     
         AC_CHECK_PROGS([PDFLATEX], [pdflatex])
         if test -z "$PDFLATEX"; then
@@ -59,7 +57,7 @@ AC_DEFUN([AX_DOXYGEN], [
     fi
     
     AM_CONDITIONAL([HAVE_DOXYGEN], [test x"$ax_doxygen_ok" = xyes])
-    AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])])
+    AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])], [AC_MSG_WARN([You can not generate software reference documentation without DOXYGEN !!!])])
 
     AC_MSG_RESULT()
 ])

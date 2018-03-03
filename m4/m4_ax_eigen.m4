@@ -16,11 +16,11 @@
 
 AU_ALIAS([ACX_EIGEN], [AX_EIGEN])
 AC_DEFUN([AX_EIGEN], [
-        AC_MSG_NOTICE()
+        AC_MSG_NOTICE(EIGEN)
         
         AC_ARG_WITH([eigen], 
                 AS_HELP_STRING([--with-eigen@<:@=DIR@:>@], 
-                               [use EIGEN library (default is yes) - it is possible to specify the root directory for EIGEN (optional)]),            
+                        [use EIGEN library (default is yes) - it is possible to specify the root directory for EIGEN (optional)]),            
                 [ 
                         if test x"$withval" = xno ; then
                                 AC_MSG_ERROR([ Unable to continue without the EIGEN library !])

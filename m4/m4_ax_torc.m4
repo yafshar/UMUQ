@@ -16,29 +16,32 @@
 
 AU_ALIAS([ACX_TORC], [AX_TORC])
 AC_DEFUN([AX_TORC], [
-        AC_MSG_NOTICE()
+        AC_MSG_NOTICE(TORC)
 
         AC_ARG_WITH([torc], 
                 AS_HELP_STRING([--with-torc@<:@=DIR@:>@], 
                                [use TORC library (default is yes) - it is possible to specify the PATH for TORC (optional)]),            
                 [ 
-                        if test x$withval = xno ; then
+                        if test x"$withval" = xno; then
                                 AC_MSG_ERROR([ Unable to continue without the TORC library !])
-                        elif test x$withval = xyes ; then
+                        elif test x"$withval" = xyes; then
                                 want_torc="yes"
                                 ac_torc_path=""
-                        else
+                        elif test x"$withval" != x; then
                                 want_torc="yes"
                                 ac_torc_path="$withval"
+                        else
+                                want_torc="yes"
+                                ac_torc_path=""
                         fi
                 ], [want_torc="yes"]
         )
         
-        if test x$want_torc = xyes; then              
+        if test x"$want_torc" = xyes; then              
                 succeeded=no
                 
                 dnl first we check the system location for TORC libraries
-                if test x$ac_torc_path != x; then
+                if test x"$ac_torc_path" != x; then
                         for ac_torc_path_tmp in $ac_torc_path $ac_torc_path/include $ac_torc_path/torc $ac_torc_path/torc/include ; do 
                                 if test -f "$ac_torc_path_tmp/torc.h"  && test -r "$ac_torc_path_tmp/torc.h" ; then
                                         TORC_CFLAGS=" -I$ac_torc_path_tmp"" $PTHREAD_CFLAGS "
@@ -88,32 +91,33 @@ AC_DEFUN([AX_TORC], [
                 LDFLAGS+="$TORC_LDFLAGS"' -ltorc '" $PTHREAD_LIBS "         
                 
                 save_CC="$CC"
-                if test x$ax_mpi_ok = xyes; then 
+                if test x"$ax_mpi_ok" = xyes; then 
                         CC="$MPICC"
                 fi
 
                 AC_LANG_PUSH(C)
-
                 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
                         @%:@include <torc.h>
-                ]], [[]]
-                )], [AC_MSG_RESULT(yes)
-                succeeded=yes
-                found_system=yes
-                ],[])
+                        ]], [[]]
+                        )], [
+                                AC_MSG_RESULT(checking torc.h usability...  yes)
+                                AC_MSG_RESULT(checking torc.h presence... yes)
+                                AC_MSG_RESULT(checking for torc.h... yes)
+                                succeeded=yes
+                        ],[]
+                )
                 
                 AC_CHECK_LIB( torc, torc_init, 
                         [], [
-                        succeeded=no
-                        AC_MSG_ERROR([ Unable to continue without the TORC library !])
+                                succeeded=no
+                                AC_MSG_ERROR([ Unable to continue without the TORC library !])
                         ]
                 )
-                
                 AC_LANG_POP([C])
 
                 CC="$save_CC"
 
-                if test "x$succeeded" == "xyes" ; then
+                if test x"$succeeded" = xyes ; then
                         AC_SUBST(CFLAGS)
                         AC_SUBST(LDFLAGS)
                         ax_torc_ok="yes"

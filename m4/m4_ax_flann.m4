@@ -16,11 +16,11 @@
 
 AU_ALIAS([ACX_FLANN], [AX_FLANN])
 AC_DEFUN([AX_FLANN], [
-        AC_MSG_NOTICE()
+        AC_MSG_NOTICE(FLANN)
 
         AC_ARG_WITH([flann], 
                 AS_HELP_STRING([--with-flann@<:@=DIR@:>@], 
-                               [use FLANN library (default is yes) - it is possible to specify the root directory for FLANN (optional)]),            
+                        [use FLANN library (default is yes) - it is possible to specify the root directory for FLANN (optional)]),            
                 [ 
                         if test x"$withval" = xno ; then
                                 AC_MSG_ERROR([ Unable to continue without the FLANN library !])

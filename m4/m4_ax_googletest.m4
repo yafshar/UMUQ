@@ -16,7 +16,7 @@
 
 AU_ALIAS([ACX_GOOGLETEST], [AX_GOOGLETEST])
 AC_DEFUN([AX_GOOGLETEST], [
-        AC_MSG_NOTICE()
+        AC_MSG_NOTICE(GOOGLETEST)
 
         AC_ARG_WITH([googletest], 
                 AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], 

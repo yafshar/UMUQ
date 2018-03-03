@@ -40,7 +40,7 @@
 
 AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
-	AC_MSG_NOTICE()
+	AC_MSG_NOTICE(MPI)
 
 	ax_mpi_ok="no"
 	want_mpi="yes"
