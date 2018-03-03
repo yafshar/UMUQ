@@ -33,6 +33,7 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for libraries.
+AC_MSG_RESULT() 
 
 ### Checking for MPI
 AC_MSG_CHECKING([ for MPI Library - ])
@@ -42,7 +43,7 @@ AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI libr
 ### Checking for EIGEN
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ for EIGEN Library - ])
-AC_MSG_NOTICE()
+AC_MSG_NOTICE(EIGEN)
 AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok="yes"], [ax_eigen_ok="no"])
 AS_IF([test x"$ax_eigen_ok" = xno], [ AX_EIGEN ])
 AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
@@ -51,7 +52,7 @@ AC_LANG_POP([C++])
 ### Checking for FLANN
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ for FLANN Library - ])
-AC_MSG_NOTICE()
+AC_MSG_NOTICE(FLANN)
 AC_CHECK_HEADERS([flann/flann.h], [ax_flann_ok="yes"], [ax_flann_ok="no"])
 AS_IF([test x"$ax_flann_ok" != xyes], [ AX_FLANN ])
 AS_IF([test x"$ax_flann_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
@@ -63,17 +64,17 @@ AX_LAPACK
 AS_IF([test x"$ax_lapack_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
 
 ### Checking for GOOGLETEST
-AC_MSG_CHECKING([ for GOOGLETEST Framework ])
+AC_MSG_CHECKING([ for GOOGLETEST Framework - ])
 AX_GOOGLETEST
 
 ### Checking for POSIX threads
-AC_MSG_CHECKING([ for POSIX threads ])
+AC_MSG_CHECKING([ for POSIX threads - ])
 AX_PTHREAD
 AS_IF([test x"$ax_pthread_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
 
 ### Checking for TORC
 AC_LANG_PUSH([C])
-AC_MSG_CHECKING([ for TORC Library ])
+AC_MSG_CHECKING([ for TORC Library - ])
 AC_CHECK_HEADERS([torc.h], [ax_torc_ok="yes"], [ax_torc_ok="no"])
 AS_IF([test x"$ax_torc_ok" != xyes], [ AX_TORC ])
 AS_IF([test x"$ax_torc_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
@@ -81,7 +82,6 @@ AC_LANG_POP([C])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
-AC_CHECK_HEADERS([pthread.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
@@ -95,6 +95,7 @@ AC_CHECK_FUNCS([pow])
 AC_LANG_POP([C++])
 
 # Chech for Doxygen
+AC_MSG_CHECKING([ for DOXYGEN - ])
 AX_DOXYGEN
 
 AC_CONFIG_FILES([Makefile src/Makefile])
