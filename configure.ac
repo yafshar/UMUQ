@@ -50,18 +50,15 @@ AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN li
 AC_LANG_POP([C++])
 
 ### Checking for FLANN
-AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ for FLANN Library - ])
 AC_MSG_NOTICE(FLANN)
-AC_CHECK_HEADERS([flann/flann.h], [ax_flann_ok="yes"], [ax_flann_ok="no"])
-AS_IF([test x"$ax_flann_ok" != xyes], [ AX_FLANN ])
-AS_IF([test x"$ax_flann_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
-AC_LANG_POP([C++])
+AX_FLANN
+AS_IF([test x"$ax_flann_ok" = xno], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
 
 ### Checking for LAPACK
 AC_MSG_CHECKING([ for LAPACK Library - ])
 AX_LAPACK
-AS_IF([test x"$ax_lapack_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
+AS_IF([test x"$ax_lapack_ok" = xno], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
 
 ### Checking for GOOGLETEST
 AC_MSG_CHECKING([ for GOOGLETEST Framework - ])
@@ -70,14 +67,14 @@ AX_GOOGLETEST
 ### Checking for POSIX threads
 AC_MSG_CHECKING([ for POSIX threads - ])
 AX_PTHREAD
-AS_IF([test x"$ax_pthread_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
+AS_IF([test x"$ax_pthread_ok" = xno], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
 
 ### Checking for TORC
 AC_LANG_PUSH([C])
 AC_MSG_CHECKING([ for TORC Library - ])
 AC_CHECK_HEADERS([torc.h], [ax_torc_ok="yes"], [ax_torc_ok="no"])
-AS_IF([test x"$ax_torc_ok" != xyes], [ AX_TORC ])
-AS_IF([test x"$ax_torc_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
+AS_IF([test x"$ax_torc_ok" = xno], [ AX_TORC ])
+AS_IF([test x"$ax_torc_ok" = xno], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
 AC_LANG_POP([C])
 
 # Checks for header files.
