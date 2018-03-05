@@ -37,23 +37,18 @@ AC_MSG_RESULT()
 
 ### Checking for MPI
 AC_MSG_CHECKING([ for MPI Library - ])
+AC_MSG_NOTICE(MPI)
 AX_MPI
-AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])])
 
 ### Checking for EIGEN
-AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([ for EIGEN Library - ])
 AC_MSG_NOTICE(EIGEN)
-AC_CHECK_HEADERS([Eigen/Dense], [ax_eigen_ok="yes"], [ax_eigen_ok="no"])
-AS_IF([test x"$ax_eigen_ok" = xno], [ AX_EIGEN ])
-AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
-AC_LANG_POP([C++])
+AX_EIGEN
 
 ### Checking for FLANN
 AC_MSG_CHECKING([ for FLANN Library - ])
 AC_MSG_NOTICE(FLANN)
 AX_FLANN
-AS_IF([test x"$ax_flann_ok" = xno], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
 
 ### Checking for LAPACK
 AC_MSG_CHECKING([ for LAPACK Library - ])
