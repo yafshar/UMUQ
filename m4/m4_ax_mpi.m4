@@ -40,12 +40,6 @@
 
 AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
-	AC_MSG_NOTICE(MPI)
-
-	ax_mpi_ok="no"
-	want_mpi="yes"
-	ac_mpi_path=""
-
 	AC_ARG_WITH([mpi], 
 		AS_HELP_STRING([--with-mpi@<:@=DIR@:>@], 
 			[use MPI library (default is yes) - it is possible to specify the root directory for MPI (optional)]),            
@@ -53,138 +47,203 @@ AC_DEFUN([AX_MPI], [
 			if test x"$withval" = xno ; then
                 AC_MSG_ERROR([ Unable to continue without the MPI library !])
             elif test x"$withval" = xyes ; then
-                want_mpi="yes"
                 ac_mpi_path=""
-            else
-                want_mpi="yes"
+            elif test x"$withval" != x ; then
                 ac_mpi_path="$withval"
+            else
+                ac_mpi_path=""
             fi
-        ], [want_mpi="yes"]
+        ], [
+			ac_mpi_path=""
+		]
     )
 
-	if test x"$want_mpi" = xyes; then
+    dnl if the user does not provide the DIR root directory for MPI, we search the default PATH
+    ax_mpi_ok="no"
+
+    AS_IF([test x"$ax_mpi_ok" = xno], [  
+        AC_MSG_NOTICE(MPI)
+                
+        succeeded=no
+
 		ac_mpi_bin=""
     
 	    if test x"$ac_mpi_path" != x; then
 			for ac_mpi_path_tmp in $ac_mpi_path $ac_mpi_path/bin ; do
 				for ax_mpi_tmp_CC in mpicc hcc mpcc mpcc_r mpxlc cmpicc ; do
 					if test -x "$ac_mpi_path_tmp"'/'"$ax_mpi_tmp_CC" ; then
-						ac_mpi_bin = ac_mpi_path_tmp
+						ac_mpi_bin="$ac_mpi_path_tmp"
 						break;
 					fi
 				done
 			done
 		fi
+
+		AC_PREREQ(2.50)
 		
-		AC_PREREQ(2.50) 
-	    AC_LANG_CASE(
-	        [C], [
-	            AC_REQUIRE([AC_PROG_CC])
-	            AC_ARG_VAR(MPICC, [MPI C compiler command])
-	            if test x"$ac_mpi_bin" = x; then
-					AC_CHECK_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc cmpicc, $CC)
-				else
-					AC_CHECK_PROGS(MPICC, "$ac_mpi_bin"'/mpicc' "$ac_mpi_bin"'/hcc' "$ac_mpi_bin"'/mpcc' "$ac_mpi_bin"'/mpcc_r' "$ac_mpi_bin"'/mpxlc' "$ac_mpi_bin"'/cmpicc', $CC)
-				fi
-	            ax_mpi_save_CC="$CC"
-	            LAMMPICC="$CC"
-	            CC="$MPICC"
-	            AC_SUBST(MPICC)
-	        ],
-	        [C++], [
-	            AC_REQUIRE([AC_PROG_CXX])
-	            AC_ARG_VAR(MPICXX, [MPI C++ compiler command])
-	            if test x"$ac_mpi_bin" = x; then
-	            	AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++, $CXX)
-				else
-					AC_CHECK_PROGS(MPICC, "$ac_mpi_bin"'/mpic++' "$ac_mpi_bin"'/mpicxx' "$ac_mpi_bin"'/mpiCC' "$ac_mpi_bin"'/mpCC' "$ac_mpi_bin"'/hcp' "$ac_mpi_bin"'/mpxlC' "$ac_mpi_bin"'/mpxlC_r' "$ac_mpi_bin"'/cmpic++', $CXX)
-				fi
-	            ax_mpi_save_CXX="$CXX"
-	            LAMMPICXX="$CXX"
-	            CXX="$MPICXX"
-	            AC_SUBST(MPICXX)
-	        ],
-	        [Fortran 77], [
-	            AC_REQUIRE([AC_PROG_F77])
-	            AC_ARG_VAR(MPIF77, [MPI Fortran compiler command])
-	            if test x"$ac_mpi_bin" = x; then
-	            	AC_CHECK_PROGS(MPIF77, mpifort mpif77 hf77 mpxlf mpf77 mpif90 mpf90 mpxlf90 mpxlf95 mpxlf_r cmpifc cmpif90c, $F77)
-				else
-					AC_CHECK_PROGS(MPICC, "$ac_mpi_bin"'/mpifort' "$ac_mpi_bin"'/mpif77' "$ac_mpi_bin"'/hf77' "$ac_mpi_bin"'/mpxlf' "$ac_mpi_bin"'/mpxlf' "$ac_mpi_bin"'/mpif90' "$ac_mpi_bin"'/mpf90' "$ac_mpi_bin"'/mpxlf90' "$ac_mpi_bin"'/mpxlf95' "$ac_mpi_bin"'/mpxlf_r' "$ac_mpi_bin"'/cmpifc' "$ac_mpi_bin"'/cmpif90c', $F77)
-				fi
-	            ax_mpi_save_F77="$F77"
-	            LAMMPIF77="$F77"
-	            F77="$MPIF77"
-	            AC_SUBST(MPIF77)
-	        ],
-	        [Fortran], [
-		        AC_REQUIRE([AC_PROG_FC])
-		        AC_ARG_VAR(MPIFC, [MPI Fortran compiler command])
-	            if test x"$ac_mpi_bin" = x; then
-		        	AC_CHECK_PROGS(MPIFC, mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, $FC)
-				else
-					AC_CHECK_PROGS(MPICC, "$ac_mpi_bin"'/mpifort' "$ac_mpi_bin"'/mpif90' "$ac_mpi_bin"'/mpxlf95_r' "$ac_mpi_bin"'/mpxlf90_r' "$ac_mpi_bin"'/mpxlf95' "$ac_mpi_bin"'/mpxlf90' "$ac_mpi_bin"'/mpf90' "$ac_mpi_bin"'/mpf90' "$ac_mpi_bin"'/cmpif90c', $FC)
-				fi
-		        ax_mpi_save_FC="$FC"
-		        FC="$MPIFC"
-	            AC_SUBST(MPIFC)
-	        ]
-	    )
+		AS_IF([test x"$ac_mpi_bin" != x], [
+			PATH_SAVED="$PATH"
+			PATH="$ac_mpi_bin"':'"$PATH"
+
+			AC_REQUIRE([AC_PROG_CC])
+			AC_ARG_VAR(MPICC, [MPI C compiler command])
+			MPICC=""
+			for ac_prog_cc_tmp in mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc ; do
+				AS_VAR_IF(CC, ["$ac_prog_cc_tmp"], [
+						MPICC="$CC"
+						break;
+					], []
+				)
+				AS_VAR_IF(CC, ["$ac_mpi_bin"'/'"$ac_prog_cc_tmp"], [
+						MPICC="$CC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPICC" = x; then
+				AC_CHECK_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc, [no], [path = ‘$PATH’])
+			fi
+			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
+				[
+					ax_mpi_save_CC="$CC"
+					CC="$MPICC"
+					AC_SUBST(MPICC)
+				]
+			)
+			
+			AC_REQUIRE([AC_PROG_CXX])
+			AC_ARG_VAR(MPICXX, [MPI C++ compiler command])
+			MPICXX=""
+			for ac_prog_cxx_tmp in mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r ; do
+				AS_VAR_IF(CXX, ["$ac_prog_cxx_tmp"], [
+						MPICXX="$CXX"
+						break;
+					], []
+				)
+				AS_VAR_IF(CXX, ["$ac_mpi_bin"'/'"$ac_prog_cxx_tmp"], [
+						MPICXX="$CXX"
+						break;
+					], []
+				)
+			done
+			if test x"$MPICXX" = x; then
+				AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r, [no], [path = ‘$PATH’])
+			fi
+			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
+				[
+					ax_mpi_save_CXX="$CXX"
+	            	CXX="$MPICXX"
+	            	AC_SUBST(MPICXX)
+				]
+			)
+
+			PATH="$PATH_SAVED"
+		], [	 
+			AC_REQUIRE([AC_PROG_CC])
+			AC_ARG_VAR(MPICC, [MPI C compiler command])
+			MPICC=""
+			for ac_prog_cc_tmp in mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc ; do
+				AS_VAR_IF(CC, ["$ac_prog_cc_tmp"], [
+						MPICC="$CC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPICC" = x; then
+				AC_CHECK_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc, [no])
+			fi
+			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
+				[
+					ax_mpi_save_CC="$CC"
+					CC="$MPICC"
+					AC_SUBST(MPICC)
+				]
+			)
+			
+			AC_REQUIRE([AC_PROG_CXX])
+			AC_ARG_VAR(MPICXX, [MPI C++ compiler command])
+			MPICXX=""
+			for ac_prog_cxx_tmp in mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r ; do
+				AS_VAR_IF(CXX, ["$ac_prog_cxx_tmp"], [
+						MPICXX="$CXX"
+						break;
+					], []
+				)
+			done
+			if test x"$MPICXX" = x; then
+				AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r, [no])
+			fi
+			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
+				[
+					ax_mpi_save_CXX="$CXX"
+	            	CXX="$MPICXX"
+	            	AC_SUBST(MPICXX)
+				]
+			)
+		])
 	
-	    if test x = x"$MPILIBS"; then
+	    if test x"$MPILIBS" = x; then
 	        AC_LANG_CASE(
 	            [C], [
 	                AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])
 	            ], 
 	            [C++], [
 	                AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])
-	            ], 
-	            [Fortran 77], [
-	                AC_MSG_CHECKING([for MPI_Init]) 
-	                AC_TRY_LINK([],[      call MPI_Init], [MPILIBS=" " AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-	            ],
-	            [Fortran], [
-	                AC_MSG_CHECKING([for MPI_Init]) 
-	                AC_TRY_LINK([],[call MPI_Init], [MPILIBS=" " AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
 	            ]
 	        )
 	    fi
 	    
-	    if test x = x"$MPILIBS"; then
+	    if test x"$MPILIBS" = x; then
 	        AC_CHECK_LIB(mpi, MPI_Init, [MPILIBS="-lmpi"])
 	    fi
 	
-	    if test x = x"$MPILIBS"; then
+	    if test x"$MPILIBS" = x; then
 	        AC_CHECK_LIB(mpich, MPI_Init, [MPILIBS="-lmpich"])
 	    fi
-	
-	    # We have to use AC_TRY_COMPILE and not AC_CHECK_HEADER because the
+
+		# We have to use AC_TRY_COMPILE and not AC_CHECK_HEADER because the
 	    # latter uses $CPP, not $CC (which may be mpicc).
 	    AC_LANG_CASE(
 	        [C], [
-	            if test x != x"$MPILIBS"; then
-	                AC_MSG_CHECKING([for mpi.h])
-	                export LAMMPICC="$ax_mpi_save_CC"
-	                AC_TRY_COMPILE([#include <mpi.h>], 
-	                                [],
-	                                [AC_MSG_RESULT(yes)], 
-	                                [MPILIBS=""
-	                                 AC_MSG_RESULT(no)]
-	                )
-	                unset LAMMPICC
+	            if test x"$MPILIBS" != x; then             
+                	AC_LANG_PUSH([C])
+                	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+                                	@%:@include <mpi.h>
+                        	]], [[]]
+                        	)], [
+                                	AC_MSG_RESULT(checking mpi.h usability...  yes)
+                                	AC_MSG_RESULT(checking mpi.h presence... yes)
+                                	AC_MSG_RESULT(checking for mpi.h... yes)
+                                	succeeded=yes
+                        	], [
+									MPILIBS=""
+                                	AC_MSG_RESULT(checking mpi.h usability...  no)
+                                	AC_MSG_RESULT(checking mpi.h presence... no)
+                                	AC_MSG_RESULT(checking for mpi.h... no)
+                        	]
+                	)
+                	AC_LANG_POP([C])
 	            fi
 	        ], 
 	        [C++], [
-	            if test x != x"$MPILIBS"; then
-	                AC_MSG_CHECKING([for mpi.h])
-	                export LAMMPICXX="$ax_mpi_save_CXX"
-	                AC_TRY_COMPILE([#include <mpi.h>],
-	                                [],
-	                                [AC_MSG_RESULT(yes)], 
-	                                [MPILIBS=""
-	                                AC_MSG_RESULT(no)]
-	                )
-	                unset LAMMPICXX 
+	            if test x"$MPILIBS" != x; then
+                	AC_LANG_PUSH([C++])
+                	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+                                	@%:@include <mpi.h>
+                        	]], [[]]
+                        	)], [
+                                	AC_MSG_RESULT(checking mpi.h usability...  yes)
+                                	AC_MSG_RESULT(checking mpi.h presence... yes)
+                                	AC_MSG_RESULT(checking for mpi.h... yes)
+                                	succeeded=yes
+                        	], [
+									MPILIBS=""
+                                	AC_MSG_RESULT(checking mpi.h usability...  no)
+                                	AC_MSG_RESULT(checking mpi.h presence... no)
+                                	AC_MSG_RESULT(checking for mpi.h... no)
+                        	]
+                	)
+                	AC_LANG_POP([C++])
 	            fi
 	        ]    
 	    )
@@ -207,11 +266,13 @@ AC_DEFUN([AX_MPI], [
 	    AC_SUBST(MPILIBS)
 	
 	    # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
-	    if test x != x"$MPILIBS"; then
+	    if test x"$MPILIBS" != x; then
 			ax_mpi_ok="yes"
 	        AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 	        :
 	    fi
-	fi
+	])
+
+	AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])])
 	AC_MSG_RESULT()
 ]) # AX_MPI
