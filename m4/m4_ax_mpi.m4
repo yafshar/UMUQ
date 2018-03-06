@@ -36,7 +36,8 @@
 #   @license GPLWithACException
 #
 # ADAPTED 
-#   Yaser Afshar @ ya.afshar@gmail.com
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_MPI], [AX_MPI])
 AC_DEFUN([AX_MPI], [
@@ -81,16 +82,9 @@ AC_DEFUN([AX_MPI], [
 
 		AC_PREREQ(2.50)
 		
-		AS_IF([test x"$ac_mpi_bin" != x], [
+		AS_IF([test x"$ac_mpi_bin" != x], [	
 			PATH_SAVED="$PATH"
-			LD_LIBRARY_PATH_SAVED="$LD_LIBRARY_PATH"
-			DYLD_LIBRARY_PATH_SAVED="$DYLD_LIBRARY_PATH"
 			PATH="$ac_mpi_bin"':'"$PATH"
-			LD_LIBRARY_PATH="$ac_mpi_bin"'../lib:'"$LD_LIBRARY_PATH"
-			DYLD_LIBRARY_PATH="$ac_mpi_bin"'../lib:'"$DYLD_LIBRARY_PATH"
-			export PATH="$PATH"
-			export LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
-			export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"
 
 			AC_REQUIRE([AC_PROG_CC])
 			AC_ARG_VAR(MPICC, [MPI C compiler command])
@@ -108,13 +102,16 @@ AC_DEFUN([AX_MPI], [
 				)
 			done
 			if test x"$MPICC" = x; then
-				AC_CHECK_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc, [no], [path = ‘$PATH’])
+				AC_CHECK_PROGS(MPICC, mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc, [no], [$PATH])
 			fi
 			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
-				[
+				[		
 					ax_mpi_save_CC="$CC"
-					CC="$MPICC"
-					AC_SUBST(MPICC)
+					if test -x "$ac_mpi_bin"'/'"$MPICC"; then
+						MPICC="$ac_mpi_bin"'/'"$MPICC"
+					fi
+					CC="$MPICC"         	
+	            	AC_SUBST(MPICC)
 				]
 			)
 			
@@ -134,12 +131,15 @@ AC_DEFUN([AX_MPI], [
 				)
 			done
 			if test x"$MPICXX" = x; then
-				AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r, [no], [path = ‘$PATH’])
+				AC_CHECK_PROGS(MPICXX, mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r, [no], [$PATH])
 			fi
 			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
 				[
 					ax_mpi_save_CXX="$CXX"
-	            	CXX="$MPICXX"
+					if test -x "$ac_mpi_bin"'/'"$MPICXX"; then
+						MPICXX="$ac_mpi_bin"'/'"$MPICXX"
+					fi  
+					CXX="$MPICXX"       	
 	            	AC_SUBST(MPICXX)
 				]
 			)
@@ -177,18 +177,8 @@ AC_DEFUN([AX_MPI], [
                 )
 			fi
 			AC_LANG_POP([C++])
-	    
-			unset PATH
-			unset LD_LIBRARY_PATH
-			unset DYLD_LIBRARY_PATH
 
 			PATH="$PATH_SAVED"
-			LD_LIBRARY_PATH="$LD_LIBRARY_PATH_SAVED"
-			DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH_SAVED"
-			
-			export PATH="$PATH"
-			export LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
-			export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH"
 		], [	 
 			AC_REQUIRE([AC_PROG_CC])
 			AC_ARG_VAR(MPICC, [MPI C compiler command])

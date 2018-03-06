@@ -8,7 +8,8 @@
 #   Test to see if the DOXYGEN has been installed.
 #
 # ADAPTED 
-#   Yaser Afshar @ ya.afshar@gmail.com
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_DOXYGEN], [AX_DOXYGEN])
 AC_DEFUN([AX_DOXYGEN], [

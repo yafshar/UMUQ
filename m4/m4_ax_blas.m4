@@ -66,7 +66,8 @@
 #serial 15
 #
 # ADAPTED 
-#   Yaser Afshar @ ya.afshar@gmail.com
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_BLAS], [AX_BLAS])
 AC_DEFUN([AX_BLAS], [

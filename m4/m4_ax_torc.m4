@@ -11,8 +11,9 @@
 #   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
 #   and evaluates the environment variable for TORC library and header files. 
 #
-# ADAPTED 
-#   Yaser Afshar @ ya.afshar@gmail.com
+# AUTHOR 
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_TORC], [AX_TORC])
 AC_DEFUN([AX_TORC], [

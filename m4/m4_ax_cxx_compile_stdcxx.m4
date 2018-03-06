@@ -39,10 +39,14 @@
 #   and this notice are preserved.  This file is offered as-is, without any
 #   warranty.
 
-#serial 4
+#serial 8
 
 dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
 dnl  (serial version number 13).
+#
+# ADAPTED 
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
   AC_MSG_NOTICE()
