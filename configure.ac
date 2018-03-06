@@ -36,39 +36,39 @@ AC_PROG_CC
 AC_MSG_RESULT() 
 
 ### Checking for MPI
-AC_MSG_CHECKING([ for MPI Library - ])
+AC_MSG_CHECKING([for - MPI Library - ])
 AC_MSG_NOTICE(MPI)
 AX_MPI
 
 ### Checking for EIGEN
-AC_MSG_CHECKING([ for EIGEN Library - ])
+AC_MSG_CHECKING([for - EIGEN Library - ])
 AC_MSG_NOTICE(EIGEN)
 AX_EIGEN
 
 ### Checking for FLANN
-AC_MSG_CHECKING([ for FLANN Library - ])
+AC_MSG_CHECKING([for - FLANN Library - ])
 AC_MSG_NOTICE(FLANN)
 AX_FLANN
 
+### Checking for BLAS
+AC_MSG_CHECKING([for - BLAS Library - ])
+AX_BLAS
+
 ### Checking for LAPACK
-AC_MSG_CHECKING([ for LAPACK Library - ])
+AC_MSG_CHECKING([for - LAPACK Library - ])
 AX_LAPACK
 
 ### Checking for GOOGLETEST
-AC_MSG_CHECKING([ for GOOGLETEST Framework - ])
+AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
 AX_GOOGLETEST
 
 ### Checking for POSIX threads
-AC_MSG_CHECKING([ for POSIX threads - ])
+AC_MSG_CHECKING([for - POSIX threads - ])
 AX_PTHREAD
 
 ### Checking for TORC
-AC_LANG_PUSH([C])
-AC_MSG_CHECKING([ for TORC Library - ])
-AC_CHECK_HEADERS([torc.h], [ax_torc_ok="yes"], [ax_torc_ok="no"])
-AS_IF([test x"$ax_torc_ok" = xno], [ AX_TORC ])
-AS_IF([test x"$ax_torc_ok" = xno], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
-AC_LANG_POP([C])
+AC_MSG_CHECKING([for - TORC Library - ])
+AX_TORC
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
@@ -76,16 +76,18 @@ AC_CHECK_HEADERS([stdlib.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
 
-# Ensure we are using c11 C++ standard.
 AC_LANG_PUSH([C++])
+
+# Ensure we are using c11 C++ standard.
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
+
 AC_LANG_POP([C++])
 
 # Chech for Doxygen
-AC_MSG_CHECKING([ for DOXYGEN - ])
+AC_MSG_CHECKING([ for - DOXYGEN - ])
 AX_DOXYGEN
 
 AC_CONFIG_FILES([Makefile src/Makefile])

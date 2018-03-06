@@ -72,99 +72,199 @@
 
 AU_ALIAS([ACX_LAPACK], [AX_LAPACK])
 AC_DEFUN([AX_LAPACK], [
-	AC_MSG_NOTICE(LAPACK)
-        
     AC_REQUIRE([AX_BLAS])
     
-	ax_lapack_ok=no
-
-    AC_ARG_WITH(lapack,
-        [AS_HELP_STRING([--with-lapack=<lib>], [use LAPACK library <lib>])]
+	AC_ARG_WITH([lapack], 
+		AS_HELP_STRING([--with-lapack@<:@=DIR@:>@], 
+			[use LAPACK library (default is yes) - it is possible to specify the directory for LAPACK library (optional)]
+		), [ 
+			if test x"$withval" = xno ; then
+				AC_MSG_ERROR([ Unable to continue without the LAPACK library !])
+				ac_lapack_path=no
+			elif test x"$withval" = xyes ; then
+				ac_lapack_path=""
+			elif test x"$withval" != x ; then
+				ac_lapack_path="$withval"
+            else
+				ac_lapack_path=""
+			fi
+		], [
+			ac_lapack_path=""
+		]
+	)
+	
+    AC_ARG_WITH(lapacklib,
+        [AS_HELP_STRING([--with-lapacklib@<:@=lib@:>@], [use LAPACK library (default is yes)])]
     )
 
+	LDFLAGS_SAVED="$LDFLAGS"
+
+	lapack_LDFLAGS=""
+
 	case $with_lapack in
-		yes | "") 
-            ;;
-		no) 
-			ax_lapack_ok=disable 
-			;;
-		-* | */* | *.a | *.so | *.so.* | *.o) 
-			LAPACK_LIBS="$with_lapack" 
-			;;
-		*) 
-			LAPACK_LIBS="-l$with_lapack" 
-			;;
+	yes | "")
+		AS_IF([test x"$ac_lapack_path" = x], [], 
+			[
+				for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
+					if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
+						lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+					fi
+				done
+			]
+		)
+		;;
+	no) 
+		ac_lapack_path=no 
+		;;
+	-* | */* | *.a | *.so | *.so.* | *.o) 
+		LAPACK_LIBS="$with_lapack"
+		AS_IF([test x"$ac_lapack_path" = x], [], 
+			[
+				for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
+					if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
+						lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+					fi
+				done
+			]
+		)
+		;;
+	*) 
+		LAPACK_LIBS="-l$with_lapack" 
+		AS_IF([test x"$ac_lapack_path" = x], [], 
+			[
+				for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
+					if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
+						if test -f "$ac_lapack_path_tmp/$with_lapack.a" && test -r "$ac_lapack_path_tmp/$with_lapack.a"; then 
+							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+							break;
+						fi
+						if test -f "$ac_lapack_path_tmp/$with_lapack.so" && test -r "$ac_lapack_path_tmp/$with_lapack.so"; then 
+							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+							break;
+						fi
+						if test -f "$ac_lapack_path_tmp/$with_lapack.o" && test -r "$ac_lapack_path_tmp/$with_lapack.o"; then 
+							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+							break;
+						fi
+						if test -f "$ac_lapack_path_tmp/$with_lapack" && test -r "$ac_lapack_path_tmp/$with_lapack"; then 
+							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+							break;
+						fi
+					fi
+				done
+				AS_IF([test x"$lapack_LDFLAGS" = x], 
+					[
+						for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
+							if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
+								lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+							fi
+						done
+					]
+				)
+			]
+		)
+		;;
 	esac
 
-	# Get fortran linker name of LAPACK function to check for.
-	AC_F77_FUNC(cheev)
+	ax_lapack_ok=no
 
-	# We cannot use LAPACK if BLAS is not found
-	if test x"$ax_blas_ok" != xyes; then
-		ax_lapack_ok=noblas
-    	LAPACK_LIBS=""
-	fi
+	dnl if the user does not provide the DIR root directory for LAPACK, we search the default PATH
+	AS_IF([test x"$ac_lapack_path" = no], [], [ 
+		AC_MSG_NOTICE(LAPACK)
 
-    # First, check LAPACK_LIBS environment variable
-	if test x"$LAPACK_LIBS" != x; then
-		save_LIBS="$LIBS"; 
-		LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
-                
-		AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
-		AC_TRY_LINK_FUNC($cheev, 
-        	[ax_lapack_ok=yes], [LAPACK_LIBS=""]
-		)
-		AC_MSG_RESULT($ax_lapack_ok)
-                
-		LIBS="$save_LIBS"
-		if test x"$ax_lapack_ok" = xno; then
+		# Get fortran linker name of LAPACK function to check for.
+		AC_F77_FUNC(cheev)
+
+		# We cannot use LAPACK if BLAS is not found
+		if test x"$ax_blas_ok" != xyes; then
+			ax_lapack_ok=noblas
 			LAPACK_LIBS=""
 		fi
-	fi
 
-	# LAPACK linked to by default?  (is sometimes included in BLAS lib)
-    if test x"$ax_lapack_ok" = xno; then
-		save_LIBS="$LIBS"; 
-        LIBS="$LIBS $BLAS_LIBS $FLIBS"
-        AC_CHECK_FUNC($cheev, [ax_lapack_ok=yes])
-        LIBS="$save_LIBS"
-    fi
+		AS_IF([test x"$ac_lapack_path" = x], [
+				# First, check LAPACK_LIBS environment variable
+				if test x"$LAPACK_LIBS" != x; then
+					save_LIBS="$LIBS"; 
+					LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+                
+					AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
+					AC_TRY_LINK_FUNC($cheev, 
+						[ax_lapack_ok=yes], [LAPACK_LIBS=""]
+					)
+					AC_MSG_RESULT($ax_lapack_ok)
+                
+					LIBS="$save_LIBS"
+					if test x"$ax_lapack_ok" = xno; then
+						LAPACK_LIBS=""
+					fi
+				fi
+			], [
+				LDFLAGS+=" $lapack_LDFLAGS"
+				LDFLAGS+=" $BLAS_LIBS $LIBS $FLIBS"
+				
+				save_LIBS="$LIBS"; 
+				LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+				
+				AC_MSG_CHECKING([for $cheev])
+				AC_TRY_LINK_FUNC($cheev, [
+						ax_lapack_ok=yes
+						AC_SUBST(LDFLAGS)
+						AC_SUBST(LIBS)
+					], [
+						LDFLAGS="$LDFLAGS_SAVED"
+						LIBS="$save_LIBS"
+						LAPACK_LIBS=""
+					]
+				)
+				AC_MSG_RESULT($ax_lapack_ok)			
+			]
+		)
 
-	# Generic LAPACK library?
-    for lapack in lapack lapack_rs6k; do
+		# LAPACK linked to by default?  (is sometimes included in BLAS lib)
 		if test x"$ax_lapack_ok" = xno; then
 			save_LIBS="$LIBS"; 
-			LIBS="$BLAS_LIBS $LIBS"
-        	AC_CHECK_LIB($lapack, $cheev,
-            	[ax_lapack_ok=yes; LAPACK_LIBS="-l$lapack"], [], [$FLIBS]
-            )
-            LIBS="$save_LIBS"
-        fi
-	done
+			LIBS="$LIBS $BLAS_LIBS $FLIBS"
+			AC_CHECK_FUNC($cheev, [ax_lapack_ok=yes])
+			LIBS="$save_LIBS"
+		fi
 
-	AC_SUBST(LAPACK_LIBS)
+		# Generic LAPACK library?
+		for lapack in lapack lapack_rs6k; do
+			if test x"$ax_lapack_ok" = xno; then
+				save_LIBS="$LIBS"; 
+				LIBS="$BLAS_LIBS $LIBS"
+				AC_CHECK_LIB($lapack, $cheev,
+					[
+						ax_lapack_ok=yes
+						LAPACK_LIBS="-l$lapack"
+					], [], [
+						$FLIBS
+					]
+				)
+				LIBS="$save_LIBS"
+			fi
+		done
 
-	AC_LANG_PUSH(C++)
+		AC_SUBST(LAPACK_LIBS)
 
-    if test x"$ax_lapack_ok" = xyes; then
-		AC_CHECK_LIB( lapack, dgetrf_, 
-			[], [
+		AC_LANG_PUSH(C++)
+		if test x"$ax_lapack_ok" = xyes; then
+			AC_CHECK_LIB(lapack, dgetrf_, 
+				[], [
 					ax_lapack_ok=no
-                    AC_MSG_ERROR([ Unable to continue without the LAPACK library !])
-                ]
-        )
-    fi
-        
-	AC_LANG_POP(C++)
+					AC_MSG_ERROR([ Unable to continue without the LAPACK library !])
+				]
+			)
+		fi  
+		AC_LANG_POP(C++)
+	])
 
-    # Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
-    if test x"$ax_lapack_ok" = xyes; then
+	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
+	if test x"$ax_lapack_ok" = xyes; then
 		LDFLAGS+=" $LAPACK_LIBS"
-        AC_SUBST(LDFLAGS)
-        AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
-        :
-    else
-        ax_lapack_ok=no
+		AC_SUBST(LDFLAGS)
+		AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
+		:
     fi
 
 	AS_IF([test x"$ax_lapack_ok" = xno], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
