@@ -53,7 +53,6 @@ AX_FLANN
 ### Checking for LAPACK
 AC_MSG_CHECKING([ for LAPACK Library - ])
 AX_LAPACK
-AS_IF([test x"$ax_lapack_ok" = xno], [ AC_MSG_ERROR([ Unable to find the LAPACK library !])])
 
 ### Checking for GOOGLETEST
 AC_MSG_CHECKING([ for GOOGLETEST Framework - ])
@@ -62,7 +61,6 @@ AX_GOOGLETEST
 ### Checking for POSIX threads
 AC_MSG_CHECKING([ for POSIX threads - ])
 AX_PTHREAD
-AS_IF([test x"$ax_pthread_ok" = xno], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
 
 ### Checking for TORC
 AC_LANG_PUSH([C])
@@ -114,6 +112,10 @@ Configure Information:
   Linker            : $LD
     LDFLAGS         :   $LDFLAGS
     LIBS            :   $LIBS
+
+  MPI C   compiler  : $MPICC
+  MPI C++ compiler  : $MPICXX
+    MPILIBS         :   $MPILIBS
 
   Google Test 
     GTEST_CPPFLAGS  : $GTEST_CPPFLAGS
