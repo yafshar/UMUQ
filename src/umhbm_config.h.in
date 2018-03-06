@@ -28,6 +28,9 @@
 /* Define to 1 if you have the <flann/flann.h> header file. */
 #undef HAVE_FLANN_FLANN_H
 
+/* Define to 1 if you have the <gtest/gtest.h> header file. */
+#undef HAVE_GTEST_GTEST_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
