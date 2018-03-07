@@ -1,5 +1,5 @@
-#ifndef POLYNOMIAL_H
-#define POLYNOMIAL_H
+#ifndef UMHBM_POLYNOMIAL_H
+#define UMHBM_POLYNOMIAL_H
 
 /*! \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *

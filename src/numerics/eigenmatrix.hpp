@@ -1,5 +1,5 @@
-#ifndef EIGENMATRIX_H
-#define EIGENMATRIX_H
+#ifndef UMHBM_EIGENMATRIX_H
+#define UMHBM_EIGENMATRIX_H
 
 #include <Eigen/Dense>
 
