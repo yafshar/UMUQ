@@ -10,3 +10,7 @@ TESTS += polynomial_test
 check_PROGRAMS += polynomial_test
 polynomial_test_SOURCES = polynomial_test.cpp 
 
+TESTS += spawner_test
+check_PROGRAMS += spawner_test
+spawner_test_SOURCES = spawner_test.cpp 
+
