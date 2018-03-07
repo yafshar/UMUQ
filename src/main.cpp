@@ -6,6 +6,8 @@
 #include "./numerics/polynomial.hpp"
 #include "./numerics/eigenmatrix.hpp"
 #include "./numerics/flannlib.hpp"
+#include "./misc/timer.hpp"
+#include "./misc/spawner.hpp"
 #include <lapacke.h>
 
 int main()
@@ -15,8 +17,10 @@ int main()
     int r = 2;
     int *alpha = NULL;
     polynomial p;
+	UMTimer t;
 
     p.monomial_basis(d, r, alpha);
+	t.toc("monomial_basis");
 
     std::cout << " d =  " << d << std::endl;
     std::cout << " r =  " << r << std::endl;
@@ -35,8 +39,10 @@ int main()
         std::cout << std::endl;
     }
     std::cout << "----------------" << std::endl;
-
+	
     n = p.binomial_coefficient(d + r, r);
+
+	t.toc("binomial_coefficient");
 
     double *value=NULL;
     double *x=NULL;
