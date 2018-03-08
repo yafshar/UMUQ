@@ -49,7 +49,7 @@ class spawner
 		}
 
 		/* mark the end of argument list */
-		*argv = '\0';
+		*argv = nullptr;
 	}
 
 	int execute_cmd(int me, char **argv, char *dir)
@@ -64,7 +64,7 @@ class spawner
 		}
 		else if (pid == 0) // child process
 		{
-			if (dir != NULL)
+			if (dir != nullptr)
 			{
 				// move to the specified directory
 				chdir(dir);
@@ -74,7 +74,7 @@ class spawner
 		}
 
 		// wait for process to change state
-		waitpid(pid, NULL, 0);
+		waitpid(pid, nullptr, 0);
 
 		return 0;
 	}
@@ -180,7 +180,7 @@ class spawner
 
 		// open a directory
 		dir = opendir(name);
-		if (dir == NULL)
+		if (dir == nullptr)
 		{
 			// could not open directory
 			perror("The following error occurred");
@@ -190,7 +190,7 @@ class spawner
 		{
 			// read a directory
 			/* print all the files and directories within directory */
-			while ((ent = readdir(dir)) != NULL)
+			while ((ent = readdir(dir)) != nullptr)
 			{
 				char source[256], dest[256];
 
@@ -209,7 +209,7 @@ class spawner
 
 		// open a directory
 		dir = opendir(dirname);
-		if (dir == NULL)
+		if (dir == nullptr)
 		{
 			// could not open directory
 			perror("The following error occurred");
