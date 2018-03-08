@@ -17,7 +17,7 @@ TEST(parse_test, HandlesZeroInput)
 	sprintf(line, " ");
 	s.parse(line, largv);
 
-	char const *targv[0];
+	const char *targv[0];
 	targv[0] = "";
 
 	EXPECT_STREQ(largv[0], targv[0]);
@@ -39,7 +39,7 @@ TEST(parse_test, HandlesInput)
 	sprintf(line, "sh doall.sh");
 	s.parse(line, largv);
 
-	char const *targv[10];
+	const char *targv[2];
 	targv[0] = "sh";
 	targv[1] = "doall.sh";
 
@@ -50,8 +50,8 @@ TEST(parse_test, HandlesInput)
 
 	sprintf(line, "bash doall.sh out 2>&1");
 	s.parse(line, largv);
-	
-	char const *ttargv[22];
+
+	const char *ttargv[4];
 	ttargv[0] = "bash";
 	ttargv[1] = "doall.sh";
 	ttargv[2] = "out";
