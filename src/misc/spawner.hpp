@@ -24,6 +24,14 @@
 //opendir, readdir
 #include <dirent.h>
 
+/*! \class spawner
+*   \brief spawner is a class which includes some helper functionality.
+*	
+* 	spawner class contains functionality for parsing the line, exectuing command
+*   delete a name from a filesystem or unlink the files, copy file from a path to 
+*   other path
+*/
+
 class spawner
 {
   public:
@@ -49,7 +57,7 @@ class spawner
 		}
 
 		/* mark the end of argument list */
-		*argv = nullptr;
+		*argv = NULL;
 	}
 
 	int execute_cmd(int me, char **argv, char *dir)
@@ -64,7 +72,7 @@ class spawner
 		}
 		else if (pid == 0) // child process
 		{
-			if (dir != nullptr)
+			if (dir != NULL)
 			{
 				// move to the specified directory
 				chdir(dir);
@@ -74,7 +82,7 @@ class spawner
 		}
 
 		// wait for process to change state
-		waitpid(pid, nullptr, 0);
+		waitpid(pid, NULL, 0);
 
 		return 0;
 	}
@@ -180,7 +188,7 @@ class spawner
 
 		// open a directory
 		dir = opendir(name);
-		if (dir == nullptr)
+		if (dir == NULL)
 		{
 			// could not open directory
 			perror("The following error occurred");
@@ -190,7 +198,7 @@ class spawner
 		{
 			// read a directory
 			/* print all the files and directories within directory */
-			while ((ent = readdir(dir)) != nullptr)
+			while ((ent = readdir(dir)) != NULL)
 			{
 				char source[256], dest[256];
 
@@ -209,7 +217,7 @@ class spawner
 
 		// open a directory
 		dir = opendir(dirname);
-		if (dir == nullptr)
+		if (dir == NULL)
 		{
 			// could not open directory
 			perror("The following error occurred");
