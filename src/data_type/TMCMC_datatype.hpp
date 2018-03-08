@@ -4,8 +4,10 @@
 #include <iostream>
 //malloc, calloc, qsort
 #include <cstdlib>
-//fopen
+//fopen, fgets, sscanf, sprintf
 #include <cstdio>
+//strlen, strstr
+#include <cstring>
 
 /*! \file TMCMC_datatype.hpp
 *   \brief Data types and helper structures.
@@ -113,9 +115,9 @@ struct data_t
 	*  \brief constructor for the default variables
 	*    
 	*/
-	data_t() : Nth(4),
-			   MaxStages(20),
-			   PopSize(1024),
+	data_t() : Nth(0),
+			   MaxStages(0),
+			   PopSize(0),
 			   lowerbound(NULL),
 			   upperbound(NULL),
 			   compositeprior_distr(NULL),
@@ -125,35 +127,25 @@ struct data_t
 			   auxil_data(NULL),
 			   MinChainLength(0),
 			   MaxChainLength(1e6),
-			   lb(-6), /* Default LB, same for all */
-			   ub(6),
-			   TolCOV(1.0),
+			   lb(0), /* Default LB, same for all */
+			   ub(0),
+			   TolCOV(0),
 			   bbeta(0.2),
 			   seed(280675),
 			   options(),
-			   prior_type(0),
+			   prior_type(1),
 			   prior_count(0),
 			   iplot(0),
 			   icdump(1),
 			   ifdump(0),
 			   Num(NULL),
-			   LastNum(1024),
+			   LastNum(0),
 			   use_proposal_cma(0),
 			   init_mean(NULL),
 			   local_cov(NULL),
 			   use_local_cov(0),
-			   local_scale(0)
-	{
-		lowerbound = (double *)malloc(Nth * sizeof(double));
-		upperbound = (double *)malloc(Nth * sizeof(double));
-		for (int i = 0; i < Nth; i++)
-		{
-			lowerbound[i] = lb;
-			upperbound[i] = ub;
-		}
-		prior_mu = (double *)malloc(Nth * sizeof(double));
-		prior_sigma = (double *)malloc(Nth * Nth * sizeof(double));
-	};
+			   local_scale(0){};
+
 	//! constructor
 	/*!
     *  \brief constructor for the default input variables
@@ -177,7 +169,7 @@ struct data_t
 													bbeta(0.2),
 													seed(280675),
 													options(),
-													prior_type(0),
+													prior_type(1),
 													prior_count(0),
 													iplot(0),
 													icdump(1),
@@ -190,8 +182,8 @@ struct data_t
 													use_local_cov(0),
 													local_scale(0)
 	{
-		lowerbound = (double *)calloc(Nth, Nth * sizeof(double));
-		upperbound = (double *)calloc(Nth, Nth * sizeof(double));
+		lowerbound = new double[Nth](0);
+		upperbound = new double[Nth](0); 
 		prior_mu = (double *)calloc(Nth, Nth * sizeof(double));
 		prior_sigma = (double *)calloc(Nth * Nth, Nth * Nth * sizeof(double));
 		for (int i = 0; i < Nth; i++)
@@ -222,37 +214,7 @@ struct data_t
 // read the tmcmc.par file for setting the input variables
 void data_t::read(const char *fname)
 {
-	FILE *f;
-	try
-	{
-		f = fopen(fname, "r");
-	}
-	catch (const std::system_error &e)
-	{
-		std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-	catch (...)
-	{
-		std::cout << " System error with code " << std::endl;
-	}
-
-	/*
-     N th         *  2
-     MaxStages     200
-     PopSize       1024
-     Bdef         -4    4
-     #B0          -6    6
-     #B1          -6    6
-     TolCOV        1
-     bbeta         0.2
-     seed          280675
-     opt.MaxIter   100
-     opt.Tol       1e-6
-     opt.Display   0
-     opt.Step      1e-5
-     iplot         0
-     icdump        1
-     ifdump        0
-     */
+	FILE *f = fopen(fname, "r");
 
 	char line[256];
 
@@ -262,132 +224,141 @@ void data_t::read(const char *fname)
 		line_no++;
 		if ((line[0] == '#') || (strlen(line) == 0))
 		{
-			printf("ignoring line %d\n", line_no);
+			//std::cout << "ignoring line " << line_no << std::endl;
 			continue;
 		}
 
 		if (strstr(line, "Nth"))
 		{
-			sscanf(line, "%*s %d", &data.Nth);
+			sscanf(line, "%*s %d", &Nth);
 		}
 		else if (strstr(line, "MaxStages"))
 		{
-			sscanf(line, "%*s %d", &data.MaxStages);
+			sscanf(line, "%*s %d", &MaxStages);
 		}
 		else if (strstr(line, "PopSize"))
 		{
-			sscanf(line, "%*s %d", &data.PopSize);
+			sscanf(line, "%*s %d", &PopSize);
 		}
 		else if (strstr(line, "TolCOV"))
 		{
-			sscanf(line, "%*s %lf", &data.TolCOV);
+			sscanf(line, "%*s %lf", &TolCOV);
 		}
 		else if (strstr(line, "bbeta"))
 		{
-			sscanf(line, "%*s %lf", &data.bbeta);
+			sscanf(line, "%*s %lf", &bbeta);
 		}
 		else if (strstr(line, "seed"))
 		{
-			sscanf(line, "%*s %ld", &data.seed);
+			sscanf(line, "%*s %ld", &seed);
 		}
 		else if (strstr(line, "opt.MaxIter"))
 		{
-			sscanf(line, "%*s %d", &data.options.MaxIter);
+			sscanf(line, "%*s %d", &options.MaxIter);
 		}
 		else if (strstr(line, "opt.Tol"))
 		{
-			sscanf(line, "%*s %lf", &data.options.Tol);
+			sscanf(line, "%*s %lf", &options.Tol);
 		}
 		else if (strstr(line, "opt.Display"))
 		{
-			sscanf(line, "%*s %d", &data.options.Display);
+			sscanf(line, "%*s %d", &options.Display);
 		}
 		else if (strstr(line, "opt.Step"))
 		{
-			sscanf(line, "%*s %lf", &data.options.Step);
-			printf("setting step = %f\n", data.options.Step);
+			sscanf(line, "%*s %lf", &options.Step);
+			printf("setting step = %f\n", options.Step);
 		}
 		else if (strstr(line, "prior_type"))
 		{
-			sscanf(line, "%*s %d", &data.prior_type);
+			sscanf(line, "%*s %d", &prior_type);
 		}
 		else if (strstr(line, "prior_count"))
 		{
-			sscanf(line, "%*s %d", &data.prior_count);
+			sscanf(line, "%*s %d", &prior_count);
 		}
 		else if (strstr(line, "iplot"))
 		{
-			sscanf(line, "%*s %d", &data.iplot);
+			sscanf(line, "%*s %d", &iplot);
 		}
 		else if (strstr(line, "icdump"))
 		{
-			sscanf(line, "%*s %d", &data.icdump);
+			sscanf(line, "%*s %d", &icdump);
 		}
 		else if (strstr(line, "ifdump"))
 		{
-			sscanf(line, "%*s %d", &data.ifdump);
+			sscanf(line, "%*s %d", &ifdump);
 		}
 		else if (strstr(line, "Bdef"))
 		{
-			sscanf(line, "%*s %lf %lf", &data.lb, &data.ub);
+			sscanf(line, "%*s %lf %lf", &lb, &ub);
 		}
 		else if (strstr(line, "MinChainLength"))
 		{
-			sscanf(line, "%*s %d", &data.MinChainLength);
+			sscanf(line, "%*s %d", &MinChainLength);
 		}
 		else if (strstr(line, "MaxChainLength"))
 		{
-			sscanf(line, "%*s %d", &data.MaxChainLength);
+			sscanf(line, "%*s %d", &MaxChainLength);
 		}
 		else if (strstr(line, "use_local_cov"))
 		{
-			sscanf(line, "%*s %d", &data.use_local_cov);
+			sscanf(line, "%*s %d", &use_local_cov);
 		}
 	}
 
-	rewind(f);
-	line_no = 0;
-
-	free(data.lowerbound);
-	free(data.upperbound);
-	data.lowerbound = (double *)malloc(data.Nth * sizeof(double));
-	data.upperbound = (double *)malloc(data.Nth * sizeof(double));
-
-	for (i = 0; i < data.Nth; i++)
+	if (lowerbound != NULL)
 	{
+		delete lowerbound;
+	}
+	if (upperbound != NULL)
+	{
+		delete upperbound;
+	}
+
+	lowerbound = (double *)malloc(Nth * sizeof(double));
+	upperbound = (double *)malloc(Nth * sizeof(double));
+
+	int found;
+	for (int i = 0; i < Nth; i++)
+	{
+		rewind(f);
 		found = 0;
 		while (fgets(line, 256, f) != NULL)
 		{
-			line_no++;
-
 			if ((line[0] == '#') || (strlen(line) == 0))
+			{
 				continue;
+			}
 
 			char bound[8];
 			sprintf(bound, "B%d", i);
 			if (strstr(line, bound) != NULL)
 			{
-				sscanf(line, "%*s %lf %lf", &data.lowerbound[i], &data.upperbound[i]);
+				sscanf(line, "%*s %lf %lf", &lowerbound[i], &upperbound[i]);
 				found = 1;
 				break;
 			}
 		}
 		if (!found)
 		{
-			data.lowerbound[i] = data.lb; /* Bdef value or Default LB */
-			data.upperbound[i] = data.ub; /* Bdef value of Default UB */
+			lowerbound[i] = lb; /* Bdef value or Default LB */
+			upperbound[i] = ub; /* Bdef value of Default UB */
 		}
-		rewind(f);
-		line_no = 0;
 	}
 
-	if (data.prior_type == 1) /* gaussian */
+	if (prior_type == 1) /* gaussian */
 	{
 		/* new, parse prior_mu */
 		rewind(f);
 		line_no = 0;
 
-		free(data.prior_mu);
+		if (prior_mu != NULL)
+		{
+			delete prior_mu;
+		}
+
+		free(prior_mu);
 		data.prior_mu = (double *)malloc(data.Nth * sizeof(double));
 
 		found = 0;
