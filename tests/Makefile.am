@@ -14,3 +14,6 @@ TESTS += spawner_test
 check_PROGRAMS += spawner_test
 spawner_test_SOURCES = spawner_test.cpp 
 
+TESTS += TMCMC_datatype
+check_PROGRAMS += TMCMC_datatype
+TMCMC_datatype_SOURCES = TMCMC_datatype_test.cpp

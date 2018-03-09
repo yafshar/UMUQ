@@ -2,11 +2,14 @@
 #define UMHBM_TMCMC_DATATYPE_H
 
 #include <iostream>
-//malloc, calloc, qsort
+#include <iomanip>
+#include <system_error>
+
+//malloc, calloc, qsort, atof
 #include <cstdlib>
 //fopen, fgets, sscanf, sprintf
 #include <cstdio>
-//strlen, strstr
+//strlen, strstr, strtok
 #include <cstring>
 
 /*! \file TMCMC_datatype.hpp
@@ -129,11 +132,11 @@ struct data_t
 			   MaxChainLength(1e6),
 			   lb(0), /* Default LB, same for all */
 			   ub(0),
-			   TolCOV(0),
+			   TolCOV(1.0),
 			   bbeta(0.2),
 			   seed(280675),
 			   options(),
-			   prior_type(1),
+			   prior_type(0),
 			   prior_count(0),
 			   iplot(0),
 			   icdump(1),
@@ -169,7 +172,7 @@ struct data_t
 													bbeta(0.2),
 													seed(280675),
 													options(),
-													prior_type(1),
+													prior_type(0),
 													prior_count(0),
 													iplot(0),
 													icdump(1),
@@ -182,24 +185,56 @@ struct data_t
 													use_local_cov(0),
 													local_scale(0)
 	{
-		lowerbound = new double[Nth](0);
-		upperbound = new double[Nth](0); 
-		prior_mu = (double *)calloc(Nth, Nth * sizeof(double));
-		prior_sigma = (double *)calloc(Nth * Nth, Nth * Nth * sizeof(double));
-		for (int i = 0; i < Nth; i++)
+		lowerbound = new double[Nth];
+		upperbound = new double[Nth];
+		prior_mu = new double[Nth];
+		int e = Nth;
+		while (e--)
 		{
-			for (int j = 0; j < Nth; j++)
+			lowerbound[e] = 0;
+			upperbound[e] = 0;
+			prior_mu[e] = 0;
+		}
+
+		prior_sigma = new double[Nth * Nth];
+		for (int i = 0, k = 0; i < Nth; i++)
+		{
+			for (int j = 0; j < Nth; j++, k++)
 			{
 				if (i == j)
 				{
-					prior_sigma[i * Nth + j] = 1.0;
+					prior_sigma[k] = 1.0;
+				}
+				else
+				{
+					prior_sigma[k] = 0.0;
 				}
 			}
 		}
-		Num = (int *)malloc(MaxStages * sizeof(int));
-		for (int i = 0; i < Nth; i++)
+
+		Num = new int[MaxStages];
+		e = MaxStages;
+		while (e--)
+			Num[e] = PopSize;
+
+		local_cov = new double *[PopSize];
+		for (int i = 0; i < PopSize; i++)
 		{
-			Num[i] = PopSize;
+			local_cov[i] = new double[Nth * Nth];
+			for (int j = 0, l = 0; j < Nth; j++)
+			{
+				for (int k = 0; k < Nth; k++, l++)
+				{
+					if (j == k)
+					{
+						local_cov[i][l] = 1.0;
+					}
+					else
+					{
+						local_cov[i][l] = 0.0;
+					}
+				}
+			}
 		}
 	};
 
@@ -208,23 +243,87 @@ struct data_t
 	*    
     */
 	void read(const char *fname);
-	void read();
+	void read()
+	{
+		// read the tmcmc.par file for setting the input variables
+		read("tmcmc.par");
+	};
+	
+	//! destructor
+	/*!
+    *  \brief destructor 
+	*    
+    */
+	~data_t()
+	{
+		if (lowerbound != NULL)
+		{
+			delete[] lowerbound;
+			lowerbound = NULL;
+		}
+		if (upperbound != NULL)
+		{
+			delete[] upperbound;
+			upperbound = NULL;
+		}
+		if (compositeprior_distr != NULL)
+		{
+			delete[] compositeprior_distr;
+			compositeprior_distr = NULL;
+		}
+		if (prior_mu != NULL)
+		{
+			delete[] prior_mu;
+			prior_mu = NULL;
+		}
+		if (prior_sigma != NULL)
+		{
+			delete[] prior_sigma;
+			prior_sigma = NULL;
+		}
+		if (auxil_data != NULL)
+		{
+			delete[] auxil_data;
+			auxil_data=NULL;
+		}
+		if (Num != NULL)
+		{
+			delete[] Num;
+			Num = NULL;
+		}
+
+		if (init_mean != NULL)
+		{
+			delete[] * init_mean;
+			delete[] init_mean;
+			init_mean = NULL;
+		}
+
+		if (local_cov != NULL)
+		{
+			delete[] * local_cov;
+			delete[] local_cov;
+			local_cov = NULL;
+		}
+	};
 };
 
-// read the tmcmc.par file for setting the input variables
+// read the input file fname for setting the input variables
 void data_t::read(const char *fname)
 {
 	FILE *f = fopen(fname, "r");
 
 	char line[256];
 
-	int line_no = 0;
+	int probdim = Nth;
+	int maxgens = MaxStages;
+	int datanum = PopSize;
+	bool linit;
+
 	while (fgets(line, 256, f) != NULL)
 	{
-		line_no++;
 		if ((line[0] == '#') || (strlen(line) == 0))
 		{
-			//std::cout << "ignoring line " << line_no << std::endl;
 			continue;
 		}
 
@@ -267,7 +366,6 @@ void data_t::read(const char *fname)
 		else if (strstr(line, "opt.Step"))
 		{
 			sscanf(line, "%*s %lf", &options.Step);
-			printf("setting step = %f\n", options.Step);
 		}
 		else if (strstr(line, "prior_type"))
 		{
@@ -307,20 +405,26 @@ void data_t::read(const char *fname)
 		}
 	}
 
-	if (lowerbound != NULL)
+	linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != NULL);
+
+	if (linit)
 	{
-		delete lowerbound;
-	}
-	if (upperbound != NULL)
-	{
-		delete upperbound;
+		if (lowerbound != NULL)
+		{
+			delete[] lowerbound;
+		}
+		lowerbound = new double[Nth];
+
+		if (upperbound != NULL)
+		{
+			delete[] upperbound;
+		}
+		upperbound = new double[Nth];
 	}
 
-	lowerbound = (double *)malloc(Nth * sizeof(double));
-	upperbound = (double *)malloc(Nth * sizeof(double));
-
+	int i;
 	int found;
-	for (int i = 0; i < Nth; i++)
+	for (i = 0; i < Nth; i++)
 	{
 		rewind(f);
 		found = 0;
@@ -349,35 +453,38 @@ void data_t::read(const char *fname)
 
 	if (prior_type == 1) /* gaussian */
 	{
-		/* new, parse prior_mu */
-		rewind(f);
-		line_no = 0;
-
-		if (prior_mu != NULL)
+		if (linit)
 		{
-			delete prior_mu;
+			/* new, parse prior_mu */
+			if (prior_mu != NULL)
+			{
+				delete[] prior_mu;
+			}
+			prior_mu = new double[Nth];
 		}
 
-		free(prior_mu);
-		data.prior_mu = (double *)malloc(data.Nth * sizeof(double));
-
+		rewind(f);
 		found = 0;
 		while (fgets(line, 256, f) != NULL)
 		{
-			line_no++;
 			if ((line[0] == '#') || (strlen(line) == 0))
+			{
 				continue;
+			}
 
 			if (strstr(line, "prior_mu") != NULL)
 			{
 				char *tok = strtok(line, " ;,\t");
 				if (tok == NULL)
+				{
 					break;
-				int i = 0;
+				}
+
+				i = 0;
 				tok = strtok(NULL, " ;,\t");
 				while (tok != NULL)
 				{
-					data.prior_mu[i] = atof(tok);
+					prior_mu[i] = atof(tok);
 					i++;
 					tok = strtok(NULL, " ;,\t");
 				}
@@ -388,36 +495,43 @@ void data_t::read(const char *fname)
 
 		if (!found)
 		{
-			for (i = 0; i < data.Nth; i++)
-			{
-				data.prior_mu[i] = 0.0; /* Mudef value of Default Mean */
-			}
+			i = Nth;
+			while (i--)
+				prior_mu[i] = 0.0;
 		}
 
-		/* new, parse prior_sigma */
+		if (linit)
+		{
+			/* new, parse prior_sigma */
+			if (prior_sigma != NULL)
+			{
+				delete[] prior_sigma;
+			}
+			prior_sigma = new double[Nth * Nth];
+		}
+
 		rewind(f);
-		line_no = 0;
-
-		free(data.prior_sigma);
-		data.prior_sigma = (double *)malloc(data.Nth * data.Nth * sizeof(double));
-
 		found = 0;
 		while (fgets(line, 256, f) != NULL)
 		{
-			line_no++;
 			if ((line[0] == '#') || (strlen(line) == 0))
+			{
 				continue;
+			}
 
 			if (strstr(line, "prior_sigma") != NULL)
 			{
 				char *tok = strtok(line, " ;,\t");
 				if (tok == NULL)
+				{
 					break;
-				int i = 0;
+				}
+
+				i = 0;
 				tok = strtok(NULL, " ;,\t");
 				while (tok != NULL)
 				{
-					data.prior_sigma[i] = atof(tok);
+					prior_sigma[i] = atof(tok);
 					i++;
 					tok = strtok(NULL, " ;,\t");
 				}
@@ -428,106 +542,124 @@ void data_t::read(const char *fname)
 
 		if (!found)
 		{
-			for (i = 0; i < data.Nth; i++)
+			int j, k;
+			for (i = 0, k = 0; i < Nth; i++)
 			{
-				int j;
-				for (j = 0; j < data.Nth; j++)
+				for (j = 0; j < Nth; j++, k++)
 				{
 					if (i == j)
-						data.prior_sigma[i * data.Nth + j] = 1.0; /* Sigmadef value of Default Sigma */
+					{
+						prior_sigma[k] = 1.0;
+					}
 					else
-						data.prior_sigma[i * data.Nth + j] = 0.0;
+					{
+						prior_sigma[k] = 0.0;
+					}
 				}
 			}
 		}
 	}
 
-	if (data.prior_type == 3) /* composite */
+	if (prior_type == 3) /* composite */
 	{
-		rewind(f);
-		line_no = 0;
-
-		data.compositeprior_distr = (double *)malloc(data.Nth * sizeof(double));
-
-		free(data.prior_mu);
-		free(data.prior_sigma);
-		data.prior_mu = (double *)malloc(data.Nth * sizeof(double));
-		data.prior_sigma = (double *)malloc(data.Nth * data.Nth * sizeof(double));
-
-		for (i = 0; i < data.Nth; i++)
+		if (compositeprior_distr != NULL)
 		{
+			delete[] compositeprior_distr;
+		}
+		compositeprior_distr = new double[Nth];
+
+		if (linit)
+		{
+			if (prior_mu != NULL)
+			{
+				delete[] prior_mu;
+			}
+			prior_mu = new double[Nth];
+
+			if (prior_sigma != NULL)
+			{
+				delete[] prior_sigma;
+			}
+			prior_sigma = new double[Nth * Nth];
+		}
+
+		for (i = 0; i < Nth; i++)
+		{
+			rewind(f);
 			found = 0;
 			while (fgets(line, 256, f) != NULL)
 			{
-				line_no++;
-
 				if ((line[0] == '#') || (strlen(line) == 0))
+				{
 					continue;
+				}
 
 				char bound[8];
 				sprintf(bound, "C%d", i);
 				if (strstr(line, bound) != NULL)
 				{
-					sscanf(line, "%*s %lf %lf %lf", &data.compositeprior_distr[i],
-						   &data.lowerbound[i], &data.upperbound[i]);
+					sscanf(line, "%*s %lf %lf %lf", &compositeprior_distr[i], &lowerbound[i], &upperbound[i]);
 					found = 1;
 					break;
 				}
 			}
 			if (!found)
 			{
-				data.lowerbound[i] = data.lb; /* Bdef value or Default LB */
-				data.upperbound[i] = data.ub; /* Bdef value of Default UB */
-				data.compositeprior_distr[i] = 0;
+				lowerbound[i] = lb; /* Bdef value or Default LB */
+				upperbound[i] = ub; /* Bdef value of Default UB */
+				compositeprior_distr[i] = 0;
 			}
-			rewind(f);
-			line_no = 0;
 		}
 	}
 
 	/* new, parse auxil_size and auxil_data */
 	rewind(f);
-	line_no = 0;
-
 	found = 0;
 	while (fgets(line, 256, f) != NULL)
 	{
-		line_no++;
 		if ((line[0] == '#') || (strlen(line) == 0))
+		{
 			continue;
+		}
 
 		if (strstr(line, "auxil_size") != NULL)
 		{
-			sscanf(line, "%*s %d", &data.auxil_size);
+			sscanf(line, "%*s %d", &auxil_size);
 			found = 1;
 			break;
 		}
 	}
 
-	if (data.auxil_size > 0)
+	if (auxil_size > 0)
 	{
+		if (auxil_data != NULL)
+		{
+			delete[] auxil_data;
+		}
+		auxil_data = new double[auxil_size];
+
 		rewind(f);
-		line_no = 0;
-
-		data.auxil_data = (double *)malloc(data.auxil_size * sizeof(double));
-
 		found = 0;
 		while (fgets(line, 256, f) != NULL)
 		{
-			line_no++;
 			if ((line[0] == '#') || (strlen(line) == 0))
+			{
 				continue;
+			}
 
 			if (strstr(line, "auxil_data") != NULL)
 			{
 				char *tok = strtok(line, " ;,\t");
 				if (tok == NULL)
+				{
 					break;
-				int i = 0;
+				}
+
+				i = 0;
 				tok = strtok(NULL, " ;,\t");
 				while (tok != NULL)
 				{
-					data.auxil_data[i] = atof(tok);
+					auxil_data[i] = atof(tok);
 					i++;
 					tok = strtok(NULL, " ;,\t");
 				}
@@ -539,30 +671,53 @@ void data_t::read(const char *fname)
 
 	fclose(f);
 
-#if 0
-    print_matrix((char *)"prior_mu", data.prior_mu, data.Nth);
-    print_matrix((char *)"prior_sigma", data.prior_sigma, data.Nth*data.Nth);
-    print_matrix((char *)"auxil_data", data.auxil_data, data.auxil_size);
-#endif
-
-	free(data.Num);
-	data.Num = (int *)malloc(data.MaxStages * sizeof(int));
-	for (i = 0; i < data.MaxStages; i++)
+	if (linit)
 	{
-		data.Num[i] = data.PopSize;
-	}
-	data.LastNum = data.PopSize;
+		if (Num != NULL)
+		{
+			delete[] Num;
+		}
+		Num = new int[MaxStages];
 
-	double *LCmem = (double *)calloc(1, data.PopSize * data.Nth * data.Nth * sizeof(double));
-	data.local_cov = (double **)malloc(data.PopSize * sizeof(double *));
-	int pos;
-	for (pos = 0; pos < data.PopSize; ++pos)
-	{
-		data.local_cov[pos] = LCmem + pos * data.Nth * data.Nth;
-		for (i = 0; i < data.Nth; ++i)
-			data.local_cov[pos][i * data.Nth + i] = 1;
+		i = MaxStages;
+		while (i--)
+			Num[i] = PopSize;
+
+		LastNum = PopSize;
+
+		if (local_cov != NULL)
+		{
+			for (i = 0; i < PopSize; i++)
+			{
+				if (local_cov[i] != NULL)
+				{
+					delete[] local_cov[i];
+				}
+			}
+			delete[] local_cov;
+		}
+
+		local_cov = new double *[PopSize];
+		for (i = 0; i < PopSize; i++)
+		{
+			local_cov[i] = new double[Nth * Nth];
+			for (int j = 0, l = 0; j < Nth; j++)
+			{
+				for (int k = 0; k < Nth; k++, l++)
+				{
+					if (j == k)
+					{
+						local_cov[i][l] = 1;
+					}
+					else
+					{
+						local_cov[i][l] = 0;
+					}
+				}
+			}
+		}
 	}
-}
+};
 
 /*!
 *  \brief basic structure
@@ -603,7 +758,7 @@ struct basic
 * \param queue an integer argument for submission of leaders only
 * \param error double argument for measuring error
 */
-struct cgdbp : basic
+struct cgdbp_t : basic
 {
 
 	int queue;
@@ -612,15 +767,15 @@ struct cgdbp : basic
     *  \brief constructor for the default variables
 	*    
     */
-	cgdbp() : queue(0),
-			  error(0){};
+	cgdbp_t() : queue(0),
+				error(0){};
 };
 
 /*!
 *  \brief database generation structure
 *    
 */
-struct dbp : basic
+struct dbp_t : basic
 {
 };
 
@@ -628,7 +783,7 @@ struct dbp : basic
 *  \brief database generation structure
 *    
 */
-struct resdbp : basic
+struct resdbp_t : basic
 {
 };
 
@@ -644,7 +799,7 @@ struct resdbp : basic
 * \param SS             cluster-wide
 * \param meantheta  
 */
-struct runinfo
+struct runinfo_t
 {
 	int Gen;
 	double *CoefVar;					 /*[MAXGENS];*/
@@ -654,6 +809,18 @@ struct runinfo
 	double *acceptance;					 /*[MAXGENS];*/
 	double **SS; /*[PROBDIM][PROBDIM];*/ //
 	double **meantheta;					 /*[MAXGENS][PROBDIM];*/
+										 /*!
+    *  \brief constructor for the default variables
+	*    
+    */
+	runinfo_t() : Gen(0),
+				  CoefVar(NULL),
+				  p(NULL),
+				  currentuniques(NULL),
+				  logselection(NULL),
+				  acceptance(NULL),
+				  SS(NULL),
+				  meantheta(NULL){};
 };
 
 /*!
@@ -700,8 +867,11 @@ struct database
     *  \param nsize1 an integer argument.
     *  \param nsize2 an integer argument.
     */
-	void init(int nsize1, int nsize2);
 	void init(int nsize1);
+	void init(int nsize1, int nsize2)
+	{
+		init(nsize1 * nsize2);
+	};
 
 	/*!
 	* /brief A member updating the database
@@ -711,10 +881,13 @@ struct database
 	*  \param Fvalue     a double value 
 	*  \param Garray     a double array
 	*  \param ndimGarray an integer argument, shows the size of Garray
-	*  \param surrogate  an integer argument for the surrogate model
+	*  \param surrogate  an integer argument for the surrogate model (default 0, no surrogate)
     */
 	void update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate);
-	void update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray);
+	void update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray)
+	{
+		update(*Parray, ndimParray, Fvalue, *Garray, ndimGarray, 0);
+	};
 
 	/*!
 	* /brief function for sorting elemnts of an array for database elements.
@@ -723,23 +896,85 @@ struct database
 	*  element size bytes long, using the compar function to determine the order.
     */
 	void sort(sort_t *list);
-};
 
-template <class T>
-void database<T>::init(int nsize1, int nsize2)
-{
-	if (entry == NULL)
+	/*!
+	* /brief function for printing  the data
+	*
+    */
+	virtual void print(){};
+
+	/*!
+	* /brief function for dumping the data
+	*
+    */
+	virtual void dump(const char *fname)
 	{
-		entry = (T *)calloc(1, nsize1 * nsize2 * sizeof(T));
-	}
-}
+		if (entry != NULL)
+		{
+			char filename[256];
+			if (strlen(fname) == 0)
+			{
+				sprintf(filename, "db_%03d.txt", entries - 1);
+			}
+			else
+			{
+				sprintf(filename, "%s_%03d.txt", fname, entries - 1);
+			}
+
+			FILE *f = fopen(filename, "w");
+
+			for (int pos = 0; pos < entries - 1; pos++)
+			{
+				if (entry[pos].Parray != NULL)
+				{
+					for (int i = 0; i < entry[pos].ndimParray; i++)
+					{
+						fprintf(f, "%20.16lf ", entry[pos].Parray[i]);
+					}
+				}
+				if (entry[pos].Garray != NULL)
+				{
+					fprintf(f, "%20.16lf ", entry[pos].Fvalue);
+					int i;
+					for (i = 0; i < entry[pos].ndimGarray - 1; i++)
+					{
+						fprintf(f, "%20.16lf ", entry[pos].Garray[i]);
+					}
+					fprintf(f, "%20.16lf\n", entry[pos].Garray[i]);
+				}
+				else
+				{
+					fprintf(f, "%20.16lf\n", entry[pos].Fvalue);
+				}
+			}
+
+			fclose(f);
+		}
+	};
+
+	virtual void dump()
+	{
+		dump("");
+	};
+};
 
 template <class T>
 void database<T>::init(int nsize1)
 {
 	if (entry == NULL)
 	{
-		entry = (T *)calloc(1, nsize1 * sizeof(T));
+		try
+		{
+			entry = new T[nsize1];
+		}
+		catch (const std::system_error &e)
+		{
+			std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+		}
+		for (int i = 0; i < nsize1; i++)
+		{
+			entry[i] = (T)0;
+		}
 	}
 }
 
@@ -755,7 +990,26 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 
 	if (ndimParray > entry[pos].ndimParray)
 	{
-		entry[pos].Parray = (double *)realloc(entry[pos].Parray, ndimParray * sizeof(double));
+		if (entry[pos].Parray != NULL)
+		{
+			try
+			{
+				delete[] entry[pos].Parray;
+			}
+			catch (const std::system_error &e)
+			{
+				std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+			}
+		}
+
+		try
+		{
+			entry[pos].Parray = new double[ndimParray];
+		}
+		catch (const std::system_error &e)
+		{
+			std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+		}
 	}
 	entry[pos].ndimParray = ndimParray;
 
@@ -768,9 +1022,27 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 
 	if (ndimGarray > entry[pos].ndimGarray)
 	{
-		entry[pos].Garray = (double *)realloc(entry[pos].Garray, ndimGarray * sizeof(double));
-	}
+		if (entry[pos].Garray != NULL)
+		{
+			try
+			{
+				delete[] entry[pos].Garray;
+			}
+			catch (const std::system_error &e)
+			{
+				std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+			}
+		}
 
+		try
+		{
+			entry[pos].Garray = new double[ndimGarray];
+		}
+		catch (const std::system_error &e)
+		{
+			std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+		}
+	}
 	entry[pos].ndimGarray = ndimGarray;
 
 	for (int i = 0; i < ndimGarray; i++)
@@ -779,42 +1051,6 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 	}
 
 	entry[pos].surrogate = surrogate;
-};
-
-template <class T>
-void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray)
-{
-	int pos;
-
-	pthread_mutex_lock(&m);
-	pos = entries;
-	entries++;
-	pthread_mutex_unlock(&m);
-
-	if (ndimParray > entry[pos].ndimParray)
-	{
-		entry[pos].Parray = (double *)realloc(entry[pos].Parray, ndimParray * sizeof(double));
-	}
-	entry[pos].ndimParray = ndimParray;
-
-	for (int i = 0; i < ndimParray; i++)
-	{
-		entry[pos].Parray[i] = Parray[i];
-	}
-
-	entry[pos].Fvalue = Fvalue;
-
-	if (ndimGarray > entry[pos].ndimGarray)
-	{
-		entry[pos].Garray = (double *)realloc(entry[pos].Garray, ndimGarray * sizeof(double));
-	}
-
-	entry[pos].ndimGarray = ndimGarray;
-
-	for (int i = 0; i < ndimGarray; i++)
-	{
-		entry[pos].Garray[i] = Garray[i];
-	}
 };
 
 /*!
@@ -847,15 +1083,51 @@ void database<T>::sort(sort_t *list)
 	qsort(list, entries, sizeof(sort_t), compar_desc);
 }
 
-struct cgdb : database<cgdbp>
+struct cgdb_t : database<cgdbp_t>
 {
 };
 
-struct db : database<dbp>
+struct db_t : database<dbp_t>
 {
+	virtual void print()
+	{
+		if (entry != NULL)
+		{
+			std::cout << "---- database priniting ----" << std::endl;
+
+			for (int pos = 0; pos < entries; pos++)
+			{
+				if (entry[pos].Parray != NULL)
+				{
+					int j;
+					std::cout << "ENTRY"
+							  << std::setw(5) << pos << " : POINT(";
+					for (j = 0; j < entry[pos].ndimParray - 1; j++)
+					{
+						std::cout << std::setw(20) << entry[pos].Parray[j] << ", ";
+					}
+					std::cout << std::setw(20) << entry[pos].Parray[j] << ") Fvalue="
+							  << std::setw(20) << entry[pos].Fvalue << " Surrogate="
+							  << std::setw(20) << entry[pos].surrogate << std::endl;
+				}
+				if (entry[pos].Garray != NULL)
+				{
+					int i;
+					std::cout << "Garray=[";
+					for (i = 0; i < entry[pos].ndimGarray - 1; i++)
+					{
+						std::cout << std::setw(20) << entry[pos].Garray[i] << ", ";
+					}
+					std::cout << std::setw(20) << entry[pos].Garray[i] << "]" << std::endl;
+				}
+			}
+
+			std::cout << "----------------------------" << std::endl;
+		}
+	};
 };
 
-struct resdb : database<resdbp>
+struct resdb_t : database<resdbp_t>
 {
 };
 
