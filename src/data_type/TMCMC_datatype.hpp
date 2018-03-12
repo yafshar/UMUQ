@@ -93,7 +93,7 @@ struct data_t
     } options;
 
     int sampling_type; /* 0: uniform, 1: gaussian, 2: file */
-    int prior_type;	/* 0: lognormal, 1: gaussian */
+    int prior_type;    /* 0: lognormal, 1: gaussian */
 
     /* prior information needed for hiegherarchical analysis */
     /* this number = prior + number of datasets = 1 + N_IND */
@@ -248,7 +248,7 @@ struct data_t
         // read the tmcmc.par file for setting the input variables
         read("tmcmc.par");
     };
-    
+
     //! destructor
     /*!
     *  \brief destructor 
@@ -284,7 +284,7 @@ struct data_t
         if (auxil_data != NULL)
         {
             delete[] auxil_data;
-            auxil_data=NULL;
+            auxil_data = NULL;
         }
         if (Num != NULL)
         {
@@ -306,6 +306,8 @@ struct data_t
             local_cov = NULL;
         }
     };
+
+    void destroy();
 };
 
 // read the input file fname for setting the input variables
@@ -720,6 +722,69 @@ void data_t::read(const char *fname)
 };
 
 /*!
+*  \brief destructor 
+*    
+*/
+void data_t::destroy()
+{
+    if (lowerbound != NULL)
+    {
+        delete[] lowerbound;
+        lowerbound = NULL;
+    }
+
+    if (upperbound != NULL)
+    {
+        delete[] upperbound;
+        upperbound = NULL;
+    }
+
+    if (compositeprior_distr != NULL)
+    {
+        delete[] compositeprior_distr;
+        compositeprior_distr = NULL;
+    }
+
+    if (prior_mu != NULL)
+    {
+        delete[] prior_mu;
+        prior_mu = NULL;
+    }
+
+    if (prior_sigma != NULL)
+    {
+        delete[] prior_sigma;
+        prior_sigma = NULL;
+    }
+
+    if (auxil_data != NULL)
+    {
+        delete[] auxil_data;
+        auxil_data = NULL;
+    }
+
+    if (Num != NULL)
+    {
+        delete[] Num;
+        Num = NULL;
+    }
+
+    if (init_mean != NULL)
+    {
+        delete[] * init_mean;
+        delete[] init_mean;
+        init_mean = NULL;
+    }
+
+    if (local_cov != NULL)
+    {
+        delete[] * local_cov;
+        delete[] local_cov;
+        local_cov = NULL;
+    }
+}
+
+/*!
 *  \brief basic structure
 *    
 *  \param Parray     double array for points in space
@@ -802,13 +867,13 @@ struct resdbp_t : basic
 struct runinfo_t
 {
     int Gen;
-    double *CoefVar;					 /*[MAXGENS];*/
-    double *p;							 /*[MAXGENS];*/
-    int *currentuniques;				 /*[MAXGENS];*/
-    double *logselection;				 /*[MAXGENS];*/
-    double *acceptance;					 /*[MAXGENS];*/
+    double *CoefVar;                     /*[MAXGENS];*/
+    double *p;                           /*[MAXGENS];*/
+    int *currentuniques;                 /*[MAXGENS];*/
+    double *logselection;                /*[MAXGENS];*/
+    double *acceptance;                  /*[MAXGENS];*/
     double **SS; /*[PROBDIM][PROBDIM];*/ //
-    double **meantheta;					 /*[MAXGENS][PROBDIM];*/
+    double **meantheta;                  /*[MAXGENS][PROBDIM];*/
                                          /*!
     *  \brief constructor for the default variables
     *    
