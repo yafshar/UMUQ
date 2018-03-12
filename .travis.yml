@@ -16,8 +16,6 @@ before_install:
   - test -n $CXX    && unset CXX
   - test -n $FC     && unset FC
   - test -n $F77    && unset F77
-  - test -n $MPICC  && unset MPICC
-  - test -n $MPIC++ && unset MPIC++ 
 
 # Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
 # It is more tedious, but grants us far more flexibility.
