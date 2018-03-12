@@ -12,6 +12,12 @@ git:
 before_install:
   - sed -i 's/git@github.com:/https:\/\/ya.afshar:36c5f06f9fa292f5d022efa6701e9cb9897507f5@github.com\//' .gitmodules
   - git submodule update --init --recursive
+  - test -n $CC     && unset CC
+  - test -n $CXX    && unset CXX
+  - test -n $FC     && unset FC
+  - test -n $F77    && unset F77
+  - test -n $MPICC  && unset MPICC
+  - test -n $MPIC++ && unset MPIC++ 
 
 # Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
 # It is more tedious, but grants us far more flexibility.
@@ -30,13 +36,12 @@ matrix:
 
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
-install:
+install: make get-deps
   - ./scripts/install-${TRAVIS_OS_NAME}.sh
   - . ./scripts/env-${TRAVIS_OS_NAME}.sh
   - ./scripts/log-config.sh
 
-#script: ./scripts/travis.sh
-#
+
 # For sudo=false builds this section installs the necessary dependencies.
 addons:
   apt:
@@ -45,11 +50,15 @@ addons:
     # List of whitelisted in travis apt-sources:
     #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
     sources:
-    - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r/test
     - llvm-toolchain-precise-3.7
     packages:
-    - g++-5.0
+    - cmake
+    - g++-5
     - clang-3.7
+
+env:
+  - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
 notifications:
   email: false
