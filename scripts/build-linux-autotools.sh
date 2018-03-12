@@ -9,3 +9,4 @@ mkdir build || true
 cd build
 ../configure
 make
+make check
