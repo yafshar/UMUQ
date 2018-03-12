@@ -50,7 +50,7 @@ addons:
     # List of whitelisted in travis apt-sources:
     #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
     sources:
-    - ubuntu-toolchain-r/test
+    - ubuntu-toolchain-r-test
     - llvm-toolchain-precise-3.7
     packages:
     - cmake
