@@ -2,9 +2,9 @@
 set -eu
 
 if [ "${TRAVIS_OS_NAME}" != linux ]; then
-    echo "Not a Linux build"
+	echo "Not a Linux build"
 	echo "Skipping installation"
-    exit 0
+	exit 0
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
@@ -19,3 +19,5 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libflann-1.9
 	sudo apt-get install -y libflann-dev
 fi
+
+
