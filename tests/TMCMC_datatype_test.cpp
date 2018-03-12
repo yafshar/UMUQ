@@ -9,33 +9,35 @@
 // Tests parse
 TEST(datatype, HandlesConstruction)
 {
-    data_t d1;
+    data_t *d1 = new data_t;
 
-    EXPECT_EQ(0, d1.Nth);
-    EXPECT_EQ(0, d1.MaxStages);
-    EXPECT_EQ(0, d1.PopSize);
-    EXPECT_EQ(0, d1.auxil_size);
-    EXPECT_EQ(0, d1.MinChainLength);
-    EXPECT_EQ(1e6, d1.MaxChainLength);
-    EXPECT_EQ(0, d1.lb);
-    EXPECT_EQ(0, d1.ub);
-    EXPECT_EQ(1.0, d1.TolCOV);
-    EXPECT_EQ(0.2, d1.bbeta);
-    EXPECT_EQ(280675, d1.seed);
-    EXPECT_EQ(0, d1.prior_type);
-    EXPECT_EQ(0, d1.prior_count);
-    EXPECT_EQ(0, d1.iplot);
-    EXPECT_EQ(1, d1.icdump);
-    EXPECT_EQ(0, d1.ifdump);
-    EXPECT_EQ(0, d1.LastNum);
-    EXPECT_EQ(0, d1.use_proposal_cma);
-    EXPECT_EQ(0, d1.use_local_cov);
-    EXPECT_EQ(0, d1.local_scale);
+    EXPECT_EQ(0, d1->Nth);
+    EXPECT_EQ(0, d1->MaxStages);
+    EXPECT_EQ(0, d1->PopSize);
+    EXPECT_EQ(0, d1->auxil_size);
+    EXPECT_EQ(0, d1->MinChainLength);
+    EXPECT_EQ(1e6, d1->MaxChainLength);
+    EXPECT_EQ(0, d1->lb);
+    EXPECT_EQ(0, d1->ub);
+    EXPECT_EQ(1.0, d1->TolCOV);
+    EXPECT_EQ(0.2, d1->bbeta);
+    EXPECT_EQ(280675, d1->seed);
+    EXPECT_EQ(0, d1->prior_type);
+    EXPECT_EQ(0, d1->prior_count);
+    EXPECT_EQ(0, d1->iplot);
+    EXPECT_EQ(1, d1->icdump);
+    EXPECT_EQ(0, d1->ifdump);
+    EXPECT_EQ(0, d1->LastNum);
+    EXPECT_EQ(0, d1->use_proposal_cma);
+    EXPECT_EQ(0, d1->use_local_cov);
+    EXPECT_EQ(0, d1->local_scale);
     
-    EXPECT_EQ(100, d1.options.MaxIter);
-    EXPECT_EQ(1e-6, d1.options.Tol);
-    EXPECT_EQ(0, d1.options.Display);
-    EXPECT_EQ(1e-5, d1.options.Step);
+    EXPECT_EQ(100, d1->options.MaxIter);
+    EXPECT_EQ(1e-6, d1->options.Tol);
+    EXPECT_EQ(0, d1->options.Display);
+    EXPECT_EQ(1e-5, d1->options.Step);
+
+	delete d1;
 
     data_t d2(4,20,1024);
 
@@ -64,6 +66,11 @@ TEST(datatype, HandlesConstruction)
     EXPECT_EQ(1e-6, d2.options.Tol);
     EXPECT_EQ(0, d2.options.Display);
     EXPECT_EQ(1e-5, d2.options.Step);
+
+	d2.destroy();
+
+	EXPECT_EQ(NULL, d2.lowerbound);
+
 };
 
 int main(int argc, char **argv)
