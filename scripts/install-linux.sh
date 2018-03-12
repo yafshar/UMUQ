@@ -16,8 +16,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y liblapack-dev
 	sudo apt-get install -y libgtest-dev 
 	sudo apt-get install -y libeigen3-dev
-	sudo apt-get install -y libflann-1.9
 	sudo apt-get install -y libflann-dev
+	sudo apt-get install -y libflann-1.8
 fi
 
 
