@@ -60,7 +60,7 @@ class spawner
         *argv = NULL;
     }
 
-    int execute_cmd(int me, char **argv, char *dir)
+    int execute_cmd(int me, char **argv, const char *dir)
     {
         pid_t pid;
 
@@ -75,10 +75,19 @@ class spawner
             if (dir != NULL)
             {
                 // move to the specified directory
-                chdir(dir);
+                if (chdir(dir) < 0)
+                {
+                    std::cout << "Failed to change PATH!!!!" << std::endl;
+                    std::cout << "Permission is denied for one of the components in the path to : " << dir << std::endl;
+                    return 1;
+                }
             }
 
-            execvp(*argv, argv);
+            if (execvp(*argv, argv) < 0)
+            {
+                std::cout << "Error occured while attempting to execute the command!!!!" << std::endl;
+                return 1;
+            }
         }
 
         // wait for process to change state
@@ -119,7 +128,9 @@ class spawner
         // O_RDONLY: Open for reading only
         fd_from = open(from, O_RDONLY);
         if (fd_from < 0)
+        {
             return -1;
+        }
 
         // get file status
         fstat(fd_from, &sb);
@@ -131,7 +142,9 @@ class spawner
 
         fd_to = open(to, O_WRONLY | O_CREAT | O_EXCL, sb.st_mode);
         if (fd_to < 0)
+        {
             goto out_error;
+        }
 
         while (nread = read(fd_from, buf, sizeof buf), nread > 0)
         {
@@ -175,7 +188,9 @@ class spawner
 
         close(fd_from);
         if (fd_to >= 0)
+        {
             close(fd_to);
+        }
 
         errno = saved_errno;
         return -1;
