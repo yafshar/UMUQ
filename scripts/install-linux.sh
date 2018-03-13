@@ -27,7 +27,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	# Run in a subdirectory to keep the sources clean
 	mkdir build || true
 	cd build
-	../configure CC=mpicc F77=mpifort
+	../configure
 	make
 	sudo make install
 	cd ../
