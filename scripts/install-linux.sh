@@ -9,7 +9,6 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get update 
-	sudo apt-get upgrade
 	sudo apt-get install -y gcc-5 g++-5 gfortran-5 clang-3.7
 	sudo apt-get install -y mpich 
 	sudo apt-get install -y libmpich-dev
