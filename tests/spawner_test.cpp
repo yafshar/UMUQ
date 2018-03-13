@@ -48,6 +48,14 @@ TEST(parse_test, HandlesInput)
         EXPECT_STREQ(largv[i], targv[i]);
     }
 
+    //testing space at the start of line
+    sprintf(line, "   sh doall.sh");
+    s.parse(line, largv);
+    for (int i = 0; i < 2; i++)
+    {
+        EXPECT_STREQ(largv[i], targv[i]);
+    }
+
     sprintf(line, "bash doall.sh out 2>&1");
     s.parse(line, largv);
 
@@ -61,11 +69,18 @@ TEST(parse_test, HandlesInput)
     {
         EXPECT_STREQ(largv[i], ttargv[i]);
     }
+};
 
+TEST(fileExist, HandlesFiles)
+{
+    spawner s;
     
+    //EXPECT_EXIT(s.fileExists("TMCMC.par"), ::testing::KilledBySignal(1), "");
+};
 
-
-
+TEST(parse_cmd, HandlesCmd)
+{
+    spawner s;
 };
 
 int main(int argc, char **argv)

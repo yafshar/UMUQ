@@ -70,7 +70,6 @@ TEST(datatype, HandlesConstruction)
 	d2.destroy();
 
 	EXPECT_EQ(NULL, d2.lowerbound);
-
 };
 
 int main(int argc, char **argv)
