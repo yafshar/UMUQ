@@ -18,6 +18,20 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libeigen3-dev
 	sudo apt-get install -y libflann-dev
 	sudo apt-get install -y libflann1.8
+
+
+	# TORC installation 
+	cd external 
+	cd torc_lite  
+	# Create the configuration script
+	autoreconf -i
+	# Run in a subdirectory to keep the sources clean
+	mkdir build || true
+	cd build
+	../configure CC=mpicc F77=mpif77
+	make
+	sudo make install
+	cd ../
 fi
 
 
