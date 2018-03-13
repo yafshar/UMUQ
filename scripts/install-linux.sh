@@ -21,14 +21,13 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 
 	# TORC installation 
-	cd external 
-	cd torc_lite  
+	cd external/torc_lite
 	# Create the configuration script
 	autoreconf -i
 	# Run in a subdirectory to keep the sources clean
 	mkdir build || true
 	cd build
-	../configure CC=mpicc F77=mpif77
+	../configure CC=mpicc F77=mpifort
 	make
 	sudo make install
 	cd ../
