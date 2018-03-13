@@ -1,17 +1,18 @@
-#ifndef UMHBM_HELPER_H
-#define UMHBM_HELPER_H
+#ifndef UMHBM_SPAWNER_H
+#define UMHBM_SPAWNER_H
 
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1
 
 #include <iostream>
+
 //waitpid, fstat, opendir
 #include <sys/types.h>
 //waitpid
 #include <sys/wait.h>
 //fork, execvp, chdir, fstat
 #include <unistd.h>
-//remove, perror, sprintf
+//remove, perror, sprintf, fopen
 #include <stdio.h>
 //nftw
 #include <ftw.h>
@@ -23,6 +24,10 @@
 #include <errno.h>
 //opendir, readdir
 #include <dirent.h>
+//exit
+#include <stdlib.h>
+//strlen, strstr, strtok
+#include <cstring>
 
 /*! \class spawner
 *   \brief spawner is a class which includes some helper functionality.
@@ -35,7 +40,110 @@
 class spawner
 {
   public:
-    void parse(char *line, char **argv)
+    FILE *fp;
+
+    spawner() : fp(NULL){};
+    ~spawner(){};
+
+    // /*!
+    //  *  \brief Execute a command getting the std::cout
+    //  *
+    //  */
+    // static inline std::string exec(const char *argv)
+    // {
+    //     std::array<char, 256> buffer;
+    //     std::string result;
+    //     std::shared_ptr<FILE> pipe(popen(argv, "r"), pclose);
+    //     if (!pipe)
+    //     {
+    //         throw std::runtime_error("popen() failed!");
+    //     }
+    //     while (!feof(pipe.get()))
+    //     {
+    //         if (fgets(buffer.data(), 256, pipe.get()) != NULL)
+    //         {
+    //             result += buffer.data();
+    //         }
+    //     }
+    //     return result;
+    // }
+
+    /*!
+     *  \brief Check to see whether the file fileName exists and accessible to read or write!
+     *  
+     */
+    inline bool fileExists(const char *fileName)
+    {
+        struct stat buffer;
+        return (stat(fileName, &buffer) == 0);
+    }
+
+    /*!
+     *  \brief Opens the file whose name is specified in the parameter filename 
+     *  
+     *  Opens the file whose name is specified in the parameter filename and
+     *  associates it with a stream that can be identified in future operations 
+     *  by the FILE pointer returned.inline   
+     */
+    inline void openFile(const char *fileName)
+    {
+        if (fileExists(fileName))
+        {
+            if (fp == NULL)
+            {
+                fp = fopen(fileName, "r");
+                if (fp == NULL)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << fileName << " does not exists!" << std::endl;
+                    exit(1);
+                }
+            }
+            else
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << "Pointer to the File " << fileName << " is busy!" << std::endl;
+                exit(1);
+            }
+        }
+        else
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << fileName << " does not exists!" << std::endl;
+            exit(1);
+        }
+    }
+
+    inline void openFile(const char *fileName, const char *mode)
+    {
+        if (*mode != 'r' || fileExists(fileName))
+        {
+            if (fp == NULL)
+            {
+                fp = fopen(fileName, mode);
+                if (fp == NULL)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << fileName << " does not exists!" << std::endl;
+                    exit(1);
+                }
+            }
+            else
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << "Pointer to the File " << fileName << " is busy!" << std::endl;
+                exit(1);
+            }
+        }
+        else
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << fileName << " does not exists!" << std::endl;
+            exit(1);
+        }
+    }
+
+    inline void parse(char *line, char **argv)
     {
         /* if not the end of line ....... */
         while (*line != '\0')
@@ -59,6 +167,46 @@ class spawner
         /* mark the end of argument list */
         *argv = NULL;
     }
+
+    // inline void parse(const char *line, const char *str, int &value)
+    // {
+    //     if (strstr(line, str))
+    //     {
+    //         sscanf(line, "%*s %d", &value);
+    //     }
+    // }
+
+    // inline void parse(const char *line, const char *str, int &value1, int &value2)
+    // {
+    //     if (strstr(line, str))
+    //     {
+    //         sscanf(line, "%*s %d %d", &value1, &value2);
+    //     }
+    // }
+
+    // inline void parse(const char *line, const char *str, long int &value)
+    // {
+    //     if (strstr(line, str))
+    //     {
+    //         sscanf(line, "%*s %ld", &value);
+    //     }
+    // }
+
+    // inline void parse(const char *line, const char *str, double &value)
+    // {
+    //     if (strstr(line, str))
+    //     {
+    //         sscanf(line, "%*s %lf", &value);
+    //     }
+    // }
+
+    // inline void parse(const char *line, const char *str, double &value1, double &value2)
+    // {
+    //     if (strstr(line, str))
+    //     {
+    //         sscanf(line, "%*s %lf %lf", &value1, &value2);
+    //     }
+    // }
 
     int execute_cmd(int me, char **argv, const char *dir)
     {
@@ -104,7 +252,9 @@ class spawner
         // produces a message on the standard error output, describing the last error encountered during
         // a call to a system or library function
         if (rv)
+        {
             perror(fpath);
+        }
 
         return rv;
     }
@@ -226,7 +376,7 @@ class spawner
         return 0;
     }
 
-    int copy_file(const char *dirname, const char *filename)
+    int copy_file(const char *dirname, const char *fileName)
     {
         DIR *dir;
 
@@ -242,8 +392,8 @@ class spawner
         {
             char source[256], dest[256];
 
-            sprintf(source, "%s/%s", dirname, filename);
-            sprintf(dest, "./%s", filename);
+            sprintf(source, "%s/%s", dirname, fileName);
+            sprintf(dest, "./%s", fileName);
 
             cp(source, dest);
 
