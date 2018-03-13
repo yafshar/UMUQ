@@ -1021,6 +1021,57 @@ struct database
     {
         dump("");
     };
+
+    /*!
+    * /brief function for loading the data
+    *
+    */
+    virtual void load(const char *fname)
+    {
+        
+        if (entry != NULL)
+        {
+            char filename[256];
+            if (strlen(fname) == 0)
+            {
+                sprintf(filename, "db_%03d.txt", entries - 1);
+            }
+            else
+            {
+                sprintf(filename, "%s_%03d.txt", fname, entries - 1);
+            }
+
+            FILE *f = fopen(filename, "w");
+
+            for (int pos = 0; pos < entries - 1; pos++)
+            {
+                if (entry[pos].Parray != NULL)
+                {
+                    for (int i = 0; i < entry[pos].ndimParray; i++)
+                    {
+                        fprintf(f, "%20.16lf ", entry[pos].Parray[i]);
+                    }
+                }
+                if (entry[pos].Garray != NULL)
+                {
+                    fprintf(f, "%20.16lf ", entry[pos].Fvalue);
+                    int i;
+                    for (i = 0; i < entry[pos].ndimGarray - 1; i++)
+                    {
+                        fprintf(f, "%20.16lf ", entry[pos].Garray[i]);
+                    }
+                    fprintf(f, "%20.16lf\n", entry[pos].Garray[i]);
+                }
+                else
+                {
+                    fprintf(f, "%20.16lf\n", entry[pos].Fvalue);
+                }
+            }
+
+            fclose(f);
+        }
+    };
+
 };
 
 template <class T>
