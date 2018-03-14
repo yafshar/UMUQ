@@ -12,6 +12,9 @@
 //strlen, strstr, strtok
 #include <cstring>
 
+#include "../misc/utility.hpp"
+#include "../misc/parser.hpp"
+
 /*! \file TMCMC_datatype.hpp
 *   \brief Data types and helper structures.
 *
@@ -242,11 +245,11 @@ struct data_t
     *  \brief constructor for the default input variables
     *    
     */
-    void read(const char *fname);
-    void read()
+    bool read(const char *fname);
+    bool read()
     {
         // read the tmcmc.par file for setting the input variables
-        read("tmcmc.par");
+        return read("tmcmc.par");
     };
 
     //! destructor
@@ -291,14 +294,12 @@ struct data_t
             delete[] Num;
             Num = NULL;
         }
-
         if (init_mean != NULL)
         {
             delete[] * init_mean;
             delete[] init_mean;
             init_mean = NULL;
         }
-
         if (local_cov != NULL)
         {
             delete[] * local_cov;
@@ -311,414 +312,444 @@ struct data_t
 };
 
 // read the input file fname for setting the input variables
-void data_t::read(const char *fname)
+bool data_t::read(const char *fname)
 {
-    FILE *f = fopen(fname, "r");
+    utility u;
 
-    char line[256];
-
-    int probdim = Nth;
-    int maxgens = MaxStages;
-    int datanum = PopSize;
-    bool linit;
-
-    while (fgets(line, 256, f) != NULL)
+    if (u.openFile(fname))
     {
-        if ((line[0] == '#') || (strlen(line) == 0))
-        {
-            continue;
-        }
+        parser p;
 
-        if (strstr(line, "Nth"))
-        {
-            sscanf(line, "%*s %d", &Nth);
-        }
-        else if (strstr(line, "MaxStages"))
-        {
-            sscanf(line, "%*s %d", &MaxStages);
-        }
-        else if (strstr(line, "PopSize"))
-        {
-            sscanf(line, "%*s %d", &PopSize);
-        }
-        else if (strstr(line, "TolCOV"))
-        {
-            sscanf(line, "%*s %lf", &TolCOV);
-        }
-        else if (strstr(line, "bbeta"))
-        {
-            sscanf(line, "%*s %lf", &bbeta);
-        }
-        else if (strstr(line, "seed"))
-        {
-            sscanf(line, "%*s %ld", &seed);
-        }
-        else if (strstr(line, "opt.MaxIter"))
-        {
-            sscanf(line, "%*s %d", &options.MaxIter);
-        }
-        else if (strstr(line, "opt.Tol"))
-        {
-            sscanf(line, "%*s %lf", &options.Tol);
-        }
-        else if (strstr(line, "opt.Display"))
-        {
-            sscanf(line, "%*s %d", &options.Display);
-        }
-        else if (strstr(line, "opt.Step"))
-        {
-            sscanf(line, "%*s %lf", &options.Step);
-        }
-        else if (strstr(line, "prior_type"))
-        {
-            sscanf(line, "%*s %d", &prior_type);
-        }
-        else if (strstr(line, "prior_count"))
-        {
-            sscanf(line, "%*s %d", &prior_count);
-        }
-        else if (strstr(line, "iplot"))
-        {
-            sscanf(line, "%*s %d", &iplot);
-        }
-        else if (strstr(line, "icdump"))
-        {
-            sscanf(line, "%*s %d", &icdump);
-        }
-        else if (strstr(line, "ifdump"))
-        {
-            sscanf(line, "%*s %d", &ifdump);
-        }
-        else if (strstr(line, "Bdef"))
-        {
-            sscanf(line, "%*s %lf %lf", &lb, &ub);
-        }
-        else if (strstr(line, "MinChainLength"))
-        {
-            sscanf(line, "%*s %d", &MinChainLength);
-        }
-        else if (strstr(line, "MaxChainLength"))
-        {
-            sscanf(line, "%*s %d", &MaxChainLength);
-        }
-        else if (strstr(line, "use_local_cov"))
-        {
-            sscanf(line, "%*s %d", &use_local_cov);
-        }
-    }
+        int probdim = Nth;
+        int maxgens = MaxStages;
+        int datanum = PopSize;
+        bool linit;
 
-    linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != NULL);
-
-    if (linit)
-    {
-        if (lowerbound != NULL)
+        while (u.readLine())
         {
-            delete[] lowerbound;
-        }
-        lowerbound = new double[Nth];
-
-        if (upperbound != NULL)
-        {
-            delete[] upperbound;
-        }
-        upperbound = new double[Nth];
-    }
-
-    int i;
-    int found;
-    for (i = 0; i < Nth; i++)
-    {
-        rewind(f);
-        found = 0;
-        while (fgets(line, 256, f) != NULL)
-        {
-            if ((line[0] == '#') || (strlen(line) == 0))
+            if (u.emptyLine())
             {
                 continue;
             }
 
-            char bound[8];
-            sprintf(bound, "B%d", i);
-            if (strstr(line, bound) != NULL)
+            p.parse(u.line, u.lineArg);
+
+            std::string str(u.lineArg[0]);
+
+            if (str == "Nth")
             {
-                sscanf(line, "%*s %lf %lf", &lowerbound[i], &upperbound[i]);
-                found = 1;
-                break;
+                p.parse(u.lineArg[1], Nth);
+            }
+            else if (str == "MaxStages")
+            {
+                p.parse(u.lineArg[1], MaxStages);
+            }
+            else if (str == "PopSize")
+            {
+                p.parse(u.lineArg[1], PopSize);
+            }
+            else if (str == "TolCOV")
+            {
+                p.parse(u.lineArg[1], TolCOV);
+            }
+            else if (str == "bbeta")
+            {
+                p.parse(u.lineArg[1], bbeta);
+            }
+            else if (str == "seed")
+            {
+                p.parse(u.lineArg[1], seed);
+            }
+            else if (str == "opt.MaxIter")
+            {
+                p.parse(u.lineArg[1], options.MaxIter);
+            }
+            else if (str == "opt.Tol")
+            {
+                p.parse(u.lineArg[1], options.Tol);
+            }
+            else if (str == "opt.Display")
+            {
+                p.parse(u.lineArg[1], options.Display);
+            }
+            else if (str == "opt.Step")
+            {
+                p.parse(u.lineArg[1], options.Step);
+            }
+            else if (str == "prior_type")
+            {
+                p.parse(u.lineArg[1], prior_type);
+            }
+            else if (str == "prior_count")
+            {
+                p.parse(u.lineArg[1], prior_count);
+            }
+            else if (str == "iplot")
+            {
+                p.parse(u.lineArg[1], iplot);
+            }
+            else if (str == "icdump")
+            {
+                p.parse(u.lineArg[1], icdump);
+            }
+            else if (str == "ifdump")
+            {
+                p.parse(u.lineArg[1], ifdump);
+            }
+            else if (str == "Bdef")
+            {
+                p.parse(u.lineArg[1], lb);
+                p.parse(u.lineArg[2], ub);
+            }
+            else if (str == "MinChainLength")
+            {
+                p.parse(u.lineArg[1], MinChainLength);
+            }
+            else if (str == "MaxChainLength")
+            {
+                p.parse(u.lineArg[1], MaxChainLength);
+            }
+            else if (str == "use_local_cov")
+            {
+                p.parse(u.lineArg[1], use_local_cov);
             }
         }
-        if (!found)
-        {
-            lowerbound[i] = lb; /* Bdef value or Default LB */
-            upperbound[i] = ub; /* Bdef value of Default UB */
-        }
-    }
 
-    if (prior_type == 1) /* gaussian */
-    {
+        linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != NULL);
         if (linit)
         {
-            /* new, parse prior_mu */
-            if (prior_mu != NULL)
+            if (lowerbound != NULL)
             {
-                delete[] prior_mu;
+                delete[] lowerbound;
             }
-            prior_mu = new double[Nth];
+            lowerbound = new double[Nth];
+
+            if (upperbound != NULL)
+            {
+                delete[] upperbound;
+            }
+            upperbound = new double[Nth];
         }
 
-        rewind(f);
-        found = 0;
-        while (fgets(line, 256, f) != NULL)
+        int n = Nth;
+        int found;
+        while (n--)
         {
-            if ((line[0] == '#') || (strlen(line) == 0))
-            {
-                continue;
-            }
+            u.rewindFile();
 
-            if (strstr(line, "prior_mu") != NULL)
-            {
-                char *tok = strtok(line, " ;,\t");
-                if (tok == NULL)
-                {
-                    break;
-                }
-
-                i = 0;
-                tok = strtok(NULL, " ;,\t");
-                while (tok != NULL)
-                {
-                    prior_mu[i] = atof(tok);
-                    i++;
-                    tok = strtok(NULL, " ;,\t");
-                }
-                found = 1;
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            i = Nth;
-            while (i--)
-                prior_mu[i] = 0.0;
-        }
-
-        if (linit)
-        {
-            /* new, parse prior_sigma */
-            if (prior_sigma != NULL)
-            {
-                delete[] prior_sigma;
-            }
-            prior_sigma = new double[Nth * Nth];
-        }
-
-        rewind(f);
-        found = 0;
-        while (fgets(line, 256, f) != NULL)
-        {
-            if ((line[0] == '#') || (strlen(line) == 0))
-            {
-                continue;
-            }
-
-            if (strstr(line, "prior_sigma") != NULL)
-            {
-                char *tok = strtok(line, " ;,\t");
-                if (tok == NULL)
-                {
-                    break;
-                }
-
-                i = 0;
-                tok = strtok(NULL, " ;,\t");
-                while (tok != NULL)
-                {
-                    prior_sigma[i] = atof(tok);
-                    i++;
-                    tok = strtok(NULL, " ;,\t");
-                }
-                found = 1;
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            int j, k;
-            for (i = 0, k = 0; i < Nth; i++)
-            {
-                for (j = 0; j < Nth; j++, k++)
-                {
-                    if (i == j)
-                    {
-                        prior_sigma[k] = 1.0;
-                    }
-                    else
-                    {
-                        prior_sigma[k] = 0.0;
-                    }
-                }
-            }
-        }
-    }
-
-    if (prior_type == 3) /* composite */
-    {
-        if (compositeprior_distr != NULL)
-        {
-            delete[] compositeprior_distr;
-        }
-        compositeprior_distr = new double[Nth];
-
-        if (linit)
-        {
-            if (prior_mu != NULL)
-            {
-                delete[] prior_mu;
-            }
-            prior_mu = new double[Nth];
-
-            if (prior_sigma != NULL)
-            {
-                delete[] prior_sigma;
-            }
-            prior_sigma = new double[Nth * Nth];
-        }
-
-        for (i = 0; i < Nth; i++)
-        {
-            rewind(f);
             found = 0;
-            while (fgets(line, 256, f) != NULL)
+            std::string strt("B" + std::to_string(n));
+
+            while (u.readLine())
             {
-                if ((line[0] == '#') || (strlen(line) == 0))
+                if (u.emptyLine())
                 {
                     continue;
                 }
 
-                char bound[8];
-                sprintf(bound, "C%d", i);
-                if (strstr(line, bound) != NULL)
+                p.parse(u.line, u.lineArg);
+
+                std::string str(u.lineArg[0]);
+
+                if (str == strt)
                 {
-                    sscanf(line, "%*s %lf %lf %lf", &compositeprior_distr[i], &lowerbound[i], &upperbound[i]);
+                    p.parse(u.lineArg[1], lowerbound[n]);
+                    p.parse(u.lineArg[2], upperbound[n]);
                     found = 1;
                     break;
                 }
             }
+
             if (!found)
             {
-                lowerbound[i] = lb; /* Bdef value or Default LB */
-                upperbound[i] = ub; /* Bdef value of Default UB */
-                compositeprior_distr[i] = 0;
+                lowerbound[n] = lb; /* Bdef value or Default LB */
+                upperbound[n] = ub; /* Bdef value of Default UB */
             }
         }
-    }
 
-    /* new, parse auxil_size and auxil_data */
-    rewind(f);
-    found = 0;
-    while (fgets(line, 256, f) != NULL)
-    {
-        if ((line[0] == '#') || (strlen(line) == 0))
+        if (prior_type == 1) /* gaussian */
         {
-            continue;
+            if (linit)
+            {
+                /* new, parse prior_mu */
+                if (prior_mu != NULL)
+                {
+                    delete[] prior_mu;
+                }
+                prior_mu = new double[Nth];
+            }
+
+            u.rewindFile();
+            found = 0;
+
+            while (u.readLine())
+            {
+                if (u.emptyLine())
+                {
+                    continue;
+                }
+
+                p.parse(u.line, u.lineArg);
+
+                std::string str(u.lineArg[0]);
+
+                if (str == "prior_mu")
+                {
+                    for (n = 0; n < Nth; n++)
+                    {
+                        p.parse(u.lineArg[n + 1], prior_mu[n]);
+                    }
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                n = Nth;
+                while (n--)
+                {
+                    prior_mu[n] = 0.0;
+                }
+            }
+
+            if (linit)
+            {
+                /* new, parse prior_sigma */
+                if (prior_sigma != NULL)
+                {
+                    delete[] prior_sigma;
+                }
+                prior_sigma = new double[Nth * Nth];
+            }
+
+            u.rewindFile();
+            found = 0;
+
+            while (u.readLine())
+            {
+                if (u.emptyLine())
+                {
+                    continue;
+                }
+
+                p.parse(u.line, u.lineArg);
+
+                std::string str(u.lineArg[0]);
+
+                if (str == "prior_sigma")
+                {
+                    for (n = 0; n < Nth * Nth; n++)
+                    {
+                        p.parse(u.lineArg[n + 1], prior_sigma[n]);
+                    }
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                int i, j, k;
+                for (i = 0, k = 0; i < Nth; i++)
+                {
+                    for (j = 0; j < Nth; j++, k++)
+                    {
+                        if (i == j)
+                        {
+                            prior_sigma[k] = 1.0;
+                        }
+                        else
+                        {
+                            prior_sigma[k] = 0.0;
+                        }
+                    }
+                }
+            }
         }
 
-        if (strstr(line, "auxil_size") != NULL)
+        if (prior_type == 3) /* composite */
         {
-            sscanf(line, "%*s %d", &auxil_size);
-            found = 1;
-            break;
-        }
-    }
+            if (compositeprior_distr != NULL)
+            {
+                delete[] compositeprior_distr;
+            }
+            compositeprior_distr = new double[Nth];
 
-    if (auxil_size > 0)
-    {
-        if (auxil_data != NULL)
-        {
-            delete[] auxil_data;
-        }
-        auxil_data = new double[auxil_size];
+            if (linit)
+            {
+                if (prior_mu != NULL)
+                {
+                    delete[] prior_mu;
+                }
+                prior_mu = new double[Nth];
 
-        rewind(f);
+                if (prior_sigma != NULL)
+                {
+                    delete[] prior_sigma;
+                }
+                prior_sigma = new double[Nth * Nth];
+            }
+
+            n = Nth;
+            while (n--)
+            {
+                u.rewindFile();
+
+                found = 0;
+                std::string strt("C" + std::to_string(n));
+
+                while (u.readLine())
+                {
+                    if (u.emptyLine())
+                    {
+                        continue;
+                    }
+
+                    p.parse(u.line, u.lineArg);
+
+                    std::string str(u.lineArg[0]);
+
+                    if (str == strt)
+                    {
+                        p.parse(u.lineArg[1], compositeprior_distr[n]);
+                        p.parse(u.lineArg[2], lowerbound[n]);
+                        p.parse(u.lineArg[3], upperbound[n]);
+                        found = 1;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    compositeprior_distr[n] = 0;
+                    lowerbound[n] = lb; /* Bdef value or Default LB */
+                    upperbound[n] = ub; /* Bdef value of Default UB */
+                }
+            }
+        }
+
+        /* new, parse auxil_size and auxil_data */
+        u.rewindFile();
         found = 0;
-        while (fgets(line, 256, f) != NULL)
+
+        while (u.readLine())
         {
-            if ((line[0] == '#') || (strlen(line) == 0))
+            if (u.emptyLine())
             {
                 continue;
             }
 
-            if (strstr(line, "auxil_data") != NULL)
-            {
-                char *tok = strtok(line, " ;,\t");
-                if (tok == NULL)
-                {
-                    break;
-                }
+            p.parse(u.line, u.lineArg);
 
-                i = 0;
-                tok = strtok(NULL, " ;,\t");
-                while (tok != NULL)
-                {
-                    auxil_data[i] = atof(tok);
-                    i++;
-                    tok = strtok(NULL, " ;,\t");
-                }
+            std::string str(u.lineArg[0]);
+
+            if (str == "auxil_size")
+            {
+                p.parse(u.lineArg[1], auxil_size);
                 found = 1;
                 break;
             }
         }
-    }
 
-    fclose(f);
-
-    if (linit)
-    {
-        if (Num != NULL)
+        if (auxil_size > 0)
         {
-            delete[] Num;
-        }
-        Num = new int[MaxStages];
-
-        i = MaxStages;
-        while (i--)
-            Num[i] = PopSize;
-
-        LastNum = PopSize;
-
-        if (local_cov != NULL)
-        {
-            for (i = 0; i < PopSize; i++)
+            if (auxil_data != NULL)
             {
-                if (local_cov[i] != NULL)
+                delete[] auxil_data;
+            }
+            auxil_data = new double[auxil_size];
+
+            u.rewindFile();
+
+            found = 0;
+
+            while (u.readLine())
+            {
+                if (u.emptyLine())
                 {
-                    delete[] local_cov[i];
+                    continue;
+                }
+
+                p.parse(u.line, u.lineArg);
+
+                std::string str(u.lineArg[0]);
+
+                if (str == "auxil_data")
+                {
+                    for (n = 0; n < auxil_size; n++)
+                    {
+                        p.parse(u.lineArg[n + 1], auxil_data[n]);
+                    }
+                    found = 1;
+                    break;
                 }
             }
-            delete[] local_cov;
-        }
 
-        local_cov = new double *[PopSize];
-        for (i = 0; i < PopSize; i++)
-        {
-            local_cov[i] = new double[Nth * Nth];
-            for (int j = 0, l = 0; j < Nth; j++)
+            if (!found)
             {
-                for (int k = 0; k < Nth; k++, l++)
+                int i;
+                for (i = 0; i < auxil_size; i++)
                 {
-                    if (j == k)
-                    {
-                        local_cov[i][l] = 1;
-                    }
-                    else
-                    {
-                        local_cov[i][l] = 0;
-                    }
+                    auxil_data[i] = 0;
                 }
             }
         }
+
+        u.closeFile();
+
+        if (linit)
+        {
+            if (Num != NULL)
+            {
+                delete[] Num;
+            }
+            Num = new int[MaxStages];
+
+            n = MaxStages;
+            while (n--)
+            {
+                Num[n] = PopSize;
+            }
+            LastNum = PopSize;
+
+            if (local_cov != NULL)
+            {
+                n = PopSize;
+                while (n--)
+                {
+                    if (local_cov[n] != NULL)
+                    {
+                        delete[] local_cov[n];
+                    }
+                }
+
+                delete[] local_cov;
+            }
+
+            local_cov = new double *[PopSize];
+            for (n = 0; n < PopSize; n++)
+            {
+                local_cov[n] = new double[Nth * Nth];
+                for (int i = 0, l = 0; i < Nth; i++)
+                {
+                    for (int j = 0; j < Nth; j++, l++)
+                    {
+                        if (i == j)
+                        {
+                            local_cov[n][l] = 1;
+                        }
+                        else
+                        {
+                            local_cov[n][l] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
+    return false;
 };
 
 /*!
@@ -1028,7 +1059,7 @@ struct database
     */
     virtual void load(const char *fname)
     {
-        
+
         if (entry != NULL)
         {
             char filename[256];
@@ -1071,7 +1102,6 @@ struct database
             fclose(f);
         }
     };
-
 };
 
 template <class T>
