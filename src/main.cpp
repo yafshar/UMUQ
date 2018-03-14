@@ -7,7 +7,7 @@
 #include "./numerics/eigenmatrix.hpp"
 #include "./numerics/flannlib.hpp"
 #include "./misc/timer.hpp"
-#include "./misc/spawner.hpp"
+#include "./misc/utility.hpp"
 #include <lapacke.h>
 
 int main()
