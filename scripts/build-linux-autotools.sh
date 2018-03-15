@@ -3,6 +3,7 @@ set -e
 
 # Create the configuration script
 autoreconf -i
-../configure
+#configure and make
+./configure
 make
 make check
