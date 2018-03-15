@@ -37,44 +37,30 @@ AC_DEFUN([AX_GOOGLETEST], [
 	)
 
 	AS_IF([test x"$ac_googletest_path" = xno], [], 
-		[ 
+		[
+			CPPFLAGS_SAVED="$CPPFLAGS"
+
 			dnl if the user does not provide the DIR root directory for EIGEN, we search the default PATH
 			AS_IF([test x"$ac_googletest_path" = x], 
 				[ 
-					AC_CHECK_HEADERS([gtest/gtest.h], [ax_googletest_ok=yes], [ax_googletest_ok=no])
-
-					AS_IF([test x"$ax_googletest_ok" = xyes], 
+					AC_CHECK_HEADERS([gtest/gtest.h], 
 						[
-							LDFLAGS_SAVED="$LDFLAGS"
-							LDFLAGS+=' -lgtest '
-
-							AC_LANG_PUSH(C++)
-							AS_IF([test x"$ax_googletest_ok" = xyes], 
-								[
-									AC_CHECK_LIB([gtest], [main], 
-										[], [
-											ax_googletest_ok="no"
-											LDFLAGS="$LDFLAGS_SAVED"
-										]
-									)
-								], [
-									LDFLAGS="$LDFLAGS_SAVED"
-								]
-							)
-							AC_LANG_POP([C++])
-							AC_SUBST(LDFLAGS)
+							ax_googletest_ok=yes
+							succeeded=yes
+						], [
+							ax_googletest_ok=no
+							succeeded=no
 						]
 					)
-				], 
-				[
+				], [
 					ax_googletest_ok=no
+					succeeded=no
 				]
 			)
 			
 			AS_IF([test x"$ax_googletest_ok" = xno], 
 				[
 					AC_MSG_NOTICE(GOOGLETEST)
-					succeeded=no
 
 					dnl first we check the system location for googletest libraries
 					if test x"$ac_googletest_path" != x; then
@@ -95,35 +81,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 						done
 					fi
 
-					CPPFLAGS_SAVED="$CPPFLAGS"
-					LDFLAGS_SAVED="$LDFLAGS"
-
 					CPPFLAGS+="$googletest_CPPFLAGS"
-
-					googletest_LDFLAGS=""
-					
-					if test x"$ac_googletest_path" != x; then
-						if test -d "$ac_googletest_path/lib" && test -r "$ac_googletest_path/lib" ; then
-							googletest_LDFLAGS=" -L$ac_googletest_path/lib"   
-						fi
-					else
-						for ac_googletest_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu ; do
-							if test -f "$ac_googletest_path_tmp/libgtest.so" && test -r "$ac_googletest_path_tmp/libgtest.so"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
-								break;
-							fi
-							if test -f "$ac_googletest_path_tmp/libgtest.a" && test -r "$ac_googletest_path_tmp/libgtest.a"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
-								break;
-							fi      
-							if test -f "$ac_googletest_path_tmp/libgtest.dylib" && test -r "$ac_googletest_path_tmp/libgtest.dylib"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp"  
-								break;
-							fi   
-						done
-					fi
-
-					LDFLAGS+="$googletest_LDFLAGS -lgtest"
 
 					AC_LANG_PUSH(C++)
 					AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -141,37 +99,25 @@ AC_DEFUN([AX_GOOGLETEST], [
 							AC_MSG_ERROR([ Unable to continue without the GOOGLETEST header files !])
 						]
 					)
-
-					LIBS_SAVED="$LIBS"
-
-					AC_CHECK_LIB([gtest], [main],
-						[], [
-							succeeded=no
-							AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
-						]
-					)
 					AC_LANG_POP([C++])
-
-					if test x"$succeeded" == xyes ; then
-						GTEST_CPPFLAGS="$CPPFLAGS"
-						GTEST_CXXFLAGS="$CXXFLAGS"
-						GTEST_LDFLAGS="$LDFLAGS"
-						GTEST_LIBS="$LIBS"
-
-						AC_SUBST(GTEST_CPPFLAGS)
-						AC_SUBST(GTEST_CXXFLAGS)
-						AC_SUBST(GTEST_LDFLAGS)
-						AC_SUBST(GTEST_LIBS)
-                        
-						ax_googletest_ok="yes"
-					fi
-
-					CPPFLAGS="$CPPFLAGS_SAVED"
-					LDFLAGS="$LDFLAGS_SAVED"
-					LIBS="$LIBS_SAVED"
-					AC_SUBST(LIBS)
 				]
 			)
+
+			if test x"$succeeded" == xyes ; then
+				GTEST_CPPFLAGS="$CPPFLAGS"
+				GTEST_CXXFLAGS="$CXXFLAGS"
+				GTEST_LDFLAGS="$LDFLAGS"
+				GTEST_LIBS="$LIBS"
+
+				AC_SUBST(GTEST_CPPFLAGS)
+				AC_SUBST(GTEST_CXXFLAGS)
+				AC_SUBST(GTEST_LDFLAGS)
+				AC_SUBST(GTEST_LIBS)
+
+				ax_googletest_ok="yes"$
+			fi
+
+			CPPFLAGS="$CPPFLAGS_SAVED"
 		]
 	)
 
