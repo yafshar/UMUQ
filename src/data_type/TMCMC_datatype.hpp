@@ -16,7 +16,7 @@
 #include "../misc/parser.hpp"
 
 /*! \file TMCMC_datatype.hpp
-*   \brief Data types and helper structures.
+*   \brief Data types and helper structures & classes.
 *
 * \param Nth
 * \param MaxStages
@@ -50,8 +50,9 @@
 * \param use_local_cov
 * \param local_scale
 */
-struct data_t
+class data_t
 {
+  public:
     int Nth;
     int MaxStages; /* = MAXGENS*/
     int PopSize;   /* = DATANUM*/
@@ -763,50 +764,42 @@ void data_t::destroy()
         delete[] lowerbound;
         lowerbound = NULL;
     }
-
     if (upperbound != NULL)
     {
         delete[] upperbound;
         upperbound = NULL;
     }
-
     if (compositeprior_distr != NULL)
     {
         delete[] compositeprior_distr;
         compositeprior_distr = NULL;
     }
-
     if (prior_mu != NULL)
     {
         delete[] prior_mu;
         prior_mu = NULL;
     }
-
     if (prior_sigma != NULL)
     {
         delete[] prior_sigma;
         prior_sigma = NULL;
     }
-
     if (auxil_data != NULL)
     {
         delete[] auxil_data;
         auxil_data = NULL;
     }
-
     if (Num != NULL)
     {
         delete[] Num;
         Num = NULL;
     }
-
     if (init_mean != NULL)
     {
         delete[] * init_mean;
         delete[] init_mean;
         init_mean = NULL;
     }
-
     if (local_cov != NULL)
     {
         delete[] * local_cov;
@@ -1043,7 +1036,6 @@ struct database
                     fprintf(f, "%20.16lf\n", entry[pos].Fvalue);
                 }
             }
-
             fclose(f);
         }
     };
@@ -1138,14 +1130,7 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
     {
         if (entry[pos].Parray != NULL)
         {
-            try
-            {
-                delete[] entry[pos].Parray;
-            }
-            catch (const std::system_error &e)
-            {
-                std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-            }
+            delete[] entry[pos].Parray;
         }
 
         try
@@ -1170,14 +1155,7 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
     {
         if (entry[pos].Garray != NULL)
         {
-            try
-            {
-                delete[] entry[pos].Garray;
-            }
-            catch (const std::system_error &e)
-            {
-                std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-            }
+            delete[] entry[pos].Garray;
         }
 
         try
@@ -1218,7 +1196,7 @@ void database<T>::sort(sort_t *list)
 {
     if (list == NULL)
     {
-        list = (sort_t *)malloc(entries * sizeof(sort_t));
+        list = new sort_t[entries];
     }
     for (int i = 0; i < entries; i++)
     {
