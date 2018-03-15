@@ -26,7 +26,6 @@
 //opendir, readdir
 #include <dirent.h>
 
-
 #define LINESIZE 256
 
 /*! \class utility
@@ -155,7 +154,7 @@ class utility
      *  \brief 
      */
     inline bool readLine() const { return fgets(line, LINESIZE, f) != NULL; }
-    
+
     /*!
      *  \brief  
      */
@@ -166,7 +165,6 @@ class utility
      */
     inline void rewindFile() { rewind(f); }
 
-
     /*!
      *  \brief  close the File
      */
@@ -176,25 +174,11 @@ class utility
         {
             fclose(f);
             f = NULL;
-            
-            try
-            {
-                delete[] line;
-            }
-            catch (const std::system_error &e)
-            {
-                std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-            }
+
+            delete[] line;
             line = NULL;
-            
-            try
-            {
-                delete[] lineArg;
-            }
-            catch (const std::system_error &e)
-            {
-                std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-            }
+
+            delete[] lineArg;
             lineArg = NULL;
         }
     }

@@ -117,6 +117,7 @@ class data_t
     double **local_cov; /* [DATANUM][PROBDIM*PROBDIM] */
     int use_local_cov;
     double local_scale;
+
     //! constructor
     /*!
     *  \brief constructor for the default variables
@@ -260,53 +261,7 @@ class data_t
     */
     ~data_t()
     {
-        if (lowerbound != NULL)
-        {
-            delete[] lowerbound;
-            lowerbound = NULL;
-        }
-        if (upperbound != NULL)
-        {
-            delete[] upperbound;
-            upperbound = NULL;
-        }
-        if (compositeprior_distr != NULL)
-        {
-            delete[] compositeprior_distr;
-            compositeprior_distr = NULL;
-        }
-        if (prior_mu != NULL)
-        {
-            delete[] prior_mu;
-            prior_mu = NULL;
-        }
-        if (prior_sigma != NULL)
-        {
-            delete[] prior_sigma;
-            prior_sigma = NULL;
-        }
-        if (auxil_data != NULL)
-        {
-            delete[] auxil_data;
-            auxil_data = NULL;
-        }
-        if (Num != NULL)
-        {
-            delete[] Num;
-            Num = NULL;
-        }
-        if (init_mean != NULL)
-        {
-            delete[] * init_mean;
-            delete[] init_mean;
-            init_mean = NULL;
-        }
-        if (local_cov != NULL)
-        {
-            delete[] * local_cov;
-            delete[] local_cov;
-            local_cov = NULL;
-        }
+        destroy();
     };
 
     void destroy();
@@ -934,12 +889,16 @@ struct sort_t
 * \param m A mutex object
 */
 template <class T>
-struct database
+class database
 {
+  public:
     T *entry;
     int entries;
+
+  private:
     pthread_mutex_t m;
 
+  public:
     /*!
     *  \brief constructor for the database structure
     *    
@@ -956,10 +915,10 @@ struct database
     *  \param nsize1 an integer argument.
     *  \param nsize2 an integer argument.
     */
-    void init(int nsize1);
-    void init(int nsize1, int nsize2)
+    bool init(int nsize1);
+    bool init(int nsize1, int nsize2)
     {
-        init(nsize1 * nsize2);
+        return init(nsize1 * nsize2);
     };
 
     /*!
@@ -1097,7 +1056,7 @@ struct database
 };
 
 template <class T>
-void database<T>::init(int nsize1)
+bool database<T>::init(int nsize1)
 {
     if (entry == NULL)
     {
@@ -1107,13 +1066,16 @@ void database<T>::init(int nsize1)
         }
         catch (const std::system_error &e)
         {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            return false;
         }
         for (int i = 0; i < nsize1; i++)
         {
             entry[i] = (T)0;
         }
+        return true;
     }
+    return false;
 }
 
 template <class T>
