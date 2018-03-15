@@ -31,6 +31,7 @@ TEST(openFile_test, HandlesFiles)
     EXPECT_EQ(NULL, u.f);
     EXPECT_EQ(NULL, u.line);
     EXPECT_EQ(NULL, u.lineArg);
+    
 };
 
 // Tests
