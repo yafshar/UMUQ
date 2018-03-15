@@ -264,14 +264,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     }
 
     n = d * polynomial::binomial_coefficient(d + r, r);
-    try
-    {
-        alpha = new int[n];
-    }
-    catch (const std::system_error &e)
-    {
-        std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-    }
+    alpha = new int[n];
 
     int x[d];
     for (int i = 0; i < d; i++)
