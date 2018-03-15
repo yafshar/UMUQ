@@ -1,6 +1,13 @@
 #ifndef UMHBM_POLYNOMIAL_H
 #define UMHBM_POLYNOMIAL_H
 
+#include <iostream>
+#include <system_error>
+#include <cmath>
+
+//exit
+#include <cstdlib>
+
 /*! \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *
  *  A (univariate) monomial in 1 variable x is simply any (non-negative integer) power of x:
@@ -102,14 +109,14 @@ int polynomial::binomial_coefficient(int n, int k)
     if ((k < 0) || (n < 0))
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! k or n < 0" << std::endl;
+        std::cerr << " Fatal error! k or n < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (k < n)
     {
         if (k == 0)
             return 1;
-        if ((k == 1) || (k == n-1))
+        if ((k == 1) || (k == n - 1))
             return n;
         int mn;
         int mx;
@@ -148,7 +155,7 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     if (r < 0)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! maximum degree r < 0" << std::endl;
+        std::cerr << " Fatal error! maximum degree r < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (r == 0)
@@ -160,14 +167,14 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     if (asum < 0)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! input sums < 0" << std::endl;
+        std::cerr << " Fatal error! input sums < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     if (r < asum)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! input sums > maximum degree r" << std::endl;
+        std::cerr << " Fatal error! input sums > maximum degree r" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -253,14 +260,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
 
     if (alpha != NULL)
     {
-        try
-        {
-            delete[] alpha;
-        }
-        catch (const std::system_error &e)
-        {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-        }
+        delete[] alpha;
     }
 
     n = d * polynomial::binomial_coefficient(d + r, r);
@@ -270,7 +270,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     }
     catch (const std::system_error &e)
     {
-        std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+        std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
     }
 
     int x[d];
