@@ -1,19 +1,19 @@
 #
 # SYNOPSIS
 #
-#   AX_GOOGLETEST([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#	AX_GOOGLETEST([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   Test for the GOOGLETEST framework
+#	Test for the GOOGLETEST framework
 #
-#   If no path to the installed googletest framework is given the macro searchs
-#   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
-#   and evaluates the environment variable for googletest library and header files. 
+#	If no path to the installed googletest framework is given the macro searchs
+#	under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
+#	and evaluates the environment variable for googletest library and header files. 
 #
 # ADAPTED 
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_GOOGLETEST], [AX_GOOGLETEST])
 AC_DEFUN([AX_GOOGLETEST], [
@@ -46,14 +46,9 @@ AC_DEFUN([AX_GOOGLETEST], [
 					AS_IF([test x"$ax_googletest_ok" = xyes], 
 						[
 							LDFLAGS_SAVED="$LDFLAGS"
-							LDFLAGS+=' -lgtest -lpthread'
+							LDFLAGS+=' -lgtest '
 
 							AC_LANG_PUSH(C++)
-							AC_CHECK_LIB([pthread], [main], 
-								[], [
-									ax_googletest_ok=no
-								]
-							)
 							AS_IF([test x"$ax_googletest_ok" = xyes], 
 								[
 									AC_CHECK_LIB([gtest], [main], 
@@ -149,13 +144,6 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 					LIBS_SAVED="$LIBS"
 
-					AC_CHECK_LIB([pthread], [main],
-						[], [
-							succeeded=no
-							AC_MSG_ERROR([ Unable to continue! pthread devel library is missing! pthread is required for this program!])
-						]
-					)
-
 					AC_CHECK_LIB([gtest], [main],
 						[], [
 							succeeded=no
@@ -186,7 +174,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 			)
 		]
 	)
-	
+
 	AM_CONDITIONAL([HAVE_GOOGLETEST], [test x"$ax_googletest_ok" == xyes])
 	AM_COND_IF([HAVE_GOOGLETEST],
 		[], [
