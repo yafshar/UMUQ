@@ -10,9 +10,9 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get update 
 	
-    sudo update-alternatives --remove-all gcc 
-    sudo update-alternatives --remove-all g++
-    sudo update-alternatives --remove-all gfortran
+    # sudo update-alternatives --remove-all gcc 
+    # sudo update-alternatives --remove-all g++
+    # sudo update-alternatives --remove-all gfortran
     
     sudo apt-get install -y gcc-5 g++-5 gfortran-5 clang-3.7
 
