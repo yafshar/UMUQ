@@ -2,6 +2,7 @@
 #define UMHBM_ARRAY_H
 
 #include <iostream>
+#include <iterator>
 
 /*! \class ArrayWrapper
 *   \brief ArrayWrapper is a class which creates a std iterator for a vector
@@ -19,9 +20,20 @@ class ArrayWrapper
         bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
         bool operator!=(iterator const &rhs) { return iPosition != rhs.iPosition; }
 
-        void operator++() { ++iPosition; }
+        iterator &operator++()
+        {
+            ++iPosition;
+            return *this;
+        }
 
-        T operator*()
+        iterator operator++(T)
+        {
+            iterator tmp(*this);
+            operator++();
+            return tmp;
+        }
+
+        T& operator*()
         {
             return *iPosition;
         }
