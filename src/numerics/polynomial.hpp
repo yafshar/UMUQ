@@ -2,7 +2,6 @@
 #define UMHBM_POLYNOMIAL_H
 
 #include <iostream>
-#include <system_error>
 #include <cmath>
 
 //exit
@@ -264,7 +263,15 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     }
 
     n = d * polynomial::binomial_coefficient(d + r, r);
-    alpha = new int[n];
+    try
+    {
+        alpha = new int[n];
+    }
+    catch (std::bad_alloc &e)
+    {
+        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     int x[d];
     for (int i = 0; i < d; i++)
