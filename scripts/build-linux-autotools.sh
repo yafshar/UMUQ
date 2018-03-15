@@ -4,6 +4,6 @@ set -e
 # Create the configuration script
 autoreconf -i
 #configure and make
-./configure
+./configure --with-googletest
 make
 make check
