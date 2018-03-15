@@ -77,8 +77,7 @@ TEST(datatype, HandlesIO)
 {
     data_t d1;
 
-    std::cout << d1.read("test.txt") << std::endl;
-
+    EXPECT_TRUE(d1.read("test.txt"));
     EXPECT_EQ(4, d1.Nth);
     EXPECT_EQ(20, d1.MaxStages);
     EXPECT_EQ(5000, d1.PopSize);
@@ -114,7 +113,7 @@ TEST(datatype, HandlesIO)
     EXPECT_EQ(15.0, d1.upperbound[2]);
     EXPECT_EQ(1.0, d1.upperbound[3]);
 
-    //EXPECT_TRUE(d1->read("test.txt"));
+    //
 }
 
 int main(int argc, char **argv)
