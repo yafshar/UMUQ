@@ -931,10 +931,10 @@ class database
     *  \param ndimGarray an integer argument, shows the size of Garray
     *  \param surrogate  an integer argument for the surrogate model (default 0, no surrogate)
     */
-    void update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate);
-    void update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray)
+    bool update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate);
+    bool update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray)
     {
-        update(*Parray, ndimParray, Fvalue, *Garray, ndimGarray, 0);
+        return update(*Parray, ndimParray, Fvalue, *Garray, ndimGarray, 0);
     };
 
     /*!
@@ -1079,7 +1079,7 @@ bool database<T>::init(int nsize1)
 }
 
 template <class T>
-void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate)
+bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate)
 {
     int pos;
 
@@ -1101,7 +1101,8 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
         }
         catch (const std::system_error &e)
         {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            return false;
         }
     }
     entry[pos].ndimParray = ndimParray;
@@ -1126,7 +1127,8 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
         }
         catch (const std::system_error &e)
         {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            return false;
         }
     }
     entry[pos].ndimGarray = ndimGarray;
@@ -1137,6 +1139,7 @@ void database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
     }
 
     entry[pos].surrogate = surrogate;
+    return true;
 };
 
 /*!

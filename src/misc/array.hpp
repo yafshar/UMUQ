@@ -13,10 +13,10 @@ class ArrayWrapper
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
       public:
-        iterator(const T *aPointer) : iPosition(aPointer) {}
+        iterator(T const *aPointer) : iPosition(aPointer) {}
 
-        bool operator==(const iterator &rhs) { return iPosition == rhs.iPosition; }
-        bool operator!=(const iterator &rhs) { return iPosition != rhs.iPosition; }
+        bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
+        bool operator!=(iterator const &rhs) { return iPosition != rhs.iPosition; }
 
         void operator++() { ++iPosition; }
 
@@ -31,11 +31,11 @@ class ArrayWrapper
         }
 
       private:
-        const T *iPosition;
+        T const *iPosition;
     };
 
   public:
-    ArrayWrapper(const T *aInputArray, long aNumOfElements) : iArray(aInputArray), iNumOfElements(aNumOfElements) {}
+    ArrayWrapper(T const *aInputArray, long aNumOfElements) : iArray(aInputArray), iNumOfElements(aNumOfElements) {}
 
     iterator begin()
     {
@@ -47,7 +47,7 @@ class ArrayWrapper
     }
 
   private:
-    const T *iArray;
+    T const *iArray;
     long iNumOfElements;
 };
 
