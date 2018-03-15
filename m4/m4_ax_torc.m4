@@ -109,7 +109,7 @@ AC_DEFUN([AX_TORC], [
 				fi
 			done
 		else
-			for ac_torc_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/torc /usr/lib64/torc /use/local/lib/torc /use/local/lib64/torc /opt/torc /opt/lib/torc ; do
+			for ac_torc_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/torc /usr/lib64/torc /use/local/lib/torc /use/local/lib64/torc /opt/torc /opt/lib/torc /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu ; do
 				if test -d "$ac_torc_path_tmp" && test -r "$ac_torc_path_tmp" ; then
 					if test -f "$ac_torc_path_tmp/libtorc.a" && test -r "$ac_torc_path_tmp/libtorc.a"; then
 						TORC_LDFLAGS="-L$ac_torc_path_tmp" 

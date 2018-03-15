@@ -30,11 +30,11 @@ AC_DEFUN([AX_GOOGLETEST], [
 				ac_googletest_path="$withval"
 			else 
 				ac_googletest_path=""
-            fi
-        ], [
+			fi
+		], [
 			ac_googletest_path=no
 		]
-    )
+	)
 
 	AS_IF([test x"$ac_googletest_path" = xno], [], 
 		[ 
@@ -45,30 +45,30 @@ AC_DEFUN([AX_GOOGLETEST], [
         			
 					AS_IF([test x"$ax_googletest_ok" = xyes], 
 						[
-            				LDFLAGS_SAVED="$LDFLAGS"
-            				LDFLAGS+=' -lgtest -lpthread'
+            						LDFLAGS_SAVED="$LDFLAGS"
+            						LDFLAGS+=' -lgtest -lpthread'
             			
 							AC_LANG_PUSH(C++)
-            				AC_CHECK_LIB([pthread], [main], 
-                        		[], [
-                    				ax_googletest_ok=no
-                        		]
-                			) 
+            						AC_CHECK_LIB([pthread], [main], 
+                        					[], [
+                    							ax_googletest_ok=no
+                        					]
+                					) 
 							AS_IF([test x"$ax_googletest_ok" = xyes], 
 								[
 									AC_CHECK_LIB([gtest], [main], 
-										[],	[
-                    						ax_googletest_ok="no"
-                    						LDFLAGS="$LDFLAGS_SAVED"
-                						]
-            						)
+										[], [
+                    									ax_googletest_ok="no"
+                    									LDFLAGS="$LDFLAGS_SAVED"
+                								]
+            								)
 								], [
 									LDFLAGS="$LDFLAGS_SAVED"
 								]
 							)						
 							AC_LANG_POP([C++])
-            				AC_SUBST(LDFLAGS)
-        				]
+            						AC_SUBST(LDFLAGS)
+        					]
 					)
 				], 
 				[
@@ -78,7 +78,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 			
 			AS_IF([test x"$ax_googletest_ok" = xno], 
 				[
-                	AC_MSG_NOTICE(GOOGLETEST)
+                			AC_MSG_NOTICE(GOOGLETEST)
 					succeeded=no
                 
 					dnl first we check the system location for googletest libraries
@@ -91,18 +91,18 @@ AC_DEFUN([AX_GOOGLETEST], [
 								fi
 							fi
 						done
-                	else
-						for ac_googletest_path_tmp in /usr /usr/local /use/local/include /opt /opt/local ; do
+					else
+						for ac_googletest_path_tmp in /usr /usr/inlude /usr/local /use/local/include /opt /opt/local ; do
 							if test -f "$ac_googletest_path_tmp/gtest.h" && test -r "$ac_googletest_path_tmp/gtest.h"; then
 								googletest_CPPFLAGS=" -I$ac_googletest_path_tmp"
-                                break;
-                            fi
-                        done
-                	fi
+								break;
+							fi
+						done
+					fi
 
 					CPPFLAGS_SAVED="$CPPFLAGS"
 					LDFLAGS_SAVED="$LDFLAGS"
-					
+
 					CPPFLAGS+="$googletest_CPPFLAGS"
 
 					googletest_LDFLAGS=""
@@ -112,7 +112,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 							googletest_LDFLAGS=" -L$ac_googletest_path/lib"   
 						fi
 					else
-						for ac_googletest_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib ; do
+						for ac_googletest_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu ; do
 							if test -f "$ac_googletest_path_tmp/libgtest.so" && test -r "$ac_googletest_path_tmp/libgtest.so"; then
 								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
 								break;
@@ -120,7 +120,11 @@ AC_DEFUN([AX_GOOGLETEST], [
 							if test -f "$ac_googletest_path_tmp/libgtest.a" && test -r "$ac_googletest_path_tmp/libgtest.a"; then
 								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
 								break;
-                            fi      
+							fi      
+							if test -f "$ac_googletest_path_tmp/libgtest.dylib" && test -r "$ac_googletest_path_tmp/libgtest.dylib"; then
+								googletest_LDFLAGS=" -L$ac_googletest_path_tmp"  
+								break;
+							fi   
 						done
 					fi
 
@@ -128,18 +132,18 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 					AC_LANG_PUSH(C++)
 					AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-                    		@%:@include "gtest/gtest.h"
+							@%:@include "gtest/gtest.h"
 						]], [[]]
-                        )], [
+						)], [
 							AC_MSG_RESULT(checking gtest/gtest.h usability...  yes)
 							AC_MSG_RESULT(checking gtest/gtest.h presence... yes)
 							AC_MSG_RESULT(checking for gtest/gtest.h... yes)
 							succeeded=yes
 						], [
-                			AC_MSG_RESULT(checking gtest/gtest.husability...  no)
+							AC_MSG_RESULT(checking gtest/gtest.husability...  no)
 							AC_MSG_RESULT(checking gtest/gtest.h presence... no)
-                    		AC_MSG_RESULT(checking for gtest/gtest.h... no)
-                    		AC_MSG_ERROR([ Unable to continue without the GOOGLETEST header files !])
+							AC_MSG_RESULT(checking for gtest/gtest.h... no)
+							AC_MSG_ERROR([ Unable to continue without the GOOGLETEST header files !])
 						]
 					)
 
@@ -149,7 +153,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 						[], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! pthread devel library is missing! pthread is required for this program!])
-                        ]
+						]
 					)    
                 
 					AC_CHECK_LIB([gtest], [main], 
@@ -157,7 +161,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
 						]
-                	)
+					)
 					AC_LANG_POP([C++])
 
 					if test x"$succeeded" == xyes ; then
@@ -177,7 +181,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 					CPPFLAGS="$CPPFLAGS_SAVED"
 					LDFLAGS="$LDFLAGS_SAVED"                
 					LIBS="$LIBS_SAVED" 
-                	AC_SUBST(LIBS)
+					AC_SUBST(LIBS)
 				]
 			)
 		]

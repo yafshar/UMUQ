@@ -73,7 +73,7 @@ AC_DEFUN([AX_FLANN], [
                 fi
             done
         else
-            for ac_flann_path_tmp in /usr /usr/local /use/local/include /opt /opt/local ; do
+            for ac_flann_path_tmp in /usr /usr/include /usr/local /use/local/include /opt /opt/local ; do
                 if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
                     if test -f "$ac_flann_path_tmp/flann/flann.h" && test -r "$ac_flann_path_tmp/flann/flann.h"; then
                         flann_CPPFLAGS="-I$ac_flann_path_tmp"
@@ -94,7 +94,7 @@ AC_DEFUN([AX_FLANN], [
                 flann_LDFLAGS=" -L$ac_flann_path/lib"   
             fi
     	else
-            for ac_flann_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib ; do
+            for ac_flann_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu; do
                 if test -f "$ac_flann_path_tmp/libflann.so" && test -r "$ac_flann_path_tmp/libflann.so"; then
                     flann_LDFLAGS=" -L$ac_flann_path_tmp" 
                     break;

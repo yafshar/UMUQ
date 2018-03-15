@@ -59,7 +59,7 @@ AC_DEFUN([AX_EIGEN], [
                 fi
             done
     	else
-            for ac_eigen_path_tmp in /usr /usr/local /use/local/include /opt /opt/local ; do
+            for ac_eigen_path_tmp in /usr /usr/inlude /usr/local /use/local/include /opt /opt/local ; do
                 if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen"; then
                     if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense"; then
                         EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp"
