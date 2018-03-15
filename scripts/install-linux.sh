@@ -37,6 +37,13 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y liblapacke
 	sudo apt-get install -y liblapacke-dev
 	sudo apt-get install -y libgtest-dev 
+
+	# This is valid on ubuntu Linux    
+	cd /usr/src/gtest
+	sudo cmake CMakeLists.txt
+	sudo make
+	sudo cp *.a /usr/lib
+
 	sudo apt-get install -y libeigen3-dev
 	sudo apt-get install -y libflann-dev
 	sudo apt-get install -y libflann1.8
