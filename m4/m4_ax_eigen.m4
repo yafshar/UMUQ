@@ -86,12 +86,8 @@ AC_DEFUN([AX_EIGEN], [
         fi
 
         CPPFLAGS_SAVED="$CPPFLAGS"
-        CPPFLAGS+=" $EIGEN_CPPFLAGS"
-        find / -name Dense
-        echo "-----------------------"
-        pwd
-        echo "-----------------------"
-        find . -name Dense
+        CPPFLAGS+=" $EIGEN_CPPFLAGS"' -I/usr/include/eigen3'
+        ll /usr/include/eigen3/Eigen/Dense
         AC_LANG_PUSH(C++)
         AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
 				@%:@include <Eigen/Dense>
