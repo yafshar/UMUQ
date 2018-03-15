@@ -34,6 +34,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libmpich-dev
 	sudo apt-get install -y libblas-dev
 	sudo apt-get install -y liblapack-dev
+    sudo apt-get install -y liblapacke
+    sudo apt-get install -y liblapacke-dev
 	sudo apt-get install -y libgtest-dev 
 	sudo apt-get install -y libeigen3-dev
 	sudo apt-get install -y libflann-dev
