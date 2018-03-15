@@ -19,8 +19,8 @@ AU_ALIAS([ACX_GOOGLETEST], [AX_GOOGLETEST])
 AC_DEFUN([AX_GOOGLETEST], [
 	AC_ARG_WITH([googletest], 
 		AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], 
-        	[use GOOGLETEST framework (default is no) - it is possible to specify the root directory for GOOGLETEST (optional)]
-		), [ 
+			[use GOOGLETEST framework (default is no) - it is possible to specify the root directory for GOOGLETEST (optional)]
+		), [
 			if test x"$withval" = xno ; then
 				AC_MSG_WARN([You can not test the library without GOOGLETEST framework !!!])
 				ac_googletest_path=no
@@ -38,49 +38,49 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 	AS_IF([test x"$ac_googletest_path" = xno], [], 
 		[ 
-  			dnl if the user does not provide the DIR root directory for EIGEN, we search the default PATH
+			dnl if the user does not provide the DIR root directory for EIGEN, we search the default PATH
 			AS_IF([test x"$ac_googletest_path" = x], 
 				[ 
 					AC_CHECK_HEADERS([gtest/gtest.h], [ax_googletest_ok=yes], [ax_googletest_ok=no])
-        			
+
 					AS_IF([test x"$ax_googletest_ok" = xyes], 
 						[
-            						LDFLAGS_SAVED="$LDFLAGS"
-            						LDFLAGS+=' -lgtest -lpthread'
-            			
+							LDFLAGS_SAVED="$LDFLAGS"
+							LDFLAGS+=' -lgtest -lpthread'
+
 							AC_LANG_PUSH(C++)
-            						AC_CHECK_LIB([pthread], [main], 
-                        					[], [
-                    							ax_googletest_ok=no
-                        					]
-                					) 
+							AC_CHECK_LIB([pthread], [main], 
+								[], [
+									ax_googletest_ok=no
+								]
+							)
 							AS_IF([test x"$ax_googletest_ok" = xyes], 
 								[
 									AC_CHECK_LIB([gtest], [main], 
 										[], [
-                    									ax_googletest_ok="no"
-                    									LDFLAGS="$LDFLAGS_SAVED"
-                								]
-            								)
+											ax_googletest_ok="no"
+											LDFLAGS="$LDFLAGS_SAVED"
+										]
+									)
 								], [
 									LDFLAGS="$LDFLAGS_SAVED"
 								]
-							)						
+							)
 							AC_LANG_POP([C++])
-            						AC_SUBST(LDFLAGS)
-        					]
+							AC_SUBST(LDFLAGS)
+						]
 					)
 				], 
 				[
 					ax_googletest_ok=no
 				]
-			) 
+			)
 			
 			AS_IF([test x"$ax_googletest_ok" = xno], 
 				[
-                			AC_MSG_NOTICE(GOOGLETEST)
+					AC_MSG_NOTICE(GOOGLETEST)
 					succeeded=no
-                
+
 					dnl first we check the system location for googletest libraries
 					if test x"$ac_googletest_path" != x; then
 						for ac_googletest_path_tmp in $ac_googletest_path $ac_googletest_path/include ; do 
@@ -148,15 +148,15 @@ AC_DEFUN([AX_GOOGLETEST], [
 					)
 
 					LIBS_SAVED="$LIBS"
-                
-					AC_CHECK_LIB([pthread], [main], 
+
+					AC_CHECK_LIB([pthread], [main],
 						[], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! pthread devel library is missing! pthread is required for this program!])
 						]
-					)    
-                
-					AC_CHECK_LIB([gtest], [main], 
+					)
+
+					AC_CHECK_LIB([gtest], [main],
 						[], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
@@ -167,9 +167,9 @@ AC_DEFUN([AX_GOOGLETEST], [
 					if test x"$succeeded" == xyes ; then
 						GTEST_CPPFLAGS="$CPPFLAGS"
 						GTEST_CXXFLAGS="$CXXFLAGS"
-						GTEST_LDFLAGS="$LDFLAGS"                
+						GTEST_LDFLAGS="$LDFLAGS"
 						GTEST_LIBS="$LIBS"
-                                                                 
+
 						AC_SUBST(GTEST_CPPFLAGS)
 						AC_SUBST(GTEST_CXXFLAGS)
 						AC_SUBST(GTEST_LDFLAGS)
@@ -177,10 +177,10 @@ AC_DEFUN([AX_GOOGLETEST], [
                         
 						ax_googletest_ok="yes"
 					fi
-                
+
 					CPPFLAGS="$CPPFLAGS_SAVED"
-					LDFLAGS="$LDFLAGS_SAVED"                
-					LIBS="$LIBS_SAVED" 
+					LDFLAGS="$LDFLAGS_SAVED"
+					LIBS="$LIBS_SAVED"
 					AC_SUBST(LIBS)
 				]
 			)
@@ -188,12 +188,12 @@ AC_DEFUN([AX_GOOGLETEST], [
 	)
 	
 	AM_CONDITIONAL([HAVE_GOOGLETEST], [test x"$ax_googletest_ok" == xyes])
-	AM_COND_IF([HAVE_GOOGLETEST], 
+	AM_COND_IF([HAVE_GOOGLETEST],
 		[], [
 			AC_MSG_RESULT(Unable to locate GOOGLETEST !) 
 			AC_MSG_RESULT(You can not test the library without GOOGLETEST framework !!!)
 		]
 	)
-	
+
 	AC_MSG_RESULT()
 ])
