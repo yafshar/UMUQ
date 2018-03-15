@@ -87,7 +87,11 @@ AC_DEFUN([AX_EIGEN], [
 
         CPPFLAGS_SAVED="$CPPFLAGS"
         CPPFLAGS+=" $EIGEN_CPPFLAGS"
-        find /usr/inlude -name Dense
+        find / -name Dense
+        echo "-----------------------"
+        pwd
+        echo "-----------------------"
+        find . -name Dense
         AC_LANG_PUSH(C++)
         AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
 				@%:@include <Eigen/Dense>
