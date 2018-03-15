@@ -10,6 +10,7 @@
 template <typename T>
 class ArrayWrapper
 {
+  public:
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
       public:
@@ -34,7 +35,6 @@ class ArrayWrapper
         T const *iPosition;
     };
 
-  public:
     ArrayWrapper(T const *aInputArray, long aNumOfElements) : iArray(aInputArray), iNumOfElements(aNumOfElements) {}
 
     iterator begin()

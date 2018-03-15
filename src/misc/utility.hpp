@@ -103,9 +103,10 @@ class utility
             line = new char[LINESIZE];
             lineArg = new char *[LINESIZE];
         }
-        catch (const std::system_error &e)
+        catch (const std::bad_alloc &e)
         {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            return false;
         }
 
         return true;
@@ -135,9 +136,10 @@ class utility
                 line = new char[LINESIZE];
                 lineArg = new char *[LINESIZE];
             }
-            catch (const std::system_error &e)
+            catch (const std::bad_alloc &e)
             {
-                std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             return true;
