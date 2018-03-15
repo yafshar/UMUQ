@@ -60,6 +60,7 @@ AC_DEFUN([AX_EIGEN], [
             done
     	else
             for ac_eigen_path_tmp in /usr /usr/inlude /usr/local /use/local/include /opt /opt/local ; do
+                ls -l $ac_eigen_path_tmp
                 if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen"; then
                     if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense"; then
                         EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp"
@@ -87,7 +88,8 @@ AC_DEFUN([AX_EIGEN], [
 
         CPPFLAGS_SAVED="$CPPFLAGS"
         CPPFLAGS+=" $EIGEN_CPPFLAGS"' -I/usr/include/eigen3'
-        ll /usr/include/eigen3/Eigen/Dense
+        echo "---------------------------------------------------------"
+        ls -l /usr/include/eigen3/Eigen/Dense
         AC_LANG_PUSH(C++)
         AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
 				@%:@include <Eigen/Dense>
