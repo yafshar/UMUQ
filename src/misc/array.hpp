@@ -26,7 +26,7 @@ class ArrayWrapper
             return *this;
         }
 
-        iterator operator++(T)
+        iterator operator++(int)
         {
             iterator tmp(*this);
             operator++();
@@ -38,16 +38,14 @@ class ArrayWrapper
             return *iPosition;
         }
 
-        ~iterator()
-        {
-            // nothing to do
-        }
+        ~iterator(){}; // nothing to do
 
       private:
         T const *iPosition;
     };
 
     ArrayWrapper(T const *aInputArray, long aNumOfElements) : iArray(aInputArray), iNumOfElements(aNumOfElements) {}
+    ~ArrayWrapper(){};
 
     iterator begin()
     {
