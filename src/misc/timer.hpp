@@ -15,22 +15,38 @@
 class UMTimer
 {
   public:
-    UMTimer() {
+    //! constructor
+    /*!
+    *  \brief constructor 
+    *    
+    */
+    UMTimer()
+    {
         tic();
     }
-
+    /*!
+    *  \brief tic starts a stopwatch timer, and stores the internal time at execution of the command. 
+    *
+    *  tic starts a stopwatch timer, and stores the internal time at execution of the command. 
+    *  Consecutive tic overwrites the previous recorded time.
+    */
     void tic()
     {
         t1_internal = my_gettime();
     }
-
+    
+    /*!
+    *  \brief toc displays the elapsed time so that you can record time for simultaneous time spans.
+    *
+    *  toc displays the elapsed time so that you can record time for simultaneous time spans. 
+    */
     void toc()
     {
         t2_internal = my_gettime();
 
         double elapsed_seconds = t2_internal - t1_internal;
 
-        //output the elapsed time to terminal 
+        //output the elapsed time to terminal
         std::cout << " It took " << std::to_string(elapsed_seconds) << " seconds" << std::endl;
     }
 
@@ -40,7 +56,7 @@ class UMTimer
 
         double elapsed_seconds = t2_internal - t1_internal;
 
-        //output the elapsed time to terminal 
+        //output the elapsed time to terminal
         std::cout << timing_name << " took " << std::to_string(elapsed_seconds) << " seconds" << std::endl;
     }
 
