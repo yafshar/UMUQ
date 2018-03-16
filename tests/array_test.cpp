@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "../src/misc/array.hpp"
 #include "gtest/gtest.h"
 
@@ -7,7 +5,7 @@ TEST(arraywrapper_test, HandlesVectors)
 {
     int j;
 
-    // check for array of int
+    //! check for array of int
     int *iarray = nullptr;
     iarray = new int[1000];
     for (j = 0; j < 1000; j++)
@@ -24,7 +22,7 @@ TEST(arraywrapper_test, HandlesVectors)
 
     delete[] iarray;
 
-    // check for array of double
+    //! check for array of double
     double *darray = nullptr;
     darray = new double[100];
     for (j = 0; j < 100; j++)
@@ -42,7 +40,7 @@ TEST(arraywrapper_test, HandlesVectors)
 
     delete[] darray;
 
-    // check for array of structure
+    //! check for array of structure
     struct srt
     {
         int i;
@@ -63,9 +61,11 @@ TEST(arraywrapper_test, HandlesVectors)
     ArrayWrapper<srt> is(srtarray, 10);
     for (auto i = is.begin(); i != is.end(); i++, j++)
     {
-        EXPECT_EQ((*i).i, j);
-        EXPECT_EQ((*i).n, j * 10);
-        EXPECT_EQ((*i).s, (double)j * 10.0);
+        auto e = i.get();
+
+        EXPECT_EQ(e.i, j);
+        EXPECT_EQ(e.n, j * 10);
+        EXPECT_EQ(e.s, (double)j * 10.0);
     }
 
     delete[] srtarray;
