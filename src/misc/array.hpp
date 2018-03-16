@@ -5,17 +5,22 @@
 #include <iterator>
 
 /*! \class ArrayWrapper
-*   \brief ArrayWrapper is a class which creates a std iterator for a vector
+*   \brief ArrayWrapper is a class which creates a std iterator for an array of type T
 *	
 */
-template <typename T>
+template <class T>
 class ArrayWrapper
 {
   public:
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
       public:
+        /*! 
+         *  \brief iterator constructor
+         *
+         */
         iterator(T const *aPointer) : iPosition(aPointer) {}
+        ~iterator(){}; // nothing to do
 
         bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
         bool operator!=(iterator const &rhs) { return iPosition != rhs.iPosition; }
@@ -28,9 +33,9 @@ class ArrayWrapper
 
         iterator operator++(int)
         {
-            iterator tmp(*this);
+            iterator t(*this);
             operator++();
-            return tmp;
+            return t;
         }
 
         T operator*()
@@ -38,26 +43,49 @@ class ArrayWrapper
             return *iPosition;
         }
 
-        ~iterator(){}; // nothing to do
+        /*! 
+         *  \brief Get the actual value
+         * 
+         * \return the actual value
+         */
+        inline T get()
+        {
+            return *iPosition;
+        }
 
       private:
         T const *iPosition;
     };
-
-    ArrayWrapper(T const *aInputArray, long aNumOfElements) : iArray(aInputArray), iNumOfElements(aNumOfElements) {}
+    /*! 
+     *  \brief ArrayWrapper constructor
+     *
+     */
+    ArrayWrapper(T const *InputT, long NumOfElements) : iT(InputT), iNumOfElements(NumOfElements) {}
     ~ArrayWrapper(){};
 
+    /*! 
+     * \brief Returns an iterator to the beginning of Input
+     * 
+     * \return an iterator to the beginning of the given Input
+     */
     iterator begin()
     {
-        return iterator(iArray);
+        return iterator(iT);
     }
+    /*! 
+     * \brief Returns an iterator to the end
+     * 
+     * \return an iterator to the end of the given Input
+     */
     iterator end()
     {
-        return iterator(iArray + iNumOfElements);
+        return iterator(iT + iNumOfElements);
     }
 
   private:
-    T const *iArray;
+    //! Pointer to the actual Input
+    T const *iT;
+    //! Size of InputT
     long iNumOfElements;
 };
 
