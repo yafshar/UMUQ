@@ -5,14 +5,14 @@
 #include <iomanip>
 #include <system_error>
 
-//malloc, calloc, qsort, atof
+//qsort
 #include <cstdlib>
 //fopen, fgets, sscanf, sprintf
 #include <cstdio>
 //strlen, strstr, strtok
 #include <cstring>
 
-#include "../misc/utility.hpp"
+#include "../io/io.hpp"
 #include "../misc/parser.hpp"
 
 /*! \file TMCMC_datatype.hpp
@@ -30,14 +30,14 @@
 * \param auxil_data
 * \param MinChainLength
 * \param MaxChainLength
-* \param lb
-* \param ub
+* \param lb                  generic lower bound
+* \param ub                  generic upper bound
 * \param TolCOV
 * \param bbeta
 * \param seed
 * \param options
-* \param sampling_type
-* \param prior_type
+* \param sampling_type       sampling type which can be 0: uniform, 1: gaussian, 2: file 
+* \param prior_type          prior type which can be  0: lognormal, 1: gaussian
 * \param prior_count
 * \param iplot
 * \param icdump              dump current dataset of accepted points
@@ -270,10 +270,12 @@ class data_t
 // read the input file fname for setting the input variables
 bool data_t::read(const char *fname)
 {
-    utility u;
+    // We use an IO object to open and read a file
+    io u;
 
     if (u.openFile(fname))
     {
+        // We need a parser object to parse
         parser p;
 
         int probdim = Nth;
