@@ -2,6 +2,7 @@
 #define UMHBM_TMCMC_DATATYPE_H
 
 #include <iostream>
+#include <algorithm>
 #include <iomanip>
 #include <system_error>
 
@@ -14,6 +15,7 @@
 
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
+#include "../misc/array.hpp"
 
 /*! \file TMCMC_datatype.hpp
 *   \brief Data types and helper structures & classes.
@@ -190,9 +192,18 @@ class data_t
                                                     use_local_cov(0),
                                                     local_scale(0)
     {
-        lowerbound = new double[Nth];
-        upperbound = new double[Nth];
-        prior_mu = new double[Nth];
+        try
+        {
+            lowerbound = new double[Nth];
+            upperbound = new double[Nth];
+            prior_mu = new double[Nth];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        }
+
         int e = Nth;
         while (e--)
         {
@@ -201,7 +212,16 @@ class data_t
             prior_mu[e] = 0;
         }
 
-        prior_sigma = new double[Nth * Nth];
+        try
+        {
+            prior_sigma = new double[Nth * Nth];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        }
+
         for (int i = 0, k = 0; i < Nth; i++)
         {
             for (int j = 0; j < Nth; j++, k++)
@@ -217,15 +237,42 @@ class data_t
             }
         }
 
-        Num = new int[MaxStages];
+        try
+        {
+            Num = new int[MaxStages];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        }
+
         e = MaxStages;
         while (e--)
             Num[e] = PopSize;
 
-        local_cov = new double *[PopSize];
+        try
+        {
+            local_cov = new double *[PopSize];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        }
+
         for (int i = 0; i < PopSize; i++)
         {
-            local_cov[i] = new double[Nth * Nth];
+            try
+            {
+                local_cov[i] = new double[Nth * Nth];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
+
             for (int j = 0, l = 0; j < Nth; j++)
             {
                 for (int k = 0; k < Nth; k++, l++)
@@ -244,8 +291,10 @@ class data_t
     };
 
     /*!
-    *  \brief constructor for the default input variables
-    *    
+    *  \brief read the input file fname
+    *
+    * \param fname              name of the input file
+    * \return true on success
     */
     bool read(const char *fname);
     bool read()
@@ -264,6 +313,10 @@ class data_t
         destroy();
     };
 
+    /*!
+    *  \brief destroy created memory 
+    *
+    */
     void destroy();
 };
 
@@ -380,13 +433,31 @@ bool data_t::read(const char *fname)
             {
                 delete[] lowerbound;
             }
-            lowerbound = new double[Nth];
+
+            try
+            {
+                lowerbound = new double[Nth];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
 
             if (upperbound != NULL)
             {
                 delete[] upperbound;
             }
-            upperbound = new double[Nth];
+
+            try
+            {
+                upperbound = new double[Nth];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
         }
 
         int n = Nth;
@@ -434,7 +505,16 @@ bool data_t::read(const char *fname)
                 {
                     delete[] prior_mu;
                 }
-                prior_mu = new double[Nth];
+
+                try
+                {
+                    prior_mu = new double[Nth];
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                }
             }
 
             u.rewindFile();
@@ -478,7 +558,16 @@ bool data_t::read(const char *fname)
                 {
                     delete[] prior_sigma;
                 }
-                prior_sigma = new double[Nth * Nth];
+
+                try
+                {
+                    prior_sigma = new double[Nth * Nth];
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                }
             }
 
             u.rewindFile();
@@ -532,7 +621,15 @@ bool data_t::read(const char *fname)
             {
                 delete[] compositeprior_distr;
             }
-            compositeprior_distr = new double[Nth];
+            try
+            {
+                compositeprior_distr = new double[Nth];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
 
             if (linit)
             {
@@ -540,13 +637,31 @@ bool data_t::read(const char *fname)
                 {
                     delete[] prior_mu;
                 }
-                prior_mu = new double[Nth];
+
+                try
+                {
+                    prior_mu = new double[Nth];
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                }
 
                 if (prior_sigma != NULL)
                 {
                     delete[] prior_sigma;
                 }
-                prior_sigma = new double[Nth * Nth];
+
+                try
+                {
+                    prior_sigma = new double[Nth * Nth];
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                }
             }
 
             n = Nth;
@@ -616,7 +731,16 @@ bool data_t::read(const char *fname)
             {
                 delete[] auxil_data;
             }
-            auxil_data = new double[auxil_size];
+
+            try
+            {
+                auxil_data = new double[auxil_size];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
 
             u.rewindFile();
 
@@ -662,7 +786,16 @@ bool data_t::read(const char *fname)
             {
                 delete[] Num;
             }
-            Num = new int[MaxStages];
+
+            try
+            {
+                Num = new int[MaxStages];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
 
             n = MaxStages;
             while (n--)
@@ -685,10 +818,26 @@ bool data_t::read(const char *fname)
                 delete[] local_cov;
             }
 
-            local_cov = new double *[PopSize];
+            try
+            {
+                local_cov = new double *[PopSize];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            }
             for (n = 0; n < PopSize; n++)
             {
-                local_cov[n] = new double[Nth * Nth];
+                try
+                {
+                    local_cov[n] = new double[Nth * Nth];
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                }
                 for (int i = 0, l = 0; i < Nth; i++)
                 {
                     for (int j = 0; j < Nth; j++, l++)
@@ -711,7 +860,7 @@ bool data_t::read(const char *fname)
 };
 
 /*!
-*  \brief destructor 
+*  \brief destroy the allocated memory 
 *    
 */
 void data_t::destroy()
@@ -811,7 +960,8 @@ struct cgdbp_t : basic
     double error;
     /*!
     *  \brief constructor for the default variables
-    *    
+    *  
+    * constructor for the default variables it initializes to zero
     */
     cgdbp_t() : queue(0),
                 error(0){};
@@ -886,6 +1036,7 @@ struct sort_t
 /*!
 *  \brief database structure
 *
+* \tparam T type of database structure
 * \param entry
 * \param entries an integer argument shows the size of entry
 * \param m A mutex object
@@ -1066,11 +1217,13 @@ bool database<T>::init(int nsize1)
         {
             entry = new T[nsize1];
         }
-        catch (const std::system_error &e)
+        catch (std::bad_alloc &e)
         {
-            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
             return false;
-        }
+        };
+
         for (int i = 0; i < nsize1; i++)
         {
             entry[i] = (T)0;
@@ -1101,9 +1254,10 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
         {
             entry[pos].Parray = new double[ndimParray];
         }
-        catch (const std::system_error &e)
+        catch (std::bad_alloc &e)
         {
-            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
             return false;
         }
     }
@@ -1127,9 +1281,10 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
         {
             entry[pos].Garray = new double[ndimGarray];
         }
-        catch (const std::system_error &e)
+        catch (std::bad_alloc &e)
         {
-            std::cerr << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
             return false;
         }
     }
@@ -1159,18 +1314,8 @@ int compar_desc(const void *p1, const void *p2)
 }
 
 template <class T>
-void database<T>::sort(sort_t *list)
+inline void database<T>::sort(sort_t *list)
 {
-    if (list == NULL)
-    {
-        list = new sort_t[entries];
-    }
-    for (int i = 0; i < entries; i++)
-    {
-        list[i].idx = i;
-        list[i].nsel = entry[i].nsel;
-        list[i].Fvalue = entry[i].Fvalue;
-    }
     qsort(list, entries, sizeof(sort_t), compar_desc);
 }
 
