@@ -5,12 +5,10 @@
 #define _BSD_SOURCE 1
 
 #include <iostream>
-//fopen, remove, perror, sprintf
+//remove, perror, sprintf
 #include <stdio.h>
 //stat, open, fstat
 #include <sys/stat.h>
-//strlen, strstr, strtok
-#include <cstring>
 //fork, execvp, chdir, fstat
 #include <unistd.h>
 //waitpid, fstat, opendir
@@ -26,12 +24,10 @@
 //opendir, readdir
 #include <dirent.h>
 
-#define LINESIZE 256
-
 /*! \class utility
 *   \brief utility is a class which includes some helper functionality.
 *	
-* 	utility class contains functionality for parsing the line, exectuing command
+* 	utility class contains functionality for exectuing command
 *   delete a name from a filesystem or unlink the files, copy file from a path to 
 *   other path
 */
@@ -39,152 +35,6 @@
 class utility
 {
   public:
-    FILE *f;
-
-    char *line;
-    char **lineArg;
-
-    utility() : f(NULL), line(NULL), lineArg(NULL){};
-
-    ~utility()
-    {
-        closeFile();
-    };
-
-    /*!
-     *  \brief return true if file is opened
-     */
-    inline bool isFileOpened() const { return f != NULL; }
-
-    /*!
-     *  \brief Check to see whether the file fileName exists and accessible to read or write!
-     *  
-     */
-    inline bool isFileExist(const char *fileName)
-    {
-        struct stat buffer;
-        return (stat(fileName, &buffer) == 0);
-    }
-
-    /*!
-     *  \brief Opens the file whose name is specified in the parameter filename 
-     *  
-     *  Opens the file whose name is specified in the parameter filename and
-     *  associates it with a stream that can be identified in future operations 
-     *  by the FILE pointer returned.inline   
-     */
-    inline bool openFile(const char *fileName)
-    {
-        if (!isFileExist(fileName))
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << fileName << " does not exists!" << std::endl;
-            return false;
-        }
-
-        if (isFileOpened())
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Pointer to the File " << fileName << " is busy!" << std::endl;
-            return false;
-        }
-
-        f = fopen(fileName, "r");
-
-        if (f == NULL)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << fileName << " does not exists!" << std::endl;
-            return false;
-        }
-
-        try
-        {
-            line = new char[LINESIZE];
-            lineArg = new char *[LINESIZE];
-        }
-        catch (const std::bad_alloc &e)
-        {
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    inline bool openFile(const char *fileName, const char *mode)
-    {
-        if (*mode != 'r' || isFileExist(fileName))
-        {
-            if (isFileOpened())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Pointer to the File " << fileName << " is busy!" << std::endl;
-                return false;
-            }
-
-            f = fopen(fileName, mode);
-            if (f == NULL)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << fileName << " does not exists!" << std::endl;
-                return false;
-            }
-
-            try
-            {
-                line = new char[LINESIZE];
-                lineArg = new char *[LINESIZE];
-            }
-            catch (const std::bad_alloc &e)
-            {
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            return true;
-        }
-        else
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << fileName << " does not exists!" << std::endl;
-            return false;
-        }
-    }
-
-    /*!
-     *  \brief 
-     */
-    inline bool readLine() const { return fgets(line, LINESIZE, f) != NULL; }
-
-    /*!
-     *  \brief  
-     */
-    inline bool emptyLine() const { return (line[0] == '#') || (strlen(line) == 0); }
-
-    /*!
-     *  \brief 
-     */
-    inline void rewindFile() { rewind(f); }
-
-    /*!
-     *  \brief  close the File
-     */
-    inline void closeFile()
-    {
-        if (isFileOpened())
-        {
-            fclose(f);
-            f = NULL;
-
-            delete[] line;
-            line = NULL;
-
-            delete[] lineArg;
-            lineArg = NULL;
-        }
-    }
-
     // /*!
     //  *  \brief Execute a command getting the std::cout
     //  *
