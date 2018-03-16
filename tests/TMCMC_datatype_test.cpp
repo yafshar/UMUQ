@@ -1,10 +1,5 @@
-#include <iostream>
-#include <stdio.h>
-
 #include "../src/data_type/TMCMC_datatype.hpp"
 #include "gtest/gtest.h"
-
-#define BUFLEN 1024
 
 // Tests parse
 TEST(datatype, HandlesConstruction)
@@ -113,7 +108,7 @@ TEST(datatype, HandlesIO)
     EXPECT_EQ(15.0, d1.upperbound[2]);
     EXPECT_EQ(1.0, d1.upperbound[3]);
 
-    //
+    
 }
 
 int main(int argc, char **argv)
