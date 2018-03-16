@@ -33,7 +33,7 @@ class ArrayWrapper
             return tmp;
         }
 
-        T& operator*()
+        T operator*()
         {
             return *iPosition;
         }
