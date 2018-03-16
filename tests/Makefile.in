@@ -87,10 +87,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = polynomial_test$(EXEEXT) parser_test$(EXEEXT) \
-	utility_test$(EXEEXT) TMCMC_datatype_test$(EXEEXT)
-check_PROGRAMS = polynomial_test$(EXEEXT) parser_test$(EXEEXT) \
-	utility_test$(EXEEXT) TMCMC_datatype_test$(EXEEXT)
+TESTS = polynomial_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) io_test$(EXEEXT) \
+	TMCMC_datatype_test$(EXEEXT)
+check_PROGRAMS = polynomial_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) io_test$(EXEEXT) \
+	TMCMC_datatype_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/m4_ax_cxx_compile_stdcxx.m4 \
@@ -111,6 +113,12 @@ CONFIG_CLEAN_VPATH_FILES =
 am_TMCMC_datatype_test_OBJECTS = TMCMC_datatype_test.$(OBJEXT)
 TMCMC_datatype_test_OBJECTS = $(am_TMCMC_datatype_test_OBJECTS)
 TMCMC_datatype_test_LDADD = $(LDADD)
+am_array_test_OBJECTS = array_test.$(OBJEXT)
+array_test_OBJECTS = $(am_array_test_OBJECTS)
+array_test_LDADD = $(LDADD)
+am_io_test_OBJECTS = io_test.$(OBJEXT)
+io_test_OBJECTS = $(am_io_test_OBJECTS)
+io_test_LDADD = $(LDADD)
 am_parser_test_OBJECTS = parser_test.$(OBJEXT)
 parser_test_OBJECTS = $(am_parser_test_OBJECTS)
 parser_test_LDADD = $(LDADD)
@@ -149,9 +157,11 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(TMCMC_datatype_test_SOURCES) $(parser_test_SOURCES) \
+SOURCES = $(TMCMC_datatype_test_SOURCES) $(array_test_SOURCES) \
+	$(io_test_SOURCES) $(parser_test_SOURCES) \
 	$(polynomial_test_SOURCES) $(utility_test_SOURCES)
-DIST_SOURCES = $(TMCMC_datatype_test_SOURCES) $(parser_test_SOURCES) \
+DIST_SOURCES = $(TMCMC_datatype_test_SOURCES) $(array_test_SOURCES) \
+	$(io_test_SOURCES) $(parser_test_SOURCES) \
 	$(polynomial_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -508,8 +518,10 @@ AM_CPPFLAGS = $(GTEST_CPPFLAGS)
 AM_CXXFLAGS = $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
 polynomial_test_SOURCES = polynomial_test.cpp 
-parser_test_SOURCES = parser_test.cpp
 utility_test_SOURCES = utility_test.cpp
+parser_test_SOURCES = parser_test.cpp
+array_test_SOURCES = array_test.cpp
+io_test_SOURCES = io_test.cpp
 TMCMC_datatype_test_SOURCES = TMCMC_datatype_test.cpp
 all: all-am
 
@@ -524,9 +536,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign tests/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign tests/Makefile
+	  $(AUTOMAKE) --gnu tests/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -552,6 +564,14 @@ TMCMC_datatype_test$(EXEEXT): $(TMCMC_datatype_test_OBJECTS) $(TMCMC_datatype_te
 	@rm -f TMCMC_datatype_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(TMCMC_datatype_test_OBJECTS) $(TMCMC_datatype_test_LDADD) $(LIBS)
 
+array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
+	@rm -f array_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+
+io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
+	@rm -f io_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(io_test_OBJECTS) $(io_test_LDADD) $(LIBS)
+
 parser_test$(EXEEXT): $(parser_test_OBJECTS) $(parser_test_DEPENDENCIES) $(EXTRA_parser_test_DEPENDENCIES) 
 	@rm -f parser_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(parser_test_OBJECTS) $(parser_test_LDADD) $(LIBS)
@@ -571,6 +591,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TMCMC_datatype_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/array_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility_test.Po@am__quote@
@@ -789,6 +811,13 @@ polynomial_test.log: polynomial_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+utility_test.log: utility_test$(EXEEXT)
+	@p='utility_test$(EXEEXT)'; \
+	b='utility_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 parser_test.log: parser_test$(EXEEXT)
 	@p='parser_test$(EXEEXT)'; \
 	b='parser_test'; \
@@ -796,9 +825,16 @@ parser_test.log: parser_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-utility_test.log: utility_test$(EXEEXT)
-	@p='utility_test$(EXEEXT)'; \
-	b='utility_test'; \
+array_test.log: array_test$(EXEEXT)
+	@p='array_test$(EXEEXT)'; \
+	b='array_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+io_test.log: io_test$(EXEEXT)
+	@p='io_test$(EXEEXT)'; \
+	b='io_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
