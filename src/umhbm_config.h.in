@@ -10,7 +10,7 @@
 /* Define if you have a BLAS library. */
 #undef HAVE_BLAS
 
-/* define if the compiler supports basic C++11 syntax */
+/* Define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
 
 /* Define if you have DOXYGEN. */
@@ -28,6 +28,9 @@
 /* Define to 1 if you have the <flann/flann.h> header file. */
 #undef HAVE_FLANN_FLANN_H
 
+/* Define to 1 if you have the <gtest/gtest.h> header file. */
+#undef HAVE_GTEST_GTEST_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -43,9 +46,6 @@
 /* Define to 1 if you have the `lapack' library (-llapack). */
 #undef HAVE_LIBLAPACK
 
-/* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
-
 /* Define to 1 if you have the `torc' library (-ltorc). */
 #undef HAVE_LIBTORC
 
@@ -60,9 +60,6 @@
 
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
-
-/* Define to 1 if you have the <pthread.h> header file. */
-#undef HAVE_PTHREAD_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
