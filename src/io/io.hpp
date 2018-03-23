@@ -5,6 +5,7 @@
 #define _BSD_SOURCE 1
 
 #include <iostream>
+#include <limits>
 
 //fopen, rewind
 #include <cstdio>
@@ -19,7 +20,6 @@
 *   \brief io is a class which includes some IO functionality.
 *	
 */
-
 class io
 {
   public:
@@ -168,6 +168,119 @@ class io
             lineArg = NULL;
         }
     }
+
+    
+    
+    
+    
+    
+    // /*!
+    //  * \brief Helper function to print the matrix
+    //  * 
+    //  * \tparam  _Rows  number of rows
+    //  * \tparam  _Cols  number of columns
+    //  * \param   idata  array of data type T 
+    //  * \param   Rows  
+    //  * \param   Cols
+    //  */
+    // template <int _Rows, int _Cols>
+    // void print_matrix(const char *title, double **idata, int rows=_Rows, int Cols=_Cols)
+    // {
+    //     EMatrixXd EXd = Eigen::Map
+
+        
+    //     /*    if (!display) return;*/
+    //     printf("\n%s =\n\n", title);
+    //     for (int i = 0; i < n; i++)
+    //     {
+    //         printf("   %20.15lf\n", v[i]);
+    //     }
+    //     printf("\n");
+    // }
+
+
+
+
+
+
+
+
+
+    // /**********************************************/
+    // /* Helper routines */
+    // /**********************************************/
+    // void print_matrix(char *title, double *v, int n)
+    // {
+    //     /*    if (!display) return;*/
+    //     printf("\n%s =\n\n", title);
+    //     for (int i = 0; i < n; i++)
+    //     {
+    //         printf("   %20.15lf\n", v[i]);
+    //     }
+    //     printf("\n");
+    // }
+
+    // void print_matrix_i(char *title, int *v, int n)
+    // {
+    //     int i;
+
+    //     /*    if (!display) return;*/
+
+    //     printf("\n%s =\n\n", title);
+    //     for (i = 0; i < n; i++)
+    //     {
+    //         printf("  %8d\n", v[i]);
+    //     }
+    //     printf("\n");
+    // }
+
+    // void print_matrix_2d(char *title, double **v, int n1, int n2)
+    // {
+    //     int i, j;
+
+    //     /*    if (!display) return;*/
+
+    //     printf("\n%s =\n\n", title);
+    //     for (i = 0; i < n1; i++)
+    //     {
+    //         for (j = 0; j < n2; j++)
+    //         {
+    //             printf("   %20.15lf", v[i][j]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("\n");
+    // }
+
+    // void fprint_matrix_1d(FILE *fp, char *title, double *v, int n)
+    // {
+    //     int i;
+
+    //     if (fp == stdout)
+    //         fprintf(fp, "\n%s =\n\n", title);
+    //     for (i = 0; i < n; i++)
+    //     {
+    //         fprintf(fp, "%12.4lf ", v[i]);
+    //     }
+    //     fprintf(fp, "\n");
+    // }
+
+    // void fprint_matrix_2d(FILE *fp, char *title, double **v, int n1, int n2)
+    // {
+    //     int i, j;
+
+    //     if (fp == stdout)
+    //         fprintf(fp, "\n%s =\n\n", title);
+    //     for (i = 0; i < n1; i++)
+    //     {
+    //         for (j = 0; j < n2; j++)
+    //         {
+    //             fprintf(fp, "   %20.15lf", v[i][j]);
+    //         }
+    //         fprintf(fp, "\n");
+    //     }
+    //     fprintf(fp, "\n");
+    // }
 };
 
 #endif
