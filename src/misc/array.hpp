@@ -5,9 +5,10 @@
 #include <iterator>
 
 /*! \class ArrayWrapper
-*   \brief ArrayWrapper is a class which creates a std iterator for an array of type T
-*	
-*/
+  * \brief ArrayWrapper is a class which creates a std iterator for an array of type T
+  *
+  * Expression of a class T (vector or matrix, or other types) as an array object
+  */
 template <class T>
 class ArrayWrapper
 {
@@ -56,37 +57,67 @@ class ArrayWrapper
       private:
         T const *iPosition;
     };
+
     /*! 
      *  \brief ArrayWrapper constructor
      *
      */
-    ArrayWrapper(T const *InputT, long NumOfElements) : iT(InputT), iNumOfElements(NumOfElements) {}
+    ArrayWrapper(T const *InputArray, size_t NumOfElements) : iArray(InputArray), iNumOfElements(NumOfElements) {}
     ~ArrayWrapper(){};
+
+    inline void set(T *InputArray, size_t NumOfElements)
+    {
+        iArray = InputArray;
+        iNumOfElements = NumOfElements;
+    }
 
     /*! 
      * \brief Returns an iterator to the beginning of Input
      * 
      * \return an iterator to the beginning of the given Input
      */
-    iterator begin()
+    inline iterator begin()
     {
-        return iterator(iT);
+        return iterator(iArray);
     }
+    inline const iterator begin() const
+    {
+        return iterator(iArray);
+    }
+
     /*! 
      * \brief Returns an iterator to the end
      * 
      * \return an iterator to the end of the given Input
      */
-    iterator end()
+    inline iterator end()
     {
-        return iterator(iT + iNumOfElements);
+        return iterator(iArray + iNumOfElements);
+    }
+    inline const iterator end() const
+    {
+        return iterator(iArray + iNumOfElements);
+    }
+
+    inline size_t size() const { return iNumOfElements; }
+
+    inline void swap(ArrayWrapper<T> &aObj)
+    {
+        std::swap(iNumOfElements, aObj.iNumOfElements);
+        std::swap(iArray, aObj.iArray);
     }
 
   private:
     //! Pointer to the actual Input
-    T const *iT;
-    //! Size of InputT
-    long iNumOfElements;
+    T const *iArray;
+    //! Size of InputArray
+    size_t iNumOfElements;
+
+    // make it noncopyable
+    ArrayWrapper(const ArrayWrapper &) = delete;
+
+    // make it not assignable
+    ArrayWrapper &operator=(const ArrayWrapper &) = delete;
 };
 
 #endif
