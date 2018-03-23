@@ -9,7 +9,7 @@
 #include "./misc/timer.hpp"
 #include "./misc/utility.hpp"
 #include <lapacke.h>
-
+#include <random>
 int main()
 {
 
@@ -17,14 +17,14 @@ int main()
     int r = 2;
     int *alpha = NULL;
     polynomial p;
-	UMTimer t;
+    UMTimer t;
 
     p.monomial_basis(d, r, alpha);
-	t.toc("monomial_basis");
+    t.toc("monomial_basis");
 
     std::cout << " d =  " << d << std::endl;
     std::cout << " r =  " << r << std::endl;
-    std::cout << " i    [] []" << std::endl;
+    std::cout << "  i   [] []" << std::endl;
 
     int i, n;
     n = 0;
@@ -39,15 +39,15 @@ int main()
         std::cout << std::endl;
     }
     std::cout << "----------------" << std::endl;
-	
+
     n = p.binomial_coefficient(d + r, r);
 
-	t.toc("binomial_coefficient");
+    t.toc("binomial_coefficient");
 
-    double *value=NULL;
-    double *x=NULL;
+    double *value = NULL;
+    double *x = NULL;
 
-    x = new double[d]; 
+    x = new double[d];
 
     EMatrixXd A;
     A.resize(n, n);
@@ -87,9 +87,8 @@ int main()
 
         for (int j = 0; j < n; j++)
         {
-            A(i,j)=value[j];
+            A(i, j) = value[j];
         }
-
     }
 
     delete[] alpha;
@@ -101,9 +100,10 @@ int main()
 
     EVectorXd B;
     B.resize(n);
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
+    {
         B(i) = 1;
-    } 
+    }
     std::cout << "Here is the vector B:" << std::endl;
     std::cout << B << std::endl;
 
@@ -124,24 +124,48 @@ int main()
     std::cout << relative_error << std::endl;
     std::cout << "----------------" << std::endl;
 
-    // EMatrixXd AA;
-    // AA.resize(6, 6);
-    // AA << 1, 1, 1, 1, 1, 1,
-    //     1, 0, -1, 0, .70710678118654752440, -.70710678118654752440,
-    //     0, 1, 0, -1, .70710678118654752440, -.70710678118654752440,
-    //     1, 0, 1, 0, 0.5, 0.5,
-    //     0, 0, 0, 0, 0.5, 0.5,
-    //     0, 1, 0, 1, 0.5, 0.5;
-    // std::cout << "--------AA--------" << std::endl;
-    // std::cout << AA << std::endl;
-    // std::cout << "--------AA^T--------" << std::endl;
-    // AA.transposeInPlace();
-    // std::cout << AA << std::endl;
-    // std::cout << "----------------" << std::endl;
-    // Eigen::JacobiSVD<EMatrixXd> svd(AA);
-    // std::cout << svd.singularValues() << std::endl;
-    // std::cout << "----------inverse----------" << std::endl;
-    // std::cout << AA.inverse() << std::endl;
+    EMatrixXd AA;
+    AA.resize(6, 6);
+    AA << 1, 1, 1, 1, 1, 1,
+        1, 0, -1, 0, .70710678118654752440, -.70710678118654752440,
+        0, 1, 0, -1, .70710678118654752440, -.70710678118654752440,
+        1, 0, 1, 0, 0.5, 0.5,
+        0, 0, 0, 0, 0.5, 0.5,
+        0, 1, 0, 1, 0.5, 0.5;
+    std::cout << "--------AA--------" << std::endl;
+    std::cout << AA << std::endl;
+    std::cout << "--------AA^T--------" << std::endl;
+    t.tic();
+    AA.transposeInPlace();
+    t.toc("Eigen transposeInPlace");
+    std::cout << AA << std::endl;
+    std::cout << "----------------" << std::endl;
+    Eigen::JacobiSVD<EMatrixXd> svd(AA);
+    std::cout << svd.singularValues() << std::endl;
+    std::cout << "----------inverse----------" << std::endl;
+    std::cout << AA.inverse() << std::endl;
+
+    double *y;
+    y = new double[6];
+    y[0] = 10;
+    y[1] = 20;
+    y[2] = 30;
+    y[3] = 40;
+    y[4] = 50;
+    y[5] = 60;
+
+    std::cout << "------------------" << std::endl;
+    std::cout << EMapXd(y, 2, 3) << std::endl;
+    std::cout << "------------------" << std::endl;
+
+    EMatrixXd yy;
+    yy.resize(2, 3);
+    yy << 1, 2, 3, 4, 5, 6;
+    std::cout << yy << std::endl;
+    std::cout << "------------------" << std::endl;
+    EMapXd(yy, y);
+    std::cout << y[0] << " " << y[1] << " " << y[2] << " " << y[3] << " " << y[4] << " " << y[5] << std::endl;
+
 
     // // note, to understand this part take a look in the MAN pages, at section of parameters.
     // char TRANS = 'N';
