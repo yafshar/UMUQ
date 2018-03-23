@@ -1122,33 +1122,35 @@ class database
                 sprintf(filename, "%s_%03d.txt", fname, entries - 1);
             }
 
-            FILE *f = fopen(filename, "w");
-
-            for (int pos = 0; pos < entries - 1; pos++)
+            io f;
+            if (f.openFile(filename, "w"))
             {
-                if (entry[pos].Parray != NULL)
+                for (int pos = 0; pos < entries - 1; pos++)
                 {
-                    for (int i = 0; i < entry[pos].ndimParray; i++)
+                    if (entry[pos].Parray != NULL)
                     {
-                        fprintf(f, "%20.16lf ", entry[pos].Parray[i]);
+                        for (int i = 0; i < entry[pos].ndimParray; i++)
+                        {
+                            fprintf(f.f, "%20.16lf ", entry[pos].Parray[i]);
+                        }
+                    }
+                    if (entry[pos].Garray != NULL)
+                    {
+                        fprintf(f.f, "%20.16lf ", entry[pos].Fvalue);
+                        int i;
+                        for (i = 0; i < entry[pos].ndimGarray - 1; i++)
+                        {
+                            fprintf(f.f, "%20.16lf ", entry[pos].Garray[i]);
+                        }
+                        fprintf(f.f, "%20.16lf\n", entry[pos].Garray[i]);
+                    }
+                    else
+                    {
+                        fprintf(f.f, "%20.16lf\n", entry[pos].Fvalue);
                     }
                 }
-                if (entry[pos].Garray != NULL)
-                {
-                    fprintf(f, "%20.16lf ", entry[pos].Fvalue);
-                    int i;
-                    for (i = 0; i < entry[pos].ndimGarray - 1; i++)
-                    {
-                        fprintf(f, "%20.16lf ", entry[pos].Garray[i]);
-                    }
-                    fprintf(f, "%20.16lf\n", entry[pos].Garray[i]);
-                }
-                else
-                {
-                    fprintf(f, "%20.16lf\n", entry[pos].Fvalue);
-                }
+                f.closeFile();
             }
-            fclose(f);
         }
     };
 
