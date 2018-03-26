@@ -4,3 +4,6 @@
 [submodule "external/torc_lite"]
 	path = external/torc_lite
 	url = git@github.com:yafshar/torc_lite.git
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror.git
