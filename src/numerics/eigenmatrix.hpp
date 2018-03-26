@@ -132,6 +132,18 @@ TEMX EMapX(TdataPtr *dataPtr, size_t nRows, size_t nCols)
     return Eigen::Map<TEMX>(dataPtr, nRows, nCols);
 }
 
+template <>
+EMatrixXd EMapX<EMatrixXd, double>(double *dataPtr, size_t nRows, size_t nCols)
+{
+    return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
+}
+
+template <>
+EMatrix2d EMapX<EMatrix2d, double>(double *dataPtr, size_t nRows, size_t nCols)
+{
+    return Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr);
+}
+
 /*!
  * \brief Pointer will now point to a beginning of a memory region of the Eigen’s data structures
  *  
@@ -149,6 +161,18 @@ void EMapX(TEMX EMX, TdataPtr *dataPtr)
     Eigen::Map<TEMX>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
 }
 
+template <>
+void EMapX(EMatrixXd EMX, double *dataPtr)
+{
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
+}
+
+template <>
+void EMapX(EMatrix2d EMX, double *dataPtr)
+{
+    Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr, 2, 2) = EMX;
+}
+
 /*!
  * \brief Map the existing pointer to the array of type double to an Eigen object
  * 
@@ -159,7 +183,7 @@ void EMapX(TEMX EMX, TdataPtr *dataPtr)
  * \param  nCols    Number of Columns
  * \param  EMapXd   Eigen Matrix representation of data
  */
-Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> EMapXd(double *dataPtr, size_t nRows, size_t nCols)
+EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
 {
     return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
 }
