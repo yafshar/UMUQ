@@ -77,7 +77,7 @@ AC_DEFUN([AX_FLANN], [
 		else
 			for ac_flann_path_tmp in external ; do
 				if !( test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src") ; then
-					`git submodule update --init external/flann`
+					git submodule update --init external/flann
 				fi
 				if test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src" ; then
 					flann_PATH=`pwd`

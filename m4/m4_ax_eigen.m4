@@ -62,7 +62,7 @@ AC_DEFUN([AX_EIGEN], [
 	else
 		for ac_eigen_path_tmp in external ; do
 			if !( test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen") ; then
-				`git submodule update --init external/eigen`
+				git submodule update --init external/eigen
 			fi
 			if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
 				eigen_PATH=`pwd`
