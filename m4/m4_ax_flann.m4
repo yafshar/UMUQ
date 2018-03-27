@@ -7,9 +7,8 @@
 #
 #   Test for the FLANN libraries
 #
-#   If no path to the installed FLANN library is given the macro searchs
-#   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
-#   and evaluates the environment variable for FLANN library and header files. 
+#   If no path to the installed FLANN library is given the macro uses
+#   external folder and make the FLANN library and header files. 
 #
 # ADAPTED 
 #  Yaser Afshar @ ya.afshar@gmail.com
@@ -60,9 +59,11 @@ AC_DEFUN([AX_FLANN], [
         AC_MSG_NOTICE(FLANN)
                 
         succeeded=no
-
-        dnl first we check the system location for flann libraries
-        flann_CPPFLAGS=""
+    
+        flann_LDFLAGS=
+        flann_CPPFLAGS=
+        flann_PATH=
+        
         if test x"$ac_flann_path" != x; then
             for ac_flann_path_tmp in $ac_flann_path $ac_flann_path/include ; do 
                 if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
@@ -73,14 +74,19 @@ AC_DEFUN([AX_FLANN], [
                 fi
             done
         else
-            for ac_flann_path_tmp in /usr /usr/include /usr/local /use/local/include /opt /opt/local ; do
-                if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
-                    if test -f "$ac_flann_path_tmp/flann/flann.h" && test -r "$ac_flann_path_tmp/flann/flann.h"; then
-                        flann_CPPFLAGS="-I$ac_flann_path_tmp"
-                    	break;
-                    fi
+		    for ac_flann_path_tmp in external ; do
+			    if !( test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src") ; then
+                    `git submodule update --init external/flann`
                 fi
-            done
+			    if test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src" ; then
+                    flann_PATH=`pwd`
+				    flann_PATH+='/'"$ac_flann_path_tmp"'/flann'
+				    if test -f "$flann_PATH/src/cpp/flann/flann.h" && test -r "$flann_PATH/src/cpp/flann/flann.h"; then 
+                        flann_CPPFLAGS="-I$flann_PATH"'/src/cpp'
+                        break;
+                    fi
+			    fi
+		    done
     	fi
 
         CPPFLAGS_SAVED="$CPPFLAGS"
@@ -88,26 +94,28 @@ AC_DEFUN([AX_FLANN], [
 
     	CPPFLAGS+=" $flann_CPPFLAGS"
 
-    	flann_LDFLAGS=""
         if test x"$ac_flann_path" != x; then
             if test -d "$ac_flann_path/lib" && test -r "$ac_flann_path/lib" ; then
                 flann_LDFLAGS=" -L$ac_flann_path/lib"   
             fi
     	else
-            for ac_flann_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu; do
-                if test -f "$ac_flann_path_tmp/libflann.so" && test -r "$ac_flann_path_tmp/libflann.so"; then
-                    flann_LDFLAGS=" -L$ac_flann_path_tmp" 
-                    break;
+            if test x"$flann_PATH" != x ; then
+                if test -f "$flann_PATH/build/lib/libflann.so" && test -r "$flann_PATH/build/lib/libflann.so"; then
+                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib' 
                 fi
-                if test -f "$ac_flann_path_tmp/libflann.a" && test -r "$ac_flann_path_tmp/libflann.a"; then
-                    flann_LDFLAGS=" -L$ac_flann_path_tmp" 
-                    break;
+                if test -f "$flann_PATH/build/lib/libflann.a" && test -r "$flann_PATH/build/lib/libflann.a"; then
+                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
                 fi      
-                if test -f "$ac_flann_path_tmp/libflann.dylib" && test -r "$ac_flann_path_tmp/libflann.dylib"; then
-                    flann_LDFLAGS=" -L$ac_flann_path_tmp" 
-                    break;
-                fi      
-            done
+                if test -f "$flann_PATH/build/lib/libflann.dylib" && test -r "$flann_PATH/build/lib/libflann.dylib"; then
+                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib' 
+                fi 
+                if test x"$flann_LDFLAGS" = x ; then
+                    AC_LANG_PUSH(C++)
+                    (cd "$flann_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$flann_PATH" && make)
+                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
+                    AC_LANG_POP([C++])
+                fi     
+            fi
         fi
 
         LDFLAGS+="$flann_LDFLAGS"' -lflann'

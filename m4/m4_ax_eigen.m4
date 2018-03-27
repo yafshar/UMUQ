@@ -47,34 +47,36 @@ AC_DEFUN([AX_EIGEN], [
                 
 	succeeded=no
                 
-	dnl first we check the system location for eigen libraries
-	EIGEN_CPPFLAGS=""
-	if test x"$ac_eigen_path" != x; then
+	eigen_CPPFLAGS=
+    eigen_PATH=
+	
+    if test x"$ac_eigen_path" != x; then
 		for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
 			if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
 				if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense" ; then
-					EIGEN_CPPFLAGS="-I$ac_eigen_path_tmp"
+					eigen_CPPFLAGS="-I$ac_eigen_path_tmp"
 					break;
 				fi
 			fi
 		done
 	else
 		for ac_eigen_path_tmp in external ; do
-			if test -d "$ac_eigen_path_tmp/eigen" && test -r "$ac_eigen_path_tmp/eigen" ; then
-				EIGENPATH=`pwd`
-				EIGENPATH+='/'"$ac_eigen_path_tmp"'/eigen'
-				if test -d "$EIGENPATH/Eigen" && test -r "$EIGENPATH/Eigen"; then
-					if test -f "$EIGENPATH/Eigen/Dense"  && test -r "$EIGENPATH/Eigen/Dense"; then                 
-						EIGEN_CPPFLAGS="-I$EIGENPATH"
-						break;
-					fi
+			if !( test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen") ; then
+                `git submodule update --init external/eigen`
+            fi
+            if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
+				eigen_PATH=`pwd`
+				eigen_PATH+='/'"$ac_eigen_path_tmp"'/eigen'
+				if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then                 
+					eigen_CPPFLAGS="-I$eigen_PATH"
+					break;
 				fi
 			fi
 		done
 	fi
 
 	CPPFLAGS_SAVED="$CPPFLAGS"
-	CPPFLAGS+=" $EIGEN_CPPFLAGS"
+	CPPFLAGS+=" $eigen_CPPFLAGS"
 	
 	AC_LANG_PUSH(C++)
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 

@@ -90,6 +90,9 @@ AC_DEFUN([AX_GOOGLETEST], [
 						done
 					else
 						for ac_googletest_path_tmp in external ; do
+							if !( test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest") ; then
+                                `git submodule update --init external/googletest`
+                            fi
 							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
 								googletest_PATH=`pwd`
 								googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
@@ -119,8 +122,10 @@ AC_DEFUN([AX_GOOGLETEST], [
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
 							fi
 							if test x"$googletest_LDFLAGS" = x ; then
-								(cd "$googletest_PATH" && cmake CMakeLists.txt && make)
-								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+                                AC_LANG_PUSH(C++)
+                                (cd "$googletest_PATH" && mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX= && make)
+                                googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+                                AC_LANG_POP([C++])
 							fi
 						fi
 					fi
