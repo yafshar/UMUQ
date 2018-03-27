@@ -90,7 +90,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 						done
 					else
 						for ac_googletest_path_tmp in external ; do
-							if !( test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest") ; then
+							if !( test -d "$ac_googletest_path_tmp/googletest/googletest" && test -r "$ac_googletest_path_tmp/googletest/googletest") ; then
 								`git submodule update --init external/googletest`
 							fi
 							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
