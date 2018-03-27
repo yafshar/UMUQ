@@ -1,19 +1,18 @@
 #
 # SYNOPSIS
 #
-#   AX_EIGEN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#	AX_EIGEN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   Test for the EIGEN libraries
+#	Test for the EIGEN libraries
 #
-#   If no path to the installed eigen library is given the macro searchs
-#   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
-#   and look for header files.
+#	If no path to the installed eigen library is given the macro uses
+#	external folder and look for header files.
 #
 # ADAPTED 
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_EIGEN], [AX_EIGEN])
 AC_DEFUN([AX_EIGEN], [
