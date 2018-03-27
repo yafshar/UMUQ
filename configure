@@ -3374,18 +3374,18 @@ fi
 #
 # SYNOPSIS
 #
-#   AX_FLANN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#	AX_FLANN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   Test for the FLANN libraries
+#	Test for the FLANN libraries
 #
-#   If no path to the installed FLANN library is given the macro uses
-#   external folder and make the FLANN library and header files.
+#	If no path to the installed FLANN library is given the macro uses
+#	external folder and make the FLANN library and header files.
 #
 # ADAPTED
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 # This is what autoupdate's m4 run will expand.  It fires
 # the warning (with _au_warn_XXX), outputs it into the
@@ -3405,6 +3405,7 @@ fi
 # then outputs the replacement expansion.  We do not care
 # about autoupdate's warning because that contains
 # information on what to do *after* running autoupdate.
+
 
 
 # ===========================================================================
@@ -6233,9 +6234,9 @@ $as_echo "$as_me: EIGEN" >&6;}
 	succeeded=no
 
 	eigen_CPPFLAGS=
-    eigen_PATH=
+	eigen_PATH=
 
-    if test x"$ac_eigen_path" != x; then
+	if test x"$ac_eigen_path" != x; then
 		for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
 			if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
 				if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense" ; then
@@ -6247,9 +6248,9 @@ $as_echo "$as_me: EIGEN" >&6;}
 	else
 		for ac_eigen_path_tmp in external ; do
 			if !( test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen") ; then
-                `git submodule update --init external/eigen`
-            fi
-            if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
+				`git submodule update --init external/eigen`
+			fi
+			if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
 				eigen_PATH=`pwd`
 				eigen_PATH+='/'"$ac_eigen_path_tmp"'/eigen'
 				if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then
@@ -6345,27 +6346,27 @@ $as_echo "$as_me: FLANN" >&6;}
 # Check whether --with-flann was given.
 if test "${with_flann+set}" = set; then :
   withval=$with_flann;
-            if test x"$withval" = xno ; then
-            	as_fn_error $? " Unable to continue without the FLANN library !" "$LINENO" 5
-            elif test x"$withval" = xyes ; then
-                ac_flann_path=""
-            elif test x"$withval" != x ; then
-                ac_flann_path="$withval"
-        	else
-                ac_flann_path=""
-            fi
+			if test x"$withval" = xno ; then
+				as_fn_error $? " Unable to continue without the FLANN library !" "$LINENO" 5
+			elif test x"$withval" = xyes ; then
+				ac_flann_path=""
+			elif test x"$withval" != x ; then
+				ac_flann_path="$withval"
+			else
+				ac_flann_path=""
+			fi
 
 else
 
-            ac_flann_path=""
+			ac_flann_path=""
 
 
 fi
 
 
-        if test x"$ac_flann_path" = x; then :
+		if test x"$ac_flann_path" = x; then :
 
-        for ac_header in flann/flann.h
+		for ac_header in flann/flann.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "flann/flann.h" "ac_cv_header_flann_flann_h" "$ac_includes_default"
 if test "x$ac_cv_header_flann_flann_h" = xyes; then :
@@ -6379,17 +6380,17 @@ fi
 
 done
 
-        if test x"$ax_flann_ok" = xyes; then :
+		if test x"$ax_flann_ok" = xyes; then :
 
-            LDFLAGS_SAVED="$LDFLAGS"
-            LDFLAGS+=' -lflann'
-            ac_ext=cpp
+				LDFLAGS_SAVED="$LDFLAGS"
+				LDFLAGS+=' -lflann'
+				ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for flann_build_index_double in -lflann" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for flann_build_index_double in -lflann" >&5
 $as_echo_n "checking for flann_build_index_double in -lflann... " >&6; }
 if ${ac_cv_lib_flann_flann_build_index_double+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -6434,17 +6435,18 @@ _ACEOF
 
 else
 
-                    ax_flann_ok="no"
-                    LDFLAGS="$LDFLAGS_SAVED"
+						ax_flann_ok="no"
+						LDFLAGS="$LDFLAGS_SAVED"
 
 
 fi
 
-        	ac_ext=c
+				ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 
 
@@ -6452,98 +6454,98 @@ fi
 
 else
 
-            ax_flann_ok="no"
+			ax_flann_ok="no"
 
 
 fi
 
-    if test x"$ax_flann_ok" = xno; then :
+	if test x"$ax_flann_ok" = xno; then :
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: FLANN" >&5
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: FLANN" >&5
 $as_echo "$as_me: FLANN" >&6;}
 
-        succeeded=no
+		succeeded=no
 
-        flann_LDFLAGS=
-        flann_CPPFLAGS=
-        flann_PATH=
+		flann_LDFLAGS=
+		flann_CPPFLAGS=
+		flann_PATH=
 
-        if test x"$ac_flann_path" != x; then
-            for ac_flann_path_tmp in $ac_flann_path $ac_flann_path/include ; do
-                if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
-                    if test -f "$ac_flann_path_tmp/flann/flann.h"  && test -r "$ac_flann_path_tmp/flann/flann.h" ; then
-                        flann_CPPFLAGS="-I$ac_flann_path_tmp"
-                        break;
-                    fi
-                fi
-            done
-        else
-		    for ac_flann_path_tmp in external ; do
-			    if !( test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src") ; then
-                    `git submodule update --init external/flann`
-                fi
-			    if test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src" ; then
-                    flann_PATH=`pwd`
-				    flann_PATH+='/'"$ac_flann_path_tmp"'/flann'
-				    if test -f "$flann_PATH/src/cpp/flann/flann.h" && test -r "$flann_PATH/src/cpp/flann/flann.h"; then
-                        flann_CPPFLAGS="-I$flann_PATH"'/src/cpp'
-                        break;
-                    fi
-			    fi
-		    done
-    	fi
+		if test x"$ac_flann_path" != x; then
+			for ac_flann_path_tmp in $ac_flann_path $ac_flann_path/include ; do
+				if test -d "$ac_flann_path_tmp/flann" && test -r "$ac_flann_path_tmp/flann" ; then
+					if test -f "$ac_flann_path_tmp/flann/flann.h"  && test -r "$ac_flann_path_tmp/flann/flann.h" ; then
+						flann_CPPFLAGS="-I$ac_flann_path_tmp"
+						break;
+					fi
+				fi
+			done
+		else
+			for ac_flann_path_tmp in external ; do
+				if !( test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src") ; then
+					`git submodule update --init external/flann`
+				fi
+				if test -d "$ac_flann_path_tmp/flann/src" && test -r "$ac_flann_path_tmp/flann/src" ; then
+					flann_PATH=`pwd`
+					flann_PATH+='/'"$ac_flann_path_tmp"'/flann'
+					if test -f "$flann_PATH/src/cpp/flann/flann.h" && test -r "$flann_PATH/src/cpp/flann/flann.h"; then
+						flann_CPPFLAGS="-I$flann_PATH"'/src/cpp'
+						break;
+					fi
+				fi
+			done
+		fi
 
-        CPPFLAGS_SAVED="$CPPFLAGS"
-        LDFLAGS_SAVED="$LDFLAGS"
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		LDFLAGS_SAVED="$LDFLAGS"
 
-    	CPPFLAGS+=" $flann_CPPFLAGS"
+		CPPFLAGS+=" $flann_CPPFLAGS"
 
-        if test x"$ac_flann_path" != x; then
-            if test -d "$ac_flann_path/lib" && test -r "$ac_flann_path/lib" ; then
-                flann_LDFLAGS=" -L$ac_flann_path/lib"
-            fi
-    	else
-            if test x"$flann_PATH" != x ; then
-                if test -f "$flann_PATH/build/lib/libflann.so" && test -r "$flann_PATH/build/lib/libflann.so"; then
-                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
-                fi
-                if test -f "$flann_PATH/build/lib/libflann.a" && test -r "$flann_PATH/build/lib/libflann.a"; then
-                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
-                fi
-                if test -f "$flann_PATH/build/lib/libflann.dylib" && test -r "$flann_PATH/build/lib/libflann.dylib"; then
-                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
-                fi
-                if test x"$flann_LDFLAGS" = x ; then
-                    ac_ext=cpp
+		if test x"$ac_flann_path" != x; then
+			if test -d "$ac_flann_path/lib" && test -r "$ac_flann_path/lib" ; then
+				flann_LDFLAGS=" -L$ac_flann_path/lib"
+			fi
+		else
+			if test x"$flann_PATH" != x ; then
+				if test -f "$flann_PATH/build/lib/libflann.so" && test -r "$flann_PATH/build/lib/libflann.so"; then
+					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
+				fi
+				if test -f "$flann_PATH/build/lib/libflann.a" && test -r "$flann_PATH/build/lib/libflann.a"; then
+					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
+				fi
+				if test -f "$flann_PATH/build/lib/libflann.dylib" && test -r "$flann_PATH/build/lib/libflann.dylib"; then
+					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
+				fi
+				if test x"$flann_LDFLAGS" = x ; then
+					ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-                    (cd "$flann_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$flann_PATH" && make)
-                    flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
-                    ac_ext=c
+					(cd "$flann_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$flann_PATH" && make)
+					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
+					ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-                fi
-            fi
-        fi
+				fi
+			fi
+		fi
 
-        LDFLAGS+="$flann_LDFLAGS"' -lflann'
+		LDFLAGS+="$flann_LDFLAGS"' -lflann'
 
-        ac_ext=cpp
+		ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+		cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-            	#include <flann/flann.h>
+				#include <flann/flann.h>
 
 int
 main ()
@@ -6556,29 +6558,29 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h usability...  yes" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h usability...  yes" >&5
 $as_echo "checking flann/flann.h usability...  yes" >&6; }
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h presence... yes" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h presence... yes" >&5
 $as_echo "checking flann/flann.h presence... yes" >&6; }
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for flann/flann.h... yes" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for flann/flann.h... yes" >&5
 $as_echo "checking for flann/flann.h... yes" >&6; }
-                succeeded=yes
+				succeeded=yes
 
 else
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h usability...  no" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h usability...  no" >&5
 $as_echo "checking flann/flann.h usability...  no" >&6; }
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h presence... no" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking flann/flann.h presence... no" >&5
 $as_echo "checking flann/flann.h presence... no" >&6; }
-                { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for flann/flann.h... no" >&5
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for flann/flann.h... no" >&5
 $as_echo "checking for flann/flann.h... no" >&6; }
-                as_fn_error $? " Unable to continue without the FLANN header files !" "$LINENO" 5
+				as_fn_error $? " Unable to continue without the FLANN header files !" "$LINENO" 5
 
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for flann_build_index_double in -lflann" >&5
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for flann_build_index_double in -lflann" >&5
 $as_echo_n "checking for flann_build_index_double in -lflann... " >&6; }
 if ${ac_cv_lib_flann_flann_build_index_double+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -6623,40 +6625,40 @@ _ACEOF
 
 else
 
-                succeeded=no
-                as_fn_error $? " Unable to continue without the FLANN library !" "$LINENO" 5
+				succeeded=no
+				as_fn_error $? " Unable to continue without the FLANN library !" "$LINENO" 5
 
 
 fi
 
-        ac_ext=c
+		ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-        if test x"$succeeded" = xyes ; then
+		if test x"$succeeded" = xyes ; then
 
 
-            ax_flann_ok="yes"
+			ax_flann_ok="yes"
 
 $as_echo "#define HAVE_FLANN 1" >>confdefs.h
 
-            :
-        else
-            ax_flann_ok="no"
-            CPPFLAGS="$CPPFLAGS_SAVED"
-            LDFLAGS="$LDFLAGS_SAVED"
-            :
-        fi
+			:
+		else
+			ax_flann_ok="no"
+			CPPFLAGS="$CPPFLAGS_SAVED"
+			LDFLAGS="$LDFLAGS_SAVED"
+			:
+		fi
 
 fi
 
-    if test x"$ax_flann_ok" = xno; then :
+	if test x"$ax_flann_ok" = xno; then :
    as_fn_error $? " Unable to find the FLANN library !" "$LINENO" 5
 fi
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: " >&5
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: " >&5
 $as_echo "" >&6; }
 
 
@@ -10154,9 +10156,9 @@ $as_echo "$as_me: GOOGLETEST" >&6;}
 						done
 					else
 						for ac_googletest_path_tmp in external ; do
-							if !( test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest") ; then
-                                `git submodule update --init external/googletest`
-                            fi
+							if !( test -d "$ac_googletest_path_tmp/googletest/googletest" && test -r "$ac_googletest_path_tmp/googletest/googletest") ; then
+								`git submodule update --init external/googletest`
+							fi
 							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
 								googletest_PATH=`pwd`
 								googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
@@ -10186,15 +10188,15 @@ $as_echo "$as_me: GOOGLETEST" >&6;}
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
 							fi
 							if test x"$googletest_LDFLAGS" = x ; then
-                                ac_ext=cpp
+								ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-                                (cd "$googletest_PATH" && mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX= && make)
-                                googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
-                                ac_ext=c
+								(cd "$googletest_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$googletest_PATH" && make)
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+								ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
