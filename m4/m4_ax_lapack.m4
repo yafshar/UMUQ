@@ -247,7 +247,7 @@ AC_DEFUN([AX_LAPACK], [
 
 		AC_SUBST(LAPACK_LIBS)
 
-		AC_LANG_PUSH(C++)
+		AC_LANG_PUSH([C++])
 		if test x"$ax_lapack_ok" = xyes; then
 			AC_CHECK_LIB(lapack, dgetrf_, 
 				[], [
@@ -256,7 +256,7 @@ AC_DEFUN([AX_LAPACK], [
 				]
 			)
 		fi  
-		AC_LANG_POP(C++)
+		AC_LANG_POP([C++])
 	])
 
 	if test x"$ax_lapack_ok" = xyes; then

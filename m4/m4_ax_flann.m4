@@ -111,7 +111,7 @@ AC_DEFUN([AX_FLANN], [
 					flann_LDFLAGS=" -L$flann_PATH"'/build/lib' 
 				fi
 				if test x"$flann_LDFLAGS" = x ; then
-					AC_LANG_PUSH(C++)
+					AC_LANG_PUSH([C++])
 					(cd "$flann_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$flann_PATH" && make)
 					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
 					AC_LANG_POP([C++])
@@ -121,7 +121,7 @@ AC_DEFUN([AX_FLANN], [
 
 		LDFLAGS+="$flann_LDFLAGS"' -lflann'
 
-		AC_LANG_PUSH(C++)
+		AC_LANG_PUSH([C++])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 				@%:@include <flann/flann.h>
 			]], [[]]

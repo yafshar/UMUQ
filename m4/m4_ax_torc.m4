@@ -128,7 +128,7 @@ AC_DEFUN([AX_TORC], [
 		save_CC="$CC"
 		AS_IF([test x"$ax_mpi_ok" = xyes], [CC="$MPICC"])
 		
-		AC_LANG_PUSH(C)
+		AC_LANG_PUSH([C])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 				@%:@include <torc.h>
 			]], [[]]

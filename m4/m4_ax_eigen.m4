@@ -78,7 +78,7 @@ AC_DEFUN([AX_EIGEN], [
 	CPPFLAGS_SAVED="$CPPFLAGS"
 	CPPFLAGS+=" $eigen_CPPFLAGS"
 
-	AC_LANG_PUSH(C++)
+	AC_LANG_PUSH([C++])
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
 			@%:@include <Eigen/Dense>
 		]], [[]]
