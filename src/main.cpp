@@ -8,7 +8,7 @@
 #include "./numerics/flannlib.hpp"
 #include "./misc/timer.hpp"
 #include "./misc/utility.hpp"
-#include "./misc/lapacke.h"
+#include <lapacke.h>
 #include <random>
 int main()
 {
