@@ -3337,19 +3337,18 @@ fi
 #
 # SYNOPSIS
 #
-#   AX_EIGEN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#	AX_EIGEN([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   Test for the EIGEN libraries
+#	Test for the EIGEN libraries
 #
-#   If no path to the installed eigen library is given the macro searchs
-#   under /usr, /usr/local, /usr/local/include, /opt, and /opt/local
-#   and look for header files.
+#	If no path to the installed eigen library is given the macro uses
+#	external folder and look for header files.
 #
 # ADAPTED
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 # This is what autoupdate's m4 run will expand.  It fires
 # the warning (with _au_warn_XXX), outputs it into the
@@ -3603,9 +3602,9 @@ fi
 #
 #	Test for the GOOGLETEST framework
 #
-#	If no path to the installed googletest framework is given the macro searchs
-#	under /usr, /usr/local, /usr/local/include, /opt, and /opt/local
-#	and evaluates the environment variable for googletest library and header files.
+#	If no path to the installed googletest framework is given the macro uses
+#	the external installation and evaluates the environment variable for
+#	googletest library and header files.
 #
 # ADAPTED
 #	Yaser Afshar @ ya.afshar@gmail.com
@@ -10057,7 +10056,7 @@ $as_echo "$as_me: GOOGLETEST" >&6;}
 
 					googletest_LDFLAGS=
 					googletest_CPPFLAGS=
-                    googletest_PATH=
+					googletest_PATH=
 
 										if test x"$ac_googletest_path" != x; then
 						for ac_googletest_path_tmp in $ac_googletest_path $ac_googletest_path/include ; do
@@ -10070,14 +10069,14 @@ $as_echo "$as_me: GOOGLETEST" >&6;}
 						done
 					else
 						for ac_googletest_path_tmp in external ; do
-                            if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
-                            googletest_PATH=`pwd`
-				            googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
-							if test -f "$googletest_PATH/googletest/include/gtest/gtest.h" && test -r "$googletest_PATH/googletest/include/gtest/gtest.h"; then
-								googletest_CPPFLAGS=" -I$googletest_PATH"'/googletest/include'
-								break;
+							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
+								googletest_PATH=`pwd`
+								googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
+								if test -f "$googletest_PATH/googletest/include/gtest/gtest.h" && test -r "$googletest_PATH/googletest/include/gtest/gtest.h"; then
+									googletest_CPPFLAGS=" -I$googletest_PATH"'/googletest/include'
+									break;
+								fi
 							fi
-                            fi
 						done
 					fi
 
@@ -10089,9 +10088,20 @@ $as_echo "$as_me: GOOGLETEST" >&6;}
 						fi
 					else
 						if test x"$googletest_PATH" != x ; then
-                            (cd "$googletest_PATH" && cmake CMakeLists.txt && make)
-                            googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
-                        fi
+							if test -f "$googletest_PATH/googlemock/gtest/libgtest.a" && test -r "$googletest_PATH/googlemock/gtest/libgtest.a"; then
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+							fi
+							if test -f "$googletest_PATH/googlemock/gtest/libgtest.so" && test -r "$googletest_PATH/googlemock/gtest/libgtest.so"; then
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+							fi
+							if test -f "$googletest_PATH/googlemock/gtest/libgtest.dyld" && test -r "$googletest_PATH/googlemock/gtest/libgtest.dyld"; then
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+							fi
+							if test x"$googletest_LDFLAGS" = x ; then
+								(cd "$googletest_PATH" && cmake CMakeLists.txt && make)
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+							fi
+						fi
 					fi
 
 					LDFLAGS+="$googletest_LDFLAGS"' -lgtest'
