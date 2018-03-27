@@ -20,7 +20,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 	AC_ARG_WITH([googletest], 
 		AS_HELP_STRING([--with-googletest@<:@=DIR@:>@], 
 			[use GOOGLETEST framework (default is no) - it is possible to specify the root directory for GOOGLETEST (optional)]
-		), [ 
+		), [
 			if test x"$withval" = xno ; then
 				AC_MSG_WARN([You can not test the library without GOOGLETEST framework !!!])
 				ac_googletest_path=no
@@ -91,8 +91,8 @@ AC_DEFUN([AX_GOOGLETEST], [
 					else
 						for ac_googletest_path_tmp in external ; do
 							if !( test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest") ; then
-                                `git submodule update --init external/googletest`
-                            fi
+								`git submodule update --init external/googletest`
+							fi
 							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
 								googletest_PATH=`pwd`
 								googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
@@ -122,10 +122,10 @@ AC_DEFUN([AX_GOOGLETEST], [
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
 							fi
 							if test x"$googletest_LDFLAGS" = x ; then
-                                AC_LANG_PUSH(C++)
-                                (cd "$googletest_PATH" && mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX= && make)
-                                googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
-                                AC_LANG_POP([C++])
+								AC_LANG_PUSH(C++)
+								(cd "$googletest_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$googletest_PATH" && make)
+								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+								AC_LANG_POP([C++])
 							fi
 						fi
 					fi
