@@ -13,7 +13,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	#sudo update-alternatives --remove-all gcc 
 	#sudo update-alternatives --remove-all g++
 	#sudo update-alternatives --remove-all gfortran
-    
+
 	sudo apt-get install -y gcc-5 g++-5 gfortran-5 clang-3.7
 
 	#sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
@@ -34,6 +34,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libmpich-dev
 	sudo apt-get install -y libblas-dev
 	sudo apt-get install -y liblapack-dev
+	sudo apt-get install -y liblapacke
+	sudo apt-get install -y liblapacke-dev
 	sudo apt-get install -y libflann-dev
 	sudo apt-get install -y libflann1.8
 
