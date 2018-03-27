@@ -7,9 +7,9 @@
 #
 #	Test for the GOOGLETEST framework
 #
-#	If no path to the installed googletest framework is given the macro searchs
-#	under /usr, /usr/local, /usr/local/include, /opt, and /opt/local 
-#	and evaluates the environment variable for googletest library and header files. 
+#	If no path to the installed googletest framework is given the macro uses
+#	the external installation and evaluates the environment variable for 
+#	googletest library and header files. 
 #
 # ADAPTED 
 #	Yaser Afshar @ ya.afshar@gmail.com
@@ -42,7 +42,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 			CPPFLAGS_SAVED="$CPPFLAGS"
 			LIBS_SAVED="$LIBS"
 
-			dnl if the user does not provide the DIR root directory for EIGEN, we search the default PATH
+			dnl if the user does not provide the DIR root directory for googletest, we search the default PATH
 			AS_IF([test x"$ac_googletest_path" = x],
 				[
 					AC_CHECK_HEADERS([gtest/gtest.h], [ax_googletest_ok=yes], [ax_googletest_ok=no])
@@ -76,6 +76,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 					googletest_LDFLAGS=
 					googletest_CPPFLAGS=
+					googletest_PATH=
 
 					dnl first we check the system location for googletest libraries
 					if test x"$ac_googletest_path" != x; then
@@ -88,10 +89,14 @@ AC_DEFUN([AX_GOOGLETEST], [
 							fi
 						done
 					else
-						for ac_googletest_path_tmp in /usr /usr/local /use/local/include /opt /opt/local ; do
-							if test -f "$ac_googletest_path_tmp/gtest.h" && test -r "$ac_googletest_path_tmp/gtest.h"; then
-								googletest_CPPFLAGS=" -I$ac_googletest_path_tmp"
-								break;
+						for ac_googletest_path_tmp in external ; do
+							if test -d "$ac_googletest_path_tmp/googletest" && test -r "$ac_googletest_path_tmp/googletest" ; then
+								googletest_PATH=`pwd`
+								googletest_PATH+='/'"$ac_googletest_path_tmp"'/googletest'
+								if test -f "$googletest_PATH/googletest/include/gtest/gtest.h" && test -r "$googletest_PATH/googletest/include/gtest/gtest.h"; then
+									googletest_CPPFLAGS=" -I$googletest_PATH"'/googletest/include'
+									break;
+								fi
 							fi
 						done
 					fi
@@ -103,20 +108,10 @@ AC_DEFUN([AX_GOOGLETEST], [
 							googletest_LDFLAGS=" -L$ac_googletest_path/lib"   
 						fi
 					else
-						for ac_googletest_path_tmp in /usr/lib /usr/lib64 /use/local/lib /use/local/lib64 /opt /opt/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu /usr/lib/arm-linux-gnueabihf /usr/lib/i386-linux-gnu /usr/lib/powerpc-linux-gnu /usr/lib/powerpc64le-linux-gnu ; do
-							if test -f "$ac_googletest_path_tmp/libgtest.so" && test -r "$ac_googletest_path_tmp/libgtest.so"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
-								break;
-							fi
-							if test -f "$ac_googletest_path_tmp/libgtest.a" && test -r "$ac_googletest_path_tmp/libgtest.a"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
-								break;
-							fi
-							if test -f "$ac_googletest_path_tmp/libgtest.dylib" && test -r "$ac_googletest_path_tmp/libgtest.dylib"; then
-								googletest_LDFLAGS=" -L$ac_googletest_path_tmp" 
-								break;
-							fi
-						done
+						if test x"$googletest_PATH" != x ; then
+							(cd "$googletest_PATH" && cmake CMakeLists.txt && make)
+							googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+						fi
 					fi
 
 					LDFLAGS+="$googletest_LDFLAGS"' -lgtest'
