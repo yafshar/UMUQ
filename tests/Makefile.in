@@ -87,12 +87,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = polynomial_test$(EXEEXT) utility_test$(EXEEXT) \
-	parser_test$(EXEEXT) array_test$(EXEEXT) io_test$(EXEEXT) \
-	TMCMC_datatype_test$(EXEEXT)
-check_PROGRAMS = polynomial_test$(EXEEXT) utility_test$(EXEEXT) \
-	parser_test$(EXEEXT) array_test$(EXEEXT) io_test$(EXEEXT) \
-	TMCMC_datatype_test$(EXEEXT)
+TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
+	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	io_test$(EXEEXT) TMCMC_datatype_test$(EXEEXT)
+check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
+	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	io_test$(EXEEXT) TMCMC_datatype_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/m4_ax_cxx_compile_stdcxx.m4 \
@@ -110,22 +110,27 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/umhbm_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_TMCMC_datatype_test_OBJECTS = TMCMC_datatype_test.$(OBJEXT)
+am__dirstamp = $(am__leading_dot)dirstamp
+am_TMCMC_datatype_test_OBJECTS =  \
+	data_type/TMCMC_datatype_test.$(OBJEXT)
 TMCMC_datatype_test_OBJECTS = $(am_TMCMC_datatype_test_OBJECTS)
 TMCMC_datatype_test_LDADD = $(LDADD)
-am_array_test_OBJECTS = array_test.$(OBJEXT)
+am_array_test_OBJECTS = misc/array_test.$(OBJEXT)
 array_test_OBJECTS = $(am_array_test_OBJECTS)
 array_test_LDADD = $(LDADD)
-am_io_test_OBJECTS = io_test.$(OBJEXT)
+am_eigen_test_OBJECTS = numerics/eigen_test.$(OBJEXT)
+eigen_test_OBJECTS = $(am_eigen_test_OBJECTS)
+eigen_test_LDADD = $(LDADD)
+am_io_test_OBJECTS = io/io_test.$(OBJEXT)
 io_test_OBJECTS = $(am_io_test_OBJECTS)
 io_test_LDADD = $(LDADD)
-am_parser_test_OBJECTS = parser_test.$(OBJEXT)
+am_parser_test_OBJECTS = misc/parser_test.$(OBJEXT)
 parser_test_OBJECTS = $(am_parser_test_OBJECTS)
 parser_test_LDADD = $(LDADD)
-am_polynomial_test_OBJECTS = polynomial_test.$(OBJEXT)
+am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
-am_utility_test_OBJECTS = utility_test.$(OBJEXT)
+am_utility_test_OBJECTS = misc/utility_test.$(OBJEXT)
 utility_test_OBJECTS = $(am_utility_test_OBJECTS)
 utility_test_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -158,11 +163,13 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(TMCMC_datatype_test_SOURCES) $(array_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(utility_test_SOURCES)
+	$(eigen_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(utility_test_SOURCES)
 DIST_SOURCES = $(TMCMC_datatype_test_SOURCES) $(array_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(utility_test_SOURCES)
+	$(eigen_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -517,12 +524,13 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(GTEST_CPPFLAGS)
 AM_CXXFLAGS = $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
-polynomial_test_SOURCES = polynomial_test.cpp 
-utility_test_SOURCES = utility_test.cpp
-parser_test_SOURCES = parser_test.cpp
-array_test_SOURCES = array_test.cpp
-io_test_SOURCES = io_test.cpp
-TMCMC_datatype_test_SOURCES = TMCMC_datatype_test.cpp
+polynomial_test_SOURCES = numerics/polynomial_test.cpp 
+eigen_test_SOURCES = numerics/eigen_test.cpp 
+utility_test_SOURCES = misc/utility_test.cpp
+parser_test_SOURCES = misc/parser_test.cpp
+array_test_SOURCES = misc/array_test.cpp
+io_test_SOURCES = io/io_test.cpp
+TMCMC_datatype_test_SOURCES = data_type/TMCMC_datatype_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -559,26 +567,67 @@ $(am__aclocal_m4_deps):
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+data_type/$(am__dirstamp):
+	@$(MKDIR_P) data_type
+	@: > data_type/$(am__dirstamp)
+data_type/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) data_type/$(DEPDIR)
+	@: > data_type/$(DEPDIR)/$(am__dirstamp)
+data_type/TMCMC_datatype_test.$(OBJEXT): data_type/$(am__dirstamp) \
+	data_type/$(DEPDIR)/$(am__dirstamp)
 
 TMCMC_datatype_test$(EXEEXT): $(TMCMC_datatype_test_OBJECTS) $(TMCMC_datatype_test_DEPENDENCIES) $(EXTRA_TMCMC_datatype_test_DEPENDENCIES) 
 	@rm -f TMCMC_datatype_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(TMCMC_datatype_test_OBJECTS) $(TMCMC_datatype_test_LDADD) $(LIBS)
+misc/$(am__dirstamp):
+	@$(MKDIR_P) misc
+	@: > misc/$(am__dirstamp)
+misc/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) misc/$(DEPDIR)
+	@: > misc/$(DEPDIR)/$(am__dirstamp)
+misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
+	misc/$(DEPDIR)/$(am__dirstamp)
 
 array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
 	@rm -f array_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+numerics/$(am__dirstamp):
+	@$(MKDIR_P) numerics
+	@: > numerics/$(am__dirstamp)
+numerics/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/$(DEPDIR)
+	@: > numerics/$(DEPDIR)/$(am__dirstamp)
+numerics/eigen_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+eigen_test$(EXEEXT): $(eigen_test_OBJECTS) $(eigen_test_DEPENDENCIES) $(EXTRA_eigen_test_DEPENDENCIES) 
+	@rm -f eigen_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(eigen_test_OBJECTS) $(eigen_test_LDADD) $(LIBS)
+io/$(am__dirstamp):
+	@$(MKDIR_P) io
+	@: > io/$(am__dirstamp)
+io/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) io/$(DEPDIR)
+	@: > io/$(DEPDIR)/$(am__dirstamp)
+io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
 	@rm -f io_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(io_test_OBJECTS) $(io_test_LDADD) $(LIBS)
+misc/parser_test.$(OBJEXT): misc/$(am__dirstamp) \
+	misc/$(DEPDIR)/$(am__dirstamp)
 
 parser_test$(EXEEXT): $(parser_test_OBJECTS) $(parser_test_DEPENDENCIES) $(EXTRA_parser_test_DEPENDENCIES) 
 	@rm -f parser_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(parser_test_OBJECTS) $(parser_test_LDADD) $(LIBS)
+numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
 
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
+misc/utility_test.$(OBJEXT): misc/$(am__dirstamp) \
+	misc/$(DEPDIR)/$(am__dirstamp)
 
 utility_test$(EXEEXT): $(utility_test_OBJECTS) $(utility_test_DEPENDENCIES) $(EXTRA_utility_test_DEPENDENCIES) 
 	@rm -f utility_test$(EXEEXT)
@@ -586,27 +635,34 @@ utility_test$(EXEEXT): $(utility_test_OBJECTS) $(utility_test_DEPENDENCIES) $(EX
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f data_type/*.$(OBJEXT)
+	-rm -f io/*.$(OBJEXT)
+	-rm -f misc/*.$(OBJEXT)
+	-rm -f numerics/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TMCMC_datatype_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/array_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/polynomial_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@data_type/$(DEPDIR)/TMCMC_datatype_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
@@ -811,6 +867,13 @@ polynomial_test.log: polynomial_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+eigen_test.log: eigen_test$(EXEEXT)
+	@p='eigen_test$(EXEEXT)'; \
+	b='eigen_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 utility_test.log: utility_test$(EXEEXT)
 	@p='utility_test$(EXEEXT)'; \
 	b='utility_test'; \
@@ -926,6 +989,14 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f data_type/$(DEPDIR)/$(am__dirstamp)
+	-rm -f data_type/$(am__dirstamp)
+	-rm -f io/$(DEPDIR)/$(am__dirstamp)
+	-rm -f io/$(am__dirstamp)
+	-rm -f misc/$(DEPDIR)/$(am__dirstamp)
+	-rm -f misc/$(am__dirstamp)
+	-rm -f numerics/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -935,7 +1006,7 @@ clean: clean-am
 clean-am: clean-checkPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf data_type/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -981,7 +1052,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf data_type/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
