@@ -1,5 +1,9 @@
-#ifndef POLYNOMIAL_H
-#define POLYNOMIAL_H
+#ifndef UMHBM_POLYNOMIAL_H
+#define UMHBM_POLYNOMIAL_H
+
+#include <iostream>
+#include <cmath>
+#include <cstdlib> //for exit
 
 /*! \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *
@@ -9,7 +13,6 @@
  */
 class polynomial
 {
-
   public:
     polynomial() : dim(2), degree(2){};
     inline polynomial(unsigned int dm);
@@ -85,31 +88,35 @@ inline T polynomial::arraysum(int arraysize, T *array)
     return sum;
 };
 
+/*! 
+ * \brief Computes the binomial coefficient C(n, k).
+ *
+ * 1) A binomial coefficient C(n, k) can be defined as the coefficient of X ^ k in the expansion of(1 + X) ^ n
+ * 2) A binomial coefficient C(n, k) also gives the number of ways, disregarding order, that k objects can be 
+ * chosen from among n objects; 
+ * more formally, the number of k-element subsets (or k-combinations) of an n-element set.
+ * 
+ * The formula used is:
+ *   c(n,k) = n! / ( n! * (n-k)! )  
+ *  $c(n,k) = \frac{n\!}{( n\! * (n-k)! )}$ 
+ * 
+ * @param[in] n
+ * @param[in] k
+ * @param[out] binomial The binomial coefficient
+ */
 int polynomial::binomial_coefficient(int n, int k)
 {
-    /*! 
-    *   \brief Computes the binomial coefficient c(n, k).
-    *  
-    *   The formula used is:
-    *       c(n,k) = n! / ( n! * (n-k)! )  
-    *       $c(n,k) = \frac{n\!}{( n\! * (n-k)! )}$ 
-    *   Parameters:
-    *       @param[in] n
-    *       @param[in] k
-    *       @param[out] binomial The binomial coefficient
-    */
-
     if ((k < 0) || (n < 0))
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! k or n < 0" << std::endl;
+        std::cerr << " Fatal error! k or n < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (k < n)
     {
         if (k == 0)
             return 1;
-        if ((k == 1) || (k == n-1))
+        if ((k == 1) || (k == n - 1))
             return n;
         int mn;
         int mx;
@@ -129,26 +136,27 @@ int polynomial::binomial_coefficient(int n, int k)
         return 1;
     }
 
+    std::cout << std::endl;
+    std::cerr << " The binomial coefficient is undefined for k > n " << std::endl;
     return 0;
 };
 
+/*! 
+ *   \brief Use a reverse lexicographic order for next monomial, degree between 0 and r
+ *   all monomials in a d dimensional space, with degree r.
+ *
+ *   Parameters:
+ *       @param[in]  d   The spatial dimension
+ *       @param[in]  r   Maximum degree
+ *       @param[in]  x   Current monomial
+ *       @param[out] x   Next monomial, last value in the sequence is r.
+ */
 void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
 {
-    /*! 
-    *   \brief Use a reverse lexicographic order for next monomial, degree between 0 and r
-    *   all monomials in a d dimensional space, with degree r.
-    *
-    *   Parameters:
-    *       @param[in]  d   The spatial dimension
-    *       @param[in]  r   Maximum degree
-    *       @param[in]  x   Current monomial
-    *       @param[out] x   Next monomial, last value in the sequence is r.
-    */
-
     if (r < 0)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! maximum degree r < 0" << std::endl;
+        std::cerr << " Fatal error! maximum degree r < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (r == 0)
@@ -160,14 +168,14 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     if (asum < 0)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! input sums < 0" << std::endl;
+        std::cerr << " Fatal error! input sums < 0" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     if (r < asum)
     {
         std::cout << std::endl;
-        std::cout << " Fatal error! input sums > maximum degree r" << std::endl;
+        std::cerr << " Fatal error! input sums > maximum degree r" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -217,50 +225,42 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     return;
 };
 
+/*! 
+ *   \brief  All monomials in a d dimensional space, with total degree r.
+ *   
+ *   For example:
+ *       d = 2
+ *       r = 2
+ *
+ *       alpha[ 0],[ 1] = 0, 0 = x^0 y^0
+ *       alpha[ 2],[ 3] = 1, 0 = x^1 y^0
+ *       alpha[ 4],[ 5] = 0, 1 = x^0 y^1
+ *       alpha[ 6],[ 7] = 2, 0 = x^2 y^0
+ *       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
+ *       alpha[10],[11] = 0, 2 = x^0 y^2
+ *
+ *       monomial_basis(2,2)   = {1,    x,   y,  x^2, xy,  y^2}
+ *                       alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
+ *
+ *
+ *       monomial_basis(3,2)   = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
+ *                       alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
+ *
+ *
+ *   Parameters:
+ *       @param[in]  d       The spatial dimension
+ *       @param[in]  r       Maximum degree
+ *       @param[in]  alpha   Undefined pointer
+ *       @param[out] alpha   Pointer to monomial sequence
+ */
 void polynomial::monomial_basis(int d, int r, int *&alpha)
 {
-    /*! 
-    *   \brief  All monomials in a d dimensional space, with total degree r.
-    *   
-    *   For example:
-    *       d = 2
-    *       r = 2
-    *
-    *       alpha[ 0],[ 1] = 0, 0 = x^0 y^0
-    *       alpha[ 2],[ 3] = 1, 0 = x^1 y^0
-    *       alpha[ 4],[ 5] = 0, 1 = x^0 y^1
-    *       alpha[ 6],[ 7] = 2, 0 = x^2 y^0
-    *       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
-    *       alpha[10],[11] = 0, 2 = x^0 y^2
-    *
-    *       monomial_basis(2,2)   = {1,    x,   y,  x^2, xy,  y^2}
-    *                       alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
-    *
-    *
-    *       monomial_basis(3,2)   = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
-    *                       alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
-    *
-    *
-    *   Parameters:
-    *       @param[in]  d       The spatial dimension
-    *       @param[in]  r       Maximum degree
-    *       @param[in]  alpha   Undefined pointer
-    *       @param[out] alpha   Pointer to monomial sequence
-    */
-
     int j;
     int n;
 
     if (alpha != NULL)
     {
-        try
-        {
-            delete[] alpha;
-        }
-        catch (const std::system_error &e)
-        {
-            std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
-        }
+        delete[] alpha;
     }
 
     n = d * polynomial::binomial_coefficient(d + r, r);
@@ -268,9 +268,10 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     {
         alpha = new int[n];
     }
-    catch (const std::system_error &e)
+    catch (std::bad_alloc &e)
     {
-        std::cout << " System error with code " << e.code() << " meaning " << e.what() << std::endl;
+        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
     }
 
     int x[d];
@@ -295,19 +296,18 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     return;
 };
 
+/*! \brief Evaluates a monomial at a point x.
+ *
+ *   Parameters:
+ *       @param[in]  d       The spatial dimension
+ *       @param[in]  r       Maximum degree
+ *       @param[in]  alpha   The exponents of the monomial
+ *       @param[in]  x       The coordinates of the evaluation points
+ *       @param[out] value   Monomial_value, the array value of the monomial at point x
+ */
 template <typename T>
 void polynomial::monomial_value(int d, int r, int *alpha, T *x, T *&value)
 {
-    /*! \brief Evaluates a monomial at a point x.
-    *
-    *   Parameters:
-    *       @param[in]  d       The spatial dimension
-    *       @param[in]  r       Maximum degree
-    *       @param[in]  alpha   The exponents of the monomial
-    *       @param[in]  x       The coordinates of the evaluation points
-    *       @param[out] value   Monomial_value, the array value of the monomial at point x
-    */
-
     int n;
     n = polynomial::binomial_coefficient(d + r, r);
 

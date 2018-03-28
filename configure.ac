@@ -58,13 +58,13 @@ AX_BLAS
 AC_MSG_CHECKING([for - LAPACK Library - ])
 AX_LAPACK
 
-### Checking for GOOGLETEST
-AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
-AX_GOOGLETEST
-
 ### Checking for POSIX threads
 AC_MSG_CHECKING([for - POSIX threads - ])
 AX_PTHREAD
+
+### Checking for GOOGLETEST
+AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
+AX_GOOGLETEST
 
 ### Checking for TORC
 AC_MSG_CHECKING([for - TORC Library - ])

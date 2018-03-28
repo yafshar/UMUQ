@@ -7,29 +7,37 @@
 sudo: false
 language: cpp
 
+git:
+  submodules: false
+
+before_install:
+  - test -n $CC     && unset CC
+  - test -n $CXX    && unset CXX
+  - test -n $FC     && unset FC
+  - test -n $F77    && unset F77
+
 # Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
 # It is more tedious, but grants us far more flexibility.
 matrix:
   include:
     - os: linux
-    compiler: gcc
-    sudo : true
-    install: ./scripts/install-linux.sh && ./scripts/log-config.sh
-    script: ./scripts/build-linux-autotools.sh
+      compiler: gcc
+      sudo: true
+      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+      script: ./scripts/build-linux-autotools.sh
     - os: linux
-    compiler: gcc
-    sudo : true
-    install: ./scripts/install-linux.sh && ./scripts/log-config.sh
-    script: ./scripts/build-linux-autotools.sh
-    
-# These are the install and build (script) phases for the most common entries in the matrix.  They could be included
-# in each entry in the matrix, but that is just repetitive.
-install:
+      compiler: clang
+      sudo: true
+      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+      script: ./scripts/build-linux-autotools.sh
+
+## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
+## in each entry in the matrix, but that is just repetitive.
+install: make get-deps
   - ./scripts/install-${TRAVIS_OS_NAME}.sh
   - . ./scripts/env-${TRAVIS_OS_NAME}.sh
   - ./scripts/log-config.sh
-    
-script: ./scripts/travis.sh
+
 
 # For sudo=false builds this section installs the necessary dependencies.
 addons:
@@ -41,10 +49,13 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     - llvm-toolchain-precise-3.7
-        
-packages:
-  - g++-5
-  - clang-3.7
+    packages:
+    - cmake
+    - g++-5
+    - clang-3.7
+
+env:
+  - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
 
 notifications:
   email: false

@@ -3,9 +3,7 @@ set -e
 
 # Create the configuration script
 autoreconf -i
-
-# Run in a subdirectory to keep the sources clean
-mkdir build || true
-cd build
-../configure
+#configure and make
+./configure --with-googletest
 make
+make check

@@ -7,23 +7,23 @@
 // Tests binomial coefficient c(n, k) of 0.
 TEST(binomial_coefficient_test, HandlesZeroInput)
 {
-  polynomial p;
+    polynomial p;
 
-  EXPECT_EQ(1, p.binomial_coefficient(1, 0));
-  EXPECT_EQ(0, p.binomial_coefficient(0, 1));
-  EXPECT_EQ(1, p.binomial_coefficient(0, 0));
-  EXPECT_EQ(1, p.binomial_coefficient(10, 0));
+    EXPECT_EQ(1, p.binomial_coefficient(1, 0));
+    EXPECT_EQ(0, p.binomial_coefficient(0, 1));
+    EXPECT_EQ(1, p.binomial_coefficient(0, 0));
+    EXPECT_EQ(1, p.binomial_coefficient(10, 0));
 }
 
 // Tests binomial coefficient c(n, k)
 TEST(binomial_coefficient_test, HandlesOtherInput)
 {
-  polynomial p;
+    polynomial p;
 
-  EXPECT_EQ(10, p.binomial_coefficient(10, 1));
-  EXPECT_EQ(1, p.binomial_coefficient(10, 10));
-  EXPECT_EQ(6, p.binomial_coefficient(4, 2));
-  EXPECT_EQ(10, p.binomial_coefficient(5, 2));
+    EXPECT_EQ(10, p.binomial_coefficient(10, 1));
+    EXPECT_EQ(1, p.binomial_coefficient(10, 10));
+    EXPECT_EQ(6, p.binomial_coefficient(4, 2));
+    EXPECT_EQ(10, p.binomial_coefficient(5, 2));
 }
 
 /*! \brief Tests binomial coefficient c(n, k) of 0.
@@ -48,59 +48,59 @@ TEST(binomial_coefficient_test, HandlesOtherInput)
 */
 TEST(monomial_basis_test, HandlesInput)
 {
-  polynomial p;
+    polynomial p;
 
-  int dim;
-  int degree;
-  int *coeff=NULL;
-  int num;
+    int dim;
+    int degree;
+    int *coeff = NULL;
+    int num;
 
-  dim = 2;
-  degree = 2;
+    dim = 2;
+    degree = 2;
 
-  p.monomial_basis(dim, degree, coeff);
-  num = dim * p.binomial_coefficient(dim + degree, degree);
-  EXPECT_EQ(12, num);
+    p.monomial_basis(dim, degree, coeff);
+    num = dim * p.binomial_coefficient(dim + degree, degree);
+    EXPECT_EQ(12, num);
 
-  int alpha[12] = {0, 0,
-                   1, 0,
-                   0, 1,
-                   2, 0,
-                   1, 1,
-                   0, 2};
+    int alpha[12] = {0, 0,
+                     1, 0,
+                     0, 1,
+                     2, 0,
+                     1, 1,
+                     0, 2};
 
-  int i;
-  for (i = 0; i < num; i++)
-  {
-    EXPECT_EQ(alpha[i], coeff[i]);
-  };
+    int i;
+    for (i = 0; i < num; i++)
+    {
+        EXPECT_EQ(alpha[i], coeff[i]);
+    };
 
-  dim = 3;
+    dim = 3;
 
-  p.monomial_basis(dim, degree, coeff);
+    p.monomial_basis(dim, degree, coeff);
 
-  num = dim * p.binomial_coefficient(dim + degree, degree);
-  EXPECT_EQ(30, num);
+    num = dim * p.binomial_coefficient(dim + degree, degree);
+    EXPECT_EQ(30, num);
 
-  int beta[30] = {0, 0, 0,
-                  1, 0, 0,
-                  0, 1, 0,
-                  0, 0, 1,
-                  2, 0, 0,
-                  1, 1, 0,
-                  1, 0, 1,
-                  0, 2, 0,
-                  0, 1, 1,
-                  0, 0, 2};
+    int beta[30] = {0, 0, 0,
+                    1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1,
+                    2, 0, 0,
+                    1, 1, 0,
+                    1, 0, 1,
+                    0, 2, 0,
+                    0, 1, 1,
+                    0, 0, 2};
 
-  for (i = 0; i < num; i++)
-  {
-    EXPECT_EQ(beta[i], coeff[i]);
-  };
+    for (i = 0; i < num; i++)
+    {
+        EXPECT_EQ(beta[i], coeff[i]);
+    };
 }
 
 int main(int argc, char **argv)
 {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

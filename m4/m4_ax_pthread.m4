@@ -1,88 +1,88 @@
 #
 # SYNOPSIS
 #
-#   AX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+#	AX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 #
 # DESCRIPTION
 #
-#   This macro figures out how to build C programs using POSIX threads. It
-#   sets the PTHREAD_LIBS output variable to the threads library and linker
-#   flags, and the PTHREAD_CFLAGS output variable to any special C compiler
-#   flags that are needed. (The user can also force certain compiler
-#   flags/libs to be tested by setting these environment variables.)
-#
-#   Also sets PTHREAD_CC to any special C compiler that is needed for
-#   multi-threaded programs (defaults to the value of CC otherwise). (This is
-#   necessary on AIX to use the special cc_r compiler alias.)
-#   
-#   NOTE: You are assumed to not only compile your program with these flags,
-#   but also link it with them as well. e.g. you should link with $PTHREAD_CC
-#   $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS $LIBS
-#   
-#   If you are only building threads programs, you may wish to use these
-#   variables in your default LIBS, CFLAGS, and CC:
-#   
-#          LIBS="$PTHREAD_LIBS $LIBS"
-#          CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-#          CC="$PTHREAD_CC"
-#   
-#   In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute constant
-#   has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to that name
-#   (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
-#   
-#   ACTION-IF-FOUND is a list of shell commands to run if a threads library
-#   is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
-#   is not found. If ACTION-IF-FOUND is not specified, the default action
-#   will define HAVE_PTHREAD.
-#   
-#   Please let the authors know if this macro fails on any platform, or if
-#   you have any other suggestions or comments. This macro was based on work
-#   by SGJ on autoconf scripts for FFTW (www.fftw.org) (with help from M.
-#   Frigo), as well as ac_pthread and hb_pthread macros posted by AFC to the
-#   autoconf macro repository. We are also grateful for the helpful feedback
-#   of numerous users.
-#   
-#   Version: 1.8 (last modified: 2003-05-21)
-#   Author: Steven G. Johnson <stevenj@alum.mit.edu> and
-#           Alejandro Forero Cuervo <bachue@bachue.com>
-#   
-#   from http://www.gnu.org/software/ac-archive/htmldoc/index.html
-#   
-#   License:
-#   GNU General Public License
-#   [http://www.gnu.org/software/ac-archive/htmldoc/COPYING.html]
-#   with this special exception
-#   [http://www.gnu.org/software/ac-archive/htmldoc/COPYING-Exception.html]. 
+#	his macro figures out how to build C programs using POSIX threads. It
+#	sets the PTHREAD_LIBS output variable to the threads library and linker
+#	flags, and the PTHREAD_CFLAGS output variable to any special C compiler
+#	flags that are needed. (The user can also force certain compiler
+#	flags/libs to be tested by setting these environment variables.)
+#	
+#	Also sets PTHREAD_CC to any special C compiler that is needed for
+#	multi-threaded programs (defaults to the value of CC otherwise). (This is
+#	necessary on AIX to use the special cc_r compiler alias.)
+#	
+#	NOTE: You are assumed to not only compile your program with these flags,
+#	but also link it with them as well. e.g. you should link with $PTHREAD_CC
+#	$CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS $LIBS
+#	
+#	If you are only building threads programs, you may wish to use these
+#	variables in your default LIBS, CFLAGS, and CC:
+#	
+#	LIBS="$PTHREAD_LIBS $LIBS"
+#	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+#	CC="$PTHREAD_CC"
+#	
+#	In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute constant
+#	has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to that name
+#	(e.g. PTHREAD_CREATE_UNDETACHED on AIX).
+#	
+#	ACTION-IF-FOUND is a list of shell commands to run if a threads library
+#	is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
+#	is not found. If ACTION-IF-FOUND is not specified, the default action
+#	will define HAVE_PTHREAD.
+#	
+#	Please let the authors know if this macro fails on any platform, or if
+#	you have any other suggestions or comments. This macro was based on work
+#	by SGJ on autoconf scripts for FFTW (www.fftw.org) (with help from M.
+#	Frigo), as well as ac_pthread and hb_pthread macros posted by AFC to the
+#	autoconf macro repository. We are also grateful for the helpful feedback
+#	of numerous users.
+#	
+#	Version: 1.8 (last modified: 2003-05-21)
+#	Author: Steven G. Johnson <stevenj@alum.mit.edu> and
+#	Alejandro Forero Cuervo <bachue@bachue.com>
+#	
+#	from http://www.gnu.org/software/ac-archive/htmldoc/index.html
+#	
+#	License:
+#	GNU General Public License
+#	[http://www.gnu.org/software/ac-archive/htmldoc/COPYING.html]
+#	with this special exception
+#	[http://www.gnu.org/software/ac-archive/htmldoc/COPYING-Exception.html]. 
 #
 # ADAPTED 
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
 	AC_MSG_NOTICE(POSIX threads)
 
-    AC_REQUIRE([AC_CANONICAL_HOST])
-    AC_LANG_PUSH(C)
-    ax_pthread_ok=no
+	AC_REQUIRE([AC_CANONICAL_HOST])
+	AC_LANG_PUSH(C)
+	ax_pthread_ok=no
 
 	# We used to check for pthread.h first, but this fails if pthread.h
 	# requires special compiler flags (e.g. on True64 or Sequent).
-    # It gets checked for in the link test anyway.
+	# It gets checked for in the link test anyway.
 
 	# First of all, check if the user has set any of the PTHREAD_LIBS,
 	# etcetera environment variables, and if threads linking works using
 	# them:
-    if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
+	if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
 		save_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 		save_LIBS="$LIBS"
 		LIBS="$PTHREAD_LIBS $LIBS"
 		AC_MSG_CHECKING([for pthread_join in LIBS=$PTHREAD_LIBS with CFLAGS=$PTHREAD_CFLAGS])
 		AC_TRY_LINK_FUNC(pthread_join, ax_pthread_ok=yes) 
-		AC_MSG_RESULT($ax_pthread_ok)        
+		AC_MSG_RESULT($ax_pthread_ok)
 		if test x"$ax_pthread_ok" = xno; then
-        	PTHREAD_LIBS=""
+			PTHREAD_LIBS=""
 			PTHREAD_CFLAGS=""
 		fi
 		LIBS="$save_LIBS"
@@ -121,15 +121,15 @@ AC_DEFUN([AX_PTHREAD], [
 	case "${host_cpu}-${host_os}" in
 	*solaris*)
 		# On Solaris (at least, for some versions), libc contains stubbed
-        # (non-functional) versions of the pthreads routines, so link-based
-        # tests will erroneously succeed.  (We need to link with -pthread or
-        # -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
-        # a function called by this macro, so we could check for that, but
-        # who knows whether they'll stub that too in a future libc.)  So,
-        # we'll just look for -pthreads and -lpthread first:
+		# (non-functional) versions of the pthreads routines, so link-based
+		# tests will erroneously succeed.  (We need to link with -pthread or
+		# -lpthread.)  (The stubs are missing pthread_cleanup_push, or rather
+		# a function called by this macro, so we could check for that, but
+		# who knows whether they'll stub that too in a future libc.)  So,
+		# we'll just look for -pthreads and -lpthread first:
 
 		ax_pthread_flags="-pthread -pthreads pthread -mt $ax_pthread_flags"
-        ;;
+		;;
 	esac
 
 	if test x"$ax_pthread_ok" = xno; then
@@ -169,7 +169,7 @@ AC_DEFUN([AX_PTHREAD], [
 					pthread_cleanup_push(0, 0);
 					pthread_create(0,0,0,0); 
 					pthread_cleanup_pop(0); 
-        		], [ax_pthread_ok=yes]
+				], [ax_pthread_ok=yes]
 			)
 
 			LIBS="$save_LIBS"
@@ -182,7 +182,7 @@ AC_DEFUN([AX_PTHREAD], [
 
 			PTHREAD_LIBS=""
 			PTHREAD_CFLAGS=""
-        done
+		done
 	fi
 
 	# Various other checks:
@@ -197,7 +197,7 @@ AC_DEFUN([AX_PTHREAD], [
 		AC_MSG_CHECKING([for joinable pthread attribute])
 		AC_TRY_LINK([#include <pthread.h>], [
 				int attr=PTHREAD_CREATE_JOINABLE;
-        	], ok=PTHREAD_CREATE_JOINABLE, ok=unknown
+			], ok=PTHREAD_CREATE_JOINABLE, ok=unknown
 		)
 
 		if test x"$ok" = xunknown; then
@@ -209,13 +209,13 @@ AC_DEFUN([AX_PTHREAD], [
 
 		if test x"$ok" != xPTHREAD_CREATE_JOINABLE; then
 			AC_DEFINE(PTHREAD_CREATE_JOINABLE, $ok, 
-            	[Define to the necessary symbol if this constant uses a non-standard name on your system.]
+				[Define to the necessary symbol if this constant uses a non-standard name on your system.]
 			)
 		fi
 
 		AC_MSG_RESULT(${ok})
 		if test x"$ok" = xunknown; then
-        	AC_MSG_WARN([we do not know how to create joinable pthreads])
+			AC_MSG_WARN([we do not know how to create joinable pthreads])
 		fi
 
 		AC_MSG_CHECKING([if more special flags are required for pthreads])
@@ -223,12 +223,12 @@ AC_DEFUN([AX_PTHREAD], [
 		flag=no
 		
 		case "${host_cpu}-${host_os}" in
-        *-aix* | *-freebsd*)     
+		*-aix* | *-freebsd*)
 			flag="-D_THREAD_SAFE"
 			;;
-        *solaris* | *-osf* | *-hpux* | *linux* | *linux-gnu*) 
+		*solaris* | *-osf* | *-hpux* | *linux* | *linux-gnu*)
 			flag="-D_REENTRANT"
-			;; 
+			;;
 		esac
 
 		AC_MSG_RESULT(${flag})
@@ -251,7 +251,14 @@ AC_DEFUN([AX_PTHREAD], [
 
 	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 	if test x"$ax_pthread_ok" = xyes; then
-		AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
+		LIBS="$PTHREAD_LIBS $LIBS"
+        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+        CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+        AC_SUBST(LIBS)
+        AC_SUBST(CFLAGS)
+        AC_SUBST(CXXFLAGS)
+        
+        AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
 		:
 	fi
 
