@@ -40,7 +40,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libflann1.8
 
 	# TORC installation 
-	cd external/torc_lite
+	cd external/torc
 	# Create the configuration script
 	autoreconf -i
 	# Configure and install
