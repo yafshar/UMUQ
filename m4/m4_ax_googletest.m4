@@ -8,10 +8,9 @@
 #	Test for the GOOGLETEST framework
 #
 #	If no path to the installed googletest framework is given the macro uses
-#	the external installation and evaluates the environment variable for 
-#	googletest library and header files. 
+#	the external folder and creates and builds googletest library and header files. 
 #
-# ADAPTED 
+# AUTHOR 
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
@@ -25,11 +24,11 @@ AC_DEFUN([AX_GOOGLETEST], [
 				AC_MSG_WARN([You can not test the library without GOOGLETEST framework !!!])
 				ac_googletest_path=no
 			elif test x"$withval" = xyes ; then
-				ac_googletest_path=""
+				ac_googletest_path=
 			elif test x"$withval" != x ; then
 				ac_googletest_path="$withval"
 			else 
-				ac_googletest_path=""
+				ac_googletest_path=
 			fi
 		], [
 			ac_googletest_path=no
