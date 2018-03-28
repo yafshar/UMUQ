@@ -1,6 +1,12 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
-[submodule "external/torc_lite"]
-	path = external/torc_lite
+[submodule "external/torc"]
+	path = external/torc
 	url = git@github.com:yafshar/torc_lite.git
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror.git
+[submodule "external/flann"]
+	path = external/flann
+	url = https://github.com/mariusmuja/flann.git
