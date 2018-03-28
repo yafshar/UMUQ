@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "../src/numerics/polynomial.hpp"
+#include "numerics/polynomial.hpp"
 #include "gtest/gtest.h"
 
 // Tests binomial coefficient c(n, k) of 0.

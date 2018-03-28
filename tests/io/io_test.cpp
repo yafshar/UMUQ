@@ -1,4 +1,4 @@
-#include "../src/io/io.hpp"
+#include "io/io.hpp"
 #include "gtest/gtest.h"
 
 TEST(isFileExist_test, HandlesFiles)

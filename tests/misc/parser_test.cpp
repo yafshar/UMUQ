@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../src/misc/parser.hpp"
+#include "misc/parser.hpp"
 #include "gtest/gtest.h"
 
 #define BUFLEN 1024

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../src/misc/utility.hpp"
+#include "misc/utility.hpp"
 #include "gtest/gtest.h"
 
 // Tests
