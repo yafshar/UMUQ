@@ -39,16 +39,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get install -y libflann-dev
 	sudo apt-get install -y libflann1.8
 
-	# TORC installation 
-	cd external/torc
-	# Create the configuration script
-	autoreconf -i
-	# Configure and install
-	./configure
-	make
-	sudo make install
-	cd ../../
-
 	sudo apt-get update
 fi
 
