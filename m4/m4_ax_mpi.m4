@@ -19,8 +19,8 @@
 #	NOTE: 
 #	If you want to compile everything with MPI, you should set:
 #
-#	    CC="$MPICC" #OR# CXX="$MPICXX" #OR# F77="$MPIF77" #OR# FC="$MPIFC"
-#	    LIBS="$MPILIBS $LIBS"
+#	CC="$MPICC" #OR# CXX="$MPICXX" #OR# F77="$MPIF77" #OR# FC="$MPIFC"
+#	LIBS="$MPILIBS $LIBS"
 #
 #	The user can force a particular library/compiler by setting the
 #	MPICC/MPICXX/MPIF77/MPIFC and/or MPILIBS environment variables.
@@ -52,22 +52,22 @@ AC_DEFUN([AX_MPI], [
 			elif test x"$withval" != x ; then
 				ac_mpi_path="$withval"
 			else
-				ac_mpi_path=""
+				ac_mpi_path=
 			fi
 		], [
-			ac_mpi_path=""
+			ac_mpi_path=
 		]
 	)
 
 	dnl if the user does not provide the DIR root directory for MPI, we search the default PATH
-	ax_mpi_ok="no"
+	ax_mpi_ok=no
 
 	AS_IF([test x"$ax_mpi_ok" = xno], [  
 		AC_MSG_NOTICE(MPI)
 
 		succeeded=no
 
-		ac_mpi_bin=""
+		ac_mpi_bin=
 
 		if test x"$ac_mpi_path" != x; then
 			for ac_mpi_path_tmp in $ac_mpi_path $ac_mpi_path/bin ; do
@@ -88,7 +88,7 @@ AC_DEFUN([AX_MPI], [
 
 			AC_REQUIRE([AC_PROG_CC])
 			AC_ARG_VAR(MPICC, [MPI C compiler command])
-			MPICC=""
+			MPICC=
 			for ac_prog_cc_tmp in mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc ; do
 				AS_VAR_IF(CC, ["$ac_prog_cc_tmp"], [
 						MPICC="$CC"
@@ -117,7 +117,7 @@ AC_DEFUN([AX_MPI], [
 			
 			AC_REQUIRE([AC_PROG_CXX])
 			AC_ARG_VAR(MPICXX, [MPI C++ compiler command])
-			MPICXX=""
+			MPICXX=
 			for ac_prog_cxx_tmp in mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r ; do
 				AS_VAR_IF(CXX, ["$ac_prog_cxx_tmp"], [
 						MPICXX="$CXX"
@@ -169,7 +169,7 @@ AC_DEFUN([AX_MPI], [
 						AC_MSG_RESULT(checking for mpi.h... yes)
 						succeeded=yes
 					], [
-						MPILIBS=""
+						MPILIBS=
 						AC_MSG_RESULT(checking mpi.h usability...  no)
 						AC_MSG_RESULT(checking mpi.h presence... no)
 						AC_MSG_RESULT(checking for mpi.h... no)
