@@ -5,7 +5,7 @@ Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
 
 <table>
   <tr>
-    <td colspan="2"> Multivariate normal distribution  &nbsp; &nbsp; <img src="https://latex.codecogs.com/svg.latex?&space;f=0.1\mathcal{N}\left(\mu_1, \sigma^2\right)+0.9\mathcal{N}\left(\mu_2, \sigma^2\right)" title="f=0.1\mathcal{N}\left(\mu_1, \sigma^2\right)+0.9\mathcal{N}\left(\mu_2, \sigma^2\right)" /> </td>
+    <td colspan="2"> Multivariate normal distribution  &nbsp; &nbsp; <img src="https://latex.codecogs.com/svg.latex?&space;f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" title="f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" /> </td>
 </td>
   </tr>
   <tr>
