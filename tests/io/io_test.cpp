@@ -1,6 +1,7 @@
 #include "io/io.hpp"
 #include "gtest/gtest.h"
 
+//! TEST for file existence 
 TEST(isFileExist_test, HandlesFiles)
 {
     io out;
@@ -8,9 +9,12 @@ TEST(isFileExist_test, HandlesFiles)
     EXPECT_FALSE(out.isFileExist("utility.txt"));
 };
 
+//! TEST how IO handles files
 TEST(openFile_test, HandlesFiles)
 {
+    //!An instance of io class
     io out;
+    
     EXPECT_FALSE(out.isFileOpened());
 
     EXPECT_TRUE(out.openFile("test.txt"));
