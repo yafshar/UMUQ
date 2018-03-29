@@ -113,7 +113,7 @@ typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
 typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 
 /*!
- * \brief New type to map the existing memory buffer in a RowMajor to an Eigen Matrix object
+ * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -124,16 +124,34 @@ template <typename TdataPtr>
 using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
 /*!
- * \brief New type to map the existing pointer to an Eigen Matrix object of type double
+ * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer    
+ * 
+ */
+template <typename TdataPtr>
+using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+
+/*!
+ * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures.  
  * 
  */
 using TEMapXd = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
+/*!
+ * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures.  
+ * 
+ */
+using CTEMapXd = Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
 /*!
- * \brief EMapX function copies the existing memory buffer to an Eigen Matrix object of size(nRows, nCols) 
+ * \brief EMapX function copies the existing C++ memory buffer to an Eigen Matrix object of size(nRows, nCols) 
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -149,23 +167,24 @@ using TEMapXd = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
 template <typename TEMX, typename TdataPtr>
 TEMX EMapX(TdataPtr *dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<TEMX>(dataPtr, nRows, nCols);
+    return Eigen::Map<const TEMX>(dataPtr, nRows, nCols);
 }
 
-template <>
-EMatrixXd EMapX<EMatrixXd, double>(double *dataPtr, size_t nRows, size_t nCols)
+template <typename TEMX, typename TdataPtr>
+TEMX EMapX(TdataPtr **dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
-}
+    TEMX MTemp(nRows, nCols);
 
-template <>
-EMatrix2d EMapX<EMatrix2d, double>(double *dataPtr, size_t nRows, size_t nCols)
-{
-    return Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr);
+    for (size_t i = 0; i < nRows; i++)
+    {
+        MTemp.row(i) = Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], nCols);
+    }
+
+    return MTemp;
 }
 
 /*!
- * \brief Pointer will now point to a beginning of a memory region of the Eigen’s data structures
+ * \brief Pointer will now point to a beginning of a memory buffer of the Eigen’s data structures
  *  
  * The Map operation maps the existing Eigen’s data structure to the memory buffer
  * 
@@ -176,25 +195,22 @@ EMatrix2d EMapX<EMatrix2d, double>(double *dataPtr, size_t nRows, size_t nCols)
  * \param  dataPtr pointer to the array of type TdataPtr
  */
 template <typename TEMX, typename TdataPtr>
-void EMapX(TEMX EMX, TdataPtr *dataPtr)
+void EMapX(const TEMX EMX, TdataPtr *dataPtr)
 {
     Eigen::Map<TEMX>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
 }
 
-template <>
-void EMapX(EMatrixXd EMX, double *dataPtr)
+template <typename TEMX, typename TdataPtr>
+void EMapX(const TEMX EMX, TdataPtr **dataPtr)
 {
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
-}
-
-template <>
-void EMapX(EMatrix2d EMX, double *dataPtr)
-{
-    Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr, 2, 2) = EMX;
+    for (size_t i = 0; i < EMX.rows(); i++)
+    {
+        Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
+    }    
 }
 
 /*!
- * \brief Copy the existing pointer to the array of type double to an Eigen object
+ * \brief Copy the existing pointer to the C++ memory buffer of type double to an Eigen object
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures.  
  * 
@@ -205,7 +221,19 @@ void EMapX(EMatrix2d EMX, double *dataPtr)
  */
 EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
+    return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
+}
+
+EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
+{
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
+
+    for (size_t i = 0; i < nRows; i++)
+    {
+        MTemp.row(i) = EVectorXd::Map(&dataPtr[i][0], nCols);
+    }
+
+    return MTemp;
 }
 
 /*!
@@ -216,8 +244,17 @@ EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
  * \param  EMXd    Input Eigen’s matrix of type double
  * \param  dataPtr Pointer to the memory buffer of type double
  */
-void EMapXd(EMatrixXd EMXd, double *dataPtr)
+void EMapXd(const EMatrixXd EMXd, double *dataPtr)
 {
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMXd.rows(), EMXd.cols()) = EMXd;
 }
+
+void EMapXd(const EMatrixXd EMXd, double **dataPtr)
+{
+    for (size_t i = 0; i < EMXd.rows(); i++)
+    {
+        EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
+    }
+}
+
 #endif
