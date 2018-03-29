@@ -1,7 +1,7 @@
 #include "data_type/TMCMC_datatype.hpp"
 #include "gtest/gtest.h"
 
-// Tests parse
+//! Tests parse
 TEST(datatype, HandlesConstruction)
 {
     data_t *d1 = new data_t;
@@ -67,7 +67,7 @@ TEST(datatype, HandlesConstruction)
     EXPECT_EQ(NULL, d2.lowerbound);
 };
 
-// Tests read input file
+//! Tests read input file
 TEST(datatype, HandlesIO)
 {
     data_t d1;
