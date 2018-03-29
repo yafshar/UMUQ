@@ -3,7 +3,9 @@
 #include "numerics/eigenmatrix.hpp"
 #include "gtest/gtest.h"
 
-// Tests
+/*! 
+ * Test to check about map type handling is done correctly
+ */
 TEST(eigen_test, HandlesMap)
 {
     double *A = nullptr;
@@ -13,7 +15,7 @@ TEST(eigen_test, HandlesMap)
         A[i] = (double)i;
     }
 
-    //Copy the buffer to the new Eigen object
+    //!Copy the buffer to the new Eigen object
     EMatrixXd ACopy = EMapXd(A, 3, 4);
 
     for (int i = 0, l = 0; i < 3; i++)
@@ -24,30 +26,38 @@ TEST(eigen_test, HandlesMap)
         }
     }
 
-    //Map the buffer to an Eigen object format
+    //!Map the buffer to an Eigen object format
     TEMapXd AMap(A, 3, 4);
     A[0] = -100.;
-    A[5] = 200.;
-    A[9] = 900.;
+    A[1] = 200.0;
+    A[5] = 500.0;
+    A[9] = 900.0;
     A[11] = -23.;
 
     EXPECT_NE(AMap(0, 0), ACopy(0, 0));
+    EXPECT_NE(AMap(0, 1), ACopy(0, 1));
     EXPECT_NE(AMap(1, 1), ACopy(1, 1));
     EXPECT_NE(AMap(2, 1), ACopy(2, 1));
     EXPECT_NE(AMap(2, 3), ACopy(2, 3));
 
     EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
-    EXPECT_DOUBLE_EQ(AMap(0, 1), 1.);
+    EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
     EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
     EXPECT_DOUBLE_EQ(AMap(0, 3), 3.);
     EXPECT_DOUBLE_EQ(AMap(1, 0), 4.);
-    EXPECT_DOUBLE_EQ(AMap(1, 1), 200.);
+    EXPECT_DOUBLE_EQ(AMap(1, 1), 500.);
     EXPECT_DOUBLE_EQ(AMap(1, 2), 6.);
     EXPECT_DOUBLE_EQ(AMap(1, 3), 7.);
     EXPECT_DOUBLE_EQ(AMap(2, 0), 8.);
     EXPECT_DOUBLE_EQ(AMap(2, 1), 900.);
     EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
     EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
+
+    AMap(0, 0) = 200.0;
+    EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
+
+    //!Map the buffer to a read only Eigen object format
+    // CTEMapXd CAMap(A, 3, 4);
 
     delete[] A;
     A = nullptr;
@@ -60,13 +70,13 @@ TEST(eigen_test, HandlesMap)
         A[i] = 0;
     }
 
-    //create a new 25*25 Eigen Matrix C and initialize to random values
+    //!create a new 25*25 Eigen Matrix C and initialize to random values
     EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
 
-    //copy the matrix C into A
+    //!copy the matrix C into A
     EMapXd(C, A);
 
-    //check to see if the copy process has been done correctly
+    //!check to see if the copy process has been done correctly
     for (int i = 0, l = 0; i < 25; i++)
     {
         for (int j = 0; j < 25; j++, l++)
@@ -75,18 +85,66 @@ TEST(eigen_test, HandlesMap)
         }
     }
 
-    //change one value in the array
+    //!change one value in the array
     A[624] = 100.0;
 
-    //check to make sure that the matrix C is a copy of the array buffer
+    //!check to make sure that the matrix C is a copy of the array buffer
     EXPECT_NE(A[624], C(24, 24));
 
-    //destroy the object
+    //!destroy the object
     delete[] A;
     A = nullptr;
+
+    A = &C(0, 0);
+
+    A[0] = 10000.0;
+    EXPECT_DOUBLE_EQ(C(0, 0), 10000.0);
+
+    double **D;
+    D = new double *[3];
+    for (int i = 0; i < 3; i++)
+    {
+        D[i] = new double[3];
+    }
+
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            D[i][j] = (double)l;
+        }
+    }
+
+    EMatrixXd DCopy = EMapXd(D, 3, 3);
+
+    for (int j = 0; j < 3; j++)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            EXPECT_DOUBLE_EQ(DCopy(i, j), D[i][j]);
+        }
+    }
+
+    //!Converts them to an array, which uses to multiply them coefficient-wise
+    DCopy = DCopy.array() * DCopy.array();
+
+    EMapXd(DCopy, D);
+
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(D[i][j], (double)l * l);
+        }
+    }
+
+    delete[] * D;
+    delete[] D;
 };
 
-// Linear Algebra test
+/*! 
+ * Linear Algebra test
+ */
 TEST(eigen_test, HandlesSolver)
 {
     EMatrix6d A;
@@ -99,10 +157,8 @@ TEST(eigen_test, HandlesSolver)
 
     EVector6d B = EVector6d::Ones();
 
-    std::cout << A << std::endl;
-
-    //LU decomposition of a matrix with complete pivoting
-    // Eigen::FullPivLU<EMatrix6d> lu(A);
+    //!LU decomposition of a matrix with complete pivoting
+    //!Eigen::FullPivLU<EMatrix6d> lu(A);
 
     EVector6d X = A.fullPivLu().solve(B);
 
@@ -117,18 +173,18 @@ TEST(eigen_test, HandlesSolver)
     EXPECT_TRUE(std::isnan(relative_error));
 }
 
-// SVD test
+//! SVD test
 TEST(eigen_test, HandlesSVD)
 {
-    //This is the example from wikipedia
-    //https://en.wikipedia.org/wiki/Singular-value_decomposition
+    //!This is the example from wikipedia
+    //!https://en.wikipedia.org/wiki/Singular-value_decomposition
     Eigen::Matrix<double, 4, 5> A;
     A << 1, 0, 0, 0, 2,
         0, 0, 3, 0, 0,
         0, 0, 0, 0, 0,
         0, 2, 0, 0, 0;
 
-    // Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
+    //!Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
     Eigen::JacobiSVD<Eigen::Matrix<double, 4, 5>> svd(A);
     EVector4d B(svd.singularValues());
 
