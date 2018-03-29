@@ -1,7 +1,12 @@
 #ifndef UMHBM_EIGENMATRIX_H
 #define UMHBM_EIGENMATRIX_H
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include <Eigen/Dense>
+#include "../misc/Meta.hpp"
 
 // Standard typedef from eigen
 typedef typename Eigen::Matrix<double, 2, 2> EMatrix2d;
@@ -206,7 +211,7 @@ void EMapX(const TEMX EMX, TdataPtr **dataPtr)
     for (size_t i = 0; i < EMX.rows(); i++)
     {
         Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
-    }    
+    }
 }
 
 /*!
@@ -256,5 +261,108 @@ void EMapXd(const EMatrixXd EMXd, double **dataPtr)
         EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
     }
 }
+
+/*!
+     * \brief Helper function to print the matrix of type (double, float, int)
+     * 
+     * \param   idata  array of data type T 
+     * \param   nRows  
+     * \param   nCols
+     */
+
+template <typename Tidata>
+void print_matrix(const char *title, Tidata **idata, size_t nRows, size_t nCols)
+{
+    typedef typename conditional<is_same<Tidata, double>::value, EMatrixXd, typename conditional<is_same<Tidata, int>::value, EMatrixXi, EMatrixXf>::type>::type TiMatrix;
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << title << "\n\n";
+    std::cout << EMapX<TiMatrix, Tidata>(idata, nRows, nCols) << sep;
+}
+
+template <typename Tidata>
+void print_matrix(Tidata **idata, size_t nRows, size_t nCols)
+{
+    typedef typename conditional<is_same<Tidata, double>::value, EMatrixXd, typename conditional<is_same<Tidata, int>::value, EMatrixXi, EMatrixXf>::type>::type TiMatrix;
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << EMapX<TiMatrix, Tidata>(idata, nRows, nCols) << sep;
+}
+
+template <typename Tidata>
+void print_matrix(const char *title, Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << title << "\n\n";
+    std::cout << TiMatrix << sep;
+}
+
+template <typename Tidata>
+void print_matrix(Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << TiMatrix << sep;
+}
+
+template <typename TEMX>
+void write_matrix(FILE *f, const TEMX &EMX)
+{
+
+}
+
+    // void fprint_matrix_1d(FILE *fp, char *title, double *v, int n)
+    // {
+    //     int i;
+
+    //     if (fp == stdout)
+    //         fprintf(fp, "\n%s =\n\n", title);
+    //     for (i = 0; i < n; i++)
+    //     {
+    //         fprintf(fp, "%12.4lf ", v[i]);
+    //     }
+    //     fprintf(fp, "\n");
+    // }
+
+    // void fprint_matrix_2d(FILE *fp, char *title, double **v, int n1, int n2)
+    // {
+    //     int i, j;
+
+    //     if (fp == stdout)
+    //         fprintf(fp, "\n%s =\n\n", title);
+    //     for (i = 0; i < n1; i++)
+    //     {
+    //         for (j = 0; j < n2; j++)
+    //         {
+    //             fprintf(fp, "   %20.15lf", v[i][j]);
+    //         }
+    //         fprintf(fp, "\n");
+    //     }
+    //     fprintf(fp, "\n");
+    // }
+
+    // template <typename TEMX>
+    // void read_binarymatrix(const char *filename, TEMX &EMX)
+    // {
+    //     typename TEMX::Index nRows = 0;
+    //     typename TEMX::Index nCols = 0;
+
+    //     std::ifstream in(filename, std::ios::in | std::ios::binary);
+
+    //     in.read(reinterpret_cast<char *>(&nRows), sizeof(typename TEMX::Index));
+    //     in.read(reinterpret_cast<char *>(&nCols), sizeof(typename TEMX::Index));
+
+    //     EMX.resize(nRows, nCols);
+
+    //     in.read(reinterpret_cast<char *> EMX.data(), nRows * nCols * sizeof(typename TEMX::Scalar));
+    //     in.close();
+    // }
 
 #endif

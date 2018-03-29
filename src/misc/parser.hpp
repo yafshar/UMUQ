@@ -2,11 +2,23 @@
 #define UMHBM_PARSER_H
 
 #include <iostream>
+#include <cstdlib>
 
 //open,fstat
 #include <sys/stat.h>
 //fopen, fclose
 #include <stdio.h>
+
+template <typename T>
+inline T parse(const char *lineArg)
+{
+};
+
+template <>
+inline int parse<int>(const char *lineArg)
+{
+    return std::atoi(lineArg);
+}
 
 class parser
 {
@@ -29,7 +41,7 @@ class parser
             *argv++ = line;
 
             /* skip the argument until ...*/
-            while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',') 
+            while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',')
             {
                 line++;
             }
@@ -38,6 +50,21 @@ class parser
         /* mark the end of argument list */
         *argv = NULL;
     }
+
+    // template <typename T>
+    // inline T parse(const char *lineArg)
+    // {
+    //     T value;
+    //     std::stringstream str(lineArg);
+    //     str >> value;
+    //     return value;
+    // };
+
+    // template <>
+    // void Parser<float>::parse(const string &)
+    // {
+    //     result = atof(string.c_str());
+    // }
 
     inline void parse(const char *lineArg, int &value)
     {

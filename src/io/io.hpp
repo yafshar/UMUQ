@@ -7,14 +7,56 @@
 #include <iostream>
 #include <limits>
 
-//fopen, rewind
-#include <cstdio>
-//strlen
-#include <cstring>
-//stat
-#include <sys/stat.h>
+#include <cstdio>     //fopen, rewind
+#include <cstring>    //strlen
+#include <sys/stat.h> //stat
 
 #define LINESIZE 256
+
+/*! 
+  * \brief Stores a set of parameters controlling the way matrices are printed
+  *
+  * List of available parameters:
+  *  - \b coeffSeparator string printed between two coefficients of the same row
+  *  - \b rowSeparator string printed between two rows
+  *  - \b rowPrefix string printed at the beginning of each row
+  *  - \b rowSuffix string printed at the end of each row
+  *  - \b matPrefix string printed at the beginning of the matrix
+  *  - \b matSuffix string printed at the end of the matrix
+  *
+  */
+struct IOFormat
+{
+    /** Default constructor, see class IOFormat for the meaning of the parameters */
+    IOFormat(const std::string &_coeffSeparator = " ",
+             const std::string &_rowSeparator = "\n",
+             const std::string &_rowPrefix = "",
+             const std::string &_rowSuffix = "",
+             const std::string &_matPrefix = "",
+             const std::string &_matSuffix = "") : matPrefix(_matPrefix),
+                                                   matSuffix(_matSuffix),
+                                                   rowPrefix(_rowPrefix),
+                                                   rowSuffix(_rowSuffix),
+                                                   rowSeparator(_rowSeparator),
+                                                   rowSpacer(""),
+                                                   coeffSeparator(_coeffSeparator)
+    {
+        int i = int(matSuffix.length()) - 1;
+        while (i >= 0 && matSuffix[i] != '\n')
+        {
+            rowSpacer += ' ';
+            i--;
+        }
+    }
+
+    std::string coeffSeparator;
+    std::string rowSeparator;
+    std::string rowPrefix;
+    std::string rowSuffix;
+    std::string matPrefix;
+    std::string matSuffix;
+    std::string rowSpacer;
+};
 
 /*! \class io
 *   \brief io is a class which includes some IO functionality.
@@ -24,7 +66,6 @@ class io
 {
   public:
     FILE *f;
-
     char *line;
     char **lineArg;
 
@@ -169,43 +210,7 @@ class io
         }
     }
 
-    
-    
-    
-    
-    
-    // /*!
-    //  * \brief Helper function to print the matrix
-    //  * 
-    //  * \tparam  _Rows  number of rows
-    //  * \tparam  _Cols  number of columns
-    //  * \param   idata  array of data type T 
-    //  * \param   Rows  
-    //  * \param   Cols
-    //  */
-    // template <int _Rows, int _Cols>
-    // void print_matrix(const char *title, double **idata, int rows=_Rows, int Cols=_Cols)
-    // {
-    //     EMatrixXd EXd = Eigen::Map
-
-        
-    //     /*    if (!display) return;*/
-    //     printf("\n%s =\n\n", title);
-    //     for (int i = 0; i < n; i++)
-    //     {
-    //         printf("   %20.15lf\n", v[i]);
-    //     }
-    //     printf("\n");
-    // }
-
-
-
-
-
-
-
-
-
+  private:
     // /**********************************************/
     // /* Helper routines */
     // /**********************************************/
