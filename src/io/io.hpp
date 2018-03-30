@@ -67,6 +67,13 @@ struct IOFormat
 class io
 {
   public:
+    static const std::ios_base::openmode app = std::fstream::app;
+    static const std::ios_base::openmode binary = std::fstream::binary;
+    static const std::ios_base::openmode in = std::fstream::in;
+    static const std::ios_base::openmode out = std::fstream::out;
+    static const std::ios_base::openmode ate = std::fstream::ate;
+    static const std::ios_base::openmode trunc = std::fstream::trunc;
+
     io() : f(NULL), line(NULL), lineArg(NULL){};
 
     ~io()
@@ -75,12 +82,12 @@ class io
     };
 
     /*!
-     *  \brief return true if file is opened
+     * \brief return true if file is opened
      */
     inline bool isFileOpened() const { return f != NULL; }
 
     /*!
-     *  \brief Check to see whether the file fileName exists and accessible to read or write!
+     * \brief Check to see whether the file fileName exists and accessible to read or write!
      *  
      */
     inline bool isFileExist(const char *fileName)
@@ -90,11 +97,11 @@ class io
     }
 
     /*!
-     *  \brief Opens the file whose name is specified in the parameter filename 
+     * \brief Opens the file whose name is specified in the parameter filename 
      *  
-     *  Opens the file whose name is specified in the parameter filename and
-     *  associates it with a stream that can be identified in future operations 
-     *  by the FILE pointer returned.inline   
+     * Opens the file whose name is specified in the parameter filename and
+     * associates it with a stream that can be identified in future operations 
+     * by the FILE pointer returned.inline   
      */
     inline bool openFile(const char *fileName)
     {
@@ -191,60 +198,55 @@ class io
      * std::fstream::trunc 	  discard the contents of the stream when opening
      * std::fstream::ate 	  seek to the end of stream immediately after open
      */
-    inline bool openFile(const char *fileName, std::ios_base::openmode mode)
+    inline bool openFile(const char *fileName, const std::ios_base::openmode mode)
     {
-        if (mode != std::fstream::in || isFileExist(fileName))
+        if (fs.is_open())
         {
-            if (fs.is_open())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-                return false;
-            }
-
-            fs.open(fileName, mode);
-            if (!fs.is_open())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-                return false;
-            }
-
-            // Returns true if an error has occurred on the associated stream.
-            if (fs.fail())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "An error has occurred on the associated stream from opening '" << fileName << "' ." << std::endl;
-                return false;
-            }
-
-            return true;
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
+            return false;
         }
-        else
+
+        fs.open(fileName, mode);
+        if (!fs.is_open())
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << "'" << fileName << "' does not exists!" << std::endl;
             return false;
         }
+
+        //! Returns true if an error has occurred on the associated stream.
+        if (fs.fail())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "An error has occurred on the associated stream from opening '" << fileName << "' ." << std::endl;
+            return false;
+        }
+
+        return true;
     }
 
     /*!
-     *  \brief 
+     * \brief Get string from stream
+     * 
+     * Get string from stream and stores them into line until (LINESIZE-1) characters 
+     * have been read or either a newline or the end-of-file is reached, whichever happens first.
      */
     inline bool readLine() const { return fgets(line, LINESIZE, f) != NULL; }
 
     /*!
-     *  \brief  
+     * \brief Check if the length of the line is empty or commented with "#"  
      */
     inline bool emptyLine() const { return (line[0] == '#') || (strlen(line) == 0); }
 
     /*!
-     *  \brief 
+     * \brief Set position of stream to the beginning
+     * Sets the position indicator associated with stream to the beginning of the file.
      */
     inline void rewindFile() { rewind(f); }
 
     /*!
-     *  \brief  close the File
+     * \brief Close the File
      */
     inline void closeFile()
     {
@@ -266,22 +268,34 @@ class io
             fs.close();
         }
     }
-
+    
+    /*!
+     * \brief Get the stream
+     */
     std::fstream &getFstream()
     {
         return io::fs;
     }
 
+    /*!
+     * \brief Get the pointer to the FILE *f
+     */
     FILE *getFile()
     {
         return f;
     }
 
+    /*!
+     * \brief Get the pointer line
+     */
     char *getLine()
     {
         return line;
     }
 
+    /*!
+     * \brief Get the pointer lineArg
+     */
     char **getLineArg()
     {
         return lineArg;
@@ -293,36 +307,6 @@ class io
 
     char *line;
     char **lineArg;
-
-    // void fprint_matrix_1d(FILE *fp, char *title, double *v, int n)
-    // {
-    //     int i;
-
-    //     if (fp == stdout)
-    //         fprintf(fp, "\n%s =\n\n", title);
-    //     for (i = 0; i < n; i++)
-    //     {
-    //         fprintf(fp, "%12.4lf ", v[i]);
-    //     }
-    //     fprintf(fp, "\n");
-    // }
-
-    // void fprint_matrix_2d(FILE *fp, char *title, double **v, int n1, int n2)
-    // {
-    //     int i, j;
-
-    //     if (fp == stdout)
-    //         fprintf(fp, "\n%s =\n\n", title);
-    //     for (i = 0; i < n1; i++)
-    //     {
-    //         for (j = 0; j < n2; j++)
-    //         {
-    //             fprintf(fp, "   %20.15lf", v[i][j]);
-    //         }
-    //         fprintf(fp, "\n");
-    //     }
-    //     fprintf(fp, "\n");
-    // }
 };
 
 #endif
