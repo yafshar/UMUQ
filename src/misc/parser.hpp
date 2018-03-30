@@ -2,23 +2,11 @@
 #define UMHBM_PARSER_H
 
 #include <iostream>
-#include <cstdlib>
-
+#include <sstream>
 //open,fstat
 #include <sys/stat.h>
 //fopen, fclose
 #include <stdio.h>
-
-template <typename T>
-inline T parse(const char *lineArg)
-{
-};
-
-template <>
-inline int parse<int>(const char *lineArg)
-{
-    return std::atoi(lineArg);
-}
 
 class parser
 {
@@ -51,20 +39,12 @@ class parser
         *argv = NULL;
     }
 
-    // template <typename T>
-    // inline T parse(const char *lineArg)
-    // {
-    //     T value;
-    //     std::stringstream str(lineArg);
-    //     str >> value;
-    //     return value;
-    // };
-
-    // template <>
-    // void Parser<float>::parse(const string &)
-    // {
-    //     result = atof(string.c_str());
-    // }
+    template <typename T>
+    inline void parse(const char *lineArg, T &value)
+    {
+        std::stringstream str(lineArg);
+        str >> value;
+    }
 
     inline void parse(const char *lineArg, int &value)
     {
