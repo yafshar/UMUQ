@@ -186,26 +186,31 @@ TEST(eigen_io_test, HandlesLoadandSave)
     saveMatrix<EMatrixXi>(fs, C);
     fs.close();
 
-    //!Create a new matrix of of the same size and type as
+    //!Create a new matrix of of the same size and type as C
     EMatrixXi D(10, 10);
+
+    //!Open the file and read the matrix from it
     fs.open(fileName, std::fstream::in);
     loadMatrix<EMatrixXi>(fs, D);
     fs.close();
 
     EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
 
+    //!delete the file
     std::remove(fileName);
 
+    //!Open a file and write down two matrices of different types in it
     fs.open(fileName, std::fstream::out | std::fstream::app);
     saveMatrix<EMatrixXd>(fs, A);
     saveMatrix<EMatrixXi>(fs, C);
     fs.close();
 
+    //!Initialize B and D to zero
     B = EMatrix4d::Zero();
     D = Eigen::Matrix<int, 10, 10>::Zero();
 
+    //!Open the file and read the matrices from it
     fs.open(fileName, std::fstream::in);
-
     loadMatrix<EMatrix4d>(fs, B);
     loadMatrix<EMatrixXi>(fs, D);
 
