@@ -1,7 +1,7 @@
 #include "io/io.hpp"
 #include "gtest/gtest.h"
 
-//! TEST for file existence 
+//! TEST for file existence
 TEST(isFileExist_test, HandlesFiles)
 {
     io out;
@@ -14,7 +14,7 @@ TEST(openFile_test, HandlesFiles)
 {
     //!An instance of io class
     io out;
-    
+
     EXPECT_FALSE(out.isFileOpened());
 
     EXPECT_TRUE(out.openFile("test.txt"));
@@ -27,9 +27,12 @@ TEST(openFile_test, HandlesFiles)
     EXPECT_EQ(n, 82);
     out.closeFile();
     EXPECT_FALSE(out.isFileOpened());
-    EXPECT_EQ(NULL, out.f);
-    EXPECT_EQ(NULL, out.line);
-    EXPECT_EQ(NULL, out.lineArg);
+
+    char *line = out.getLine();
+    char **lineArg = out.getLineArg();
+
+    EXPECT_EQ(NULL, line);
+    EXPECT_EQ(NULL, lineArg);
 };
 
 int main(int argc, char **argv)
