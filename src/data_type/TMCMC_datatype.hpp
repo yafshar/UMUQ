@@ -446,6 +446,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             if (upperbound != NULL)
@@ -461,6 +462,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
         }
 
@@ -521,6 +523,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -577,6 +580,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -642,6 +646,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             if (linit)
@@ -659,6 +664,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
 
                 if (prior_sigma != NULL)
@@ -674,6 +680,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -759,6 +766,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             u.rewindFile();
@@ -817,6 +825,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             n = MaxStages;
@@ -848,6 +857,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
             for (n = 0; n < PopSize; n++)
             {
@@ -859,6 +869,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
                 }
                 for (int i = 0, l = 0; i < Nth; i++)
                 {
