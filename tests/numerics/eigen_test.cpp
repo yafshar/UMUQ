@@ -159,67 +159,379 @@ TEST(eigen_io_test, HandlesLoadandSave)
     const char *fileName = "tmp";
     std::fstream fs;
 
-    //!Create a matrix of size 4*4 and of type double and fill it with random numbers
-    EMatrixXd A = Eigen::Matrix<double, 4, 4>::Random();
+    //! - 1
+    {
+        //!Create a matrix of size 4*4 and of type double and fill it with random numbers
+        EMatrixXd A = Eigen::Matrix<double, 4, 4>::Random();
 
-    //!Open a file and write the matrix in it
-    fs.open(fileName, std::fstream::out);
-    saveMatrix<EMatrixXd>(fs, A);
-    fs.close();
+        //!Create a new matrix B of the same size and type as A
+        EMatrix4d B;
 
-    //!Create a new matrix B of the same size and type as A
-    EMatrix4d B;
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-    //!Open the file and read the matrix from it
-    fs.open(fileName, std::fstream::in);
-    loadMatrix<EMatrix4d>(fs, B);
-    fs.close();
+        //!Write the matrix in it
+        saveMatrix<EMatrixXd>(fs, A);
 
-    //!Compare that the matrix A and B are approximately the same within machine precision
-    EXPECT_TRUE(A.isApprox(B));
+        //!Rewind the file
+        fs.seekg(0);
 
-    //!Create a new matrix of type int and fill it with random number
-    EMatrixXi C = Eigen::Matrix<int, 10, 10>::Random();
+        //!Read the matrix from it
+        loadMatrix<EMatrix4d>(fs, B);
 
-    //!Open a file and write down the matrix in it
-    fs.open(fileName, std::fstream::out);
-    saveMatrix<EMatrixXi>(fs, C);
-    fs.close();
+        fs.close();
 
-    //!Create a new matrix of of the same size and type as C
-    EMatrixXi D(10, 10);
+        //!Compare that the matrix A and B are approximately the same within machine precision
+        EXPECT_TRUE(A.isApprox(B));
 
-    //!Open the file and read the matrix from it
-    fs.open(fileName, std::fstream::in);
-    loadMatrix<EMatrixXi>(fs, D);
-    fs.close();
+        //! - 2
 
-    EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+        //!Create a new matrix of type int and fill it with random number
+        EMatrixXi C = Eigen::Matrix<int, 10, 10>::Random();
 
-    //!delete the file
-    std::remove(fileName);
+        //!Create a new matrix of of the same size and type as C
+        EMatrixXi D(10, 10);
 
-    //!Open a file and write down two matrices of different types in it
-    fs.open(fileName, std::fstream::out | std::fstream::app);
-    saveMatrix<EMatrixXd>(fs, A);
-    saveMatrix<EMatrixXi>(fs, C);
-    fs.close();
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-    //!Initialize B and D to zero
-    B = EMatrix4d::Zero();
-    D = Eigen::Matrix<int, 10, 10>::Zero();
+        //!Write the matrix in it
+        saveMatrix<EMatrixXi>(fs, C);
 
-    //!Open the file and read the matrices from it
-    fs.open(fileName, std::fstream::in);
-    loadMatrix<EMatrix4d>(fs, B);
-    loadMatrix<EMatrixXi>(fs, D);
+        //!Rewind the file
+        fs.seekg(0);
 
-    EXPECT_TRUE(A.isApprox(B));
-    EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+        //!Read the matrix from it
+        loadMatrix<EMatrixXi>(fs, D);
 
-    fs.close();
+        fs.close();
+        //!delete the file
+        std::remove(fileName);
 
-    std::remove(fileName);
+        //!Compare the matrices
+        EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+
+        //! - 3
+
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::app);
+
+        //!write down two matrices of different types in it
+        saveMatrix<EMatrixXd>(fs, A);
+        saveMatrix<EMatrixXi>(fs, C);
+
+        //!Initialize B and D to zero
+        B = EMatrix4d::Zero();
+        D = Eigen::Matrix<int, 10, 10>::Zero();
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        loadMatrix<EMatrix4d>(fs, B);
+        loadMatrix<EMatrixXi>(fs, D);
+
+        fs.close();
+
+        //!Compare the matrices
+        EXPECT_TRUE(A.isApprox(B));
+        EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+    }
+
+    //! - 4
+    {
+        //!Create a new array and initialize it
+        int *E = new int[12];
+        for (int i = 0; i < 12; i++)
+        {
+            E[i] = i;
+        }
+
+        //!Create a new array
+        int *F = new int[12];
+
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //!Save the array in a matrix format
+        saveMatrix<int>(fs, E, 3, 4);
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        //!Read the array
+        loadMatrix<int>(fs, F, 3, 4);
+
+        fs.close();
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                EXPECT_EQ(F[i], E[i]);
+            }
+        }
+
+        delete[] E;
+        delete[] F;
+    }
+
+    //! - 5
+    {
+        //!Create a new array and initialize it
+        double **G = nullptr;
+        G = new double *[3];
+        for (int i = 0; i < 3; i++)
+        {
+            G[i] = new double[4];
+        }
+        for (int i = 0, l = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 4; j++, l++)
+            {
+                G[i][j] = (double)l;
+            }
+        }
+
+        //!Create a new array
+        double H[3][4];
+
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //!Write the matrix
+        saveMatrix<double>(fs, G, 3, 4);
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        //!Read the matrix
+        loadMatrix<double>(fs, reinterpret_cast<double *>(H), 3, 4);
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                EXPECT_DOUBLE_EQ(H[i][j], G[i][j]);
+            }
+        }
+
+        fs.close();
+        //!delete the file
+        std::remove(fileName);
+
+        delete[] * G;
+        delete[] G;
+    }
+
+    //! - 6
+    {
+        //!Create a new array and initialize it
+        int *I = new int[12];
+        for (int i = 0; i < 12; i++)
+        {
+            I[i] = i;
+        }
+
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //!Write the matrix
+        saveMatrix<int>(fs, I, 12);
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        int J[12];
+
+        //!Read the matrix
+        loadMatrix<int>(fs, J, 12);
+
+        for (int i = 0; i < 12; i++)
+        {
+            EXPECT_EQ(J[i], I[i]);
+        }
+
+        fs.close();
+        //!delete the file
+        std::remove(fileName);
+
+        delete[] I;
+    }
+
+    //! - 7
+    {
+        //!Create a new array and initialize it
+        double **K = nullptr;
+        K = new double *[3];
+        for (int i = 0; i < 3; i++)
+        {
+            K[i] = new double[8];
+        }
+        for (int i = 0, l = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 8; j++, l++)
+            {
+                K[i][j] = (double)l;
+            }
+        }
+
+        //!Create a new array and initialize it
+        int *L = new int[20];
+        for (int i = 0; i < 20; i++)
+        {
+            L[i] = i;
+        }
+
+        //!Open a file for reading and writing
+        fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //!Write the matrices
+        saveMatrix<double>(fs, K, 3, 8);
+        saveMatrix<int>(fs, L, 20);
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        double M[3][8];
+        int N[20];
+
+        loadMatrix<double>(fs, reinterpret_cast<double *>(M), 3, 8);
+        loadMatrix<int>(fs, N, 20);
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                EXPECT_DOUBLE_EQ(M[i][j], K[i][j]);
+            }
+        }
+
+        for (int i = 0; i < 20; i++)
+        {
+            EXPECT_EQ(N[i], L[i]);
+        }
+
+        fs.close();
+        //!delete the file
+        std::remove(fileName);
+
+        delete[] * K;
+        delete[] K;
+        delete[] L;
+    }
+
+    //! - 8
+    {
+        //!Create a new array and initialize it
+        double **K = nullptr;
+        K = new double *[3];
+        for (int i = 0; i < 3; i++)
+        {
+            K[i] = new double[6];
+        }
+        for (int i = 0, l = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 6; j++, l++)
+            {
+                K[i][j] = (double)l;
+            }
+        }
+
+        //!Open a file for reading and writing
+        fs.open("yaser", std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //!Write the matrices
+        saveMatrix<double>(fs, K, 3, 6);
+
+        double **M = nullptr;
+        M = new double *[3];
+        for (int i = 0; i < 3; i++)
+        {
+            M[i] = new double[6];
+        }
+
+        //!Rewind the file
+        fs.seekg(0);
+
+        loadMatrix<double>(fs, M, 3, 6);
+
+        fs.close();
+        //!delete the file
+        // std::remove(fileName);
+
+        delete[] * K;
+    }
+
+    //! - 9
+    {
+        // struct ebasic
+        // {
+        //     double *Parray;
+        //     int ndimParray;
+        //     double *Garray;
+        //     int ndimGarray;
+        //     double Fvalue;
+        //     int surrogate;
+        //     int nsel;
+        //     /*!
+        //      *  \brief constructor for the default variables
+        //      *
+        //      */
+        //     ebasic() : Parray(NULL),
+        //                ndimParray(0),
+        //                Garray(NULL),
+        //                ndimGarray(0),
+        //                Fvalue(0),
+        //                surrogate(0),
+        //                nsel(0){};
+        // };
+
+        // class edatabase
+        // {
+        //   public:
+        //     ebasic *entry;
+        //     int entries;
+        //     edatabase() : entry(NULL),
+        //                   entries(0){};
+        // };
+
+        // //!Create data and initialize it
+        // edatabase dd;
+
+        // dd.entries = 4;
+        // dd.entry = new ebasic[dd.entries];
+        // for (int i = 0, l = 0; i < dd.entries; i++, l++)
+        // {
+        //     dd.entry[i].ndimParray = 2;
+        //     dd.entry[i].Parray = new double[dd.entry[i].ndimParray];
+        //     for (int j = 0; j < dd.entry[i].ndimParray; j++)
+        //     {
+        //         dd.entry[i].Parray[j] = (double)(l * l);
+        //     }
+        //     dd.entry[i].ndimGarray = 4;
+        //     dd.entry[i].Garray = new double[dd.entry[i].ndimGarray];
+        //     for (int j = 0; j < dd.entry[i].ndimGarray; j++)
+        //     {
+        //         dd.entry[i].Garray[j] = (double)(l * l * l);
+        //     }
+        //     dd.entry[i].Fvalue = (double)l;
+        // }
+
+        // //!Open a file for reading and writing
+        // fs.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        // double **tmp = nullptr;
+        // tmp = new double *[3];
+
+        // for (int i = 0; i < dd.entries; i++)
+        // {
+        //     tmp[0] = dd.entry[i].Parray;
+        //     tmp[1] = &dd.entry[i].Fvalue;
+        //     tmp[2] = dd.entry[i].Garray;
+
+        //     saveMatrix<double>(fs, tmp, 3, )
+        // }
+    }
 }
 
 /*! 

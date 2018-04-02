@@ -277,7 +277,7 @@ void printMatrix(const char *title, Tidata **idata, size_t nRows, size_t nCols)
     std::string sep = "\n----------------------------------------\n";
     std::cout << sep;
     std::cout << title << "\n\n";
-    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
+    std::cout << EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
 }
 
 template <typename Tidata>
@@ -285,7 +285,7 @@ void printMatrix(Tidata **idata, size_t nRows, size_t nCols)
 {
     std::string sep = "\n----------------------------------------\n";
     std::cout << sep;
-    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
+    std::cout << EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
 }
 
 template <typename Tidata>
@@ -346,6 +346,47 @@ inline bool loadMatrix(std::fstream &fs, TEMX &EMX)
 }
 
 /*!
+ * \brief Helper function to load the matrix from a file 
+ * 
+ * \tparam  Tidata data type 
+ * \param   idata  array of input data of type Tidata
+ * \param   nRows  number of rows
+ * \param   nCols  number of columns
+ */
+template <typename Tidata>
+inline bool loadMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t nCols, size_t options = 0)
+{
+    switch (options)
+    {
+    case (0):
+        Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
+        loadMatrix<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>>(fs, MTemp);
+        EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(MTemp, idata));
+        return true;
+    case (1):
+        Eigen::Matrix<Tidata, 1, Eigen::Dynamic> MTemp(1, nRows * nCols);
+        loadMatrix<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(fs, MTemp);
+        EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>( Eigen::Map<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic> >(MTemp, nRows, nCols), idata));
+        return true;
+    };
+    return false;    
+}
+
+template <typename Tidata>
+inline bool loadMatrix(std::fstream &fs, Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+    return loadMatrix<TEMapX<Tidata>>(fs, TiMatrix);
+}
+
+template <typename Tidata>
+inline bool loadMatrix(std::fstream &fs, Tidata *idata, size_t nRows)
+{
+    Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>> TiMatrix(idata, 1, nRows);
+    return loadMatrix<Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>>(fs, TiMatrix);
+}
+
+/*!
  * \brief Helper function to save the matrix of type TEMX into a file 
  * 
  * \tparam  TEMX   typedef for Eigen matrix 
@@ -370,4 +411,42 @@ inline bool saveMatrix(std::fstream &fs, TEMX EMX)
     return true;
 }
 
+/*!
+ * \brief Helper function to save the matrix into a file 
+ * 
+ * \tparam  Tidata data type 
+ * \param   idata  array of input data of type Tidata
+ * \param   nRows  number of rows
+ * \param   nCols  number of columns
+ * \param options  (default) 0 save in matrix format and 1 save in vector format
+ */
+template <typename Tidata>
+inline bool saveMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t nCols, size_t options = 0)
+{
+    switch (options)
+    {
+    case (0):
+        return saveMatrix<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>>(
+            fs,
+            EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols));
+    case (1):
+        return saveMatrix<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(
+            fs,
+            Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols).data(), nRows * nCols));
+    }
+}
+
+template <typename Tidata>
+inline bool saveMatrix(std::fstream &fs, Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+    return saveMatrix<TEMapX<Tidata>>(fs, TiMatrix);
+}
+
+template <typename Tidata>
+inline bool saveMatrix(std::fstream &fs, Tidata *idata, size_t nRows)
+{
+    Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>> TiMatrix(idata, 1, nRows);
+    return saveMatrix<Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>>(fs, TiMatrix);
+}
 #endif

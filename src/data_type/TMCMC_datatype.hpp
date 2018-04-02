@@ -6,16 +6,16 @@
 #include <iomanip>
 #include <system_error>
 
-//qsort
-#include <cstdlib>
-//fopen, fgets, sscanf, sprintf
-#include <cstdio>
-//strlen, strstr, strtok
-#include <cstring>
+#include <cstdlib> //qsort
+#include <cstdio>  //fopen, fgets, sscanf, sprintf
+#include <cstring> //strlen, strstr, strtok
 
 #include "../io/io.hpp"
+
 #include "../misc/parser.hpp"
 #include "../misc/array.hpp"
+
+#include "../numerics/eigenmatrix.hpp"
 
 /*! \file TMCMC_datatype.hpp
 *   \brief Data types and helper structures & classes.
@@ -869,7 +869,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
+                    return false;
                 }
                 for (int i = 0, l = 0; i < Nth; i++)
                 {
@@ -1145,44 +1145,38 @@ class database
     {
         if (entry != NULL)
         {
-            char filename[256];
+            char fileName[256];
             if (strlen(fname) == 0)
             {
-                sprintf(filename, "db_%03d.txt", entries - 1);
+                sprintf(fileName, "db_%03d.txt", entries - 1);
             }
             else
             {
-                sprintf(filename, "%s_%03d.txt", fname, entries - 1);
+                sprintf(fileName, "%s_%03d.txt", fname, entries - 1);
             }
 
             io f;
-            if (f.openFile(filename, "w"))
+            if (f.openFile(fileName, f.out | f.trunc))
             {
+                auto fs = f.getFstream();
+
+                double **tmp = nullptr;
+                int nRows = 2 + (int)(entry[0].Garray != NULL);
+                tmp = new double *[3];
+
                 for (int pos = 0; pos < entries - 1; pos++)
                 {
-                    if (entry[pos].Parray != NULL)
-                    {
-                        for (int i = 0; i < entry[pos].ndimParray; i++)
-                        {
-                            fprintf(f.f, "%20.16lf ", entry[pos].Parray[i]);
-                        }
-                    }
-                    if (entry[pos].Garray != NULL)
-                    {
-                        fprintf(f.f, "%20.16lf ", entry[pos].Fvalue);
-                        int i;
-                        for (i = 0; i < entry[pos].ndimGarray - 1; i++)
-                        {
-                            fprintf(f.f, "%20.16lf ", entry[pos].Garray[i]);
-                        }
-                        fprintf(f.f, "%20.16lf\n", entry[pos].Garray[i]);
-                    }
-                    else
-                    {
-                        fprintf(f.f, "%20.16lf\n", entry[pos].Fvalue);
-                    }
+                    tmp[0] = entry[pos].Parray;
+                    tmp[1] = &entry[pos].Fvalue;
+                    tmp[2] = entry[pos].Garray;
+
+                    int nCols = entry[pos].ndimParray + 1 + entry[pos].ndimGarray;
+
+                    saveMatrix(fs, tmp, nRows, nCols);
                 }
                 f.closeFile();
+
+                delete[] tmp;
             }
         }
     };
@@ -1201,44 +1195,38 @@ class database
 
         if (entry != NULL)
         {
-            char filename[256];
+            char fileName[256];
             if (strlen(fname) == 0)
             {
-                sprintf(filename, "db_%03d.txt", entries - 1);
+                sprintf(fileName, "db_%03d.txt", entries - 1);
             }
             else
             {
-                sprintf(filename, "%s_%03d.txt", fname, entries - 1);
+                sprintf(fileName, "%s_%03d.txt", fname, entries - 1);
             }
 
-            FILE *f = fopen(filename, "w");
-
-            for (int pos = 0; pos < entries - 1; pos++)
+            io f;
+            if (f.openFile(fileName, f.in))
             {
-                if (entry[pos].Parray != NULL)
-                {
-                    for (int i = 0; i < entry[pos].ndimParray; i++)
-                    {
-                        fprintf(f, "%20.16lf ", entry[pos].Parray[i]);
-                    }
-                }
-                if (entry[pos].Garray != NULL)
-                {
-                    fprintf(f, "%20.16lf ", entry[pos].Fvalue);
-                    int i;
-                    for (i = 0; i < entry[pos].ndimGarray - 1; i++)
-                    {
-                        fprintf(f, "%20.16lf ", entry[pos].Garray[i]);
-                    }
-                    fprintf(f, "%20.16lf\n", entry[pos].Garray[i]);
-                }
-                else
-                {
-                    fprintf(f, "%20.16lf\n", entry[pos].Fvalue);
-                }
-            }
+                auto fs = f.getFstream();
+                double **tmp = nullptr;
+                int nRows = 2;
+                tmp = new double *[2];
 
-            fclose(f);
+                for (int pos = 0; pos < entries - 1; pos++)
+                {
+                    tmp[0] = entry[pos].Parray;
+                    tmp[1] = &entry[pos].Fvalue;
+                    tmp[2] = entry[pos].Garray;
+
+                    int nCols = entry[pos].ndimParray + 1;
+
+                    loadMatrix(fs, tmp, nRows, nCols);
+                }
+                f.closeFile();
+
+                delete[] tmp;
+            }
         }
     };
 };
