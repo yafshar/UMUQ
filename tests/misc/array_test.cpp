@@ -1,4 +1,4 @@
-#include "../src/misc/array.hpp"
+#include "misc/array.hpp"
 #include "gtest/gtest.h"
 
 TEST(arraywrapper_test, HandlesVectors)

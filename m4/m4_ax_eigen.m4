@@ -10,7 +10,7 @@
 #	If no path to the installed eigen library is given the macro uses
 #	external folder and look for header files.
 #
-# ADAPTED 
+# AUTHOR 
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 

@@ -1,119 +1,161 @@
 #ifndef UMHBM_EIGENMATRIX_H
 #define UMHBM_EIGENMATRIX_H
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include <Eigen/Dense>
 
 // Standard typedef from eigen
-typedef Eigen::Matrix<double, 2, 2> EMatrix2d;
-typedef Eigen::Matrix<double, 2, Eigen::Dynamic> EMatrix2Xd;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 2> EMatrixX2d;
+typedef typename Eigen::Matrix<double, 2, 2> EMatrix2d;
+typedef typename Eigen::Matrix<double, 2, Eigen::Dynamic> EMatrix2Xd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 2> EMatrixX2d;
 
-typedef Eigen::Matrix<double, 3, 3> EMatrix3d;
-typedef Eigen::Matrix<double, 3, Eigen::Dynamic> EMatrix3Xd;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 3> EMatrixX3d;
+typedef typename Eigen::Matrix<double, 3, 3> EMatrix3d;
+typedef typename Eigen::Matrix<double, 3, Eigen::Dynamic> EMatrix3Xd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 3> EMatrixX3d;
 
-typedef Eigen::Matrix<double, 4, 4> EMatrix4d;
-typedef Eigen::Matrix<double, 4, Eigen::Dynamic> EMatrix4Xd;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 4> EMatrixX4d;
+typedef typename Eigen::Matrix<double, 4, 4> EMatrix4d;
+typedef typename Eigen::Matrix<double, 4, Eigen::Dynamic> EMatrix4Xd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 4> EMatrixX4d;
 
-typedef Eigen::Matrix<double, 5, 5> EMatrix5d;
-typedef Eigen::Matrix<double, 5, Eigen::Dynamic> EMatrix5Xd;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 5> EMatrixX5d;
+typedef typename Eigen::Matrix<double, 5, 5> EMatrix5d;
+typedef typename Eigen::Matrix<double, 5, Eigen::Dynamic> EMatrix5Xd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 5> EMatrixX5d;
 
-typedef Eigen::Matrix<double, 6, 6> EMatrix6d;
-typedef Eigen::Matrix<double, 6, Eigen::Dynamic> EMatrix6Xd;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 6> EMatrixX6d;
+typedef typename Eigen::Matrix<double, 6, 6> EMatrix6d;
+typedef typename Eigen::Matrix<double, 6, Eigen::Dynamic> EMatrix6Xd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 6> EMatrixX6d;
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> EMatrixXd;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> EMatrixXd;
 
-typedef Eigen::Matrix<float, 2, 2> EMatrix2f;
-typedef Eigen::Matrix<float, 2, Eigen::Dynamic> EMatrix2Xf;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 2> EMatrixX2f;
+typedef typename Eigen::Matrix<float, 2, 2> EMatrix2f;
+typedef typename Eigen::Matrix<float, 2, Eigen::Dynamic> EMatrix2Xf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 2> EMatrixX2f;
 
-typedef Eigen::Matrix<float, 3, 3> EMatrix3f;
-typedef Eigen::Matrix<float, 3, Eigen::Dynamic> EMatrix3Xf;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 3> EMatrixX3f;
+typedef typename Eigen::Matrix<float, 3, 3> EMatrix3f;
+typedef typename Eigen::Matrix<float, 3, Eigen::Dynamic> EMatrix3Xf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 3> EMatrixX3f;
 
-typedef Eigen::Matrix<float, 4, 4> EMatrix4f;
-typedef Eigen::Matrix<float, 4, Eigen::Dynamic> EMatrix4Xf;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 4> EMatrixX4f;
+typedef typename Eigen::Matrix<float, 4, 4> EMatrix4f;
+typedef typename Eigen::Matrix<float, 4, Eigen::Dynamic> EMatrix4Xf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 4> EMatrixX4f;
 
-typedef Eigen::Matrix<float, 5, 5> EMatrix5f;
-typedef Eigen::Matrix<float, 5, Eigen::Dynamic> EMatrix5Xf;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 5> EMatrixX5f;
+typedef typename Eigen::Matrix<float, 5, 5> EMatrix5f;
+typedef typename Eigen::Matrix<float, 5, Eigen::Dynamic> EMatrix5Xf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 5> EMatrixX5f;
 
-typedef Eigen::Matrix<float, 6, 6> EMatrix6f;
-typedef Eigen::Matrix<float, 6, Eigen::Dynamic> EMatrix6Xf;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 6> EMatrixX6f;
+typedef typename Eigen::Matrix<float, 6, 6> EMatrix6f;
+typedef typename Eigen::Matrix<float, 6, Eigen::Dynamic> EMatrix6Xf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 6> EMatrixX6f;
 
-typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> EMatrixXf;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> EMatrixXf;
 
-typedef Eigen::Matrix<int, 2, 2> EMatrix2i;
-typedef Eigen::Matrix<int, 2, Eigen::Dynamic> EMatrix2Xi;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 2> EMatrixX2i;
+typedef typename Eigen::Matrix<int, 2, 2> EMatrix2i;
+typedef typename Eigen::Matrix<int, 2, Eigen::Dynamic> EMatrix2Xi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 2> EMatrixX2i;
 
-typedef Eigen::Matrix<int, 3, 3> EMatrix3i;
-typedef Eigen::Matrix<int, 3, Eigen::Dynamic> EMatrix3Xi;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 3> EMatrixX3i;
+typedef typename Eigen::Matrix<int, 3, 3> EMatrix3i;
+typedef typename Eigen::Matrix<int, 3, Eigen::Dynamic> EMatrix3Xi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 3> EMatrixX3i;
 
-typedef Eigen::Matrix<int, 4, 4> EMatrix4i;
-typedef Eigen::Matrix<int, 4, Eigen::Dynamic> EMatrix4Xi;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 4> EMatrixX4i;
+typedef typename Eigen::Matrix<int, 4, 4> EMatrix4i;
+typedef typename Eigen::Matrix<int, 4, Eigen::Dynamic> EMatrix4Xi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 4> EMatrixX4i;
 
-typedef Eigen::Matrix<int, 5, 5> EMatrix5i;
-typedef Eigen::Matrix<int, 5, Eigen::Dynamic> EMatrix5Xi;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 5> EMatrixX5i;
+typedef typename Eigen::Matrix<int, 5, 5> EMatrix5i;
+typedef typename Eigen::Matrix<int, 5, Eigen::Dynamic> EMatrix5Xi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 5> EMatrixX5i;
 
-typedef Eigen::Matrix<int, 6, 6> EMatrix6i;
-typedef Eigen::Matrix<int, 6, Eigen::Dynamic> EMatrix6Xi;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 6> EMatrixX6i;
+typedef typename Eigen::Matrix<int, 6, 6> EMatrix6i;
+typedef typename Eigen::Matrix<int, 6, Eigen::Dynamic> EMatrix6Xi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 6> EMatrixX6i;
 
-typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> EMatrixXi;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> EMatrixXi;
 
-typedef Eigen::Matrix<double, 1, 2> ERowVector2d;
-typedef Eigen::Matrix<double, 1, 3> ERowVector3d;
-typedef Eigen::Matrix<double, 1, 4> ERowVector4d;
-typedef Eigen::Matrix<double, 1, 5> ERowVector5d;
-typedef Eigen::Matrix<double, 1, 6> ERowVector6d;
-typedef Eigen::Matrix<double, 1, Eigen::Dynamic> ERowVectorXd;
+typedef typename Eigen::Matrix<double, 1, 2> ERowVector2d;
+typedef typename Eigen::Matrix<double, 1, 3> ERowVector3d;
+typedef typename Eigen::Matrix<double, 1, 4> ERowVector4d;
+typedef typename Eigen::Matrix<double, 1, 5> ERowVector5d;
+typedef typename Eigen::Matrix<double, 1, 6> ERowVector6d;
+typedef typename Eigen::Matrix<double, 1, Eigen::Dynamic> ERowVectorXd;
 
-typedef Eigen::Matrix<float, 1, 2> ERowVector2f;
-typedef Eigen::Matrix<float, 1, 3> ERowVector3f;
-typedef Eigen::Matrix<float, 1, 4> ERowVector4f;
-typedef Eigen::Matrix<float, 1, 5> ERowVector5f;
-typedef Eigen::Matrix<float, 1, 6> ERowVector6f;
-typedef Eigen::Matrix<float, 1, Eigen::Dynamic> ERowVectorXf;
+typedef typename Eigen::Matrix<float, 1, 2> ERowVector2f;
+typedef typename Eigen::Matrix<float, 1, 3> ERowVector3f;
+typedef typename Eigen::Matrix<float, 1, 4> ERowVector4f;
+typedef typename Eigen::Matrix<float, 1, 5> ERowVector5f;
+typedef typename Eigen::Matrix<float, 1, 6> ERowVector6f;
+typedef typename Eigen::Matrix<float, 1, Eigen::Dynamic> ERowVectorXf;
 
-typedef Eigen::Matrix<int, 1, 2> ERowVector2i;
-typedef Eigen::Matrix<int, 1, 3> ERowVector3i;
-typedef Eigen::Matrix<int, 1, 4> ERowVector4i;
-typedef Eigen::Matrix<int, 1, 5> ERowVector5i;
-typedef Eigen::Matrix<int, 1, 6> ERowVector6i;
-typedef Eigen::Matrix<int, 1, Eigen::Dynamic> ERowVectorXi;
+typedef typename Eigen::Matrix<int, 1, 2> ERowVector2i;
+typedef typename Eigen::Matrix<int, 1, 3> ERowVector3i;
+typedef typename Eigen::Matrix<int, 1, 4> ERowVector4i;
+typedef typename Eigen::Matrix<int, 1, 5> ERowVector5i;
+typedef typename Eigen::Matrix<int, 1, 6> ERowVector6i;
+typedef typename Eigen::Matrix<int, 1, Eigen::Dynamic> ERowVectorXi;
 
-typedef Eigen::Matrix<double, 2, 1> EVector2d;
-typedef Eigen::Matrix<double, 3, 1> EVector3d;
-typedef Eigen::Matrix<double, 4, 1> EVector4d;
-typedef Eigen::Matrix<double, 5, 1> EVector5d;
-typedef Eigen::Matrix<double, 6, 1> EVector6d;
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> EVectorXd;
+typedef typename Eigen::Matrix<double, 2, 1> EVector2d;
+typedef typename Eigen::Matrix<double, 3, 1> EVector3d;
+typedef typename Eigen::Matrix<double, 4, 1> EVector4d;
+typedef typename Eigen::Matrix<double, 5, 1> EVector5d;
+typedef typename Eigen::Matrix<double, 6, 1> EVector6d;
+typedef typename Eigen::Matrix<double, Eigen::Dynamic, 1> EVectorXd;
 
-typedef Eigen::Matrix<float, 2, 1> EVector2f;
-typedef Eigen::Matrix<float, 3, 1> EVector3f;
-typedef Eigen::Matrix<float, 4, 1> EVector4f;
-typedef Eigen::Matrix<float, 5, 1> EVector5f;
-typedef Eigen::Matrix<float, 6, 1> EVector6f;
-typedef Eigen::Matrix<float, Eigen::Dynamic, 1> EVectorXf;
+typedef typename Eigen::Matrix<float, 2, 1> EVector2f;
+typedef typename Eigen::Matrix<float, 3, 1> EVector3f;
+typedef typename Eigen::Matrix<float, 4, 1> EVector4f;
+typedef typename Eigen::Matrix<float, 5, 1> EVector5f;
+typedef typename Eigen::Matrix<float, 6, 1> EVector6f;
+typedef typename Eigen::Matrix<float, Eigen::Dynamic, 1> EVectorXf;
 
-typedef Eigen::Matrix<int, 2, 1> EVector2i;
-typedef Eigen::Matrix<int, 3, 1> EVector3i;
-typedef Eigen::Matrix<int, 4, 1> EVector4i;
-typedef Eigen::Matrix<int, 5, 1> EVector5i;
-typedef Eigen::Matrix<int, 6, 1> EVector6i;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
+typedef typename Eigen::Matrix<int, 2, 1> EVector2i;
+typedef typename Eigen::Matrix<int, 3, 1> EVector3i;
+typedef typename Eigen::Matrix<int, 4, 1> EVector4i;
+typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
+typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
+typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 
 /*!
- * \brief Map the existing memory buffer to an Eigen object
+ * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer    
+ * 
+ */
+template <typename TdataPtr>
+using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+
+/*!
+ * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer    
+ * 
+ */
+template <typename TdataPtr>
+using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+
+/*!
+ * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures.  
+ * 
+ */
+using TEMapXd = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+
+/*!
+ * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures.  
+ * 
+ */
+using CTEMapXd = Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+
+/*!
+ * \brief EMapX function copies the existing C++ memory buffer to an Eigen Matrix object of size(nRows, nCols) 
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -129,23 +171,24 @@ typedef Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 template <typename TEMX, typename TdataPtr>
 TEMX EMapX(TdataPtr *dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<TEMX>(dataPtr, nRows, nCols);
+    return Eigen::Map<const TEMX>(dataPtr, nRows, nCols);
 }
 
-template <>
-EMatrixXd EMapX<EMatrixXd, double>(double *dataPtr, size_t nRows, size_t nCols)
+template <typename TEMX, typename TdataPtr>
+TEMX EMapX(TdataPtr **dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
-}
+    TEMX MTemp(nRows, nCols);
 
-template <>
-EMatrix2d EMapX<EMatrix2d, double>(double *dataPtr, size_t nRows, size_t nCols)
-{
-    return Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr);
+    for (size_t i = 0; i < nRows; i++)
+    {
+        MTemp.row(i) = Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], nCols);
+    }
+
+    return MTemp;
 }
 
 /*!
- * \brief Pointer will now point to a beginning of a memory region of the Eigen’s data structures
+ * \brief Pointer will now point to a beginning of a memory buffer of the Eigen’s data structures
  *  
  * The Map operation maps the existing Eigen’s data structure to the memory buffer
  * 
@@ -156,25 +199,22 @@ EMatrix2d EMapX<EMatrix2d, double>(double *dataPtr, size_t nRows, size_t nCols)
  * \param  dataPtr pointer to the array of type TdataPtr
  */
 template <typename TEMX, typename TdataPtr>
-void EMapX(TEMX EMX, TdataPtr *dataPtr)
+void EMapX(const TEMX EMX, TdataPtr *dataPtr)
 {
     Eigen::Map<TEMX>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
 }
 
-template <>
-void EMapX(EMatrixXd EMX, double *dataPtr)
+template <typename TEMX, typename TdataPtr>
+void EMapX(const TEMX EMX, TdataPtr **dataPtr)
 {
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
-}
-
-template <>
-void EMapX(EMatrix2d EMX, double *dataPtr)
-{
-    Eigen::Map<Eigen::Matrix<double, 2, 2, Eigen::RowMajor>>(dataPtr, 2, 2) = EMX;
+    for (size_t i = 0; i < EMX.rows(); i++)
+    {
+        Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
+    }
 }
 
 /*!
- * \brief Map the existing pointer to the array of type double to an Eigen object
+ * \brief Copy the existing pointer to the C++ memory buffer of type double to an Eigen object
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures.  
  * 
@@ -185,7 +225,19 @@ void EMapX(EMatrix2d EMX, double *dataPtr)
  */
 EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
 {
-    return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
+    return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
+}
+
+EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
+{
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
+
+    for (size_t i = 0; i < nRows; i++)
+    {
+        MTemp.row(i) = EVectorXd::Map(&dataPtr[i][0], nCols);
+    }
+
+    return MTemp;
 }
 
 /*!
@@ -196,9 +248,126 @@ EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
  * \param  EMXd    Input Eigen’s matrix of type double
  * \param  dataPtr Pointer to the memory buffer of type double
  */
-void EMapXd(EMatrixXd EMXd, double *dataPtr)
+void EMapXd(const EMatrixXd EMXd, double *dataPtr)
 {
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMXd.rows(), EMXd.cols()) = EMXd;
+}
+
+void EMapXd(const EMatrixXd EMXd, double **dataPtr)
+{
+    for (size_t i = 0; i < EMXd.rows(); i++)
+    {
+        EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
+    }
+}
+
+/*!
+ * \brief Helper function to print the matrix
+ * 
+ * \tparam  Tidata type of data
+ * 
+ * \param   title  string that should be written at the top 
+ * \param   idata  array of input data of type Tidata
+ * \param   nRows  number of rows
+ * \param   nCols  number of columns
+ */
+template <typename Tidata>
+void printMatrix(const char *title, Tidata **idata, size_t nRows, size_t nCols)
+{
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << title << "\n\n";
+    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
+}
+
+template <typename Tidata>
+void printMatrix(Tidata **idata, size_t nRows, size_t nCols)
+{
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
+}
+
+template <typename Tidata>
+void printMatrix(const char *title, Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << title << "\n\n";
+    std::cout << TiMatrix << sep;
+}
+
+template <typename Tidata>
+void printMatrix(Tidata *idata, size_t nRows, size_t nCols)
+{
+    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
+
+    std::string sep = "\n----------------------------------------\n";
+    std::cout << sep;
+    std::cout << TiMatrix << sep;
+}
+
+/*!
+ * \brief Helper function to load the matrix of type TEMX from a file 
+ * 
+ * \tparam  TEMX   typedef for Eigen matrix 
+ * \param   EMX    Eigen matrix
+ */
+template <typename TEMX>
+inline bool loadMatrix(std::fstream &fs, TEMX &EMX)
+{
+    std::string line;
+
+    for (size_t i = 0; i < EMX.rows(); i++)
+    {
+        if (getline(fs, line))
+        {
+            std::stringstream input_line(line);
+
+            size_t j = 0;
+            while (!input_line.eof())
+            {
+                input_line >> EMX(i, j);
+                j++;
+            }
+            if (j != EMX.cols())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*!
+ * \brief Helper function to save the matrix of type TEMX into a file 
+ * 
+ * \tparam  TEMX   typedef for Eigen matrix 
+ * \param   EMX    Eigen matrix
+ */
+template <typename TEMX>
+inline bool saveMatrix(std::fstream &fs, TEMX EMX)
+{
+    if (!fs.is_open())
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "This file stream is not open for writing." << std::endl;
+        return false;
+    }
+
+    Eigen::IOFormat fmt(Eigen::FullPrecision);
+
+    fs << std::fixed;
+    fs << EMX.format(fmt);
+    fs << '\n';
+
+    return true;
 }
 
 #endif

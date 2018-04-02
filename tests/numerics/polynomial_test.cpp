@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cmath>
 
-#include "../src/numerics/polynomial.hpp"
+#include "numerics/polynomial.hpp"
 #include "gtest/gtest.h"
 
-// Tests binomial coefficient c(n, k) of 0.
+//! Tests binomial coefficient c(n, k) of 0.
 TEST(binomial_coefficient_test, HandlesZeroInput)
 {
     polynomial p;
@@ -15,7 +15,7 @@ TEST(binomial_coefficient_test, HandlesZeroInput)
     EXPECT_EQ(1, p.binomial_coefficient(10, 0));
 }
 
-// Tests binomial coefficient c(n, k)
+//! Tests binomial coefficient c(n, k)
 TEST(binomial_coefficient_test, HandlesOtherInput)
 {
     polynomial p;

@@ -1,3 +1,9 @@
+#
+# AUTHOR
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
+#
+
 AC_PREREQ([2.69])
 AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
 
@@ -9,7 +15,7 @@ AC_CANONICAL_BUILD
 
 AC_CONFIG_HEADERS(src/umhbm_config.h)
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 # AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])

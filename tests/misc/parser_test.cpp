@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../src/misc/parser.hpp"
+#include "misc/parser.hpp"
 #include "gtest/gtest.h"
 
 #define BUFLEN 1024
@@ -23,7 +23,7 @@ TEST(parse_test, HandlesZeroInput)
 
     EXPECT_STREQ(largv[0], targv[0]);
 
-    //checking for tab and next line
+    //!checking for tab and next line
     sprintf(line, "\t  \n");
 
     p.parse(line, largv);
@@ -52,7 +52,7 @@ TEST(parse_test, HandlesInput)
         EXPECT_STREQ(largv[i], targv[i]);
     }
 
-    //testing space at the start of line
+    //!testing space at the start of line
     sprintf(line, "   sh doall.sh");
     p.parse(line, largv);
     for (int i = 0; i < 2; i++)
@@ -104,10 +104,10 @@ TEST(parse_cmd, HandlesCmd)
         EXPECT_EQ(str, "B" + std::to_string(n));
 
         p.parse(largv[1], lowerbound);
-        EXPECT_EQ(lowerbound, 0.05 + (double)n);
+        EXPECT_DOUBLE_EQ(lowerbound, 0.05 + (double)n);
 
         p.parse(largv[2], upperbound);
-        EXPECT_EQ(upperbound, 100.012 + (double)n);
+        EXPECT_DOUBLE_EQ(upperbound, 100.012 + (double)n);
     }
 
     n = 8;
@@ -129,10 +129,10 @@ TEST(parse_cmd, HandlesCmd)
     std::string str(largv[0]);
 
     p.parse(largv[1], prior_mu1);
-    EXPECT_EQ(prior_mu1, 1.0);
+    EXPECT_DOUBLE_EQ(prior_mu1, 1.0);
 
     p.parse(largv[2], prior_mu2);
-    EXPECT_EQ(prior_mu2, 0.1);
+    EXPECT_DOUBLE_EQ(prior_mu2, 0.1);
 };
 
 int main(int argc, char **argv)

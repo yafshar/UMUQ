@@ -343,86 +343,90 @@ bool data_t::read(const char *fname)
                 continue;
             }
 
-            p.parse(u.line, u.lineArg);
+            char *line = u.getLine();
+            char **lineArg = u.getLineArg();
 
-            std::string str(u.lineArg[0]);
+            // Parse the line into line arguments
+            p.parse(line, lineArg);
+
+            std::string str(lineArg[0]);
 
             if (str == "Nth")
             {
-                p.parse(u.lineArg[1], Nth);
+                p.parse(lineArg[1], Nth);
             }
             else if (str == "MaxStages")
             {
-                p.parse(u.lineArg[1], MaxStages);
+                p.parse(lineArg[1], MaxStages);
             }
             else if (str == "PopSize")
             {
-                p.parse(u.lineArg[1], PopSize);
+                p.parse(lineArg[1], PopSize);
             }
             else if (str == "TolCOV")
             {
-                p.parse(u.lineArg[1], TolCOV);
+                p.parse(lineArg[1], TolCOV);
             }
             else if (str == "bbeta")
             {
-                p.parse(u.lineArg[1], bbeta);
+                p.parse(lineArg[1], bbeta);
             }
             else if (str == "seed")
             {
-                p.parse(u.lineArg[1], seed);
+                p.parse(lineArg[1], seed);
             }
             else if (str == "opt.MaxIter")
             {
-                p.parse(u.lineArg[1], options.MaxIter);
+                p.parse(lineArg[1], options.MaxIter);
             }
             else if (str == "opt.Tol")
             {
-                p.parse(u.lineArg[1], options.Tol);
+                p.parse(lineArg[1], options.Tol);
             }
             else if (str == "opt.Display")
             {
-                p.parse(u.lineArg[1], options.Display);
+                p.parse(lineArg[1], options.Display);
             }
             else if (str == "opt.Step")
             {
-                p.parse(u.lineArg[1], options.Step);
+                p.parse(lineArg[1], options.Step);
             }
             else if (str == "prior_type")
             {
-                p.parse(u.lineArg[1], prior_type);
+                p.parse(lineArg[1], prior_type);
             }
             else if (str == "prior_count")
             {
-                p.parse(u.lineArg[1], prior_count);
+                p.parse(lineArg[1], prior_count);
             }
             else if (str == "iplot")
             {
-                p.parse(u.lineArg[1], iplot);
+                p.parse(lineArg[1], iplot);
             }
             else if (str == "icdump")
             {
-                p.parse(u.lineArg[1], icdump);
+                p.parse(lineArg[1], icdump);
             }
             else if (str == "ifdump")
             {
-                p.parse(u.lineArg[1], ifdump);
+                p.parse(lineArg[1], ifdump);
             }
             else if (str == "Bdef")
             {
-                p.parse(u.lineArg[1], lb);
-                p.parse(u.lineArg[2], ub);
+                p.parse(lineArg[1], lb);
+                p.parse(lineArg[2], ub);
             }
             else if (str == "MinChainLength")
             {
-                p.parse(u.lineArg[1], MinChainLength);
+                p.parse(lineArg[1], MinChainLength);
             }
             else if (str == "MaxChainLength")
             {
-                p.parse(u.lineArg[1], MaxChainLength);
+                p.parse(lineArg[1], MaxChainLength);
             }
             else if (str == "use_local_cov")
             {
-                p.parse(u.lineArg[1], use_local_cov);
+                p.parse(lineArg[1], use_local_cov);
             }
         }
 
@@ -442,6 +446,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             if (upperbound != NULL)
@@ -457,6 +462,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
         }
 
@@ -476,14 +482,17 @@ bool data_t::read(const char *fname)
                     continue;
                 }
 
-                p.parse(u.line, u.lineArg);
+                char *line = u.getLine();
+                char **lineArg = u.getLineArg();
 
-                std::string str(u.lineArg[0]);
+                p.parse(line, lineArg);
+
+                std::string str(lineArg[0]);
 
                 if (str == strt)
                 {
-                    p.parse(u.lineArg[1], lowerbound[n]);
-                    p.parse(u.lineArg[2], upperbound[n]);
+                    p.parse(lineArg[1], lowerbound[n]);
+                    p.parse(lineArg[2], upperbound[n]);
                     found = 1;
                     break;
                 }
@@ -514,6 +523,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -527,15 +537,18 @@ bool data_t::read(const char *fname)
                     continue;
                 }
 
-                p.parse(u.line, u.lineArg);
+                char *line = u.getLine();
+                char **lineArg = u.getLineArg();
 
-                std::string str(u.lineArg[0]);
+                p.parse(line, lineArg);
+
+                std::string str(lineArg[0]);
 
                 if (str == "prior_mu")
                 {
                     for (n = 0; n < Nth; n++)
                     {
-                        p.parse(u.lineArg[n + 1], prior_mu[n]);
+                        p.parse(lineArg[n + 1], prior_mu[n]);
                     }
                     found = 1;
                     break;
@@ -567,6 +580,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -580,15 +594,18 @@ bool data_t::read(const char *fname)
                     continue;
                 }
 
-                p.parse(u.line, u.lineArg);
+                char *line = u.getLine();
+                char **lineArg = u.getLineArg();
 
-                std::string str(u.lineArg[0]);
+                p.parse(line, lineArg);
+
+                std::string str(lineArg[0]);
 
                 if (str == "prior_sigma")
                 {
                     for (n = 0; n < Nth * Nth; n++)
                     {
-                        p.parse(u.lineArg[n + 1], prior_sigma[n]);
+                        p.parse(lineArg[n + 1], prior_sigma[n]);
                     }
                     found = 1;
                     break;
@@ -629,6 +646,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             if (linit)
@@ -646,6 +664,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
 
                 if (prior_sigma != NULL)
@@ -661,6 +680,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
                 }
             }
 
@@ -679,15 +699,18 @@ bool data_t::read(const char *fname)
                         continue;
                     }
 
-                    p.parse(u.line, u.lineArg);
+                    char *line = u.getLine();
+                    char **lineArg = u.getLineArg();
 
-                    std::string str(u.lineArg[0]);
+                    p.parse(line, lineArg);
+
+                    std::string str(lineArg[0]);
 
                     if (str == strt)
                     {
-                        p.parse(u.lineArg[1], compositeprior_distr[n]);
-                        p.parse(u.lineArg[2], lowerbound[n]);
-                        p.parse(u.lineArg[3], upperbound[n]);
+                        p.parse(lineArg[1], compositeprior_distr[n]);
+                        p.parse(lineArg[2], lowerbound[n]);
+                        p.parse(lineArg[3], upperbound[n]);
                         found = 1;
                         break;
                     }
@@ -713,13 +736,16 @@ bool data_t::read(const char *fname)
                 continue;
             }
 
-            p.parse(u.line, u.lineArg);
+            char *line = u.getLine();
+            char **lineArg = u.getLineArg();
 
-            std::string str(u.lineArg[0]);
+            p.parse(line, lineArg);
+
+            std::string str(lineArg[0]);
 
             if (str == "auxil_size")
             {
-                p.parse(u.lineArg[1], auxil_size);
+                p.parse(lineArg[1], auxil_size);
                 found = 1;
                 break;
             }
@@ -740,6 +766,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             u.rewindFile();
@@ -753,15 +780,18 @@ bool data_t::read(const char *fname)
                     continue;
                 }
 
-                p.parse(u.line, u.lineArg);
+                char *line = u.getLine();
+                char **lineArg = u.getLineArg();
 
-                std::string str(u.lineArg[0]);
+                p.parse(line, lineArg);
+
+                std::string str(lineArg[0]);
 
                 if (str == "auxil_data")
                 {
                     for (n = 0; n < auxil_size; n++)
                     {
-                        p.parse(u.lineArg[n + 1], auxil_data[n]);
+                        p.parse(lineArg[n + 1], auxil_data[n]);
                     }
                     found = 1;
                     break;
@@ -795,6 +825,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
 
             n = MaxStages;
@@ -826,6 +857,7 @@ bool data_t::read(const char *fname)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
             }
             for (n = 0; n < PopSize; n++)
             {
@@ -837,6 +869,7 @@ bool data_t::read(const char *fname)
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                     std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
                 }
                 for (int i = 0, l = 0; i < Nth; i++)
                 {

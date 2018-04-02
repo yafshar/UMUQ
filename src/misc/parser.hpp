@@ -2,7 +2,7 @@
 #define UMHBM_PARSER_H
 
 #include <iostream>
-
+#include <sstream>
 //open,fstat
 #include <sys/stat.h>
 //fopen, fclose
@@ -29,7 +29,7 @@ class parser
             *argv++ = line;
 
             /* skip the argument until ...*/
-            while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',') 
+            while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',')
             {
                 line++;
             }
@@ -37,6 +37,13 @@ class parser
 
         /* mark the end of argument list */
         *argv = NULL;
+    }
+
+    template <typename T>
+    inline void parse(const char *lineArg, T &value)
+    {
+        std::stringstream str(lineArg);
+        str >> value;
     }
 
     inline void parse(const char *lineArg, int &value)

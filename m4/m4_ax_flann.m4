@@ -8,9 +8,9 @@
 #	Test for the FLANN libraries
 #
 #	If no path to the installed FLANN library is given the macro uses
-#	external folder and make the FLANN library and header files. 
+#	external folder and creates the FLANN library and header files. 
 #
-# ADAPTED 
+# AUTHOR 
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
