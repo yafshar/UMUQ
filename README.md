@@ -25,3 +25,4 @@ Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
     <td> <img src="./docs/Rosenbrock.gif?raw=true" width="400" height="400"> </td>
   </tr>
 </table>
+
