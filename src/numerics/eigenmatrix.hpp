@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #include <Eigen/Dense>
@@ -115,6 +116,11 @@ typedef typename Eigen::Matrix<int, 4, 1> EVector4i;
 typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
 typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
 typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
+
+Eigen::IOFormat fmt(Eigen::FullPrecision);
+
+typedef typename Eigen::Index Index;
+Index width;
 
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
@@ -320,21 +326,15 @@ inline bool loadMatrix(std::fstream &fs, TEMX &EMX)
 {
     std::string line;
 
-    for (size_t i = 0; i < EMX.rows(); i++)
+    for (int i = 0; i < EMX.rows(); i++)
     {
         if (getline(fs, line))
         {
             std::stringstream input_line(line);
 
-            size_t j = 0;
-            while (!input_line.eof())
+            for (int j = 0; j < EMX.cols(); j++)
             {
                 input_line >> EMX(i, j);
-                j++;
-            }
-            if (j != EMX.cols())
-            {
-                return false;
             }
         }
         else
@@ -352,24 +352,109 @@ inline bool loadMatrix(std::fstream &fs, TEMX &EMX)
  * \param   idata  array of input data of type Tidata
  * \param   nRows  number of rows
  * \param   nCols  number of columns
+ * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
  */
 template <typename Tidata>
 inline bool loadMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t nCols, size_t options = 0)
 {
-    switch (options)
+    std::string line;
+
+    if (options == 0)
     {
-    case (0):
-        Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
-        loadMatrix<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>>(fs, MTemp);
-        EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(MTemp, idata));
+        for (int i = 0; i < nRows; i++)
+        {
+            if (getline(fs, line))
+            {
+                std::stringstream input_line(line);
+
+                for (int j = 0; j < nCols; j++)
+                {
+                    input_line >> idata[i][j];
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
         return true;
-    case (1):
-        Eigen::Matrix<Tidata, 1, Eigen::Dynamic> MTemp(1, nRows * nCols);
-        loadMatrix<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(fs, MTemp);
-        EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>( Eigen::Map<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic> >(MTemp, nRows, nCols), idata));
+    }
+    else if (options == 1)
+    {
+        if (getline(fs, line))
+        {
+            std::stringstream input_line(line);
+            for (int i = 0; i < nRows; i++)
+            {
+                for (int j = 0; j < nCols; j++)
+                {
+                    input_line >> idata[i][j];
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
         return true;
-    };
-    return false;    
+    }
+    return false;
+}
+
+/*!
+ * \brief Helper function to load the matrix from a file 
+ * 
+ * \tparam  Tidata data type 
+ * \param   idata  array of input data of type Tidata
+ * \param   nRows  number of rows
+ * \param   nCols  number of columns for each row
+ * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+ */
+template <typename Tidata>
+inline bool loadMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t *nCols, size_t options = 0)
+{
+    std::string line;
+
+    if (options == 0)
+    {
+        for (int i = 0; i < nRows; i++)
+        {
+            if (getline(fs, line))
+            {
+                std::stringstream input_line(line);
+
+                for (int j = 0; j < nCols[i]; j++)
+                {
+                    input_line >> idata[i][j];
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else if (options == 1)
+    {
+        if (getline(fs, line))
+        {
+            std::stringstream input_line(line);
+            for (int i = 0; i < nRows; i++)
+            {
+                for (int j = 0; j < nCols[i]; j++)
+                {
+                    input_line >> idata[i][j];
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
 template <typename Tidata>
@@ -402,11 +487,9 @@ inline bool saveMatrix(std::fstream &fs, TEMX EMX)
         return false;
     }
 
-    Eigen::IOFormat fmt(Eigen::FullPrecision);
-
     fs << std::fixed;
     fs << EMX.format(fmt);
-    fs << '\n';
+    fs << fmt.rowSeparator;
 
     return true;
 }
@@ -418,35 +501,332 @@ inline bool saveMatrix(std::fstream &fs, TEMX EMX)
  * \param   idata  array of input data of type Tidata
  * \param   nRows  number of rows
  * \param   nCols  number of columns
- * \param options  (default) 0 save in matrix format and 1 save in vector format
+ * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
+ *                           1 save matrix in vector format and proceed the position indicator to the next line &
+ *                           2 save matrix in vector format and kepp the position indicator on the same line
  */
 template <typename Tidata>
 inline bool saveMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t nCols, size_t options = 0)
 {
-    switch (options)
+    if (!fs.is_open())
     {
-    case (0):
-        return saveMatrix<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>>(
-            fs,
-            EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols));
-    case (1):
-        return saveMatrix<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(
-            fs,
-            Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>(EMapX<Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols).data(), nRows * nCols));
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "This file stream is not open for writing." << std::endl;
+        return false;
     }
+
+    std::string rowSeparator;
+    if (options > 0)
+    {
+        rowSeparator = fmt.rowSeparator;
+        fmt.rowSeparator = fmt.coeffSeparator;
+    }
+
+    if (fs.tellp() == 0)
+    {
+        if (std::numeric_limits<Tidata>::is_integer)
+        {
+            fs.precision(0);
+        }
+        else
+        {
+            fs.precision(Eigen::NumTraits<Tidata>::digits10());
+        }
+        fs << std::fixed;
+
+        width = 0;
+    }
+    else
+    {
+        width = std::max<Index>(0, width);
+    }
+
+    for (Index i = 0; i < nRows; i++)
+    {
+        for (Index j = 0; j < nCols; j++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << idata[i][j];
+            width = std::max<Index>(width, Index(sstr.str().length()));
+        }
+    }
+
+    if (width)
+    {
+        for (Index i = 0; i < nRows; ++i)
+        {
+            fs.width(width);
+            fs << idata[i][0];
+            for (Index j = 1; j < nCols; ++j)
+            {
+                fs << fmt.coeffSeparator;
+                fs.width(width);
+                fs << idata[i][j];
+            }
+            fs << fmt.rowSeparator;
+        }
+    }
+    else
+    {
+        for (Index i = 0; i < nRows; ++i)
+        {
+            fs << idata[i][0];
+            for (Index j = 1; j < nCols; ++j)
+            {
+                fs << fmt.coeffSeparator;
+                fs << idata[i][j];
+            }
+            fs << fmt.rowSeparator;
+        }
+    }
+
+    if (options == 0)
+    {
+        return true;
+    }
+    else if (options == 1)
+    {
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.rowSeparator;
+        return true;
+    }
+    else if (options == 2)
+    {
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.coeffSeparator;
+        return true;
+    }
+    return false;
+}
+
+/*!
+ * \brief Helper function to save the matrix into a file 
+ * 
+ * \tparam  Tidata data type 
+ * \param   idata  array of input data of type Tidata
+ * \param   nRows  number of rows
+ * \param   *nCols number of columns for each row
+ * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
+ *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
+ *                           2 saves matrix in vector format and kepps the position indicator on the same line
+ */
+template <typename Tidata>
+inline bool saveMatrix(std::fstream &fs, Tidata **idata, size_t nRows, size_t *nCols, size_t options = 0)
+{
+    if (!fs.is_open())
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "This file stream is not open for writing." << std::endl;
+        return false;
+    }
+
+    std::string rowSeparator;
+    if (options > 0)
+    {
+        rowSeparator = fmt.rowSeparator;
+        fmt.rowSeparator = fmt.coeffSeparator;
+    }
+
+    if (fs.tellp() == 0)
+    {
+        if (std::numeric_limits<Tidata>::is_integer)
+        {
+            fs.precision(0);
+        }
+        else
+        {
+            fs.precision(Eigen::NumTraits<Tidata>::digits10());
+        }
+        fs << std::fixed;
+
+        width = 0;
+    }
+    else
+    {
+        width = std::max<Index>(0, width);
+    }
+
+    for (Index i = 0; i < nRows; i++)
+    {
+        for (Index j = 0; j < nCols[i]; j++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << idata[i][j];
+            width = std::max<Index>(width, Index(sstr.str().length()));
+        }
+    }
+
+    if (width)
+    {
+        for (Index i = 0; i < nRows; ++i)
+        {
+            fs.width(width);
+            fs << idata[i][0];
+            for (Index j = 1; j < nCols[i]; ++j)
+            {
+                fs << fmt.coeffSeparator;
+                fs.width(width);
+                fs << idata[i][j];
+            }
+            fs << fmt.rowSeparator;
+        }
+    }
+    else
+    {
+        for (Index i = 0; i < nRows; ++i)
+        {
+            fs << idata[i][0];
+            for (Index j = 1; j < nCols[i]; ++j)
+            {
+                fs << fmt.coeffSeparator;
+                fs << idata[i][j];
+            }
+            fs << fmt.rowSeparator;
+        }
+    }
+
+    if (options == 0)
+    {
+        return true;
+    }
+    else if (options == 1)
+    {
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.rowSeparator;
+        return true;
+    }
+    else if (options == 2)
+    {
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.coeffSeparator;
+        return true;
+    }
+    return false;
 }
 
 template <typename Tidata>
-inline bool saveMatrix(std::fstream &fs, Tidata *idata, size_t nRows, size_t nCols)
+inline bool saveMatrix(std::fstream &fs, Tidata *idata, size_t nRows, size_t nCols = 1, size_t options = 0)
 {
-    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
-    return saveMatrix<TEMapX<Tidata>>(fs, TiMatrix);
-}
+    if (!fs.is_open())
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "This file stream is not open for writing." << std::endl;
+        return false;
+    }
 
-template <typename Tidata>
-inline bool saveMatrix(std::fstream &fs, Tidata *idata, size_t nRows)
-{
-    Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>> TiMatrix(idata, 1, nRows);
-    return saveMatrix<Eigen::Map<Eigen::Matrix<Tidata, 1, Eigen::Dynamic>>>(fs, TiMatrix);
+    std::string rowSeparator;
+
+    if (options > 0)
+    {
+        rowSeparator = fmt.rowSeparator;
+        fmt.rowSeparator = fmt.coeffSeparator;
+    }
+
+    if (fs.tellp() == 0)
+    {
+        if (std::numeric_limits<Tidata>::is_integer)
+        {
+            fs.precision(0);
+        }
+        else
+        {
+            fs.precision(Eigen::NumTraits<Tidata>::digits10());
+        }
+        fs << std::fixed;
+
+        width = 0;
+    }
+    else
+    {
+        width = std::max<Index>(0, width);
+    }
+
+    for (Index i = 0; i < nRows * nCols; i++)
+    {
+        std::stringstream sstr;
+        sstr.copyfmt(fs);
+        sstr << idata[i];
+        width = std::max<Index>(width, Index(sstr.str().length()));
+    }
+
+    if (width)
+    {
+        if (nCols == 1)
+        {
+            fs.width(width);
+            fs << idata[0];
+            for (Index i = 1; i < nRows; i++)
+            {
+                fs << fmt.coeffSeparator;
+                fs.width(width);
+                fs << idata[i];
+            }
+            fs << fmt.rowSeparator;
+        }
+        else
+        {
+            for (Index i = 0, l = 0; i < nRows; i++)
+            {
+                fs.width(width);
+                fs << idata[l];
+                for (Index j = 1; j < nCols; j++)
+                {
+                    l++;
+                    fs << fmt.coeffSeparator;
+                    fs.width(width);
+                    fs << idata[l];
+                }
+                l++;
+                fs << fmt.rowSeparator;
+            }
+        }
+    }
+    else
+    {
+        if (nCols == 1)
+        {
+            fs << idata[0];
+            for (Index i = 1; i < nRows; i++)
+            {
+                fs << fmt.coeffSeparator;
+                fs << idata[i];
+            }
+            fs << fmt.rowSeparator;
+        }
+        else
+        {
+            for (Index i = 0, l = 0; i < nRows; i++)
+            {
+                fs << idata[l];
+                for (Index j = 1; j < nCols; j++)
+                {
+                    l++;
+                    fs << fmt.coeffSeparator;
+                    fs << idata[l];
+                }
+                l++;
+                fs << fmt.rowSeparator;
+            }
+        }
+    }
+
+    if (options == 0)
+    {
+        return true;
+    }
+    else if (options == 1)
+    {
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.rowSeparator;
+        return true;
+    }
+    else if (options == 2)
+    {
+        fmt.rowSeparator = rowSeparator;
+        return true;
+    }
+    return false;
 }
 #endif
