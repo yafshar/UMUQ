@@ -644,10 +644,6 @@ PTHREAD_CC
 LAPACK_LIBS
 BLAS_LIBS
 FLIBS
-host_os
-host_vendor
-host_cpu
-host
 ac_ct_F77
 FFLAGS
 F77
@@ -707,6 +703,14 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+target_os
+target_vendor
+target_cpu
+target
+host_os
+host_vendor
+host_cpu
+host
 build_os
 build_vendor
 build_cpu
@@ -1398,6 +1402,7 @@ Program names:
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -2441,6 +2446,11 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# AC_COPYRIGHT(Copyright 2018 University of Michigan)
+# AC_REVISION([$Revision: 1.00 $])
+
+
+
 ac_aux_dir=
 for ac_dir in auxdir "$srcdir"/auxdir; do
   if test -f "$ac_dir/install-sh"; then
@@ -2473,6 +2483,15 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 ac_config_commands="$ac_config_commands tests/atconfig"
 
+
+
+# Configuring
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------------------------------------------" >&5
+$as_echo "---------------------------------------------" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------  Configuring UMich HBM  -----------" >&5
+$as_echo "---------  Configuring UMich HBM  -----------" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------------------------------------------" >&5
+$as_echo "---------------------------------------------" >&6; }
 
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
@@ -2512,10 +2531,106 @@ IFS=$ac_save_IFS
 case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking target system type" >&5
+$as_echo_n "checking target system type... " >&6; }
+if ${ac_cv_target+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $target_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target" >&5
+$as_echo "$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5;;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
+if test "$host" != "$target"; then :
+
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Cross-compile detected" >&5
+$as_echo "$as_me: WARNING: Cross-compile detected" >&2;}
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Proceed at your own risk!" >&5
+$as_echo "$as_me: WARNING: Proceed at your own risk!" >&2;}
+
+
+fi
+
+# Check for architectures with no support
+case "${host}" in
+	powerpc-*|powerpc64-*|ppc-*)
+	as_fn_error $? "Big endian PPC is no longer supported." "$LINENO" 5
+	;;
+esac
+case "${target}" in
+	powerpc-*|powerpc64-*|ppc-*)
+	as_fn_error $? "Big endian PPC is no longer supported." "$LINENO" 5
+	;;
+esac
 
 ac_config_headers="$ac_config_headers src/umhbm_config.h"
 
 
+#
+# Init automake
+#
 am__api_version='1.15'
 
 # Find a good install program.  We prefer a C program (faster),
@@ -3096,7 +3211,7 @@ END
 fi
 
 
-# AC_CONFIG_MACRO_DIR([m4])
+#
 # ===========================================================================
 #   http://www.gnu.org/software/autoconf-archive/ax_cxx_compile_stdcxx.html
 # ===========================================================================
@@ -3663,14 +3778,6 @@ fi
 # information on what to do *after* running autoupdate.
 
 
-
-# Configuring
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------------------------------------------" >&5
-$as_echo "---------------------------------------------" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------  Configuring UMich HBM  -----------" >&5
-$as_echo "---------  Configuring UMich HBM  -----------" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ---------------------------------------------" >&5
-$as_echo "---------------------------------------------" >&6; }
 
 # Checks for programs.
 ac_ext=cpp
@@ -6874,39 +6981,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-$as_echo_n "checking host system type... " >&6; }
-if ${ac_cv_host+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-$as_echo "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
 
 
 ac_ext=f
