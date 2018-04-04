@@ -36,7 +36,7 @@ check_PROGRAMS += io_test
 io_test_SOURCES = io/io_test.cpp
 
 
-#data_type
-TESTS += TMCMC_datatype_test
-check_PROGRAMS += TMCMC_datatype_test
-TMCMC_datatype_test_SOURCES = data_type/TMCMC_datatype_test.cpp
+#core
+TESTS += datatype_test
+check_PROGRAMS += datatype_test
+TMCMC_datatype_test_SOURCES = core/datatype_test.cpp

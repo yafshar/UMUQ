@@ -117,10 +117,20 @@ typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
 typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
 typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 
+/*!
+ * \brief Stores a set of parameters controlling the way matrices are printed
+ * 
+ * - precision \c FullPrecision.
+ * - coeffSeparator string printed between two coefficients of the same row
+ * - rowSeparator string printed between two rows
+ */
 Eigen::IOFormat fmt(Eigen::FullPrecision);
 
-typedef typename Eigen::Index Index;
-Index width;
+/*! 
+ * \brief The Index type
+ */
+typedef typename std::ptrdiff_t Index;
+std::ptrdiff_t width;
 
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor

@@ -10,9 +10,15 @@
 #include "./misc/utility.hpp"
 #include <lapacke.h>
 #include <random>
+
+#include "./core/datatype.hpp"
+
 int main()
 {
 
+    cgdb_t cgb;
+    
+    
     int d = 2;
     int r = 2;
     int *alpha = NULL;
