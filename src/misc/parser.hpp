@@ -12,7 +12,7 @@ class parser
 {
   public:
     /*!
-     *  \brief parse a line to seperate arguments
+     * \brief parse a line to seperate arguments
      */
     inline void parse(char *line, char **argv)
     {

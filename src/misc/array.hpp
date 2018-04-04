@@ -20,6 +20,7 @@ class ArrayWrapper
          *  \brief iterator constructor
          *
          */
+        iterator() : iPosition(nullptr) {}
         iterator(T const *aPointer) : iPosition(aPointer) {}
         ~iterator(){}; // nothing to do
 
@@ -62,7 +63,24 @@ class ArrayWrapper
      *  \brief ArrayWrapper constructor
      *
      */
+    ArrayWrapper() : iArray(nullptr), iNumOfElements(0) {}
     ArrayWrapper(T const *InputArray, size_t NumOfElements) : iArray(InputArray), iNumOfElements(NumOfElements) {}
+    ArrayWrapper(ArrayWrapper &&InputArrayObj)
+    {
+        iArray = InputArrayObj.iArray;
+        InputArrayObj.iArray = nullptr;
+        iNumOfElements = InputArrayObj.iNumOfElements;
+        InputArrayObj.iNumOfElements = 0;
+    }
+    ArrayWrapper &operator=(ArrayWrapper &&InputArrayObj)
+    {
+        iArray = InputArrayObj.iArray;
+        InputArrayObj.iArray = nullptr;
+        iNumOfElements = InputArrayObj.iNumOfElements;
+        InputArrayObj.iNumOfElements = 0;
+        return *this;
+    }
+
     ~ArrayWrapper(){};
 
     inline void set(T *InputArray, size_t NumOfElements)
@@ -110,6 +128,7 @@ class ArrayWrapper
   private:
     //! Pointer to the actual Input
     T const *iArray;
+    
     //! Size of InputArray
     size_t iNumOfElements;
 

@@ -5,24 +5,16 @@
 #define _BSD_SOURCE 1
 
 #include <iostream>
-//remove, perror, sprintf
-#include <stdio.h>
-//stat, open, fstat
-#include <sys/stat.h>
-//fork, execvp, chdir, fstat
-#include <unistd.h>
-//waitpid, fstat, opendir
-#include <sys/types.h>
-//waitpid
-#include <sys/wait.h>
-//nftw
-#include <ftw.h>
-//open
-#include <fcntl.h>
-//perror
-#include <errno.h>
-//opendir, readdir
-#include <dirent.h>
+
+#include <stdio.h>     //remove, perror, sprintf
+#include <sys/stat.h>  //stat, open, fstat
+#include <unistd.h>    //fork, execvp, chdir, fstat
+#include <sys/types.h> //waitpid, fstat, opendir
+#include <sys/wait.h>  //waitpid
+#include <ftw.h>       //nftw
+#include <fcntl.h>     //open
+#include <errno.h>     //perror
+#include <dirent.h>    //opendir, readdir
 
 /*! \class utility
 *   \brief utility is a class which includes some helper functionality.

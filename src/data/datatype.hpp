@@ -1081,6 +1081,9 @@ class database
     T *entry;
     int entries;
 
+    std::unique_ptr<T[]> dataMemory;
+    ArrayWrapper<T> data;
+
   private:
     pthread_mutex_t m;
 
