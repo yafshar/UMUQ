@@ -39,4 +39,4 @@ io_test_SOURCES = io/io_test.cpp
 #core
 TESTS += datatype_test
 check_PROGRAMS += datatype_test
-TMCMC_datatype_test_SOURCES = core/datatype_test.cpp
+datatype_test_SOURCES = core/datatype_test.cpp
