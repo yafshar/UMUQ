@@ -1,4 +1,4 @@
-#include "core/datatype.hpp"
+#include "data/datatype.hpp"
 #include "gtest/gtest.h"
 
 //! Tests parse

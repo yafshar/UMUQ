@@ -36,7 +36,7 @@ check_PROGRAMS += io_test
 io_test_SOURCES = io/io_test.cpp
 
 
-#core
+#data
 TESTS += datatype_test
 check_PROGRAMS += datatype_test
-datatype_test_SOURCES = core/datatype_test.cpp
+datatype_test_SOURCES = data/datatype_test.cpp
