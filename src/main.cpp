@@ -11,7 +11,9 @@
 #include <lapacke.h>
 #include <random>
 
-#include "./data/datatype.hpp"
+#include "data/stdata.hpp"
+#include "data/current.hpp"
+#include "data/datatype.hpp"
 
 int main()
 {
