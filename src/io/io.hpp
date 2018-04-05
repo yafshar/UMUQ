@@ -274,7 +274,7 @@ class io
      */
     std::fstream &getFstream()
     {
-        return io::fs;
+        return fs;
     }
 
     /*!
