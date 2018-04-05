@@ -95,11 +95,11 @@ inline void assert_fail(const char *condition, const char *function, const char 
     std::cerr << "assertion failed: " << condition << " in function " << function << " at " << file << ":" << line << std::endl;
     abort();
 }
-#define UMHBM_plain_assert(x)                                                                           \
-    do                                                                                                  \
-    {                                                                                                   \
-        if (!UMHBM::internal::copy_bool(x))                                                             \
-            UMHBM::internal::assert_fail(UMHBM_MAKESTRING(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); \
+#define UMHBM_plain_assert(x)                                                                 \
+    do                                                                                        \
+    {                                                                                         \
+        if (!UMHBM::copy_bool(x))                                                             \
+            UMHBM::assert_fail(UMHBM_MAKESTRING(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); \
     } while (false)
 #endif
 
