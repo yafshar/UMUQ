@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <system_error>
+#include <memory>
 
 #include <cstdlib> //qsort
 #include <cstdio>  //fopen, fgets, sscanf, sprintf
