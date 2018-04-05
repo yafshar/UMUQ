@@ -1162,7 +1162,7 @@ class database
             io f;
             if (f.openFile(fileName, f.out | f.trunc))
             {
-                auto fs = f.getFstream();
+                std::fstream &fs = f.getFstream();
 
                 double **tmp = nullptr;
                 int nRows = 2 + (int)(entry[0].Garray != NULL);
