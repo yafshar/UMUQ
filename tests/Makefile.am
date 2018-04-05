@@ -37,6 +37,6 @@ io_test_SOURCES = io/io_test.cpp
 
 
 #data
-TESTS += datatype_test
-check_PROGRAMS += datatype_test
-datatype_test_SOURCES = data/datatype_test.cpp
+TESTS += stdata_test
+check_PROGRAMS += stdata_test
+stdata_test_SOURCES = data/stdata_test.cpp

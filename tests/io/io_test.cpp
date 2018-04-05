@@ -41,6 +41,7 @@ TEST(openFilestream_test, HandlesFiles)
     //!An instance of io class
     io f;
     const char *fileName = "tmp";
+    
 
     EXPECT_FALSE(f.openFile(fileName, f.in));
     EXPECT_FALSE(f.openFile(fileName, f.in | f.binary));

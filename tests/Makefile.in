@@ -90,10 +90,10 @@ host_triplet = @host@
 target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) datatype_test$(EXEEXT)
+	io_test$(EXEEXT) stdata_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) datatype_test$(EXEEXT)
+	io_test$(EXEEXT) stdata_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/m4_ax_cxx_compile_stdcxx.m4 \
@@ -115,9 +115,6 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_array_test_OBJECTS = misc/array_test.$(OBJEXT)
 array_test_OBJECTS = $(am_array_test_OBJECTS)
 array_test_LDADD = $(LDADD)
-am_datatype_test_OBJECTS = data/datatype_test.$(OBJEXT)
-datatype_test_OBJECTS = $(am_datatype_test_OBJECTS)
-datatype_test_LDADD = $(LDADD)
 am_eigen_test_OBJECTS = numerics/eigen_test.$(OBJEXT)
 eigen_test_OBJECTS = $(am_eigen_test_OBJECTS)
 eigen_test_LDADD = $(LDADD)
@@ -130,6 +127,9 @@ parser_test_LDADD = $(LDADD)
 am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
+am_stdata_test_OBJECTS = data/stdata_test.$(OBJEXT)
+stdata_test_OBJECTS = $(am_stdata_test_OBJECTS)
+stdata_test_LDADD = $(LDADD)
 am_utility_test_OBJECTS = misc/utility_test.$(OBJEXT)
 utility_test_OBJECTS = $(am_utility_test_OBJECTS)
 utility_test_LDADD = $(LDADD)
@@ -162,13 +162,13 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(array_test_SOURCES) $(datatype_test_SOURCES) \
-	$(eigen_test_SOURCES) $(io_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+SOURCES = $(array_test_SOURCES) $(eigen_test_SOURCES) \
+	$(io_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(stdata_test_SOURCES) \
 	$(utility_test_SOURCES)
-DIST_SOURCES = $(array_test_SOURCES) $(datatype_test_SOURCES) \
-	$(eigen_test_SOURCES) $(io_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+DIST_SOURCES = $(array_test_SOURCES) $(eigen_test_SOURCES) \
+	$(io_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(stdata_test_SOURCES) \
 	$(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -534,7 +534,7 @@ utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
 io_test_SOURCES = io/io_test.cpp
-datatype_test_SOURCES = data/datatype_test.cpp
+stdata_test_SOURCES = data/stdata_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -583,18 +583,6 @@ misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
 array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
 	@rm -f array_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
-data/$(am__dirstamp):
-	@$(MKDIR_P) data
-	@: > data/$(am__dirstamp)
-data/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) data/$(DEPDIR)
-	@: > data/$(DEPDIR)/$(am__dirstamp)
-data/datatype_test.$(OBJEXT): data/$(am__dirstamp) \
-	data/$(DEPDIR)/$(am__dirstamp)
-
-datatype_test$(EXEEXT): $(datatype_test_OBJECTS) $(datatype_test_DEPENDENCIES) $(EXTRA_datatype_test_DEPENDENCIES) 
-	@rm -f datatype_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(datatype_test_OBJECTS) $(datatype_test_LDADD) $(LIBS)
 numerics/$(am__dirstamp):
 	@$(MKDIR_P) numerics
 	@: > numerics/$(am__dirstamp)
@@ -630,6 +618,18 @@ numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
+data/$(am__dirstamp):
+	@$(MKDIR_P) data
+	@: > data/$(am__dirstamp)
+data/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) data/$(DEPDIR)
+	@: > data/$(DEPDIR)/$(am__dirstamp)
+data/stdata_test.$(OBJEXT): data/$(am__dirstamp) \
+	data/$(DEPDIR)/$(am__dirstamp)
+
+stdata_test$(EXEEXT): $(stdata_test_OBJECTS) $(stdata_test_DEPENDENCIES) $(EXTRA_stdata_test_DEPENDENCIES) 
+	@rm -f stdata_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(stdata_test_OBJECTS) $(stdata_test_LDADD) $(LIBS)
 misc/utility_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -647,7 +647,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/datatype_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
@@ -906,9 +906,9 @@ io_test.log: io_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-datatype_test.log: datatype_test$(EXEEXT)
-	@p='datatype_test$(EXEEXT)'; \
-	b='datatype_test'; \
+stdata_test.log: stdata_test$(EXEEXT)
+	@p='stdata_test$(EXEEXT)'; \
+	b='stdata_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
