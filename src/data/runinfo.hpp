@@ -28,13 +28,13 @@ struct runinfo_t
     *    
     */
     runinfo_t() : Gen(0),
-                  CoefVar(NULL),
-                  p(NULL),
-                  currentuniques(NULL),
-                  logselection(NULL),
-                  acceptance(NULL),
-                  SS(NULL),
-                  meantheta(NULL){};
+                  CoefVar(nullptr),
+                  p(nullptr),
+                  currentuniques(nullptr),
+                  logselection(nullptr),
+                  acceptance(nullptr),
+                  SS(nullptr),
+                  meantheta(nullptr){};
 };
 
 #endif

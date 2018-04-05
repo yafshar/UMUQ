@@ -23,7 +23,7 @@ int main()
     
     int d = 2;
     int r = 2;
-    int *alpha = NULL;
+    int *alpha = nullptr;
     polynomial p;
     UMTimer t;
 
@@ -52,8 +52,8 @@ int main()
 
     t.toc("binomial_coefficient");
 
-    double *value = NULL;
-    double *x = NULL;
+    double *value = nullptr;
+    double *x = nullptr;
 
     x = new double[d];
 

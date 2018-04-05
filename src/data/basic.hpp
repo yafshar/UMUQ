@@ -25,9 +25,9 @@ struct basic
     *  \brief constructor for the default variables
     *    
     */
-    basic() : Parray(NULL),
+    basic() : Parray(nullptr),
               ndimParray(0),
-              Garray(NULL),
+              Garray(nullptr),
               ndimGarray(0),
               Fvalue(0),
               surrogate(0),

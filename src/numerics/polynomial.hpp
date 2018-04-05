@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <cstdlib> //for exit
+#include <cstdlib> //for std::exit
 
 /*! \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *
@@ -110,7 +110,7 @@ int polynomial::binomial_coefficient(int n, int k)
     {
         std::cout << std::endl;
         std::cerr << " Fatal error! k or n < 0" << std::endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     if (k < n)
     {
@@ -157,7 +157,7 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     {
         std::cout << std::endl;
         std::cerr << " Fatal error! maximum degree r < 0" << std::endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     if (r == 0)
         return;
@@ -169,14 +169,14 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
     {
         std::cout << std::endl;
         std::cerr << " Fatal error! input sums < 0" << std::endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
     if (r < asum)
     {
         std::cout << std::endl;
         std::cerr << " Fatal error! input sums > maximum degree r" << std::endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
     if (x[0] == r)
@@ -271,7 +271,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     catch (std::bad_alloc &e)
     {
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
     int x[d];

@@ -55,10 +55,10 @@ class database
     *  \brief constructor for the database structure
     *    
     */
-    database() : entry(NULL),
+    database() : entry(nullptr),
                  entries(0)
     {
-        pthread_mutex_init(&m, NULL);
+        pthread_mutex_init(&m, nullptr);
     };
 
     /*!
@@ -109,7 +109,7 @@ class database
     */
     inline bool dump(const char *fname)
     {
-        if (entry != NULL)
+        if (entry != nullptr)
         {
             char fileName[256];
             if (strlen(fname) == 0)
@@ -127,7 +127,7 @@ class database
                 std::fstream &fs = f.getFstream();
 
                 double **tmp = nullptr;
-                int nRows = 2 + (int)(entry[0].Garray != NULL);
+                int nRows = 2 + (int)(entry[0].Garray != nullptr);
                 tmp = new double *[3];
 
                 for (int pos = 0; pos < entries - 1; pos++)
@@ -164,7 +164,7 @@ class database
     */
     bool load(const char *fname)
     {
-        // if (entry != NULL)
+        // if (entry != nullptr)
         // {
         //     char fileName[256];
         //     if (strlen(fname) == 0)
@@ -183,7 +183,7 @@ class database
 
         //         double **tmp = nullptr;
 
-        //         int nRows = 2 + (int)(entry[0].Garray != NULL);
+        //         int nRows = 2 + (int)(entry[0].Garray != nullptr);
         //         tmp = new double *[3];
 
         //         for (int pos = 0; pos < entries - 1; pos++)
@@ -212,7 +212,7 @@ class database
 template <class T>
 bool database<T>::init(int nsize1)
 {
-    if (entry == NULL)
+    if (entry == nullptr)
     {
         try
         {
@@ -246,7 +246,7 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 
     if (ndimParray > entry[pos].ndimParray)
     {
-        if (entry[pos].Parray != NULL)
+        if (entry[pos].Parray != nullptr)
         {
             delete[] entry[pos].Parray;
         }
@@ -273,7 +273,7 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 
     if (ndimGarray > entry[pos].ndimGarray)
     {
-        if (entry[pos].Garray != NULL)
+        if (entry[pos].Garray != nullptr)
         {
             delete[] entry[pos].Garray;
         }
@@ -328,13 +328,13 @@ struct db_t : database<dbp_t>
 {
     // virtual void print()
     // {
-    //     if (entry != NULL)
+    //     if (entry != nullptr)
     //     {
     //         std::cout << "---- database priniting ----" << std::endl;
 
     //         for (int pos = 0; pos < entries; pos++)
     //         {
-    //             if (entry[pos].Parray != NULL)
+    //             if (entry[pos].Parray != nullptr)
     //             {
     //                 int j;
     //                 std::cout << "ENTRY"
@@ -347,7 +347,7 @@ struct db_t : database<dbp_t>
     //                           << std::setw(20) << entry[pos].Fvalue << " Surrogate="
     //                           << std::setw(20) << entry[pos].surrogate << std::endl;
     //             }
-    //             if (entry[pos].Garray != NULL)
+    //             if (entry[pos].Garray != nullptr)
     //             {
     //                 int i;
     //                 std::cout << "Garray=[";

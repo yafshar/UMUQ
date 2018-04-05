@@ -117,13 +117,13 @@ class stdata
     stdata() : Nth(0),
                MaxStages(0),
                PopSize(0),
-               lowerbound(NULL),
-               upperbound(NULL),
-               compositeprior_distr(NULL),
-               prior_mu(NULL),
-               prior_sigma(NULL),
+               lowerbound(nullptr),
+               upperbound(nullptr),
+               compositeprior_distr(nullptr),
+               prior_mu(nullptr),
+               prior_sigma(nullptr),
                auxil_size(0),
-               auxil_data(NULL),
+               auxil_data(nullptr),
                MinChainLength(0),
                MaxChainLength(1e6),
                lb(0), /* Default LB, same for all */
@@ -137,11 +137,11 @@ class stdata
                iplot(0),
                icdump(1),
                ifdump(0),
-               Num(NULL),
+               Num(nullptr),
                LastNum(0),
                use_proposal_cma(0),
-               init_mean(NULL),
-               local_cov(NULL),
+               init_mean(nullptr),
+               local_cov(nullptr),
                use_local_cov(0),
                local_scale(0){};
 
@@ -153,13 +153,13 @@ class stdata
     stdata(int probdim, int maxgens, int datanum) : Nth(probdim),
                                                     MaxStages(maxgens),
                                                     PopSize(datanum),
-                                                    lowerbound(NULL),
-                                                    upperbound(NULL),
-                                                    compositeprior_distr(NULL),
-                                                    prior_mu(NULL),
-                                                    prior_sigma(NULL),
+                                                    lowerbound(nullptr),
+                                                    upperbound(nullptr),
+                                                    compositeprior_distr(nullptr),
+                                                    prior_mu(nullptr),
+                                                    prior_sigma(nullptr),
                                                     auxil_size(0),
-                                                    auxil_data(NULL),
+                                                    auxil_data(nullptr),
                                                     MinChainLength(0),
                                                     MaxChainLength(1e6),
                                                     lb(-6), /* Default LB, same for all */
@@ -173,11 +173,11 @@ class stdata
                                                     iplot(0),
                                                     icdump(1),
                                                     ifdump(0),
-                                                    Num(NULL),
+                                                    Num(nullptr),
                                                     LastNum(datanum),
                                                     use_proposal_cma(0),
-                                                    init_mean(NULL),
-                                                    local_cov(NULL),
+                                                    init_mean(nullptr),
+                                                    local_cov(nullptr),
                                                     use_local_cov(0),
                                                     local_scale(0)
     {
@@ -414,10 +414,10 @@ bool stdata::read(const char *fname)
             }
         }
 
-        linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != NULL);
+        linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != nullptr);
         if (linit)
         {
-            if (lowerbound != NULL)
+            if (lowerbound != nullptr)
             {
                 delete[] lowerbound;
             }
@@ -433,7 +433,7 @@ bool stdata::read(const char *fname)
                 return false;
             }
 
-            if (upperbound != NULL)
+            if (upperbound != nullptr)
             {
                 delete[] upperbound;
             }
@@ -494,7 +494,7 @@ bool stdata::read(const char *fname)
             if (linit)
             {
                 /* new, parse prior_mu */
-                if (prior_mu != NULL)
+                if (prior_mu != nullptr)
                 {
                     delete[] prior_mu;
                 }
@@ -551,7 +551,7 @@ bool stdata::read(const char *fname)
             if (linit)
             {
                 /* new, parse prior_sigma */
-                if (prior_sigma != NULL)
+                if (prior_sigma != nullptr)
                 {
                     delete[] prior_sigma;
                 }
@@ -618,7 +618,7 @@ bool stdata::read(const char *fname)
 
         if (prior_type == 3) /* composite */
         {
-            if (compositeprior_distr != NULL)
+            if (compositeprior_distr != nullptr)
             {
                 delete[] compositeprior_distr;
             }
@@ -635,7 +635,7 @@ bool stdata::read(const char *fname)
 
             if (linit)
             {
-                if (prior_mu != NULL)
+                if (prior_mu != nullptr)
                 {
                     delete[] prior_mu;
                 }
@@ -651,7 +651,7 @@ bool stdata::read(const char *fname)
                     return false;
                 }
 
-                if (prior_sigma != NULL)
+                if (prior_sigma != nullptr)
                 {
                     delete[] prior_sigma;
                 }
@@ -737,7 +737,7 @@ bool stdata::read(const char *fname)
 
         if (auxil_size > 0)
         {
-            if (auxil_data != NULL)
+            if (auxil_data != nullptr)
             {
                 delete[] auxil_data;
             }
@@ -796,7 +796,7 @@ bool stdata::read(const char *fname)
 
         if (linit)
         {
-            if (Num != NULL)
+            if (Num != nullptr)
             {
                 delete[] Num;
             }
@@ -819,12 +819,12 @@ bool stdata::read(const char *fname)
             }
             LastNum = PopSize;
 
-            if (local_cov != NULL)
+            if (local_cov != nullptr)
             {
                 n = PopSize;
                 while (n--)
                 {
-                    if (local_cov[n] != NULL)
+                    if (local_cov[n] != nullptr)
                     {
                         delete[] local_cov[n];
                     }
@@ -882,52 +882,52 @@ bool stdata::read(const char *fname)
 */
 void stdata::destroy()
 {
-    if (lowerbound != NULL)
+    if (lowerbound != nullptr)
     {
         delete[] lowerbound;
-        lowerbound = NULL;
+        lowerbound = nullptr;
     }
-    if (upperbound != NULL)
+    if (upperbound != nullptr)
     {
         delete[] upperbound;
-        upperbound = NULL;
+        upperbound = nullptr;
     }
-    if (compositeprior_distr != NULL)
+    if (compositeprior_distr != nullptr)
     {
         delete[] compositeprior_distr;
-        compositeprior_distr = NULL;
+        compositeprior_distr = nullptr;
     }
-    if (prior_mu != NULL)
+    if (prior_mu != nullptr)
     {
         delete[] prior_mu;
-        prior_mu = NULL;
+        prior_mu = nullptr;
     }
-    if (prior_sigma != NULL)
+    if (prior_sigma != nullptr)
     {
         delete[] prior_sigma;
-        prior_sigma = NULL;
+        prior_sigma = nullptr;
     }
-    if (auxil_data != NULL)
+    if (auxil_data != nullptr)
     {
         delete[] auxil_data;
-        auxil_data = NULL;
+        auxil_data = nullptr;
     }
-    if (Num != NULL)
+    if (Num != nullptr)
     {
         delete[] Num;
-        Num = NULL;
+        Num = nullptr;
     }
-    if (init_mean != NULL)
+    if (init_mean != nullptr)
     {
         delete[] * init_mean;
         delete[] init_mean;
-        init_mean = NULL;
+        init_mean = nullptr;
     }
-    if (local_cov != NULL)
+    if (local_cov != nullptr)
     {
         delete[] * local_cov;
         delete[] local_cov;
-        local_cov = NULL;
+        local_cov = nullptr;
     }
 }
 
