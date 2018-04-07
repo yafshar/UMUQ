@@ -3,6 +3,7 @@
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 #
+
 AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
 
 # AC_COPYRIGHT(Copyright 2018 University of Michigan)
@@ -13,7 +14,19 @@ AC_PREREQ([2.69])
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_TESTDIR([tests])
+
 AC_CONFIG_MACRO_DIR([m4])
+# 
+m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
+m4_include([m4/m4_ax_mpi.m4])
+m4_include([m4/m4_ax_pthread.m4])
+m4_include([m4/m4_ax_torc.m4])
+m4_include([m4/m4_ax_eigen.m4])
+m4_include([m4/m4_ax_flann.m4])
+m4_include([m4/m4_ax_blas.m4])
+m4_include([m4/m4_ax_lapack.m4])
+m4_include([m4/m4_ax_googletest.m4])
+m4_include([m4/m4_ax_doxygen.m4])
 
 # Configuring
 AC_MSG_RESULT(---------------------------------------------)
@@ -33,7 +46,7 @@ AS_IF([test "$host" != "$target"],
 # Check for architectures with no support
 case "${host}" in
 	powerpc-*|powerpc64-*|ppc-*)
-	AC_MSG_ERROR([Big endian PPC is no longer supported.])
+	AC_MSG_ERROR([Big endian PPC is not supported.])
 	;;
 esac
 case "${target}" in
@@ -49,21 +62,12 @@ AC_CONFIG_HEADERS(src/umhbm_config.h)
 #
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects])
 
-# 
-m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
-m4_include([m4/m4_ax_mpi.m4])
-m4_include([m4/m4_ax_pthread.m4])
-m4_include([m4/m4_ax_torc.m4])
-m4_include([m4/m4_ax_eigen.m4])
-m4_include([m4/m4_ax_flann.m4])
-m4_include([m4/m4_ax_blas.m4])
-m4_include([m4/m4_ax_lapack.m4])
-m4_include([m4/m4_ax_googletest.m4])
-m4_include([m4/m4_ax_doxygen.m4])
-
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AC_F77_LIBRARY_LDFLAGS
+
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
 AC_MSG_RESULT() 
