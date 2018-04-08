@@ -35,6 +35,10 @@ TESTS += io_test
 check_PROGRAMS += io_test
 io_test_SOURCES = io/io_test.cpp
 
+TESTS += eigen_io_test
+check_PROGRAMS += eigen_io_test
+eigen_io_test_SOURCES = io/eigen_io_test.cpp
+
 
 #data
 TESTS += stdata_test

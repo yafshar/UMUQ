@@ -90,10 +90,10 @@ host_triplet = @host@
 target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) stdata_test$(EXEEXT)
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) stdata_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) stdata_test$(EXEEXT)
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) stdata_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -122,6 +122,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_eigen_io_test_OBJECTS = io/eigen_io_test.$(OBJEXT)
+eigen_io_test_OBJECTS = $(am_eigen_io_test_OBJECTS)
+eigen_io_test_LDADD = $(LDADD)
 am_eigen_test_OBJECTS = numerics/eigen_test.$(OBJEXT)
 eigen_test_OBJECTS = $(am_eigen_test_OBJECTS)
 eigen_test_LDADD = $(LDADD)
@@ -156,8 +159,9 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src
 depcomp = $(SHELL) $(top_srcdir)/auxdir/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = data/$(DEPDIR)/stdata_test.Po \
-	io/$(DEPDIR)/io_test.Po misc/$(DEPDIR)/array_test.Po \
-	misc/$(DEPDIR)/parser_test.Po misc/$(DEPDIR)/utility_test.Po \
+	io/$(DEPDIR)/eigen_io_test.Po io/$(DEPDIR)/io_test.Po \
+	misc/$(DEPDIR)/array_test.Po misc/$(DEPDIR)/parser_test.Po \
+	misc/$(DEPDIR)/utility_test.Po \
 	numerics/$(DEPDIR)/eigen_test.Po \
 	numerics/$(DEPDIR)/polynomial_test.Po
 am__mv = mv -f
@@ -179,14 +183,14 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(array_test_SOURCES) $(eigen_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
-DIST_SOURCES = $(array_test_SOURCES) $(eigen_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
+DIST_SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -571,6 +575,7 @@ utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
 io_test_SOURCES = io/io_test.cpp
+eigen_io_test_SOURCES = io/eigen_io_test.cpp
 stdata_test_SOURCES = data/stdata_test.cpp
 all: all-am
 
@@ -626,6 +631,18 @@ misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
 array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
 	@rm -f array_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+io/$(am__dirstamp):
+	@$(MKDIR_P) io
+	@: > io/$(am__dirstamp)
+io/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) io/$(DEPDIR)
+	@: > io/$(DEPDIR)/$(am__dirstamp)
+io/eigen_io_test.$(OBJEXT): io/$(am__dirstamp) \
+	io/$(DEPDIR)/$(am__dirstamp)
+
+eigen_io_test$(EXEEXT): $(eigen_io_test_OBJECTS) $(eigen_io_test_DEPENDENCIES) $(EXTRA_eigen_io_test_DEPENDENCIES) 
+	@rm -f eigen_io_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(eigen_io_test_OBJECTS) $(eigen_io_test_LDADD) $(LIBS)
 numerics/$(am__dirstamp):
 	@$(MKDIR_P) numerics
 	@: > numerics/$(am__dirstamp)
@@ -638,12 +655,6 @@ numerics/eigen_test.$(OBJEXT): numerics/$(am__dirstamp) \
 eigen_test$(EXEEXT): $(eigen_test_OBJECTS) $(eigen_test_DEPENDENCIES) $(EXTRA_eigen_test_DEPENDENCIES) 
 	@rm -f eigen_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(eigen_test_OBJECTS) $(eigen_test_LDADD) $(LIBS)
-io/$(am__dirstamp):
-	@$(MKDIR_P) io
-	@: > io/$(am__dirstamp)
-io/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) io/$(DEPDIR)
-	@: > io/$(DEPDIR)/$(am__dirstamp)
 io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
@@ -691,6 +702,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@ # am--include-marker
@@ -969,6 +981,13 @@ io_test.log: io_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+eigen_io_test.log: eigen_io_test$(EXEEXT)
+	@p='eigen_io_test$(EXEEXT)'; \
+	b='eigen_io_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 stdata_test.log: stdata_test$(EXEEXT)
 	@p='stdata_test$(EXEEXT)'; \
 	b='stdata_test'; \
@@ -1078,6 +1097,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-am
 		-rm -f data/$(DEPDIR)/stdata_test.Po
+	-rm -f io/$(DEPDIR)/eigen_io_test.Po
 	-rm -f io/$(DEPDIR)/io_test.Po
 	-rm -f misc/$(DEPDIR)/array_test.Po
 	-rm -f misc/$(DEPDIR)/parser_test.Po
@@ -1130,6 +1150,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f data/$(DEPDIR)/stdata_test.Po
+	-rm -f io/$(DEPDIR)/eigen_io_test.Po
 	-rm -f io/$(DEPDIR)/io_test.Po
 	-rm -f misc/$(DEPDIR)/array_test.Po
 	-rm -f misc/$(DEPDIR)/parser_test.Po
