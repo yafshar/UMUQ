@@ -1,18 +1,6 @@
 #ifndef UMHBM_META_H
 #define UMHBM_META_H
 
-template <bool Condition, typename Then, typename Else>
-struct conditional
-{
-    typedef Then type;
-};
-
-template <typename Then, typename Else>
-struct conditional<false, Then, Else>
-{
-    typedef Else type;
-};
-
 template <typename T, typename U>
 struct is_same
 {
@@ -88,4 +76,4 @@ struct meta_least_common_multiple<A, B, K, true>
     };
 };
 
-#endif //
+#endif 
