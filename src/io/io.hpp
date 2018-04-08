@@ -6,12 +6,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <string> //getline
 #include <limits>
 #include <ios>
+
+#include <sstream>
 
 #include <cstdio>     //fopen, rewind
 #include <cstring>    //strlen
 #include <sys/stat.h> //stat
+#include <cmath>      //ceil,log10
+
+#include "../core/digits10.hpp"
 
 #define LINESIZE 256
 
@@ -23,41 +29,23 @@
   *  - \b rowSeparator string printed between two rows
   *  - \b rowPrefix string printed at the beginning of each row
   *  - \b rowSuffix string printed at the end of each row
-  *  - \b matPrefix string printed at the beginning of the matrix
-  *  - \b matSuffix string printed at the end of the matrix
   *
   */
 struct IOFormat
 {
-    /** Default constructor, see class IOFormat for the meaning of the parameters */
+    /** Default constructor, see IOFormat for the meaning of the parameters */
     IOFormat(const std::string &_coeffSeparator = " ",
              const std::string &_rowSeparator = "\n",
              const std::string &_rowPrefix = "",
-             const std::string &_rowSuffix = "",
-             const std::string &_matPrefix = "",
-             const std::string &_matSuffix = "") : matPrefix(_matPrefix),
-                                                   matSuffix(_matSuffix),
-                                                   rowPrefix(_rowPrefix),
-                                                   rowSuffix(_rowSuffix),
+             const std::string &_rowSuffix = "") : coeffSeparator(_coeffSeparator),
                                                    rowSeparator(_rowSeparator),
-                                                   rowSpacer(""),
-                                                   coeffSeparator(_coeffSeparator)
-    {
-        int i = int(matSuffix.length()) - 1;
-        while (i >= 0 && matSuffix[i] != '\n')
-        {
-            rowSpacer += ' ';
-            i--;
-        }
-    }
+                                                   rowPrefix(_rowPrefix),
+                                                   rowSuffix(_rowSuffix) {}
 
     std::string coeffSeparator;
     std::string rowSeparator;
     std::string rowPrefix;
     std::string rowSuffix;
-    std::string matPrefix;
-    std::string matSuffix;
-    std::string rowSpacer;
 };
 
 /*! \class io
@@ -243,7 +231,20 @@ class io
      * \brief Set position of stream to the beginning
      * Sets the position indicator associated with stream to the beginning of the file.
      */
-    inline void rewindFile() { rewind(f); }
+    inline void rewindFile()
+    {
+        if (isFileOpened())
+        {
+            rewind(f);
+            return;
+        }
+        if (fs.is_open())
+        {
+            //!Rewind the file
+            fs.seekg(0);
+            return;
+        }
+    }
 
     /*!
      * \brief Close the File
@@ -266,9 +267,10 @@ class io
         if (fs.is_open())
         {
             fs.close();
+            return;
         }
     }
-    
+
     /*!
      * \brief Get the stream
      */
@@ -301,12 +303,751 @@ class io
         return lineArg;
     }
 
+    /*!
+     * \brief Helper function to save the matrix of type TM with TF format into a file 
+     * 
+     * \tparam  TM    typedef for matrix 
+     * \tparam  TF    typedef for format of writing
+     * \param   MX    matrix
+     * \param   IOfmt IO format for the matrix type
+     */
+    template <typename TM, typename TF>
+    inline bool saveMatrix(TM MX, TF IOfmt)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        fs << std::fixed;
+        fs << MX.format(IOfmt);
+        fs << fmt.rowSeparator;
+
+        return true;
+    }
+
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam  Tidata data type 
+     * \param   idata  array of input data of type Tidata
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
+     *                           1 save matrix in vector format and proceed the position indicator to the next line &
+     *                           2 save matrix in vector format and kepp the position indicator on the same line
+     */
+    template <typename Tidata>
+    inline bool saveMatrix(Tidata **idata, int nRows, int nCols, int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<Tidata>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<Tidata>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(fs);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs.width(Width);
+                fs << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.coeffSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam  Tidata data type 
+     * \param   idata  array of input data of type Tidata
+     * \param   nRows  number of rows
+     * \param   *nCols number of columns for each row
+     * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
+     *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
+     *                           2 saves matrix in vector format and kepps the position indicator on the same line
+     */
+    template <typename Tidata>
+    inline bool saveMatrix(Tidata **idata, int nRows, int *nCols, int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<Tidata>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<Tidata>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols[i]; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(fs);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs.width(Width);
+                fs << idata[i][0];
+                for (int j = 1; j < nCols[i]; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs << idata[i][0];
+                for (int j = 1; j < nCols[i]; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.coeffSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    template <typename Tidata>
+    inline bool saveMatrix(Tidata *idata, int nRows, int nCols = 1, int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<Tidata>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<Tidata>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows * nCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (Width)
+        {
+            if (nCols == 1)
+            {
+                fs.width(Width);
+                fs << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i];
+                }
+                fs << fmt.rowSeparator;
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    fs.width(Width);
+                    fs << idata[l];
+                    for (int j = 1; j < nCols; j++)
+                    {
+                        l++;
+                        fs << fmt.coeffSeparator;
+                        fs.width(Width);
+                        fs << idata[l];
+                    }
+                    l++;
+                    fs << fmt.rowSeparator;
+                }
+            }
+        }
+        else
+        {
+            if (nCols == 1)
+            {
+                fs << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i];
+                }
+                fs << fmt.rowSeparator;
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    fs << idata[l];
+                    for (int j = 1; j < nCols; j++)
+                    {
+                        l++;
+                        fs << fmt.coeffSeparator;
+                        fs << idata[l];
+                    }
+                    l++;
+                    fs << fmt.rowSeparator;
+                }
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix of type TM from a file 
+     * 
+     * \tparam  TM   typedef for matrix 
+     * \param   MX   Matrix
+     */
+    template <typename TM>
+    inline bool loadMatrix(TM &MX)
+    {
+        std::string Line;
+
+        for (int i = 0; i < MX.rows(); i++)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+
+                for (int j = 0; j < MX.cols(); j++)
+                {
+                    inLine >> MX(i, j);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam  Tidata data type 
+     * \param   idata  array of input data of type Tidata
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     */
+    template <typename Tidata>
+    inline bool loadMatrix(Tidata **idata, int nRows, int nCols, int options = 0)
+    {
+        std::string Line;
+
+        if (options == 0)
+        {
+            for (int i = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (options == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    for (int j = 0; j < nCols; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam  Tidata data type 
+     * \param   idata  array of input data of type Tidata
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns for each row
+     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     */
+    template <typename Tidata>
+    inline bool loadMatrix(Tidata **idata, int nRows, int *nCols, int options = 0)
+    {
+        std::string Line;
+
+        if (options == 0)
+        {
+            for (int i = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols[i]; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (options == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    for (int j = 0; j < nCols[i]; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    template <typename Tidata>
+    inline bool loadMatrix(Tidata *idata, int nRows, int nCols = 1)
+    {
+        std::string Line;
+
+        if (nCols == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    inLine >> idata[i];
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        else
+        {
+            for (int i = 0, l = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols; j++, l++)
+                    {
+                        inLine >> idata[l];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam  Tidata type of data
+     * 
+     * \param   title  string that should be written at the top 
+     * \param   idata  array of input data of type Tidata
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     */
+    template <typename Tidata>
+    void printMatrix(const char *title, Tidata **idata, int nRows, int nCols)
+    {
+        std::string sep = "\n----------------------------------------\n";
+        std::cout << sep;
+        if (std::strlen(title) > 0)
+        {
+            std::cout << title << "\n\n";
+        }
+
+        if (std::numeric_limits<Tidata>::is_integer)
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(0);
+        }
+        else
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(digits10<Tidata>());
+        }
+        std::cout << std::fixed;
+
+        Width = 0;
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(std::cout);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                std::cout.width(Width);
+                std::cout << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << idata[i][j];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                std::cout << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << idata[i][j];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+        std::cout << sep;
+    }
+
+    template <typename Tidata>
+    void printMatrix(Tidata **idata, size_t nRows, size_t nCols)
+    {
+        printMatrix<Tidata>("", idata, nRows, nCols);
+    }
+
+    template <typename Tidata>
+    void printMatrix(const char *title, Tidata *idata, int nRows, int nCols = 1)
+    {
+        std::string sep = "\n----------------------------------------\n";
+        std::cout << sep;
+        if (std::strlen(title) > 0)
+        {
+            std::cout << title << "\n\n";
+        }
+
+        if (std::numeric_limits<Tidata>::is_integer)
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(0);
+        }
+        else
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(digits10<Tidata>());
+        }
+        std::cout << std::fixed;
+
+        Width = 0;
+
+        for (int i = 0; i < nRows * nCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(std::cout);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (nCols == 1)
+        {
+            if (Width)
+            {
+                std::cout.width(Width);
+                std::cout << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << idata[i];
+                }
+            }
+            else
+            {
+                std::cout << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << idata[i];
+                }
+            }
+            std::cout << fmt.rowSeparator;
+            std::cout << sep;
+        }
+        else
+        {
+            if (Width)
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    std::cout.width(Width);
+                    std::cout << idata[l];
+                    for (int j = 1; j < nCols; j++, l++)
+                    {
+                        std::cout << fmt.coeffSeparator;
+                        std::cout.width(Width);
+                        std::cout << idata[l];
+                    }
+                    std::cout << fmt.rowSeparator;
+                }
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    std::cout << idata[l];
+                    for (int j = 1; j < nCols; j++, l++)
+                    {
+                        std::cout << fmt.coeffSeparator;
+                        std::cout << idata[l];
+                    }
+                    std::cout << fmt.rowSeparator;
+                }
+            }
+            std::cout << sep;
+        }
+    }
+
+    template <typename Tidata>
+    void printMatrix(Tidata *idata, int nRows, int nCols = 1)
+    {
+        printMatrix<Tidata>("", idata, nRows, nCols);
+    }
+
   private:
     FILE *f;
     std::fstream fs;
 
     char *line;
     char **lineArg;
+
+    typedef std::ptrdiff_t Idx;
+    std::ptrdiff_t Width;
+
+    IOFormat fmt;
 };
 
 #endif
