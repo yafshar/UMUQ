@@ -121,12 +121,6 @@ typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
  */
 Eigen::IOFormat fmt(Eigen::FullPrecision);
 
-// /*! 
-//  * \brief The Index type
-//  */
-// typedef typename std::ptrdiff_t Index;
-// std::ptrdiff_t width;
-
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
  * 
