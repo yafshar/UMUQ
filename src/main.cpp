@@ -3,11 +3,12 @@
 #include <cmath>
 #include <iomanip>
 
-#include "./numerics/polynomial.hpp"
-#include "./numerics/eigenmatrix.hpp"
-#include "./numerics/flannlib.hpp"
-#include "./misc/timer.hpp"
-#include "./misc/utility.hpp"
+#include "core/core.hpp"
+#include "numerics/polynomial.hpp"
+#include "numerics/eigenmatrix.hpp"
+#include "numerics/flannlib.hpp"
+#include "misc/timer.hpp"
+#include "misc/utility.hpp"
 #include <lapacke.h>
 #include <random>
 
