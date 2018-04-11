@@ -207,16 +207,16 @@ class io
     /*!
      * \brief Helper function to save the matrix into a file 
      * 
-     * \tparam  Tidata data type 
-     * \param   idata  array of input data of type Tidata
+     * \tparam  TD     data type 
+     * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
      * \param   nCols  number of columns
      * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
      *                           1 save matrix in vector format and proceed the position indicator to the next line &
      *                           2 save matrix in vector format and kepp the position indicator on the same line
      */
-    template <typename Tidata>
-    inline bool saveMatrix(Tidata **idata, const int nRows, const int nCols, const int options = 0)
+    template <typename TD>
+    inline bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -235,7 +235,7 @@ class io
         //!IF the output position indicator of the current associated streambuf object is at the startline
         if (fs.tellp() == 0)
         {
-            if (std::numeric_limits<Tidata>::is_integer)
+            if (std::numeric_limits<TD>::is_integer)
             {
                 //!Manages the precision (i.e. how many digits are generated)
                 fs.precision(0);
@@ -243,7 +243,7 @@ class io
             else
             {
                 //!Manages the precision (i.e. how many digits are generated)
-                fs.precision(digits10<Tidata>());
+                fs.precision(digits10<TD>());
             }
             fs << std::fixed;
 
@@ -316,16 +316,16 @@ class io
     /*!
      * \brief Helper function to save the matrix into a file 
      * 
-     * \tparam  Tidata data type 
-     * \param   idata  array of input data of type Tidata
+     * \tparam  TD     data type 
+     * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
      * \param   *nCols number of columns for each row
      * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
      *                           2 saves matrix in vector format and kepps the position indicator on the same line
      */
-    template <typename Tidata>
-    inline bool saveMatrix(Tidata **idata, const int nRows, const int *nCols, const int options = 0)
+    template <typename TD>
+    inline bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -344,7 +344,7 @@ class io
         //!IF the output position indicator of the current associated streambuf object is at the startline
         if (fs.tellp() == 0)
         {
-            if (std::numeric_limits<Tidata>::is_integer)
+            if (std::numeric_limits<TD>::is_integer)
             {
                 //!Manages the precision (i.e. how many digits are generated)
                 fs.precision(0);
@@ -352,7 +352,7 @@ class io
             else
             {
                 //!Manages the precision (i.e. how many digits are generated)
-                fs.precision(digits10<Tidata>());
+                fs.precision(digits10<TD>());
             }
             fs << std::fixed;
 
@@ -422,8 +422,8 @@ class io
         return false;
     }
 
-    template <typename Tidata>
-    inline bool saveMatrix(Tidata *idata, const int nRows, const int nCols = 1, const int options = 0)
+    template <typename TD>
+    inline bool saveMatrix(TD *idata, const int nRows, const int nCols = 1, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -442,7 +442,7 @@ class io
         //!IF the output position indicator of the current associated streambuf object is at the startline
         if (fs.tellp() == 0)
         {
-            if (std::numeric_limits<Tidata>::is_integer)
+            if (std::numeric_limits<TD>::is_integer)
             {
                 //!Manages the precision (i.e. how many digits are generated)
                 fs.precision(0);
@@ -450,7 +450,7 @@ class io
             else
             {
                 //!Manages the precision (i.e. how many digits are generated)
-                fs.precision(digits10<Tidata>());
+                fs.precision(digits10<TD>());
             }
             fs << std::fixed;
 
@@ -581,14 +581,14 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  Tidata data type 
-     * \param   idata  array of input data of type Tidata
+     * \tparam  TD data type 
+     * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
      * \param   nCols  number of columns
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      */
-    template <typename Tidata>
-    inline bool loadMatrix(Tidata **idata, const int nRows, const int nCols, const int options = 0)
+    template <typename TD>
+    inline bool loadMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
     {
         std::string Line;
 
@@ -637,14 +637,14 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  Tidata data type 
-     * \param   idata  array of input data of type Tidata
+     * \tparam  TD data type 
+     * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
      * \param   nCols  number of columns for each row
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      */
-    template <typename Tidata>
-    inline bool loadMatrix(Tidata **idata, const int nRows, const int *nCols, const int options = 0)
+    template <typename TD>
+    inline bool loadMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
     {
         std::string Line;
 
@@ -690,8 +690,8 @@ class io
         return false;
     }
 
-    template <typename Tidata>
-    inline bool loadMatrix(Tidata *idata, const int nRows, const int nCols = 1)
+    template <typename TD>
+    inline bool loadMatrix(TD *idata, const int nRows, const int nCols = 1)
     {
         std::string Line;
 
@@ -737,15 +737,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  Tidata type of data
+     * \tparam  TD type of data
      * 
      * \param   title  string that should be written at the top 
-     * \param   idata  array of input data of type Tidata
+     * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
      * \param   nCols  number of columns
      */
-    template <typename Tidata>
-    void printMatrix(const char *title, Tidata **idata, const int nRows, const int nCols)
+    template <typename TD>
+    void printMatrix(const char *title, TD **idata, const int nRows, const int nCols)
     {
         std::string sep = "\n----------------------------------------\n";
         std::cout << sep;
@@ -754,7 +754,7 @@ class io
             std::cout << title << "\n\n";
         }
 
-        if (std::numeric_limits<Tidata>::is_integer)
+        if (std::numeric_limits<TD>::is_integer)
         {
             //!Manages the precision (i.e. how many digits are generated)
             std::cout.precision(0);
@@ -762,7 +762,7 @@ class io
         else
         {
             //!Manages the precision (i.e. how many digits are generated)
-            std::cout.precision(digits10<Tidata>());
+            std::cout.precision(digits10<TD>());
         }
         std::cout << std::fixed;
 
@@ -810,14 +810,14 @@ class io
         std::cout << sep;
     }
 
-    template <typename Tidata>
-    void printMatrix(Tidata **idata, const int nRows, const int nCols)
+    template <typename TD>
+    void printMatrix(TD **idata, const int nRows, const int nCols)
     {
-        printMatrix<Tidata>("", idata, nRows, nCols);
+        printMatrix<TD>("", idata, nRows, nCols);
     }
 
-    template <typename Tidata>
-    void printMatrix(const char *title, Tidata *idata, const int nRows, const int nCols = 1)
+    template <typename TD>
+    void printMatrix(const char *title, TD *idata, const int nRows, const int nCols = 1)
     {
         std::string sep = "\n----------------------------------------\n";
         std::cout << sep;
@@ -826,7 +826,7 @@ class io
             std::cout << title << "\n\n";
         }
 
-        if (std::numeric_limits<Tidata>::is_integer)
+        if (std::numeric_limits<TD>::is_integer)
         {
             //!Manages the precision (i.e. how many digits are generated)
             std::cout.precision(0);
@@ -834,7 +834,7 @@ class io
         else
         {
             //!Manages the precision (i.e. how many digits are generated)
-            std::cout.precision(digits10<Tidata>());
+            std::cout.precision(digits10<TD>());
         }
         std::cout << std::fixed;
 
@@ -907,21 +907,22 @@ class io
         }
     }
 
-    template <typename Tidata>
-    void printMatrix(Tidata *idata, const int nRows, const int nCols = 1)
+    template <typename TD>
+    void printMatrix(TD *idata, const int nRows, const int nCols = 1)
     {
-        printMatrix<Tidata>("", idata, nRows, nCols);
+        printMatrix<TD>("", idata, nRows, nCols);
     }
 
   private:
-    //input/output operations on file based streams
+    //Input/output operations on file based streams
     std::fstream fs;
-
+    //Line for reading the string of data
     std::string line;
 
     typedef std::ptrdiff_t Idx;
     std::ptrdiff_t Width;
 
+    //IO format
     IOFormat fmt;
 };
 
