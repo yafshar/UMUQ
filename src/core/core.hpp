@@ -1,7 +1,10 @@
 #ifndef UMHBM_CORE_H
 #define UMHBM_CORE_H
 
-// then include this file where all our macros are defined.
+//Include this file where all configuration variables are defined.
+#include "../umhbm_config.h"
+
+//Include this file where all our macros are defined.
 #include "macros.hpp"
 
 // Defines symbols for compile-time detection of which instructions are used.
@@ -45,6 +48,9 @@ extern "C" {
 #include <omp.h>
 #endif
 
+#define _XOPEN_SOURCE 700
+#define _BSD_SOURCE 1
+
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>
@@ -52,15 +58,22 @@ extern "C" {
 #include <cassert>
 #include <functional>
 #include <iosfwd>
-#include <cstring>
 #include <string>
 #include <limits>
 #include <climits>
 #include <algorithm>   // for min/max:
 #include <type_traits> // for std::is_nothrow_move_assignable
 #include <iostream>    // for outputting debug info
+#include <fstream>
+#include <sstream>
+#include <ios>
 
-/** \brief Namespace containing all symbols from the %UMHBM library. */
+#include <cstring>    //strlen
+#include <sys/stat.h> //stat
+
+/*!
+ * \brief Namespace containing all symbols from the %UMHBM library. 
+ */
 namespace UMHBM
 {
 inline static const char *SimdInstructionSetsInUse(void)
@@ -82,9 +95,8 @@ inline static const char *SimdInstructionSetsInUse(void)
 }
 
 /*! 
-  * This is the main module of UMHBM
-  */
-
+ * This is the main module of UMHBM
+ */
 #include "meta.hpp"
 
 #endif // UMHBM_CORE_H

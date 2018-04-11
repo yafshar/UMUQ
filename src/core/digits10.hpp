@@ -1,6 +1,8 @@
 #ifndef UMHBM_DIGITS10_H
 #define UMHBM_DIGITS10_H
 
+#include <cmath> //ceil, log10
+
 // default implementation of digits10(), based on numeric_limits if specialized,
 // 0 for integer types, and log10(epsilon()) otherwise.
 template <typename T,
