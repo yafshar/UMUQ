@@ -1,3 +1,4 @@
+#include "core/core.hpp"
 #include "data/stdata.hpp"
 #include "gtest/gtest.h"
 
@@ -71,8 +72,8 @@ TEST(streamdatatype, HandlesConstruction)
 TEST(streamdatatype, HandlesIO)
 {
     stdata d1;
-
     EXPECT_TRUE(d1.read("test.txt"));
+
     EXPECT_EQ(4, d1.Nth);
     EXPECT_EQ(20, d1.MaxStages);
     EXPECT_EQ(5000, d1.PopSize);
@@ -103,6 +104,7 @@ TEST(streamdatatype, HandlesIO)
     EXPECT_DOUBLE_EQ(3.0, d1.lowerbound[1]);
     EXPECT_DOUBLE_EQ(6.01, d1.lowerbound[2]);
     EXPECT_DOUBLE_EQ(0.0001, d1.lowerbound[3]);
+
     EXPECT_DOUBLE_EQ(10.0, d1.upperbound[0]);
     EXPECT_DOUBLE_EQ(4.0, d1.upperbound[1]);
     EXPECT_DOUBLE_EQ(15.0, d1.upperbound[2]);
