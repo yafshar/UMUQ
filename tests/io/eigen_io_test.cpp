@@ -1,3 +1,4 @@
+#include "core/core.hpp"
 #include "numerics/eigenmatrix.hpp"
 #include "io/io.hpp"
 #include "gtest/gtest.h"
