@@ -1,12 +1,11 @@
 #ifndef UMHBM_STDATA_H
 #define UMHBM_STDATA_H
 
-#include <iostream>
-
+#include "../core/core.hpp"
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
 
-/*! \file tdata.hpp
+/*! \file stdata.hpp
 *  \brief stream Data type
 *
 * \param Nth
@@ -308,9 +307,9 @@ class stdata
 bool stdata::read(const char *fname)
 {
     // We use an IO object to open and read a file
-    io u;
+    io f;
 
-    if (u.openFile(fname))
+    if (f.openFile(fname, f.in))
     {
         // We need a parser object to parse
         parser p;
@@ -320,97 +319,88 @@ bool stdata::read(const char *fname)
         int datanum = PopSize;
         bool linit;
 
-        while (u.readLine())
+        //read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+        while (f.readLine())
         {
-            if (u.emptyLine())
-            {
-                continue;
-            }
-
-            char *line = u.getLine();
-            char **lineArg = u.getLineArg();
-
             // Parse the line into line arguments
-            p.parse(line, lineArg);
+            p.parse(f.getLine());
 
-            std::string str(lineArg[0]);
-
-            if (str == "Nth")
+            if (p.at<std::string>(0) == "Nth")
             {
-                p.parse(lineArg[1], Nth);
+                Nth = p.at<int>(1);
             }
-            else if (str == "MaxStages")
+            else if (p.at<std::string>(0) == "MaxStages")
             {
-                p.parse(lineArg[1], MaxStages);
+                MaxStages = p.at<int>(1);
             }
-            else if (str == "PopSize")
+            else if (p.at<std::string>(0) == "PopSize")
             {
-                p.parse(lineArg[1], PopSize);
+                PopSize = p.at<int>(1);
             }
-            else if (str == "TolCOV")
+            else if (p.at<std::string>(0) == "TolCOV")
             {
-                p.parse(lineArg[1], TolCOV);
+                TolCOV = p.at<double>(1);
             }
-            else if (str == "bbeta")
+            else if (p.at<std::string>(0) == "bbeta")
             {
-                p.parse(lineArg[1], bbeta);
+                bbeta = p.at<double>(1);
             }
-            else if (str == "seed")
+            else if (p.at<std::string>(0) == "seed")
             {
-                p.parse(lineArg[1], seed);
+                seed = p.at<long>(1);
             }
-            else if (str == "opt.MaxIter")
+            else if (p.at<std::string>(0) == "opt.MaxIter")
             {
-                p.parse(lineArg[1], options.MaxIter);
+                options.MaxIter = p.at<int>(1);
             }
-            else if (str == "opt.Tol")
+            else if (p.at<std::string>(0) == "opt.Tol")
             {
-                p.parse(lineArg[1], options.Tol);
+                options.Tol = p.at<double>(1);
             }
-            else if (str == "opt.Display")
+            else if (p.at<std::string>(0) == "opt.Display")
             {
-                p.parse(lineArg[1], options.Display);
+                options.Display = p.at<int>(1);
             }
-            else if (str == "opt.Step")
+            else if (p.at<std::string>(0) == "opt.Step")
             {
-                p.parse(lineArg[1], options.Step);
+                options.Step = p.at<double>(1);
             }
-            else if (str == "prior_type")
+            else if (p.at<std::string>(0) == "prior_type")
             {
-                p.parse(lineArg[1], prior_type);
+                prior_type = p.at<int>(1);
             }
-            else if (str == "prior_count")
+            else if (p.at<std::string>(0) == "prior_count")
             {
-                p.parse(lineArg[1], prior_count);
+                prior_count = p.at<int>(1);
             }
-            else if (str == "iplot")
+            else if (p.at<std::string>(0) == "iplot")
             {
-                p.parse(lineArg[1], iplot);
+                iplot = p.at<int>(1);
             }
-            else if (str == "icdump")
+            else if (p.at<std::string>(0) == "icdump")
             {
-                p.parse(lineArg[1], icdump);
+                icdump = p.at<int>(1);
             }
-            else if (str == "ifdump")
+            else if (p.at<std::string>(0) == "ifdump")
             {
-                p.parse(lineArg[1], ifdump);
+                ifdump = p.at<int>(1);
             }
-            else if (str == "Bdef")
+            else if (p.at<std::string>(0) == "Bdef")
             {
-                p.parse(lineArg[1], lb);
-                p.parse(lineArg[2], ub);
+                lb = p.at<double>(1);
+                ub = p.at<double>(2);
             }
-            else if (str == "MinChainLength")
+            else if (p.at<std::string>(0) == "MinChainLength")
             {
-                p.parse(lineArg[1], MinChainLength);
+                MinChainLength = p.at<int>(1);
             }
-            else if (str == "MaxChainLength")
+            else if (p.at<std::string>(0) == "MaxChainLength")
             {
-                p.parse(lineArg[1], MaxChainLength);
+                MaxChainLength = p.at<int>(1);
             }
-            else if (str == "use_local_cov")
+            else if (p.at<std::string>(0) == "use_local_cov")
             {
-                p.parse(lineArg[1], use_local_cov);
+                use_local_cov = p.at<int>(1);
             }
         }
 
@@ -454,29 +444,19 @@ bool stdata::read(const char *fname)
         int found;
         while (n--)
         {
-            u.rewindFile();
+            f.rewindFile();
 
             found = 0;
             std::string strt("B" + std::to_string(n));
 
-            while (u.readLine())
+            while (f.readLine())
             {
-                if (u.emptyLine())
+                p.parse(f.getLine());
+
+                if (p.at<std::string>(0) == strt)
                 {
-                    continue;
-                }
-
-                char *line = u.getLine();
-                char **lineArg = u.getLineArg();
-
-                p.parse(line, lineArg);
-
-                std::string str(lineArg[0]);
-
-                if (str == strt)
-                {
-                    p.parse(lineArg[1], lowerbound[n]);
-                    p.parse(lineArg[2], upperbound[n]);
+                    lowerbound[n] = p.at<double>(1);
+                    upperbound[n] = p.at<double>(2);
                     found = 1;
                     break;
                 }
@@ -511,28 +491,18 @@ bool stdata::read(const char *fname)
                 }
             }
 
-            u.rewindFile();
+            f.rewindFile();
             found = 0;
 
-            while (u.readLine())
+            while (f.readLine())
             {
-                if (u.emptyLine())
-                {
-                    continue;
-                }
+                p.parse(f.getLine());
 
-                char *line = u.getLine();
-                char **lineArg = u.getLineArg();
-
-                p.parse(line, lineArg);
-
-                std::string str(lineArg[0]);
-
-                if (str == "prior_mu")
+                if (p.at<std::string>(0) == "prior_mu")
                 {
                     for (n = 0; n < Nth; n++)
                     {
-                        p.parse(lineArg[n + 1], prior_mu[n]);
+                        prior_mu[n] = p.at<double>(n + 1);
                     }
                     found = 1;
                     break;
@@ -568,28 +538,18 @@ bool stdata::read(const char *fname)
                 }
             }
 
-            u.rewindFile();
+            f.rewindFile();
             found = 0;
 
-            while (u.readLine())
+            while (f.readLine())
             {
-                if (u.emptyLine())
-                {
-                    continue;
-                }
+                p.parse(f.getLine());
 
-                char *line = u.getLine();
-                char **lineArg = u.getLineArg();
-
-                p.parse(line, lineArg);
-
-                std::string str(lineArg[0]);
-
-                if (str == "prior_sigma")
+                if (p.at<std::string>(0) == "prior_sigma")
                 {
                     for (n = 0; n < Nth * Nth; n++)
                     {
-                        p.parse(lineArg[n + 1], prior_sigma[n]);
+                        prior_sigma[n] = p.at<double>(n + 1);
                     }
                     found = 1;
                     break;
@@ -671,30 +631,20 @@ bool stdata::read(const char *fname)
             n = Nth;
             while (n--)
             {
-                u.rewindFile();
+                f.rewindFile();
 
                 found = 0;
                 std::string strt("C" + std::to_string(n));
 
-                while (u.readLine())
+                while (f.readLine())
                 {
-                    if (u.emptyLine())
+                    p.parse(f.getLine());
+
+                    if (p.at<std::string>(0) == strt)
                     {
-                        continue;
-                    }
-
-                    char *line = u.getLine();
-                    char **lineArg = u.getLineArg();
-
-                    p.parse(line, lineArg);
-
-                    std::string str(lineArg[0]);
-
-                    if (str == strt)
-                    {
-                        p.parse(lineArg[1], compositeprior_distr[n]);
-                        p.parse(lineArg[2], lowerbound[n]);
-                        p.parse(lineArg[3], upperbound[n]);
+                        compositeprior_distr[n] = p.at<double>(1);
+                        lowerbound[n] = p.at<double>(2);
+                        upperbound[n] = p.at<double>(3);
                         found = 1;
                         break;
                     }
@@ -710,26 +660,16 @@ bool stdata::read(const char *fname)
         }
 
         /* new, parse auxil_size and auxil_data */
-        u.rewindFile();
+        f.rewindFile();
         found = 0;
 
-        while (u.readLine())
+        while (f.readLine())
         {
-            if (u.emptyLine())
+            p.parse(f.getLine());
+
+            if (p.at<std::string>(0) == "auxil_size")
             {
-                continue;
-            }
-
-            char *line = u.getLine();
-            char **lineArg = u.getLineArg();
-
-            p.parse(line, lineArg);
-
-            std::string str(lineArg[0]);
-
-            if (str == "auxil_size")
-            {
-                p.parse(lineArg[1], auxil_size);
+                auxil_size = p.at<int>(1);
                 found = 1;
                 break;
             }
@@ -753,29 +693,19 @@ bool stdata::read(const char *fname)
                 return false;
             }
 
-            u.rewindFile();
+            f.rewindFile();
 
             found = 0;
 
-            while (u.readLine())
+            while (f.readLine())
             {
-                if (u.emptyLine())
-                {
-                    continue;
-                }
+                p.parse(f.getLine());
 
-                char *line = u.getLine();
-                char **lineArg = u.getLineArg();
-
-                p.parse(line, lineArg);
-
-                std::string str(lineArg[0]);
-
-                if (str == "auxil_data")
+                if (p.at<std::string>(0) == "auxil_data")
                 {
                     for (n = 0; n < auxil_size; n++)
                     {
-                        p.parse(lineArg[n + 1], auxil_data[n]);
+                        auxil_data[n] = p.at<double>(n + 1);
                     }
                     found = 1;
                     break;
@@ -792,7 +722,7 @@ bool stdata::read(const char *fname)
             }
         }
 
-        u.closeFile();
+        f.closeFile();
 
         if (linit)
         {
