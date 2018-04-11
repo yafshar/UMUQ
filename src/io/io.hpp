@@ -1,25 +1,7 @@
 #ifndef UMHBM_IO_H
 #define UMHBM_IO_H
 
-#define _XOPEN_SOURCE 700
-#define _BSD_SOURCE 1
-
-#include <iostream>
-#include <fstream>
-#include <string> //getline
-#include <limits>
-#include <ios>
-
-#include <sstream>
-
-#include <cstdio>     //fopen, rewind
-#include <cstring>    //strlen
-#include <sys/stat.h> //stat
-#include <cmath>      //ceil,log10
-
 #include "../core/digits10.hpp"
-
-#define LINESIZE 256
 
 /*! 
   * \brief Stores a set of parameters controlling the way matrices are printed
@@ -62,7 +44,8 @@ class io
     static const std::ios_base::openmode ate = std::fstream::ate;
     static const std::ios_base::openmode trunc = std::fstream::trunc;
 
-    io() : f(NULL), line(NULL), lineArg(NULL){};
+    //!default constrcutor
+    io(){};
 
     ~io()
     {
@@ -72,7 +55,7 @@ class io
     /*!
      * \brief return true if file is opened
      */
-    inline bool isFileOpened() const { return f != NULL; }
+    inline bool isFileOpened() const { return fs.is_open(); }
 
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
@@ -82,92 +65,6 @@ class io
     {
         struct stat buffer;
         return (stat(fileName, &buffer) == 0);
-    }
-
-    /*!
-     * \brief Opens the file whose name is specified in the parameter filename 
-     *  
-     * Opens the file whose name is specified in the parameter filename and
-     * associates it with a stream that can be identified in future operations 
-     * by the FILE pointer returned.inline   
-     */
-    inline bool openFile(const char *fileName)
-    {
-        if (!isFileExist(fileName))
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
-
-        if (isFileOpened())
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-            return false;
-        }
-
-        f = fopen(fileName, "r");
-
-        if (f == NULL)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
-
-        try
-        {
-            line = new char[LINESIZE];
-            lineArg = new char *[LINESIZE];
-        }
-        catch (const std::bad_alloc &e)
-        {
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    inline bool openFile(const char *fileName, const char *mode)
-    {
-        if (*mode != 'r' || isFileExist(fileName))
-        {
-            if (isFileOpened())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-                return false;
-            }
-
-            f = fopen(fileName, mode);
-            if (f == NULL)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-                return false;
-            }
-
-            try
-            {
-                line = new char[LINESIZE];
-                lineArg = new char *[LINESIZE];
-            }
-            catch (const std::bad_alloc &e)
-            {
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            return true;
-        }
-        else
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
     }
 
     /*!
@@ -186,7 +83,7 @@ class io
      * std::fstream::trunc 	  discard the contents of the stream when opening
      * std::fstream::ate 	  seek to the end of stream immediately after open
      */
-    inline bool openFile(const char *fileName, const std::ios_base::openmode mode)
+    inline bool openFile(const char *fileName, const std::ios_base::openmode mode = in)
     {
         if (fs.is_open())
         {
@@ -220,12 +117,31 @@ class io
      * Get string from stream and stores them into line until (LINESIZE-1) characters 
      * have been read or either a newline or the end-of-file is reached, whichever happens first.
      */
-    inline bool readLine() const { return fgets(line, LINESIZE, f) != NULL; }
+    inline bool readLine(const char comment = '#')
+    {
+        std::string linetmp;
+        for (;;)
+        {
+            std::getline(fs, linetmp);
+            if (fs.good())
+            {
+                std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
 
-    /*!
-     * \brief Check if the length of the line is empty or commented with "#"  
-     */
-    inline bool emptyLine() const { return (line[0] == '#') || (strlen(line) == 0); }
+                // See if we found a valid line
+                if (linetmp.length() > 0 && linetmp[linePos] != comment)
+                {
+                    //Trim the empty space at the start of the line
+                    line = linetmp.substr(linePos);
+                    return true;
+                }
+            }
+            else
+            {
+                linetmp.clear();
+                return false;
+            }
+        }
+    }
 
     /*!
      * \brief Set position of stream to the beginning
@@ -233,17 +149,12 @@ class io
      */
     inline void rewindFile()
     {
-        if (isFileOpened())
-        {
-            rewind(f);
-            return;
-        }
-        if (fs.is_open())
-        {
-            //!Rewind the file
-            fs.seekg(0);
-            return;
-        }
+        //clearing all error state flags if there is any
+        fs.clear();
+
+        //!Rewind the file
+        fs.seekg(0);
+        return;
     }
 
     /*!
@@ -251,24 +162,8 @@ class io
      */
     inline void closeFile()
     {
-        if (isFileOpened())
-        {
-            fclose(f);
-            f = NULL;
-
-            delete[] line;
-            line = NULL;
-
-            delete[] lineArg;
-            lineArg = NULL;
-
-            return;
-        }
-        if (fs.is_open())
-        {
-            fs.close();
-            return;
-        }
+        fs.close();
+        return;
     }
 
     /*!
@@ -279,28 +174,9 @@ class io
         return fs;
     }
 
-    /*!
-     * \brief Get the pointer to the FILE *f
-     */
-    FILE *getFile()
-    {
-        return f;
-    }
-
-    /*!
-     * \brief Get the pointer line
-     */
-    char *getLine()
+    std::string &getLine()
     {
         return line;
-    }
-
-    /*!
-     * \brief Get the pointer lineArg
-     */
-    char **getLineArg()
-    {
-        return lineArg;
     }
 
     /*!
@@ -340,7 +216,7 @@ class io
      *                           2 save matrix in vector format and kepp the position indicator on the same line
      */
     template <typename Tidata>
-    inline bool saveMatrix(Tidata **idata, int nRows, int nCols, int options = 0)
+    inline bool saveMatrix(Tidata **idata, const int nRows, const int nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -449,7 +325,7 @@ class io
      *                           2 saves matrix in vector format and kepps the position indicator on the same line
      */
     template <typename Tidata>
-    inline bool saveMatrix(Tidata **idata, int nRows, int *nCols, int options = 0)
+    inline bool saveMatrix(Tidata **idata, const int nRows, const int *nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -547,7 +423,7 @@ class io
     }
 
     template <typename Tidata>
-    inline bool saveMatrix(Tidata *idata, int nRows, int nCols = 1, int options = 0)
+    inline bool saveMatrix(Tidata *idata, const int nRows, const int nCols = 1, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -712,7 +588,7 @@ class io
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      */
     template <typename Tidata>
-    inline bool loadMatrix(Tidata **idata, int nRows, int nCols, int options = 0)
+    inline bool loadMatrix(Tidata **idata, const int nRows, const int nCols, const int options = 0)
     {
         std::string Line;
 
@@ -768,7 +644,7 @@ class io
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      */
     template <typename Tidata>
-    inline bool loadMatrix(Tidata **idata, int nRows, int *nCols, int options = 0)
+    inline bool loadMatrix(Tidata **idata, const int nRows, const int *nCols, const int options = 0)
     {
         std::string Line;
 
@@ -815,7 +691,7 @@ class io
     }
 
     template <typename Tidata>
-    inline bool loadMatrix(Tidata *idata, int nRows, int nCols = 1)
+    inline bool loadMatrix(Tidata *idata, const int nRows, const int nCols = 1)
     {
         std::string Line;
 
@@ -869,7 +745,7 @@ class io
      * \param   nCols  number of columns
      */
     template <typename Tidata>
-    void printMatrix(const char *title, Tidata **idata, int nRows, int nCols)
+    void printMatrix(const char *title, Tidata **idata, const int nRows, const int nCols)
     {
         std::string sep = "\n----------------------------------------\n";
         std::cout << sep;
@@ -935,13 +811,13 @@ class io
     }
 
     template <typename Tidata>
-    void printMatrix(Tidata **idata, size_t nRows, size_t nCols)
+    void printMatrix(Tidata **idata, const int nRows, const int nCols)
     {
         printMatrix<Tidata>("", idata, nRows, nCols);
     }
 
     template <typename Tidata>
-    void printMatrix(const char *title, Tidata *idata, int nRows, int nCols = 1)
+    void printMatrix(const char *title, Tidata *idata, const int nRows, const int nCols = 1)
     {
         std::string sep = "\n----------------------------------------\n";
         std::cout << sep;
@@ -1032,17 +908,16 @@ class io
     }
 
     template <typename Tidata>
-    void printMatrix(Tidata *idata, int nRows, int nCols = 1)
+    void printMatrix(Tidata *idata, const int nRows, const int nCols = 1)
     {
         printMatrix<Tidata>("", idata, nRows, nCols);
     }
 
   private:
-    FILE *f;
+    //input/output operations on file based streams
     std::fstream fs;
 
-    char *line;
-    char **lineArg;
+    std::string line;
 
     typedef std::ptrdiff_t Idx;
     std::ptrdiff_t Width;
