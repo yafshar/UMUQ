@@ -51,25 +51,30 @@ extern "C" {
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1
 
+#include <sys/stat.h> //stat
+
+#include <cassert>
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>
+#include <cstdio>  //fopen, fgets, sscanf, sprintf
+#include <climits>
 #include <cmath>
-#include <cassert>
+#include <cstring> //strlen, strstr, strtok
+
 #include <functional>
 #include <iosfwd>
 #include <string>
 #include <limits>
-#include <climits>
 #include <algorithm>   // for min/max:
 #include <type_traits> // for std::is_nothrow_move_assignable
 #include <iostream>    // for outputting debug info
 #include <fstream>
 #include <sstream>
 #include <ios>
-
-#include <cstring>    //strlen
-#include <sys/stat.h> //stat
+#include <iomanip>
+#include <system_error>
+#include <memory>
 
 /*!
  * \brief Namespace containing all symbols from the %UMHBM library. 
