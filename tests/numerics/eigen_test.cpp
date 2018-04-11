@@ -1,3 +1,4 @@
+#include "core/core.hpp"
 #include "numerics/eigenmatrix.hpp"
 #include "gtest/gtest.h"
 
@@ -187,7 +188,7 @@ TEST(eigen_svd_test, HandlesSVD)
 	EVector4d B(svd.singularValues());
 
 	EXPECT_DOUBLE_EQ(3, B(0));
-	EXPECT_DOUBLE_EQ(std::sqrt(5.), B(1));
+	EXPECT_DOUBLE_EQ(std::sqrt((double)5.), B(1));
 	EXPECT_DOUBLE_EQ(2, B(2));
 	EXPECT_DOUBLE_EQ(0, B(3));
 }
