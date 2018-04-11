@@ -26,27 +26,32 @@ class data
      *    
      */
     data() { init(0); }
+
     /*!
      * \brief constructor for the data structure - initialize initial entries to the provided value
      * @param nsize
      */
     data(int nsize) { init(nsize); }
+    
     /*!
      * \brief constructor for the data structure - initialize initial entries to the provided value
      * @param nsize
      * @param initData
      */
+    
     data(int nsize, T initData) { init(nsize, initData); }
     /*!
      * Move constructor
      * @param inputObj data to be moved
      */
+    
     data(data &&inputObj)
     {
         entries = inputObj.entries;
         entry = std::move(inputObj.entry);
         entryData = std::move(inputObj.entryData);
     }
+    
     /*!
      * Move assignment operator
      * @param inputObj
@@ -58,6 +63,7 @@ class data
         entryData = std::move(inputObj.entryData);
         return *this;
     }
+    
     /*!
      * Constructor - initialize data with other data (data are copied and casted if needed).
      * @tparam U new type of data
@@ -69,6 +75,7 @@ class data
         init(initData.entries);
         std::copy(initData.entry.begin(), initData.entry.end(), entry.begin());
     }
+    
     /*!
      * Creates copy of this data converting each element to new type
      * @tparam U new type of data
@@ -81,6 +88,7 @@ class data
         std::copy(entry.begin(), entry.end(), new_value.entry.begin());
         return new_value;
     }
+    
     /*!
      * access element at provided index 
      * @param id
