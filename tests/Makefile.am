@@ -44,3 +44,7 @@ eigen_io_test_SOURCES = io/eigen_io_test.cpp
 TESTS += stdata_test
 check_PROGRAMS += stdata_test
 stdata_test_SOURCES = data/stdata_test.cpp
+
+TESTS += runinfo_test
+check_PROGRAMS += runinfo_test
+runinfo_test_SOURCES = data/runinfo_test.cpp
