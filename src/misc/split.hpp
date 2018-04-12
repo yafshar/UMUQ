@@ -50,7 +50,7 @@ T &split(std::string const &line, std::string const &delims, T &words)
     char c_chars[line.size() + 1];
     char *c_str = &c_chars[0];
     std::strcpy(c_str, line.c_str());
-    token = strtok(c_str, delims.c_str());
+    token = std::strtok(c_str, delims.c_str());
     while (token != NULL)
     {
         words.push_back(token);
