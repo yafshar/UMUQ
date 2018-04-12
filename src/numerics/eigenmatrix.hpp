@@ -253,12 +253,12 @@ EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
  * \param  EMXd    Input Eigen’s matrix of type double
  * \param  dataPtr Pointer to the memory buffer of type double
  */
-void EMapXd(const EMatrixXd EMXd, double *dataPtr)
+void EMapXd(EMatrixXd const EMXd, double *dataPtr)
 {
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMXd.rows(), EMXd.cols()) = EMXd;
 }
 
-void EMapXd(const EMatrixXd EMXd, double **dataPtr)
+void EMapXd(EMatrixXd const EMXd, double **dataPtr)
 {
     for (size_t i = 0; i < EMXd.rows(); i++)
     {
