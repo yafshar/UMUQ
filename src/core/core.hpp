@@ -75,6 +75,7 @@ extern "C" {
 #include <iomanip>
 #include <system_error>
 #include <memory>
+#include <random>
 
 /*!
  * \brief Namespace containing all symbols from the %UMHBM library. 
