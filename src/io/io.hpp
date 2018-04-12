@@ -114,8 +114,8 @@ class io
     /*!
      * \brief Get string from stream
      * 
-     * Get string from stream and stores them into line until (LINESIZE-1) characters 
-     * have been read or either a newline or the end-of-file is reached, whichever happens first.
+     * Get string from stream and stores them into line until 
+     * a newline or the end-of-file is reached, whichever happens first.
      */
     inline bool readLine(const char comment = '#')
     {
@@ -213,7 +213,7 @@ class io
      * \param   nCols  number of columns
      * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
      *                           1 save matrix in vector format and proceed the position indicator to the next line &
-     *                           2 save matrix in vector format and kepp the position indicator on the same line
+     *                           2 save matrix in vector format and keep the position indicator on the same line
      */
     template <typename TD>
     inline bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
@@ -322,7 +322,7 @@ class io
      * \param   *nCols number of columns for each row
      * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
-     *                           2 saves matrix in vector format and kepps the position indicator on the same line
+     *                           2 saves matrix in vector format and keep the position indicator on the same line
      */
     template <typename TD>
     inline bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
