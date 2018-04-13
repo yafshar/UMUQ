@@ -1,5 +1,8 @@
-#ifndef SARUPRNG_H
-#define SARUPRNG_H
+#ifndef UMHBM_SARUPRNG_H
+#define UMHBM_SARUPRNG_H
+
+// References:
+// 1. Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
 
 /*
  * Copyright (c) 2008 Steve Worley < m a t h g e e k@(my last name).com >
@@ -105,6 +108,7 @@ class Saru
 
     template <unsigned int steps>
     inline unsigned int u32();
+
     template <unsigned int steps>
     inline float f();
     template <unsigned int steps>
@@ -113,8 +117,8 @@ class Saru
     inline float f(float low, float high);
     template <unsigned int steps>
     inline double d(double low, double high);
-
     inline unsigned int u32();
+    inline unsigned int u32(unsigned int high);
     inline float f();
     inline double d();
     inline float f(float low, float high);
@@ -355,6 +359,33 @@ inline unsigned int Saru::u32()
 inline unsigned int Saru::u32()
 {
     return u32<1>();
+}
+
+/*!
+ * \brief  Advance state by 1, and output a 32 bit integer pseudo-random value.
+ *         with variate in [0, high] for unsigned int high
+ */
+inline unsigned int Saru::u32(unsigned int const high)
+{
+    if (high == 0) return 0;
+    
+    unsigned int usedhigh = high;
+
+    usedhigh |= usedhigh >> 1;
+    usedhigh |= usedhigh >> 2;
+    usedhigh |= usedhigh >> 4;
+    usedhigh |= usedhigh >> 8;
+    usedhigh |= usedhigh >> 16;
+    
+    // Draw numbers until one is found in [0, n]
+    unsigned int i = u32<1>() & usedhigh;
+
+    while (i > high)
+    {
+        i = u32<1>() & usedhigh;
+    }
+
+    return i;
 }
 
 /* Floats have 23 bits of mantissa. We take 31 p-rand bits, cast to
