@@ -89,13 +89,13 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	stats_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
+	array_test$(EXEEXT) io_test$(EXEEXT) eigen_io_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	io_test$(EXEEXT) eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	stats_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
+	array_test$(EXEEXT) io_test$(EXEEXT) eigen_io_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -142,6 +142,9 @@ polynomial_test_LDADD = $(LDADD)
 am_runinfo_test_OBJECTS = data/runinfo_test.$(OBJEXT)
 runinfo_test_OBJECTS = $(am_runinfo_test_OBJECTS)
 runinfo_test_LDADD = $(LDADD)
+am_stats_test_OBJECTS = numerics/stats_test.$(OBJEXT)
+stats_test_OBJECTS = $(am_stats_test_OBJECTS)
+stats_test_LDADD = $(LDADD)
 am_stdata_test_OBJECTS = data/stdata_test.$(OBJEXT)
 stdata_test_OBJECTS = $(am_stdata_test_OBJECTS)
 stdata_test_LDADD = $(LDADD)
@@ -185,13 +188,13 @@ am__v_CXXLD_1 =
 SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(io_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(io_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -573,6 +576,7 @@ AM_CXXFLAGS = $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
 polynomial_test_SOURCES = numerics/polynomial_test.cpp 
 eigen_test_SOURCES = numerics/eigen_test.cpp 
+stats_test_SOURCES = numerics/stats_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
@@ -687,6 +691,12 @@ data/runinfo_test.$(OBJEXT): data/$(am__dirstamp) \
 runinfo_test$(EXEEXT): $(runinfo_test_OBJECTS) $(runinfo_test_DEPENDENCIES) $(EXTRA_runinfo_test_DEPENDENCIES) 
 	@rm -f runinfo_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(runinfo_test_OBJECTS) $(runinfo_test_LDADD) $(LIBS)
+numerics/stats_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+stats_test$(EXEEXT): $(stats_test_OBJECTS) $(stats_test_DEPENDENCIES) $(EXTRA_stats_test_DEPENDENCIES) 
+	@rm -f stats_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(stats_test_OBJECTS) $(stats_test_LDADD) $(LIBS)
 data/stdata_test.$(OBJEXT): data/$(am__dirstamp) \
 	data/$(DEPDIR)/$(am__dirstamp)
 
@@ -719,6 +729,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -953,6 +964,13 @@ polynomial_test.log: polynomial_test$(EXEEXT)
 eigen_test.log: eigen_test$(EXEEXT)
 	@p='eigen_test$(EXEEXT)'; \
 	b='eigen_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+stats_test.log: stats_test$(EXEEXT)
+	@p='stats_test$(EXEEXT)'; \
+	b='stats_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

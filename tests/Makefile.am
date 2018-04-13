@@ -15,6 +15,9 @@ TESTS += eigen_test
 check_PROGRAMS += eigen_test
 eigen_test_SOURCES = numerics/eigen_test.cpp 
 
+TESTS += stats_test
+check_PROGRAMS += stats_test
+stats_test_SOURCES = numerics/stats_test.cpp 
 
 #misc
 TESTS += utility_test
