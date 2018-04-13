@@ -144,7 +144,7 @@ std::string &parser::at<std::string>(size_t id)
 };
 
 template <>
-std::string &parser::operator()(size_t id)
+std::string &parser::operator()<std::string>(size_t id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }

@@ -19,6 +19,10 @@ TESTS += stats_test
 check_PROGRAMS += stats_test
 stats_test_SOURCES = numerics/stats_test.cpp 
 
+TESTS += psrandom_test
+check_PROGRAMS += psrandom_test
+psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test

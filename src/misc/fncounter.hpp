@@ -15,6 +15,9 @@ struct fncounter
 	static int nfglb;
 	static int nftot;
 
+    /*! 
+     * \brief Increment the local function call counters
+     */
 	void increment()
 	{
 		//lock and unlock a mutex
@@ -23,8 +26,14 @@ struct fncounter
 		pthread_mutex_unlock(&fm);
 	}
 
+    /*! 
+     * \brief Reset task of setting the local function call counters to zero
+     */
 	void reset_task() { nflcl = 0; }
-
+    
+    /*! 
+     * \brief Resetting the local function call counters to zero
+     */
 	void reset()
 	{
 		for (int i = 0; i < torc_num_nodes(); i++)
@@ -34,6 +43,9 @@ struct fncounter
 		torc_waitall();
 	}
 
+    /*! 
+     * \brief Get task of the local function call counters
+     */
 	void get_task(int *x) { *x = nflcl; }
 
 	int get()
