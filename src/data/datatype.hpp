@@ -5,7 +5,7 @@
 #include "../io/io.hpp"
 
 /*!
-*  \brief structure for sorting Fvalue for entires of database structure
+* \brief structure for sorting Fvalue for entires of database structure
 * 
 * \param idx      an intger argument for indexing
 * \param nsel     an integer argument for selection of leaders only
@@ -19,13 +19,13 @@ struct sort_t
 };
 
 /*!
-*  \brief database structure
-*
-* \tparam T type of database structure
-* \param entry
-* \param entries an integer argument shows the size of entry
-* \param m A mutex object
-*/
+ * \brief database structure
+ *
+ * \tparam T type of database structure
+ * \param entry
+ * \param entries an integer argument shows the size of entry
+ * \param m A mutex object
+ */
 template <class T>
 class database
 {
@@ -38,46 +38,46 @@ class database
 
   public:
     /*!
-    *  \brief constructor for the database structure
-    *    
-    */
+     *  \brief constructor for the database structure
+     *    
+     */
     database() : entry(nullptr),
                  entries(0)
     {
         pthread_mutex_init(&m, nullptr);
-    };
+    }
 
     /*!
-    * /brief Init function taking two arguments and initialize the structure.
-    *
-    *  \param nsize1 an integer argument.
-    */
+     * /brief Init function taking two arguments and initialize the structure.
+     *
+     *  \param nsize1 an integer argument.
+     */
     bool init(int nsize1);
 
     /*!
-    * /brief A member updating the database
-    *
-    *  \param Parray     a double array of points.
-    *  \param ndimParray an integer argument, shows the size of Parray
-    *  \param Fvalue     a double value 
-    *  \param Garray     a double array
-    *  \param ndimGarray an integer argument, shows the size of Garray
-    *  \param surrogate  an integer argument for the surrogate model (default 0, no surrogate)
-    */
+     * /brief A member updating the database
+     *
+     *  \param Parray     a double array of points.
+     *  \param ndimParray an integer argument, shows the size of Parray
+     *  \param Fvalue     a double value 
+     *  \param Garray     a double array
+     *  \param ndimGarray an integer argument, shows the size of Garray
+     *  \param surrogate  an integer argument for the surrogate model (default 0, no surrogate)
+     */
     bool update(double *Parray, int ndimParray, double Fvalue, double *Garray, int ndimGarray, int surrogate = 0);
 
     /*!
-    * /brief function for sorting elemnts of an array for database elements.
-    *
-    *  Sorts the entries elements of the array pointed to by list, each 
-    *  element size bytes long, using the compar function to determine the order.
-    */
+     * /brief function for sorting elemnts of an array for database elements.
+     *
+     *  Sorts the entries elements of the array pointed to by list, each 
+     *  element size bytes long, using the compar function to determine the order.
+     */
     inline void sort(sort_t *list);
 
     /*!
-    * /brief function for printing  the data
-    *
-    */
+     * /brief function for printing  the data
+     *
+     */
     bool print()
     {
         if (entry != nullptr)
@@ -116,12 +116,12 @@ class database
             return true;
         }
         return false;
-    };
+    }
 
     /*!
-    * /brief function for dumping the data
-    *
-    */
+     * /brief function for dumping the data
+     *
+     */
     bool dump(const char *fname = "")
     {
         if (entry != nullptr)
@@ -166,12 +166,12 @@ class database
             return false;
         }
         return false;
-    };
+    }
 
     /*!
-    * /brief function for loading the data
-    *
-    */
+     * /brief function for loading the data
+     *
+     */
     bool load(const char *fname)
     {
         if (entry != nullptr)
@@ -218,7 +218,7 @@ class database
         }
         return false;
     }
-};
+}
 
 template <class T>
 bool database<T>::init(int nsize1)
@@ -309,13 +309,13 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 
     entry[pos].surrogate = surrogate;
     return true;
-};
+}
 
 /*!
-*  \brief Pointer to a function that compares two elements.
-*   
-*  This function is called repeatedly by qsort to compare two elements.
-*/
+ *  \brief Pointer to a function that compares two elements.
+ *   
+ *  This function is called repeatedly by qsort to compare two elements.
+ */
 int compar_desc(const void *p1, const void *p2)
 {
     sort_t *s1 = (sort_t *)p1;
