@@ -91,11 +91,9 @@ AC_DEFUN([AX_TORC], [
 			done
 		fi
 
-		# CFLAGS_SAVED="$CFLAGS"
 		CPPFLAGS_SAVED="$CPPFLAGS"
 		LDFLAGS_SAVED="$LDFLAGS"
 
-		# CFLAGS+=" $torc_CFLAGS"
 		CPPFLAGS+=" $torc_CFLAGS"
 
 		if test x"$ac_torc_path" != x; then
@@ -167,12 +165,10 @@ AC_DEFUN([AX_TORC], [
 		CC="$save_CC"
 
 		if test x"$succeeded" = xyes ; then
-			# AC_SUBST(CFLAGS)
 			AC_SUBST(CPPFLAGS)
 			AC_SUBST(LDFLAGS)
 			ax_torc_ok=yes
 		else
-			# CFLAGS="$CFLAGS_SAVED"
 			CPPFLAGS="$CPPFLAGS_SAVED"
 			LDFLAGS="$LDFLAGS_SAVED"
 		fi
