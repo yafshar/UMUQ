@@ -7,286 +7,494 @@
 #include "eigenmatrix.hpp"
 #include "saruprng.hpp"
 
-namespace
+struct psrandom
 {
-class psrandom
-{
-  public:
-    /*!
+	/*!
+	 * /brief Default constructor
+	 */
+	psrandom(){};
+
+	/*!
      * \brief constructor
      * 
      * \param seed Input seed for random number initialization 
      */
-    psrandom(size_t iseed_ = std::random_device{}()) : iseed(iseed_), mt19937Init(false), SaruInit(false)
-    {
-        num_workers = torc_i_num_workers();
-        node_id = torc_node_id();
-        // std::cout << num_workers << " " << node_id << std::endl;
-        // NumberGenerator = new std::mt19937[num_workers];
-        // saru = new Saru[num_workers];
-    }
+	psrandom(size_t iseed_);
 
-    /*!
+	/*!
      * \brief Destructor
      */
-    ~psrandom()
-    {
-        // if (NumberGenerator != nullptr)
-        // {
-        //     delete[] NumberGenerator;
-        // }
-        // if (saru != nullptr)
-        // {
-        //     delete[] saru;
-        // }
-    }
+	~psrandom()
+	{
+		iseed = 0;
 
-    // /*!
-    //  * \brief Init task on each node to set the current state of the engine
-    //  */
-    // void mt19937_Init_task()
-    // {
-    //     size_t rseed[std::mt19937::state_size];
-    //     for (int i = 0; i < num_workers; i++)
-    //     {
-    //         size_t dummy = (size_t)(iseed + i + num_workers * node_id);
-    //         for (size_t j = 0; j < std::mt19937::state_size; j++)
-    //         {
-    //             rseed[j] = j + dummy;
-    //         }
+		if (NumberGenerator != nullptr)
+		{
+			delete[] NumberGenerator;
+			NumberGenerator = nullptr;
+		}
 
-    //         // Seed the engine with unsigned ints
-    //         std::seed_seq sseq(rseed, rseed + std::mt19937::state_size);
+		if (saru != nullptr)
+		{
+			delete[] saru;
+			saru = nullptr;
+		}
+	}
 
-    //         // For each thread feed the RNG
-    //         NumberGenerator[i].seed(sseq);
-    //     }
-    // }
+	/*!
+	 * \brief Init task on each node to set the current state of the engine
+	 */
+	static void init_Task();
 
-    // /*!
-    //  * \brief Sets the current state of the engine
-    //  */
-    // void mt19937_Init()
-    // {
-    //     for (int i = 0; i < torc_num_nodes(); i++)
-    //     {
-    //         torc_create_ex(i * num_workers, 1, (void (*)()) mt19937_Init_task, 0);
-    //     }
-    //     torc_waitall();
-    //     mt19937Init = true;
-    // }
+	/*!
+	 * \brief Sets the current state of the engine
+	 */
+	bool init();
 
-    // /*!
-    //  * \brief Init task on each node to set the current state of the engine
-    //  */
-    // void Saru_Init_task()
-    // {
-    //     for (int i = 0; i < num_workers; i++)
-    //     {
-    //         Saru s(iseed, num_workers * (node_id + 1), i);
-    //         saru[i] = std::move(s);
-    //     }
-    // }
+	/*!
+	 * \brief Uniform random number between [a..b)
+	 *
+	 * \tparam T data type one of float, double
+	 *
+	 * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
+	 */
+	template <typename T>
+	inline T unirnd(T a = 0, T b = 1)
+	{
+		/** left empty on purpose */
+	}
 
-    // /*!
-    //  * \brief Sets the current state of the engine
-    //  */
-    // void Saru_Init()
-    // {
-    //     for (int i = 0; i < torc_num_nodes(); i++)
-    //     {
-    //         torc_create_ex(i * num_workers, 1, (void (*)()) Saru_Init_task, 0);
-    //     }
-    //     torc_waitall();
-    //     SaruInit = true;
-    // }
+	/*!
+	 * \brief Advance state by 1, and output a double precision [0..1) floating point
+	 * 
+	 * Reference:
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+	 */
+	inline double d() { return saru[0].d(); }
 
-    // /*!
-    //  * \brief Multivariate normal distribution
-    //  * 
-    //  * \tparam TM the type of the Matrix 
-    //  * \tparam TV the type of the Vector
-    //  * 
-    //  * \tparam T data type one of float, double, or long double
-    //  * 
-    //  */
-    // template <typename TM, typename TV>
-    // struct mvnormdist
-    // {
-    //     /*!
-    //      * \brief constructor (default mean = 0)
-    //      * 
-    //      * \param covariance covariance Matrix 
-    //      */
-    //     mvnormdist(TM const &covariance) : mvnormdist(TV::Zero(covariance.rows()), covariance) {}
+	/*!
+	 * \Advance state by 1, and output a single precision [0..1) floating point
+	 * 
+	 * Reference:
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+	 */
+	inline float f() { return saru[0].f(); }
 
-    //     /*!
-    //      * \brief constructor
-    //      * 
-    //      * \param mean mean vector
-    //      * \param covariance covariance Matrix 
-    //      */
-    //     mvnormdist(TV const &mean, TM const &covariance) : mean(mean)
-    //     {
-    //         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
-    //         Eigen::SelfAdjointEigenSolver<TV> es(covariance);
-    //         transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-    //     }
+	/*!
+	 * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
+	 * 
+	 * Reference:
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+	 */
+	inline unsigned int u32() { return saru[0].u32(); }
 
-    //     TV mean;
-    //     TM transform;
-    //     typedef typename TM::Scalar T;
+	/*!
+	 * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
+	 *
+	 * \param idata array of input data of type int
+	 * \param nSize Size of the array idata
+	 *
+	 * The permutations generated by this algorithm occur with the same probability.
+	 *
+	 * References : R. Durstenfeld, "Algorithm 235: Random permutation"
+	 *              Communications of the ACM, 7 (1964), p. 420
+	 */
+	void shuffle(int *idata, int nSize)
+	{
+		//Get the thread ID
+		int me = torc_i_worker_id();
 
-    //     /*!
-    //      * \returns a vector with multivariate normal distribution
-    //      */
-    //     TV operator()() const
-    //     {
-    //         int me = torc_i_worker_id();
-    //         return mean + transform * TV{mean.size()}.unaryExpr([&](T x) { return normalDist(NumberGenerator[me]); });
-    //     }
-    // };
+		for (int i = nSize - 1; i > 0; --i)
+		{
+			auto idx = saru[me].u32(i);
+			std::swap(idata[i], idata[idx]);
+		}
+	}
 
-    // /*!
-    //  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
-    //  * 
-    //  * \tparam T data type one of float, double, or long double
-    //  * 
-    //  */
-    // template <typename T = double>
-    // struct normrnd
-    // {
-    //     /*!
-    //      * \brief Default constructor (default mean = 0, stddev = 1)
-    //      */
-    //     normrnd(T mean = 0, T stddev = 1)
-    //     {
-    //         std::normal_distribution<T> d(mean, stddev);
-    //     }
+	/*!
+	 * RNG seed
+	 */
+	static size_t iseed;
 
-    //     std::normal_distribution<T> d;
-
-    //     /*!
-    //      * \returns random numbers x according to Normal (or Gaussian) random number distribution
-    //      * The result type generated by the generator is undefined if @T is not one of float, double, or long double
-    //      */
-    //     T operator()() const
-    //     {
-    //         //Get the thread ID
-    //         int me = torc_i_worker_id();
-    //         return d(NumberGenerator[me]);
-    //     }
-    // };
-
-    // /*!
-    //  * \brief Generates random numbers x > 0 according to the lognormal_distribution 
-    //  * 
-    //  * \tparam T data type one of float, double, or long double
-    //  * 
-    //  */
-    // template <typename T = double>
-    // struct lognormrnd
-    // {
-    //     /*!
-    //      * \brief Default constructor (default mean = 0, stddev = 1)
-    //      */
-    //     lognormrnd(T mean = 0, T stddev = 1)
-    //     {
-    //         std::lognormal_distribution<T> d(mean, stddev);
-    //     }
-    //     std::lognormal_distribution<T> d;
-
-    //     /*!
-    //      * \returns random numbers x > 0 according to the lognormal_distribution
-    //      * The result type generated by the generator is undefined if @T is not one of float, double, or long double
-    //      */
-    //     T operator()() const
-    //     {
-    //         //Get the thread ID
-    //         int me = torc_i_worker_id();
-    //         return d(NumberGenerator[me]);
-    //     }
-    // };
-
-    // /*! 
-    //  * \brief Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
-    //  * 
-    //  * \tparam T data type one of float, double
-    //  * 
-    //  */
-    // template <typename T>
-    // T unirnd(T a = 0, T b = 1)
-    // {
-    // }
-
-    // /*! 
-    //  * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
-    //  * 
-    //  * \param idata array of input data of type int
-    //  * \param nSize Size of the array idata
-    //  * 
-    //  * The permutations generated by this algorithm occur with the same probability.
-    //  * 
-    //  * References : R. Durstenfeld, "Algorithm 235: Random permutation"
-    //  *              Communications of the ACM, 7 (1964), p. 420
-    //  */
-    // void shuffle(int *idata, int nSize)
-    // {
-    //     //Get the thread ID
-    //     int me = torc_i_worker_id();
-
-    //     for (int i = nSize - 1; i > 0; --i)
-    //     {
-    //         unsigned int idx = saru[me].u32(i);
-    //         std::swap(idata[i], idata[idx]);
-    //     }
-    // }
-
-  private:
-    size_t iseed;
-    int num_workers;
-    int node_id;
-    bool mt19937Init;
-    bool SaruInit;
-
-    /*! 
+	/*! 
      * 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
      */
-    std::mt19937 *NumberGenerator = nullptr;
+	static std::mt19937 *NumberGenerator;
 
-    /*! 
-     * produces real values on a standard normal (Gaussian) distribution
-     * values near the mean are the most likely
-     * standard deviation affects the dispersion of generated values from the mean
-     */
-    std::normal_distribution<> normalDist;
-
-    /*! 
+	/*! 
      * C++ Saru PRNG
      */
-    Saru *saru = nullptr;
+	static Saru *saru;
 };
 
-// /*! 
-//  * \brief Advance the PRNG state by 1, and output a double precision [a..b) number (default a = 0, b = 1)
-//  * 
-//  * \tparam T data type one of float, double 
-//  */
-// template <>
-// double psrandom::unirnd<double>(double a, double b)
-// {
-//     //Get the thread ID
-//     int me = torc_i_worker_id();
-//     return saru[me].d(a, b);
-// }
+size_t psrandom::iseed = 0;
+std::mt19937 *psrandom::NumberGenerator = nullptr;
+Saru *psrandom::saru = nullptr;
 
-// template <>
-// float psrandom::unirnd<float>(float a, float b)
-// {
-//     //Get the thread ID
-//     int me = torc_i_worker_id();
-//     return saru[me].f(a, b);
-// }
+/*!
+ * \brief constructor
+ * 
+ * \param seed input seed for random number initialization 
+ */
+psrandom::psrandom(size_t iseed_)
+{
+	//Number of local workers
+	int nlocalworkers = torc_i_num_workers();
+
+	psrandom::iseed = iseed_;
+
+	try
+	{
+		psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
+		psrandom::saru = new Saru[nlocalworkers];
+	}
+	catch (std::bad_alloc &e)
+	{
+		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+		std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+	};
 }
+
+/*!
+ * \brief init Task on each node to set the current state of the engine
+ */
+void psrandom::init_Task()
+{
+	size_t rseed[std::mt19937::state_size];
+	//Get the local number of workers
+	size_t nlocalworkers = (size_t)torc_i_num_workers();
+	//Node Id (MPI rank)
+	size_t node_id = (size_t)torc_node_id();
+
+	size_t n = nlocalworkers * (node_id + 1);
+	for (size_t i = 0; i < nlocalworkers; i++)
+	{
+		size_t j = psrandom::iseed + n + i;
+
+		for (size_t k = 0; k < std::mt19937::state_size; k++)
+		{
+			rseed[k] = k + j;
+		}
+
+		//Seed the engine with unsigned ints
+		std::seed_seq sseq(rseed, rseed + std::mt19937::state_size);
+
+		//For each thread feed the RNG
+		psrandom::NumberGenerator[i].seed(sseq);
+
+		Saru s(psrandom::iseed, n, i);
+		psrandom::saru[i] = std::move(s);
+	}
+}
+
+/*!
+ * \brief Set the current state of the engine
+ */
+bool psrandom::init()
+{
+	if (psrandom::iseed == 0)
+	{
+		psrandom::iseed = std::random_device{}();
+	}
+
+	int nlocalworkers = torc_i_num_workers();
+
+	if (psrandom::NumberGenerator == nullptr)
+	{
+		try
+		{
+			psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
+		}
+		catch (std::bad_alloc &e)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			return false;
+		};
+	}
+	if (psrandom::saru == nullptr)
+	{
+		try
+		{
+			psrandom::saru = new Saru[nlocalworkers];
+		}
+		catch (std::bad_alloc &e)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			return false;
+		};
+	}
+
+	for (int i = 0; i < torc_num_nodes(); i++)
+	{
+		torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom::init_Task, 0);
+	}
+	torc_waitall();
+
+	return true;
+}
+
+/*!
+ * \brief Uniform random number between [a..b)
+ *
+ * \tparam T data type one of float, double
+ *
+ * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
+ */
+template <>
+inline double psrandom::unirnd<double>(double a, double b)
+{
+	//Get the thread ID
+	int me = torc_i_worker_id();
+	return saru[me].d(a, b);
+}
+
+template <>
+inline float psrandom::unirnd<float>(float a, float b)
+{
+	//Get the thread ID
+	int me = torc_i_worker_id();
+	return saru[me].f(a, b);
+}
+
+/*!
+ * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
+ * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
+ * psrandom object.
+ *
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename T = double>
+struct normrnd
+{
+  public:
+	/*!
+	 * \brief Default constructor (default mean = 0, stddev = 1)
+	 */
+	normrnd(T mean = 0, T stddev = 1) : d(mean, stddev)
+	{
+		if (psrandom::iseed == 0)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+		}
+	}
+
+	/*!
+	 * \returns random numbers x according to Normal (or Gaussian) random number distribution
+	 * The result type generated by the generator is undefined if @T is not one of float, double, or long double
+	 */
+	T operator()()
+	{
+		//Get the thread ID
+		int me = torc_i_worker_id();
+		return d(psrandom::NumberGenerator[me]);
+	}
+
+  private:
+	std::normal_distribution<T> d;
+};
+
+/*!
+ * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
+ * This class is independent.
+ *
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename T = double>
+class Normrnd
+{
+  public:
+	/*!
+	 * \brief Default constructor (default mean = 0, stddev = 1)
+	 */
+	Normrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
+
+	/*!
+	 * \returns random numbers x according to Normal (or Gaussian) random number distribution
+	 * The result type generated by the generator is undefined if @T is not one of float, double, or long double
+	 */
+	T operator()() { return d(gen); }
+
+  private:
+	std::mt19937 gen;
+	std::normal_distribution<T> d;
+};
+
+/*!
+ * \brief Generates random numbers x > 0 according to the lognormal_distribution
+ * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
+ * psrandom object.
+ * 
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename T = double>
+class lognormrnd
+{
+  public:
+	/*!
+	 * \brief Default constructor (default mean = 0, stddev = 1)
+	 */
+	lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev)
+	{
+		if (psrandom::iseed == 0)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+		}
+	}
+
+	/*!
+	 * \returns random numbers x > 0 according to the lognormal_distribution
+	 * The result type generated by the generator is undefined if @T is not one of float, double, or long double
+	 */
+	T operator()()
+	{
+		//Get the thread ID
+		int me = torc_i_worker_id();
+		return d(psrandom::NumberGenerator[me]);
+	}
+
+  private:
+	std::lognormal_distribution<T> d;
+};
+
+/*!
+ * \brief Generates random numbers x > 0 according to the lognormal_distribution
+ * This class is independent.
+ * 
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename T = double>
+class Lognormrnd
+{
+  public:
+	/*!
+	 * \brief Default constructor (default mean = 0, stddev = 1)
+	 */
+	Lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
+
+	/*!
+	 * \returns random numbers x > 0 according to the lognormal_distribution
+	 * The result type generated by the generator is undefined if @T is not one of float, double, or long double
+	 */
+	T operator()() { return d(gen); }
+
+  private:
+	std::mt19937 gen;
+	std::lognormal_distribution<T> d;
+};
+
+/*!
+ * \brief Multivariate normal distribution
+ * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
+ * psrandom object.
+ *
+ * \tparam TM the type of the Matrix
+ * \tparam TV the type of the Vector
+ *
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename TM, typename TV>
+class mvnormdist
+{
+  public:
+	/*!
+     * \brief constructor (default mean = 0)
+     *
+     * \param covariance covariance Matrix
+     */
+	mvnormdist(TM const &covariance) : mvnormdist(TV::Zero(covariance.rows()), covariance) {}
+
+	/*!
+     * \brief constructor
+     *
+     * \param mean mean vector
+     * \param covariance covariance Matrix
+     */
+	mvnormdist(TV const &mean, TM const &covariance) : mean(mean)
+	{
+		if (psrandom::iseed == 0)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+		}
+
+		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
+		Eigen::SelfAdjointEigenSolver<TV> es(covariance);
+		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+	}
+
+	/*!
+     * \returns a vector with multivariate normal distribution
+     */
+	TV operator()() const
+	{
+		int me = torc_i_worker_id();
+		return mean + transform * TV{mean.size()}.unaryExpr([&](T x) { return d(psrandom::NumberGenerator[me]); });
+	}
+
+  private:
+	TV mean;
+	TM transform;
+	typedef typename TM::Scalar T;
+	std::normal_distribution<T> d;
+};
+
+/*!
+ * \brief Multivariate normal distribution
+ * This class is independent.
+ *
+ * \tparam TM the type of the Matrix
+ * \tparam TV the type of the Vector
+ *
+ * \tparam T data type one of float, double, or long double
+ *
+ */
+template <typename TM, typename TV>
+class Mvnormdist
+{
+  public:
+	/*!
+     * \brief constructor (default mean = 0)
+     *
+     * \param covariance covariance Matrix
+     */
+	Mvnormdist(TM const &covariance) : Mvnormdist(TV::Zero(covariance.rows()), covariance) {}
+
+	/*!
+     * \brief constructor
+     *
+     * \param mean mean vector
+     * \param covariance covariance Matrix
+     */
+	Mvnormdist(TV const &mean, TM const &covariance) : mean(mean), gen(std::random_device{}())
+	{
+		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
+		Eigen::SelfAdjointEigenSolver<TV> es(covariance);
+		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+	}
+
+	/*!
+     * \returns a vector with multivariate normal distribution
+     */
+	TV operator()() const
+	{
+		return mean + transform * TV{mean.size()}.unaryExpr([&](T x) { return d(gen); });
+	}
+
+  private:
+	TV mean;
+	TM transform;
+	typedef typename TM::Scalar T;
+	std::mt19937 gen;
+	std::normal_distribution<T> d;
+};
 
 #endif
