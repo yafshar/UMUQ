@@ -265,6 +265,10 @@ AC_DEFUN([AX_MPI], [
 		# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 		if test x"$MPILIBS" != x; then
 			ax_mpi_ok="yes"
+			CC="$MPICC"
+			CXX="$MPICXX"         	
+			AC_SUBST(CC)  	
+			AC_SUBST(CXX)
 			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 			:
 		fi
