@@ -14,7 +14,6 @@ AC_PREREQ([2.69])
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_TESTDIR([tests])
-
 AC_CONFIG_MACRO_DIR([m4])
 # 
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
@@ -61,6 +60,11 @@ AC_CONFIG_HEADERS(src/umhbm_config.h)
 # Init automake
 #
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects])
+
+#
+# Set prefix default (install directory) to a directory in the build area.
+# This allows multiple src-dir builds within one host.
+AC_PREFIX_DEFAULT([`pwd`])
 
 # Checks for programs.
 AC_PROG_CXX
