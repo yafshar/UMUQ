@@ -36,6 +36,9 @@ TESTS += array_test
 check_PROGRAMS += array_test
 array_test_SOURCES = misc/array_test.cpp
 
+TESTS += funcallcounter_test
+check_PROGRAMS += funcallcounter_test
+funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 
 #io
 TESTS += io_test
