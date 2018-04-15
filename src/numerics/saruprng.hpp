@@ -1,8 +1,8 @@
 #ifndef UMHBM_SARUPRNG_H
 #define UMHBM_SARUPRNG_H
 
-// References:
-// 1. Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+// Reference:
+// Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
 
 /*
  * Copyright (c) 2008 Steve Worley < m a t h g e e k@(my last name).com >
