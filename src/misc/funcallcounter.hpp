@@ -33,41 +33,14 @@ struct funcallcounter
 	/*! 
      * \brief Resetting the local function call counters to zero
      */
-	void reset()
-	{
-		for (int i = 0; i < torc_num_nodes(); i++)
-		{
-			torc_create_ex(i * torc_i_num_workers(), 1, (void *)reset_Task, 0);
-		}
-		torc_waitall();
-	}
+	void reset();
 
 	/*! 
      * \brief Get task of the local function call counters
      */
 	static void get_Task(int *x);
 
-	int get()
-	{
-		//TODO correct the number of nodes
-		int c[1024]; /* MAX_NODES*/
-
-		for (int i = 0; i < torc_num_nodes(); i++)
-		{
-			torc_create_ex(i * torc_i_num_workers(), 1, (void *)get_Task, 1,
-						   1, MPI_INT, CALL_BY_RES,
-						   &c[i]);
-		}
-		torc_waitall();
-
-		num_of_global_function_counter = std::accumulate(c, c + torc_num_nodes(), 0);
-
-		std::cout << "global number of function counts: " << num_of_global_function_counter << std::endl;
-
-		num_of_total_function_counter += num_of_global_function_counter;
-
-		return num_of_global_function_counter;
-	}
+	int get();
 };
 
 pthread_mutex_t funcallcounter::function_counter_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -82,8 +55,42 @@ int funcallcounter::num_of_total_function_counter = 0;
 void funcallcounter::reset_Task() { funcallcounter::num_of_local_function_counter = 0; }
 
 /*! 
+ * \brief Resetting the local function call counters to zero
+ */
+void funcallcounter::reset()
+{
+	for (int i = 0; i < torc_num_nodes(); i++)
+	{
+		torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())funcallcounter::reset_Task, 0);
+	}
+	torc_waitall();
+}
+
+/*! 
  * \brief Get task of the local function call counters
  */
 void funcallcounter::get_Task(int *x) { *x = funcallcounter::num_of_local_function_counter; }
+
+int funcallcounter::get()
+{
+	//TODO correct the number of nodes
+	int c[1024]; /* MAX_NODES*/
+
+	for (int i = 0; i < torc_num_nodes(); i++)
+	{
+		torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())funcallcounter::get_Task, 1,
+					   1, MPI_INT, CALL_BY_RES,
+					   &c[i]);
+	}
+	torc_waitall();
+
+	funcallcounter::num_of_global_function_counter = std::accumulate(c, c + torc_num_nodes(), 0);
+
+	std::cout << "global number of function counts: " << funcallcounter::num_of_global_function_counter << std::endl;
+
+	funcallcounter::num_of_total_function_counter += funcallcounter::num_of_global_function_counter;
+
+	return funcallcounter::num_of_global_function_counter;
+}
 
 #endif
