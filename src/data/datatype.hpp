@@ -218,7 +218,7 @@ class database
         }
         return false;
     }
-}
+};
 
 template <class T>
 bool database<T>::init(int nsize1)
