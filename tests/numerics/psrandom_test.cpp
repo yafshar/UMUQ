@@ -1,29 +1,28 @@
+#include "torc.h"
 #include "core/core.hpp"
+#include "numerics/eigenmatrix.hpp"
 #include "numerics/psrandom.hpp"
 #include "gtest/gtest.h"
 
-#define MODE_MS 0
+psrandom r;
 
 /*! 
  * Test to check random functionality
  */
 TEST(random_test, HandlesRandoms)
 {
+	EXPECT_TRUE(r.init());
 }
 
 int main(int argc, char **argv)
 {
-    torc_init(argc, argv, MODE_MS);
+	torc_register_task((void *)r.init_Task);
+	torc_init(argc, argv, 0);
 
-    // torc_register_task((void *)r.mt19937_Init_task);
-    // torc_register_task((void *)r.Saru_Init_task);
+	::testing::InitGoogleTest(&argc, argv);
+	int res = RUN_ALL_TESTS();
 
-    psrandom r(280675);
+	torc_finalize();
 
-    ::testing::InitGoogleTest(&argc, argv);
-    int res = RUN_ALL_TESTS();
-
-    torc_finalize();
-
-    return res;
+	return res;
 }
