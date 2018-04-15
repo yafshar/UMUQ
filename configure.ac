@@ -69,44 +69,6 @@ AC_F77_LIBRARY_LDFLAGS
 
 AC_PROG_LIBTOOL
 
-# Checks for libraries.
-AC_MSG_RESULT() 
-
-### Checking for MPI
-AC_MSG_CHECKING([for - MPI Library - ])
-AC_MSG_NOTICE(MPI)
-AX_MPI
-
-### Checking for EIGEN
-AC_MSG_CHECKING([for - EIGEN Library - ])
-AC_MSG_NOTICE(EIGEN)
-AX_EIGEN
-
-### Checking for FLANN
-AC_MSG_CHECKING([for - FLANN Library - ])
-AC_MSG_NOTICE(FLANN)
-AX_FLANN
-
-### Checking for BLAS
-AC_MSG_CHECKING([for - BLAS Library - ])
-AX_BLAS
-
-### Checking for LAPACK
-AC_MSG_CHECKING([for - LAPACK Library - ])
-AX_LAPACK
-
-### Checking for POSIX threads
-AC_MSG_CHECKING([for - POSIX threads - ])
-AX_PTHREAD
-
-### Checking for GOOGLETEST
-AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
-AX_GOOGLETEST
-
-### Checking for TORC
-AC_MSG_CHECKING([for - TORC Library - ])
-AX_TORC
-
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
 
@@ -122,6 +84,44 @@ AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 AC_CHECK_FUNCS([pow])
 
 AC_LANG_POP([C++])
+
+# Checks for libraries.
+AC_MSG_RESULT() 
+
+### Checking for POSIX threads
+AC_MSG_CHECKING([for - POSIX threads - ])
+AX_PTHREAD
+
+### Checking for MPI
+AC_MSG_CHECKING([for - MPI Library - ])
+AC_MSG_NOTICE(MPI)
+AX_MPI
+
+### Checking for TORC
+AC_MSG_CHECKING([for - TORC Library - ])
+AX_TORC
+
+### Checking for BLAS
+AC_MSG_CHECKING([for - BLAS Library - ])
+AX_BLAS
+
+### Checking for LAPACK
+AC_MSG_CHECKING([for - LAPACK Library - ])
+AX_LAPACK
+
+### Checking for EIGEN
+AC_MSG_CHECKING([for - EIGEN Library - ])
+AC_MSG_NOTICE(EIGEN)
+AX_EIGEN
+
+### Checking for FLANN
+AC_MSG_CHECKING([for - FLANN Library - ])
+AC_MSG_NOTICE(FLANN)
+AX_FLANN
+
+### Checking for GOOGLETEST
+AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
+AX_GOOGLETEST
 
 # Chech for Doxygen
 AC_MSG_CHECKING([ for - DOXYGEN - ])
