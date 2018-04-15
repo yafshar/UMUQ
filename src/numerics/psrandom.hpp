@@ -273,7 +273,7 @@ inline float psrandom::unirnd<float>(float a, float b)
  *
  */
 template <typename T = double>
-struct normrnd
+class normrnd
 {
   public:
     /*!
