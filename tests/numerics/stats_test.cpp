@@ -11,8 +11,8 @@ TEST(stats_test, HandlesStats)
     int Iarray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
     EXPECT_EQ(s.minelement<int>(Iarray, 10), 1);
     EXPECT_EQ(s.maxelement<int>(Iarray, 10), 10);
-    EXPECT_EQ(s.min_at<int>(Iarray, 10), 4);
-    EXPECT_EQ(s.max_at<int>(Iarray, 10), 7);
+    EXPECT_EQ(s.minelement_index<int>(Iarray, 10), 4);
+    EXPECT_EQ(s.maxelement_index<int>(Iarray, 10), 7);
     double sum = s.sum<int, double>(Iarray, 10);
     double mean = s.mean<int, double>(Iarray, 10);
     double stddev = s.stddev<int, double>(Iarray, 10);
