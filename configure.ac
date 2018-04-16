@@ -67,39 +67,24 @@ AM_INIT_AUTOMAKE([1.9 dist-bzip2 dist-zip foreign subdir-objects])
 AC_PREFIX_DEFAULT([`pwd`])
 
 # Checks for programs.
-AC_PROG_CXX
-AC_PROG_CC
+AC_PROG_CXX([mpic++ mpicxx mpiCC mpCC hcp mpxlC mpxlC_r cmpic++ cmpic++i mpig++ mpicpc tmCC mpCC_r])
+AC_PROG_CC([mpicc hcc mpcc mpcc_r mpxlc mpxlc_r cmpicc mpigcc tmcc])
+AC_PROG_CPP
 AC_F77_LIBRARY_LDFLAGS
 
 AC_PROG_LIBTOOL
 
-# Checks for header files.
-AC_CHECK_HEADERS([stdlib.h])
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_C_INLINE
-
-AC_LANG_PUSH([C++])
-
-# Ensure we are using c11 C++ standard.
-AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
-
-# Checks for library functions.
-AC_CHECK_FUNCS([pow])
-
-AC_LANG_POP([C++])
-
 # Checks for libraries.
 AC_MSG_RESULT() 
-
-### Checking for POSIX threads
-AC_MSG_CHECKING([for - POSIX threads - ])
-AX_PTHREAD
 
 ### Checking for MPI
 AC_MSG_CHECKING([for - MPI Library - ])
 AC_MSG_NOTICE(MPI)
 AX_MPI
+
+### Checking for POSIX threads
+AC_MSG_CHECKING([for - POSIX threads - ])
+AX_PTHREAD
 
 ### Checking for TORC
 AC_MSG_CHECKING([for - TORC Library - ])
@@ -130,6 +115,22 @@ AX_GOOGLETEST
 # Chech for Doxygen
 AC_MSG_CHECKING([ for - DOXYGEN - ])
 AX_DOXYGEN
+
+# Checks for header files.
+AC_CHECK_HEADERS([stdlib.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_INLINE
+
+AC_LANG_PUSH([C++])
+
+# Ensure we are using c11 C++ standard.
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+
+# Checks for library functions.
+AC_CHECK_FUNCS([pow])
+
+AC_LANG_POP([C++])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AM_COND_IF([HAVE_GOOGLETEST], [AC_CONFIG_FILES([tests/Makefile])])
