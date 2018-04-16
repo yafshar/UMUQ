@@ -4,7 +4,7 @@
 #define LINESIZE 256
 
 /*! \class parser
-*   \brief parser is a class which prase string of data to seperate words
+* \brief parser is a class which prase string of data to seperate words
 *	
 */
 class parser
@@ -13,10 +13,9 @@ class parser
     /*!
      * \brief parse a line to seperate arguments
      */
-    inline void parse(std::string &line_)
+    inline void parse(const std::string &line_)
     {
-        char *line = &line_[0];
-
+        char *line = (char *) &line_[0];
         lineNum = 0;
 
         /* if not the end of line ....... */
