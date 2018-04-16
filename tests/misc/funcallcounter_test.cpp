@@ -44,7 +44,7 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
 
     //Number of nodes
     int nnodes = torc_num_nodes();
-    int ntasks = 10;
+    int ntasks = 100;
 
     for (int i = 0; i < ntasks; i++)
     {
