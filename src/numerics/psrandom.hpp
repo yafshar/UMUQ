@@ -155,15 +155,15 @@ Saru *psrandom::saru = nullptr;
  * 
  * \param seed input seed for random number initialization 
  */
-psrandom::psrandom(size_t iseed_)
+psrandom::psrandom(size_t const iseed_)
 {
-    //Number of local workers
-    int nlocalworkers = torc_i_num_workers();
-
     psrandom::iseed = iseed_;
 
     try
     {
+        //Number of local workers
+        int nlocalworkers = torc_i_num_workers();
+        
         psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
         psrandom::saru = new Saru[nlocalworkers];
     }
