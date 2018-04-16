@@ -3,10 +3,13 @@
 
 #include "saruprng.hpp"
 
+/*! \class psrandom
+  *
+  */
 struct psrandom
 {
     /*!
-     * /brief Default constructor
+     * \brief Default constructor
      */
     psrandom(){};
 
@@ -27,7 +30,7 @@ struct psrandom
     };
 
     /*!
-     *  \brief destroy created memory 
+     * \brief destroy the created memory and set the static variable to NULL
      *
      */
     void destroy()
@@ -48,16 +51,20 @@ struct psrandom
     }
 
     /*!
-     * \brief Init task on each node to set the current state of the engine
+     * \brief Init task on each node to set the current state of the engine for each thread
      */
     static void init_Task();
 
     /*!
+     * \returns \a true when sets the current state of the engine successfully
+     * 
      * \brief Sets the current state of the engine
      */
     bool init();
 
     /*!
+     * \returns Uniform random number between [a..b)
+     * 
      * \brief Uniform random number between [a..b)
      *
      * \tparam T data type one of float, double
@@ -71,6 +78,8 @@ struct psrandom
     }
 
     /*!
+     * \returns a uniform random number of a double precision [0..1) floating point 
+     * 
      * \brief Advance state by 1, and output a double precision [0..1) floating point
      * 
      * Reference:
@@ -79,6 +88,8 @@ struct psrandom
     inline double d() { return saru[0].d(); }
 
     /*!
+     * \returns a uniform random number of a single precision [0..1) floating point
+     * 
      * \Advance state by 1, and output a single precision [0..1) floating point
      * 
      * Reference:
@@ -87,6 +98,8 @@ struct psrandom
     inline float f() { return saru[0].f(); }
 
     /*!
+     * \returns an unisgned 32 bit integer pseudo-random value
+     * 
      * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
      * 
      * Reference:
@@ -198,6 +211,15 @@ void psrandom::init_Task()
  */
 bool psrandom::init()
 {
+    auto initialized = 0;
+    MPI_Initialized(&initialized);
+    if (!initialized)
+    {
+        return false;
+    }
+
+    torc_register_task((void *)psrandom::init_Task);
+
     if (psrandom::iseed == 0)
     {
         psrandom::iseed = std::random_device{}();
@@ -247,6 +269,7 @@ bool psrandom::init()
  * \tparam T data type one of float, double
  *
  * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
+ * This is a partial specialization to make a special case for double precision uniform random number
  */
 template <>
 inline double psrandom::unirnd<double>(double a, double b)
@@ -256,6 +279,9 @@ inline double psrandom::unirnd<double>(double a, double b)
     return saru[me].d(a, b);
 }
 
+/*!
+ * This is a partial specialization to make a special case for float precision uniform random number
+ */
 template <>
 inline float psrandom::unirnd<float>(float a, float b)
 {
