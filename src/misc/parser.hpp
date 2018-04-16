@@ -3,8 +3,6 @@
 
 #define LINESIZE 256
 
-namespace
-{
 /*! \class parser
 *   \brief parser is a class which prase string of data to seperate words
 *	
@@ -148,6 +146,5 @@ std::string &parser::operator()<std::string>(size_t id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }
-} //end of namespace
 
 #endif
