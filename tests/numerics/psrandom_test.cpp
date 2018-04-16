@@ -4,25 +4,44 @@
 #include "numerics/psrandom.hpp"
 #include "gtest/gtest.h"
 
-psrandom r;
+class MPIEnvironment : public ::testing::Environment
+{
+  public:
+    virtual void SetUp()
+    {
+        char **argv;
+        int argc = 0;
+
+        torc_init(argc, argv, 0);
+
+        // ::testing::TestEventListeners &listeners = ::testing::UnitTest::GetInstance()->listeners();
+        // if (torc_node_id() != 0)
+        // {
+        //     delete listeners.Release(listeners.default_result_printer());
+        // }
+    }
+
+    virtual void TearDown()
+    {
+        torc_finalize();
+    }
+
+    virtual ~MPIEnvironment() {}
+};
 
 /*! 
  * Test to check random functionality
  */
 TEST(random_test, HandlesRandoms)
 {
-	EXPECT_TRUE(r.init());
+    psrandom r;
+    EXPECT_TRUE(r.init());
 }
 
 int main(int argc, char **argv)
 {
-	torc_register_task((void *)r.init_Task);
-	torc_init(argc, argv, 0);
-
-	::testing::InitGoogleTest(&argc, argv);
-	int res = RUN_ALL_TESTS();
-
-	torc_finalize();
-
-	return res;
+    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(new MPIEnvironment);
+    
+    return RUN_ALL_TESTS();
 }
