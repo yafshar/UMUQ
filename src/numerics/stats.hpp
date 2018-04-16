@@ -2,7 +2,7 @@
 #define UMHBM_STATS_H
 
 /*! \class stats
-*   \brief stats is a class which includes some statictics functionality
+* \brief stats is a class which includes some statictics functionality
 *	
 */
 struct stats
@@ -48,7 +48,7 @@ struct stats
      * \returns The the position of the smallest element
      */
     template <typename T>
-    inline int min_at(T const *idata, int const nSize)
+    inline int minelement_index(T const *idata, int const nSize)
     {
         return (int)std::distance(idata, std::min_element(idata, idata + nSize));
     }
@@ -63,7 +63,7 @@ struct stats
      * \returns The the position of the greatest element
      */
     template <typename T>
-    inline int max_at(T const *idata, int const nSize)
+    inline int maxelement_index(T const *idata, int const nSize)
     {
         return (int)std::distance(idata, std::max_element(idata, idata + nSize));
     }
@@ -97,7 +97,7 @@ struct stats
     template <typename T, typename TOut = double>
     inline TOut mean(T const *idata, const int nSize)
     {
-        return (TOut)sum<T, TOut>(idata, nSize) / nSize;
+        return sum<T, TOut>(idata, nSize) / nSize;
     }
 
     /*!
