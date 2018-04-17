@@ -134,24 +134,24 @@ AC_DEFUN([AX_LAPACK], [
 		fi
 
 		AS_IF([test x"$ac_lapack_path" = x], [
-		    # First, check LAPACK_LIBS environment variable
+			#First, check LAPACK_LIBS environment variable
 			if test x"$LAPACK_LIBS" != x; then
 				save_LIBS="$LIBS"; 
 				LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
-                
+
 				AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
 				AC_TRY_LINK_FUNC($cheev, 
 					[ax_lapack_ok=yes], [LAPACK_LIBS=]
 				)
 				AC_MSG_RESULT($ax_lapack_ok)
-                
+
 				LIBS="$save_LIBS"
 				if test x"$ax_lapack_ok" = xno; then
 					LAPACK_LIBS=
 				fi
 			fi
 		], [
-            # if the user provides the DIR root directory for LAPACK, we search that first
+			# if the user provides the DIR root directory for LAPACK, we search that first
 			for ac_lapack_path_tmp in $ac_lapack_path ; do
 				if test -d "$ac_lapack_path_tmp/lib" && test -r "$ac_lapack_path_tmp/lib" ; then
 					lapack_LDFLAGS+=" -L$ac_lapack_path_tmp/lib"
@@ -162,12 +162,12 @@ AC_DEFUN([AX_LAPACK], [
 					break;
 				fi
 			done        
-            
-            LDFLAGS+=" $lapack_LDFLAGS $LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
-				
+
+			LDFLAGS+=" $lapack_LDFLAGS $LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+
 			save_LIBS="$LIBS"; 
 			LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
-				
+
 			AC_MSG_CHECKING([for $cheev])
 			AC_TRY_LINK_FUNC($cheev, [
 					ax_lapack_ok=yes
@@ -180,26 +180,26 @@ AC_DEFUN([AX_LAPACK], [
 			)
 			AC_MSG_RESULT($ax_lapack_ok)
 
-            # LAPACK in the user provided DIR does not work
-            if test x"$ax_lapack_ok" = xno; then
-                # check LAPACK_LIBS environment variable
-			    if test x"$LAPACK_LIBS" != x; then
-				    LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
-                
-				    AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
-				    AC_TRY_LINK_FUNC($cheev, 
-					    [ax_lapack_ok=yes], [LAPACK_LIBS=]
-				    )
-				    AC_MSG_RESULT($ax_lapack_ok)
-                
-				    LIBS="$save_LIBS"
-				    if test x"$ax_lapack_ok" = xno; then
-					    LAPACK_LIBS=
-				    fi
-                else
-                    LAPACK_LIBS=
-			    fi
-            fi
+			# LAPACK in the user provided DIR does not work
+			if test x"$ax_lapack_ok" = xno; then
+				# check LAPACK_LIBS environment variable
+				if test x"$LAPACK_LIBS" != x; then
+					LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+
+					AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
+					AC_TRY_LINK_FUNC($cheev, 
+						[ax_lapack_ok=yes], [LAPACK_LIBS=]
+					)
+					AC_MSG_RESULT($ax_lapack_ok)
+
+					LIBS="$save_LIBS"
+					if test x"$ax_lapack_ok" = xno; then
+						LAPACK_LIBS=
+					fi
+				else
+					LAPACK_LIBS=
+				fi
+			fi
 		])
 
 		# LAPACK linked to by default?  (is sometimes included in BLAS lib)
