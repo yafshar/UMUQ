@@ -124,14 +124,12 @@ AC_DEFUN([AX_LAPACK], [
 	AS_IF([test x"$ac_lapack_path" = no], [], [ 
 		AC_MSG_NOTICE(LAPACK)
 
+		AC_PREREQ(2.50)
+		AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
+		AC_REQUIRE([AC_CANONICAL_HOST])
+
 		# Get fortran linker name of LAPACK function to check for.
 		AC_F77_FUNC(cheev)
-
-		# We cannot use LAPACK if BLAS is not found
-		if test x"$ax_blas_ok" != xyes; then
-			ax_lapack_ok=noblas
-			LAPACK_LIBS=
-		fi
 
 		AS_IF([test x"$ac_lapack_path" = x], [
 			#First, check LAPACK_LIBS environment variable
@@ -154,16 +152,16 @@ AC_DEFUN([AX_LAPACK], [
 			# if the user provides the DIR root directory for LAPACK, we search that first
 			for ac_lapack_path_tmp in $ac_lapack_path ; do
 				if test -d "$ac_lapack_path_tmp/lib" && test -r "$ac_lapack_path_tmp/lib" ; then
-					lapack_LDFLAGS+=" -L$ac_lapack_path_tmp/lib"
+					lapack_LDFLAGS=" -L$ac_lapack_path_tmp/lib"
 					break;
 				fi
 				if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
-					lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
+					lapack_LDFLAGS=" -L$ac_lapack_path_tmp"
 					break;
 				fi
 			done        
 
-			LDFLAGS+=" $lapack_LDFLAGS $LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+			LDFLAGS+=" $lapack_LDFLAGS"
 
 			save_LIBS="$LIBS"; 
 			LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
