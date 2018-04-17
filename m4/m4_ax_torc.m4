@@ -124,7 +124,7 @@ AC_DEFUN([AX_TORC], [
 					save_CC="$CC"
 					AS_IF([test x"$ax_mpi_ok" = xyes], [CC="$MPICC"])
 					AC_LANG_PUSH([C])
-					(cd "$torc_PATH" && autoreconf -i && ./configure && make)
+					(cd "$torc_PATH" && autoreconf -i && ./configure CC=$MPICC F77=$MPIFC && make)
 					torc_LDFLAGS=" -L$torc_PATH"'/src'
 					AC_LANG_POP([C])
 					CC="$save_CC"
