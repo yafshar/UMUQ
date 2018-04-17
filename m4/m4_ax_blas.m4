@@ -91,81 +91,35 @@ AC_DEFUN([AX_BLAS], [
 	)
 	
 	AC_ARG_WITH([blaslib],
-		AS_HELP_STRING([--with-blaslib@<:@=lib@:>@], [use BLAS library (default is yes)])
+		AS_HELP_STRING([--with-blaslib@<:@=lib@:>@], [use BLAS library (default is yes)]),
+		[
+			if test x"$withval" = xno ; then
+				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
+			elif test x"$withval" = xyes ; then
+				with-blaslib=yes
+			elif test x"$withval" != x ; then
+				with-blaslib="$withval"
+			else
+				with-blaslib=yes
+			fi
+		], [
+			 with-blaslib=yes
+		]
 	)
 
-	LDFLAGS_SAVED="$LDFLAGS"
-
-	blas_LDFLAGS=
 
 	case $with_blaslib in
-	yes | "")
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-					fi
-				done
-			]
-		)
-		;;
-	no) 
-		ac_blas_path=no 
-		;;
-	-* | */* | *.a | *.so | *.so.* | *.o) 
-		BLAS_LIBS="$with_blaslib"
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-					fi
-				done
-			]
-		)
-		;;
-	*) 
-		BLAS_LIBS="-l$with_blaslib" 
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						if test -f "$ac_blas_path_tmp/$with_blaslib.a" && test -r "$ac_blas_path_tmp/$with_blaslib.a"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib.so" && test -r "$ac_blas_path_tmp/$with_blaslib.so"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib.o" && test -r "$ac_blas_path_tmp/$with_blaslib.o"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib" && test -r "$ac_blas_path_tmp/$with_blaslib"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-					fi
-				done
-				AS_IF([test x"$blas_LDFLAGS" = x], 
-					[
-						for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-							if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-								blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							fi
-						done
-					]
-				)
-			]
-		)
-		;;
+	yes) ;;
+	-* | */* | *.a | *.so | *.so.* | *.o) BLAS_LIBS="$with_blaslib" ;;
+	*) BLAS_LIBS="-l$with_blaslib" ;;
 	esac
+
+	LDFLAGS_SAVED="$LDFLAGS"
+	blas_LDFLAGS=
 
 	ax_blas_ok=no
 
-	dnl if the user does not provide the DIR root directory for BLAS, we search the default PATH
+	# if the user does not provide the DIR root directory for BLAS, we search the default PATH
 	AS_IF([test x"$ac_blas_path" = no], [], [ 
 		AC_MSG_NOTICE(BLAS)
 		
@@ -181,25 +135,25 @@ AC_DEFUN([AX_BLAS], [
 		LIBS="$LIBS $FLIBS"
 
 		AS_IF([test x"$ac_blas_path" = x], [], [
-				LDFLAGS+=" $blas_LDFLAGS"
-				LDFLAGS+=" $BLAS_LIBS"
+			# First check BLAS_LIBS environment variables
+			LDFLAGS+=" $blas_LDFLAGS"
+			LDFLAGS+=" $BLAS_LIBS"
 				
-				save_LIBS="$LIBS"; 
-				LIBS="$BLAS_LIBS $LIBS"
+			save_LIBS="$LIBS"; 
+			LIBS="$BLAS_LIBS $LIBS"
 				
-				AC_MSG_CHECKING([for $sgemm])
-				AC_TRY_LINK_FUNC($sgemm, [
-						ax_blas_ok=yes
-						AC_SUBST(LDFLAGS)
-						AC_SUBST(LIBS)
-					], [
-						LDFLAGS="$LDFLAGS_SAVED"
-						LIBS="$save_LIBS"
-					]
-				)
-				AC_MSG_RESULT($ax_blas_ok)			
+			AC_MSG_CHECKING([for $sgemm])
+			AC_TRY_LINK_FUNC($sgemm, [
+				ax_blas_ok=yes
+				AC_SUBST(LDFLAGS)
+				AC_SUBST(LIBS)
+			], [
+				LDFLAGS="$LDFLAGS_SAVED"
+				LIBS="$save_LIBS"
 			]
-		)
+			)
+			AC_MSG_RESULT($ax_blas_ok)			
+		])
 		
 		# First, check BLAS_LIBS environment variable
 		if test x"$ax_blas_ok" = xno; then
@@ -209,7 +163,7 @@ AC_DEFUN([AX_BLAS], [
 				
 				AC_MSG_CHECKING([for $sgemm in $BLAS_LIBS])
 				AC_TRY_LINK_FUNC($sgemm, 
-					[ax_blas_ok=yes], [BLAS_LIBS=""]
+					[ax_blas_ok=yes], [BLAS_LIBS=]
 				)
 				AC_MSG_RESULT($ax_blas_ok)
 
