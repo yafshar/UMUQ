@@ -82,26 +82,33 @@ AC_DEFUN([AX_LAPACK], [
 				AC_MSG_ERROR([ Unable to continue without the LAPACK library !])
 				ac_lapack_path=no
 			elif test x"$withval" = xyes ; then
-				ac_lapack_path=""
+				ac_lapack_path=
 			elif test x"$withval" != x ; then
 				ac_lapack_path="$withval"
 			else
-				ac_lapack_path=""
+				ac_lapack_path=
 			fi
 		], [
-			ac_lapack_path=""
+			ac_lapack_path=
 		]
 	)
 	
-	AC_ARG_WITH(lapacklib,
-		[AS_HELP_STRING([--with-lapacklib@<:@=lib@:>@], [use LAPACK library (default is yes)])]
+	AC_ARG_WITH([lapacklib],
+		AS_HELP_STRING([--with-lapacklib@<:@=lib@:>@], [use LAPACK library (default is yes)]), 
+        [
+			if test x"$withval" = xno ; then
+				AC_MSG_ERROR([ Unable to continue without the LAPACK library !])
+			fi
+        ], [
+			with_lapacklib=yes
+		]
 	)
 
 	LDFLAGS_SAVED="$LDFLAGS"
 
-	lapack_LDFLAGS=""
+	lapack_LDFLAGS=
 
-	case $with_lapack in
+	case $with_lapacklib in
 	yes | "")
 		AS_IF([test x"$ac_lapack_path" = x], [], 
 			[
@@ -117,7 +124,7 @@ AC_DEFUN([AX_LAPACK], [
 		ac_lapack_path=no 
 		;;
 	-* | */* | *.a | *.so | *.so.* | *.o) 
-		LAPACK_LIBS="$with_lapack"
+		LAPACK_LIBS="$with_lapacklib"
 		AS_IF([test x"$ac_lapack_path" = x], [], 
 			[
 				for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
@@ -129,38 +136,14 @@ AC_DEFUN([AX_LAPACK], [
 		)
 		;;
 	*)
-		LAPACK_LIBS="-l$with_lapack" 
+		LAPACK_LIBS="-l$with_lapacklib" 
 		AS_IF([test x"$ac_lapack_path" = x], [], 
 			[
 				for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
 					if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
-						if test -f "$ac_lapack_path_tmp/$with_lapack.a" && test -r "$ac_lapack_path_tmp/$with_lapack.a"; then 
-							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
-							break;
-						fi
-						if test -f "$ac_lapack_path_tmp/$with_lapack.so" && test -r "$ac_lapack_path_tmp/$with_lapack.so"; then 
-							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
-							break;
-						fi
-						if test -f "$ac_lapack_path_tmp/$with_lapack.o" && test -r "$ac_lapack_path_tmp/$with_lapack.o"; then 
-							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
-							break;
-						fi
-						if test -f "$ac_lapack_path_tmp/$with_lapack" && test -r "$ac_lapack_path_tmp/$with_lapack"; then 
-							lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
-							break;
-						fi
+						lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
 					fi
 				done
-				AS_IF([test x"$lapack_LDFLAGS" = x], 
-					[
-						for ac_lapack_path_tmp in $ac_lapack_path $ac_lapack_path/lib ; do
-							if test -d "$ac_lapack_path_tmp" && test -r "$ac_lapack_path_tmp" ; then
-								lapack_LDFLAGS+=" -L$ac_lapack_path_tmp"
-							fi
-						done
-					]
-				)
 			]
 		)
 		;;
@@ -178,7 +161,7 @@ AC_DEFUN([AX_LAPACK], [
 		# We cannot use LAPACK if BLAS is not found
 		if test x"$ax_blas_ok" != xyes; then
 			ax_lapack_ok=noblas
-			LAPACK_LIBS=""
+			LAPACK_LIBS=
 		fi
 
 		AS_IF([test x"$ac_lapack_path" = x], [
@@ -189,13 +172,13 @@ AC_DEFUN([AX_LAPACK], [
                 
 					AC_MSG_CHECKING([for $cheev in $LAPACK_LIBS])
 					AC_TRY_LINK_FUNC($cheev, 
-						[ax_lapack_ok=yes], [LAPACK_LIBS=""]
+						[ax_lapack_ok=yes], [LAPACK_LIBS=]
 					)
 					AC_MSG_RESULT($ax_lapack_ok)
                 
 					LIBS="$save_LIBS"
 					if test x"$ax_lapack_ok" = xno; then
-						LAPACK_LIBS=""
+						LAPACK_LIBS=
 					fi
 				fi
 			], [
@@ -213,7 +196,7 @@ AC_DEFUN([AX_LAPACK], [
 					], [
 						LDFLAGS="$LDFLAGS_SAVED"
 						LIBS="$save_LIBS"
-						LAPACK_LIBS=""
+						LAPACK_LIBS=
 					]
 				)
 				AC_MSG_RESULT($ax_lapack_ok)			
