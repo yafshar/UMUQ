@@ -144,6 +144,35 @@ AC_DEFUN([AX_MPI], [
 				]
 			)
 
+			AC_REQUIRE([AC_PROG_FC])
+			AC_ARG_VAR(MPIFC, [MPI Fortran compiler command])
+			MPIFC=
+			for ac_prog_fc_tmp in mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c ; do
+				AS_VAR_IF(MPIFC, ["$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+				AS_VAR_IF(FC, ["$ac_mpi_bin"'/'"$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPIFC" = x; then
+				AC_CHECK_PROGS(MPIFC, mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, [no], [$PATH])
+			fi
+			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
+				[		
+					ax_mpi_save_FC="$FC"
+					if test -x "$ac_mpi_bin"'/'"$MPIFC"; then
+						MPIFC="$ac_mpi_bin"'/'"$MPIFC"
+					fi
+					FC="$MPIFC"	
+					AC_SUBST(MPIFC)
+				]
+			)
+
 			AC_LANG_PUSH([C++])
 			if test x"$MPILIBS" = x; then
 				AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])
@@ -222,6 +251,27 @@ AC_DEFUN([AX_MPI], [
 				]
 			)
 
+			AC_REQUIRE([AC_PROG_FC])
+			AC_ARG_VAR(MPIFC, [MPI Fortran compiler command])
+			MPIFC=
+			for ac_prog_fc_tmp in mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c ; do
+				AS_VAR_IF(FC, ["$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPIFC" = x; then
+				AC_CHECK_PROGS(MPIFC, mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, [no])
+			fi
+			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
+				[
+					ax_mpi_save_FC="$FC"
+					FC="$MPIFC"
+					AC_SUBST(MPIFC)
+				]
+			)
+
 			AC_LANG_PUSH([C++])
 			if test x"$MPILIBS" = x; then
 				AC_CHECK_FUNC(MPI_Init, [MPILIBS=" "])
@@ -259,12 +309,18 @@ AC_DEFUN([AX_MPI], [
 
 		CC="$ax_mpi_save_CC"
 		CXX="$ax_mpi_save_CXX"
+		FC="$ax_mpi_save_FC"
 
 		AC_SUBST(MPILIBS)
 
 		# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 		if test x"$MPILIBS" != x; then
 			ax_mpi_ok="yes"
+			AC_SUBST(CC,["$MPICC"])
+			AC_SUBST(CXX,["$MPICXX"])
+			AC_SUBST(FC,["$MPIFC"])
+			CPP=
+			AX_PROG_CPP_CORRECTION
 			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 			:
 		fi
