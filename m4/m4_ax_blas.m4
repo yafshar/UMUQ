@@ -96,17 +96,20 @@ AC_DEFUN([AX_BLAS], [
 			if test x"$withval" = xno ; then
 				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
 			elif test x"$withval" = xyes ; then
-				with-blaslib=yes
+				with_blaslib=yes
 			elif test x"$withval" != x ; then
-				with-blaslib="$withval"
+				if test -d "$withval" && test -r "$withval" ; then
+                    break;
+                else
+                    with_blaslib=yes
+                fi
 			else
-				with-blaslib=yes
+				with_blaslib=yes
 			fi
 		], [
-			 with-blaslib=yes
+			 with_blaslib=yes
 		]
 	)
-
 
 	case $with_blaslib in
 	yes) ;;
