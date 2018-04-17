@@ -422,10 +422,10 @@ class Lognormrnd
     std::lognormal_distribution<T> d;
 };
 
-/*!
+/*! \class mvnormdist
  * \brief Multivariate normal distribution
- * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
- * psrandom object.
+ * This class is based on psrandom object seeded engine. 
+ * So to use this object there should be an instance of psrandom object.
  *
  * \tparam TM the type of the Matrix
  * \tparam TV the type of the Vector
@@ -479,7 +479,7 @@ class mvnormdist
     std::normal_distribution<T> d;
 };
 
-/*!
+/*! \class Mvnormdist
  * \brief Multivariate normal distribution
  * This class is independent.
  *
