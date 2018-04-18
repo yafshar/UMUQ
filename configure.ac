@@ -3,13 +3,12 @@
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 #
+AC_PREREQ([2.69])
 
 AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
 
 # AC_COPYRIGHT(Copyright 2018 University of Michigan)
 # AC_REVISION([$Revision: 1.00 $])
-
-AC_PREREQ([2.69])
 
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
@@ -17,6 +16,7 @@ AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
 # 
 m4_include([m4/m4_ax_prog.m4])
+m4_include([m4/m4_ax_arch.m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
 m4_include([m4/m4_ax_mpi.m4])
 m4_include([m4/m4_ax_pthread.m4])
@@ -36,24 +36,8 @@ AC_MSG_RESULT(---------------------------------------------)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AS_IF([test "$host" != "$target"],
-	[
-		AC_MSG_WARN([Cross-compile detected])
-		AC_MSG_WARN([Proceed at your own risk!])
-	]
-)
-
-# Check for architectures with no support
-case "${host}" in
-	powerpc-*|powerpc64-*|ppc-*)
-	AC_MSG_ERROR([Big endian PPC is not supported.])
-	;;
-esac
-case "${target}" in
-	powerpc-*|powerpc64-*|ppc-*)
-	AC_MSG_ERROR([Big endian PPC is no longer supported.])
-	;;
-esac
+# Check for architectures
+AX_ARCH
 
 AC_CONFIG_HEADERS(src/umhbm_config.h)
 
