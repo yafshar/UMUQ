@@ -14,23 +14,24 @@
 #
 #	To link with BLAS, you should link with:
 #
-#	$BLAS_LIBS $LIBS $FLIBS
+#	$BLAS_LIBS $LIBS $FCLIBS
 #
-#	in that order. FLIBS is the output variable of the
-#	AC_F77_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
-#	sometimes necessary in order to link with F77 libraries. Users will also
-#	need to use AC_F77_DUMMY_MAIN (see the autoconf manual), for the same
+#	in that order. FCLIBS is the output variable of the
+#	AC_FC_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
+#	sometimes necessary in order to link with FC libraries. Users will also
+#	need to use AC_FC_DUMMY_MAIN (see the autoconf manual), for the same
 #	reason.
 #
 #	Many libraries are searched for, from ATLAS to CXML to ESSL. The user
-#	may also use --with-blas=<lib> in order to use some specific BLAS
+#	may also use --with-blaslib=<lib> in order to use some specific BLAS
 #	library <lib>. In order to link successfully, however, be aware that you
 #	will probably need to use the same Fortran compiler (which can be set
-#	via the F77 env. var.) as was used to compile the BLAS library.
+#	via the FC env. var.) as was used to compile the BLAS library.
 #
 #	ACTION-IF-FOUND is a list of shell commands to run if a BLAS library is
-#	found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it is
-#	not found. If ACTION-IF-FOUND is not specified, the default action will
+#	found, and ACTION-IF-NOT-FOUND it stops with an Error message of
+#	not found (Unable to continue without the BLAS library !)
+#	If ACTION-IF-FOUND is not specified, the default action will
 #	define HAVE_BLAS.
 #
 # LICENSE
@@ -144,7 +145,7 @@ AC_DEFUN([AX_BLAS], [
 		AC_FC_FUNC(dgemm)
 
 		ax_blas_save_LIBS="$LIBS"
-		LIBS="$LIBS $FLIBS"
+		LIBS="$LIBS $FCLIBS"
 
 		# First check BLAS_PATH & BLAS_LIBS environment variables
 		AS_IF([test x"$ac_blas_path" != x], [
@@ -389,7 +390,7 @@ AC_DEFUN([AX_BLAS], [
 							ax_blas_ok=yes
 							BLAS_LIBS='-lessl -lblas'
 						], [], [
-							-lblas $FLIBS
+							-lblas $FCLIBS
 						]
 					)
 				]

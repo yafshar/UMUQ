@@ -11,27 +11,28 @@
 #	This macro looks for a library that implements the LAPACK linear-algebra
 #	interface (see http://www.netlib.org/lapack/). On success, it sets the
 #	LAPACK_LIBS output variable to hold the requisite library linkages.
-#	
+#
 #	To link with LAPACK, you should link with:
 #	
-#	$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS
+#	$LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS
 #	
 #	in that order. BLAS_LIBS is the output variable of the AX_BLAS macro,
-#	called automatically. FLIBS is the output variable of the
-#	AC_F77_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
-#	sometimes necessary in order to link with F77 libraries. Users will also
-#	need to use AC_F77_DUMMY_MAIN (see the autoconf manual), for the same
+#	called automatically. FCLIBS is the output variable of the
+#	AC_FC_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
+#	sometimes necessary in order to link with FC libraries. Users will also
+#	need to use AC_FC_DUMMY_MAIN (see the autoconf manual), for the same
 #	reason.
 #	
-#	The user may also use --with-lapack=<lib> in order to use some specific
+#	The user may also use --with-lapacklib=<lib> in order to use some specific
 #	LAPACK library <lib>. In order to link successfully, however, be aware
 #	that you will probably need to use the same Fortran compiler (which can
-#	be set via the F77 env. var.) as was used to compile the LAPACK and BLAS
+#	be set via the FC env. var.) as was used to compile the LAPACK and BLAS
 #	libraries.
-#	
+#
 #	ACTION-IF-FOUND is a list of shell commands to run if a LAPACK library
-#	is found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it
-#	is not found. If ACTION-IF-FOUND is not specified, the default action
+#	is found, and ACTION-IF-NOT-FOUND it stops with an Error message of
+#	not found (Unable to continue without the LAPACK library !)
+#	If ACTION-IF-FOUND is not specified, the default action
 #	will define HAVE_LAPACK.
 #
 # LICENSE
@@ -146,13 +147,13 @@ AC_DEFUN([AX_LAPACK], [
 		AC_FC_FUNC(cheev)
 
 		ax_lapack_save_LIBS="$LIBS"
-		LIBS="$LIBS $FLIBS"
+		LIBS="$LIBS $FCLIBS"
 
 		if test x"$ac_lapack_path" != x; then
 			LDFLAGS+="$LAPACK_LDFLAGS $LAPACK_LIBS $BLAS_LDFLAGS $BLAS_LIBS $LIBS"
 
 			save_LIBS="$LIBS"
-			LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+			LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
 
 			AC_MSG_CHECKING([for $cheev])
 			AC_TRY_LINK_FUNC($cheev, [ax_lapack_ok=yes])
@@ -198,7 +199,7 @@ AC_DEFUN([AX_LAPACK], [
 						ax_lapack_ok=yes
 						LAPACK_LIBS="-l$lp"
 					], [], [
-						$FLIBS
+						$FCLIBS
 					]
 				)
 				LIBS="$save_LIBS"
@@ -237,7 +238,7 @@ AC_DEFUN([AX_LAPACK], [
 	if test x"$ax_lapack_ok" = xyes; then
 		LDFLAGS+="$LAPACK_LDFLAGS $BLAS_LDFLAGS"
 		AC_SUBST(LDFLAGS)
-		LIBS+="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+		LIBS+="$LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
 		AC_SUBST(LIBS)
 		AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
 		:
