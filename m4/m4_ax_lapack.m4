@@ -210,58 +210,62 @@ AC_DEFUN([AX_LAPACK], [
 
 		LIBS="$ax_lapack_save_LIBS"
 
+		lapacke_CFLAGS=
+		LAPACKE_LDFLAGS=
+		LAPACKE_LIBS=
+
 		if test x"$ax_lapack_ok" = xyes; then
-				AC_MSG_CHECKING([for LAPACKE C API support in specified libraries])
-				echo ""
-				AC_LANG_PUSH([C++])
-				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
-						@%:@include <lapacke.h>
-					]], [[]]
-					)], [
-						AC_MSG_RESULT(checking lapacke.h usability...  yes)
-						AC_MSG_RESULT(checking lapacke.h presence... yes)
-						AC_MSG_RESULT(checking for lapacke.h... yes)
-					], [
-						AC_MSG_RESULT(checking lapacke.h usability...  no)
-						AC_MSG_RESULT(checking lapacke.h presence... no)
-						AC_MSG_RESULT(checking for lapacke.h... no)
-						ax_lapack_ok=no
-					]
-				)
-				AC_LANG_POP([C++])
+			ax_lapacke_ok=no
+			AC_MSG_CHECKING([for LAPACKE C API support in specified libraries])
+			echo ""
+			AC_LANG_PUSH([C++])
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
+					@%:@include <lapacke.h>
+				]], [[]]
+				)], [
+					AC_MSG_RESULT(checking lapacke.h usability...  yes)
+					AC_MSG_RESULT(checking lapacke.h presence... yes)
+					AC_MSG_RESULT(checking for lapacke.h... yes)
+					ax_lapacke_ok=yes
+				]
+			)
+			AC_LANG_POP([C++])
 
-				if test x"$ax_lapack_ok" = xno; then
-					lapacke_CFLAGS=
-					lapacke_LDFLAGS=
-					lapacke_PATH=
-
-					for ac_lapacke_path_tmp in external ; do
-						if !( test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include") ; then
-							sed -i 's/git@github.com:/https:\/\/ya.afshar:36c5f06f9fa292f5d022efa6701e9cb9897507f5@github.com\//' .gitmodules
-							git submodule update --init external/lapacke
+			if test x"$ax_lapacke_ok" = xno; then
+				lapacke_PATH=
+				for ac_lapacke_path_tmp in external ; do
+					if !( test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include") ; then
+						sed -i 's/git@github.com:/https:\/\/ya.afshar:36c5f06f9fa292f5d022efa6701e9cb9897507f5@github.com\//' .gitmodules
+						git submodule update --init external/lapacke
+					fi
+					if test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include" ; then
+						lapacke_PATH=`pwd`
+						lapacke_PATH+='/'"$ac_lapacke_path_tmp"'/lapacke'
+						if test -f "$lapacke_PATH/include/lapacke.h" && test -r "$lapacke_PATH/include/lapacke.h"; then 
+							lapacke_CFLAGS="-I$lapacke_PATH/include"
+							break;
 						fi
-						if test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include" ; then
-							lapacke_PATH=`pwd`
-							lapacke_PATH+='/'"$ac_lapacke_path_tmp"'/lapacke'
-							if test -f "$lapacke_PATH/include/lapacke.h" && test -r "$lapacke_PATH/include/lapacke.h"; then 
-								lapacke_CFLAGS="-I$lapacke_PATH/include"
-								break;
-							fi
-						fi	
-					done
+					fi	
+				done
 
-					CPPFLAGS_SAVED="$CPPFLAGS"
-					LDFLAGS_SAVED="$LDFLAGS"
-					CPPFLAGS+=" $lapacke_CFLAGS"
+				CPPFLAGS_SAVED="$CPPFLAGS"
+				LDFLAGS_SAVED="$LDFLAGS"
 
-					if test x"$lapacke_PATH" != x ; then
-						if test -f "$lapacke_PATH/liblapacke.a" && test -r "$lapacke_PATH/liblapacke.a"; then
-							lapacke_LDFLAGS=" -L$lapacke_PATH"
-						fi
-						if test x"$lapacke_LDFLAGS" = x ; then
-							AC_LANG_PUSH([C])
-							if test yes = "$GCC"; then
-								(cd "$lapacke_PATH" && cat >make.inc <<EOL
+				CPPFLAGS+=" $lapacke_CFLAGS"
+
+				if test x"$lapacke_PATH" != x ; then
+					if test -f "$lapacke_PATH/liblapacke.a" && test -r "$lapacke_PATH/liblapacke.a"; then
+						LAPACKE_LDFLAGS=" -L$lapacke_PATH"
+						LAPACKE_LIBS=' -llapacke'
+						AC_SUBST(LAPACKE_LDFLAGS)
+						AC_SUBST(LAPACKE_LIBS)
+					fi
+					if test x"$LAPACKE_LDFLAGS" = x ; then
+						AC_LANG_PUSH([C])
+						if test "$GCC" = xyes; then
+							CWD_PATH=`pwd`
+							cd "$lapacke_PATH" 
+							cat >make.inc <<EOL
 SHELL           =${SHELL}
 CC              =${CC} 
 CFLAGS          =${CFLAGS}
@@ -277,12 +281,16 @@ RANLIB          =${RANLIB}
 TIMER           =INT_ETIME
 BUILD_DEPRECATED=Yes
 LAPACKELIB      =liblapacke.a
-EOL  && make)
-							else
-								case $cc_basename in
-								xl* | bgxl* | bgf* | mpixl*)
-									# IBM XL C on PPC and BlueGene
-									(cd "$lapacke_PATH" && cat >make.inc <<EOL
+EOL  
+							make
+							cd "$CWD_PATH"
+						else
+							case $cc_basename in
+							xl* | bgxl* | bgf* | mpixl*)
+								CWD_PATH=`pwd`
+								# IBM XL C on PPC and BlueGene
+								cd "$lapacke_PATH" 
+								cat >make.inc <<EOL
 SHELL           =${SHELL}
 CC              =${CC} 
 CFLAGS          =${CFLAGS} -qstrict -qarch=pwr8 -qtune=pwr8:st
@@ -299,43 +307,56 @@ RANLIB          =${RANLIB}
 TIMER           =EXT_ETIME_
 BUILD_DEPRECATED=Yes
 LAPACKELIB      =liblapacke.a
-EOL  && make)
-									;;
-								esac
-							fi
-							lapacke_LDFLAGS=" -L$lapacke_PATH"
-							AC_LANG_POP([C])
+EOL  
+								make
+								cd "$CWD_PATH"
+								;;
+							esac
 						fi
-					fi
+						if test -f "$lapacke_PATH/liblapacke.a" && test -r "$lapacke_PATH/liblapacke.a"; then
+							LAPACKE_LDFLAGS=" -L$lapacke_PATH"
+							LAPACKE_LIBS=' -llapacke'
+							AC_SUBST(LAPACKE_LDFLAGS)
+							AC_SUBST(LAPACKE_LIBS)
+						fi
+						AC_LANG_POP([C])
+					fi 
 				fi
+			fi
 
-				AC_MSG_CHECKING([for LAPACKE C API support in specified libraries])
-				echo ""
-				AC_LANG_PUSH([C++])
-				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
-						@%:@include <lapacke.h>
-					]], [[]]
-					)], [
-						AC_MSG_RESULT(checking lapacke.h usability...  yes)
-						AC_MSG_RESULT(checking lapacke.h presence... yes)
-						AC_MSG_RESULT(checking for lapacke.h... yes)
-					], [
-						AC_MSG_RESULT(checking lapacke.h usability...  no)
-						AC_MSG_RESULT(checking lapacke.h presence... no)
-						AC_MSG_RESULT(checking for lapacke.h... no)
-						AC_MSG_ERROR([ Unable to continue without the LAPACKE C API support !])
-						ax_lapack_ok=no
-					]
-				)
-				AC_LANG_POP([C++])
+			AC_MSG_CHECKING([for LAPACKE C API support])
+			echo ""
+			AC_LANG_PUSH([C++])
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
+					@%:@include <lapacke.h>
+				]], [[]]
+				)], [
+					AC_MSG_RESULT(checking lapacke.h usability...  yes)
+					AC_MSG_RESULT(checking lapacke.h presence... yes)
+					AC_MSG_RESULT(checking for lapacke.h... yes)
+				], [
+					AC_MSG_RESULT(checking lapacke.h usability...  no)
+					AC_MSG_RESULT(checking lapacke.h presence... no)
+					AC_MSG_RESULT(checking for lapacke.h... no)
+					AC_MSG_ERROR([ Unable to continue without the LAPACKE C API support !])
+					ax_lapack_ok=no
+				]
+			)
+			AC_LANG_POP([C++])
+
+			LDFLAGS="$LDFLAGS_SAVED"
+			CPPFLAGS="$CPPFLAGS_SAVED"
+		fi
 	])
 
 	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 	if test x"$ax_lapack_ok" = xyes; then
-		LDFLAGS+="$LAPACK_LDFLAGS $BLAS_LDFLAGS"
+		LDFLAGS+="$LAPACKE_LDFLAGS $LAPACK_LDFLAGS $BLAS_LDFLAGS"
 		AC_SUBST(LDFLAGS)
-		LIBS+="$LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
+		LIBS+="$LAPACKE_LIBS $LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
 		AC_SUBST(LIBS)
+		CPPFLAGS+=" $lapacke_CFLAGS"
+		AC_SUBST(CPPFLAGS)
 		AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
 		:
 	fi
