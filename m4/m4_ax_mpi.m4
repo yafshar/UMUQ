@@ -316,11 +316,8 @@ AC_DEFUN([AX_MPI], [
 		# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 		if test x"$MPILIBS" != x; then
 			ax_mpi_ok="yes"
-			AC_SUBST(CC,["$MPICC"])
-			AC_SUBST(CXX,["$MPICXX"])
-			AC_SUBST(FC,["$MPIFC"])
-			CPP=
-			AX_PROG_CPP_CORRECTION
+			#substitute the default compiler and preprocessor
+			AX_PROG_SUBSTITUTE
 			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 			:
 		fi

@@ -82,8 +82,8 @@ AC_DEFUN([AX_PTHREAD], [
 		AC_TRY_LINK_FUNC(pthread_join, ax_pthread_ok=yes) 
 		AC_MSG_RESULT($ax_pthread_ok)
 		if test x"$ax_pthread_ok" = xno; then
-			PTHREAD_LIBS=""
-			PTHREAD_CFLAGS=""
+			PTHREAD_LIBS=
+			PTHREAD_CFLAGS=
 		fi
 		LIBS="$save_LIBS"
 		CFLAGS="$save_CFLAGS"
@@ -180,8 +180,8 @@ AC_DEFUN([AX_PTHREAD], [
 				break;
 			fi
 
-			PTHREAD_LIBS=""
-			PTHREAD_CFLAGS=""
+			PTHREAD_LIBS=
+			PTHREAD_CFLAGS=
 		done
 	fi
 
