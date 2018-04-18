@@ -141,7 +141,6 @@ AC_DEFUN([AX_LAPACK], [
 		AC_MSG_NOTICE(LAPACK)
 
 		AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
-		AC_REQUIRE([AC_CANONICAL_HOST])
 
 		# Get fortran linker name of LAPACK function to check for.
 		AC_FC_FUNC(cheev)
