@@ -79,29 +79,29 @@ AC_DEFUN([AX_BLAS], [
 				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
 			elif test x"$withval" = xyes ; then
 				ac_blas_path=
-				blas_LDFLAGS=
+				BLAS_LDFLAGS=
 			elif test x"$withval" != x ; then
 				ac_blas_path="$withval"
-				blas_LDFLAGS=
+				BLAS_LDFLAGS=
 
 				# if the user provides the DIR root directory for BLAS, we check that first
 				for ac_blas_path_tmp in $ac_blas_path ; do
 					if test -d "$ac_blas_path_tmp/lib" && test -r "$ac_blas_path_tmp/lib" ; then
-						blas_LDFLAGS=" -L$ac_blas_path_tmp/lib"
+						BLAS_LDFLAGS=" -L$ac_blas_path_tmp/lib"
 						break;
 					fi
 					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						blas_LDFLAGS=" -L$ac_blas_path_tmp"
+						BLAS_LDFLAGS=" -L$ac_blas_path_tmp"
 						break;
 					fi
 				done 
 			else
 				ac_blas_path=
-				blas_LDFLAGS=
+				BLAS_LDFLAGS=
 			fi
 		], [
 			ac_blas_path=
-			blas_LDFLAGS=
+			BLAS_LDFLAGS=
 		]
 	)
 	
@@ -135,34 +135,30 @@ AC_DEFUN([AX_BLAS], [
 	# if the user does not provide the DIR root directory for BLAS, we search the default PATH
 	AS_IF([test x"$ac_blas_path" != xno], [ 
 		AC_MSG_NOTICE(BLAS)
-		
+
 		AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 		AC_REQUIRE([AC_CANONICAL_HOST])
 
 		# Get fortran linker names of BLAS functions to check for.
 		AC_FC_FUNC(sgemm)
 		AC_FC_FUNC(dgemm)
-		
+
 		ax_blas_save_LIBS="$LIBS"
 		LIBS="$LIBS $FLIBS"
 
 		# First check BLAS_PATH & BLAS_LIBS environment variables
 		AS_IF([test x"$ac_blas_path" != x], [
-			LDFLAGS+="$blas_LDFLAGS $BLAS_LIBS $LIBS"
+			LDFLAGS+="$BLAS_LDFLAGS $BLAS_LIBS $LIBS"
 
 			save_LIBS="$LIBS"; 
 			LIBS="$BLAS_LIBS $LIBS"
 				
 			AC_MSG_CHECKING([for $sgemm])
-			AC_TRY_LINK_FUNC($sgemm, [
-				ax_blas_ok=yes
-				AC_SUBST(LDFLAGS)
-				AC_SUBST(LIBS)
-			], [
-				LDFLAGS="$LDFLAGS_SAVED"
-				LIBS="$save_LIBS"
-			])
-			AC_MSG_RESULT($ax_blas_ok)			
+			AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
+			AC_MSG_RESULT($ax_blas_ok)
+
+			LIBS="$save_LIBS"
+			LDFLAGS="$LDFLAGS_SAVED"
 		])
 
 		# Check BLAS_LIBS 
@@ -172,16 +168,10 @@ AC_DEFUN([AX_BLAS], [
 				LIBS="$BLAS_LIBS $LIBS"
 
 				AC_MSG_CHECKING([for $sgemm in $BLAS_LIBS])
-				AC_TRY_LINK_FUNC($sgemm, 
-					[
-						ax_blas_ok=yes
-						AC_SUBST(LIBS)
-					], [
-						BLAS_LIBS=
-						LIBS="$save_LIBS"
-					]
-				)
+				AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes], [BLAS_LIBS=])
 				AC_MSG_RESULT($ax_blas_ok)
+
+				LIBS="$save_LIBS"
 			fi
 		fi
 
@@ -191,9 +181,7 @@ AC_DEFUN([AX_BLAS], [
 			LIBS="$LIBS"
 
 			AC_MSG_CHECKING([if $sgemm is being linked in already])
-			AC_TRY_LINK_FUNC($sgemm, 
-				[ax_blas_ok=yes]
-			)
+			AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
 			AC_MSG_RESULT($ax_blas_ok)
 
 			LIBS="$save_LIBS"
@@ -419,6 +407,7 @@ AC_DEFUN([AX_BLAS], [
 		fi
 
 		AC_SUBST(BLAS_LIBS)
+		AC_SUBST(BLAS_LDFLAGS)
 
 		LIBS="$ax_blas_save_LIBS"
 	])
