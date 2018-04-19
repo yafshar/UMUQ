@@ -1,6 +1,4 @@
-#include <iostream>
-#include <cmath>
-
+#include "core/core.hpp"
 #include "numerics/polynomial.hpp"
 #include "gtest/gtest.h"
 
