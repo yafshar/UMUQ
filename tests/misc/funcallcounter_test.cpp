@@ -3,7 +3,7 @@
 #include "misc/funcallcounter.hpp"
 #include "gtest/gtest.h"
 
-class MPIEnvironment : public ::testing::Environment
+class TORCEnvironment : public ::testing::Environment
 {
   public:
     virtual void SetUp()
@@ -25,7 +25,7 @@ class MPIEnvironment : public ::testing::Environment
         torc_finalize();
     }
 
-    virtual ~MPIEnvironment() {}
+    virtual ~TORCEnvironment() {}
 };
 
 funcallcounter f;
@@ -74,7 +74,7 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new MPIEnvironment);
+    ::testing::AddGlobalTestEnvironment(new TORCEnvironment);
 
     return RUN_ALL_TESTS();
 }

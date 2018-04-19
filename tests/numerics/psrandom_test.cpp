@@ -4,7 +4,7 @@
 #include "numerics/psrandom.hpp"
 #include "gtest/gtest.h"
 
-class MPIEnvironment : public ::testing::Environment
+class TORCEnvironment : public ::testing::Environment
 {
   public:
     virtual void SetUp()
@@ -26,7 +26,7 @@ class MPIEnvironment : public ::testing::Environment
         torc_finalize();
     }
 
-    virtual ~MPIEnvironment() {}
+    virtual ~TORCEnvironment() {}
 };
 
 /*! 
@@ -41,7 +41,7 @@ TEST(random_test, HandlesRandoms)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new MPIEnvironment);
-    
+    ::testing::AddGlobalTestEnvironment(new TORCEnvironment);
+
     return RUN_ALL_TESTS();
 }
