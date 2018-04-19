@@ -322,30 +322,30 @@ EOL
 						AC_LANG_POP([C])
 					fi 
 				fi
+
+				AC_MSG_CHECKING([for LAPACKE C API support])
+				echo ""
+				AC_LANG_PUSH([C++])
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
+						@%:@include <lapacke.h>
+					]], [[]]
+					)], [
+						AC_MSG_RESULT(checking lapacke.h usability...  yes)
+						AC_MSG_RESULT(checking lapacke.h presence... yes)
+						AC_MSG_RESULT(checking for lapacke.h... yes)
+					], [
+						AC_MSG_RESULT(checking lapacke.h usability...  no)
+						AC_MSG_RESULT(checking lapacke.h presence... no)
+						AC_MSG_RESULT(checking for lapacke.h... no)
+						AC_MSG_ERROR([ Unable to continue without the LAPACKE C API support !])
+						ax_lapack_ok=no
+					]
+				)
+				AC_LANG_POP([C++])
+
+				LDFLAGS="$LDFLAGS_SAVED"
+				CPPFLAGS="$CPPFLAGS_SAVED"
 			fi
-
-			AC_MSG_CHECKING([for LAPACKE C API support])
-			echo ""
-			AC_LANG_PUSH([C++])
-			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
-					@%:@include <lapacke.h>
-				]], [[]]
-				)], [
-					AC_MSG_RESULT(checking lapacke.h usability...  yes)
-					AC_MSG_RESULT(checking lapacke.h presence... yes)
-					AC_MSG_RESULT(checking for lapacke.h... yes)
-				], [
-					AC_MSG_RESULT(checking lapacke.h usability...  no)
-					AC_MSG_RESULT(checking lapacke.h presence... no)
-					AC_MSG_RESULT(checking for lapacke.h... no)
-					AC_MSG_ERROR([ Unable to continue without the LAPACKE C API support !])
-					ax_lapack_ok=no
-				]
-			)
-			AC_LANG_POP([C++])
-
-			LDFLAGS="$LDFLAGS_SAVED"
-			CPPFLAGS="$CPPFLAGS_SAVED"
 		fi
 	])
 
@@ -353,13 +353,10 @@ EOL
 	if test x"$ax_lapack_ok" = xyes; then
 		LDFLAGS+="$LAPACKE_LDFLAGS $LAPACK_LDFLAGS $BLAS_LDFLAGS"
 		AC_SUBST(LDFLAGS)
-        echo $LDFLAGS
         LIBS+="$LAPACKE_LIBS $LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
 		AC_SUBST(LIBS)
-        echo $LIBS
 		CPPFLAGS+=" $lapacke_CFLAGS"
 		AC_SUBST(CPPFLAGS)
-        echo $CPPFLAGS
 		AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
 		:
 	fi
