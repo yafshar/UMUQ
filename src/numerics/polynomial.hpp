@@ -300,8 +300,7 @@ void polynomial::monomial_basis(int const d, int const r, int *&alpha)
 template <typename T>
 void polynomial::monomial_value(int const d, int const r, int *alpha, T *x, T *&value)
 {
-    int n;
-    n = polynomial::binomial_coefficient(d + r, r);
+    const int n = polynomial::binomial_coefficient(d + r, r);
 
     T v;
     int k;
