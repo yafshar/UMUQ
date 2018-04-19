@@ -13,10 +13,10 @@
   *  - \b rowSuffix string printed at the end of each row
   *
   */
-struct IOFormat
+struct ioFormat
 {
-    /** Default constructor, see IOFormat for the meaning of the parameters */
-    IOFormat(const std::string &_coeffSeparator = " ",
+    /** Default constructor, see ioFormat for the meaning of the parameters */
+    ioFormat(const std::string &_coeffSeparator = " ",
              const std::string &_rowSeparator = "\n",
              const std::string &_rowPrefix = "",
              const std::string &_rowSuffix = "") : coeffSeparator(_coeffSeparator),
@@ -923,7 +923,7 @@ class io
     std::ptrdiff_t Width;
 
     //IO format
-    IOFormat fmt;
+    ioFormat fmt;
 };
 
 #endif
