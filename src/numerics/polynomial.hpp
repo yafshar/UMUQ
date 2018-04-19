@@ -1,10 +1,6 @@
 #ifndef UMHBM_POLYNOMIAL_H
 #define UMHBM_POLYNOMIAL_H
 
-#include <iostream>
-#include <cmath>
-#include <cstdlib> //for std::exit
-
 /*! \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *
  *  A (univariate) monomial in 1 variable x is simply any (non-negative integer) power of x:
@@ -18,25 +14,26 @@ class polynomial
     inline polynomial(unsigned int dm);
     inline polynomial(unsigned int dm, unsigned int dg);
 
-    template <typename T>
-    inline T min_value(T a, T b);
-    template <typename T>
-    inline T max_value(T a, T b);
-    template <typename T>
-    inline T arraysum(int arraysize, T *array);
-
-    int binomial_coefficient(int n, int k);
-
-    void monomial_basis(int d, int r, int *&alpha);
+    template <class T>
+    inline T const min_value(T const a, T const b);
+    template <class T>
+    inline T const max_value(T const a, T const b);
 
     template <typename T>
-    void monomial_value(int d, int r, int *alpha, T *x, T *&value);
+    inline T arraysum(int const arraysize, T const *array);
+
+    int binomial_coefficient(int const n, int const k);
+
+    void monomial_basis(int const d, int const r, int *&alpha);
+
+    template <typename T>
+    void monomial_value(int const d, int const r, int *alpha, T *x, T *&value);
 
   private:
     unsigned int dim;
     unsigned int degree;
 
-    void graded_reverse_lexicographic_order(int d, int r, int *x);
+    void graded_reverse_lexicographic_order(int const d, int const r, int *x);
 };
 
 inline polynomial::polynomial(unsigned int dm)
@@ -55,7 +52,7 @@ inline polynomial::polynomial(unsigned int dm, unsigned int dg)
 *   \brief A function that returns the minimum of \a a and \a b.
 */
 template <typename T>
-inline T polynomial::min_value(T a, T b)
+inline T const polynomial::min_value(T const a, T const b)
 {
     if (a > b)
         return b;
@@ -66,7 +63,7 @@ inline T polynomial::min_value(T a, T b)
 *   \brief A function that returns the maximum of \a a and \a b.
 */
 template <typename T>
-inline T polynomial::max_value(T a, T b)
+inline T const polynomial::max_value(T const a, T const b)
 {
     if (b > a)
         return b;
@@ -77,15 +74,9 @@ inline T polynomial::max_value(T a, T b)
 *   \brief A function that returns the sum of an array of arraysize.
 */
 template <typename T>
-inline T polynomial::arraysum(int arraysize, T *array)
+inline T polynomial::arraysum(int const arraysize, T const *array)
 {
-    T sum;
-    sum = 0;
-    for (int i = 0; i < arraysize; i++)
-    {
-        sum += array[i];
-    }
-    return sum;
+    return std::accumulate(array, array + arraysize, 0);
 };
 
 /*! 
@@ -104,7 +95,7 @@ inline T polynomial::arraysum(int arraysize, T *array)
  * @param[in] k
  * @param[out] binomial The binomial coefficient
  */
-int polynomial::binomial_coefficient(int n, int k)
+int polynomial::binomial_coefficient(int const n, int const k)
 {
     if ((k < 0) || (n < 0))
     {
@@ -151,7 +142,7 @@ int polynomial::binomial_coefficient(int n, int k)
  *       @param[in]  x   Current monomial
  *       @param[out] x   Next monomial, last value in the sequence is r.
  */
-void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
+void polynomial::graded_reverse_lexicographic_order(int const d, int const r, int *x)
 {
     if (r < 0)
     {
@@ -253,7 +244,7 @@ void polynomial::graded_reverse_lexicographic_order(int d, int r, int *x)
  *       @param[in]  alpha   Undefined pointer
  *       @param[out] alpha   Pointer to monomial sequence
  */
-void polynomial::monomial_basis(int d, int r, int *&alpha)
+void polynomial::monomial_basis(int const d, int const r, int *&alpha)
 {
     int j;
     int n;
@@ -270,6 +261,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
     }
     catch (std::bad_alloc &e)
     {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -306,7 +298,7 @@ void polynomial::monomial_basis(int d, int r, int *&alpha)
  *       @param[out] value   Monomial_value, the array value of the monomial at point x
  */
 template <typename T>
-void polynomial::monomial_value(int d, int r, int *alpha, T *x, T *&value)
+void polynomial::monomial_value(int const d, int const r, int *alpha, T *x, T *&value)
 {
     int n;
     n = polynomial::binomial_coefficient(d + r, r);
