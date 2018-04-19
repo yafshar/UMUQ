@@ -112,7 +112,7 @@ AC_DEFUN([AX_FLANN], [
 				fi
 				if test x"$flann_LDFLAGS" = x ; then
 					AC_LANG_PUSH([C++])
-					(cd "$flann_PATH" && mkdir -p build && cd build && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$flann_PATH" ../ && make -j 2)
+					(cd "$flann_PATH" && mkdir -p build && cd build && export CC=$CC && export CXX=$CXX && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$flann_PATH" ../ && make -j 2)
 					flann_LDFLAGS=" -L$flann_PATH"'/build/lib'
 					AC_LANG_POP([C++])
 				fi
