@@ -18,7 +18,7 @@ struct psrandom
      * 
      * \param seed Input seed for random number initialization 
      */
-    psrandom(size_t iseed_);
+    psrandom(size_t const &iseed_);
 
     /*!
      *  \brief destructor 
@@ -118,14 +118,14 @@ struct psrandom
      * References : 
      * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
      */
-    void shuffle(int *idata, int nSize)
+    void shuffle(int *idata, int const nSize)
     {
         //Get the thread ID
         int me = torc_i_worker_id();
 
         for (int i = nSize - 1; i > 0; --i)
         {
-            auto idx = saru[me].u32(i);
+            unsigned int idx = saru[me].u32(i);
             std::swap(idata[i], idata[idx]);
         }
     }
@@ -155,7 +155,7 @@ Saru *psrandom::saru = nullptr;
  * 
  * \param seed input seed for random number initialization 
  */
-psrandom::psrandom(size_t const iseed_)
+psrandom::psrandom(size_t const &iseed_)
 {
     psrandom::iseed = iseed_;
 
@@ -188,7 +188,7 @@ void psrandom::init_Task()
     size_t n = nlocalworkers * (node_id + 1);
     for (size_t i = 0; i < nlocalworkers; i++)
     {
-        size_t j = psrandom::iseed + n + i;
+        const size_t j = psrandom::iseed + n + i;
 
         for (size_t k = 0; k < std::mt19937::state_size; k++)
         {
@@ -211,6 +211,7 @@ void psrandom::init_Task()
  */
 bool psrandom::init()
 {
+    //Make sure MPI is initilized
     auto initialized = 0;
     MPI_Initialized(&initialized);
     if (!initialized)
