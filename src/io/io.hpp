@@ -3,16 +3,17 @@
 
 #include "../core/digits10.hpp"
 
-/*! 
-  * \brief Stores a set of parameters controlling the way matrices are printed
-  *
-  * List of available parameters:
-  *  - \b coeffSeparator string printed between two coefficients of the same row
-  *  - \b rowSeparator string printed between two rows
-  *  - \b rowPrefix string printed at the beginning of each row
-  *  - \b rowSuffix string printed at the end of each row
-  *
-  */
+/*! \class ioFormat
+ *
+ * \brief Stores a set of parameters controlling the way matrices are printed
+ *
+ * List of available parameters:
+ *  - \b coeffSeparator string printed between two coefficients of the same row
+ *  - \b rowSeparator   string printed between two rows
+ *  - \b rowPrefix      string printed at the beginning of each row
+ *  - \b rowSuffix      string printed at the end of each row
+ *
+ */
 struct ioFormat
 {
     /** Default constructor, see ioFormat for the meaning of the parameters */
@@ -31,9 +32,17 @@ struct ioFormat
 };
 
 /*! \class io
-*   \brief io is a class which includes some IO functionality.
-*	
-*/
+ * \brief io is a class which includes some IO functionality.
+ *
+ * Available file open flags
+ * - \b app    seek to the end of stream before each write
+ * - \b binary open in binary mode
+ * - \b in     open for reading
+ * - \b out    open for writing
+ * - \b trunc  discard the contents of the stream when opening
+ * - \b ate	   seek to the end of stream immediately after open 
+ * 
+ */
 class io
 {
   public:
@@ -54,12 +63,14 @@ class io
 
     /*!
      * \brief return true if file is opened
+     * \returns true if the file is already opened 
      */
     inline bool isFileOpened() const { return fs.is_open(); }
 
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
      *  
+     * \returns true if the file exists 
      */
     inline bool isFileExist(const char *fileName)
     {
@@ -68,20 +79,21 @@ class io
     }
 
     /*!
-     * \brief Opens the file whose name is specified in the parameter filename 
+     * \brief Opens the file whose name is specified with the parameter filename 
      *  
      * Opens the file whose name is specified in the parameter filename and
      * associates it with a stream that can be identified in future operations 
      * by the FILE pointer returned.inline   
      * 
-     * stream open mode type
+     * Available file open flags
+     * - \b std::fstream::app 	  seek to the end of stream before each write
+     * - \b std::fstream::binary  open in binary mode
+     * - \b std::fstream::in 	  open for reading
+     * - \b std::fstream::out 	  open for writing
+     * - \b std::fstream::trunc   discard the contents of the stream when opening
+     * - \b std::fstream::ate 	  seek to the end of stream immediately after open
      * 
-     * std::fstream::app 	  seek to the end of stream before each write
-     * std::fstream::binary   open in binary mode
-     * std::fstream::in 	  open for reading
-     * std::fstream::out 	  open for writing
-     * std::fstream::trunc 	  discard the contents of the stream when opening
-     * std::fstream::ate 	  seek to the end of stream immediately after open
+     * \returns true if everything goes OK
      */
     inline bool openFile(const char *fileName, const std::ios_base::openmode mode = in)
     {
@@ -114,8 +126,10 @@ class io
     /*!
      * \brief Get string from stream
      * 
-     * Get string from stream and stores them into line until 
+     * Get a string from stream and stores them into line until 
      * a newline or the end-of-file is reached, whichever happens first.
+     * 
+     * \returns true if no error occurs on the associated stream
      */
     inline bool readLine(const char comment = '#')
     {
@@ -125,7 +139,7 @@ class io
             std::getline(fs, linetmp);
             if (fs.good())
             {
-                std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
+                const std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
 
                 // See if we found a valid line
                 if (linetmp.length() > 0 && linetmp[linePos] != comment)
@@ -186,9 +200,11 @@ class io
      * \tparam  TF    typedef for format of writing
      * \param   MX    matrix
      * \param   IOfmt IO format for the matrix type
+     *
+     * \returns true if no error occurs during writing the matrix
      */
     template <typename TM, typename TF>
-    inline bool saveMatrix(TM MX, TF IOfmt)
+    inline bool saveMatrix(TM MX, TF const IOfmt)
     {
         if (!fs.is_open())
         {
@@ -214,6 +230,8 @@ class io
      * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
      *                           1 save matrix in vector format and proceed the position indicator to the next line &
      *                           2 save matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true if no error occurs during writing the matrix
      */
     template <typename TD>
     inline bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
@@ -323,6 +341,8 @@ class io
      * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
      *                           2 saves matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true if no error occurs during writing the matrix
      */
     template <typename TD>
     inline bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
@@ -553,6 +573,8 @@ class io
      * 
      * \tparam  TM   typedef for matrix 
      * \param   MX   Matrix
+     *
+     * \returns true if no error occurs during reading a matrix
      */
     template <typename TM>
     inline bool loadMatrix(TM &MX)
@@ -586,6 +608,8 @@ class io
      * \param   nRows  number of rows
      * \param   nCols  number of columns
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     *
+     * \returns true if no error occurs during reading a matrix
      */
     template <typename TD>
     inline bool loadMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
@@ -642,6 +666,8 @@ class io
      * \param   nRows  number of rows
      * \param   nCols  number of columns for each row
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     *
+     * \returns true if no error occurs during reading a matrix
      */
     template <typename TD>
     inline bool loadMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
@@ -916,6 +942,7 @@ class io
   private:
     //Input/output operations on file based streams
     std::fstream fs;
+    
     //Line for reading the string of data
     std::string line;
 
