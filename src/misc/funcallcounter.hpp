@@ -38,9 +38,10 @@ class funcallcounter
      */
     void increment()
     {
-        //lock and unlock a mutex
+        //lock a mutex
         pthread_mutex_lock(&function_counter_mutex);
         num_of_local_function_counter++;
+        //unlock the mutex
         pthread_mutex_unlock(&function_counter_mutex);
     }
 
