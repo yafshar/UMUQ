@@ -2,7 +2,7 @@
 
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
-#undef F77_DUMMY_MAIN
+#undef FC_DUMMY_MAIN
 
 /* Define if F77 and FC dummy `main' functions are identical. */
 #undef FC_DUMMY_MAIN_EQ_F77
@@ -12,6 +12,9 @@
 
 /* Define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
 
 /* Define if you have DOXYGEN. */
 #undef HAVE_DOXYGEN
@@ -42,9 +45,6 @@
 
 /* Define to 1 if you have the `gtest' library (-lgtest). */
 #undef HAVE_LIBGTEST
-
-/* Define to 1 if you have the `lapack' library (-llapack). */
-#undef HAVE_LIBLAPACK
 
 /* Define to 1 if you have the `torc' library (-ltorc). */
 #undef HAVE_LIBTORC
@@ -84,6 +84,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
 
 /* Name of package */
 #undef PACKAGE
