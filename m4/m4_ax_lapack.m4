@@ -353,10 +353,13 @@ EOL
 	if test x"$ax_lapack_ok" = xyes; then
 		LDFLAGS+="$LAPACKE_LDFLAGS $LAPACK_LDFLAGS $BLAS_LDFLAGS"
 		AC_SUBST(LDFLAGS)
-		LIBS+="$LAPACKE_LIBS $LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
+        echo $LDFLAGS
+        LIBS+="$LAPACKE_LIBS $LAPACK_LIBS $BLAS_LIBS $LIBS $FCLIBS"
 		AC_SUBST(LIBS)
+        echo $LIBS
 		CPPFLAGS+=" $lapacke_CFLAGS"
 		AC_SUBST(CPPFLAGS)
+        echo $CPPFLAGS
 		AC_DEFINE(HAVE_LAPACK, 1, [Define if you have LAPACK library.])
 		:
 	fi
