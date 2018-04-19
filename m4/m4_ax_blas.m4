@@ -112,7 +112,7 @@ AC_DEFUN([AX_BLAS], [
 			if test x"$withval" = xno ; then
 				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
 			elif test x"$withval" = xyes ; then
-				with_blaslib=yes
+				break;
 			elif test x"$withval" != x ; then
 				break;
 			else
@@ -153,7 +153,7 @@ AC_DEFUN([AX_BLAS], [
 
 			save_LIBS="$LIBS"; 
 			LIBS="$BLAS_LIBS $LIBS"
-				
+
 			AC_MSG_CHECKING([for $sgemm])
 			AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
 			AC_MSG_RESULT($ax_blas_ok)
