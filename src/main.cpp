@@ -9,7 +9,6 @@
 #include "numerics/flannlib.hpp"
 #include "misc/timer.hpp"
 #include "misc/utility.hpp"
-#include <lapacke.h>
 #include <random>
 
 #include "data/stdata.hpp"
