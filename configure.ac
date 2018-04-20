@@ -23,8 +23,6 @@ m4_include([m4/m4_ax_pthread.m4])
 m4_include([m4/m4_ax_torc.m4])
 m4_include([m4/m4_ax_eigen.m4])
 m4_include([m4/m4_ax_flann.m4])
-m4_include([m4/m4_ax_blas.m4])
-m4_include([m4/m4_ax_lapack.m4])
 m4_include([m4/m4_ax_googletest.m4])
 m4_include([m4/m4_ax_doxygen.m4])
 
