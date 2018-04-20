@@ -62,6 +62,7 @@ extern "C" {
 #include <cmath>
 #include <cstring> //strlen, strstr, strtok
 
+#include <typeinfo>
 #include <functional>
 #include <iosfwd>
 #include <string>
