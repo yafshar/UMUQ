@@ -2,6 +2,7 @@
 #define UMHBM_PSRANDOM_H
 
 #include "saruprng.hpp"
+#include "factorial.hpp"
 
 /*! \class psrandom
   *
@@ -72,9 +73,10 @@ struct psrandom
      * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
      */
     template <typename T>
-    inline T unirnd(T a = 0, T b = 1)
+    inline T unirnd(T const a = 0, T const b = 1)
     {
-        /** left empty on purpose */
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " The Factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
     }
 
     /*!
@@ -121,11 +123,11 @@ struct psrandom
     void shuffle(int *idata, int const nSize)
     {
         //Get the thread ID
-        int me = torc_i_worker_id();
+        int const me = torc_i_worker_id();
 
         for (int i = nSize - 1; i > 0; --i)
         {
-            unsigned int idx = saru[me].u32(i);
+            unsigned int const idx = saru[me].u32(i);
             std::swap(idata[i], idata[idx]);
         }
     }
@@ -162,8 +164,8 @@ psrandom::psrandom(size_t const &iseed_)
     try
     {
         //Number of local workers
-        int nlocalworkers = torc_i_num_workers();
-        
+        int const nlocalworkers = torc_i_num_workers();
+
         psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
         psrandom::saru = new Saru[nlocalworkers];
     }
@@ -188,7 +190,7 @@ void psrandom::init_Task()
     size_t n = nlocalworkers * (node_id + 1);
     for (size_t i = 0; i < nlocalworkers; i++)
     {
-        const size_t j = psrandom::iseed + n + i;
+        size_t const j = psrandom::iseed + n + i;
 
         for (size_t k = 0; k < std::mt19937::state_size; k++)
         {
@@ -216,6 +218,8 @@ bool psrandom::init()
     MPI_Initialized(&initialized);
     if (!initialized)
     {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Failed to initilize MPI " << std::endl;
         return false;
     }
 
@@ -273,10 +277,10 @@ bool psrandom::init()
  * This is a partial specialization to make a special case for double precision uniform random number
  */
 template <>
-inline double psrandom::unirnd<double>(double a, double b)
+inline double psrandom::unirnd<double>(double const a, double const b)
 {
     //Get the thread ID
-    int me = torc_i_worker_id();
+    int const me = torc_i_worker_id();
     return saru[me].d(a, b);
 }
 
@@ -287,8 +291,210 @@ template <>
 inline float psrandom::unirnd<float>(float a, float b)
 {
     //Get the thread ID
-    int me = torc_i_worker_id();
+    int const me = torc_i_worker_id();
     return saru[me].f(a, b);
+}
+
+/*! 
+ * multinomial distribution
+ *
+ * This contains minor modifications and adaptation to the original 
+ * source code made available under the following license:
+ *
+ * \verbatim
+ * Copyright (C) 2002 Gavin E. Crooks <gec@compbio.berkeley.edu>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * \endverbatim
+ */
+
+/*!   
+ * \brief The multinomial distribution
+ * 
+ * This is based on psrandom object seeded engine.  
+ * So to use it there should be an instance of psrandom object.
+ * 
+ * \tparam T data 
+ * \param    K  K possible mutually exclusive outcomes 
+ * \param    N  N independent trials
+ * \param    p  Corresponding probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    n  A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * 
+ * 
+ * The multinomial distribution has the form
+ * \f[
+ *     p(n_1, n_2, ... n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \codts p_K^{n_K}
+ * \f] 
+ *
+ * where \f$ n_1, n_2, \cdots n_K \f$ are nonnegative integers, \f$ sum_{k=1,K} {n_k = N}\f$,
+ * and \f$p = \left(p_1, p_2, \cdots, p_K\right)\f$ is a probability distribution. 
+ *
+ * Random variates are generated using the conditional binomial method.
+ * This scales well with N and does not require a setup step.
+ *   
+ *  Ref: 
+ *  C.S. David, The computer generation of multinomial random variates,
+ *  Comp. Stat. Data Anal. 16 (1993) 205-217
+ */
+template <typename T = double>
+bool multinomial(size_t const K, unsigned int const N, T const *p, unsigned int *n)
+{
+    if (psrandom::iseed == 0)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+        return false;
+    }
+
+    //Get the thread ID
+    int const me = torc_i_worker_id();
+
+    T const norm = std::accumulate(p, p + K, 0);
+    T sum_p = 0.0;
+    unsigned int sum_n = 0;
+    for (size_t i = 0; i < K; i++)
+    {
+        if (p[i] > 0.0)
+        {
+            std::binomial_distribution<> d(N - sum_n, p[i] / (norm - sum_p));
+            n[i] = d(psrandom::NumberGenerator[me]);
+        }
+        else
+        {
+            n[i] = 0;
+        }
+        sum_p += p[i];
+        sum_n += n[i];
+    }
+    return true;
+}
+
+/*!   
+ * \brief The Multinomial distribution
+ * 
+ * This is independent. 
+ * 
+ * \tparam T data 
+ * \param    K  K possible mutually exclusive outcomes 
+ * \param    N  N independent trials
+ * \param    p  Corresponding probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    n  A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * 
+ * 
+ * The multinomial distribution has the form
+ * \f[
+ *     p(n_1, n_2, ... n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \codts p_K^{n_K}
+ * \f] 
+ *
+ * where \f$ n_1, n_2, \cdots n_K \f$ are nonnegative integers, \f$ sum_{k=1,K} {n_k = N}\f$,
+ * and \f$p = \left(p_1, p_2, \cdots, p_K\right)\f$ is a probability distribution. 
+ *
+ * Random variates are generated using the conditional binomial method.
+ * This scales well with N and does not require a setup step.
+ *   
+ *  Ref: 
+ *  C.S. David, The computer generation of multinomial random variates,
+ *  Comp. Stat. Data Anal. 16 (1993) 205-217
+ */
+template <typename T = double>
+bool Multinomial(size_t const K, unsigned int const N, T const *p, unsigned int *n)
+{
+    std::mt19937 gen(std::random_device{}());
+
+    T const norm = std::accumulate(p, p + K, 0);
+    T sum_p = 0.0;
+    unsigned int sum_n = 0;
+    for (size_t i = 0; i < K; i++)
+    {
+        if (p[i] > 0.0)
+        {
+            std::binomial_distribution<> d(N - sum_n, p[i] / (norm - sum_p));
+            n[i] = d(gen);
+        }
+        else
+        {
+            n[i] = 0;
+        }
+        sum_p += p[i];
+        sum_n += n[i];
+    }
+    return true;
+}
+
+/*!
+ * \brief Computes the the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$
+ * 
+ * This is based on psrandom object seeded engine.  
+ * So to use it there should be an instance of psrandom object.
+ * 
+ * This function computes the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
+ * from a multinomial distribution with parameters \f$p[K]\f$, using the formula given above
+ * 
+ * \tparam T data type one of float, double
+ * \param  n A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * 
+ * \returns the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
+ */
+template <typename T = double>
+T multinomial_lnpdf(size_t const K, T const *p, unsigned int const *n)
+{
+    unsigned int N = std::accumulate(n, n + K, 0);
+    T const norm = std::accumulate(p, p + K, 0);
+    T log_pdf = factorial<T>(N);
+
+    for (size_t i = 0; i < K; i++)
+    {
+        if (n[i] > 0)
+        {
+            log_pdf += std::log(p[i] / norm) * n[i] - factorial<T>(n[i]);
+        }
+    }
+
+    return log_pdf;
+}
+
+/*!
+ * \brief computes the probability \f$p(n_1, n_2, \cdots, n_K)\f$
+ * 
+ * This is based on psrandom object seeded engine.  
+ * So to use it there should be an instance of psrandom object.
+ * 
+ * This function computes the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
+ * from a multinomial distribution with parameters \f$p[K]\f$, using the formula given above
+ * 
+ * \tparam T data type one of float, double
+ * \param  n A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * 
+ * \returns the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$
+ */
+template <typename T = double>
+T multinomial_pdf(size_t const K, T const *p, unsigned int const *n)
+{
+    unsigned int N = std::accumulate(n, n + K, 0);
+    T const norm = std::accumulate(p, p + K, 0);
+    T log_pdf = factorial<T>(N);
+
+    for (size_t i = 0; i < K; i++)
+    {
+        if (n[i] > 0)
+        {
+            log_pdf += std::log(p[i] / norm) * n[i] - factorial<T>(n[i]);
+        }
+    }
+
+    return std::exp(log_pdf);
 }
 
 /*!
@@ -322,7 +528,7 @@ class normrnd
     T operator()()
     {
         //Get the thread ID
-        int me = torc_i_worker_id();
+        int const me = torc_i_worker_id();
         return d(psrandom::NumberGenerator[me]);
     }
 
@@ -388,7 +594,7 @@ class lognormrnd
     T operator()()
     {
         //Get the thread ID
-        int me = torc_i_worker_id();
+        int const me = torc_i_worker_id();
         return d(psrandom::NumberGenerator[me]);
     }
 
@@ -469,7 +675,7 @@ class mvnormdist
      */
     TV operator()() const
     {
-        int me = torc_i_worker_id();
+        int const me = torc_i_worker_id();
         return mean + transform * TV{mean.size()}.unaryExpr([&](T x) { return d(psrandom::NumberGenerator[me]); });
     }
 
