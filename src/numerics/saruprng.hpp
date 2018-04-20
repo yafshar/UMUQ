@@ -1,80 +1,117 @@
 #ifndef UMHBM_SARUPRNG_H
 #define UMHBM_SARUPRNG_H
 
-// Reference:
-// Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
-
-/*
+/*! \file saruprng.hpp
+ * \brief Implementation of the Saru random number generator.
+ *
+ * This file contains minor modifications to the original Saru
+ * source code made available under the following license:
+ *
+ * \verbatim
  * Copyright (c) 2008 Steve Worley < m a t h g e e k@(my last name).com >
  * BSD license will go here when it's released..
+ *
+ * C++ Saru PRNG by Steve Worley.   This is version 0.9, August 21 2008.
+ *
+ * Saru is a 32 bit PRNG with period of 3666320093*2^32. It passes even
+ * the most stringent randomness test batteries, including DIEHARD and
+ * the much more comprehensive BigCrush battery. It is designed for
+ * evaluation efficiency, a (relatively) compact state to allow fast
+ * copying, and most notably the ability to very efficiently advance
+ * (or rewind) its state. This advancement feature is useful for game
+ * and graphics tools, and is especially attractive for multithreaded
+ * and GPU applications.
+ *
+ * The Saru generator is an original work and (deliberately)
+ * unpatented. See the algorithm description at
+ * worley.com/mathgeek/saru.html. Updates/fixes to this code (and a plain C
+ * implementation) can be found there too.
+ * \endverbatim
+ */
+
+//! Saru random number generator
+/*!
+ * Saru is a pseudo-random number generator that requires only a 64-bit state vector.
+ * The generator is first seeded using one, two, or three 32-bit unsigned integers.
+ * The seeds are hashed together to generate an initially random state consisting
+ * of two 32-bit words. The hash routines pass TestU01's Crush. The seeded generator
+ * is then able to generate streams of random numbers using a combination of
+ * a linear congruential generator (LCG) and an Offset Weyl Sequence (OWS) to advance
+ * the state. The streaming generator has a period of 3666320093*2^32, and passes
+ * DIEHARD, Rabbit, Gorilla, and TestU01's SmallCrush, Crush, and BigCrush. On
+ * the GPU, typical use is then to seed the generator per-kernel and per-thread
+ * to generate random microstreams (e.g., each thread gets a generator hashed from
+ * the particle tag, the timestep, and a user-defined seed).
+ *
+ * See
+ *
+ * Y. Afshar, F. Schmid, A. Pishevar, and S. Worley. "Exploiting seeding of random
+ * number generators for efficient domain decomposition parallelization of dissipative
+ * particle dynamics", Comput. Phys. Commun. 184, 1119-1128 (2013).
+ * 
+ * and
+ * 
+ * C.L. Phillips, J.A. Anderson, and S.C. Glotzer. "Pseudo-random number generation
+ * for Brownian Dynamics and Dissipative Particle Dynamics simulations on GPU devices",
+ * J. Comput. Phys. 230, 7191-7201 (2011).
+ *
+ *
+ * for more details.
  */
 
 /*
-  C++ Saru PRNG by Steve Worley.   This is version 0.9, August 21 2008.
-
-  Saru is a 32 bit PRNG with period of 3666320093*2^32. It passes even
-  the most stringent randomness test batteries, including DIEHARD and
-  the much more comprehensive BigCrush battery. It is designed for
-  evaluation efficiency, a (relatively) compact state to allow fast
-  copying, and most notably the ability to very efficiently advance
-  (or rewind) its state. This advancement feature is useful for game
-  and graphics tools, and is especially attractive for multithreaded
-  and GPU applications.
-
-  The Saru generator is an original work and (deliberately)
-  unpatented. See the algorithm description at
-  worley.com/mathgeek/saru.html. Updates/fixes to this code (and a plain C
-  implementation) can be found there too.
-
------------------
-
-Usage:
-
-  Constructors for 0, 1, 2, or 3 integer seeds.
-Saru z, s(12345), t(123, 456), u(123, 456, 789);
-
-  Advance state by 1, and output a 32 bit integer pseudo-random value.
-cout << s.u32() << endl; //  Passes BigCrush and DIEHARD
-
-  Advance state by 1, and output a double precision [0..1) floating point
-cout << s.d() << endl;
-
-  Advance state by 1, and output a single precision [0..1) floating point
-cout << s.f() << endl;
-
-  Move the generator state forwards a variable number of steps
-s.advance(steps);
-
-  Efficient state advancement or rewind when delta is known at compiletime
-s.advance<123>();
-s.rewind<123>();
-
-Advance state by a different step (other than 1) and output a pseudorandom value.
-cout << s.u32<4>() << endl; // skips forward 4 values and outputs the prand.
-
-  Small structure size (64 bits of plain old data) means it's easy and fast
-  to copy, store, pass, or revert the state.
-z=s;
-
-  Fork the PRNG, creating a new independent stream, seeded using
-  current generator's state. Template seeding allows multiple
-  independent children forks.
-Saru n=s.fork<123>();
-
-
-  In practice you will likely extend or wrap this class to provide
-  more specific functionality such as different output distributions.
-
----------------------
-*/
+ * Usage:
+ * 
+ * Constructors for 0, 1, 2, or 3 integer seeds.
+ * Saru z, s(12345), t(123, 456), u(123, 456, 789);
+ * 
+ * Advance state by 1, and output a 32 bit integer pseudo-random value.
+ * cout << s.u32() << endl; //  Passes BigCrush and DIEHARD
+ * 
+ * Advance state by 1, and output a double precision [0..1) floating point
+ * cout << s.d() << endl;
+ * 
+ * Advance state by 1, and output a single precision [0..1) floating point
+ * cout << s.f() << endl;
+ * 
+ * Move the generator state forwards a variable number of steps
+ * s.advance(steps);
+ * 
+ * Efficient state advancement or rewind when delta is known at compiletime
+ * s.advance<123>();
+ * s.rewind<123>();
+ * 
+ * Advance state by a different step (other than 1) and output a pseudorandom value.
+ * cout << s.u32<4>() << endl; // skips forward 4 values and outputs the prand.
+ * 
+ * Small structure size (64 bits of plain old data) means it's easy and fast
+ * to copy, store, pass, or revert the state.
+ * z=s;
+ * 
+ * Fork the PRNG, creating a new independent stream, seeded using
+ * current generator's state. Template seeding allows multiple
+ * independent children forks.
+ * Saru n=s.fork<123>();
+ * 
+ * In practice you will likely extend or wrap this class to provide
+ * more specific functionality such as different output distributions.
+ *
+ */
 
 class Saru
 {
 
   public:
+    /*! 
+     * \brief Default constructor
+     * The default constructor initializes a dummy state.
+     */
     Saru() : state(0x12345678), wstate(12345678){};
+    //! One-seed constructor
     inline Saru(unsigned int seed);
+    //! Two-seeds constructor
     inline Saru(unsigned int seed1, unsigned int seed2);
+    //! Three-seeds constructor
     inline Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
 
     /* Efficient compile-time computed advancements */
@@ -209,7 +246,10 @@ class Saru
     {
         wstate = advanceAnyWeyl<oWeylOffset, oWeylDelta, oWeylPeriod, steps>(wstate);
     }
-
+    
+    /*
+     * \tparam steps Number of steps to rewind.
+     */
     template <unsigned int steps>
     inline void rewindWeyl()
     {
@@ -367,8 +407,9 @@ inline unsigned int Saru::u32()
  */
 inline unsigned int Saru::u32(unsigned int const high)
 {
-    if (high == 0) return 0;
-    
+    if (high == 0)
+        return 0;
+
     unsigned int usedhigh = high;
 
     usedhigh |= usedhigh >> 1;
@@ -376,7 +417,7 @@ inline unsigned int Saru::u32(unsigned int const high)
     usedhigh |= usedhigh >> 4;
     usedhigh |= usedhigh >> 8;
     usedhigh |= usedhigh >> 16;
-    
+
     // Draw numbers until one is found in [0, n]
     unsigned int i = u32<1>() & usedhigh;
 
@@ -402,7 +443,7 @@ inline float Saru::f()
 template <unsigned int steps>
 inline float Saru::f(float low, float high)
 {
-    const float TWO_N32 = 0.232830643653869628906250e-9f; /* 2^-32 */
+    const float TWO_N32 = 2.32830643653869628906250e-10f; /* 2^-32 */
     return ((signed int)(u32<steps>())) * (TWO_N32 * (high - low)) + 0.5f * (high + low);
 }
 
