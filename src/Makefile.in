@@ -100,8 +100,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/m4_ax_mpi.m4 \
 	$(top_srcdir)/m4/m4_ax_pthread.m4 \
 	$(top_srcdir)/m4/m4_ax_torc.m4 $(top_srcdir)/m4/m4_ax_eigen.m4 \
-	$(top_srcdir)/m4/m4_ax_flann.m4 $(top_srcdir)/m4/m4_ax_blas.m4 \
-	$(top_srcdir)/m4/m4_ax_lapack.m4 \
+	$(top_srcdir)/m4/m4_ax_flann.m4 \
 	$(top_srcdir)/m4/m4_ax_googletest.m4 \
 	$(top_srcdir)/m4/m4_ax_doxygen.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -192,8 +191,6 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BLAS_LDFLAGS = @BLAS_LDFLAGS@
-BLAS_LIBS = @BLAS_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -219,8 +216,8 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
-FCLIBS = @FCLIBS@
 FGREP = @FGREP@
+FLANN_LD_LIBRARY_PATH = @FLANN_LD_LIBRARY_PATH@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
 GTEST_CXXFLAGS = @GTEST_CXXFLAGS@
@@ -232,8 +229,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LAPACK_LDFLAGS = @LAPACK_LDFLAGS@
-LAPACK_LIBS = @LAPACK_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
