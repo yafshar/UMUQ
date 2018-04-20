@@ -10,6 +10,3 @@
 [submodule "external/flann"]
 	path = external/flann
 	url = https://github.com/mariusmuja/flann.git
-[submodule "external/lapacke"]
-	path = external/lapacke
-	url = git@github.com:yafshar/LAPACKE.git
