@@ -89,14 +89,16 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
-	stats_test$(EXEEXT) psrandom_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
+	psrandom_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
-	stats_test$(EXEEXT) psrandom_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
+	psrandom_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT)
@@ -110,8 +112,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/m4_ax_mpi.m4 \
 	$(top_srcdir)/m4/m4_ax_pthread.m4 \
 	$(top_srcdir)/m4/m4_ax_torc.m4 $(top_srcdir)/m4/m4_ax_eigen.m4 \
-	$(top_srcdir)/m4/m4_ax_flann.m4 $(top_srcdir)/m4/m4_ax_blas.m4 \
-	$(top_srcdir)/m4/m4_ax_lapack.m4 \
+	$(top_srcdir)/m4/m4_ax_flann.m4 \
 	$(top_srcdir)/m4/m4_ax_googletest.m4 \
 	$(top_srcdir)/m4/m4_ax_doxygen.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -135,6 +136,9 @@ eigen_io_test_LDADD = $(LDADD)
 am_eigen_test_OBJECTS = numerics/eigen_test.$(OBJEXT)
 eigen_test_OBJECTS = $(am_eigen_test_OBJECTS)
 eigen_test_LDADD = $(LDADD)
+am_factorial_test_OBJECTS = numerics/factorial_test.$(OBJEXT)
+factorial_test_OBJECTS = $(am_factorial_test_OBJECTS)
+factorial_test_LDADD = $(LDADD)
 am_funcallcounter_test_OBJECTS = misc/funcallcounter_test.$(OBJEXT)
 funcallcounter_test_OBJECTS = $(am_funcallcounter_test_OBJECTS)
 funcallcounter_test_LDADD = $(LDADD)
@@ -197,17 +201,19 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
-	$(eigen_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(utility_test_SOURCES)
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
-	$(eigen_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(io_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(utility_test_SOURCES)
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -447,8 +453,6 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BLAS_LDFLAGS = @BLAS_LDFLAGS@
-BLAS_LIBS = @BLAS_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -474,7 +478,6 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
-FCLIBS = @FCLIBS@
 FGREP = @FGREP@
 FLANN_LD_LIBRARY_PATH = @FLANN_LD_LIBRARY_PATH@
 GREP = @GREP@
@@ -488,10 +491,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LAPACKE_LDFLAGS = @LAPACKE_LDFLAGS@
-LAPACKE_LIBS = @LAPACKE_LIBS@
-LAPACK_LDFLAGS = @LAPACK_LDFLAGS@
-LAPACK_LIBS = @LAPACK_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -597,6 +596,7 @@ AM_LDFLAGS = $(GTEST_LDFLAGS)
 polynomial_test_SOURCES = numerics/polynomial_test.cpp 
 eigen_test_SOURCES = numerics/eigen_test.cpp 
 stats_test_SOURCES = numerics/stats_test.cpp 
+factorial_test_SOURCES = numerics/factorial_test.cpp 
 psrandom_test_SOURCES = numerics/psrandom_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
@@ -684,6 +684,12 @@ numerics/eigen_test.$(OBJEXT): numerics/$(am__dirstamp) \
 eigen_test$(EXEEXT): $(eigen_test_OBJECTS) $(eigen_test_DEPENDENCIES) $(EXTRA_eigen_test_DEPENDENCIES) 
 	@rm -f eigen_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(eigen_test_OBJECTS) $(eigen_test_LDADD) $(LIBS)
+numerics/factorial_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+factorial_test$(EXEEXT): $(factorial_test_OBJECTS) $(factorial_test_DEPENDENCIES) $(EXTRA_factorial_test_DEPENDENCIES) 
+	@rm -f factorial_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(factorial_test_OBJECTS) $(factorial_test_LDADD) $(LIBS)
 misc/funcallcounter_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -763,6 +769,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/factorial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/psrandom_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
@@ -1007,6 +1014,13 @@ eigen_test.log: eigen_test$(EXEEXT)
 stats_test.log: stats_test$(EXEEXT)
 	@p='stats_test$(EXEEXT)'; \
 	b='stats_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+factorial_test.log: factorial_test$(EXEEXT)
+	@p='factorial_test$(EXEEXT)'; \
+	b='factorial_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
