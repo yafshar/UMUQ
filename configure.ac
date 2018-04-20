@@ -60,7 +60,6 @@ AC_MSG_RESULT()
 
 ### Checking for MPI
 AC_MSG_CHECKING([for - MPI Library - ])
-AC_MSG_NOTICE(MPI)
 AX_MPI
 
 ### Checking for POSIX threads
@@ -71,22 +70,12 @@ AX_PTHREAD
 AC_MSG_CHECKING([for - TORC Library - ])
 AX_TORC
 
-### Checking for BLAS
-AC_MSG_CHECKING([for - BLAS Library - ])
-AX_BLAS
-
-### Checking for LAPACK
-AC_MSG_CHECKING([for - LAPACK Library - ])
-AX_LAPACK
-
 ### Checking for EIGEN
 AC_MSG_CHECKING([for - EIGEN Library - ])
-AC_MSG_NOTICE(EIGEN)
 AX_EIGEN
 
 ### Checking for FLANN
 AC_MSG_CHECKING([for - FLANN Library - ])
-AC_MSG_NOTICE(FLANN)
 AX_FLANN
 
 ### Checking for GOOGLETEST
@@ -97,13 +86,13 @@ AX_GOOGLETEST
 AC_MSG_CHECKING([ for - DOXYGEN - ])
 AX_DOXYGEN
 
+AC_LANG_PUSH([C++])
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
-
-AC_LANG_PUSH([C++])
 
 # Ensure we are using c11 C++ standard.
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
