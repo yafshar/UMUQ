@@ -17,7 +17,7 @@ struct stats
      * \returns The smallest element in the array of data
      */
     template <typename T>
-    inline T minelement(T const *idata, int const nSize)
+    inline T const minelement(T const *idata, int const nSize) const
     {
         return *std::min_element(idata, idata + nSize);
     }
@@ -32,7 +32,7 @@ struct stats
      * \returns The greatest element in the array of data
      */
     template <typename T>
-    inline T maxelement(T const *idata, int const nSize)
+    inline T const maxelement(T const *idata, int const nSize) const
     {
         return *std::max_element(idata, idata + nSize);
     }
@@ -48,7 +48,7 @@ struct stats
      * \returns The the position of the smallest element
      */
     template <typename T>
-    inline int minelement_index(T const *idata, int const nSize)
+    inline int const minelement_index(T const *idata, int const nSize) const
     {
         return (int)std::distance(idata, std::min_element(idata, idata + nSize));
     }
@@ -63,7 +63,7 @@ struct stats
      * \returns The the position of the greatest element
      */
     template <typename T>
-    inline int maxelement_index(T const *idata, int const nSize)
+    inline int const maxelement_index(T const *idata, int const nSize) const
     {
         return (int)std::distance(idata, std::max_element(idata, idata + nSize));
     }
@@ -79,7 +79,7 @@ struct stats
      * \returns The sum of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut sum(T const *idata, int const nSize)
+    inline TOut sum(T const *idata, int const nSize) const
     {
         return (TOut)std::accumulate(idata, idata + nSize, (T)0);
     }
@@ -95,7 +95,7 @@ struct stats
      * \returns The mean of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut mean(T const *idata, const int nSize)
+    inline TOut mean(T const *idata, const int nSize) const
     {
         return sum<T, TOut>(idata, nSize) / nSize;
     }
@@ -111,7 +111,7 @@ struct stats
      * \returns The standard deviation of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut stddev(T const *idata, const int nSize)
+    inline TOut stddev(T const *idata, const int nSize) const
     {
         TOut m = mean<T, TOut>(idata, nSize);
         TOut s(0);
