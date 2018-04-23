@@ -42,7 +42,8 @@ template <class T>
 inline T unchecked_factorial(unsigned int n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The unchecked_factorial of type "<< typeid(T).name() << " is not implemented !" << std::endl;
+    std::cerr << " The unchecked_factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
+    throw(std::runtime_error("Wrong type!"));
 }
 
 template <>
@@ -285,7 +286,8 @@ template <class T>
 inline T factorial(unsigned int n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The Factorial of type "<< typeid(T).name() << " is not implemented !" << std::endl;
+    std::cerr << " The Factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
+    throw(std::runtime_error("Wrong type!"));
 }
 
 template <>
