@@ -101,6 +101,15 @@ inline static const char *SimdInstructionSetsInUse(void)
 }
 }
 
+#ifdef M_PI
+#undef M_PI
+#endif
+// source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
+#define M_PI    3.141592653589793238462643383279502884197169399375105820974944592307816406l
+#define M_2PI   6.283185307179586476925286766559005768394338798750211641949889184615632812l
+#define M_LPI   std::log(M_PI)
+#define M_L2PI  std::log(M_2PI)
+
 /*! 
  * This is the main module of UMHBM
  */
