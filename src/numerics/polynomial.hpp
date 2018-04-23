@@ -99,9 +99,9 @@ int polynomial::binomial_coefficient(int const n, int const k)
 {
     if ((k < 0) || (n < 0))
     {
-        std::cout << std::endl;
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Fatal error! k or n < 0" << std::endl;
-        std::exit(EXIT_FAILURE);
+        throw(std::runtime_error("Wrong Input!"));
     }
     if (k < n)
     {
@@ -127,7 +127,7 @@ int polynomial::binomial_coefficient(int const n, int const k)
         return 1;
     }
 
-    std::cout << std::endl;
+    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
     std::cerr << " The binomial coefficient is undefined for k > n " << std::endl;
     return 0;
 };
@@ -146,9 +146,9 @@ void polynomial::graded_reverse_lexicographic_order(int const d, int const r, in
 {
     if (r < 0)
     {
-        std::cout << std::endl;
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Fatal error! maximum degree r < 0" << std::endl;
-        std::exit(EXIT_FAILURE);
+        throw(std::runtime_error("Wrong Input!"));
     }
     if (r == 0)
         return;
@@ -158,16 +158,16 @@ void polynomial::graded_reverse_lexicographic_order(int const d, int const r, in
 
     if (asum < 0)
     {
-        std::cout << std::endl;
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Fatal error! input sums < 0" << std::endl;
-        std::exit(EXIT_FAILURE);
+        throw(std::runtime_error("Wrong Input!"));
     }
 
     if (r < asum)
     {
-        std::cout << std::endl;
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Fatal error! input sums > maximum degree r" << std::endl;
-        std::exit(EXIT_FAILURE);
+        throw(std::runtime_error("Wrong Input!"));
     }
 
     if (x[0] == r)
@@ -263,7 +263,6 @@ void polynomial::monomial_basis(int const d, int const r, int *&alpha)
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        std::exit(EXIT_FAILURE);
     }
 
     int x[d];
