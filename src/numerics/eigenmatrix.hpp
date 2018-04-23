@@ -112,6 +112,14 @@ typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
 typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
 typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 
+template <typename T>
+using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+
+template <typename T>
+using ERowVectorX = Eigen::Matrix<T, 1, Eigen::Dynamic>;
+
+template <typename T>
+using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 /*!
  * \brief Stores a set of parameters controlling the way matrices are printed
@@ -130,8 +138,8 @@ Eigen::IOFormat fmt(Eigen::FullPrecision);
  * \tparam TdataPtr typedef of the data pointer    
  * 
  */
-template <typename TdataPtr>
-using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+template <typename TdataPtr, int _Options = Eigen::RowMajor>
+using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
 
 /*!
  * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
@@ -141,8 +149,8 @@ using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic
  * \tparam TdataPtr typedef of the data pointer    
  * 
  */
-template <typename TdataPtr>
-using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+template <typename TdataPtr, int _Options = Eigen::RowMajor>
+using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
 
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
