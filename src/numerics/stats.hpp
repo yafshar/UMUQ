@@ -121,3 +121,35 @@ struct stats
 };
 
 #endif
+
+
+
+// double Objlogp(double x, double *fj, int fn, double pj, double tol)
+// {
+//     double fjmax = compute_max(fj, fn);
+
+//     double weight[fn];
+
+//     for (i = 0; i < fn; i++)
+//         weight[i] = exp((fj[i]-fjmax)*(x-pj));
+
+//     double sum_weight = compute_sum(weight, fn);
+
+//     double q[fn];
+
+//     for (i = 0; i < fn; i++)
+//         q[i] = weight[i]/sum_weight;
+
+//     double mean_q = compute_mean(q, fn);
+//     double std_q = compute_std(q, fn, mean_q);
+//     double CoefVar = pow(std_q/mean_q-tol, 2);    /* result */
+//     return CoefVar;
+// }
+
+
+
+
+
+
+
+
