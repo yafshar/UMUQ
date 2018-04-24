@@ -20,6 +20,8 @@ struct psrandom
             std::cerr << "There should only be one instance of a psrandom object!" << std::endl;
             throw(std::runtime_error("There should only be one instance of a psrandom object!"));
         }
+
+        iseed = std::random_device{}();
     };
 
     /*!
@@ -60,7 +62,7 @@ struct psrandom
     }
 
     /*!
-     * \brief Init task on each node to set the current state of the engine for each thread
+     * \brief Init task on each node to set the current state of the engine for all the threads on that node 
      */
     static void init_Task();
 
@@ -199,12 +201,15 @@ psrandom::psrandom(size_t const &iseed_)
 void psrandom::init_Task()
 {
     size_t rseed[std::mt19937::state_size];
+
     //Get the local number of workers
     size_t nlocalworkers = (size_t)torc_i_num_workers();
+
     //Node Id (MPI rank)
     size_t node_id = (size_t)torc_node_id();
 
     size_t n = nlocalworkers * (node_id + 1);
+
     for (size_t i = 0; i < nlocalworkers; i++)
     {
         size_t const j = psrandom::iseed + n + i;
@@ -241,11 +246,6 @@ bool psrandom::init()
     }
 
     torc_register_task((void *)psrandom::init_Task);
-
-    if (psrandom::iseed == 0)
-    {
-        psrandom::iseed = std::random_device{}();
-    }
 
     int nlocalworkers = torc_i_num_workers();
 
@@ -312,51 +312,27 @@ inline float psrandom::unirnd<float>(float a, float b)
     return saru[me].f(a, b);
 }
 
-/*! 
- * multinomial distribution
- *
- * This contains modifications and adaptation to the original 
- * source code made available under the following license:
- *
- * \verbatim
- * Copyright (C) 2002 Gavin E. Crooks <gec@compbio.berkeley.edu>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * \endverbatim
- */
-
 /*!   
  * \brief The multinomial distribution
  * 
  * This is based on psrandom object seeded engine.  
  * So to use it there should be an instance of psrandom object.
  * 
- * \tparam T data 
- * \param    K  K possible mutually exclusive outcomes 
- * \param    N  N independent trials
- * \param    p  Corresponding probabilities \f$ p_1, \cdots, p_k \f$
- * \param    n  A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * \tparam   T       data type 
+ * \param    p       vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    K       size of vector which shows K possible mutually exclusive outcomes 
+ * \param    N       N independent trials
+ * \param    mndist  A random sample from the multinomial distribution
  * 
  * 
- * The multinomial distribution has the form
+ * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
+ * The distribution of \f$ X \f$ is given by:
  * \f[
- *     p(n_1, n_2, \cdots, n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
+ *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
  * \f] 
  *
- * where \f$ n_1, n_2, \cdots n_K \f$ are nonnegative integers, \f$ sum_{k=1,K} {n_k = N}\f$,
- * and \f$p = \left(p_1, p_2, \cdots, p_K\right)\f$ is a probability distribution. 
+ * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$,
+ * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
  *
  * Random variates are generated using the conditional binomial method.
  * This scales well with N and does not require a setup step.
@@ -366,7 +342,7 @@ inline float psrandom::unirnd<float>(float a, float b)
  *  Comp. Stat. Data Anal. 16 (1993) 205-217
  */
 template <typename T = double>
-bool multinomial(size_t const K, unsigned int const N, T const *p, unsigned int *n)
+bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
 {
     if (psrandom::iseed == 0)
     {
@@ -378,22 +354,23 @@ bool multinomial(size_t const K, unsigned int const N, T const *p, unsigned int 
     //Get the thread ID
     int const me = torc_i_worker_id();
 
-    T const norm = std::accumulate(p, p + K, 0);
-    T sum_p = 0.0;
-    unsigned int sum_n = 0;
-    for (size_t i = 0; i < K; i++)
+    T const totpsum = std::accumulate(p, p + K, 0);
+
+    T psum = 0;
+    unsigned int nsum = 0;
+    for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
         {
-            std::binomial_distribution<> d(N - sum_n, p[i] / (norm - sum_p));
-            n[i] = d(psrandom::NumberGenerator[me]);
+            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            mndist[i] = d(psrandom::NumberGenerator[me]);
         }
         else
         {
-            n[i] = 0;
+            mndist[i] = 0;
         }
-        sum_p += p[i];
-        sum_n += n[i];
+        psum += p[i];
+        nsum += mndist[i];
     }
     return true;
 }
@@ -403,20 +380,21 @@ bool multinomial(size_t const K, unsigned int const N, T const *p, unsigned int 
  * 
  * This is independent. 
  * 
- * \tparam T data 
- * \param    K  K possible mutually exclusive outcomes 
- * \param    N  N independent trials
- * \param    p  Corresponding probabilities \f$ p_1, \cdots, p_k \f$
- * \param    n  A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * \tparam   T       data type 
+ * \param    p       vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    K       size of vector which shows K possible mutually exclusive outcomes 
+ * \param    N       N independent trials
+ * \param    mndist  A random sample from the multinomial distribution
  * 
  * 
- * The multinomial distribution has the form
+ * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
+ * The distribution of \f$ X \f$ is given by:
  * \f[
- *     p(n_1, n_2, ... n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \codts p_K^{n_K}
+ *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
  * \f] 
  *
- * where \f$ n_1, n_2, \cdots n_K \f$ are nonnegative integers, \f$ sum_{k=1,K} {n_k = N}\f$,
- * and \f$p = \left(p_1, p_2, \cdots, p_K\right)\f$ is a probability distribution. 
+ * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$,
+ * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
  *
  * Random variates are generated using the conditional binomial method.
  * This scales well with N and does not require a setup step.
@@ -426,53 +404,60 @@ bool multinomial(size_t const K, unsigned int const N, T const *p, unsigned int 
  *  Comp. Stat. Data Anal. 16 (1993) 205-217
  */
 template <typename T = double>
-bool Multinomial(size_t const K, unsigned int const N, T const *p, unsigned int *n)
+bool Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
 {
     std::mt19937 gen(std::random_device{}());
 
-    T const norm = std::accumulate(p, p + K, 0);
-    T sum_p = 0.0;
-    unsigned int sum_n = 0;
-    for (size_t i = 0; i < K; i++)
+    T const totpsum = std::accumulate(p, p + K, 0);
+
+    T psum = 0;
+    unsigned int nsum = 0;
+    for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
         {
-            std::binomial_distribution<> d(N - sum_n, p[i] / (norm - sum_p));
-            n[i] = d(gen);
+            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            mndist[i] = d(gen);
         }
         else
         {
-            n[i] = 0;
+            mndist[i] = 0;
         }
-        sum_p += p[i];
-        sum_n += n[i];
+        psum += p[i];
+        nsum += mndist[i];
     }
     return true;
 }
 
 /*!
- * \brief Computes the the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$
+ * \brief Computes the logarithm of the probability from the multinomial distribution
  * 
- * This function computes the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with parameters \f$p[K]\f$, using the formula given above
+ * This function computes the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
+ * from a multinomial distribution with probabilities \f$p[K]\f$.
  * 
- * \tparam T data type one of float, double
- * \param  n A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * \tparam T      data type one of float or double
+ * \param  mndist A random sample (with size of K) from the multinomial distribution
+ * \param  p      vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param  K      size of vector
  * 
- * \returns the logarithm of the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
+ * \returns the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  */
 template <typename T = double>
-T multinomial_lnpdf(size_t const K, T const *p, unsigned int const *n)
+T multinomial_lnpdf(unsigned int const *mndist, T const *p, int const K)
 {
-    unsigned int N = std::accumulate(n, n + K, 0);
-    T const norm = std::accumulate(p, p + K, 0);
+    // compute the total number of independent trials
+    unsigned int N = std::accumulate(mndist, mndist + K, 0);
+
+    T const totpsum = std::accumulate(p, p + K, 0);
+
+    //Currently we have the limitation of float or double type in factorial implementation
     T log_pdf = factorial<T>(N);
 
-    for (size_t i = 0; i < K; i++)
+    for (int i = 0; i < K; i++)
     {
-        if (n[i] > 0)
+        if (mndist[i] > 0)
         {
-            log_pdf += std::log(p[i] / norm) * n[i] - factorial<T>(n[i]);
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
         }
     }
 
@@ -480,28 +465,33 @@ T multinomial_lnpdf(size_t const K, T const *p, unsigned int const *n)
 }
 
 /*!
- * \brief computes the probability \f$p(n_1, n_2, \cdots, n_K)\f$
+ * \brief Computes the probability from the multinomial distribution
  * 
- * This function computes the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with parameters \f$p[K]\f$, using the formula given above
+ * This function computes the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
+ * from a multinomial distribution with probabilities \f$p[K]\f$.
  * 
- * \tparam T data type one of float, double
- * \param  n A random sample \f$n_1, \cdots, n_K\f$ from the multinomial distribution
+ * \tparam T      data type one of float or double
+ * \param  mndist A random sample (with size of K) from the multinomial distribution
+ * \param  p      vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param  K      size of vector
  * 
- * \returns the probability \f$p(n_1, n_2, \cdots, n_K)\f$ of sampling \f$n[K]\f$
+ * \returns the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  */
 template <typename T = double>
-T multinomial_pdf(size_t const K, T const *p, unsigned int const *n)
+T multinomial_pdf(unsigned int const *mndist, T const *p, int const K)
 {
-    unsigned int N = std::accumulate(n, n + K, 0);
-    T const norm = std::accumulate(p, p + K, 0);
+    // compute the total number of independent trials
+    unsigned int N = std::accumulate(mndist, mndist + K, 0);
+
+    T const totpsum = std::accumulate(p, p + K, 0);
+
     T log_pdf = factorial<T>(N);
 
-    for (size_t i = 0; i < K; i++)
+    for (int i = 0; i < K; i++)
     {
-        if (n[i] > 0)
+        if (mndist[i] > 0)
         {
-            log_pdf += std::log(p[i] / norm) * n[i] - factorial<T>(n[i]);
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
         }
     }
 
@@ -510,6 +500,7 @@ T multinomial_pdf(size_t const K, T const *p, unsigned int const *n)
 
 /*!
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
+ * 
  * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
  * psrandom object.
  *
@@ -658,10 +649,12 @@ class mvnormdist
     /*!
      * \brief constructor
      *
-     * \param mean_       mean Vector of size \f$n\f$
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
+     * \param mean_       mean vector of size \f$n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      */
-    mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_), covariance(covariance_)
+    mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_),
+                                                                           covariance(covariance_),
+                                                                           lu(covariance_)
     {
         if (psrandom::iseed == 0)
         {
@@ -678,11 +671,13 @@ class mvnormdist
     /*!
      * \brief constructor
      * 
+     * \param mean_       mean vector of size \f$n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      * \param n           vector size
-     * \param mean_       mean Vector of size \f$n\f$
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
      */
-    mvnormdist(int const n, T const *mean_, T const *covariance_) : mean(CTEMapX<T>(mean_, n, 1)), covariance(CTEMapX<T>(covariance_, n, n))
+    mvnormdist(T const *mean_, T const *covariance_, int const n) : mean(CTEMapX<T>(mean_, n, 1)),
+                                                                    covariance(CTEMapX<T>(covariance_, n, n)),
+                                                                    lu(CTEMapX<T>(covariance_, n, n))
     {
         if (psrandom::iseed == 0)
         {
@@ -699,17 +694,19 @@ class mvnormdist
     /*!
      * \brief constructor (default mean = 0)
      *
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      */
     mvnormdist(EMatrixX<T> const &covariance_) : mvnormdist(EVectorX<T>::Zero(covariance_.rows()), covariance_) {}
 
     /*!
      * \brief constructor (default mean = 0)
      * 
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      * \param n           vector size
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
      */
-    mvnormdist(int const n, T const *covariance_) : mean(EVectorX<T>::Zero(n)), covariance(CTEMapX<T>(covariance_, n, n))
+    mvnormdist(T const *covariance_, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                    covariance(CTEMapX<T>(covariance_, n, n)),
+                                                    lu(CTEMapX<T>(covariance_, n, n))
     {
         if (psrandom::iseed == 0)
         {
@@ -724,6 +721,24 @@ class mvnormdist
     }
 
     /*!
+     * \brief constructor (default mean = 0, covariance=I)
+     * 
+     * \param n vector size
+     */
+    mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
+                              covariance(EMatrixX<T>::Identity(n, n)),
+                              transform(EMatrixX<T>::Identity(n, n)),
+                              lu(EMatrixX<T>::Identity(n, n))
+    {
+        if (psrandom::iseed == 0)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+        }
+    }
+
+    /*!
      * \returns a vector with multivariate normal distribution
      */
     EVectorX<T> operator()()
@@ -732,33 +747,93 @@ class mvnormdist
         return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T x) { return d(psrandom::NumberGenerator[me]); });
     }
 
-    T pdf(T const *x)
+    /*!
+     * \brief PDF
+     * 
+     * \param X vector of size \f$ n \f$
+     * 
+     * \returns pdf of X
+     */
+    T pdf(EVectorX<T> const &X)
     {
-        CTEMapX<T, Eigen::ColMajor> X(x, mean.rows(), 1);
-        Eigen::FullPivLU<EMatrixX<T>> lu(covariance);
+        T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
 
-        T denom = std::pow(2.0 * M_PI, mean.rows()) * lu.determinant();
         EVectorX<T> ax = X - mean;
-        T nom = ax.traspose() * lu.inverse() * ax;
-        return std::exp(-0.5 * nom) / std::sqrt(denom);
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
     }
 
-    T lnpdf(T const *x)
+    /*!
+     * \brief PDF
+     * 
+     * \param x vector of size \f$ n \f$
+     * \param n vector size
+     * 
+     * \returns pdf of x
+     */
+    T pdf(T const *x, int const n)
     {
-        CTEMapX<T, Eigen::ColMajor> X(x, mean.rows(), 1);
-        Eigen::FullPivLU<EMatrixX<T>> lu(covariance);
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+
+        T denom = std::pow(M_2PI, n) * lu.determinant();
+
         EVectorX<T> ax = X - mean;
-        T nom = ax.traspose() * lu.inverse() * ax;
-        return -0.5 *(nom + mean.rows()*std::log(2.*M_PI)+std::log(lu.determinant()));
+        
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
+
+    /*!
+     * \brief LOGPDF
+     * 
+     * \param X vector of size \f$ n \f$
+     * 
+     * \returns logpdf of X
+     */
+    T lnpdf(EVectorX<T> const &X)
+    {
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
+    }
+
+    /*!
+     * \brief LOGPDF
+     * 
+     * \param x vector of size \f$ n \f$
+     * \param n vector size
+     * 
+     * \returns logpdf of x
+     */
+    T lnpdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
     }
 
   private:
     //Vector of size \f$n\f$
     EVectorX<T> mean;
-    //Matrix of size \f$n \times n\f$
+    //Variance-covariance matrix of size \f$ n \times n \f$
     EMatrixX<T> covariance;
     //Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
+    //LU decomposition of a matrix with complete pivoting
+    Eigen::FullPivLU<EMatrixX<T>> lu;
     //Generates random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
@@ -778,10 +853,13 @@ class Mvnormdist
     /*!
      * \brief constructor
      *
-     * \param mean_       mean Vector of size \f$n\f$
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
+     * \param mean_       mean vector of size \f$n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      */
-    Mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_), covariance(covariance_), gen(std::random_device{}())
+    Mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_),
+                                                                           covariance(covariance_),
+                                                                           gen(std::random_device{}()),
+                                                                           lu(covariance_)
     {
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
         Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
@@ -791,11 +869,14 @@ class Mvnormdist
     /*!
      * \brief constructor
      * 
+     * \param mean_       mean vector of size \f$n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      * \param n           vector size
-     * \param mean_       mean Vector of size \f$n\f$
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
      */
-    Mvnormdist(int const n, T const *mean_, T const *covariance_) : mean(CTEMapX<T>(mean_, n, 1)), covariance(CTEMapX<T>(covariance_, n, n)), gen(std::random_device{}())
+    Mvnormdist(T const *mean_, T const *covariance_, int const n) : mean(CTEMapX<T>(mean_, n, 1)),
+                                                                    covariance(CTEMapX<T>(covariance_, n, n)),
+                                                                    gen(std::random_device{}()),
+                                                                    lu(CTEMapX<T>(covariance_, n, n))
     {
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
         Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
@@ -805,22 +886,36 @@ class Mvnormdist
     /*!
      * \brief constructor (default mean = 0)
      *
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
+     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
      */
     Mvnormdist(EMatrixX<T> const &covariance_) : Mvnormdist(EVectorX<T>::Zero(covariance_.rows()), covariance_) {}
 
     /*!
      * \brief constructor (default mean = 0)
      * 
+     * \param covariance_ covariance matrix of size \f$n \times n\f$
      * \param n           vector size
-     * \param covariance_ covariance Matrix of size \f$n \times n\f$
      */
-    Mvnormdist(int const n, T const *covariance_) : mean(EVectorX<T>::Zero(n)), covariance(CTEMapX<T>(covariance_, n, n)), gen(std::random_device{}())
+    Mvnormdist(T const *covariance_, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                    covariance(CTEMapX<T>(covariance_, n, n)),
+                                                    gen(std::random_device{}()),
+                                                    lu(CTEMapX<T>(covariance_, n, n))
     {
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
         Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
         transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
     }
+
+    /*!
+     * \brief constructor (default mean = 0, covariance=I)
+     * 
+     * \param n vector size
+     */
+    Mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
+                              covariance(EMatrixX<T>::Identity(n, n)),
+                              transform(EMatrixX<T>::Identity(n, n)),
+                              gen(std::random_device{}()),
+                              lu(EMatrixX<T>::Identity(n, n)) {}
 
     /*!
      * \returns a vector with multivariate normal distribution
@@ -830,13 +925,93 @@ class Mvnormdist
         return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T x) { return d(gen); });
     }
 
+    /*!
+     * \brief PDF
+     * 
+     * \param X vector of size \f$ n \f$
+     * 
+     * \returns pdf of X
+     */
+    T pdf(EVectorX<T> const &X)
+    {
+        T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
+
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
+
+    /*!
+     * \brief PDF
+     * 
+     * \param x vector of size \f$ n \f$
+     * \param n vector size
+     * 
+     * \returns pdf of x
+     */
+    T pdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+
+        T denom = std::pow(M_2PI, n) * lu.determinant();
+
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
+
+    /*!
+     * \brief LOGPDF
+     * 
+     * \param X vector of size \f$ n \f$
+     * 
+     * \returns logpdf of X
+     */
+    T lnpdf(EVectorX<T> const &X)
+    {
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
+    }
+
+    /*!
+     * \brief LOGPDF
+     * 
+     * \param x vector of size \f$ n \f$
+     * \param n vector size
+     * 
+     * \returns logpdf of x
+     */
+    T lnpdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+
+        EVectorX<T> ax = X - mean;
+
+        //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
+
+        return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
+    }
+
   private:
     //Vector of size \f$n\f$
     EVectorX<T> mean;
-    //Matrix of size \f$n \times n\f$
+    //Variance-covariance matrix of size \f$n \times n\f$
     EMatrixX<T> covariance;
     //Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
+    //LU decomposition of a matrix with complete pivoting
+    Eigen::FullPivLU<EMatrixX<T>> lu;
     //A random number engine based on Mersenne Twister algorithm
     std::mt19937 gen;
     //Generates random numbers according to the Normal (or Gaussian) random number distribution
