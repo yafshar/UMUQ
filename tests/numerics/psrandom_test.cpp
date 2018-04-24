@@ -48,12 +48,19 @@ TEST(random_test, HandlesRandoms)
     //create an object of type Multivariate normal distribution
     mvnormdist<double> MVNOBJ1(EM2d);
 
+    EVector2d X = MVNOBJ1();
+
+    MVNOBJ1.pdf(X);
+    MVNOBJ1.lnpdf(X);
+
     //create an object of type Multivariate normal distribution
     Mvnormdist<double> MVNOBJ2(EV2d, EM2d);
 
-    //TODO Add the test for mvnormdist
+    X = MVNOBJ2();
+    MVNOBJ2.pdf(X);
+    MVNOBJ2.lnpdf(X);
 
-    std::cout << MVNOBJ2() << std::endl;
+    //TODO Add the test for checking mvnormdist
 }
 
 int main(int argc, char **argv)
