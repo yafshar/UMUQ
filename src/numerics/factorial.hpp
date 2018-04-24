@@ -4,7 +4,7 @@
 /*! \class max_factorial
  * \brief Predefined max factorial
  * 
- * \tparam T data type one of float, double
+ * \tparam T data type one of float, double, int, unsigned int
  */
 template <class T>
 struct max_factorial
@@ -31,15 +31,42 @@ struct max_factorial<double>
 };
 
 /*!
+ *
+ */
+template <>
+struct max_factorial<int>
+{
+    static unsigned int const value = 10;
+};
+
+/*!
+ *
+ */
+template <>
+struct max_factorial<unsigned int>
+{
+    static unsigned int const value = 10;
+};
+
+/*!
+ *
+ */
+template <>
+struct max_factorial<long int>
+{
+    static unsigned int const value = 10;
+};
+
+/*!
  * \brief Predefined unchecked factorial
  * 
  * \tparam T data type one of float, double, long double
  * \param  n input number 
  * 
- * \returns the factorial of n for type float, double, long double and 1 for anything else
+ * \returns the factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
 template <class T>
-inline T unchecked_factorial(unsigned int n)
+inline T const unchecked_factorial(unsigned int n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
     std::cerr << " The unchecked_factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
@@ -47,7 +74,7 @@ inline T unchecked_factorial(unsigned int n)
 }
 
 template <>
-inline float unchecked_factorial<float>(unsigned int n)
+inline float const unchecked_factorial<float>(unsigned int const n)
 {
     static float const factorials[] = {
         1.0f,
@@ -90,7 +117,7 @@ inline float unchecked_factorial<float>(unsigned int n)
 }
 
 template <>
-inline long double unchecked_factorial<long double>(unsigned int n)
+inline long double const unchecked_factorial<long double>(unsigned int const n)
 {
     static long double const factorials[] = {
         1l,
@@ -269,9 +296,27 @@ inline long double unchecked_factorial<long double>(unsigned int n)
 }
 
 template <>
-inline double unchecked_factorial<double>(unsigned int n)
+inline double const unchecked_factorial<double>(unsigned int const n)
 {
     return static_cast<double>(unchecked_factorial<long double>(n));
+}
+
+template <>
+inline int const unchecked_factorial<int>(unsigned int const n)
+{
+    return (n == 0 ? 1 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 6 : n == 4 ? 24 : n == 5 ? 120 : n == 6 ? 720 : n == 7 ? 5040 : n == 8 ? 40320 : n == 9 ? 362880 : 3628800);
+}
+
+template <>
+inline unsigned int const unchecked_factorial<unsigned int>(unsigned int const n)
+{
+    return (n == 0 ? 1 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 6 : n == 4 ? 24 : n == 5 ? 120 : n == 6 ? 720 : n == 7 ? 5040 : n == 8 ? 40320 : n == 9 ? 362880 : 3628800);
+}
+
+template <>
+inline long int const unchecked_factorial<long int>(unsigned int const n)
+{
+    return static_cast<long int>(n == 0 ? 1 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 6 : n == 4 ? 24 : n == 5 ? 120 : n == 6 ? 720 : n == 7 ? 5040 : n == 8 ? 40320 : n == 9 ? 362880 : 3628800);
 }
 
 /*!
@@ -280,10 +325,10 @@ inline double unchecked_factorial<double>(unsigned int n)
  * \tparam T data type one of float, double
  * \param  n input number 
  * 
- * \returns the factorial of n \f$\left(n!\right)\f$ for type float and double and Error for anything else
+ * \returns the factorial of n \f$\left(n!\right)\f$ for type float and double, int, unsigned int, long int and Error for anything else
  */
 template <class T>
-inline T factorial(unsigned int n)
+inline T factorial(unsigned int const n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
     std::cerr << " The Factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
@@ -291,7 +336,7 @@ inline T factorial(unsigned int n)
 }
 
 template <>
-inline float factorial(unsigned int i)
+inline float factorial(unsigned int const i)
 {
     if (i <= max_factorial<float>::value)
     {
@@ -311,7 +356,7 @@ inline float factorial(unsigned int i)
 }
 
 template <>
-inline double factorial(unsigned int i)
+inline double factorial(unsigned int const i)
 {
     if (i <= max_factorial<double>::value)
     {
@@ -328,6 +373,24 @@ inline double factorial(unsigned int i)
     }
 
     return std::floor(result + 0.5);
+}
+
+template <>
+inline constexpr int factorial(unsigned int const i)
+{
+    return (i <= max_factorial<int>::value ? unchecked_factorial<int>(i) : i * factorial<int>(i - 1));
+}
+
+template <>
+inline constexpr unsigned int factorial(unsigned int const i)
+{
+    return (i <= max_factorial<unsigned int>::value ? unchecked_factorial<unsigned int>(i) : i * factorial<unsigned int>(i - 1));
+}
+
+template <>
+inline constexpr long int factorial(unsigned int const i)
+{
+    return (i <= max_factorial<long int>::value ? unchecked_factorial<long int>(i) : static_cast<long int>(i) * factorial<long int>(i - 1));
 }
 
 #endif
