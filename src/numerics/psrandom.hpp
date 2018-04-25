@@ -29,7 +29,31 @@ struct psrandom
      * 
      * \param seed Input seed for random number initialization 
      */
-    psrandom(size_t const &iseed_);
+    psrandom(size_t const &iseed_)
+    {
+        if (iseed != 0)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "There should only be one instance of a psrandom object!" << std::endl;
+            throw(std::runtime_error("There should only be one instance of a psrandom object!"));
+        }
+
+        iseed = iseed_;
+
+        try
+        {
+            //Number of local workers
+            int const nlocalworkers = torc_i_num_workers();
+
+            NumberGenerator = new std::mt19937[nlocalworkers];
+            saru = new Saru[nlocalworkers];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        };
+    }
 
     /*!
      *  \brief destructor 
@@ -86,7 +110,7 @@ struct psrandom
     inline T unirnd(T const a = 0, T const b = 1)
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " The Factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
+        std::cerr << " The Uniform random number of type " << typeid(T).name() << " is not implemented !" << std::endl;
         throw(std::runtime_error("Wrong type!"));
     }
 
@@ -144,6 +168,16 @@ struct psrandom
         }
     }
 
+    template <typename T = int>
+    void Shuffle(T *idata, int const nSize)
+    {
+        for (int i = nSize - 1; i > 0; --i)
+        {
+            unsigned int const idx = saru[0].u32(i);
+            std::swap(idata[i], idata[idx]);
+        }
+    }
+
     /*!
      * RNG seed
      */
@@ -163,37 +197,6 @@ struct psrandom
 size_t psrandom::iseed = 0;
 std::mt19937 *psrandom::NumberGenerator = nullptr;
 Saru *psrandom::saru = nullptr;
-
-/*!
- * \brief constructor
- * 
- * \param seed input seed for random number initialization 
- */
-psrandom::psrandom(size_t const &iseed_)
-{
-    if (iseed != 0)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "There should only be one instance of a psrandom object!" << std::endl;
-        throw(std::runtime_error("There should only be one instance of a psrandom object!"));
-    }
-
-    psrandom::iseed = iseed_;
-
-    try
-    {
-        //Number of local workers
-        int const nlocalworkers = torc_i_num_workers();
-
-        psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
-        psrandom::saru = new Saru[nlocalworkers];
-    }
-    catch (std::bad_alloc &e)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-    };
-}
 
 /*!
  * \brief init Task on each node to set the current state of the engine
@@ -347,7 +350,7 @@ bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
     if (psrandom::iseed == 0)
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
+        std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
         return false;
     }
 
@@ -519,8 +522,8 @@ class normrnd
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
     }
 
@@ -586,8 +589,8 @@ class lognormrnd
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
     }
 
@@ -659,8 +662,8 @@ class mvnormdist
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
 
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -682,8 +685,8 @@ class mvnormdist
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
 
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -711,8 +714,8 @@ class mvnormdist
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
 
         // Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -733,8 +736,8 @@ class mvnormdist
         if (psrandom::iseed == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "You should create an instance of a psrandom object before using this class!" << std::endl;
-            throw(std::runtime_error("You should create an instance of a psrandom object before using this class!"));
+            std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
+            throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
         }
     }
 
@@ -781,7 +784,7 @@ class mvnormdist
         T denom = std::pow(M_2PI, n) * lu.determinant();
 
         EVectorX<T> ax = X - mean;
-        
+
         //Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
         T MDistSq = ax.transpose() * lu.inverse() * ax;
 
