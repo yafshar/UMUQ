@@ -160,7 +160,7 @@ struct stats
         //Compute the standard deviation
         TOut weightstddev = stddev<TOut, TOut>(weight, fSize, weightmean);
 
-        //return the coefficient of variation (COV)
+        //return the square of the coefficient of variation (COV)
         return std::pow(weightstddev / weightmean - tol, 2);
     }
 };
