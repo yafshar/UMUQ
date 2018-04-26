@@ -4,27 +4,27 @@
 /*! \class multimin_function
   * \brief Definition of an arbitrary real-valued function with vector input and parameters
   */
-template <typename T>
+template <typename T, class Tparams>
 struct multimin_function
 {
-    T(*f)
-    (T const *x, void *params);
+    Tparams params;
     size_t n;
-    void *params;
+
+    T f(T const *x, Tparams params_);
 };
 
 /*! \class multimin_function_fdf
   * \brief Definition of an arbitrary differentiable real-valued function with vector input and parameters
   */
-template <typename T>
+template <typename T, class Tparams>
 struct multimin_function_fdf
 {
-    T(*f)
-    (T const *x, void *params);
-    void (*df)(T const *x, void *params, T *df);
-    void (*fdf)(T const *x, void *params, T *f, T *df);
     size_t n;
-    void *params;
+    Tparams params;
+
+    T f(T const *x, Tparams params_);
+    T df(T const *x, Tparams params_, T *df_);
+    T fdf(T const *x, Tparams params_, T *f_, T *df_);
 };
 
 #define MULTIMIN_FN_EVAL(F, x) (*((F)->f))(x, (F)->params)
@@ -132,11 +132,9 @@ struct multimin_fdfminimizer
     T *x;
     T *gradient;
     T *dx;
-    
+
     //size of array
     size_t n;
-    
-    void *state;
 
     /*!
      * \brief Default constructor
@@ -157,29 +155,10 @@ struct multimin_fdfminimizer
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         }
-
-        try
-        {
-            state = new typeT.size;
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        }
-
-        if (!(Ttype->alloc)(state, n))
-        {
-            destroy();
-
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to initialize minimizer state! " << std::endl;
-            throw(std::runtime_error("Failed to initialize minimizer state!"));
-        }
     }
 
     /*!
-     * \brief set
+     * \brief alloc
      * 
      * \param fdf_ Function
      * \param x
@@ -189,7 +168,7 @@ struct multimin_fdfminimizer
      *  
      * returns 
      */
-    int set(multimin_function_fdf<T> *fdf_, T const *x_, size_t const xsize, T step_size, T tol)
+    int alloc(multimin_function_fdf<T> *fdf_, T const *x_, size_t const xsize, T step_size, T tol)
     {
         if (n != fdf_->n)
         {
