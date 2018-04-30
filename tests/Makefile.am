@@ -30,6 +30,10 @@ TESTS += psrandom_test
 check_PROGRAMS += psrandom_test
 psrandom_test_SOURCES = numerics/psrandom_test.cpp 
 
+TESTS += multimin_test
+check_PROGRAMS += multimin_test 
+multimin_test_SOURCES = numerics/multimin_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test

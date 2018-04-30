@@ -90,15 +90,15 @@ host_triplet = @host@
 target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
-	psrandom_test$(EXEEXT) utility_test$(EXEEXT) \
-	parser_test$(EXEEXT) array_test$(EXEEXT) \
+	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
+	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
-	psrandom_test$(EXEEXT) utility_test$(EXEEXT) \
-	parser_test$(EXEEXT) array_test$(EXEEXT) \
+	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
+	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT)
@@ -145,6 +145,9 @@ funcallcounter_test_LDADD = $(LDADD)
 am_io_test_OBJECTS = io/io_test.$(OBJEXT)
 io_test_OBJECTS = $(am_io_test_OBJECTS)
 io_test_LDADD = $(LDADD)
+am_multimin_test_OBJECTS = numerics/multimin_test.$(OBJEXT)
+multimin_test_OBJECTS = $(am_multimin_test_OBJECTS)
+multimin_test_LDADD = $(LDADD)
 am_parser_test_OBJECTS = misc/parser_test.$(OBJEXT)
 parser_test_OBJECTS = $(am_parser_test_OBJECTS)
 parser_test_LDADD = $(LDADD)
@@ -203,17 +206,17 @@ am__v_CXXLD_1 =
 SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -598,6 +601,7 @@ eigen_test_SOURCES = numerics/eigen_test.cpp
 stats_test_SOURCES = numerics/stats_test.cpp 
 factorial_test_SOURCES = numerics/factorial_test.cpp 
 psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+multimin_test_SOURCES = numerics/multimin_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
@@ -701,6 +705,12 @@ io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
 	@rm -f io_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(io_test_OBJECTS) $(io_test_LDADD) $(LIBS)
+numerics/multimin_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+multimin_test$(EXEEXT): $(multimin_test_OBJECTS) $(multimin_test_DEPENDENCIES) $(EXTRA_multimin_test_DEPENDENCIES) 
+	@rm -f multimin_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(multimin_test_OBJECTS) $(multimin_test_LDADD) $(LIBS)
 misc/parser_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -770,6 +780,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/factorial_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/psrandom_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
@@ -1028,6 +1039,13 @@ factorial_test.log: factorial_test$(EXEEXT)
 psrandom_test.log: psrandom_test$(EXEEXT)
 	@p='psrandom_test$(EXEEXT)'; \
 	b='psrandom_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+multimin_test.log: multimin_test$(EXEEXT)
+	@p='multimin_test$(EXEEXT)'; \
+	b='multimin_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
