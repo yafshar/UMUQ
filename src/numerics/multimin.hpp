@@ -6,9 +6,40 @@
 #define MULTIMIN_FN_EVAL_DF(F, x, g) (*((F)->df))(x, (F)->params, (g))
 #define MULTIMIN_FN_EVAL_F_DF(F, x, y, g) (*((F)->fdf))(x, (F)->params, (y), (g))
 
+/*! \class function_fdf
+  * \brief Definition of an arbitrary differentiable function
+  *  
+  * \tparam T   data type
+  * \tparan TFD differentiable function type
+  */
+template <typename T, class TFD>
+class function_fdf
+{
+  public:
+    T f(T const x)
+    {
+        return static_cast<TFD *>(this)->f(x);
+    }
+
+    T df(T const x)
+    {
+        return static_cast<TFD *>(this)->df(x, df_);
+    }
+
+    void fdf(T const x, T *f_, T *df_)
+    {
+        static_cast<TFD *>(this)->fdf(x, f_, df_);
+    }
+
+    function_fdf(size_t n_) : n(n_) {}
+
+    size_t n;
+
+  private:
+    friend TFD;
+};
+
 // The goal is finding minima of arbitrary multidimensional functions.
-
-
 
 /*! \class multimin_function
   * \brief Definition of an arbitrary function with vector input and parameters
@@ -68,7 +99,7 @@ class multimin_fminimizer_type
 
     multimin_fminimizer_type(const char *name_) : name(name_) {}
     multimin_fminimizer_type(multimin_fminimizer_type const &m) : name(m.name) {}
-  
+
   private:
     friend TMFMT;
 };
@@ -99,7 +130,7 @@ class multimin_fminimizer
   * \tparan TMFD   multimin differentiable function type
   */
 template <typename T, class TMFD>
-struct multimin_function_fdf
+class multimin_function_fdf
 {
   public:
     T f(T const *x)
@@ -324,8 +355,6 @@ class multimin_fdfminimizer
      * \brief destructor
      * 
      */
-    ~multimin_fdfminimizer() { free(); }
-
     void free()
     {
         type->free();
@@ -352,6 +381,7 @@ class multimin_fdfminimizer
     multimin_function_fdf<T, TMFD> *fdf;
 
     T f;
+    
     T *x;
     T *gradient;
     T *dx;
@@ -366,5 +396,103 @@ class multimin_fdfminimizer
 struct multimin
 {
 };
+
+template <typename T>
+int multimin_test_gradient(T const *g, size_t const n, T const epsabs)
+{
+    if (epsabs < (T)0)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "Absolute tolerance is negative" << std::endl;
+        //fail
+        return -1;
+    }
+
+    //First compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
+    T norm(0);
+    std::for_each(g, g + n, [&](T const g_) { norm += g_ * g_; });
+    if (std::sqrt(norm) < epsabs)
+    {
+        //success
+        return 0;
+    }
+
+    //continue
+    return 1;
+}
+
+template <typename T>
+int multimin_test_size(T const size, T const epsabs)
+{
+    if (epsabs < 0)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << "Absolute tolerance is negative" << std::endl;
+        //fail
+        return -1;
+    }
+
+    if (size < epsabs)
+    {
+        //success
+        return 0;
+    }
+
+    //continue
+    return 1;
+}
+
+template <typename T, class TMF>
+bool multimin_diff(TMF const *f, T const *x, T *g)
+{
+    size_t n = f->n;
+
+    T const h = std::sqrt(std::numeric_limits<T>::epsilon());
+
+    T *x1 = nullptr;
+
+    try
+    {
+        x1 = new T[n];
+    }
+    catch (std::bad_alloc &e)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        return false;
+    }
+
+    std::copy(x, x + n, x1);
+
+    for (size_t i = 0; i < n; i++)
+    {
+        T fl;
+        T fh;
+
+        T xi = x[i];
+
+        T dx = std::abs(xi) * h;
+        if (dx <= 0.0)
+        {
+            dx = h;
+        }
+
+        x1[i] = xi + dx;
+
+        fh = f->f(x1);
+
+        x1[i] = xi - dx;
+
+        fl = f->f(x1);
+
+        x1[i] = xi;
+
+        g[i] = (fh - fl) / ((T)2 * dx);
+    }
+
+    delete[] x1;
+
+    return true;
+}
 
 #endif
