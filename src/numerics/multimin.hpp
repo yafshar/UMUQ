@@ -1,51 +1,13 @@
 #ifndef UMHBM_MULTIMIN_H
 #define UMHBM_MULTIMIN_H
 
-#define MULTIMIN_FN_EVAL(F, x) (*((F)->f))(x, (F)->params)
-#define MULTIMIN_FN_EVAL_F(F, x) (*((F)->f))(x, (F)->params)
-#define MULTIMIN_FN_EVAL_DF(F, x, g) (*((F)->df))(x, (F)->params, (g))
-#define MULTIMIN_FN_EVAL_F_DF(F, x, y, g) (*((F)->fdf))(x, (F)->params, (y), (g))
-
-/*! \class function_fdf
-  * \brief Definition of an arbitrary differentiable function
-  *  
-  * \tparam T   data type
-  * \tparan TFD differentiable function type
-  */
-template <typename T, class TFD>
-class function_fdf
-{
-  public:
-    T f(T const x)
-    {
-        return static_cast<TFD *>(this)->f(x);
-    }
-
-    T df(T const x)
-    {
-        return static_cast<TFD *>(this)->df(x, df_);
-    }
-
-    void fdf(T const x, T *f_, T *df_)
-    {
-        static_cast<TFD *>(this)->fdf(x, f_, df_);
-    }
-
-    function_fdf(size_t n_) : n(n_) {}
-
-    size_t n;
-
-  private:
-    friend TFD;
-};
-
 // The goal is finding minima of arbitrary multidimensional functions.
 
 /*! \class multimin_function
-  * \brief Definition of an arbitrary function with vector input and parameters
+  * \brief Defines a general function of n variables
   * 
-  * \tparam T     data type
-  * \tparan TMF   multimin function type
+  * \tparam T   data type
+  * \tparan TMF multimin function type
   */
 template <typename T, class TMF>
 class multimin_function
@@ -56,16 +18,21 @@ class multimin_function
         return static_cast<TMF *>(this)->f(x);
     }
 
-    multimin_function(size_t n_) : n(n_) {}
-
-    size_t n;
+    //The dimension of the system, i.e. the number of components of the vectors x.
+    std::size_t n;
 
   private:
     friend TMF;
 };
 
 /*! \class multimin_fminimizer_type
-  * \brief minimization of non-differentiable functions
+  * \brief This class specifies minimization algorithms which do not use gradients
+  * 
+  * \ref multimin_nmsimplex & \ref multimin_nmsimplex2
+  * 
+  * These methods use the Simplex algorithm of Nelder and Mead.
+  * Starting from the initial vector, the algorithm
+  * constructs an additional n vectors \f$ p_i \f$ using the step size vector \f$ s = step_{size} \f$.
   * 
   * \tparam T     data type
   * \tparam TMFMT multimin function minimizer type
@@ -75,9 +42,7 @@ template <typename T, class TMFMT, class TMF>
 class multimin_fminimizer_type
 {
   public:
-    const char *name;
-
-    bool alloc(size_t n)
+    bool alloc(std::size_t n)
     {
         return static_cast<TMFMT *>(this)->alloc(n);
     }
@@ -97,8 +62,7 @@ class multimin_fminimizer_type
         static_cast<TMFMT *>(this)->free();
     }
 
-    multimin_fminimizer_type(const char *name_) : name(name_) {}
-    multimin_fminimizer_type(multimin_fminimizer_type const &m) : name(m.name) {}
+    const char *name;
 
   private:
     friend TMFMT;
@@ -111,16 +75,187 @@ class multimin_fminimizer_type
   * \tparam TMFDMT multimin differentiable function minimizer type
   * \tparan TMFD   multimin differentiable function type
   */
-template <typename T, class TMFM, class TMFMT, class TMF>
+template <typename T, class TMFMT, class TMF>
 class multimin_fminimizer
 {
   public:
+    multimin_fminimizer() : type(nullptr), f(nullptr), x(nullptr) {}
+    ~multimin_fminimizer() { free(); }
+
+    /*!
+     * \brief alloc
+     * 
+     * \param Ttype pointer to \a multimin_fminimizer_type object 
+     * \param n_ size of array
+     * 
+     * \returns true if everything goes OK
+     */
+    bool alloc(multimin_fminimizer_type<T, TMFMT, TMF> *Ttype, std::size_t n_)
+    {
+        n = n_;
+        type = Ttype;
+
+        try
+        {
+            x = new T[n]();
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            return false;
+        }
+
+        if (!type->alloc(n))
+        {
+            free();
+            return false;
+        }
+
+        return true;
+    }
+
+    /*!
+     * \brief set
+     * 
+     * \param f_        
+     * \param x         input array
+     * \param step_size step size
+     *  
+     * returns 
+     */
+    bool set(multimin_function<T, TMF> *f_, T const *x_, T const *step_size)
+    {
+        if (n != f_->n)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Function incompatible with solver size! " << std::endl;
+            return false;
+        }
+
+        //set the pointer
+        f = f_;
+
+        //copy array x_ to array x
+        std::copy(x_, x_ + n, x);
+
+        return type->set(f, x, &size, step_size);
+    }
+
+    /*!
+     * \brief destructor
+     * 
+     */
+    void free()
+    {
+        if (type != nullptr)
+        {
+            type->free();
+            type = nullptr;
+        }
+
+        if (f != nullptr)
+        {
+            f = nullptr;
+        }
+
+        if (x != nullptr)
+        {
+            delete[] x;
+            x = nullptr;
+        }
+
+        n = 0;
+    }
+
+    /*!
+     * \brief iterate
+     * 
+     */
+    bool iterate()
+    {
+        return type->iterate(f, x, &size, &fval);
+    }
+
+    /*!
+     * \brief name
+     * \returns the name of the minimization type
+     */
+    const char *name()
+    {
+        return type->name;
+    }
+
+    /*!
+     * \brief get function x
+     * \returns x
+     */
+    T *get_x()
+    {
+        return x;
+    }
+
+    /*!
+     * \brief minimum
+     * \returns the minimum
+     */
+    T minimum()
+    {
+        return fval;
+    }
+
+    /*!
+     * \brief get_size
+     * \returns the size
+     */
+    T get_size()
+    {
+        return size;
+    }
+
+  public:
     //Multi dimensional part
-    TMFMT type;
-    TMF f;
+    multimin_fminimizer_type<T, TMFMT, TMF> *type;
+    multimin_function<T, TMF> *f;
+
     T fval;
+
     T *x;
+
     T size;
+
+    std::size_t n;
+};
+
+/*! \class function_fdf
+  * \brief Definition of an arbitrary differentiable function
+  *  
+  * \tparam T   data type
+  * \tparan TFD differentiable function type
+  */
+template <typename T, class TFD>
+class function_fdf
+{
+  public:
+    T f(T const x)
+    {
+        return static_cast<TFD *>(this)->f(x);
+    }
+
+    T df(T const x)
+    {
+        return static_cast<TFD *>(this)->df(x);
+    }
+
+    void fdf(T const x, T *f_, T *df_)
+    {
+        static_cast<TFD *>(this)->fdf(x, f_, df_);
+    }
+
+    std::size_t n;
+
+  private:
+    friend TFD;
 };
 
 /*! \class multimin_function_fdf
@@ -148,9 +283,7 @@ class multimin_function_fdf
         return static_cast<TMFD *>(this)->fdf(x, f_, df_);
     }
 
-    multimin_function_fdf(size_t n_) : n(n_) {}
-
-    size_t n;
+    std::size_t n;
 
   private:
     friend TMFD;
@@ -167,9 +300,7 @@ template <typename T, class TMFDMT, class TMFD>
 class multimin_fdfminimizer_type
 {
   public:
-    const char *name;
-
-    bool alloc(size_t n)
+    bool alloc(std::size_t n)
     {
         return static_cast<TMFDMT *>(this)->alloc(n);
     }
@@ -194,8 +325,7 @@ class multimin_fdfminimizer_type
         static_cast<TMFDMT *>(this)->free();
     }
 
-    multimin_fdfminimizer_type(const char *name_) : name(name_) {}
-    multimin_fdfminimizer_type(multimin_fdfminimizer_type const &m) : name(m.name) {}
+    const char *name;
 
   private:
     friend TMFDMT;
@@ -212,6 +342,9 @@ template <typename T, class TMFDMT, class TMFD>
 class multimin_fdfminimizer
 {
   public:
+    multimin_fdfminimizer() : type(nullptr), fdf(nullptr), x(nullptr), gradient(nullptr), dx(nullptr) {}
+    ~multimin_fdfminimizer() { free(); }
+
     /*!
      * \brief alloc
      * 
@@ -220,7 +353,7 @@ class multimin_fdfminimizer
      * 
      * \returns true if everything goes OK
      */
-    bool alloc(multimin_fdfminimizer_type<T, TMFDMT, TMFD> *Ttype, size_t n_)
+    bool alloc(multimin_fdfminimizer_type<T, TMFDMT, TMFD> *Ttype, std::size_t n_)
     {
         n = n_;
         type = Ttype;
@@ -260,30 +393,23 @@ class multimin_fdfminimizer
      *  
      * returns true if everything goes OK
      */
-    bool set(multimin_function_fdf<T, TMFD> *mfdf, T const *x_, size_t n_, T step_size, T tol)
+    bool set(multimin_function_fdf<T, TMFD> *fdf_, T const *x_, T step_size, T tol)
     {
-        if (n != mfdf->n)
+        if (n != fdf_->n)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << " Function incompatible with solver size! " << std::endl;
             return false;
         }
 
-        if (n_ != mfdf->n)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Vector length not compatible with function" << std::endl;
-            return false;
-        }
-
         //set the pointer
-        fdf = mfdf;
+        fdf = fdf_;
 
         //copy array x_ to array x
-        std::copy(x_, x_ + n_, x);
+        std::copy(x_, x_ + n, x);
 
         //set dx to zero
-        std::fill(dx, dx + n, (T)0);
+        std::fill(dx, dx + n, T{});
 
         return type->set(fdf, x, &f, gradient, step_size, tol);
     }
@@ -357,22 +483,36 @@ class multimin_fdfminimizer
      */
     void free()
     {
-        type->free();
-        type = nullptr;
+        if (type != nullptr)
+        {
+            type->free();
+            type = nullptr;
+        }
 
-        fdf = nullptr;
+        if (fdf != nullptr)
+        {
+            fdf = nullptr;
+        }
 
-        delete[] x;
-        x = nullptr;
+        if (x != nullptr)
+        {
+            delete[] x;
+            x = nullptr;
+        }
 
-        delete[] gradient;
-        gradient = nullptr;
+        if (gradient != nullptr)
+        {
+            delete[] gradient;
+            gradient = nullptr;
+        }
 
-        delete[] dx;
-        dx = nullptr;
+        if (dx != nullptr)
+        {
+            delete[] dx;
+            dx = nullptr;
+        }
 
         n = 0;
-        f = 0;
     }
 
   private:
@@ -381,26 +521,18 @@ class multimin_fdfminimizer
     multimin_function_fdf<T, TMFD> *fdf;
 
     T f;
-    
+
     T *x;
     T *gradient;
     T *dx;
 
-    size_t n;
-};
-
-/*! \class multimin
-* \brief 
-*	
-*/
-struct multimin
-{
+    std::size_t n;
 };
 
 template <typename T>
-int multimin_test_gradient(T const *g, size_t const n, T const epsabs)
+int multimin_test_gradient(T const *g, std::size_t const n, T const epsabs)
 {
-    if (epsabs < (T)0)
+    if (epsabs < T{})
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << "Absolute tolerance is negative" << std::endl;
@@ -408,9 +540,10 @@ int multimin_test_gradient(T const *g, size_t const n, T const epsabs)
         return -1;
     }
 
-    //First compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
+    //Compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
     T norm(0);
-    std::for_each(g, g + n, [&](T const g_) { norm += g_ * g_; });
+    std::for_each(g, g + n, [&](T const g_i) { norm += g_i * g_i; });
+
     if (std::sqrt(norm) < epsabs)
     {
         //success
@@ -445,11 +578,11 @@ int multimin_test_size(T const size, T const epsabs)
 template <typename T, class TMF>
 bool multimin_diff(TMF const *f, T const *x, T *g)
 {
-    size_t n = f->n;
+    std::size_t n = f->n;
 
     T const h = std::sqrt(std::numeric_limits<T>::epsilon());
 
-    T *x1 = nullptr;
+    T *x1;
 
     try
     {
@@ -464,7 +597,7 @@ bool multimin_diff(TMF const *f, T const *x, T *g)
 
     std::copy(x, x + n, x1);
 
-    for (size_t i = 0; i < n; i++)
+    for (std::size_t i = 0; i < n; i++)
     {
         T fl;
         T fh;
@@ -472,7 +605,7 @@ bool multimin_diff(TMF const *f, T const *x, T *g)
         T xi = x[i];
 
         T dx = std::abs(xi) * h;
-        if (dx <= 0.0)
+        if (dx <= T{})
         {
             dx = h;
         }
@@ -487,7 +620,7 @@ bool multimin_diff(TMF const *f, T const *x, T *g)
 
         x1[i] = xi;
 
-        g[i] = (fh - fl) / ((T)2 * dx);
+        g[i] = (fh - fl) / (2 * dx);
     }
 
     delete[] x1;
