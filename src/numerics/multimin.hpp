@@ -310,7 +310,7 @@ class multimin_fdfminimizer_type
         return static_cast<TMFDMT *>(this)->set(tmfd, x, f, gradient, step_size, tol);
     }
 
-    bool iterate(TMFD *tmfd, T *x, T *f, T *gradient, T *dx);
+    bool iterate(TMFD *tmfd, T *x, T *f, T *gradient, T *dx)
     {
         return static_cast<TMFDMT *>(this)->iterate(tmfd, x, f, gradient, dx);
     }
