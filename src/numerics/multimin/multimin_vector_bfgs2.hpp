@@ -1,7 +1,6 @@
 #ifndef UMHBM_MULTIMIN_VECTOR_BFGS2_H
 #define UMHBM_MULTIMIN_VECTOR_BFGS2_H
 
-#include "multimin.hpp"
 #include "multimin_linear_minimize.hpp"
 #include "multimin_linear_wrapper.hpp"
 
@@ -25,14 +24,13 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
      * 
      * \param name name of the differentiable function minimizer type (default "vector_bfgs2")
      */
-    vector_bfgs2(const char *name_ = "vector_bfgs2") : name(name_),
-                                                       p(nullptr),
+    vector_bfgs2(const char *name_ = "vector_bfgs2") : p(nullptr),
                                                        x0(nullptr),
                                                        g0(nullptr),
                                                        dx0(nullptr),
                                                        dg0(nullptr),
                                                        x_alpha(nullptr),
-                                                       g_alpha(nullptr) {}
+                                                       g_alpha(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
@@ -46,7 +44,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
      * 
      * \returns false if there is insufficient memory to create data array 
      */
-    bool alloc(std::size_t n_)
+    bool alloc(std::size_t const n_)
     {
         n = n_;
         try
@@ -212,9 +210,9 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         }
 
         //Line minimization, with cubic interpolation (order = 3)
-        bool status = minimize<T, function_fdf<T, wrapper_t<T, TMFD>::wrap>>(&wrap.fdf_linear, rho, sigma,
-                                                                             tau1, tau2, tau3, order,
-                                                                             alpha1, &alpha);
+        bool status = minimize<T, function_fdf<T, class wrapper_t<T, TMFD>::wrap>>(&wrap.fdf_linear, rho, sigma,
+                                                                                   tau1, tau2, tau3, order,
+                                                                                   alpha1, &alpha);
         if (status != true)
         {
             return false;

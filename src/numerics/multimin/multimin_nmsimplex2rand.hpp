@@ -1,7 +1,7 @@
-#ifndef UMHBM_MULTIMIN_NSIMPLEX2_H
-#define UMHBM_MULTIMIN_NSIMPLEX2_H
+#ifndef UMHBM_MULTIMIN_NSIMPLEX2RAND_H
+#define UMHBM_MULTIMIN_NSIMPLEX2RAND_H
 
-/*! \class nmsimplex2
+/*! \class nmsimplex2rand
   * \brief 
   * 
   * The Simplex method of Nelder and Mead, also known as the polytope
@@ -14,26 +14,26 @@
   * \tparan TMF multimin function type
   */
 template <typename T, class TMF>
-class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
+class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>, TMF>
 {
   public:
     /*!
      * \brief constructor
      * 
-     * \param name name of the differentiable function minimizer type (default "nmsimplex2")
+     * \param name name of the differentiable function minimizer type (default "nmsimplex2rand")
      */
-    nmsimplex2(const char *name_ = "nmsimplex2") : x1(nullptr),
-                                                   y1(nullptr),
-                                                   ws1(nullptr),
-                                                   ws2(nullptr),
-                                                   center(nullptr),
-                                                   delta(nullptr),
-                                                   xmc(nullptr) { this->name = name_; }
+    nmsimplex2rand(const char *name_ = "nmsimplex2rand") : x1(nullptr),
+                                                           y1(nullptr),
+                                                           ws1(nullptr),
+                                                           ws2(nullptr),
+                                                           center(nullptr),
+                                                           delta(nullptr),
+                                                           xmc(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
      */
-    ~nmsimplex2() { free(); }
+    ~nmsimplex2rand() { free(); }
 
     /*!
      * \brief allocate space for data type T
@@ -116,6 +116,54 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
     }
 
     /*!
+     * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
+     * The upper-left element of the submatrix is the element (k1,k2) of the original 
+     * matrix. The submatrix has n1 rows and n2 columns.
+     * The physical number of columns in memory given by n is unchanged.
+     * Mathematically, the (i,j)-th element of the new matrix is given by,
+     * \f$ ID(i, j, k1, k2, n1, n2) = [(k1 * n + k2) + i*n + j ]   \f$
+     */
+    class submatrix
+    {
+      public:
+        submatrix(std::size_t k1_, std::size_t k2_, std::size_t n1_, std::size_t n2_)
+        {
+            if (k1_ > n + 1 || k2_ > n || n1_ > n + 1 || n2 > n)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Input data overrun the ends of the original matrix " << std::endl;
+                throw(std::runtime_error("Wrong Input!"));
+            }
+            k1 = k1_;
+            k2 = k2_;
+            n1 = n1_;
+            n2 = n2_;
+        }
+
+        std::ptrdiff_t const ID(std::size_t i, std::size_t j) const
+        {
+            return k1 * n + k2 + i * n + j;
+        }
+
+      private:
+        std::size_t k1;
+        std::size_t k2;
+        std::size_t n1;
+        std::size_t n2;
+    };
+
+    /*!
+     * \brief set
+     * 
+     */
+    inline T ran_unif(unsigned long *seed)
+    {
+        unsigned long s = *seed;
+        *seed = (s * 69069 + 1) & 0xffffffffUL;
+        return (*seed) / static_cast<T>(4294967296);
+    }
+
+    /*!
      * \brief set
      * 
      */
@@ -136,29 +184,93 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 
         y1[0] = val;
 
-        //Following points are initialized to x0 + step_size
-        for (std::size_t i = 0; i < n; i++)
         {
-            //Copy the elements of the x to ws1
-            std::copy(x, x + n, ws1);
+            submatrix m(1, 0, n, n);
 
-            val = ws1[i] + step_size[i];
-            ws1[i] = val;
-
-            val = f->f(ws1);
-
-            if (!std::isfinite(val))
+            //Set the elements of the submatrix m to the corresponding elements of the identity matrix
+            for (std::size_t i = 0; i < n; i++)
             {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Non-finite function value encountered ! " << std::endl;
-                return false;
+                for (std::size_t j = 0; j < n; j++)
+                {
+                    std::ptrdiff_t const Id = m.ID(i, j);
+                    x1[Id] = (i == j) ? static_cast<T>(1) : T{};
+                }
             }
 
-            //Copy the elements of the vector ws1 into the (i+1)-th row of the matrix x1
-            std::ptrdiff_t const Id = (i + 1) * n;
-            std::copy(ws1, ws1 + n, x1 + Id);
+            //Generate a random orthornomal basis  */
+            unsigned long seed = count ^ 0x12345678;
 
-            y1[i + 1] = val;
+            //warm it up
+            ran_unif(&seed);
+
+            //Start with random reflections
+            for (std::size_t i = 0; i < n; i++)
+            {
+                T s = ran_unif(&seed);
+                if (s > 0.5)
+                {
+                    std::ptrdiff_t const Id = m.ID(i, i);
+                    x1[Id] = static_cast<T>(-1);
+                }
+            }
+
+            //Apply random rotations
+            for (std::size_t i = 0; i < n; i++)
+            {
+                for (std::size_t j = i + 1; j < n; j++)
+                {
+                    //Rotate columns i and j by a random angle
+                    T const angle = 2 * M_PI * ran_unif(&seed);
+                    T const c = std::cos(angle);
+                    T const s = std::sin(angle);
+
+                    //Apply a Givens rotation
+                    for (std::size_t r = 0; r < n; r++)
+                    {
+                        std::ptrdiff_t const Id_ci = m.ID(r, i);
+                        std::ptrdiff_t const Id_c_j = m.ID(r, j);
+                        T const x = x1[Id_ci];
+                        T const y = x1[Id_c_j];
+                        x1[Id_ci] = c * x + s * y;
+                        x1[Id_c_j] = -s * x + c * y;
+                    }
+                }
+            }
+
+            //Scale the orthonormal basis by the user-supplied step_size in
+            //each dimension, and use as an offset from the central point x
+            for (std::size_t i = 0; i < n; i++)
+            {
+                T const x_i = x[i];
+                T const s_i = step_size[i];
+
+                for (std::size_t j = 0; j < n; j++)
+                {
+                    std::ptrdiff_t const Id_ij = m.ID(i, j);
+
+                    x1[Id_ij] *= s_i;
+                    x1[Id_ij] += x_i;
+                }
+            }
+
+            //Compute the function values at each offset point
+            for (std::size_t i = 0; i < n; i++)
+            {
+                std::ptrdiff_t const Id = m.ID(i, 0);
+
+                T *r_i = x1 + Id;
+
+                val = f->f(r_i);
+
+                if (!std::isfinite(val))
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << "Non-finite function value encountered ! " << std::endl;
+                    return false;
+                }
+
+                y1[i + 1] = val;
+            }
         }
 
         compute_center();

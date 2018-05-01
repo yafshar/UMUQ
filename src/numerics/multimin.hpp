@@ -13,6 +13,9 @@ template <typename T, class TMF>
 class multimin_function
 {
   public:
+    multimin_function() {}
+    multimin_function(std::size_t n_) : n(n_) {}
+
     T f(T const *x)
     {
         return static_cast<TMF *>(this)->f(x);
@@ -237,6 +240,9 @@ template <typename T, class TFD>
 class function_fdf
 {
   public:
+    function_fdf() {}
+    function_fdf(std::size_t n_) : n(n_) {}
+
     T f(T const x)
     {
         return static_cast<TFD *>(this)->f(x);
@@ -268,6 +274,9 @@ template <typename T, class TMFD>
 class multimin_function_fdf
 {
   public:
+    multimin_function_fdf() {}
+    multimin_function_fdf(std::size_t n_) : n(n_) {}
+
     T f(T const *x)
     {
         return static_cast<TMFD *>(this)->f(x);
@@ -353,14 +362,14 @@ class multimin_fdfminimizer
      * 
      * \returns true if everything goes OK
      */
-    bool alloc(multimin_fdfminimizer_type<T, TMFDMT, TMFD> *Ttype, std::size_t n_)
+    bool alloc(TMFDMT *Ttype, std::size_t n_)
     {
         n = n_;
         type = Ttype;
 
         try
         {
-            x = new T[n];
+            x = new T[n]();
             //set to zero
             gradient = new T[n]();
             //set to zero
@@ -393,7 +402,7 @@ class multimin_fdfminimizer
      *  
      * returns true if everything goes OK
      */
-    bool set(multimin_function_fdf<T, TMFD> *fdf_, T const *x_, T step_size, T tol)
+    bool set(TMFD *fdf_, T const *x_, T step_size, T tol)
     {
         if (n != fdf_->n)
         {
@@ -517,8 +526,8 @@ class multimin_fdfminimizer
 
   private:
     // multi dimensional part
-    multimin_fdfminimizer_type<T, TMFDMT, TMFD> *type;
-    multimin_function_fdf<T, TMFD> *fdf;
+    TMFDMT *type;
+    TMFD *fdf;
 
     T f;
 
@@ -576,7 +585,7 @@ int multimin_test_size(T const size, T const epsabs)
 }
 
 template <typename T, class TMF>
-bool multimin_diff(TMF const *f, T const *x, T *g)
+bool multimin_diff(TMF *f, T const *x, T *g)
 {
     std::size_t n = f->n;
 

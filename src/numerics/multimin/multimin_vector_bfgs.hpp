@@ -1,7 +1,6 @@
 #ifndef UMHBM_MULTIMIN_VECTOR_BFGS_H
 #define UMHBM_MULTIMIN_VECTOR_BFGS_H
 
-#include "multimin.hpp"
 #include "multimin_directional_minimize.hpp"
 
 /*! \class vector_bfgs
@@ -19,14 +18,14 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
      * 
      * \param name name of the differentiable function minimizer type (default "vector_bfgs")
      */
-    vector_bfgs(const char *name_ = "vector_bfgs") : name(name_),
-                                                     p(nullptr),
+    vector_bfgs(const char *name_ = "vector_bfgs") : p(nullptr),
                                                      x0(nullptr),
                                                      x1(nullptr),
                                                      x2(nullptr),
                                                      g0(nullptr),
                                                      dx0(nullptr),
-                                                     dx1(nullptr) {}
+                                                     dx1(nullptr),
+                                                     dg0(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
@@ -52,6 +51,7 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
             g0 = new T[n]();
             dx0 = new T[n]();
             dx1 = new T[n]();
+            dg0 = new T[n]();
         }
         catch (std::bad_alloc &e)
         {
@@ -137,6 +137,11 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
             delete[] dx1;
             dx1 = nullptr;
         }
+        if (dg0 != nullptr)
+        {
+            delete[] dg0;
+            dg0 = nullptr;
+        }
     }
 
     bool restart()
@@ -198,14 +203,13 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
         }
 
 #ifdef DEBUG
-        std::cout << "Got stepc = " << stepc << "fc = " << fc << std::endl;
+        std::cout << "Got stepc = " << stepc << " fc = " << fc << std::endl;
 #endif
 
         //Do a line minimisation in the region (xa,fa) (xc,fc) to find an
         //intermediate (xb,fb) satisifying fa > fb < fc.  Choose an initial
         //xb based on parabolic interpolation
         intermediate_point<T, TMFD>(fdf, x, p, dir / pnorm, pg, stepa, stepc, fa, fc, x1, dx1, gradient, &stepb, &fb);
-
         if (stepb == T{})
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;

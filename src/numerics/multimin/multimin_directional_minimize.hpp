@@ -1,13 +1,11 @@
 #ifndef UMHBM_MULTIMIN_DIRECTIONAL_MINIMIZE_H
 #define UMHBM_MULTIMIN_DIRECTIONAL_MINIMIZE_H
-#include <cstddef>
-#include <algorithm>
 
 template <typename T>
 inline void take_step(std::size_t n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
 {
     //Compute the sum \f$y = \alpha x + y\f$ for the vectors x and y (set dx to zero).
-    T const alpha = -step / lambda;
+    T const alpha = -step * lambda;
     for (std::size_t i = 0; i < n; i++)
     {
         dx[i] = alpha * p[i];

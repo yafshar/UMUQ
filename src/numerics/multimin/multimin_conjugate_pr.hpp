@@ -1,7 +1,6 @@
 #ifndef UMHBM_MULTIMIN_CONJUGATE_PR_H
 #define UMHBM_MULTIMIN_CONJUGATE_PR_H
 
-#include "multimin.hpp"
 #include "multimin_directional_minimize.hpp"
 
 /*! \class conjugate_pr
@@ -19,12 +18,11 @@ class conjugate_pr : public multimin_fdfminimizer_type<T, conjugate_pr<T, TMFD>,
      * 
      * \param name name of the differentiable function minimizer type (default "conjugate_pr")
      */
-    conjugate_pr(const char *name_ = "conjugate_pr") : name(name_),
-                                                       x1(nullptr),
+    conjugate_pr(const char *name_ = "conjugate_pr") : x1(nullptr),
                                                        dx1(nullptr),
                                                        x2(nullptr),
                                                        p(nullptr),
-                                                       g0(nullptr) {}
+                                                       g0(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
@@ -159,7 +157,7 @@ class conjugate_pr : public multimin_fdfminimizer_type<T, conjugate_pr<T, TMFD>,
             pg += p[i] * gradient[i];
         }
 
-        dir = (pg >= 0.0) ? +1.0 : -1.0;
+        dir = (pg >= T{}) ? static_cast<T>(1) : -static_cast<T>(1);
 
         //Compute new trial point at x_c= x - step * p, where p is the current direction
         take_step<T>(n, x, p, stepc, dir / pnorm, x1, dx);
@@ -196,7 +194,6 @@ class conjugate_pr : public multimin_fdfminimizer_type<T, conjugate_pr<T, TMFD>,
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
             std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-
             return false;
         }
 

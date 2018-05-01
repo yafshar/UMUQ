@@ -1,8 +1,6 @@
 #ifndef UMHBM_MULTIMIN_STEEPEST_DESCENT_H
 #define UMHBM_MULTIMIN_STEEPEST_DESCENT_H
 
-#include "multimin.hpp"
-
 /*! \class steepest_descent
   * \brief steepest_descent for differentiable function minimizer type
   * 
@@ -26,9 +24,8 @@ class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T
      * 
      * \param name name of the differentiable function minimizer type (default "steepest_descent")
      */
-    steepest_descent(const char *name_ = "steepest_descent") : name(name_),
-                                                               x1(nullptr),
-                                                               g1(nullptr) {}
+    steepest_descent(const char *name_ = "steepest_descent") : x1(nullptr),
+                                                               g1(nullptr) { this->name = name_; }
     /*!
      * \brief destructor
      */
@@ -41,7 +38,7 @@ class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T
      * 
      * \returns false if there is insufficient memory to create data array 
      */
-    bool alloc(std::size_t n_)
+    bool alloc(std::size_t const n_)
     {
         n = n_;
         try

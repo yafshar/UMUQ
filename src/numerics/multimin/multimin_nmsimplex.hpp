@@ -1,8 +1,6 @@
 #ifndef UMHBM_MULTIMIN_NSIMPLEX_H
 #define UMHBM_MULTIMIN_NSIMPLEX_H
 
-#include "multimin.hpp"
-
 /*! \class nmsimplex
   * \brief 
   * 
@@ -24,11 +22,10 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
      * 
      * \param name name of the differentiable function minimizer type (default "nmsimplex")
      */
-    nmsimplex(const char *name_ = "nmsimplex") : name(name_),
-                                                 x1(nullptr),
+    nmsimplex(const char *name_ = "nmsimplex") : x1(nullptr),
                                                  y1(nullptr),
                                                  ws1(nullptr),
-                                                 ws2(nullptr) {}
+                                                 ws2(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
@@ -42,7 +39,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
      * 
      * \returns false if there is insufficient memory to create data array 
      */
-    bool alloc(std::size_t n_)
+    bool alloc(std::size_t const n_)
     {
         if (n_ <= 0)
         {
@@ -322,7 +319,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
             xc[j] = newval;
         }
 
-        newval = f->(xc);
+        newval = f->f(xc);
 
         return newval;
     }
@@ -355,7 +352,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
                 //Copy the elements of the i-th row of the matrix x1 into the vector xc
                 std::copy(x1 + Id, x1 + Id + n, xc);
 
-                newval = f->(xc);
+                newval = f->f(xc);
 
                 y1[i] = newval;
 
@@ -426,7 +423,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
                 //Compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
                 T sum(0);
                 std::for_each(s, s + n, [&](T const s_i) { sum += s_i * s_i; });
-                
+
                 ss += std::sqrt(sum);
             }
         }

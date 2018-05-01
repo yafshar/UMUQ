@@ -1,7 +1,6 @@
 #ifndef UMHBM_MULTIMIN_CONJUGATE_FR_H
 #define UMHBM_MULTIMIN_CONJUGATE_FR_H
 
-#include "multimin.hpp"
 #include "multimin_directional_minimize.hpp"
 
 /*! \class conjugate_fr
@@ -19,12 +18,11 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
      * 
      * \param name name of the differentiable function minimizer type (default "conjugate_fr")
      */
-    conjugate_fr(const char *name_ = "conjugate_fr") : name(name_),
-                                                       x1(nullptr),
+    conjugate_fr(const char *name_ = "conjugate_fr") : x1(nullptr),
                                                        dx1(nullptr),
                                                        x2(nullptr),
                                                        p(nullptr),
-                                                       g0(nullptr) {}
+                                                       g0(nullptr) { this->name = name_; }
 
     /*!
      * \brief destructor
@@ -172,7 +170,7 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
             step = stepc * 2;
 
             *f = fc;
-            
+
             std::copy(x1, x1 + n, x);
 
             fdf->df(x1, gradient);
@@ -194,7 +192,7 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
             std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            
+
             return false;
         }
 
