@@ -1,10 +1,8 @@
 # UMHBM
 
 Multidimensional Minimization README
-====================================
-
-Multidimensional Minimization
 ------------
+
 This file contains c++ reimplamentation and modification to the 
 original GSL Multidimensional Minimization source codes made  
 available under the following license:
@@ -33,19 +31,16 @@ Contents
 It should contain the follwing following files:
 
 -----------------------------------
-multimin_function.hpp
-
-multimin_linear_minimize.hpp
-multimin_directional_minimize.hpp
-multimin_linear_wrapper.hpp
-
-multimin_steepest_descent.hpp
-multimin_conjugate_fr.hpp
-multimin_conjugate_pr.hpp
-multimin_vector_bfgs.hpp
-multimin_vector_bfgs2.hpp
-
-multimin_nmsimplex.hpp
-multimin_nmsimplex2.hpp
-multimin_nmsimplex2rand.hpp
+ multimin_function.hpp
+ multimin_linear_minimize.hpp
+ multimin_directional_minimize.hpp
+ multimin_linear_wrapper.hpp
+ multimin_steepest_descent.hpp
+ multimin_conjugate_fr.hpp
+ multimin_conjugate_pr.hpp
+ multimin_vector_bfgs.hpp
+ multimin_vector_bfgs2.hpp
+ multimin_nmsimplex.hpp
+ multimin_nmsimplex2.hpp
+ multimin_nmsimplex2rand.hpp
 -----------------------------------
