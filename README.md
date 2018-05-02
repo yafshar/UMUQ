@@ -3,6 +3,11 @@
 
 Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
 
+Introduction
+------------
+
+Purpose :
+
 <table>
   <tr>
     <td colspan="2"> Multivariate normal distribution  &nbsp; &nbsp; <img src="https://latex.codecogs.com/svg.latex?&space;f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" title="f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" /> </td>
@@ -25,3 +30,25 @@ Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
     <td> <img src="./docs/Rosenbrock.gif?raw=true" width="400" height="400"> </td>
   </tr>
 </table>
+
+
+Initial release of UMHBM source program.
+
+Getting the code
+------------
+You can download the latest version from [here](https://github.com/yafshar/UMHBM).
+The very latest version is always available via 'github' by invoking one of the following:
+````
+## For the traditional ssh-based Git interaction:
+$ git clone git@github.com:yafshar/UMHBM.git
+
+## For HTTP-based Git interaction
+$ git clone https://github.com/yafshar/UMHBM.git
+````
+
+Contributors
+------------
+UMHBM package maintainer: Yaser Afshar <yafshar@umich.edu>
+
+Computational Aerosciences Laboratory
+University of Michigan, Ann Arbor 
