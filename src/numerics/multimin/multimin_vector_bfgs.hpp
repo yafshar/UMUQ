@@ -2,11 +2,13 @@
 #define UMHBM_MULTIMIN_VECTOR_BFGS_H
 
 /*! \class vector_bfgs
-  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
-  * 
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
+ * 
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, TMFD>
 {

@@ -2,16 +2,18 @@
 #define UMHBM_MULTIMIN_VECTOR_BFGS2_H
 
 /*! \class vector_bfgs2
-  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
-  * Fletcher's implementation of the BFGS method,
-  * using the line minimization algorithm from from R.Fletcher,
-  * "Practical Methods of Optimization", Second Edition, ISBN
-  * 0471915475.  Algorithms 2.6.2 and 2.6.4.
-  * 
-  * 
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
+ * Fletcher's implementation of the BFGS method,
+ * using the line minimization algorithm from from R.Fletcher,
+ * "Practical Methods of Optimization", Second Edition, ISBN
+ * 0471915475.  Algorithms 2.6.2 and 2.6.4.
+ * 
+ * 
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>, TMFD>
 {

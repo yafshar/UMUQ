@@ -2,11 +2,13 @@
 #define UMHBM_MULTIMIN_CONJUGATE_FR_H
 
 /*! \class conjugate_fr
-  * \brief Conjugate gradient Fletcher-Reeve algorithm
-  * 
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief Conjugate gradient Fletcher-Reeve algorithm
+ * 
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>, TMFD>
 {

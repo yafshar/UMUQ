@@ -2,11 +2,13 @@
 #define UMHBM_MULTIMIN_CONJUGATE_PR_H
 
 /*! \class conjugate_pr
-  * \brief Conjugate gradient Polak-Ribiere algorithm
-  * 
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief Conjugate gradient Polak-Ribiere algorithm
+ * 
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class conjugate_pr : public multimin_fdfminimizer_type<T, conjugate_pr<T, TMFD>, TMFD>
 {

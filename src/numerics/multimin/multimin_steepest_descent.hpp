@@ -2,19 +2,21 @@
 #define UMHBM_MULTIMIN_STEEPEST_DESCENT_H
 
 /*! \class steepest_descent
-  * \brief steepest_descent for differentiable function minimizer type
-  * 
-  * The steepest descent algorithm follows the downhill gradient of the function at each step. 
-  * When a downhill step is successful the step-size is increased by a factor of two. 
-  * If the downhill step leads to a higher function value then the algorithm backtracks 
-  * and the step size is decreased using the parameter tol. 
-  * 
-  * A suitable value of tol for most applications is 0.1. 
-  * The steepest descent method is inefficient and is included only for demonstration purposes. 
-  * 
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief steepest_descent for differentiable function minimizer type
+ * 
+ * The steepest descent algorithm follows the downhill gradient of the function at each step. 
+ * When a downhill step is successful the step-size is increased by a factor of two. 
+ * If the downhill step leads to a higher function value then the algorithm backtracks 
+ * and the step size is decreased using the parameter tol. 
+ * 
+ * A suitable value of tol for most applications is 0.1. 
+ * The steepest descent method is inefficient and is included only for demonstration purposes. 
+ * 
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T, TMFD>, TMFD>
 {

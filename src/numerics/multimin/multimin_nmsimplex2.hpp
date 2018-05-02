@@ -2,17 +2,19 @@
 #define UMHBM_MULTIMIN_NSIMPLEX2_H
 
 /*! \class nmsimplex2
-  * \brief 
-  * 
-  * The Simplex method of Nelder and Mead, also known as the polytope
-  * search alogorithm.  Ref: Nelder, J.A., Mead, R., Computer Journal 7
-  * (1965) pp. 308-313.
-  * 
-  * This implementation uses n+1 corner points in the simplex.
-  * 
-  * \tparam T   data type
-  * \tparan TMF multimin function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief 
+ * 
+ * The Simplex method of Nelder and Mead, also known as the polytope
+ * search alogorithm.  Ref: Nelder, J.A., Mead, R., Computer Journal 7
+ * (1965) pp. 308-313.
+ * 
+ * This implementation uses n+1 corner points in the simplex.
+ * 
+ * \tparam T   data type
+ * \tparan TMF multimin function type
+ */
 template <typename T, class TMF>
 class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 {

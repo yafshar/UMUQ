@@ -2,11 +2,13 @@
 #define UMHBM_MULTIMIN_LINEAR_WRAPPER_H
 
 /*! \class function_fdf
-  * \brief Definition of an arbitrary differentiable function with vector input and parameters
-  *  
-  * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
-  */
+ *  \ingroup multimin_Module
+ * 
+ * \brief Definition of an arbitrary differentiable function with vector input and parameters
+ *  
+ * \tparam T      data type
+ * \tparan TMFD   multimin differentiable function type
+ */
 template <typename T, class TMFD>
 class wrapper_t
 {
