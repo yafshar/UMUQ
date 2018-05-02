@@ -1,8 +1,6 @@
 #ifndef UMHBM_MULTIMIN_CONJUGATE_FR_H
 #define UMHBM_MULTIMIN_CONJUGATE_FR_H
 
-#include "multimin_directional_minimize.hpp"
-
 /*! \class conjugate_fr
   * \brief Conjugate gradient Fletcher-Reeve algorithm
   * 

@@ -1,8 +1,6 @@
 #ifndef UMHBM_MULTIMIN_VECTOR_BFGS_H
 #define UMHBM_MULTIMIN_VECTOR_BFGS_H
 
-#include "multimin_directional_minimize.hpp"
-
 /*! \class vector_bfgs
   * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
   * 

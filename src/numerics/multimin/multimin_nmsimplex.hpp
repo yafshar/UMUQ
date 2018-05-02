@@ -287,7 +287,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
         return true;
     }
 
-    T move_corner(T const coeff, std::size_t corner, T *xc, multimin_function<T, TMF> const *f)
+    T move_corner(T const coeff, std::size_t corner, T *xc, TMF *f)
     {
         //Moves a simplex corner scaled by coeff (negative value represents
         //mirroring by the middle point of the "other" corner points)
@@ -324,7 +324,7 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
         return newval;
     }
 
-    bool contract_by_best(std::size_t best, T *xc, multimin_function<T, TMF> *f)
+    bool contract_by_best(std::size_t best, T *xc, TMF *f)
     {
         //Function contracts the simplex in respect to
         //best valued corner. That is, all corners besides the

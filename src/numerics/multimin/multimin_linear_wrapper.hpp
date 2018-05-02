@@ -11,11 +11,13 @@ template <typename T, class TMFD>
 class wrapper_t
 {
   public:
+    wrapper_t() : fdf_linear(*this) {}
+
     /*!
      * \brief 
      * 
      */
-    void prepare(multimin_function_fdf<T, TMFD> *fdf, T const *x_, T const f_, T const *g_, T const *p_, T *x_alpha_, T *g_alpha_)
+    void prepare(TMFD *fdf, T const *x_, T const f_, T const *g_, T const *p_, T *x_alpha_, T *g_alpha_)
     {
         wfdf = fdf;
         n = wfdf->n;
@@ -130,93 +132,98 @@ class wrapper_t
          * \brief 
          * 
          */
-        T f(T const alpha)
-        {
-            //using previously cached f(alpha)
-            if (alpha == f_cache_key)
-            {
-                return f_alpha;
-            }
-
-            moveto(alpha);
-
-            f_alpha = wfdf->f(x_alpha);
-
-            f_cache_key = alpha;
-
-            return f_alpha;
-        }
+        wrap(wrapper_t<T, TMFD> &wrapper_t_ref) : w(wrapper_t_ref) {}
 
         /*!
          * \brief 
          * 
+         */
+        T f(T const alpha)
+        {
+            //using previously cached f(alpha)
+            if (alpha == w.f_cache_key)
+            {
+                return w.f_alpha;
+            }
+
+            w.moveto(alpha);
+
+            w.f_alpha = w.wfdf->f(w.x_alpha);
+
+            w.f_cache_key = alpha;
+
+            return w.f_alpha;
+        }
+
+        /*!
+         * \brief
+         *
          */
         T df(T const alpha)
         {
             //using previously cached df(alpha)
-            if (alpha == df_cache_key)
+            if (alpha == w.df_cache_key)
             {
-                return df_alpha;
+                return w.df_alpha;
             }
 
-            moveto(alpha);
+            w.moveto(alpha);
 
-            if (alpha != g_cache_key)
+            if (alpha != w.g_cache_key)
             {
-                wfdf->df(x_alpha, g_alpha);
+                w.wfdf->df(w.x_alpha, w.g_alpha);
 
-                g_cache_key = alpha;
+                w.g_cache_key = alpha;
             }
 
-            df_alpha = slope();
+            w.df_alpha = w.slope();
 
-            df_cache_key = alpha;
+            w.df_cache_key = alpha;
 
-            return df_alpha;
+            return w.df_alpha;
         }
 
         /*!
-         * \brief 
-         * 
+         * \brief
+         *
          */
         void fdf(T const alpha, T *f, T *df)
         {
-
             //Check for previously cached values
-            if (alpha == f_cache_key && alpha == df_cache_key)
+            if (alpha == w.f_cache_key && alpha == w.df_cache_key)
             {
-                *f = f_alpha;
-                *df = df_alpha;
+                *f = w.f_alpha;
+                *df = w.df_alpha;
                 return;
             }
 
-            if (alpha == f_cache_key || alpha == df_cache_key)
+            if (alpha == w.f_cache_key || alpha == w.df_cache_key)
             {
-                *f = fdf_linear.f(alpha);
-                *df = fdf_linear.df(alpha);
+                *f = w.fdf_linear.f(alpha);
+                *df = w.fdf_linear.df(alpha);
                 return;
             }
 
-            moveto(alpha);
+            w.moveto(alpha);
 
-            wfdf->fdf(x_alpha, &f_alpha, g_alpha);
+            w.wfdf->fdf(w.x_alpha, &w.f_alpha, w.g_alpha);
 
-            f_cache_key = alpha;
-            g_cache_key = alpha;
+            w.f_cache_key = alpha;
+            w.g_cache_key = alpha;
 
-            df_alpha = slope();
-            df_cache_key = alpha;
+            w.df_alpha = w.slope();
+            w.df_cache_key = alpha;
 
-            *f = f_alpha;
-            *df = df_alpha;
+            *f = w.f_alpha;
+            *df = w.df_alpha;
         }
+
+      private:
+        wrapper_t<T, TMFD> &w;
     };
 
-  public:
-    wrap fdf_linear;
-
   private:
-    multimin_function_fdf<T, TMFD> *wfdf;
+    TMFD *wfdf;
 
     //Fixed values
     T const *x;
@@ -236,6 +243,9 @@ class wrapper_t
     T g_cache_key;
 
     std::size_t n;
+
+  public:
+    wrap fdf_linear;
 };
 
 #endif

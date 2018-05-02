@@ -116,43 +116,6 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     }
 
     /*!
-     * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
-     * The upper-left element of the submatrix is the element (k1,k2) of the original 
-     * matrix. The submatrix has n1 rows and n2 columns.
-     * The physical number of columns in memory given by n is unchanged.
-     * Mathematically, the (i,j)-th element of the new matrix is given by,
-     * \f$ ID(i, j, k1, k2, n1, n2) = [(k1 * n + k2) + i*n + j ]   \f$
-     */
-    class submatrix
-    {
-      public:
-        submatrix(std::size_t k1_, std::size_t k2_, std::size_t n1_, std::size_t n2_)
-        {
-            if (k1_ > n + 1 || k2_ > n || n1_ > n + 1 || n2 > n)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Input data overrun the ends of the original matrix " << std::endl;
-                throw(std::runtime_error("Wrong Input!"));
-            }
-            k1 = k1_;
-            k2 = k2_;
-            n1 = n1_;
-            n2 = n2_;
-        }
-
-        std::ptrdiff_t const ID(std::size_t i, std::size_t j) const
-        {
-            return k1 * n + k2 + i * n + j;
-        }
-
-      private:
-        std::size_t k1;
-        std::size_t k2;
-        std::size_t n1;
-        std::size_t n2;
-    };
-
-    /*!
      * \brief set
      * 
      */
@@ -185,7 +148,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         y1[0] = val;
 
         {
-            submatrix m(1, 0, n, n);
+            submatrix m(n + 1, n, 1, 0, n, n);
 
             //Set the elements of the submatrix m to the corresponding elements of the identity matrix
             for (std::size_t i = 0; i < n; i++)
@@ -210,7 +173,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
                 if (s > 0.5)
                 {
                     std::ptrdiff_t const Id = m.ID(i, i);
-                    x1[Id] = static_cast<T>(-1);
+                    x1[Id] = -static_cast<T>(1);
                 }
             }
 
@@ -402,7 +365,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         return true;
     }
 
-    T try_corner_move(T const coeff, std::size_t corner, T *xc, TMF const *f)
+    T try_corner_move(T const coeff, std::size_t corner, T *xc, TMF *f)
     {
         //Moves a simplex corner scaled by coeff (negative value represents
         //mirroring by the middle point of the "other" corner points)
@@ -416,7 +379,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
             T const beta = ((n + 1) * coeff - 1) / static_cast<T>(n);
 
             std::ptrdiff_t const Id = corner * n;
-            T const *row = x1[Id];
+            T const *row = x1 + Id;
 
             std::copy(center, center + n, xc);
             std::for_each(xc, xc + n, [&](T &x_i) { x_i *= alpha; });
@@ -433,7 +396,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     void update_point(std::size_t const i, T const *x, T const val)
     {
         std::ptrdiff_t const Id = i * n;
-        T const *x_orig = x1[Id];
+        T const *x_orig = x1 + Id;
 
         std::size_t const N = n + 1;
 
@@ -550,7 +513,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         //Calculates the center of the simplex and stores in center
         std::size_t const N = n + 1;
 
-        std::copy(center, center + n, T{});
+        std::fill(center, center + n, T{});
 
         for (std::size_t i = 0; i < N; i++)
         {
@@ -630,6 +593,60 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     unsigned long count;
 
     std::size_t n;
+
+    /*!
+     * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
+     * The upper-left element of the submatrix is the element (k1,k2) of the original 
+     * matrix. The submatrix has n1 rows and n2 columns.
+     * The physical number of columns in memory given by NC is unchanged.
+     * Mathematically, the (i,j)-th element of the new matrix is given by,
+     * \f$ ID(i, j)_{(NC, k1, k2, n1, n2)} = [(k1 * NC + k2) + i*NC + j ]   \f$
+     * 
+     */
+    class submatrix
+    {
+      public:
+        /*!
+         * \brief constructor
+         * 
+         * \param NR number of rows in the original matrix
+         * \param NC number of columns in the original matrix
+         * \param k1 row number of the upper-left element of the submatrix
+         * \param k2 column number of the upper-left element of the submatrix
+         * \param n1 submatrix number of rows
+         * \param n2 submatrix number of columns
+         */
+        submatrix(std::size_t NR, std::size_t NC, std::size_t k1_, std::size_t k2_, std::size_t n1_, std::size_t n2_)
+        {
+            if (k1_ > NR || k2_ > NC || n1_ > NR || n2 > NC)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Input data overrun the ends of the original matrix " << std::endl;
+                throw(std::runtime_error("Wrong Input!"));
+            }
+            k1 = k1_;
+            k2 = k2_;
+            n1 = n1_;
+            n2 = n2_;
+        }
+
+        /*!
+         * \brief memory ID of an element in a matrix view of a submatrix of the matrix x1
+         * 
+         * \Returns memory id of an element in a matrix view of a submatrix of the matrix x1
+         */
+        std::ptrdiff_t const ID(std::size_t i, std::size_t j) const
+        {
+            return k1 * NC + k2 + i * NC + j;
+        }
+
+      private:
+        std::size_t NC;
+        std::size_t k1;
+        std::size_t k2;
+        std::size_t n1;
+        std::size_t n2;
+    };
 };
 
 #endif

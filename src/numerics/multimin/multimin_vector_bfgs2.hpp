@@ -1,9 +1,6 @@
 #ifndef UMHBM_MULTIMIN_VECTOR_BFGS2_H
 #define UMHBM_MULTIMIN_VECTOR_BFGS2_H
 
-#include "multimin_linear_minimize.hpp"
-#include "multimin_linear_wrapper.hpp"
-
 /*! \class vector_bfgs2
   * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
   * Fletcher's implementation of the BFGS method,
@@ -116,7 +113,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         fp0 = -g0norm;
 
         //Prepare the wrapper
-        wrap.prepare(fdf, x0, *f, g0, p, x_alpha, g_alpha);
+        w.prepare(fdf, x0, *f, g0, p, x_alpha, g_alpha);
 
         //Prepare 1d minimization parameters
         rho = static_cast<T>(0.01);
@@ -202,7 +199,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         {
             T del = std::max(-delta_f, 10 * std::numeric_limits<T>::epsilon() * std::abs(f0));
 
-            alpha1 = std::min(static_cast<T>(1), 2 * del / fp0);
+            alpha1 = std::min(static_cast<T>(1), -2 * del / fp0);
         }
         else
         {
@@ -210,7 +207,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         }
 
         //Line minimization, with cubic interpolation (order = 3)
-        bool status = minimize<T, function_fdf<T, class wrapper_t<T, TMFD>::wrap>>(&wrap.fdf_linear, rho, sigma,
+        bool status = minimize<T, function_fdf<T, class wrapper_t<T, TMFD>::wrap>>(&w.fdf_linear, rho, sigma,
                                                                                    tau1, tau2, tau3, order,
                                                                                    alpha1, &alpha);
         if (status != true)
@@ -218,7 +215,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
             return false;
         }
 
-        wrap.update_position(alpha, x, f, gradient);
+        w.update_position(alpha, x, f, gradient);
 
         delta_f = *f - f0;
 
@@ -345,7 +342,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
             fp0 += g0[i] * p[i];
         }
 
-        wrap.change_direction();
+        w.change_direction();
 
         return true;
     }
@@ -373,7 +370,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
     T *g_alpha;
 
     //wrapper function
-    wrapper_t<T, TMFD> wrap;
+    wrapper_t<T, TMFD> w;
 
     //minimization parameters
     T rho;

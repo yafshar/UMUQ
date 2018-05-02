@@ -290,7 +290,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
         return true;
     }
 
-    T try_corner_move(T const coeff, std::size_t corner, T *xc, TMF const *f)
+    T try_corner_move(T const coeff, std::size_t corner, T *xc, TMF *f)
     {
         //Moves a simplex corner scaled by coeff (negative value represents
         //mirroring by the middle point of the "other" corner points)
@@ -304,7 +304,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
             T const beta = ((n + 1) * coeff - 1) / static_cast<T>(n);
 
             std::ptrdiff_t const Id = corner * n;
-            T const *row = x1[Id];
+            T const *row = x1 + Id;
 
             std::copy(center, center + n, xc);
             std::for_each(xc, xc + n, [&](T &x_i) { x_i *= alpha; });
@@ -321,7 +321,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
     void update_point(std::size_t const i, T const *x, T const val)
     {
         std::ptrdiff_t const Id = i * n;
-        T const *x_orig = x1[Id];
+        T const *x_orig = x1 + Id;
 
         std::size_t const N = n + 1;
 
@@ -438,7 +438,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
         //Calculates the center of the simplex and stores in center
         std::size_t const N = n + 1;
 
-        std::copy(center, center + n, T{});
+        std::fill(center, center + n, T{});
 
         for (std::size_t i = 0; i < N; i++)
         {

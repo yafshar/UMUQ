@@ -1,8 +1,6 @@
 #ifndef UMHBM_MULTIMIN_CONJUGATE_PR_H
 #define UMHBM_MULTIMIN_CONJUGATE_PR_H
 
-#include "multimin_directional_minimize.hpp"
-
 /*! \class conjugate_pr
   * \brief Conjugate gradient Polak-Ribiere algorithm
   * 
