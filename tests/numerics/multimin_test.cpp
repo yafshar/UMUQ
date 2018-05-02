@@ -1,15 +1,8 @@
 #include "core/core.hpp"
+#include "numerics/multimin.hpp"
 #include "gtest/gtest.h"
 
-#include "numerics/multimin.hpp"
-#include "numerics/multimin/multimin_steepest_descent.hpp"
-#include "numerics/multimin/multimin_conjugate_fr.hpp"
-#include "numerics/multimin/multimin_conjugate_pr.hpp"
-#include "numerics/multimin/multimin_vector_bfgs.hpp"
-#include "numerics/multimin/multimin_vector_bfgs2.hpp"
-#include "numerics/multimin/multimin_nmsimplex.hpp"
-#include "numerics/multimin/multimin_nmsimplex2.hpp"
-#include "numerics/multimin/multimin_nmsimplex2rand.hpp"
+using namespace multimin;
 
 template <typename T>
 class rosenbrock_fmin : public multimin_function<T, rosenbrock_fmin<T>>
@@ -542,18 +535,14 @@ bool test_f(const char *desc, TMFMT *ftype, TMF *f)
     return ((status == 0) ? true : (status == 1) ? (std::abs(mff_obj.minimum()) > 1e-5) : false);
 }
 
-typedef rosenbrock_fmin<double> Rosenbrock_f;
 typedef rosenbrock<double> Rosenbrock;
 typedef Nrosenbrock<double> NRosenbrock;
-typedef roth_fmin<double> Roth_f;
 typedef roth<double> Roth;
 typedef Nroth<double> NRoth;
-typedef wood_fmin<double> Wood_f;
 typedef wood<double> Wood;
 typedef Nwood<double> NWood;
-typedef spring_fmin<double> Spring_f;
 
-/*! 
+/*!
  * Test to check multimin functionality
  */
 TEST(multimin_test_steepest_descent, Handles_Rosenbrock_Function)
@@ -736,52 +725,175 @@ TEST(multimin_test_vector_bfgs, Handles_Wood_Function)
     EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
 }
 
-// TEST(multimin_test_vector_bfgs2, Handles_Rosenbrock_Function)
-// {
-//     typedef vector_bfgs2<double, Rosenbrock> TRosenbrock;
-//     typedef vector_bfgs2<double, NRosenbrock> TNRosenbrock;
+TEST(multimin_test_vector_bfgs2, Handles_Rosenbrock_Function)
+{
+    typedef vector_bfgs2<double, Rosenbrock> TRosenbrock;
+    typedef vector_bfgs2<double, NRosenbrock> TNRosenbrock;
 
-//     TRosenbrock t;
-//     Rosenbrock r;
+    TRosenbrock t;
+    Rosenbrock r;
 
-//     TNRosenbrock tn;
-//     NRosenbrock rn;
+    TNRosenbrock tn;
+    NRosenbrock rn;
 
-//     EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-//     EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
-// }
+    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
+    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
+}
 
-// TEST(multimin_test_vector_bfgs2, Handles_Roth_Function)
-// {
-//     typedef vector_bfgs2<double, Roth> TRoth;
-//     typedef vector_bfgs2<double, NRoth> TNRoth;
+TEST(multimin_test_vector_bfgs2, Handles_Roth_Function)
+{
+    typedef vector_bfgs2<double, Roth> TRoth;
+    typedef vector_bfgs2<double, NRoth> TNRoth;
 
-//     TRoth t;
-//     Roth r;
+    TRoth t;
+    Roth r;
 
-//     TNRoth tn;
-//     NRoth rn;
+    TNRoth tn;
+    NRoth rn;
 
-//     EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-//     EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
-// }
+    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
+    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
+}
 
-// TEST(multimin_test_vector_bfgs2, Handles_Wood_Function)
-// {
-//     typedef vector_bfgs2<double, Wood> TWood;
-//     typedef vector_bfgs2<double, NWood> TNWood;
+TEST(multimin_test_vector_bfgs2, Handles_Wood_Function)
+{
+    typedef vector_bfgs2<double, Wood> TWood;
+    typedef vector_bfgs2<double, NWood> TNWood;
 
-//     TWood t;
-//     Wood r;
+    TWood t;
+    Wood r;
 
-//     TNWood tn;
-//     NWood rn;
+    TNWood tn;
+    NWood rn;
 
-//     EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-//     EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
-// }
+    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
+    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
+}
 
+typedef rosenbrock_fmin<double> Rosenbrock_f;
+typedef roth_fmin<double> Roth_f;
+typedef wood_fmin<double> Wood_f;
+typedef spring_fmin<double> Spring_f;
 
+TEST(multimin_test_nmsimplex, Handles_Rosenbrock_Function)
+{
+    typedef nmsimplex<double, Rosenbrock_f> TRosenbrock_f;
+
+    TRosenbrock_f t;
+    Rosenbrock_f r;
+
+    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex, Handles_Roth_Function)
+{
+    typedef nmsimplex<double, Roth_f> TRoth_f;
+
+    TRoth_f t;
+    Roth_f r;
+
+    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex, Handles_Wood_Function)
+{
+    typedef nmsimplex<double, Wood_f> TWood_f;
+
+    TWood_f t;
+    Wood_f r;
+
+    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex, Handles_Spring_Function)
+{
+    typedef nmsimplex<double, Spring_f> TSpring_f;
+
+    TSpring_f t;
+    Spring_f r;
+
+    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2, Handles_Rosenbrock_Function)
+{
+    typedef nmsimplex2<double, Rosenbrock_f> TRosenbrock_f;
+
+    TRosenbrock_f t;
+    Rosenbrock_f r;
+
+    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2, Handles_Roth_Function)
+{
+    typedef nmsimplex2<double, Roth_f> TRoth_f;
+
+    TRoth_f t;
+    Roth_f r;
+
+    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2, Handles_Wood_Function)
+{
+    typedef nmsimplex2<double, Wood_f> TWood_f;
+
+    TWood_f t;
+    Wood_f r;
+
+    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2, Handles_Spring_Function)
+{
+    typedef nmsimplex2<double, Spring_f> TSpring_f;
+
+    TSpring_f t;
+    Spring_f r;
+
+    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2rand, Handles_Rosenbrock_Function)
+{
+    typedef nmsimplex2rand<double, Rosenbrock_f> TRosenbrock_f;
+
+    TRosenbrock_f t;
+    Rosenbrock_f r;
+
+    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2rand, Handles_Roth_Function)
+{
+    typedef nmsimplex2rand<double, Roth_f> TRoth_f;
+
+    TRoth_f t;
+    Roth_f r;
+
+    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2rand, Handles_Wood_Function)
+{
+    typedef nmsimplex2rand<double, Wood_f> TWood_f;
+
+    TWood_f t;
+    Wood_f r;
+
+    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
+}
+
+TEST(multimin_test_nmsimplex2rand, Handles_Spring_Function)
+{
+    typedef nmsimplex2rand<double, Spring_f> TSpring_f;
+
+    TSpring_f t;
+    Spring_f r;
+
+    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
+}
 
 int main(int argc, char **argv)
 {
