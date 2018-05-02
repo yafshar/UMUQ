@@ -53,6 +53,6 @@ namespace multimin
 #include "multimin/multimin_nmsimplex.hpp"
 #include "multimin/multimin_nmsimplex2.hpp"
 #include "multimin/multimin_nmsimplex2rand.hpp"
-};
+}
 
 #endif
