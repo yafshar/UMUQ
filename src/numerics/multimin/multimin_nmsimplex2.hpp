@@ -494,6 +494,15 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
     }
 
   private:
+    /*!
+     * \return a (pointer to a) row of the data.
+     */
+    inline T *operator[](std::size_t index) const
+    {
+        return x1 + index * n;
+    }
+
+  private:
     //Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
     T *x1;
 

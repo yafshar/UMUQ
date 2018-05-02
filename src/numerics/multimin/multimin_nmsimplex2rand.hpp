@@ -596,6 +596,15 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 
     std::size_t n;
 
+  private:
+    /*!
+     * \return a (pointer to a) row of the data.
+     */
+    inline T *operator[](std::size_t index) const
+    {
+        return x1 + index * n;
+    }
+
     /*!
      * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
      * The upper-left element of the submatrix is the element (k1,k2) of the original 
