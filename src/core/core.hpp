@@ -57,7 +57,7 @@ extern "C" {
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>
-#include <cstdio>  //fopen, fgets, sscanf, sprintf
+#include <cstdio> //fopen, fgets, sscanf, sprintf
 #include <climits>
 #include <cmath>
 #include <cstring> //strlen, strstr, strtok
@@ -105,14 +105,25 @@ inline static const char *SimdInstructionSetsInUse(void)
 #undef M_PI
 #endif
 // source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
-#define M_PI    3.141592653589793238462643383279502884197169399375105820974944592307816406l
-#define M_2PI   6.283185307179586476925286766559005768394338798750211641949889184615632812l
-#define M_LPI   std::log(M_PI)
-#define M_L2PI  std::log(M_2PI)
+#define M_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406l
+#define M_2PI 6.283185307179586476925286766559005768394338798750211641949889184615632812l
+#define M_LPI std::log(M_PI)
+#define M_L2PI std::log(M_2PI)
 
 /*! 
  * This is the main module of UMHBM
  */
 #include "meta.hpp"
+
+/*! 
+ * Handles runtime error
+ */
+class UMUQexception : public std::runtime_error
+{
+  public:
+    UMUQexception(const char *message) : std::runtime_error(message) {}
+
+    UMUQexception(const std::string &message) : std::runtime_error(message) {}
+};
 
 #endif // UMHBM_CORE_H

@@ -61,7 +61,7 @@
 /** Allows to disable some optimizations which might affect the accuracy of the result.
   * Such optimization are enabled by default, and set UMHBM_FAST_MATH to 0 to disable them.
   * They currently include:
-  *   - single precision ArrayBase::sin() and ArrayBase::cos() for SSE and AVX vectorization.
+  *   - single precision sin() and cos() for SSE and AVX vectorization.
   */
 #ifndef UMHBM_FAST_MATH
 #define UMHBM_FAST_MATH 1
