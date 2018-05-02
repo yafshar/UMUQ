@@ -1,6 +1,7 @@
 #ifndef UMHBM_EIGENMATRIX_H
 #define UMHBM_EIGENMATRIX_H
 
+#if HAVE_EIGEN
 #include <Eigen/Dense>
 
 // Standard typedef from eigen
@@ -275,4 +276,5 @@ void EMapXd(EMatrixXd const EMXd, double **dataPtr)
     }
 }
 
+#endif //HAVE_EIGEN
 #endif
