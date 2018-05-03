@@ -50,5 +50,5 @@ Contributors
 ------------
 UMHBM package maintainer: Yaser Afshar <yafshar@umich.edu>
 
-Computational Aerosciences Laboratory
+Computational Aerosciences Laboratory  
 University of Michigan, Ann Arbor 
