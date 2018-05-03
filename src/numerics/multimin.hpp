@@ -5,11 +5,10 @@
  * \file numerics/multimin.hpp
  * \brief Implementation of the Multidimensional Minimization.
  *
- * This file contains c++ reimplamentation and modification to the 
- * original GSL Multidimensional Minimization source codes made  
+ * The multimin Module contains the c++ re-implamentation and modification 
+ * to the original GSL Multidimensional Minimization source codes made  
  * available under the following license:
  * 
- *
  * \verbatim
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Fabrice Rossi
  * 
@@ -30,7 +29,7 @@
  */
 
 /*!
- * \brief Namespace containing all the functions for Multidimensional Minimization
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
  * 
  * It includes all the functionalities for finding minima of arbitrary multidimensional 
  * functions. It provides low level components for a variety of iterative minimizers 
