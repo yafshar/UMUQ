@@ -9,6 +9,9 @@
  */
 TEST(flannlib_test, HandlesKNN)
 {
+
+#if HAVE_FLANN
+
     io f;
     EXPECT_TRUE(f.isFileExist("numerics/flannlib_test.txt"));
     EXPECT_TRUE(f.openFile("numerics/flannlib_test.txt"));
@@ -121,6 +124,8 @@ TEST(flannlib_test, HandlesKNN)
     }
 
     delete[] knntest;
+
+#endif //HAVE_FLANN
 }
 
 int main(int argc, char **argv)
