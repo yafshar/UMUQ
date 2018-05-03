@@ -3,9 +3,9 @@
 Multidimensional Minimization
 ------------
 
-This file contains c++ reimplamentation and modification to the 
-original GSL Multidimensional Minimization source codes made
-available under the following license:
+This file contains c++ reimplamentation and modification to the  
+original GSL Multidimensional Minimization source codes made  
+available under the following license:  
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  Copyright (C) 1996, 1997, 1998, 1999, 2000 Fabrice Rossi
@@ -28,7 +28,7 @@ available under the following license:
 Contents
 ----------------
 
-It should contain the follwing following files:
+It should contain the following files:  
 
 -----------------------------------
     multimin_function.hpp
@@ -44,3 +44,10 @@ It should contain the follwing following files:
     multimin_nmsimplex2.hpp
     multimin_nmsimplex2rand.hpp
 -----------------------------------
+
+Contributors
+------------
+UMHBM package maintainer: Yaser Afshar <yafshar@umich.edu>  
+
+Computational Aerosciences Laboratory  
+University of Michigan, Ann Arbor 
