@@ -24,7 +24,7 @@ int main()
     int d = 2;
     int r = 2;
     int *alpha = nullptr;
-    polynomial p;
+    polynomial<double> p;
     UMTimer t;
 
     p.monomial_basis(d, r, alpha);
