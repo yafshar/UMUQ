@@ -5,6 +5,7 @@
 
 /*! 
  * Test to check flannlib functionality
+ * for a fast approximate nearest neighbor searches
  */
 TEST(flannlib_test, HandlesKNN)
 {
