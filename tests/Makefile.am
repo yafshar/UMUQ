@@ -34,9 +34,9 @@ TESTS += multimin_test
 check_PROGRAMS += multimin_test 
 multimin_test_SOURCES = numerics/multimin_test.cpp 
 
-TESTS += flannlib_test
-check_PROGRAMS += flannlib_test 
-flannlib_test_SOURCES = numerics/flannlib_test.cpp 
+TESTS += knearestneighbors_test 
+check_PROGRAMS += knearestneighbors_test 
+knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 
 #misc
 TESTS += utility_test

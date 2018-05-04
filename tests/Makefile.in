@@ -91,7 +91,7 @@ target_triplet = @target@
 TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
-	flannlib_test$(EXEEXT) utility_test$(EXEEXT) \
+	knearestneighbors_test$(EXEEXT) utility_test$(EXEEXT) \
 	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
@@ -99,7 +99,7 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
-	flannlib_test$(EXEEXT) utility_test$(EXEEXT) \
+	knearestneighbors_test$(EXEEXT) utility_test$(EXEEXT) \
 	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
@@ -141,15 +141,16 @@ eigen_test_LDADD = $(LDADD)
 am_factorial_test_OBJECTS = numerics/factorial_test.$(OBJEXT)
 factorial_test_OBJECTS = $(am_factorial_test_OBJECTS)
 factorial_test_LDADD = $(LDADD)
-am_flannlib_test_OBJECTS = numerics/flannlib_test.$(OBJEXT)
-flannlib_test_OBJECTS = $(am_flannlib_test_OBJECTS)
-flannlib_test_LDADD = $(LDADD)
 am_funcallcounter_test_OBJECTS = misc/funcallcounter_test.$(OBJEXT)
 funcallcounter_test_OBJECTS = $(am_funcallcounter_test_OBJECTS)
 funcallcounter_test_LDADD = $(LDADD)
 am_io_test_OBJECTS = io/io_test.$(OBJEXT)
 io_test_OBJECTS = $(am_io_test_OBJECTS)
 io_test_LDADD = $(LDADD)
+am_knearestneighbors_test_OBJECTS =  \
+	numerics/knearestneighbors_test.$(OBJEXT)
+knearestneighbors_test_OBJECTS = $(am_knearestneighbors_test_OBJECTS)
+knearestneighbors_test_LDADD = $(LDADD)
 am_multimin_test_OBJECTS = numerics/multimin_test.$(OBJEXT)
 multimin_test_OBJECTS = $(am_multimin_test_OBJECTS)
 multimin_test_LDADD = $(LDADD)
@@ -210,16 +211,16 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
-	$(flannlib_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(io_test_SOURCES) $(multimin_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
+	$(knearestneighbors_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
 	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
 	$(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
-	$(flannlib_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(io_test_SOURCES) $(multimin_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
+	$(knearestneighbors_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
 	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
@@ -609,7 +610,7 @@ stats_test_SOURCES = numerics/stats_test.cpp
 factorial_test_SOURCES = numerics/factorial_test.cpp 
 psrandom_test_SOURCES = numerics/psrandom_test.cpp 
 multimin_test_SOURCES = numerics/multimin_test.cpp 
-flannlib_test_SOURCES = numerics/flannlib_test.cpp 
+knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
@@ -702,12 +703,6 @@ numerics/factorial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 factorial_test$(EXEEXT): $(factorial_test_OBJECTS) $(factorial_test_DEPENDENCIES) $(EXTRA_factorial_test_DEPENDENCIES) 
 	@rm -f factorial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(factorial_test_OBJECTS) $(factorial_test_LDADD) $(LIBS)
-numerics/flannlib_test.$(OBJEXT): numerics/$(am__dirstamp) \
-	numerics/$(DEPDIR)/$(am__dirstamp)
-
-flannlib_test$(EXEEXT): $(flannlib_test_OBJECTS) $(flannlib_test_DEPENDENCIES) $(EXTRA_flannlib_test_DEPENDENCIES) 
-	@rm -f flannlib_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(flannlib_test_OBJECTS) $(flannlib_test_LDADD) $(LIBS)
 misc/funcallcounter_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -719,6 +714,12 @@ io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
 	@rm -f io_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(io_test_OBJECTS) $(io_test_LDADD) $(LIBS)
+numerics/knearestneighbors_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+knearestneighbors_test$(EXEEXT): $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_DEPENDENCIES) $(EXTRA_knearestneighbors_test_DEPENDENCIES) 
+	@rm -f knearestneighbors_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_LDADD) $(LIBS)
 numerics/multimin_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -794,7 +795,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/factorial_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/flannlib_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/knearestneighbors_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/psrandom_test.Po@am__quote@
@@ -1065,9 +1066,9 @@ multimin_test.log: multimin_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-flannlib_test.log: flannlib_test$(EXEEXT)
-	@p='flannlib_test$(EXEEXT)'; \
-	b='flannlib_test'; \
+knearestneighbors_test.log: knearestneighbors_test$(EXEEXT)
+	@p='knearestneighbors_test$(EXEEXT)'; \
+	b='knearestneighbors_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
