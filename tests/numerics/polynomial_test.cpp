@@ -5,7 +5,8 @@
 //! Tests binomial coefficient c(n, k) of 0.
 TEST(binomial_coefficient_test, HandlesZeroInput)
 {
-    polynomial<double> p;
+    //Create an instance of a polynomial object
+    polynomial<double> p(1);
 
     EXPECT_EQ(1, p.binomial_coefficient(1, 0));
     EXPECT_EQ(0, p.binomial_coefficient(0, 1));
@@ -16,7 +17,8 @@ TEST(binomial_coefficient_test, HandlesZeroInput)
 //! Tests binomial coefficient c(n, k)
 TEST(binomial_coefficient_test, HandlesOtherInput)
 {
-    polynomial<double> p;
+    //Create an instance of a polynomial object
+    polynomial<double> p(1);
 
     EXPECT_EQ(10, p.binomial_coefficient(10, 1));
     EXPECT_EQ(1, p.binomial_coefficient(10, 10));
@@ -47,17 +49,19 @@ TEST(binomial_coefficient_test, HandlesOtherInput)
  */
 TEST(monomial_basis_test, HandlesInput)
 {
-    polynomial<double> p;
-
     int dim = 2;
     int degree = 2;
-    int *coeff = nullptr;
 
-    EXPECT_TRUE(p.monomial_basis(dim, degree, coeff));
+    polynomial<double> p(dim, degree);
+
+    int *coeff = p.monomial_basis();
+
+    EXPECT_TRUE(coeff != nullptr);
 
     int num = dim * p.binomial_coefficient(dim + degree, degree);
-    
+
     EXPECT_EQ(12, num);
+    EXPECT_EQ(p.monomialsize(), p.binomial_coefficient(dim + degree, degree));
 
     int alpha[12] = {0, 0,
                      1, 0,
@@ -73,11 +77,16 @@ TEST(monomial_basis_test, HandlesInput)
 
     dim = 3;
 
-    EXPECT_TRUE(p.monomial_basis(dim, degree, coeff));
+    //reset the polynomial to the new dimension
+    p.reset(dim, degree);
+
+    coeff = p.monomial_basis();
+    EXPECT_TRUE(coeff != nullptr);
 
     num = dim * p.binomial_coefficient(dim + degree, degree);
-    
+
     EXPECT_EQ(30, num);
+    EXPECT_EQ(p.monomialsize(), p.binomial_coefficient(dim + degree, degree));
 
     int beta[30] = {0, 0, 0,
                     1, 0, 0,
