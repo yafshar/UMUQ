@@ -6,7 +6,7 @@
 #include "core/core.hpp"
 #include "numerics/polynomial.hpp"
 #include "numerics/eigenmatrix.hpp"
-#include "numerics/flannlib.hpp"
+#include "numerics/knearestneighbors.hpp"
 #include "misc/timer.hpp"
 #include "misc/utility.hpp"
 #include <random>
