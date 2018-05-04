@@ -81,7 +81,7 @@ struct stats
     template <typename T, typename TOut = double>
     inline TOut sum(T const *idata, int const nSize) const
     {
-        return (TOut)std::accumulate(idata, idata + nSize, (T)0);
+        return (TOut)std::accumulate(idata, idata + nSize, T{});
     }
 
     /*!
