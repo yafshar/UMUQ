@@ -1,20 +1,20 @@
 #include "core/core.hpp"
 #include "io/io.hpp"
-#include "numerics/flannlib.hpp"
+#include "numerics/knearestneighbors.hpp"
 #include "gtest/gtest.h"
 
 /*! 
  * Test to check flannlib functionality
  * for a fast approximate nearest neighbor searches
  */
-TEST(flannlib_test, HandlesKNN)
+TEST(knearestneighbors_test, HandlesKNN)
 {
 
 #if HAVE_FLANN
 
     io f;
-    EXPECT_TRUE(f.isFileExist("numerics/flannlib_test.txt"));
-    EXPECT_TRUE(f.openFile("numerics/flannlib_test.txt"));
+    EXPECT_TRUE(f.isFileExist("numerics/knearestneighbors_test.txt"));
+    EXPECT_TRUE(f.openFile("numerics/knearestneighbors_test.txt"));
 
     int nRows = 0;
     while (f.readLine())
