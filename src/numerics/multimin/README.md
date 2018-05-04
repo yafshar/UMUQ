@@ -3,7 +3,7 @@
 Multidimensional Minimization
 ------------
 
-This file contains c++ reimplamentation and modification to the original 
+The multimin Module contains the c++ re-implamentation and modification to the original 
 GSL Multidimensional Minimization source codes made available under the following license:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

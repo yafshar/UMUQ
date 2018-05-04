@@ -1,7 +1,9 @@
 #ifndef UMHBM_MULTIMIN_FUNCTION_H
 #define UMHBM_MULTIMIN_FUNCTION_H
 
-// The goal is finding minima of arbitrary multidimensional functions.
+/*! \brief The goal is finding minima of arbitrary multidimensional functions.
+ *  \ingroup multimin_Module
+ */
 
 /*! \class multimin_function
   * \brief Defines a general function of n variables

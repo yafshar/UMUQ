@@ -1,6 +1,18 @@
 #ifndef UMHBM_MULTIMIN_DIRECTIONAL_MINIMIZE_H
 #define UMHBM_MULTIMIN_DIRECTIONAL_MINIMIZE_H
 
+/*!
+ * \brief Helper routines
+ * \ingroup multimin_Module
+ *
+ */
+
+//TODO : Documentation is missing!
+
+/*!
+ * \brief take_step
+ *
+ */
 template <typename T>
 inline void take_step(std::size_t n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
 {
@@ -19,6 +31,10 @@ inline void take_step(std::size_t n, T const *x, T const *p, T const step, T con
     }
 }
 
+/*!
+ * \brief intermediate_point
+ *
+ */
 template <typename T, class TMFD>
 void intermediate_point(TMFD *fdf, T const *x, T const *p, T const lambda, T pg, T stepa, T stepc, T fa, T fc, T *x1, T *dx, T *gradient, T *step, T *f)
 {
@@ -57,6 +73,10 @@ void intermediate_point(TMFD *fdf, T const *x, T const *p, T const lambda, T pg,
     fdf->df(x1, gradient);
 }
 
+/*!
+ * \brief minimize
+ *
+ */
 template <typename T, class TMFD>
 void minimize(TMFD *fdf, T const *x, T const *p, T lambda, T stepa, T stepb, T stepc, T fa, T fb, T fc, T tol, T *x1, T *dx1, T *x2, T *dx2, T *gradient, T *step, T *f, T *gnorm)
 {

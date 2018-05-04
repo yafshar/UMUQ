@@ -1,10 +1,10 @@
 #ifndef UMHBM_MULTIMIN_LINEAR_WRAPPER_H
 #define UMHBM_MULTIMIN_LINEAR_WRAPPER_H
 
-/*! \class function_fdf
+/*! \class wrapper_t
  *  \ingroup multimin_Module
  * 
- * \brief Definition of an arbitrary differentiable function with vector input and parameters
+ * \brief 
  *  
  * \tparam T      data type
  * \tparan TMFD   multimin differentiable function type
@@ -114,8 +114,8 @@ class wrapper_t
     }
 
     /*!
-	 * \brief compute gradient . direction
-	 */
+     * \brief compute gradient . direction
+     */
     inline T slope()
     {
         T df(0);
