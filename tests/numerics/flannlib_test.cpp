@@ -16,11 +16,11 @@ TEST(flannlib_test, HandlesKNN)
     EXPECT_TRUE(f.isFileExist("numerics/flannlib_test.txt"));
     EXPECT_TRUE(f.openFile("numerics/flannlib_test.txt"));
 
-    int n = 0;
+    int nRows = 0;
     while (f.readLine())
     {
         //Count the number of non empty and not commented line with "#" as default comment
-        n++;
+        nRows++;
     }
 
     //This data type has two dimensions
@@ -35,9 +35,9 @@ TEST(flannlib_test, HandlesKNN)
     //Allocate memory for reading the data
     try
     {
-        data = new double[n * nDim];
-        dtest = new double[n + 1];
-        knntest = new int[n * nn];
+        data = new double[nRows * nDim];
+        dtest = new double[nRows + 1];
+        knntest = new int[nRows * nn];
     }
     catch (std::bad_alloc &e)
     {
@@ -49,23 +49,23 @@ TEST(flannlib_test, HandlesKNN)
     f.rewindFile();
 
     //!Read the array of data
-    EXPECT_TRUE(f.loadMatrix<double>(data, n, nDim));
+    EXPECT_TRUE(f.loadMatrix<double>(data, nRows, nDim));
 
     //Close the file
     f.closeFile();
 
     // kNearestNeighbor<double, flann::L2<double>> KNN(n, nDim, nn);
-    L2NearestNeighbor<double> KNN(n, nDim, nn);
+    L2NearestNeighbor<double> KNN(nRows, nDim, nn);
 
     KNN.buildIndex(data);
 
     //using brute force to find neighbors
-    dtest[n] = std::numeric_limits<double>::max();
+    dtest[nRows] = std::numeric_limits<double>::max();
 
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < nRows; i++)
     {
         int const IdI = i * nDim;
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < nRows; j++)
         {
             if (i == j)
             {
@@ -76,8 +76,8 @@ TEST(flannlib_test, HandlesKNN)
             dtest[j] = dd[0] * dd[0] + dd[1] * dd[1];
         }
         int const Id = i * nn + nn;
-        std::fill(knntest + Id - nn, knntest + Id, n);
-        for (int j = 0; j < n; j++)
+        std::fill(knntest + Id - nn, knntest + Id, nRows);
+        for (int j = 0; j < nRows; j++)
         {
             if (i == j)
             {
@@ -110,10 +110,9 @@ TEST(flannlib_test, HandlesKNN)
         }
     }
 
-    delete[] data;
     delete[] dtest;
 
-    for (int i = 0; i < n; ++i)
+    for (int i = 0; i < nRows; ++i)
     {
         int *p = KNN.NearestNeighbors(i);
         int const Id = i * nn;
@@ -132,6 +131,27 @@ TEST(flannlib_test, HandlesKNN)
     }
 
     delete[] knntest;
+
+    double *dists = nullptr;
+    dists = KNN.minDist();
+
+    EXPECT_TRUE(dists != nullptr);
+
+    for (int i = 0; i < nRows; ++i)
+    {
+        int const IdI = i * nDim;
+        int *p = KNN.NearestNeighbors(i);
+        for (int j = 2; j < nn; j++)
+        {
+            int const IdJ = p[j] * nDim;
+            double const dd[2] = {data[IdJ] - data[IdI], data[IdJ + 1] - data[IdI + 1]};
+            double const d = std::sqrt(dd[0] * dd[0] + dd[1] * dd[1]);
+            EXPECT_TRUE((dists[i] <= d));
+        }
+    }
+
+    delete[] data;
+    delete[] dists;
 
 #endif //HAVE_FLANN
 }
