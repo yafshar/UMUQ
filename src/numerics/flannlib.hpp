@@ -117,6 +117,34 @@ class kNearestNeighbor
         return dists_ptr[Id];
     }
 
+    /*!
+     * \brief Vector of all points' distance of their nearest neighbor 
+     * 
+     * \returns Vector of all points' distance of their nearest neighbor 
+     */
+    inline T *minDist()
+    {
+        T *dists = nullptr;
+        try
+        {
+            dists = new T[rows];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            return nullptr;
+        }
+
+        for (std::size_t i = 0; i < rows; ++i)
+        {
+            std::ptrdiff_t const Id = i * nn + 1;
+            dists[i] = dists_ptr[Id];
+        }
+
+        return dists;
+    }
+
   private:
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
