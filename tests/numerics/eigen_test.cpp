@@ -188,7 +188,7 @@ TEST(eigen_svd_test, HandlesSVD)
     EVector4d B(svd.singularValues());
 
     EXPECT_DOUBLE_EQ(3, B(0));
-    EXPECT_DOUBLE_EQ(std::sqrt((double)5.), B(1));
+    EXPECT_DOUBLE_EQ(std::sqrt((double)(5)), B(1));
     EXPECT_DOUBLE_EQ(2, B(2));
     EXPECT_DOUBLE_EQ(0, B(3));
 }
@@ -196,7 +196,7 @@ TEST(eigen_svd_test, HandlesSVD)
 //! LU test
 TEST(eigen_lu_test, HandlesLU)
 {
-    //A 3*3 matrix with rank 2 which is not iinvertible
+    //A 3*3 matrix with rank 2 which is not invertible
     EMatrix3d m;
     m << 1, 1, 0,
         1, 3, 1,
