@@ -237,7 +237,9 @@ bool polynomial<T>::monomial_basis(int const d, int const r, int *&alpha)
         return false;
     }
 
-    int x[d] = {};
+    int x[d];
+    std::fill(x, x + d, T{});
+    
     int n = 0;
 
     for (;;)
