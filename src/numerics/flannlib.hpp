@@ -92,6 +92,29 @@ class kNearestNeighbor
     }
 
     /*!
+     * \brief A pointer to all points nearest neighbors indices
+     * 
+     * The function returns a pointer of size(nPoints * (nN+1)) 
+     * all points neighbors.
+     * The retorned pointer looks like below:
+     *    0                1      .     nN
+     *   ---------------------------------
+     *  | 0               0_1     .     0_nN
+     *  | 1               1_1     .     1_nN
+     *  | .
+     *  | nPoints-1        .      .     (nPoints-1)_nN
+     * 
+     *  Each row has the size of nn which is the number of neighbors+1
+     *  and it has nPoints columns
+     * 
+     * \returns All points nearest neighbors indices (in row porder).
+     */
+    inline int *NearestNeighbors() const
+    {
+        return indices_ptr.get();
+    }
+
+    /*!
      * \brief A pointer to nearest neighbors distances from the point index
      * 
      * \param index Index of a point (from data points) 
