@@ -147,7 +147,7 @@ class polynomial
      *
      * \returns A pointer to monomial sequence
      */
-    int *monomial_basis()
+    int *monomial_basis() 
     {
         if (alpha)
         {
