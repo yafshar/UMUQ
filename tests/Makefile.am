@@ -38,6 +38,10 @@ TESTS += knearestneighbors_test
 check_PROGRAMS += knearestneighbors_test 
 knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 
+TESTS += dcpse_test
+check_PROGRAMS += dcpse_test
+dcpse_test_SOURCES = numerics/dcpse_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test
