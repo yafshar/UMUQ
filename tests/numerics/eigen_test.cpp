@@ -226,6 +226,9 @@ TEST(eigen_lu_test, HandlesLU)
 
     //true as the matrix m with lu decomposition is invertible.
     EXPECT_TRUE(lu.isInvertible());
+
+
+    std::cout << EMatrix3i(EVector3i(2,5,6).asDiagonal()) << std::endl;
 }
 
 int main(int argc, char **argv)
