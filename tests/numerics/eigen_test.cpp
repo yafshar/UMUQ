@@ -206,8 +206,7 @@ TEST(eigen_lu_test, HandlesLU)
     Eigen::FullPivLU<EMatrix3d> lu(m);
 
     //the rank of the matrix m with lu decomposition.
-    auto rank = lu.rank();
-    EXPECT_EQ(rank, 2);
+    EXPECT_EQ(lu.rank(), 2);
 
     //false as the matrix m with lu decomposition is not invertible.
     EXPECT_FALSE(lu.isInvertible());
@@ -220,11 +219,10 @@ TEST(eigen_lu_test, HandlesLU)
     m << m.fullPivLu().image(m), n;
 
     //LU decomposition of a matrix with complete pivoting, and related features.
-    lu = lu.compute(m);
+    lu.compute(m);
 
     //the rank of the matrix m with lu decomposition.
-    rank = lu.rank();
-    EXPECT_EQ(rank, 3);
+    EXPECT_EQ(lu.rank(), 3);
 
     //true as the matrix m with lu decomposition is invertible.
     EXPECT_TRUE(lu.isInvertible());
