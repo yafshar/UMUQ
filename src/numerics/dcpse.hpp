@@ -60,7 +60,7 @@ class dcpse
     dcpse(int ndim) : nDim(ndim) {}
 
     /*!
-     * \brief 
+     * \brief Computes generalized DC operators 
      * 
      * \param idata            A pointer to input data 
      * \param nPoints          Number of data points
@@ -94,7 +94,7 @@ class dcpse
 
         //Get the monomials size
         //\f$ msize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
-        int msize = poly.monomialsize() - ((Beta % 2 == 0) ? 1 : 0);
+        int msize = poly.monomialsize() - (Beta % 2 == 0);
 
         if (kernel == nullptr)
         {
