@@ -1,7 +1,7 @@
 #ifndef UMHBM_EIGENMATRIX_H
 #define UMHBM_EIGENMATRIX_H
 
-#if HAVE_EIGEN
+#ifdef HAVE_EIGEN
 #include <Eigen/Dense>
 
 // Standard typedef from eigen
