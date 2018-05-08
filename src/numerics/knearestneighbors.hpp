@@ -17,10 +17,11 @@
  * \tparam Distance  Distance type for computing the distances to the nearest neighbors
  *                   (Default is a specialized class \b kNearestNeighbor<T> with L2 distance)
  * 
- * \b EUCLIDEAN
+ * \b EUCLIDEAN      Squared Euclidean distance functor, optimized version 
  * \b L2             Squared Euclidean distance functor, optimized version 
- * \b MANHATTAN
+ * \b MANHATTAN      Manhattan distance functor, optimized version
  * \b L1             Manhattan distance functor, optimized version
+ * \b L2_SIMPLE      Squared Euclidean distance functor
  * \b MINKOWSKI
  * \b MAX
  * \b HIST_INTERSECT
@@ -32,7 +33,6 @@
  *                   useful for the Brief descriptor bit count of A exclusive XOR'ed with B
  * \b HAMMING_POPCNT Hamming distance functor (pop count between two binary vectors, i.e. xor them 
  *                   and count the number of bits set)
- * \b L2_SIMPLE      Squared Euclidean distance functor
  */
 template <typename T, class Distance>
 class kNearestNeighbor
