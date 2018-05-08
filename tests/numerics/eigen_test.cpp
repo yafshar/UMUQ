@@ -2,6 +2,7 @@
 #include "numerics/eigenmatrix.hpp"
 #include "gtest/gtest.h"
 
+#ifdef HAVE_EIGEN
 /*! 
  * Test to check about map type handling is done correctly
  */
@@ -230,6 +231,15 @@ TEST(eigen_lu_test, HandlesLU)
 
     std::cout << EMatrix3i(EVector3i(2,5,6).asDiagonal()) << std::endl;
 }
+#endif
+#ifndef HAVE_EIGEN
+/*! 
+ * Test to check about map type handling is done correctly
+ */
+TEST(eigen_test, HandlesMap)
+{
+}
+#endif
 
 int main(int argc, char **argv)
 {

@@ -9,8 +9,7 @@
  */
 TEST(knearestneighbors_test, HandlesKNN)
 {
-
-#if HAVE_FLANN
+#ifdef HAVE_FLANN
 
 	io f;
 	EXPECT_TRUE(f.isFileExist("numerics/knearestneighbors_test.txt"));
