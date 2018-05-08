@@ -8,7 +8,7 @@
  * for automatically choosing the best algorithm and optimum parameters depending on the dataset.
  */
 #include <flann/flann.hpp>
-#endif //HAVE_FLANN
+#endif
 
 /*! \class kNearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces
@@ -51,8 +51,10 @@ class kNearestNeighbor
                                                                             nn(nN + 1),
                                                                             indices_ptr(new int[ndataPoints * (nN + 1)]),
                                                                             dists_ptr(new T[ndataPoints * (nN + 1)]),
+#ifdef HAVE_FLANN
                                                                             indices(indices_ptr.get(), ndataPoints, (nN + 1)),
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
+#endif
                                                                             the_same(true) {}
 
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : drows(ndataPoints),
@@ -61,8 +63,10 @@ class kNearestNeighbor
                                                                                                     nn(nN),
                                                                                                     indices_ptr(new int[nqueryPoints * nN]),
                                                                                                     dists_ptr(new T[nqueryPoints * nN]),
+#ifdef HAVE_FLANN
                                                                                                     indices(indices_ptr.get(), nqueryPoints, nN),
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
+#endif
                                                                                                     the_same(false) {}
 
     /*!
@@ -90,7 +94,7 @@ class kNearestNeighbor
         //Number of checks means: How many leafs to visit when searching
         //for neighbours (-1 for unlimited)
         index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
-#endif //HAVE_FLANN
+#endif
     }
 
     /*!
@@ -115,7 +119,7 @@ class kNearestNeighbor
         //Number of checks means: How many leafs to visit when searching
         //for neighbours (-1 for unlimited)
         index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
-#endif //HAVE_FLANN
+#endif
     }
 
     /*!
@@ -223,8 +227,10 @@ class kNearestNeighbor
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
 
+#ifdef HAVE_FLANN
     flann::Matrix<int> indices;
     flann::Matrix<T> dists;
+#endif 
 
     //Number of data rows
     std::size_t drows;
