@@ -1,8 +1,3 @@
-#include <iostream>
-#include <stdlib.h>
-#include <cmath>
-#include <iomanip>
-
 #include "core/core.hpp"
 #include "numerics/polynomial.hpp"
 #include "numerics/eigenmatrix.hpp"
