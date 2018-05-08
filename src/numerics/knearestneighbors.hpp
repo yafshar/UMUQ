@@ -1,7 +1,7 @@
 #ifndef UMHBM_KNEARESTNEIGHBORS_H
 #define UMHBM_KNEARESTNEIGHBORS_H
 
-#if HAVE_FLANN
+// #if HAVE_FLANN
 /*!
  * FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces. 
  * It contains a collection of algorithms we found to work best for nearest neighbor search and a system 
@@ -208,5 +208,5 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
     L2NearestNeighbor(int const nPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(nPoints, nDim, nN) {}
 };
 
-#endif //HAVE_FLANN
+// #endif //HAVE_FLANN
 #endif //UMHBM_FLANNLIB_H
