@@ -2,7 +2,7 @@
 #define UMHBM_CORE_H
 
 //Include this file where all configuration variables are defined.
-#include "../umhbm_config.h"
+#include <umhbm_config.h>
 
 //Include this file where all our macros are defined.
 #include "macros.hpp"
