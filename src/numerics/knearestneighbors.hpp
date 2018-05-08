@@ -257,11 +257,20 @@ class kNearestNeighbor
  * \tparam T  data type
  */
 template <typename T>
+#ifdef HAVE_FLANN
 class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
+#else
+class L2NearestNeighbor : public kNearestNeighbor<T,T>
+#endif
 {
   public:
+#ifdef HAVE_FLANN
     L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN) {}
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
+#else
+    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nDim, nN) {}
+    L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nqueryPoints, nDim, nN) {}
+#endif
 };
 
 #endif //UMHBM_FLANNLIB_H
