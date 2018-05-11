@@ -217,7 +217,7 @@ TEST(eigen_lu_test, HandlesLU)
     n << 5, 5, 5;
 
     //Creating the new matrix from image (also called its column-space) of it and a new vector.
-    m << m.fullPivLu().image(m), n;
+    m << lu.image(m), n;
 
     //LU decomposition of a matrix with complete pivoting, and related features.
     lu.compute(m);
@@ -227,9 +227,6 @@ TEST(eigen_lu_test, HandlesLU)
 
     //true as the matrix m with lu decomposition is invertible.
     EXPECT_TRUE(lu.isInvertible());
-
-
-    std::cout << EMatrix3i(EVector3i(2,5,6).asDiagonal()) << std::endl;
 }
 #endif
 #ifndef HAVE_EIGEN
