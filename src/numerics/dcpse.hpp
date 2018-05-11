@@ -5,42 +5,7 @@
 #include "factorial.hpp"
 #include "eigenmatrix.hpp"
 #include "knearestneighbors.hpp"
-
-/*! \class primitive
-  * \brief Primitive function
-  * 
-  * \tparam T   data type
-  * \tparan TF function type
-  */
-template <typename T, class TF>
-class primitive
-{
-  public:
-    inline T f(T const *x)
-    {
-        return static_cast<TF *>(this)->f(x);
-    }
-
-  private:
-    friend TF;
-};
-
-/*!
- * \brief Primitive function (quartic spline)
- * 
- * Reference: Chen et al., Int. J. Numer. Meth. Engng 2003; 56:935–960.
- * 
- * \returns \f$ 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
- */
-template <typename T>
-class quartic_spline : public primitive<T, quartic_spline<T>>
-{
-  public:
-    inline T f(T const *x)
-    {
-        return (*x > static_cast<T>(1)) ? T{} : 1 + (*x) * (*x) * (-6 + (*x) * (8 - 3 * (*x)));
-    }
-};
+#include "primitive.hpp"
 
 /*! \class dcpse
  * \brief 
@@ -112,7 +77,7 @@ class dcpse
         }
 
         //Extra check on the number of extra nearest neighbors
-        nENN = (nENN >= 0) ? nENN : 0;
+        nENN *= (nENN > 0) ? 1 : 0;
 
         //The number of points in the neighborhood of the operator
         //\f$ = \text{monomial size} + \text{number of extra neighbors} \f$ nearest neighbors
@@ -267,7 +232,7 @@ class dcpse
             }
             else
             {
-                EMatrixX<T> image = lu.image();
+                EMatrixX<T> image = lu.image(BMT);
                 AM = image * image.transpose();
 
                 lu.compute(AM);
@@ -486,7 +451,7 @@ class dcpse
             }
             else
             {
-                EMatrixX<T> image = lu.image();
+                EMatrixX<T> image = lu.image(BMT);
                 AM = image * image.transpose();
 
                 lu.compute(AM);
@@ -535,7 +500,7 @@ class dcpse
         }
 
         //Extra check on the number of extra nearest neighbors
-        nENN = (nENN >= 0) ? nENN : 0;
+        nENN *= (nENN > 0) ? 1 : 0;
 
         //The number of points in the neighborhood of the operator
         //\f$ = \text{monomial size} + \text{number of extra neighbors} \f$ nearest neighbors
@@ -549,7 +514,7 @@ class dcpse
         T *idataminDist = nullptr;
 
         {
-            //Finding only one nearest neighbor for the original points
+            //Finding only one nearest neighbor for the input data points
             L2NearestNeighbor<T> KNN1(nPoints, nDim, 1);
 
             //Construct a kd-tree index & do nearest neighbors search
@@ -560,13 +525,8 @@ class dcpse
 
         //Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
         //\f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
-        EVectorX<T> B0;
-        B0.resize(msize);
+        EVectorX<T> B0 = EVectorX<T>::Zero(msize);
         B0(0) = static_cast<T>(1);
-        for (int i = 1; i < msize; i++)
-        {
-            B0(i) = T{};
-        }
 
         //Total number of nearest neighbours for each point
         int nNN = KNN.numNearestNeighbors();
@@ -579,12 +539,15 @@ class dcpse
         EMatrixX<T> VMT;
         VMT.resize(msize, nNN);
 
+        //Matrix of exponential window function
         EVectorX<T> EM;
         EM.resize(nNN);
 
+        //Matrix A of a linear system for the kernel coefficients
         EMatrixX<T> AM;
         AM.resize(msize, msize);
 
+        //${\mathbf a}^T({\mathbf x})$ is the column vector of coefficients which is the solution of linear system
         EVectorX<T> SV;
         SV.resize(msize);
 
@@ -608,9 +571,10 @@ class dcpse
                     std::ptrdiff_t const IdJ = nearestneighbors[j] * nDim;
 
                     //pointer to query data
-                    T *Idata = idata + IdI;
-                    //pointer to idata
-                    T *Jdata = qdata + IdJ;
+                    T *Idata = qdata + IdI;
+
+                    //pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
 
                     for (int d = 0; d < nDim; d++)
                     {
@@ -669,7 +633,7 @@ class dcpse
                     //Index inside the kernel
                     std::ptrdiff_t const IdK = i * msize + j;
 
-                    //compute the kernel value at the point IdK
+                    //Compute the kernel value at the point IdK
                     T kernelV = q.f(s);
 
                     //Assemble the right hand side
@@ -678,13 +642,8 @@ class dcpse
 
                     kernel[IdK] = kernelV;
                 }
-            }
 
-            {
                 T const epsilonsq = 2 * epsilon * epsilon;
-
-                //A pointer to nearest neighbors distances from the point i
-                T *nnDist = KNN.NearestNeighborsDistances(i);
 
                 for (int j = 0; j < nNN; j++)
                 {
@@ -714,7 +673,7 @@ class dcpse
             }
             else
             {
-                EMatrixX<T> image = lu.image();
+                EMatrixX<T> image = lu.image(BMT);
                 AM = image * image.transpose();
 
                 lu.compute(AM);
@@ -722,6 +681,37 @@ class dcpse
                 SV = lu.solve(B0);
             }
 
+            //SV contains the solution to the \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+
+            {
+                //A pointer to nearest neighbors indices of point i
+                int *nearestneighbors = KNN.nearestneighbors(i);
+
+                //A pointer to nearest neighbors distances from the point i
+                T *nnDist = KNN.NearestNeighborsDistances(i);
+
+                T const epsilonsq = epsilon * epsilon;
+
+                //Loop through the neighbors
+                for (int j = 0; j < nNN; j++)
+                {
+                    //Id in the list
+                    std::ptrdiff_t const Id = j * nDim;
+
+                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                    T column[msize];
+                    poly.monomial_value(L1Dist + Id, column);
+
+                    TEMapX<T, Eigen::ColMajor> columnV(column, msize, 1);
+
+                    //Index inside the kernel
+                    std::ptrdiff_t const IdK = i * msize + j;
+
+                    T const expo = std::exp(-nnDist[j] * nnDist[j] / epsilonsq);
+                    
+                    kernel[IdK] += SV.dot(columnV) * expo;
+                }
+            }
         } //Loop over all points
 
         return true;
