@@ -65,6 +65,10 @@ AC_DEFUN([AX_MPI], [
 	AS_IF([test x"$ax_mpi_ok" = xno], [  
 		AC_MSG_NOTICE(MPI)
 
+		ax_mpi_save_CC="$CC"
+		ax_mpi_save_CXX="$CXX"
+		ax_mpi_save_FC="$FC"
+
 		succeeded=no
 
 		ac_mpi_bin=
@@ -106,7 +110,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
 				[		
-					ax_mpi_save_CC="$CC"
 					if test -x "$ac_mpi_bin"'/'"$MPICC"; then
 						MPICC="$ac_mpi_bin"'/'"$MPICC"
 					fi
@@ -135,7 +138,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
 				[
-					ax_mpi_save_CXX="$CXX"
 					if test -x "$ac_mpi_bin"'/'"$MPICXX"; then
 						MPICXX="$ac_mpi_bin"'/'"$MPICXX"
 					fi  
@@ -164,7 +166,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
 				[		
-					ax_mpi_save_FC="$FC"
 					if test -x "$ac_mpi_bin"'/'"$MPIFC"; then
 						MPIFC="$ac_mpi_bin"'/'"$MPIFC"
 					fi
@@ -224,7 +225,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
 				[
-					ax_mpi_save_CC="$CC"
 					CC="$MPICC"
 					AC_SUBST(MPICC)
 				]
@@ -245,7 +245,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
 				[
-					ax_mpi_save_CXX="$CXX"
 					CXX="$MPICXX"
 					AC_SUBST(MPICXX)
 				]
@@ -266,7 +265,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
 				[
-					ax_mpi_save_FC="$FC"
 					FC="$MPIFC"
 					AC_SUBST(MPIFC)
 				]

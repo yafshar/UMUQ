@@ -121,21 +121,15 @@ AC_DEFUN([AX_TORC], [
 					torc_LDFLAGS=" -L$torc_PATH"'/src' 
 				fi
 				if test x"$torc_LDFLAGS" = x ; then
-					save_CC="$CC"
-					AS_IF([test x"$ax_mpi_ok" = xyes], [CC="$MPICC"])
 					AC_LANG_PUSH([C])
-					(cd "$torc_PATH" && autoreconf -i && ./configure CC=$MPICC F77=$MPIFC && make)
+					(cd "$torc_PATH" && autoreconf -i && ./configure && make)
 					torc_LDFLAGS=" -L$torc_PATH"'/src'
 					AC_LANG_POP([C])
-					CC="$save_CC"
 				fi
 			fi
 		fi
 
 		LDFLAGS+=" $torc_LDFLAGS"' -ltorc '" $PTHREAD_LIBS "
-
-		save_CC="$CC"
-		AS_IF([test x"$ax_mpi_ok" = xyes], [CC="$MPICC"])
 
 		AC_LANG_PUSH([C])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -161,8 +155,6 @@ AC_DEFUN([AX_TORC], [
 			]
 		)
 		AC_LANG_POP([C])
-
-		CC="$save_CC"
 
 		if test x"$succeeded" = xyes ; then
 			AC_SUBST(CPPFLAGS)

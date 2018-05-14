@@ -54,7 +54,7 @@
 #	with this special exception
 #	[http://www.gnu.org/software/ac-archive/htmldoc/COPYING-Exception.html]. 
 #
-# ADAPTED 
+# ADAPTED
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 

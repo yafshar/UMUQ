@@ -10,7 +10,7 @@
 #	If no path to the installed googletest framework is given the macro uses
 #	the external folder and creates and builds googletest library and header files. 
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 

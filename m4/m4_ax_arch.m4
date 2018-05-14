@@ -6,7 +6,7 @@
 # DESCRIPTION
 #	Check for architectures
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 

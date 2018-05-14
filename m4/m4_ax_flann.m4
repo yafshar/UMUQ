@@ -10,7 +10,7 @@
 #	If no path to the installed FLANN library is given the macro uses
 #	external folder and creates the FLANN library and header files. 
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
@@ -146,7 +146,9 @@ AC_DEFUN([AX_FLANN], [
 		)
 
 		AC_CHECK_LIB(flann, flann_build_index_double, 
-			[], [
+			[
+				 LDFLAGS+=' -Wl,-rpath,'"$FLANN_LD_LIBRARY_PATH"
+			], [
 				succeeded=no
 				AC_MSG_ERROR([ Unable to continue without the FLANN library !])
 			]

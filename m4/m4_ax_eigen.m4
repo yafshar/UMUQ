@@ -10,7 +10,7 @@
 #	If no path to the installed eigen library is given the macro uses
 #	external folder and look for header files.
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
@@ -40,16 +40,16 @@ AC_DEFUN([AX_EIGEN], [
 		], [
 			ax_eigen_ok="no"
 		]
-	) 
-        
-	AS_IF([test x"$ax_eigen_ok" = xno], [  
+	)
+
+	AS_IF([test x"$ax_eigen_ok" = xno], [
 		AC_MSG_NOTICE(EIGEN)
-	                
+
 		succeeded=no
-	                
+
 		eigen_CPPFLAGS=
 		eigen_PATH=
-	
+
 		if test x"$ac_eigen_path" != x; then
 			for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
 				if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
@@ -67,19 +67,19 @@ AC_DEFUN([AX_EIGEN], [
 				if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
 					eigen_PATH=`pwd`
 					eigen_PATH+='/'"$ac_eigen_path_tmp"'/eigen'
-					if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then                 
+					if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then
 						eigen_CPPFLAGS="-I$eigen_PATH"
 						break;
 					fi
 				fi
 			done
 		fi
-	
+
 		CPPFLAGS_SAVED="$CPPFLAGS"
 		CPPFLAGS+=" $eigen_CPPFLAGS"
-	
+
 		AC_LANG_PUSH([C++])
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 				@%:@include <Eigen/Dense>
 			]], [[]]
 			)], [
@@ -95,7 +95,7 @@ AC_DEFUN([AX_EIGEN], [
 			]
 		)
 		AC_LANG_POP([C++])
-	
+
 		if test x"$succeeded" == xyes ; then
 			AC_SUBST(CPPFLAGS)
 			ax_eigen_ok="yes"
