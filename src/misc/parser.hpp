@@ -1,5 +1,5 @@
-#ifndef UMHBM_PARSER_H
-#define UMHBM_PARSER_H
+#ifndef UMUQ_PARSER_H
+#define UMUQ_PARSER_H
 
 #define LINESIZE 256
 

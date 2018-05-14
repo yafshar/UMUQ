@@ -1,5 +1,5 @@
-#ifndef UMHBM_TIMER_H
-#define UMHBM_TIMER_H
+#ifndef UMUQ_TIMER_H
+#define UMUQ_TIMER_H
 
 #include <iostream>
 #include <sys/time.h>

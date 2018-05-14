@@ -1,5 +1,5 @@
-#ifndef UMHBM_SARUPRNG_H
-#define UMHBM_SARUPRNG_H
+#ifndef UMUQ_SARUPRNG_H
+#define UMUQ_SARUPRNG_H
 
 /*! \file saruprng.hpp
  * \brief Implementation of the Saru random number generator.

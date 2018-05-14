@@ -1,5 +1,5 @@
-#ifndef UMHBM_FACTORIAL_H
-#define UMHBM_FACTORIAL_H
+#ifndef UMUQ_FACTORIAL_H
+#define UMUQ_FACTORIAL_H
 
 /*! \class max_factorial
  * \brief Predefined max factorial

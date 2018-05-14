@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_CONJUGATE_PR_H
-#define UMHBM_MULTIMIN_CONJUGATE_PR_H
+#ifndef UMUQ_MULTIMIN_CONJUGATE_PR_H
+#define UMUQ_MULTIMIN_CONJUGATE_PR_H
 
 /*! \class conjugate_pr
  *  \ingroup multimin_Module

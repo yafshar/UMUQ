@@ -1,5 +1,5 @@
-#ifndef UMHBM_STDATA_H
-#define UMHBM_STDATA_H
+#ifndef UMUQ_STDATA_H
+#define UMUQ_STDATA_H
 
 #include "../core/core.hpp"
 #include "../io/io.hpp"

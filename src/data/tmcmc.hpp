@@ -1,5 +1,5 @@
-#ifndef UMHBM_TMCMC_H
-#define UMHBM_TMCMC_H
+#ifndef UMUQ_TMCMC_H
+#define UMUQ_TMCMC_H
 
 #include "datatype.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef UMHBM_UTILITY_H
-#define UMHBM_UTILITY_H
+#ifndef UMUQ_UTILITY_H
+#define UMUQ_UTILITY_H
 
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1

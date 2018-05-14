@@ -1,5 +1,5 @@
-#ifndef UMHBM_PSRANDOM_H
-#define UMHBM_PSRANDOM_H
+#ifndef UMUQ_PSRANDOM_H
+#define UMUQ_PSRANDOM_H
 
 #include "saruprng.hpp"
 #include "factorial.hpp"

@@ -1,5 +1,5 @@
-#ifndef UMHBM_CURRENT_H
-#define UMHBM_CURRENT_H
+#ifndef UMUQ_CURRENT_H
+#define UMUQ_CURRENT_H
 
 #include "basic.hpp"
 

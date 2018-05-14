@@ -1,5 +1,5 @@
-#ifndef UMHBM_KNEARESTNEIGHBORS_H
-#define UMHBM_KNEARESTNEIGHBORS_H
+#ifndef UMUQ_KNEARESTNEIGHBORS_H
+#define UMUQ_KNEARESTNEIGHBORS_H
 
 #ifdef HAVE_FLANN
 /*!
@@ -55,7 +55,9 @@ class kNearestNeighbor
                                                                             indices(indices_ptr.get(), ndataPoints, (nN + 1)),
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
 #endif
-                                                                            the_same(true) {}
+                                                                            the_same(true)
+    {
+    }
 
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : drows(ndataPoints),
                                                                                                     qrows(nqueryPoints),
@@ -67,7 +69,62 @@ class kNearestNeighbor
                                                                                                     indices(indices_ptr.get(), nqueryPoints, nN),
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
 #endif
-                                                                                                    the_same(false) {}
+                                                                                                    the_same(false)
+    {
+    }
+
+    /*!
+     * Move constructor
+     * \param inputObj kNearestNeighbor to be moved
+     */
+    kNearestNeighbor(kNearestNeighbor &&inputObj)
+    {
+        //Number of data rows
+        drows = inputObj.drows;
+        //Number of qury rows
+        qrows = inputObj.qrows;
+        //Number of columns
+        cols = inputObj.cols;
+        //Number of nearest neighbors to find
+        nn = inputObj.nn;
+        //Flag to check if the input data and qury data are the same
+        the_same = inputObj.the_same;
+
+        indices_ptr = std::move(inputObj.indices_ptr);
+        dists_ptr = std::move(inputObj.dists_ptr);
+
+#ifdef HAVE_FLANN
+        indices = std::move(inputObj.indices);
+        dists = std::move(inputObj.dists);
+#endif
+    }
+
+    /*!
+     * Move assignment operator
+     * \param inputObj kNearestNeighbor to be assigned
+     */
+    kNearestNeighbor &operator=(kNearestNeighbor &&inputObj)
+    {
+        //Number of data rows
+        drows = inputObj.drows;
+        //Number of qury rows
+        qrows = inputObj.qrows;
+        //Number of columns
+        cols = inputObj.cols;
+        //Number of nearest neighbors to find
+        nn = inputObj.nn;
+        //Flag to check if the input data and qury data are the same
+        the_same = inputObj.the_same;
+
+        indices_ptr = std::move(inputObj.indices_ptr);
+        dists_ptr = std::move(inputObj.dists_ptr);
+
+#ifdef HAVE_FLANN
+        indices = std::move(inputObj.indices);
+        dists = std::move(inputObj.dists);
+#endif
+        return *this;
+    }
 
     /*!
      * \brief destructor
@@ -223,6 +280,10 @@ class kNearestNeighbor
         return nn - the_same;
     }
 
+
+
+
+
   private:
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
@@ -230,7 +291,7 @@ class kNearestNeighbor
 #ifdef HAVE_FLANN
     flann::Matrix<int> indices;
     flann::Matrix<T> dists;
-#endif 
+#endif
 
     //Number of data rows
     std::size_t drows;
@@ -260,17 +321,21 @@ template <typename T>
 #ifdef HAVE_FLANN
 class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 #else
-class L2NearestNeighbor : public kNearestNeighbor<T,T>
+class L2NearestNeighbor : public kNearestNeighbor<T, T>
 #endif
 {
   public:
 #ifdef HAVE_FLANN
-    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN) {}
+    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN)
+    {
+    }
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
 #else
-    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nDim, nN) {}
+    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nDim, nN)
+    {
+    }
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nqueryPoints, nDim, nN) {}
 #endif
 };
 
-#endif //UMHBM_FLANNLIB_H
+#endif //UMUQ_FLANNLIB_H

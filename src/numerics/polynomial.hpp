@@ -1,5 +1,5 @@
-#ifndef UMHBM_POLYNOMIAL_H
-#define UMHBM_POLYNOMIAL_H
+#ifndef UMUQ_POLYNOMIAL_H
+#define UMUQ_POLYNOMIAL_H
 
 /*! \class polynomial
  *

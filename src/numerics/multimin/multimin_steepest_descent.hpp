@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_STEEPEST_DESCENT_H
-#define UMHBM_MULTIMIN_STEEPEST_DESCENT_H
+#ifndef UMUQ_MULTIMIN_STEEPEST_DESCENT_H
+#define UMUQ_MULTIMIN_STEEPEST_DESCENT_H
 
 /*! \class steepest_descent
  *  \ingroup multimin_Module

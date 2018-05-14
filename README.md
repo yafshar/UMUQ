@@ -1,7 +1,7 @@
-# UMHBM
-[![Build Status](https://travis-ci.com/yafshar/UMHBM.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=develop)](https://travis-ci.com/yafshar/UMHBM)
+# UMUQ
+[![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=develop)](https://travis-ci.com/yafshar/UMUQ)
 
-Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
+Welcome to **UMUQ**, University of Michigan's C++ HBM framework!
 
 Introduction
 ------------
@@ -32,23 +32,23 @@ Purpose :
 </table>
 
 
-Initial release of UMHBM source program.
+Initial release of UMUQ source program.
 
 Getting the code
 ------------
-You can download the latest version from [here](https://github.com/yafshar/UMHBM).
+You can download the latest version from [here](https://github.com/yafshar/UMUQ).
 The very latest version is always available via 'github' by invoking one of the following:
 ````
 ## For the traditional ssh-based Git interaction:
-$ git clone git@github.com:yafshar/UMHBM.git
+$ git clone git@github.com:yafshar/UMUQ.git
 
 ## For HTTP-based Git interaction
-$ git clone https://github.com/yafshar/UMHBM.git
+$ git clone https://github.com/yafshar/UMUQ.git
 ````
 
 Contributors
 ------------
-UMHBM package maintainer: Yaser Afshar <yafshar@umich.edu>
+UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>
 
 Computational Aerosciences Laboratory  
 University of Michigan, Ann Arbor 

@@ -1,5 +1,5 @@
-#ifndef UMHBM_DIGITS10_H
-#define UMHBM_DIGITS10_H
+#ifndef UMUQ_DIGITS10_H
+#define UMUQ_DIGITS10_H
 
 #include <cmath> //ceil, log10
 

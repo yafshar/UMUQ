@@ -1,5 +1,5 @@
-#ifndef UMHBM_ARRAY_H
-#define UMHBM_ARRAY_H
+#ifndef UMUQ_ARRAY_H
+#define UMUQ_ARRAY_H
 
 #include <iostream>
 #include <iterator>

@@ -1,5 +1,5 @@
-#ifndef UMHBM_RUNINFO_H
-#define UMHBM_RUNINFO_H
+#ifndef UMUQ_RUNINFO_H
+#define UMUQ_RUNINFO_H
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
 

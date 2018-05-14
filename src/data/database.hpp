@@ -1,5 +1,5 @@
-#ifndef UMHBM_DATABASE_H
-#define UMHBM_DATABASE_H
+#ifndef UMUQ_DATABASE_H
+#define UMUQ_DATABASE_H
 
 /*!
 * \brief data structure

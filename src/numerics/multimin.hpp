@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_H
-#define UMHBM_MULTIMIN_H
+#ifndef UMUQ_MULTIMIN_H
+#define UMUQ_MULTIMIN_H
 
 /*!
  * \file numerics/multimin.hpp

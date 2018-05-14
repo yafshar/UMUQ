@@ -1,5 +1,5 @@
-#ifndef UMHBM_STATS_H
-#define UMHBM_STATS_H
+#ifndef UMUQ_STATS_H
+#define UMUQ_STATS_H
 
 /*! \class stats
 * \brief stats is a class which includes some statictics functionality

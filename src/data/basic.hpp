@@ -1,5 +1,5 @@
-#ifndef UMHBM_BASIC_H
-#define UMHBM_BASIC_H
+#ifndef UMUQ_BASIC_H
+#define UMUQ_BASIC_H
 
 /*!
 *  \brief basic structure

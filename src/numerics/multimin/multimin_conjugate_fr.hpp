@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_CONJUGATE_FR_H
-#define UMHBM_MULTIMIN_CONJUGATE_FR_H
+#ifndef UMUQ_MULTIMIN_CONJUGATE_FR_H
+#define UMUQ_MULTIMIN_CONJUGATE_FR_H
 
 /*! \class conjugate_fr
  *  \ingroup multimin_Module

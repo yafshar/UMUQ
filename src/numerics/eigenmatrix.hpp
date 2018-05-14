@@ -1,5 +1,5 @@
-#ifndef UMHBM_EIGENMATRIX_H
-#define UMHBM_EIGENMATRIX_H
+#ifndef UMUQ_EIGENMATRIX_H
+#define UMUQ_EIGENMATRIX_H
 
 #ifdef HAVE_EIGEN
 #include <Eigen/Dense>

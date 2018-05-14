@@ -1,5 +1,5 @@
-#ifndef UMHBM_FUNCALLCOUNTER_H
-#define UMHBM_FUNCALLCOUNTER_H
+#ifndef UMUQ_FUNCALLCOUNTER_H
+#define UMUQ_FUNCALLCOUNTER_H
 
 /*! \class funcallcounter
 * 

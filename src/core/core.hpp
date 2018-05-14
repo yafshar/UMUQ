@@ -1,50 +1,50 @@
-#ifndef UMHBM_CORE_H
-#define UMHBM_CORE_H
+#ifndef UMUQ_CORE_H
+#define UMUQ_CORE_H
 
 //Include this file where all configuration variables are defined.
-#include <umhbm_config.h>
+#include <UMUQ_config.h>
 
 //Include this file where all our macros are defined.
 #include "macros.hpp"
 
 // Defines symbols for compile-time detection of which instructions are used.
-// UMHBM_VECTORIZE_YY is defined if and only if the instruction set YY is used
-#define UMHBM_VECTORIZE
-#define UMHBM_VECTORIZE_SSE
-#define UMHBM_VECTORIZE_SSE2
+// UMUQ_VECTORIZE_YY is defined if and only if the instruction set YY is used
+#define UMUQ_VECTORIZE
+#define UMUQ_VECTORIZE_SSE
+#define UMUQ_VECTORIZE_SSE2
 
 // Detect sse3/ssse3/sse4:
 // gcc and icc defines __SSE3__, ...
 #ifdef __SSE3__
-#define UMHBM_VECTORIZE_SSE3
+#define UMUQ_VECTORIZE_SSE3
 #endif
 #ifdef __SSSE3__
-#define UMHBM_VECTORIZE_SSSE3
+#define UMUQ_VECTORIZE_SSSE3
 #endif
 #ifdef __SSE4_1__
-#define UMHBM_VECTORIZE_SSE4_1
+#define UMUQ_VECTORIZE_SSE4_1
 #endif
 #ifdef __SSE4_2__
-#define UMHBM_VECTORIZE_SSE4_2
+#define UMUQ_VECTORIZE_SSE4_2
 #endif
 
 // include files
 extern "C" {
-#ifdef UMHBM_VECTORIZE_SSE3
+#ifdef UMUQ_VECTORIZE_SSE3
 #include <pmmintrin.h>
 #endif
-#ifdef UMHBM_VECTORIZE_SSSE3
+#ifdef UMUQ_VECTORIZE_SSSE3
 #include <tmmintrin.h>
 #endif
-#ifdef UMHBM_VECTORIZE_SSE4_1
+#ifdef UMUQ_VECTORIZE_SSE4_1
 #include <smmintrin.h>
 #endif
-#ifdef UMHBM_VECTORIZE_SSE4_2
+#ifdef UMUQ_VECTORIZE_SSE4_2
 #include <nmmintrin.h>
 #endif
 } // end extern "C"
 
-#ifdef UMHBM_HAS_OPENMP
+#ifdef UMUQ_HAS_OPENMP
 #include <omp.h>
 #endif
 
@@ -79,21 +79,21 @@ extern "C" {
 #include <random>
 
 /*!
- * \brief Namespace containing all symbols from the %UMHBM library. 
+ * \brief Namespace containing all symbols from the %UMUQ library. 
  */
-namespace UMHBM
+namespace UMUQ
 {
 inline static const char *SimdInstructionSetsInUse(void)
 {
-#if defined(UMHBM_VECTORIZE_SSE4_2)
+#if defined(UMUQ_VECTORIZE_SSE4_2)
     return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
-#elif defined(UMHBM_VECTORIZE_SSE4_1)
+#elif defined(UMUQ_VECTORIZE_SSE4_1)
     return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
-#elif defined(UMHBM_VECTORIZE_SSSE3)
+#elif defined(UMUQ_VECTORIZE_SSSE3)
     return "SSE, SSE2, SSE3, SSSE3";
-#elif defined(UMHBM_VECTORIZE_SSE3)
+#elif defined(UMUQ_VECTORIZE_SSE3)
     return "SSE, SSE2, SSE3";
-#elif defined(UMHBM_VECTORIZE_SSE2)
+#elif defined(UMUQ_VECTORIZE_SSE2)
     return "SSE, SSE2";
 #else
     return "None";
@@ -111,7 +111,7 @@ inline static const char *SimdInstructionSetsInUse(void)
 #define M_L2PI std::log(M_2PI)
 
 /*! 
- * This is the main module of UMHBM
+ * This is the main module of UMUQ
  */
 #include "meta.hpp"
 
@@ -126,4 +126,4 @@ class UMUQexception : public std::runtime_error
     UMUQexception(const std::string &message) : std::runtime_error(message) {}
 };
 
-#endif // UMHBM_CORE_H
+#endif // UMUQ_CORE_H

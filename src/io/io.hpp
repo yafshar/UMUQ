@@ -1,5 +1,5 @@
-#ifndef UMHBM_IO_H
-#define UMHBM_IO_H
+#ifndef UMUQ_IO_H
+#define UMUQ_IO_H
 
 #include "../core/digits10.hpp"
 

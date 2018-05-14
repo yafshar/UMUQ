@@ -1,4 +1,4 @@
-/* src/umhbm_config.h.in.  Generated from configure.ac by autoheader.  */
+/* src/UMUQ_config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11

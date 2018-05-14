@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_VECTOR_BFGS_H
-#define UMHBM_MULTIMIN_VECTOR_BFGS_H
+#ifndef UMUQ_MULTIMIN_VECTOR_BFGS_H
+#define UMUQ_MULTIMIN_VECTOR_BFGS_H
 
 /*! \class vector_bfgs
  *  \ingroup multimin_Module

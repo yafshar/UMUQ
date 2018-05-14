@@ -1,5 +1,5 @@
-#ifndef UMHBM_SPLIT_H
-#define UMHBM_SPLIT_H
+#ifndef UMUQ_SPLIT_H
+#define UMUQ_SPLIT_H
 
 /*! 
  * \brief split a string on a single delimiter character (delim)

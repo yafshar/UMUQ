@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_LINEAR_WRAPPER_H
-#define UMHBM_MULTIMIN_LINEAR_WRAPPER_H
+#ifndef UMUQ_MULTIMIN_LINEAR_WRAPPER_H
+#define UMUQ_MULTIMIN_LINEAR_WRAPPER_H
 
 /*! \class wrapper_t
  *  \ingroup multimin_Module

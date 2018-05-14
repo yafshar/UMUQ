@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_NSIMPLEX2RAND_H
-#define UMHBM_MULTIMIN_NSIMPLEX2RAND_H
+#ifndef UMUQ_MULTIMIN_NSIMPLEX2RAND_H
+#define UMUQ_MULTIMIN_NSIMPLEX2RAND_H
 
 /*! \class nmsimplex2rand
  *  \ingroup multimin_Module

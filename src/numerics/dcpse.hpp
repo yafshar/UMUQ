@@ -1,5 +1,5 @@
-#ifndef UMHBM_DCPSE_H
-#define UMHBM_DCPSE_H
+#ifndef UMUQ_DCPSE_H
+#define UMUQ_DCPSE_H
 
 #include "polynomial.hpp"
 #include "factorial.hpp"

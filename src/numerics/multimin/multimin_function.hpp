@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_FUNCTION_H
-#define UMHBM_MULTIMIN_FUNCTION_H
+#ifndef UMUQ_MULTIMIN_FUNCTION_H
+#define UMUQ_MULTIMIN_FUNCTION_H
 
 /*! \brief The goal is finding minima of arbitrary multidimensional functions.
  *  \ingroup multimin_Module

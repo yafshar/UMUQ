@@ -5,7 +5,7 @@
 #
 AC_PREREQ([2.69])
 
-AC_INIT([UMHBM], [1.0], [ya.afshar@gmail.com])
+AC_INIT([UMUQ], [1.0], [ya.afshar@gmail.com])
 
 # AC_COPYRIGHT(Copyright 2018 University of Michigan)
 # AC_REVISION([$Revision: 1.00 $])
@@ -37,7 +37,7 @@ AC_CANONICAL_TARGET
 # Check for architectures
 AX_ARCH
 
-AC_CONFIG_HEADERS(src/umhbm_config.h)
+AC_CONFIG_HEADERS(src/UMUQ_config.h)
 
 #
 # Init automake
@@ -51,7 +51,7 @@ AC_PREFIX_DEFAULT([`pwd`])
 
 # Checks for programs.
 AX_PROG
-AC_PROG_LIBTOOL
+LT_INIT
 
 # Checks for libraries.
 AC_MSG_RESULT() 

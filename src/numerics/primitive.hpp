@@ -1,5 +1,5 @@
-#ifndef UMHBM_PRIMITIVE_H
-#define UMHBM_PRIMITIVE_H
+#ifndef UMUQ_PRIMITIVE_H
+#define UMUQ_PRIMITIVE_H
 
 /*! \class primitive
   * \brief Primitive function

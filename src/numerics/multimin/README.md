@@ -1,4 +1,4 @@
-# UMHBM
+# UMUQ
 
 Multidimensional Minimization
 ------------
@@ -46,7 +46,7 @@ It should contain the following files:
 
 Contributors
 ------------
-UMHBM package maintainer: Yaser Afshar <yafshar@umich.edu>  
+UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
 Computational Aerosciences Laboratory  
 University of Michigan, Ann Arbor 

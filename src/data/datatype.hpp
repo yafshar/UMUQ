@@ -1,5 +1,5 @@
-#ifndef UMHBM_DATATYPE_H
-#define UMHBM_DATATYPE_H
+#ifndef UMUQ_DATATYPE_H
+#define UMUQ_DATATYPE_H
 
 #include <iostream>
 #include "../io/io.hpp"

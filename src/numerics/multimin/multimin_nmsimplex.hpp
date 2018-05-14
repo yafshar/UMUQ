@@ -1,5 +1,5 @@
-#ifndef UMHBM_MULTIMIN_NSIMPLEX_H
-#define UMHBM_MULTIMIN_NSIMPLEX_H
+#ifndef UMUQ_MULTIMIN_NSIMPLEX_H
+#define UMUQ_MULTIMIN_NSIMPLEX_H
 
 /*! \class nmsimplex
  *  \ingroup multimin_Module

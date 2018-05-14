@@ -1,5 +1,5 @@
-#ifndef UMHBM_META_H
-#define UMHBM_META_H
+#ifndef UMUQ_META_H
+#define UMUQ_META_H
 
 template <bool Condition, typename Then, typename Else>
 struct conditional
