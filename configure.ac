@@ -1,3 +1,4 @@
+# University of Michigan's Uncertainty Quantification framework
 #
 # AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
@@ -7,8 +8,8 @@ AC_PREREQ([2.69])
 
 AC_INIT([UMUQ], [1.0], [ya.afshar@gmail.com])
 
-# AC_COPYRIGHT(Copyright 2018 University of Michigan)
-# AC_REVISION([$Revision: 1.00 $])
+AC_COPYRIGHT(Copyright 2018 University of Michigan)
+AC_REVISION([$Revision: 1.00 $])
 
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
@@ -25,10 +26,11 @@ m4_include([m4/m4_ax_eigen.m4])
 m4_include([m4/m4_ax_flann.m4])
 m4_include([m4/m4_ax_googletest.m4])
 m4_include([m4/m4_ax_doxygen.m4])
+#
 
 # Configuring
 AC_MSG_RESULT(---------------------------------------------)
-AC_MSG_RESULT(---------  Configuring UMich HBM  -----------)
+AC_MSG_RESULT(------------  Configuring UMUQ  -------------)
 AC_MSG_RESULT(---------------------------------------------)
 
 AC_CANONICAL_BUILD
@@ -107,7 +109,7 @@ AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Makefile])])
 AC_OUTPUT
 
 AC_MSG_RESULT([
-UMich HBM $VERSION is now configured
+UMich UQ framework $VERSION is now configured
 
 Configure Information:
   C preprocessor    : $CPP
@@ -124,10 +126,6 @@ Configure Information:
   Linker            : $LD
     LDFLAGS         :   $LDFLAGS
     LIBS            :   $LIBS
-
-  MPI C   compiler  : $MPICC
-  MPI C++ compiler  : $MPICXX
-    MPILIBS         :   $MPILIBS
 
   Google Test 
     GTEST_CPPFLAGS  : $GTEST_CPPFLAGS
