@@ -77,48 +77,61 @@ class kNearestNeighbor
      * Move constructor
      * \param inputObj kNearestNeighbor to be moved
      */
-    kNearestNeighbor(kNearestNeighbor &&inputObj)
-    {
-        //Number of data rows
-        drows = inputObj.drows;
-        //Number of qury rows
-        qrows = inputObj.qrows;
-        //Number of columns
-        cols = inputObj.cols;
-        //Number of nearest neighbors to find
-        nn = inputObj.nn;
-        //Flag to check if the input data and qury data are the same
-        the_same = inputObj.the_same;
-
-        indices_ptr = std::move(inputObj.indices_ptr);
-        dists_ptr = std::move(inputObj.dists_ptr);
-
+    kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj) : drows(inputObj.drows),
+                                                                 qrows(inputObj.qrows),
+                                                                 cols(inputObj.cols),
+                                                                 nn(inputObj.nn),
+                                                                 indices_ptr(std::move(inputObj.indices_ptr)),
+                                                                 dists_ptr(std::move(inputObj.dists_ptr)),
 #ifdef HAVE_FLANN
-        indices = std::move(inputObj.indices);
-        dists = std::move(inputObj.dists);
+                                                                 indices(std::move(inputObj.indices)),
+                                                                 dists(std::move(inputObj.dists)),
 #endif
+                                                                 the_same(inputObj.the_same)
+    {
+    }
+
+    /*!
+     * Copy constructor
+     * \param inputObj kNearestNeighbor to be copied
+     */
+    kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj) : drows(inputObj.drows),
+                                                                      qrows(inputObj.qrows),
+                                                                      cols(inputObj.cols),
+                                                                      nn(inputObj.nn),
+                                                                      indices_ptr(new int[inputObj.qrows * inputObj.nn]),
+                                                                      dists_ptr(new T[inputObj.qrows * inputObj.nn]),
+#ifdef HAVE_FLANN
+                                                                      indices(indices_ptr.get(), inputObj.qrows, inputObj.nn),
+                                                                      dists(dists_ptr.get(), inputObj.qrows, inputObj.nn),
+#endif
+                                                                      the_same(inputObj.the_same)
+    {
+        {
+            int *From = inputObj.indices_ptr.get();
+            int *To = indices_ptr.get();
+            std::copy(From, From + qrows * nn, To);
+        }
+        {
+            T *From = inputObj.dists_ptr.get();
+            T *To = dists_ptr.get();
+            std::copy(From, From + qrows * nn, To);
+        }
     }
 
     /*!
      * Move assignment operator
      * \param inputObj kNearestNeighbor to be assigned
      */
-    kNearestNeighbor &operator=(kNearestNeighbor &&inputObj)
+    kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&inputObj)
     {
-        //Number of data rows
-        drows = inputObj.drows;
-        //Number of qury rows
-        qrows = inputObj.qrows;
-        //Number of columns
-        cols = inputObj.cols;
-        //Number of nearest neighbors to find
-        nn = inputObj.nn;
-        //Flag to check if the input data and qury data are the same
-        the_same = inputObj.the_same;
-
+        drows = std::move(inputObj.drows);
+        qrows = std::move(inputObj.qrows);
+        cols = std::move(inputObj.cols);
+        nn = std::move(inputObj.nn);
+        the_same = std::move(inputObj.the_same);
         indices_ptr = std::move(inputObj.indices_ptr);
         dists_ptr = std::move(inputObj.dists_ptr);
-
 #ifdef HAVE_FLANN
         indices = std::move(inputObj.indices);
         dists = std::move(inputObj.dists);
@@ -176,6 +189,12 @@ class kNearestNeighbor
         //Number of checks means: How many leafs to visit when searching
         //for neighbours (-1 for unlimited)
         index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
+
+        if (!checkNearestNeighbors())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "Input data & query data are the same!" << std::endl;
+        }
 #endif
     }
 
@@ -280,6 +299,32 @@ class kNearestNeighbor
         return nn - the_same;
     }
 
+    /*!
+     * \brief   Function to make sure that we do not compute the nearest neighbors of a point from itself
+     * 
+     * \returns true for if input points and query points are used correctly
+     */
+    bool checkNearestNeighbors()
+    {
+        if (the_same)
+        {
+            return true;
+        }
+
+        T const eps = std::numeric_limits<T>::epsilon();
+        int s(0);
+        for (std::size_t i = 0; i < qrows; ++i)
+        {
+            std::ptrdiff_t const Id = i * nn;
+            s += (dists_ptr[Id] < eps);
+        }
+        if (s == qrows)
+        {
+            return false;
+        }
+        return true;
+    }
+
   private:
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
@@ -326,11 +371,32 @@ class L2NearestNeighbor : public kNearestNeighbor<T, T>
     {
     }
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
+    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, flann::L2<T>>(std::move(inputObj)) {}
+    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, flann::L2<T>>(inputObj) {}
+    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj)
+    {
+        kNearestNeighbor<T, flann::L2<T>>::drows = std::move(inputObj.drows);
+        kNearestNeighbor<T, flann::L2<T>>::qrows = std::move(inputObj.qrows);
+        kNearestNeighbor<T, flann::L2<T>>::cols = std::move(inputObj.cols);
+        kNearestNeighbor<T, flann::L2<T>>::nn = std::move(inputObj.nn);
+        kNearestNeighbor<T, flann::L2<T>>::the_same = std::move(inputObj.the_same);
+        kNearestNeighbor<T, flann::L2<T>>::indices_ptr = std::move(inputObj.indices_ptr);
+        kNearestNeighbor<T, flann::L2<T>>::dists_ptr = std::move(inputObj.dists_ptr);
+        kNearestNeighbor<T, flann::L2<T>>::indices = std::move(inputObj.indices);
+        kNearestNeighbor<T, flann::L2<T>>::dists = std::move(inputObj.dists);
+        return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(inputObj)));
+    }
 #else
     L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nDim, nN)
     {
     }
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nqueryPoints, nDim, nN) {}
+    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, T>(std::move(inputObj)) {}
+    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, T>(inputObj) {}
+    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj)
+    {
+        return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, T>::operator=(std::move(inputObj)));
+    }
 #endif
 };
 
