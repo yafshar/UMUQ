@@ -280,10 +280,6 @@ class kNearestNeighbor
         return nn - the_same;
     }
 
-
-
-
-
   private:
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
