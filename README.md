@@ -1,7 +1,7 @@
 # UMUQ
 [![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=develop)](https://travis-ci.com/yafshar/UMUQ)
 
-Welcome to **UMUQ**, University of Michigan's C++ HBM framework!
+Welcome to **UMUQ**, University of Michigan's Uncertainty Quantification framework!
 
 Introduction
 ------------
