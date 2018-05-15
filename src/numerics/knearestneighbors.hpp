@@ -334,10 +334,29 @@ class kNearestNeighbor
         return true;
     }
 
+    /*!
+     * \brief swap two indexes values
+     */
     void IndexSwap(int Indx1, int Indx2)
     {
         std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
         std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
+    }
+
+    /*!
+     * \returns number of input data points
+     */
+    inline int const numInputdata() const
+    {
+        return drows;
+    }
+
+    /*!
+     * \returns number of query data points
+     */
+    inline int const numQuerydata() const
+    {
+        return qrows;
     }
 
   private:
