@@ -59,6 +59,15 @@ class kNearestNeighbor
     {
     }
 
+
+    /*!
+     * \brief constructor
+     * 
+     * \param ndataPoints  Number of data points
+     * \param nqueryPoints Number of query points
+     * \param nDim         Dimension of each point
+     * \param nN           Number of nearest neighbors to find
+     */
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : drows(ndataPoints),
                                                                                                     qrows(nqueryPoints),
                                                                                                     cols(nDim),
@@ -74,7 +83,7 @@ class kNearestNeighbor
     }
 
     /*!
-     * Move constructor
+     * \brief Move constructor
      * \param inputObj kNearestNeighbor to be moved
      */
     kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj) : drows(inputObj.drows),
@@ -92,7 +101,7 @@ class kNearestNeighbor
     }
 
     /*!
-     * Copy constructor
+     * \brief Copy constructor
      * \param inputObj kNearestNeighbor to be copied
      */
     kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj) : drows(inputObj.drows),
@@ -120,7 +129,7 @@ class kNearestNeighbor
     }
 
     /*!
-     * Move assignment operator
+     * \brief Move assignment operator
      * \param inputObj kNearestNeighbor to be assigned
      */
     kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&inputObj)
@@ -140,7 +149,7 @@ class kNearestNeighbor
     }
 
     /*!
-     * \brief destructor
+     * \brief Default destructor
      *
      */
     ~kNearestNeighbor() {}
@@ -325,6 +334,12 @@ class kNearestNeighbor
         return true;
     }
 
+    void IndexSwap(int Indx1, int Indx2)
+    {
+        std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
+        std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
+    }
+
   private:
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
@@ -334,19 +349,19 @@ class kNearestNeighbor
     flann::Matrix<T> dists;
 #endif
 
-    //Number of data rows
+    //! Number of data rows
     std::size_t drows;
 
-    //Number of qury rows
+    //! Number of qury rows
     std::size_t qrows;
 
-    //Number of columns
+    //! Number of columns
     std::size_t cols;
 
-    //Number of nearest neighbors to find
+    //! Number of nearest neighbors to find
     int nn;
 
-    //Flag to check if the input data and qury data are the same
+    //! Flag to check if the input data and qury data are the same
     bool the_same;
 };
 
@@ -356,7 +371,7 @@ class kNearestNeighbor
 /*! \class L2NearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces using L2 distance functor
  * 
- * \tparam T  data type
+ * \tparam T data type
  */
 template <typename T>
 #ifdef HAVE_FLANN

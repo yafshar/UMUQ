@@ -28,7 +28,7 @@
  * \endverbatim
  */
 
-/*!
+/*! \namespace multimin
  * \brief Namespace containing all the functions for Multidimensional Minimization Module
  * 
  * It includes all the functionalities for finding minima of arbitrary multidimensional 

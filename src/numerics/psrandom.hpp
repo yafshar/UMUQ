@@ -6,6 +6,17 @@
 
 /*! \class psrandom
   *
+  * This class generates pseudo-random numbers.
+  * Engines and distributions used to produce random values. 
+  * 
+  * All of the engines may be specifically seeded, for use with repeatable simulators.
+  * Random number engines generate pseudo-random numbers using seed data as entropy source. 
+  * The choice of which engine to use involves a number of tradeoffs: 
+  * 
+  * Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast. 
+  * 
+  * The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
+  * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
   */
 struct psrandom
 {
@@ -27,7 +38,7 @@ struct psrandom
     /*!
      * \brief constructor
      * 
-     * \param seed Input seed for random number initialization 
+     * \param iseed_ Input seed for random number initialization 
      */
     psrandom(size_t const &iseed_)
     {
@@ -98,13 +109,13 @@ struct psrandom
     bool init();
 
     /*!
-     * \returns Uniform random number between [a..b)
+     * \returns Uniform random number between \f$ [a \cdots b) \f$
      * 
-     * \brief Uniform random number between [a..b)
+     * \brief Uniform random number between \f$ [a \cdots b) \f$
      *
      * \tparam T data type one of float or double
      *
-     * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
+     * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0, b = 1 \f$)
      */
     template <typename T>
     inline T unirnd(T const a = 0, T const b = 1)
@@ -115,9 +126,9 @@ struct psrandom
     }
 
     /*!
-     * \returns a uniform random number of a double precision [0..1) floating point 
+     * \returns a uniform random number of a double precision \f$ [0 \cdots 1) \f$ floating point 
      * 
-     * \brief Advance state by 1, and output a double precision [0..1) floating point
+     * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
      * 
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
@@ -125,9 +136,9 @@ struct psrandom
     inline double d() { return saru[0].d(); }
 
     /*!
-     * \returns a uniform random number of a single precision [0..1) floating point
+     * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
      * 
-     * \Advance state by 1, and output a single precision [0..1) floating point
+     * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
      * 
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
@@ -289,11 +300,11 @@ bool psrandom::init()
 }
 
 /*!
- * \brief Uniform random number between [a..b)
+ * \brief Uniform random number between \f$ [a \cdots b) \f$
  *
  * \tparam T data type one of float, double
  *
- * Advance the PRNG state by 1, and output a T precision [a..b) number (default a = 0, b = 1)
+ * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0 , b = 1 \f$)
  * This is a partial specialization to make a special case for double precision uniform random number
  */
 template <>
@@ -305,7 +316,9 @@ inline double psrandom::unirnd<double>(double const a, double const b)
 }
 
 /*!
- * This is a partial specialization to make a special case for float precision uniform random number
+ * \brief This is a partial specialization to make a special case for float precision uniform random number between \f$ [a \cdots b) \f$
+ * \param a lower bound 
+ * \param b upper bound
  */
 template <>
 inline float psrandom::unirnd<float>(float a, float b)
@@ -315,7 +328,7 @@ inline float psrandom::unirnd<float>(float a, float b)
     return saru[me].f(a, b);
 }
 
-/*!   
+/*! \fn multinomial
  * \brief The multinomial distribution
  * 
  * This is based on psrandom object seeded engine.  
@@ -378,7 +391,7 @@ bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
     return true;
 }
 
-/*!   
+/*! \fn Multinomial
  * \brief The Multinomial distribution
  * 
  * This is independent. 
@@ -432,7 +445,7 @@ bool Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
     return true;
 }
 
-/*!
+/*! \fn multinomial_lnpdf
  * \brief Computes the logarithm of the probability from the multinomial distribution
  * 
  * This function computes the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
@@ -467,7 +480,7 @@ T multinomial_lnpdf(unsigned int const *mndist, T const *p, int const K)
     return log_pdf;
 }
 
-/*!
+/*! \fn multinomial_pdf
  * \brief Computes the probability from the multinomial distribution
  * 
  * This function computes the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
@@ -501,7 +514,7 @@ T multinomial_pdf(unsigned int const *mndist, T const *p, int const K)
     return std::exp(log_pdf);
 }
 
-/*!
+/*! \class normrnd
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * 
  * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
@@ -539,10 +552,11 @@ class normrnd
     }
 
   private:
+    //! Random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
 
-/*!
+/*! \class Normrnd
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * This class is independent.
  *
@@ -565,11 +579,14 @@ class Normrnd
     T operator()() { return d(gen); }
 
   private:
+    //! Random number engine based on Mersenne Twister algorithm.
     std::mt19937 gen;
+
+    //! Random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
 
-/*!
+/*! \class lognormrnd
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
  * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
  * psrandom object.
@@ -606,11 +623,12 @@ class lognormrnd
     }
 
   private:
+    //! Lognormal_distribution random number distribution
     std::lognormal_distribution<T> d;
 };
 
-/*!
- * \brief Generates random numbers x > 0 according to the lognormal_distribution
+/*! \class Lognormrnd
+ * \brief Generates random numbers \f$ x > 0 \f$ according to the lognormal_distribution
  * This class is independent.
  * 
  * \tparam T data type one of float, double, or long double
@@ -632,7 +650,10 @@ class Lognormrnd
     T operator()() { return d(gen); }
 
   private:
+    //! Random number engine based on Mersenne Twister algorithm.
     std::mt19937 gen;
+
+    //! Lognormal_distribution random number distribution
     std::lognormal_distribution<T> d;
 };
 
@@ -829,15 +850,19 @@ class mvnormdist
     }
 
   private:
-    //Vector of size \f$n\f$
+    //! Vector of size \f$n\f$
     EVectorX<T> mean;
-    //Variance-covariance matrix of size \f$ n \times n \f$
+    
+    //! Variance-covariance matrix of size \f$ n \times n \f$
     EMatrixX<T> covariance;
-    //Matrix of size \f$n \times n\f$
+    
+    //! Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
-    //LU decomposition of a matrix with complete pivoting
+    
+    //! LU decomposition of a matrix with complete pivoting
     Eigen::FullPivLU<EMatrixX<T>> lu;
-    //Generates random numbers according to the Normal (or Gaussian) random number distribution
+    
+    //! Generates random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
 
@@ -1007,17 +1032,22 @@ class Mvnormdist
     }
 
   private:
-    //Vector of size \f$n\f$
+    //! Vector of size \f$n\f$
     EVectorX<T> mean;
-    //Variance-covariance matrix of size \f$n \times n\f$
+    
+    //! Variance-covariance matrix of size \f$n \times n\f$
     EMatrixX<T> covariance;
-    //Matrix of size \f$n \times n\f$
+    
+    //! Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
-    //LU decomposition of a matrix with complete pivoting
+    
+    //! LU decomposition of a matrix with complete pivoting
     Eigen::FullPivLU<EMatrixX<T>> lu;
-    //A random number engine based on Mersenne Twister algorithm
+    
+    //! A random number engine based on Mersenne Twister algorithm
     std::mt19937 gen;
-    //Generates random numbers according to the Normal (or Gaussian) random number distribution
+    
+    //! Generates random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
 

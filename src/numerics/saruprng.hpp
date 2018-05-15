@@ -59,7 +59,7 @@
  * for more details.
  */
 
-/*
+/* \class saru
  * Usage:
  * 
  * Constructors for 0, 1, 2, or 3 integer seeds.
@@ -114,7 +114,9 @@ class Saru
     //! Three-seeds constructor
     inline Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
 
-    /* Efficient compile-time computed advancements */
+    /*! 
+     * Efficient compile-time computed advancements 
+     */
     template <unsigned int steps>
     inline void advance()
     {
@@ -122,8 +124,10 @@ class Saru
         advanceLCG<steps>();
     }
 
-    // OK to advance negative steps in LCG, it's done mod 2^32 so it's
-    // the same as advancing 2^32-1 steps, which is correct!
+    /*! 
+     * OK to advance negative steps in LCG, it's done mod \f$ 2^32 \f$ so it's
+     * the same as advancing \f$ 2^32-1 \f$ steps, which is correct!
+     */
     template <unsigned int steps>
     inline void rewind()
     {
@@ -131,9 +135,14 @@ class Saru
         advanceLCG<-steps>();
     }
 
-    /* Slower (but still reasonable) run-time computed advancement */
+    /*!  
+     * Slower (but still reasonable) run-time computed advancement 
+     */
     inline void advance(unsigned int steps);
 
+    /*!  
+     * Set the state
+     */
     void setstate(unsigned int istate, unsigned int iwstate)
     {
         state = istate;
@@ -148,43 +157,61 @@ class Saru
 
     template <unsigned int steps>
     inline float f();
+
     template <unsigned int steps>
     inline double d();
+
     template <unsigned int steps>
     inline float f(float low, float high);
+
     template <unsigned int steps>
     inline double d(double low, double high);
+
     inline unsigned int u32();
+
     inline unsigned int u32(unsigned int high);
+
     inline float f();
+
     inline double d();
+
     inline float f(float low, float high);
+
     inline double d(double low, double high);
 
   private:
     /* compile-time metaprograms to compute LCG and Weyl advancement */
 
-    /* Computes A^N mod 2^32 */
+    /*! 
+     * Computes \f$ A^N \f$ mod \f$ 2^32 \f$  
+     */
     template <unsigned int A, unsigned int N>
     struct CTpow
     {
         static const unsigned int value = (N & 1 ? A : 1) * CTpow<A * A, N / 2>::value;
     };
 
-    /* Specialization to terminate recursion: A^0 = 1 */
+    /*! 
+     * Specialization to terminate recursion: 
+     * \f$ A^0 = 1 \f$ 
+     */
     template <unsigned int A>
     struct CTpow<A, 0>
     {
         static const unsigned int value = 1;
     };
 
-    /* CTpowseries<A,N> computes 1+A+A^2+A^3+A^4+A^5..+A^(N-1) mod 2^32.
-     We do NOT use the more elegant formula (a^N-1)/(a-1) (see Knuth
-     3.2.1), because it's more awkward to compute with implicit mod 2^32.
-
-     Based on recursion:
-     g(A,n)= (1+A)*g(A*A, n/2);      if n is even
-     g(A,n)= 1+A*(1+A)*g(A*A, n/2);  if n is ODD (since n/2 truncates)   */
+    /*! 
+     * CTpowseries<A,N> computes \f$ 1+A+A^2+A^3+A^4+A^5 \cdots + A^(N-1) \f$ mod \f$ 2^32 \f$.
+     * We do NOT use the more elegant formula \frac{(a^N-1)}{(a-1)} (see Knuth
+     * 3.2.1), because it's more awkward to compute with implicit mod \f$ 2^32 \f$.
+     * Based on recursion:
+     * 
+     * \verbatim
+     * g(A,n)= (1+A)*g(A*A, n/2);      if n is even
+     * g(A,n)= 1+A*(1+A)*g(A*A, n/2);  if n is ODD (since n/2 truncates) 
+     * \endverbatim
+     */
     template <unsigned int A, unsigned int N>
     struct CTpowseries
     {
@@ -204,10 +231,15 @@ class Saru
         static const unsigned int value = 1;
     };
 
-    /* Compute A*B mod m.  Tricky only because of implicit 2^32 modulus.
-     Uses recursion.
-     if A is even, then A*B mod m =   (A/2)*(B+B mod m) mod m.
-     if A is odd,  then A*B mod m =  ((A/2)*(B+B mod m) mod m) + B mod m.  */
+    /*! 
+     * Compute A*B mod m.  Tricky only because of implicit \f$ 2^32 \f$ modulus.
+     * Uses recursion.
+     * 
+     * \verbatim
+     * if A is even, then A*B mod m =   (A/2)*(B+B mod m) mod m.
+     * if A is odd,  then A*B mod m =  ((A/2)*(B+B mod m) mod m) + B mod m.  
+     * \endverbatim
+     */
     template <unsigned int A, unsigned int B, unsigned int m>
     struct CTmultmod
     {
@@ -216,7 +248,9 @@ class Saru
         static const unsigned int value = A & 1 ? ((B >= m - temp) ? B + temp - m : B + temp) : temp;
     };
 
-    /* terminate the recursion */
+    /*! 
+     * terminate the recursion 
+     */
     template <unsigned int B, unsigned int m>
     struct CTmultmod<0, B, m>
     {
@@ -225,16 +259,23 @@ class Saru
 
     template <unsigned int offset, unsigned int delta, unsigned int modulus, unsigned int steps>
     inline unsigned int advanceAnyWeyl(unsigned int);
-
-    static const unsigned int LCGA = 0x4beb5d59; // Full period 32 bit LCG
+    
+    //! Full period 32 bit LCG
+    static const unsigned int LCGA = 0x4beb5d59; 
     static const unsigned int LCGC = 0x2600e1f7;
-    static const unsigned int oWeylPeriod = 0xda879add; // Prime period 3666320093
+    
+    //! Prime period 3666320093
+    static const unsigned int oWeylPeriod = 0xda879add; 
     static const unsigned int oWeylOffset = 0x8009d14b;
-    static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset; // wraps mod 2^32
 
-    /* Compile-time template function to efficently advance a state x with
-     a LCG (mod 2^32) N steps.  Runtime, this all becomes a super-simple
-     single multiply and add. */
+    //! wraps mod 2^32
+    static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset; 
+
+    /*! 
+     * Compile-time template function to efficently advance a state x with
+     * a LCG (mod \f$ 2^32 \f$) N steps.  Runtime, this all becomes a super-simple
+     * single multiply and add. 
+     */
     template <unsigned int steps>
     inline void advanceLCG()
     {
@@ -246,7 +287,7 @@ class Saru
     {
         wstate = advanceAnyWeyl<oWeylOffset, oWeylDelta, oWeylPeriod, steps>(wstate);
     }
-    
+
     /*
      * \tparam steps Number of steps to rewind.
      */
@@ -260,17 +301,21 @@ class Saru
     unsigned int wstate; // Offset Weyl sequence state
 };
 
-// partial specialization to make a special case for step of 1
-/* especially efficient single step  */
+/*! 
+ * partial specialization to make a special case for step of 1
+ * especially efficient single step  
+ */
 template <>
 inline void Saru::advanceWeyl<1>()
 {
     wstate = wstate + oWeylOffset + ((((signed int)wstate) >> 31) & oWeylPeriod);
 }
 
-/* This seeding was carefully tested for good churning with 1, 2, and
-   3 bit flips.  All 32 incrementing counters (each of the circular
-   shifts) pass the TestU01 Crush tests. */
+/*! 
+ * This seeding was carefully tested for good churning with 1, 2, and
+ * 3 bit flips.  All 32 incrementing counters (each of the circular
+ * shifts) pass the TestU01 Crush tests. 
+ */
 inline Saru::Saru(unsigned int seed)
 {
     state = 0x79dedea3 * (seed ^ (((signed int)seed) >> 14));
@@ -279,8 +324,10 @@ inline Saru::Saru(unsigned int seed)
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
-/* seeding from 2 samples. We lose one bit of entropy since our input
-   seeds have 64 bits but at the end, after mixing, we have just 63. */
+/*! 
+ * seeding from 2 samples. We lose one bit of entropy since our input
+ * seeds have 64 bits but at the end, after mixing, we have just 63. 
+ */
 inline Saru::Saru(unsigned int seed1, unsigned int seed2)
 {
     seed2 += seed1 << 16;
@@ -298,8 +345,10 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2)
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
-/* 3 seeds. We have to premix the seeds before dropping to 64 bits.
-   TODO: this may be better optimized in a future version */
+/* 
+ * 3 seeds. We have to premix the seeds before dropping to 64 bits.
+ * TODO: this may be better optimized in a future version 
+ */
 inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
 {
     seed3 ^= (seed1 << 7) ^ (seed2 >> 6);
@@ -429,9 +478,11 @@ inline unsigned int Saru::u32(unsigned int const high)
     return i;
 }
 
-/* Floats have 23 bits of mantissa. We take 31 p-rand bits, cast to
-   signed int and simply multiply to get the (0,1] range. We shift and cast
-   to long to boost x86 conversion speed, see worley.com/mathgeek/floatconvert.html. */
+/*! 
+ * Floats have 23 bits of mantissa. We take 31 p-rand bits, cast to
+ * signed int and simply multiply to get the (0,1] range. We shift and cast
+ * to long to boost x86 conversion speed, see worley.com/mathgeek/floatconvert.html. 
+ */
 template <unsigned int steps>
 inline float Saru::f()
 {
@@ -439,7 +490,8 @@ inline float Saru::f()
 }
 
 /* for a range that doesn't start at 0, we use the full 32 bits since
-   we need to add an offset anyway. We still use the long cast method. */
+ * we need to add an offset anyway. We still use the long cast method. 
+ */
 template <unsigned int steps>
 inline float Saru::f(float low, float high)
 {
@@ -457,11 +509,12 @@ inline float Saru::f(float low, float high)
     return f<1>(low, high);
 }
 
-/* Doubles have 52 bits of mantissa. Casting to a long allows faster
- conversion, even with the extra needed fp addition. We use less-random
- "state" bits for the lowest order bits simply for speed. Output is
- in the (0,1] range. See worley.com/mathgeek/floatconvert.html. */
-
+/* 
+ * Doubles have 52 bits of mantissa. Casting to a long allows faster
+ * conversion, even with the extra needed fp addition. We use less-random
+ * "state" bits for the lowest order bits simply for speed. Output is
+ * in the (0,1] range. See worley.com/mathgeek/floatconvert.html. 
+ */
 template <unsigned int steps>
 inline double Saru::d()
 {

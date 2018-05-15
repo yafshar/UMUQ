@@ -132,12 +132,31 @@ using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 Eigen::IOFormat fmt(Eigen::FullPrecision);
 
 /*!
+ * \brief New type is used to map the existing C++ memory buffer to an Eigen Vector object
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer 
+ */
+template <typename TdataPtr>
+using TEMapVectorX = Eigen::Map<EVectorX<TdataPtr>>;
+
+/*!
+ * \brief New type is used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer 
+ */
+template <typename TdataPtr>
+using TEMapRowVectorX = Eigen::Map<ERowVectorX<TdataPtr>>;
+
+/*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer    
- * 
+ * \tparam TdataPtr typedef of the data pointer
  */
 template <typename TdataPtr, int _Options = Eigen::RowMajor>
 using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
@@ -147,8 +166,7 @@ using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer    
- * 
+ * \tparam TdataPtr typedef of the data pointer
  */
 template <typename TdataPtr, int _Options = Eigen::RowMajor>
 using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;

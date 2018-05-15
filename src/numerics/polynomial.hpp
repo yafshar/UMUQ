@@ -324,14 +324,16 @@ class polynomial
     };
 
   private:
-    //Dimension
+    //! Dimension
     int nDim;
-    //Order of accuracy
+
+    //! Order of accuracy
     int Order;
 
-    //The size of the monomial array
+    //! The size of the monomial array
     int monomialSize;
 
+    //! Array of monomial sequence
     std::unique_ptr<int[]> alpha;
 };
 
