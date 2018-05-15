@@ -485,7 +485,7 @@ class dcpse
         order = (order > 0) ? order : 2;
 
         //Extra check on the number of extra nearest neighbors
-        nENN *= (nENN > 0) ? 1 : 0;
+        nENN = (nENN > 0) ? nENN : 0;
 
         //Extra check on the ratio
         ratio = (ratio > 0) ? ratio : static_cast<T>(1);
@@ -565,6 +565,8 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[monomialSize];
 
+        int IndexId[monomialSize];
+
         //Primitive (quartic spline) object
         quartic_spline<T> q;
 
@@ -574,30 +576,32 @@ class dcpse
             std::ptrdiff_t const IdM = i * monomialSize;
             std::ptrdiff_t const IdI = i * nDim;
 
+            //A pointer to nearest neighbors indices of point i
+            int *NearestNeighbors = KNN->NearestNeighbors(i);
+
+            //A pointer to nearest neighbors distances from the point i
+            T *nnDist = KNN->NearestNeighborsDistances(i);
+
+            //A pointer to the array for keeping the component-wise L1 distances
+            T *l1dist = L1Dist;
+
             //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
             //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
+
+            //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
+            for (int j = 0; j < nNN; j++)
             {
-                //A pointer to nearest neighbors indices of point i
-                int *NearestNeighbors = KNN->NearestNeighbors(i);
+                std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
-                //A pointer to the array for keeping the component-wise L1 distances
-                T *l1dist = L1Dist;
+                //pointer to query data
+                T *Idata = qdata + IdI;
 
-                //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
-                for (int j = 0; j < nNN; j++)
+                //pointer to idata (neighbors of i)
+                T *Jdata = idata + IdJ;
+
+                for (int d = 0; d < nDim; d++)
                 {
-                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
-
-                    //pointer to query data
-                    T *Idata = qdata + IdI;
-
-                    //pointer to idata (neighbors of i)
-                    T *Jdata = idata + IdJ;
-
-                    for (int d = 0; d < nDim; d++)
-                    {
-                        *l1dist++ = *Idata++ - *Jdata++;
-                    }
+                    *l1dist++ = *Idata++ - *Jdata++;
                 }
             }
 
@@ -616,58 +620,62 @@ class dcpse
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i /= Epsilon; });
 
+            //Loop through the neighbors
+            for (int j = 0; j < monomialSize; j++)
             {
-                //A pointer to nearest neighbors indices of point i
-                int *NearestNeighbors = KNN->NearestNeighbors(i);
+                //Id in the L1 distance list
+                std::ptrdiff_t const Id = j * nDim;
 
-                //A pointer to nearest neighbors distances from the point i
-                T *nnDist = KNN->NearestNeighborsDistances(i);
+                //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                poly.monomial_value(L1Dist + Id, column);
 
-                //Loop through the neighbors
-                for (int j = 0; j < monomialSize; j++)
-                {
-                    //Id in the L1 distance list
-                    std::ptrdiff_t const Id = j * nDim;
+                TEMapVectorX<T> columnV(column, monomialSize);
 
-                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                    poly.monomial_value(L1Dist + Id, column);
+                //Fill the Vandermonde matrix column by column
+                VMT.block(0, j, monomialSize, 1) << columnV;
 
-                    TEMapX<T, Eigen::ColMajor> columnV(column, monomialSize, 1);
+                //Neighbor point number
+                int const IdJ = NearestNeighbors[j];
 
-                    //Fill the Vandermonde matrix column by column
-                    VMT.block(0, j, monomialSize, 1) << columnV;
+                //Using a smooth correction function that satisfies
+                //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
+                //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
+                //between the point and its nearest neighbors
+                T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
 
-                    //Neighbor point number
-                    int const IdJ = NearestNeighbors[j];
+                //Compute the kernel value at the point
+                T kernelV = q.f(&s);
 
-                    //Using a smooth correction function that satisfies
-                    //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
-                    //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
-                    //between the point and its nearest neighbors
-                    T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
+                //Assemble the right hand side
+                //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
+                B0 -= kernelV * columnV;
 
-                    //Compute the kernel value at the point
-                    T kernelV = q.f(&s);
-
-                    //Assemble the right hand side
-                    //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                    B0 -= kernelV * columnV;
-
-                    //Index inside the kernel
-                    std::ptrdiff_t const IdK = IdM + j;
-                    kernel[IdK] = kernelV;
-                }
-
-                for (int j = 0; j < monomialSize; j++)
-                {
-                    EM(j) = std::exp(-nnDist[j] * nnDist[j] / Epsilonsq2);
-                }
+                //Index inside the kernel
+                std::ptrdiff_t const IdK = IdM + j;
+                kernel[IdK] = kernelV;
             }
 
-            //LU decomposition of a matrix with complete pivoting, and related features.
-            Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+            for (int j = 0; j < monomialSize; j++)
+            {
+                EM(j) = std::exp(-nnDist[j] * nnDist[j] / Epsilonsq2);
+            }
 
-            int rank = lu.rank();
+            int rank;
+
+            {
+                //LU decomposition of a matrix with complete pivoting, and related features.
+                Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+
+                rank = lu.rank();
+
+                if (rank < monomialSize)
+                {
+                    for (int j = 0; j < monomialSize; j++)
+                    {
+                        IndexId[j] = lu.permutationQ().indices()(j);
+                    }
+                }
+            }
 
             if (rank < monomialSize)
             {
@@ -686,12 +694,6 @@ class dcpse
                         VMTimage.block(0, 0, monomialSize, monomialSize) << VMT;
                         EMimage.head(monomialSize) << EM;
 
-                        //A pointer to nearest neighbors indices of point i
-                        int *NearestNeighbors = KNN->NearestNeighbors(i);
-
-                        //A pointer to nearest neighbors distances from the point i
-                        T *nnDist = KNN->NearestNeighborsDistances(i);
-
                         //Loop through the rest of nearest neighbors
                         for (int j = monomialSize; j < nNN; j++)
                         {
@@ -701,7 +703,7 @@ class dcpse
                             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
                             poly.monomial_value(L1Dist + Id, column);
 
-                            TEMapX<T, Eigen::ColMajor> columnV(column, monomialSize, 1);
+                            TEMapVectorX<T> columnV(column, monomialSize);
 
                             //Fill the Vandermonde matrix column by column
                             VMTimage.block(0, j, monomialSize, 1) << columnV;
@@ -748,69 +750,67 @@ class dcpse
                 else
                 {
                     //We have enough neighbor points
+                    //Remove the columns which causes singularity and replace them  
+                    //with the new columns from extra neighbor points
+
+                    //Loop through the neighbors
+                    for (int j = rank, k = monomialSize; j < monomialSize; j++, k++)
                     {
-                        //A pointer to nearest neighbors indices of point i
-                        int *NearestNeighbors = KNN->NearestNeighbors(i);
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
 
-                        //A pointer to nearest neighbors distances from the point i
-                        T *nnDist = KNN->NearestNeighborsDistances(i);
+                        //Id in the list
+                        std::ptrdiff_t const Id = k * nDim;
 
-                        //Loop through the neighbors
-                        for (int j = rank, k = monomialSize; j < monomialSize; j++, k++)
-                        {
-                            //Get the column number which causes a singularity
-                            int const l = lu.permutationQ().indices()(j);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-                            //Id in the list
-                            std::ptrdiff_t const Id = k * nDim;
+                        TEMapVectorX<T> columnV(column, monomialSize);
 
-                            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                            poly.monomial_value(L1Dist + Id, column);
+                        //Get the column l which causes singularity
+                        columnL << VMT.block(0, l, monomialSize, 1);
 
-                            TEMapX<T, Eigen::ColMajor> columnV(column, monomialSize, 1);
+                        //Fill the Vandermonde matrix by the new column
+                        VMT.block(0, l, monomialSize, 1) << columnV;
 
-                            //Get the column l which causes singularity
-                            columnL << VMT.block(0, l, monomialSize, 1);
+                        //Neighbor point number
+                        int const IdJ = NearestNeighbors[k];
 
-                            //Fill the Vandermonde matrix by the new column
-                            VMT.block(0, l, monomialSize, 1) << columnV;
+                        //Using a smooth correction function that satisfies
+                        //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
+                        //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
+                        //between the point and its nearest neighbors
+                        T s = nnDist[k] / (0.9 * idataminDist[IdJ]);
 
-                            //Neighbor point number
-                            int const IdJ = NearestNeighbors[k];
+                        //Index of the column l inside the kernel
+                        std::ptrdiff_t const IdK = IdM + l;
 
-                            //Using a smooth correction function that satisfies
-                            //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
-                            //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
-                            //between the point and its nearest neighbors
-                            T s = nnDist[k] / (0.9 * idataminDist[IdJ]);
+                        //Compute the kernel value at the point IdK
+                        T kernelV = q.f(&s);
 
-                            //Index of the column l inside the kernel
-                            std::ptrdiff_t const IdK = IdM + l;
+                        //Assemble the right hand side
+                        //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
+                        B0 -= kernelV * columnV;
 
-                            //Compute the kernel value at the point IdK
-                            T kernelV = q.f(&s);
+                        kernel[IdK] = kernelV;
 
-                            //Assemble the right hand side
-                            //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                            B0 -= kernelV * columnV;
-
-                            kernel[IdK] = kernelV;
-
-                            //Neighbor point number of point L
-                            int const IdJL = NearestNeighbors[l];
-                            s = nnDist[l] / (0.9 * idataminDist[IdJL]);
-                            kernelV = q.f(&s);
-                            B0 += kernelV * columnL;
-                        }
-
-                        for (int j = rank, k = monomialSize; j < monomialSize; j++, k++)
-                        {
-                            //Get the column number which causes a singularity
-                            int const l = lu.permutationQ().indices()(j);
-
-                            EM(l) = std::exp(-nnDist[k] * nnDist[k] / Epsilonsq2);
-                        }
+                        //Neighbor point number of point L
+                        int const IdJL = NearestNeighbors[l];
+                        s = nnDist[l] / (0.9 * idataminDist[IdJL]);
+                        kernelV = q.f(&s);
+                        B0 += kernelV * columnL;
                     }
+
+                    for (int j = rank, k = monomialSize; j < monomialSize; j++, k++)
+                    {
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
+
+                        EM(l) = std::exp(-nnDist[k] * nnDist[k] / Epsilonsq2);
+                    }
+
+                    //Update the IndexId
+                    std::iota(IndexId + rank, IndexId + monomialSize, monomialSize);
 
                     //\f$ \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                     //{\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
@@ -820,8 +820,37 @@ class dcpse
                     AM = BMT * BMT.transpose();
                 }
 
-                Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
-                SV = svd.solve(B0);
+                {
+                    Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
+
+                    //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                    SV = svd.solve(B0);
+                }
+
+                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                //Later I should check on SVD solution and to find out which columns are the
+                //Most important one, then I can correct the IndexId order
+
+                //Loop through the neighbors
+                for (int j = 0; j < monomialSize; j++)
+                {
+                    //Get the right index
+                    int const l = IndexId[j];
+
+                    //Id in the list
+                    std::ptrdiff_t const Id = l * nDim;
+
+                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                    poly.monomial_value(L1Dist + Id, column);
+
+                    TEMapVectorX<T> columnV(column, monomialSize);
+
+                    T const expo = std::exp(-nnDist[l] * nnDist[l] / Epsilonsq);
+
+                    //Index inside the kernel
+                    std::ptrdiff_t const IdK = IdM + l;
+                    kernel[IdK] += SV.dot(columnV) * expo;
+                }
             }
             else
             {
@@ -833,42 +862,32 @@ class dcpse
 
                 AM = BMT * BMT.transpose();
 
-                lu.compute(AM);
+                //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                SV = AM.lu().solve(B0);
 
-                SV = lu.solve(B0);
-
-                //SV contains the solution to the \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-
+                //Loop through the neighbors
+                for (int j = 0; j < monomialSize; j++)
                 {
-                    //A pointer to nearest neighbors indices of point i
-                    int *NearestNeighbors = KNN->NearestNeighbors(i);
+                    //Id in the list
+                    std::ptrdiff_t const Id = j * nDim;
 
-                    //A pointer to nearest neighbors distances from the point i
-                    T *nnDist = KNN->NearestNeighborsDistances(i);
+                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                    poly.monomial_value(L1Dist + Id, column);
 
-                    //Loop through the neighbors
-                    for (int j = 0; j < monomialSize; j++)
-                    {
-                        //Id in the list
-                        std::ptrdiff_t const Id = j * nDim;
+                    TEMapVectorX<T> columnV(column, monomialSize);
 
-                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                    T const expo = std::exp(-nnDist[j] * nnDist[j] / Epsilonsq);
 
-                        TEMapX<T, Eigen::ColMajor> columnV(column, monomialSize, 1);
-
-                        T const expo = std::exp(-nnDist[j] * nnDist[j] / Epsilonsq);
-
-                        //Index inside the kernel
-                        std::ptrdiff_t const IdK = IdM + j;
-                        // std::cout << SV.dot(columnV) * expo << std::endl;
-                        // kernel[IdK] += SV.dot(columnV) * expo;
-                    }
+                    //Index inside the kernel
+                    std::ptrdiff_t const IdK = IdM + j;
+                    kernel[IdK] += SV.dot(columnV) * expo;
                 }
             }
+
         } //Loop over all points
 
         delete[] column;
+        delete[] idataminDist;
 
         return true;
     }
