@@ -56,7 +56,7 @@ TEST(dcpse_test, HandlesDCoperators)
 
     dcpse<double> dc(nDim);
 
-    EXPECT_TRUE(dc.dcops(data, nRows, qdata, 2, 2, 0));
+    EXPECT_TRUE(dc.computeInterpolatorWeights(data, nRows, qdata, 2, 2, 0));
 
     // EMatrix3d yaser = EMatrix3d::Zero();
     // EVector3d y1, y2, y3;
