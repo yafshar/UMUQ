@@ -28,10 +28,11 @@ class dcpse
      */
     dcpse(int ndim) : nDim(ndim), monomialSize(0), kernelSize(0) {}
 
-    /*!
-     * \brief Computes generalized DC operators
+    /*! \fn computeWeights
+     * \brief Computes generalized DC-PSE differential operators on set of input points
      *
-     * This function uses one set of points as input data to compute the generalized DC operators.
+     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     * differential operators.
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
      * use the interpolator function not this one. 
      * 
@@ -45,7 +46,7 @@ class dcpse
      * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      * 
      */
-    bool dcops(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
+    bool computeWeights(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
         //Extra check on the order
         order = (order > 0) ? order : 2;
@@ -61,15 +62,14 @@ class dcpse
         if (Beta == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Zero order degree derivative is an interpolation!" << std::endl;
-            std::cerr << "Use the interpolation function!" << std::endl;
-            return false;
+            std::cerr << "Zero order degree derivative gives an approximation!" << std::endl;
+            std::cerr << "If this is an interpolation use the interpolation function!" << std::endl;
         }
 
         int alphamin = (Beta % 2 == 0);
 
         //\f$ (-1)^{|\beta|} \f$
-        T rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
+        rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
         //Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
         polynomial<T> poly(nDim, order + Beta - 1);
@@ -468,9 +468,14 @@ class dcpse
         return true;
     }
 
-    /*!
-     * \brief Computes generalized DC operators
-     *
+    /*! \fn computeWeights
+     * \brief Computes generalized DC-PSE differential operators on the set of query points.
+     * 
+     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     * differential opearators on the set of query points.
+     * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
+     * use the interpolator function not this one. 
+     * 
      * \param idata            A pointer to input data
      * \param nPoints          Number of data points
      * \param qdata            A pointer to query data
@@ -482,7 +487,7 @@ class dcpse
      * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
      * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
-    bool dcops(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
+    bool computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
         //Extra check on the order
         order = (order > 0) ? order : 2;
@@ -498,15 +503,14 @@ class dcpse
         if (Beta == 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Zero order degree derivative is an interpolation!" << std::endl;
-            std::cerr << "Use the interpolation function!" << std::endl;
-            return false;
+            std::cerr << "Zero order degree derivative gives an approximation!" << std::endl;
+            std::cerr << "If this is an interpolation use the interpolation function!" << std::endl;
         }
 
         int alphamin = (Beta % 2 == 0);
 
         //\f$ (-1)^{|\beta|} \f$
-        T rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
+        rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
         //Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
         polynomial<T> poly(nDim, order + Beta - 1);
@@ -904,18 +908,21 @@ class dcpse
         return true;
     }
 
-    /*!
-     * \brief Computes generalized interpolator DC operators 
+    /*! \fn computeInterpolatorWeights
+     * \brief Computes generalized DC-PSE interpolator operators on the set of query points.
+     * 
+     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     * interpolator operators on the set of query points.
      * 
      * \param idata            A pointer to input data 
      * \param nPoints          Number of data points
      * \param qdata            A pointer to query data 
      * \param nqPoints         Number of query data points
      * \param order            Order of accuracy (default is 2nd order accurate)
-	 * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
      * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
-    bool dcops(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
+    bool computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
         //Extra check on the order
         order = (order > 0) ? order : 2;
@@ -1393,6 +1400,117 @@ class dcpse
         return true;
     }
 
+    /*! \fn compute
+     * \brief Evaluate a discretized DC-PSE operator from function values of input data and put the results as the query data function values
+     * 
+     * This function uses function values of input data and the weights of the operator which have 
+     * been previously computed to compute the query values and put the results as the query data 
+     * function values. 
+     * 
+     * At first it checks the computed kernel size to be equal to the number of qury points times the 
+     * size of monomials which has been previously computed for the required degree of DC-PSE operator.
+     * 
+     * \param iFvalue          A pointer to input data function value
+     * \param nPoints          Number of data points
+     * \param qFvalue          A pointer to query data function value
+     * \param nqPoints         Number of query data points
+     */
+    bool compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
+    {
+        if (KNN->numInputdata() != nPoints)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Input data does not match with previously computed weights!" << std::endl;
+            return false;
+        }
+        if (KNN->numQuerydata() != nqPoints)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Query data does not match with previously computed weights!" << std::endl;
+            return false;
+        }
+        if (kernelSize != nqPoints * monomialSize)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Previously computed weights does not macth with this query data!" << std::endl;
+            return false;
+        }
+    }
+
+    /*! \fn interpolate
+     * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the 
+     * interpolation results as the query data values
+     * 
+     * This function uses function values of input data and the weights of the interpolation operator which have 
+     * been previously computed to compute the query values and put the results as the query data 
+     * function values. 
+     * 
+     * At first it checks the computed kernel size to be equal to the number of qury points times the 
+     * size of monomials which has been previously computed for the required degree of DC-PSE operator
+     * or interpolator.
+     * 
+     * \param iFvalue          A pointer to input data function value
+     * \param nPoints          Number of data points
+     * \param qFvalue          A pointer to query data function value
+     * \param nqPoints         Number of query data points
+     */
+    bool interpolate(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
+    {
+        if (KNN->numInputdata() != nPoints)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Input data does not match with previously computed weights!" << std::endl;
+            return false;
+        }
+        if (KNN->numQuerydata() != nqPoints)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Query data does not match with previously computed weights!" << std::endl;
+            return false;
+        }
+        if (kernelSize != nqPoints * monomialSize)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Previously computed weights does not macth with this query data!" << std::endl;
+            return false;
+        }
+        
+        if (qFvalue == nullptr) {
+            try
+            {
+                qFvalue = new T[nqPoints];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
+        }
+
+        //Loop over all query points
+        for (int i = 0; i < nqPoints; i++)
+        {
+            //A pointer to nearest neighbors indices of point i
+            int *NearestNeighbors = KNN->NearestNeighbors(i);
+
+            int IdI = i * monomialSize;
+
+            T sum(0);
+
+            //Loop through the neighbors
+            for (int j = 0; j < monomialSize; j++, IdI++)
+            {
+                int const IdJ = NearestNeighbors[j];
+                sum += kernel[IdI] * iFvalue[IdJ]; 
+            }
+
+            qFvalue[i] = sum;
+        }
+
+        return true;
+    }
+
     /*!
      * \brief A pointer to neighborhood kernel at index
      * 
@@ -1440,6 +1558,9 @@ class dcpse
 
     //! Size of the kernel
     int kernelSize;
+
+    //! The sign is chosen positive for odd \f$ | \beta | \f$ and negative for even \f$ | \beta | \f$
+    T rhscoeff;
 
     //! kNearestNeighbor Object
     std::unique_ptr<L2NearestNeighbor<T>> KNN;
