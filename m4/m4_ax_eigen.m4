@@ -47,7 +47,7 @@ AC_DEFUN([AX_EIGEN], [
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 				@%:@include <cstdlib>
 				@%:@include <Eigen/Dense>
-#if EIGEN_VERSION_AT_LEAST(3,3,90)
+#if EIGEN_VERSION_AT_LEAST(3,3,2)
 #else
 				std::abort();
 #endif
@@ -99,7 +99,7 @@ AC_DEFUN([AX_EIGEN], [
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 				@%:@include <cstdlib>
 				@%:@include <Eigen/Dense>
-#if EIGEN_VERSION_AT_LEAST(3,3,90)
+#if EIGEN_VERSION_AT_LEAST(3,3,2)
 #else
 				std::abort();
 #endif
@@ -113,6 +113,7 @@ AC_DEFUN([AX_EIGEN], [
 				AC_MSG_RESULT(checking Eigen/Dense usability...  no)
 				AC_MSG_RESULT(checking Eigen/Dense presence... no)
 				AC_MSG_RESULT(checking for Eigen/Dense... no)
+				AC_MSG_RESULT(At least you need to use Eigen 3.3.2)
 				AC_MSG_ERROR([ Unable to continue without the EIGEN header files !])
 			]
 		)
