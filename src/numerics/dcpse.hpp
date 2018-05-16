@@ -83,7 +83,7 @@ class dcpse
 
         //Get the monomials size
         //\f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
-        int monomialSize = poly.monomialsize() - alphamin;
+        monomialSize = poly.monomialsize() - alphamin;
 
         if (nPoints * monomialSize > kernelSize)
         {
@@ -210,7 +210,7 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[monomialSize + alphamin];
 
-        int IndexId[monomialSize];
+        int *IndexId = new int[monomialSize];
 
         //Loop over all points
         for (int i = 0; i < nPoints; i++)
@@ -507,6 +507,7 @@ class dcpse
             }
         } //Loop over all points
 
+        delete[] IndexId;
         delete[] column;
 
         return true;
@@ -575,7 +576,7 @@ class dcpse
 
         //Get the monomials size
         //\f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
-        int monomialSize = poly.monomialsize() - alphamin;
+        monomialSize = poly.monomialsize() - alphamin;
 
         if (nqPoints * monomialSize > kernelSize)
         {
@@ -696,7 +697,7 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[monomialSize + alphamin];
 
-        int IndexId[monomialSize];
+        int *IndexId = new int[monomialSize];
 
         //Loop over all query points
         for (int i = 0; i < nqPoints; i++)
@@ -998,6 +999,7 @@ class dcpse
             }
         } //Loop over all points
 
+        delete[] IndexId;
         delete[] column;
 
         return true;
@@ -1161,7 +1163,7 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[monomialSize];
 
-        int IndexId[monomialSize];
+        int *IndexId = new int[monomialSize];
 
         //Primitive (quartic spline) object
         quartic_spline<T> q;
@@ -1540,6 +1542,7 @@ class dcpse
 
         } //Loop over all points
 
+        delete[] IndexId;
         delete[] column;
         delete[] idataminDist;
 
