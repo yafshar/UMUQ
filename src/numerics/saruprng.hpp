@@ -106,7 +106,8 @@ class Saru
      * \brief Default constructor
      * The default constructor initializes a dummy state.
      */
-    Saru() : state(0x12345678), wstate(12345678){};
+    Saru() : state(0x12345678), wstate(12345678) {}
+
     //! One-seed constructor
     inline Saru(unsigned int seed);
     //! Two-seeds constructor
@@ -203,7 +204,7 @@ class Saru
 
     /*! 
      * CTpowseries<A,N> computes \f$ 1+A+A^2+A^3+A^4+A^5 \cdots + A^(N-1) \f$ mod \f$ 2^32 \f$.
-     * We do NOT use the more elegant formula \frac{(a^N-1)}{(a-1)} (see Knuth
+     * We do NOT use the more elegant formula \f$ \frac{(a^N-1)}{(a-1)} \f$ (see Knuth
      * 3.2.1), because it's more awkward to compute with implicit mod \f$ 2^32 \f$.
      * Based on recursion:
      * 
@@ -299,7 +300,7 @@ class Saru
 
     //! LCG state
     unsigned int state;
-    
+
     //! Offset Weyl sequence state
     unsigned int wstate;
 };
@@ -311,7 +312,7 @@ class Saru
 template <>
 inline void Saru::advanceWeyl<1>()
 {
-    wstate = wstate + oWeylOffset + ((((signed int)wstate) >> 31) & oWeylPeriod);
+    wstate = wstate + oWeylOffset + ((static_cast<signed int>(wstate) >> 31) & oWeylPeriod);
 }
 
 /*! 
@@ -321,8 +322,8 @@ inline void Saru::advanceWeyl<1>()
  */
 inline Saru::Saru(unsigned int seed)
 {
-    state = 0x79dedea3 * (seed ^ (((signed int)seed) >> 14));
-    wstate = seed ^ (((signed int)state) >> 8);
+    state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
+    wstate = seed ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
@@ -335,15 +336,15 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2)
 {
     seed2 += seed1 << 16;
     seed1 += seed2 << 11;
-    seed2 += ((signed int)seed1) >> 7;
-    seed1 ^= ((signed int)seed2) >> 3;
+    seed2 += static_cast<signed int>(seed1) >> 7;
+    seed1 ^= static_cast<signed int>(seed2) >> 3;
     seed2 *= 0xA5366B4D;
     seed2 ^= seed2 >> 10;
-    seed2 ^= ((signed int)seed2) >> 19;
+    seed2 ^= static_cast<signed int>(seed2) >> 19;
     seed1 += seed2 ^ 0x6d2d4e11;
 
-    state = 0x79dedea3 * (seed1 ^ (((signed int)seed1) >> 14));
-    wstate = (state + seed2) ^ (((signed int)state) >> 8);
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
@@ -359,13 +360,13 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
     seed1 ^= (seed2 << 9) + (seed3 << 8);
     seed3 ^= 0xA5366B4D * ((seed2 >> 11) ^ (seed1 << 1));
     seed2 += 0x72BE1579 * ((seed1 << 4) ^ (seed3 >> 16));
-    seed1 ^= 0X3F38A6ED * ((seed3 >> 5) ^ (((signed int)seed2) >> 22));
+    seed1 ^= 0X3F38A6ED * ((seed3 >> 5) ^ (static_cast<signed int>(seed2) >> 22));
     seed2 += seed1 * seed3;
     seed1 += seed3 ^ (seed2 >> 2);
-    seed2 ^= ((signed int)seed2) >> 17;
+    seed2 ^= static_cast<signed int>(seed2) >> 17;
 
-    state = 0x79dedea3 * (seed1 ^ (((signed int)seed1) >> 14));
-    wstate = (state + seed2) ^ (((signed int)state) >> 8);
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
@@ -489,7 +490,7 @@ inline unsigned int Saru::u32(unsigned int const high)
 template <unsigned int steps>
 inline float Saru::f()
 {
-    return ((signed int)(u32<steps>() >> 1)) * (1.0f / 0x80000000);
+    return static_cast<signed int>(u32<steps>() >> 1) * (1.0f / 0x80000000);
 }
 
 /* for a range that doesn't start at 0, we use the full 32 bits since
@@ -499,7 +500,7 @@ template <unsigned int steps>
 inline float Saru::f(float low, float high)
 {
     const float TWO_N32 = 2.32830643653869628906250e-10f; /* 2^-32 */
-    return ((signed int)(u32<steps>())) * (TWO_N32 * (high - low)) + 0.5f * (high + low);
+    return static_cast<signed int>(u32<steps>()) * (TWO_N32 * (high - low)) + 0.5f * (high + low);
 }
 
 inline float Saru::f()
@@ -522,16 +523,18 @@ template <unsigned int steps>
 inline double Saru::d()
 {
     const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
-    signed int v = (signed int)u32<steps>();              // deliberate cast to signed int for conversion speed
-    return (v * TWO_N32 + (0.5 + 0.5 * TWO_N32)) + ((long)state) * (TWO_N32 * TWO_N32);
+    // deliberate cast to signed int for conversion speed
+    signed int v = static_cast<signed int>(u32<steps>());
+    return (v * TWO_N32 + (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32);
 }
 
 template <unsigned int steps>
 inline double Saru::d(double low, double high)
 {
     const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
-    signed int v = (signed int)u32<steps>();              // deliberate cast to signed int for conversion speed
-    return (v * TWO_N32 * (high - low) + (high + low) * (0.5 + 0.5 * TWO_N32)) + ((long)state) * (TWO_N32 * TWO_N32 * (high - low));
+    // deliberate cast to signed int for conversion speed
+    signed int v = static_cast<signed int>(u32<steps>());
+    return (v * TWO_N32 * (high - low) + (high + low) * (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32 * (high - low));
 }
 
 inline double Saru::d()
