@@ -1,11 +1,11 @@
 #ifndef UMUQ_MACROS_H
 #define UMUQ_MACROS_H
 
-#define UMUQ_WORLD_VERSION 1
 #define UMUQ_MAJOR_VERSION 1
 #define UMUQ_MINOR_VERSION 0
+#define UMUQ_REVISION_VERSION 0
 
-#define UMUQ_VERSION_AT_LEAST(x, y, z) (UMUQ_WORLD_VERSION > x || (UMUQ_WORLD_VERSION >= x && (UMUQ_MAJOR_VERSION > y || (UMUQ_MAJOR_VERSION >= y && UMUQ_MINOR_VERSION >= z))))
+#define UMUQ_VERSION_AT_LEAST(x, y, z) (UMUQ_MAJOR_VERSION > x || (UMUQ_MAJOR_VERSION >= x && (UMUQ_MINOR_VERSION > y || (UMUQ_MINOR_VERSION >= y && UMUQ_REVISION_VERSION >= z))))
 
 // Operating system identification, UMUQ_OS_*
 
@@ -89,16 +89,22 @@
 #else
 #include <cstdlib>  // for abort
 #include <iostream> // for std::cerr
+namespace UMUQ
+{
+bool copy_bool(bool b);
 bool copy_bool(bool b) { return b; }
-inline void assert_fail(const char *condition, const char *function, const char *file, int line)
+
+[[noreturn]] void assert_fail(const char *condition, const char *function, const char *file, int line);
+[[noreturn]] void assert_fail(const char *condition, const char *function, const char *file, int line)
 {
     std::cerr << "assertion failed: " << condition << " in function " << function << " at " << file << ":" << line << std::endl;
-    abort();
+    std::abort();
 }
-#define UMUQ_plain_assert(x)                                                                 \
-    do                                                                                        \
-    {                                                                                         \
-        if (!UMUQ::copy_bool(x))                                                             \
+} //namespace UMUQ
+#define UMUQ_plain_assert(x)                                                                \
+    do                                                                                      \
+    {                                                                                       \
+        if (!UMUQ::copy_bool(x))                                                            \
             UMUQ::assert_fail(UMUQ_MAKESTRING(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); \
     } while (false)
 #endif
