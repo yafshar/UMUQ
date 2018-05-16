@@ -54,12 +54,12 @@ class io
     static const std::ios_base::openmode trunc = std::fstream::trunc;
 
     //!default constrcutor
-    io(){};
+    io(){}
 
     ~io()
     {
         closeFile();
-    };
+    }
 
     /*!
      * \brief return true if file is opened
@@ -337,7 +337,7 @@ class io
      * \tparam  TD     data type 
      * \param   idata  array of input data of type TD
      * \param   nRows  number of rows
-     * \param   *nCols number of columns for each row
+     * \param   nCols  number of columns for each row
      * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
      *                           2 saves matrix in vector format and keep the position indicator on the same line
