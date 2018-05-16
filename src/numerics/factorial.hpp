@@ -48,15 +48,15 @@ struct max_factorial<int>
  * \returns the factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
 template <class T>
-inline T const unchecked_factorial(unsigned int n)
+inline T unchecked_factorial(unsigned int n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The unchecked_factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
+    std::cerr << " The unchecked_factorial of " << n << " with type " << typeid(T).name() << " is not implemented !" << std::endl;
     throw(std::runtime_error("Wrong type!"));
 }
 
 template <>
-inline float const unchecked_factorial<float>(unsigned int const n)
+inline float unchecked_factorial<float>(unsigned int const n)
 {
     static float const factorials[] =
         {
@@ -99,7 +99,7 @@ inline float const unchecked_factorial<float>(unsigned int const n)
 }
 
 template <>
-inline long double const unchecked_factorial<long double>(unsigned int const n)
+inline long double unchecked_factorial<long double>(unsigned int const n)
 {
     static long double const factorials[] =
         {
@@ -278,13 +278,13 @@ inline long double const unchecked_factorial<long double>(unsigned int const n)
 }
 
 template <>
-inline double const unchecked_factorial<double>(unsigned int const n)
+inline double unchecked_factorial<double>(unsigned int const n)
 {
     return static_cast<double>(unchecked_factorial<long double>(n));
 }
 
 template <>
-inline int const unchecked_factorial<int>(unsigned int const n)
+inline int unchecked_factorial<int>(unsigned int const n)
 {
     static int const factorials[] =
         {
@@ -304,19 +304,19 @@ inline int const unchecked_factorial<int>(unsigned int const n)
 }
 
 template <>
-inline unsigned int const unchecked_factorial<unsigned int>(unsigned int const n)
+inline unsigned int unchecked_factorial<unsigned int>(unsigned int const n)
 {
     return static_cast<unsigned int>(unchecked_factorial<int>(n));
 }
 
 template <>
-inline long int const unchecked_factorial<long int>(unsigned int const n)
+inline long int unchecked_factorial<long int>(unsigned int const n)
 {
     return static_cast<long int>(unchecked_factorial<int>(n));
 }
 
 template <>
-inline long unsigned int const unchecked_factorial<long unsigned int>(unsigned int const n)
+inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int const n)
 {
     return static_cast<long unsigned int>(unchecked_factorial<int>(n));
 }
@@ -333,7 +333,7 @@ template <class T>
 inline T factorial(unsigned int const n)
 {
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The Factorial of type " << typeid(T).name() << " is not implemented !" << std::endl;
+    std::cerr << " The Factorial of " << n << " with type " << typeid(T).name() << " is not implemented !" << std::endl;
     throw(std::runtime_error("Wrong type!"));
 }
 
