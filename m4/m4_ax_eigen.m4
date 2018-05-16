@@ -42,6 +42,23 @@ AC_DEFUN([AX_EIGEN], [
 		]
 	)
 
+	AS_IF([test x"$ax_eigen_ok" = xyes], [
+		AC_LANG_PUSH([C++])
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+				@%:@include <cstdlib>
+				@%:@include <Eigen/Dense>
+#if EIGEN_VERSION_AT_LEAST(3,3,90)
+#else
+				std::abort();
+#endif
+			]], [[]]
+			)], [], [
+				ax_eigen_ok="no"
+			]
+		)
+		AC_LANG_POP([C++])
+	])
+
 	AS_IF([test x"$ax_eigen_ok" = xno], [
 		AC_MSG_NOTICE(EIGEN)
 
@@ -80,7 +97,12 @@ AC_DEFUN([AX_EIGEN], [
 
 		AC_LANG_PUSH([C++])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+				@%:@include <cstdlib>
 				@%:@include <Eigen/Dense>
+#if EIGEN_VERSION_AT_LEAST(3,3,90)
+#else
+				std::abort();
+#endif
 			]], [[]]
 			)], [
 				AC_MSG_RESULT(checking Eigen/Dense usability...  yes)
