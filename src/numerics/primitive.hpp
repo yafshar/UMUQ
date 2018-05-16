@@ -11,6 +11,12 @@ template <typename T, class TF>
 class primitive
 {
   public:
+  /*!
+   * /brief Primitive function
+   * 
+   * /param x input
+   * /return value of \f$ {\mathbf C}(s) \f$
+   */
     inline T f(T const *x)
     {
         return static_cast<TF *>(this)->f(x);
@@ -38,7 +44,7 @@ class quartic_spline : public primitive<T, quartic_spline<T>>
      * \brief Primitive function
      * 
      * \param  x  input 
-     * \returns \f$ 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
+     * \returns value of \f$ {\mathbf C}(s) = 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
      */
     inline T f(T const *x)
     {
@@ -70,7 +76,7 @@ class cubic_spline : public primitive<T, cubic_spline<T>>
      * \brief Primitive function
      * 
      * \param  x  input 
-     * \returns \f$ {\mathbf C}(s) \f$
+     * \returns value of \f$ {\mathbf C}(s) \f$
      */
     inline T f(T const *x)
     {
@@ -101,7 +107,7 @@ class normalizedgaussian : public primitive<T, normalizedgaussian<T>>
      * \brief Primitive function
      * 
      * \param  x  input 
-     * \returns \f$ {\mathbf C}(s) \f$
+     * \returns value of \f$ {\mathbf C}(s) \f$
      */
     inline T f(T const *x)
     {
