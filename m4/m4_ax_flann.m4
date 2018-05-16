@@ -145,14 +145,16 @@ AC_DEFUN([AX_FLANN], [
 			]
 		)
 
+		LIBS_SAVED="$LIBS"
 		AC_CHECK_LIB(flann, flann_build_index_double, 
 			[
-				 LDFLAGS+=' -Wl,-rpath,'"$FLANN_LD_LIBRARY_PATH"
+				LDFLAGS+=' -Wl,-rpath,'"$FLANN_LD_LIBRARY_PATH"
 			], [
 				succeeded=no
 				AC_MSG_ERROR([ Unable to continue without the FLANN library !])
 			]
 		)
+		AS_IF([test x"$LIBS" = x"$LIBS_SAVED"], [LIBS='-lflann'" $LIBS"])
 		AC_LANG_POP([C++])
 
 		if test x"$succeeded" = xyes ; then
