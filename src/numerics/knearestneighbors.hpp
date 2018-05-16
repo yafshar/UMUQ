@@ -9,7 +9,6 @@
  */
 #include <flann/flann.hpp>
 #endif
-#include "../core/core.hpp"
 /*! \class kNearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
