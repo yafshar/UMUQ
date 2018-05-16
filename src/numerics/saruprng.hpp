@@ -259,17 +259,17 @@ class Saru
 
     template <unsigned int offset, unsigned int delta, unsigned int modulus, unsigned int steps>
     inline unsigned int advanceAnyWeyl(unsigned int);
-    
+
     //! Full period 32 bit LCG
-    static const unsigned int LCGA = 0x4beb5d59; 
+    static const unsigned int LCGA = 0x4beb5d59;
     static const unsigned int LCGC = 0x2600e1f7;
-    
+
     //! Prime period 3666320093
-    static const unsigned int oWeylPeriod = 0xda879add; 
+    static const unsigned int oWeylPeriod = 0xda879add;
     static const unsigned int oWeylOffset = 0x8009d14b;
 
     //! wraps mod 2^32
-    static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset; 
+    static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset;
 
     /*! 
      * Compile-time template function to efficently advance a state x with
@@ -297,8 +297,11 @@ class Saru
         wstate = advanceAnyWeyl<oWeylOffset, oWeylPeriod - oWeylDelta, oWeylPeriod, steps>(wstate);
     }
 
-    unsigned int state;  // LCG state
-    unsigned int wstate; // Offset Weyl sequence state
+    //! LCG state
+    unsigned int state;
+    
+    //! Offset Weyl sequence state
+    unsigned int wstate;
 };
 
 /*! 
