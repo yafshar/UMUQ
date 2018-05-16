@@ -16,10 +16,10 @@ class polynomial
     /*! 
      * \brief constructor
      * 
-     * \param dm  Dimension
+     * \param dim  Dimension
      * \param ord Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    polynomial(unsigned int dim, unsigned int ord = 2) : nDim(dim), Order(ord)
+    polynomial(int dim, int ord = 2) : nDim(dim), Order(ord)
     {
         if (nDim <= 0)
         {
@@ -42,10 +42,10 @@ class polynomial
      * 
      * Reset the values to the new ones
      * 
-     * \param dm  new Dimension
+     * \param dim new Dimension
      * \param ord new Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    void reset(unsigned int dim, unsigned int ord = 2)
+    void reset(int dim, int ord = 2)
     {
         nDim = dim;
         if (nDim <= 0)
@@ -121,10 +121,10 @@ class polynomial
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << " The binomial coefficient is undefined for k > n " << std::endl;
         return 0;
-    };
+    }
 
     /*! 
-     * \brief  \f$ \alpha = \f$ all the monomials in a d dimensional space, with total degree r.
+     * \brief Here, \f$\alpha=\f$ all the monomials in a d dimensional space, with total degree r.
      *   
      * For example:
      *       d = 2
@@ -182,7 +182,7 @@ class polynomial
             }
             return alpha.get();
         }
-    };
+    }
 
     /*! 
      * \brief Evaluates a monomial at a point x.
@@ -230,19 +230,19 @@ class polynomial
         }
 
         return monomialSize;
-    };
+    }
 
-    int const monomialsize() const
+    int monomialsize() const
     {
         return monomialSize;
     }
 
-    int const dim() const
+    int dim() const
     {
         return nDim;
     }
 
-    int const order() const
+    int order() const
     {
         return Order;
     }
@@ -252,8 +252,7 @@ class polynomial
      * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and r
      *  all monomials in a d dimensional space, with order of accuracy r.
      *
-     * \param x   Current monomial
-     * \param x   Next monomial, last value in the sequence is r.
+     * \param x   Current monomial on input and next monomial on the output (last value in the sequence is r).
      */
     bool graded_reverse_lexicographic_order(int *x)
     {
@@ -321,7 +320,7 @@ class polynomial
             }
         }
         return true;
-    };
+    }
 
   private:
     //! Dimension
