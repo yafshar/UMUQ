@@ -2,7 +2,7 @@
 #define UMUQ_STATS_H
 
 /*! \class stats
-* \brief stats is a class which includes some statictics functionality
+* \brief stats is a class which includes some functionality for applying statistics to input data
 *	
 */
 struct stats
@@ -48,7 +48,7 @@ struct stats
      * \returns The the position of the smallest element
      */
     template <typename T>
-    inline int const minelement_index(T const *idata, int const nSize) const
+    inline int minelement_index(T const *idata, int const nSize) const
     {
         return (int)std::distance(idata, std::min_element(idata, idata + nSize));
     }
@@ -63,7 +63,7 @@ struct stats
      * \returns The the position of the greatest element
      */
     template <typename T>
-    inline int const maxelement_index(T const *idata, int const nSize) const
+    inline int maxelement_index(T const *idata, int const nSize) const
     {
         return (int)std::distance(idata, std::max_element(idata, idata + nSize));
     }
@@ -81,7 +81,7 @@ struct stats
     template <typename T, typename TOut = double>
     inline TOut sum(T const *idata, int const nSize) const
     {
-        return (TOut)std::accumulate(idata, idata + nSize, T{});
+        return static_cast<TOut>(std::accumulate(idata, idata + nSize, T{}));
     }
 
     /*!
@@ -123,7 +123,7 @@ struct stats
      * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
      * 
      * \tparam T       data type
-     * \tparam TOut    data type of return output result (default is double)
+     * \tparam TOut    data type of the return output result (default is double)
      * 
      * \param  fValue  An array of log value
      * \param  fSize   size of the fValue array 
@@ -156,7 +156,7 @@ struct stats
 
         //Compute the mean
         TOut weightmean = mean<TOut, TOut>(weight, fSize);
-        
+
         //Compute the standard deviation
         TOut weightstddev = stddev<TOut, TOut>(weight, fSize, weightmean);
 
