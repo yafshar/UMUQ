@@ -346,7 +346,7 @@ class kNearestNeighbor
     /*!
      * \returns number of input data points
      */
-    inline int const numInputdata() const
+    inline int numInputdata() const
     {
         return drows;
     }
@@ -354,7 +354,7 @@ class kNearestNeighbor
     /*!
      * \returns number of query data points
      */
-    inline int const numQuerydata() const
+    inline int numQuerydata() const
     {
         return qrows;
     }
