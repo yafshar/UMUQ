@@ -26,7 +26,7 @@ class dcpse
      * 
      * \param ndim             Dimensiononality
      */
-    dcpse(int ndim) : nDim(ndim), monomialSize(0), kernelSize(0) {}
+    explicit dcpse(int ndim) : nDim(ndim), monomialSize(0), kernelSize(0) {}
 
     /*! \fn computeWeights
      * \brief Computes generalized DC-PSE differential operators on set of input points
@@ -48,6 +48,13 @@ class dcpse
      */
     bool computeWeights(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
+        if (nPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of input data points are negative! " << std::endl;
+            return false;
+        }
+
         //Extra check on the order
         order = (order > 0) ? order : 2;
 
@@ -78,23 +85,60 @@ class dcpse
         //\f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
         int monomialSize = poly.monomialsize() - alphamin;
 
-        kernelSize = nPoints * monomialSize;
-
-        try
+        if (nPoints * monomialSize > kernelSize)
         {
-            //Make sure of the correct kernel size
-            kernel.reset(new T[kernelSize]);
-
-            //Finding K nearest neighbors
-            //The number of points K in the neighborhood of each point
-            //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, monomialSize + nENN));
+            kernelSize = nPoints * monomialSize;
+            try
+            {
+                //Make sure of the correct kernel size
+                kernel.reset(new T[kernelSize]);
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
-        catch (std::bad_alloc &e)
+        else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+            kernelSize = nPoints * monomialSize;
+        }
+
+        if (KNN)
+        {
+            if (nPoints != KNN->numInputdata() || nPoints != KNN->numQuerydata())
+            {
+                try
+                {
+                    //Finding K nearest neighbors
+                    //The number of points K in the neighborhood of each point
+                    //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, monomialSize + nENN));
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            try
+            {
+                //Finding K nearest neighbors
+                //The number of points K in the neighborhood of each point
+                //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, monomialSize + nENN));
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
 
         //Construct a kd-tree index & do nearest neighbors search
@@ -489,6 +533,20 @@ class dcpse
      */
     bool computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
+        if (nPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of input data points are negative! " << std::endl;
+            return false;
+        }
+
+        if (nqPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of query data points are negative! " << std::endl;
+            return false;
+        }
+
         //Extra check on the order
         order = (order > 0) ? order : 2;
 
@@ -519,23 +577,60 @@ class dcpse
         //\f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
         int monomialSize = poly.monomialsize() - alphamin;
 
-        kernelSize = nqPoints * monomialSize;
-
-        try
+        if (nqPoints * monomialSize > kernelSize)
         {
-            //Make sure of the correct kernel size
-            kernel.reset(new T[kernelSize]);
-
-            //Finding K nearest neighbors
-            //The number of points K in the neighborhood of each point
-            //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+            kernelSize = nqPoints * monomialSize;
+            try
+            {
+                //Make sure of the correct kernel size
+                kernel.reset(new T[kernelSize]);
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
-        catch (std::bad_alloc &e)
+        else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+            kernelSize = nqPoints * monomialSize;
+        }
+
+        if (KNN)
+        {
+            if (nqPoints != KNN->numInputdata() || nqPoints != KNN->numQuerydata())
+            {
+                try
+                {
+                    //Finding K nearest neighbors
+                    //The number of points K in the neighborhood of each point
+                    //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            try
+            {
+                //Finding K nearest neighbors
+                //The number of points K in the neighborhood of each point
+                //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
 
         //Construct a kd-tree index & do nearest neighbors search
@@ -924,6 +1019,20 @@ class dcpse
      */
     bool computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
     {
+        if (nPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of input data points are negative! " << std::endl;
+            return false;
+        }
+
+        if (nqPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of query data points are negative! " << std::endl;
+            return false;
+        }
+
         //Extra check on the order
         order = (order > 0) ? order : 2;
 
@@ -940,23 +1049,60 @@ class dcpse
         //\f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
         monomialSize = poly.monomialsize();
 
-        kernelSize = nqPoints * monomialSize;
-
-        try
+        if (nqPoints * monomialSize > kernelSize)
         {
-            //Make sure of the correct kernel size
-            kernel.reset(new T[kernelSize]);
-
-            //Finding K nearest neighbors
-            //The number of points K in the neighborhood of each point
-            //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+            kernelSize = nqPoints * monomialSize;
+            try
+            {
+                //Make sure of the correct kernel size
+                kernel.reset(new T[kernelSize]);
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
-        catch (std::bad_alloc &e)
+        else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+            kernelSize = nqPoints * monomialSize;
+        }
+
+        if (KNN)
+        {
+            if (nqPoints != KNN->numInputdata() || nqPoints != KNN->numQuerydata())
+            {
+                try
+                {
+                    //Finding K nearest neighbors
+                    //The number of points K in the neighborhood of each point
+                    //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            try
+            {
+                //Finding K nearest neighbors
+                //The number of points K in the neighborhood of each point
+                //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
         }
 
         //Construct a kd-tree index & do nearest neighbors search
@@ -1435,6 +1581,20 @@ class dcpse
             std::cerr << " Previously computed weights does not macth with this query data!" << std::endl;
             return false;
         }
+
+        if (qFvalue == nullptr)
+        {
+            try
+            {
+                qFvalue = new T[nqPoints];
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
+        }
     }
 
     /*! \fn interpolate
@@ -1474,8 +1634,9 @@ class dcpse
             std::cerr << " Previously computed weights does not macth with this query data!" << std::endl;
             return false;
         }
-        
-        if (qFvalue == nullptr) {
+
+        if (qFvalue == nullptr)
+        {
             try
             {
                 qFvalue = new T[nqPoints];
@@ -1502,7 +1663,7 @@ class dcpse
             for (int j = 0; j < monomialSize; j++, IdI++)
             {
                 int const IdJ = NearestNeighbors[j];
-                sum += kernel[IdI] * iFvalue[IdJ]; 
+                sum += kernel[IdI] * iFvalue[IdJ];
             }
 
             qFvalue[i] = sum;
