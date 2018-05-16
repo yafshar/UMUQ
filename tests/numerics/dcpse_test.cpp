@@ -18,7 +18,7 @@ TEST(dcpse_test, HandlesDCoperators)
     std::fill(idata, idata + npoints, dx);
     std::partial_sum(idata, idata + npoints, idata, std::plus<double>());
 
-    for (int i = 0; i < npoints, i++)
+    for (int i = 0; i < npoints; i++)
     {
         std::cout << i << " " << idata[i] << std::endl;
     }
