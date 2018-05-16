@@ -1,7 +1,12 @@
-# UMHBM
-[![Build Status](https://travis-ci.com/yafshar/UMHBM.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=master)](https://travis-ci.com/yafshar/UMHBM)
+# UMUQ
+[![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=master)](https://travis-ci.com/yafshar/UMUQ)
 
-Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
+Welcome to **UMUQ**, University of Michigan's Uncertainty Quantification framework!
+
+Introduction
+------------
+
+Purpose :
 
 <table>
   <tr>
@@ -25,4 +30,27 @@ Welcome to **UMHBM**, University of Michigan's C++ HBM framework!
     <td> <img src="./docs/Rosenbrock.gif?raw=true" width="400" height="400"> </td>
   </tr>
 </table>
+
+
+Initial release of UMUQ source program.
+
+Getting the code
+------------
+You can download the latest version from [here](https://github.com/yafshar/UMUQ).
+The very latest version is always available via 'github' by invoking one of the following:
+````
+## For the traditional ssh-based Git interaction:
+$ git clone git@github.com:yafshar/UMUQ.git
+
+## For HTTP-based Git interaction
+$ git clone https://github.com/yafshar/UMUQ.git
+````
+
+Contributors
+------------
+UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>
+
+Computational Aerosciences Laboratory  
+University of Michigan, Ann Arbor 
+
 
