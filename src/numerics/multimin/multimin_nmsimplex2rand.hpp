@@ -4,7 +4,7 @@
 /*! \class nmsimplex2rand
  *  \ingroup multimin_Module
  * 
- * \brief 
+ * \brief The Simplex method
  * 
  * The Simplex method of Nelder and Mead, also known as the polytope
  * search alogorithm.  Ref: Nelder, J.A., Mead, R., Computer Journal 7
@@ -13,7 +13,7 @@
  * This implementation uses n+1 corner points in the simplex.
  * 
  * \tparam T   data type
- * \tparan TMF multimin function type
+ * \tparam TMF multimin function type
  */
 template <typename T, class TMF>
 class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>, TMF>
@@ -22,7 +22,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     /*!
      * \brief constructor
      * 
-     * \param name name of the differentiable function minimizer type (default "nmsimplex2rand")
+     * \param name_ name of the differentiable function minimizer type (default "nmsimplex2rand")
      */
     nmsimplex2rand(const char *name_ = "nmsimplex2rand") : x1(nullptr),
                                                            y1(nullptr),
