@@ -49,6 +49,7 @@ class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
 
         df_[0] = 2 * (u - 1) + 40 * u * b;
         df_[1] = -20 * b;
+		return 0;
     }
 
     void fdf(T const *x, T *f_, T *df_)
@@ -86,7 +87,7 @@ class Nrosenbrock : public multimin_function_fdf<T, Nrosenbrock<T>>
 
     T df(T const *x, T *df_)
     {
-        multimin_diff<T, Nrosenbrock<T>>(this, x, df_);
+        return multimin_diff<T, Nrosenbrock<T>>(this, x, df_);
     }
 
     void fdf(T const *x, T *f_, T *df_)
@@ -150,6 +151,7 @@ class roth : public multimin_function_fdf<T, roth<T>>
 
         df_[0] = 2 * a + 2 * b;
         df_[1] = 2 * a * c + 2 * b * d;
+		return 0;
     }
 
     void fdf(T const *x, T *f_, T *df_)
@@ -182,7 +184,7 @@ class Nroth : public multimin_function_fdf<T, Nroth<T>>
 
     T df(T const *x, T *df_)
     {
-        multimin_diff<T, Nroth<T>>(this, x, df_);
+        return multimin_diff<T, Nroth<T>>(this, x, df_);
     }
 
     void fdf(T const *x, T *f_, T *df_)
@@ -259,6 +261,7 @@ class wood : public multimin_function_fdf<T, wood<T>>
         df_[1] = -200 * t1 - 20.2 * (1 - u2) - 19.8 * (1 - u4);
         df_[2] = 360 * u3 * t2 - 2 * (1 - u3);
         df_[3] = -180 * t2 - 20.2 * (1 - u4) - 19.8 * (1 - u2);
+		return 0;
     }
 
     void fdf(T const *x, T *f_, T *df_)
@@ -297,7 +300,7 @@ class Nwood : public multimin_function_fdf<T, Nwood<T>>
 
     T df(T const *x, T *df_)
     {
-        multimin_diff<T, Nwood<T>>(this, x, df_);
+        return multimin_diff<T, Nwood<T>>(this, x, df_);
     }
 
     void fdf(T const *x, T *f_, T *df_)
