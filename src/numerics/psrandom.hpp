@@ -189,19 +189,13 @@ struct psrandom
         }
     }
 
-    /*!
-     * RNG seed
-     */
+    //! RNG seed
     static size_t iseed;
 
-    /*! 
-     * 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
-     */
+    //! 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
     static std::mt19937 *NumberGenerator;
 
-    /*! 
-     * C++ Saru PRNG
-     */
+    //! C++ Saru PRNG
     static Saru *saru;
 };
 
