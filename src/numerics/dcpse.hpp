@@ -186,7 +186,7 @@ class dcpse
         int nNN = KNN->numNearestNeighbors();
 
         //Array for keeping the component-wise L1 distances
-        T L1Dist[nNN * nDim];
+        T *L1Dist = new T[nNN * nDim];
 
         //Creating a transpose of the Vandermonde matrix
         //with the size of monomials * monomials \f$  = l \times l \f$
@@ -224,29 +224,27 @@ class dcpse
             //A pointer to nearest neighbors distances from the point i
             T *nnDist = KNN->NearestNeighborsDistances(i);
 
-            //A pointer to the array for keeping the component-wise L1 distances
-            T *l1dist = L1Dist;
-
             //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
             //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
 
-            //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
-            for (int j = 0; j < nNN; j++)
             {
-                std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
-
                 //pointer to query data
                 T *Idata = idata + IdI;
 
-                //pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
-
-                for (int d = 0; d < nDim; d++)
+                //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
+                for (int j = 0, n = 0; j < nNN; j++)
                 {
-                    *l1dist++ = *Idata++ - *Jdata++;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
+
+                    //pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    for (int d = 0; d < nDim; d++, n++)
+                    {
+                        L1Dist[n] = Idata[d] - Jdata[d];
+                    }
                 }
             }
-
             //Compute component-wise average neighbor spacing
             T h_avg(0);
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
@@ -507,6 +505,7 @@ class dcpse
             }
         } //Loop over all points
 
+        delete[] L1Dist;
         delete[] IndexId;
         delete[] column;
 
@@ -673,7 +672,7 @@ class dcpse
         int nNN = KNN->numNearestNeighbors();
 
         //Array for keeping the component-wise L1 distances
-        T L1Dist[nNN * nDim];
+        T *L1Dist = new T[nNN * nDim];
 
         //Creating a transpose of the Vandermonde matrix
         //with the size of monomials * monomials \f$  = l \times l \f$
@@ -711,26 +710,25 @@ class dcpse
             //A pointer to nearest neighbors distances from the point i
             T *nnDist = KNN->NearestNeighborsDistances(i);
 
-            //A pointer to the array for keeping the component-wise L1 distances
-            T *l1dist = L1Dist;
-
             //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
             //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
 
-            //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
-            for (int j = 0; j < nNN; j++)
             {
-                std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
-
                 //pointer to query data
-                T *Idata = idata + IdI;
+                T *Idata = qdata + IdI;
 
-                //pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
-
-                for (int d = 0; d < nDim; d++)
+                //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
+                for (int j = 0, n = 0; j < nNN; j++)
                 {
-                    *l1dist++ = *Idata++ - *Jdata++;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
+
+                    //pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    for (int d = 0; d < nDim; d++, n++)
+                    {
+                        L1Dist[n] = Idata[d] - Jdata[d];
+                    }
                 }
             }
 
@@ -1001,6 +999,7 @@ class dcpse
 
         delete[] IndexId;
         delete[] column;
+        delete[] L1Dist;
 
         return true;
     }
@@ -1137,7 +1136,7 @@ class dcpse
         int nNN = KNN->numNearestNeighbors();
 
         //Array for keeping the component-wise L1 distances
-        T L1Dist[nNN * nDim];
+        T *L1Dist = new T[nNN * nDim];
 
         //Creating a transpose of the Vandermonde matrix
         //with the size of monomials * monomials \f$  = l \times l \f$
@@ -1180,29 +1179,28 @@ class dcpse
             //A pointer to nearest neighbors distances from the point i
             T *nnDist = KNN->NearestNeighborsDistances(i);
 
-            //A pointer to the array for keeping the component-wise L1 distances
-            T *l1dist = L1Dist;
-
             //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
             //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
 
-            //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
-            for (int j = 0; j < nNN; j++)
             {
-                std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
-
                 //pointer to query data
                 T *Idata = qdata + IdI;
 
-                //pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
-
-                for (int d = 0; d < nDim; d++)
+                //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
+                for (int j = 0, n = 0; j < nNN; j++)
                 {
-                    *l1dist++ = *Idata++ - *Jdata++;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
+
+                    //pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    for (int d = 0; d < nDim; d++, n++)
+                    {
+                        L1Dist[n] = Idata[d] - Jdata[d];
+                    }
                 }
             }
-
+            
             //Compute component-wise average neighbor spacing
             T h_avg(0);
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
@@ -1542,6 +1540,7 @@ class dcpse
 
         } //Loop over all points
 
+        delete[] L1Dist;
         delete[] IndexId;
         delete[] column;
         delete[] idataminDist;
