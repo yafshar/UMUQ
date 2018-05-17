@@ -236,7 +236,7 @@ class multimin_fminimizer
   * \brief Definition of an arbitrary differentiable function
   *  
   * \tparam T   data type
-  * \tparan TFD differentiable function type
+  * \tparam TFD differentiable function type
   */
 template <typename T, class TFD>
 class function_fdf
@@ -289,9 +289,9 @@ class multimin_function_fdf
         return static_cast<TMFD *>(this)->df(x, df_);
     }
 
-    T fdf(T const *x, T *f_, T *df_)
+    void fdf(T const *x, T *f_, T *df_)
     {
-        return static_cast<TMFD *>(this)->fdf(x, f_, df_);
+        static_cast<TMFD *>(this)->fdf(x, f_, df_);
     }
 
     std::size_t n;
