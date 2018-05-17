@@ -4,6 +4,15 @@
 
 using namespace multimin;
 
+/*! \class rosenbrock_fmin
+ * \brief The Rosenbrock function
+ * 
+ * The Rosenbrock function, also referred to as the Valley or Banana function, is a 
+ * popular test problem for gradient-based optimization algorithms. 
+ * The function is unimodal, and the global minimum lies in a narrow, parabolic valley. 
+ * However, even though this valley is easy to find, convergence to the minimum is 
+ * difficult (Picheny et al., 2012).
+ */
 template <typename T>
 class rosenbrock_fmin : public multimin_function<T, rosenbrock_fmin<T>>
 {
@@ -26,6 +35,15 @@ class rosenbrock_fmin : public multimin_function<T, rosenbrock_fmin<T>>
     }
 };
 
+/*! \class rosenbrock
+ * \brief The Rosenbrock function
+ * 
+ * The Rosenbrock function, also referred to as the Valley or Banana function, is a 
+ * popular test problem for gradient-based optimization algorithms. 
+ * The function is unimodal, and the global minimum lies in a narrow, parabolic valley. 
+ * However, even though this valley is easy to find, convergence to the minimum is 
+ * difficult (Picheny et al., 2012).
+ */
 template <typename T>
 class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
 {
@@ -70,6 +88,15 @@ class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
     }
 };
 
+/*! \class Nrosenbrock
+ * \brief The Rosenbrock function
+ * 
+ * The Rosenbrock function, also referred to as the Valley or Banana function, is a 
+ * popular test problem for gradient-based optimization algorithms. 
+ * The function is unimodal, and the global minimum lies in a narrow, parabolic valley. 
+ * However, even though this valley is easy to find, convergence to the minimum is 
+ * difficult (Picheny et al., 2012).
+ */
 template <typename T>
 class Nrosenbrock : public multimin_function_fdf<T, Nrosenbrock<T>>
 {
