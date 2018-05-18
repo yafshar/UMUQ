@@ -139,7 +139,8 @@ struct stats
         //Find the maximum value in the array of fValue of size fSize
         T fMaxValue = maxelement<T>(fValue, fSize);
 
-        TOut weight[fSize];
+        TOut *weight = new TOut[fSize];
+        
         TOut diff = static_cast<TOut>(x - p);
 
         //Compute the weight
@@ -159,6 +160,8 @@ struct stats
 
         //Compute the standard deviation
         TOut weightstddev = stddev<TOut, TOut>(weight, fSize, weightmean);
+
+        delete[] weight;
 
         //return the square of the coefficient of variation (COV)
         return std::pow(weightstddev / weightmean - tol, 2);
