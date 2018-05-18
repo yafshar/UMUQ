@@ -9,7 +9,7 @@
   * \brief Defines a general function of n variables
   * 
   * \tparam T   data type
-  * \tparan TMF multimin function type
+  * \tparam TMF multimin function type
   */
 template <typename T, class TMF>
 class multimin_function
@@ -41,7 +41,7 @@ class multimin_function
   * 
   * \tparam T     data type
   * \tparam TMFMT multimin function minimizer type
-  * \tparan TMF   multimin function type
+  * \tparam TMF   multimin function type
   */
 template <typename T, class TMFMT, class TMF>
 class multimin_fminimizer_type
@@ -78,7 +78,7 @@ class multimin_fminimizer_type
   * 
   * \tparam T     data type
   * \tparam TMFMT multimin differentiable function minimizer type
-  * \tparan TMF   multimin differentiable function type
+  * \tparam TMF   multimin differentiable function type
   */
 template <typename T, class TMFMT, class TMF>
 class multimin_fminimizer
@@ -270,7 +270,7 @@ class function_fdf
   * \brief Definition of an arbitrary differentiable function with vector input and parameters
   *  
   * \tparam T      data type
-  * \tparan TMFD   multimin differentiable function type
+  * \tparam TMFD   multimin differentiable function type
   */
 template <typename T, class TMFD>
 class multimin_function_fdf
@@ -305,7 +305,7 @@ class multimin_function_fdf
   * 
   * \tparam T      data type
   * \tparam TMFDMT multimin differentiable function minimizer type
-  * \tparan TMFD   multimin differentiable function type
+  * \tparam TMFD   multimin differentiable function type
   */
 template <typename T, class TMFDMT, class TMFD>
 class multimin_fdfminimizer_type
@@ -347,7 +347,7 @@ class multimin_fdfminimizer_type
   * 
   * \tparam T      data type
   * \tparam TMFDMT multimin differentiable function minimizer type
-  * \tparan TMFD   multimin differentiable function type
+  * \tparam TMFD   multimin differentiable function type
   */
 template <typename T, class TMFDMT, class TMFD>
 class multimin_fdfminimizer

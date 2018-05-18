@@ -13,7 +13,7 @@
  * This implementation uses n+1 corner points in the simplex.
  * 
  * \tparam T   data type
- * \tparan TMF multimin function type
+ * \tparam TMF multimin function type
  */
 template <typename T, class TMF>
 class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>

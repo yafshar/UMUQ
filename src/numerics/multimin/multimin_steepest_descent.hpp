@@ -15,7 +15,7 @@
  * The steepest descent method is inefficient and is included only for demonstration purposes. 
  * 
  * \tparam T      data type
- * \tparan TMFD   multimin differentiable function type
+ * \tparam TMFD   multimin differentiable function type
  */
 template <typename T, class TMFD>
 class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T, TMFD>, TMFD>

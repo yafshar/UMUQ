@@ -6,8 +6,14 @@
  * 
  * \brief Conjugate gradient Fletcher-Reeve algorithm
  * 
+ * This is a succession of line minimizations. In this algorithm we use the value of the function 
+ * and its gradient at each evaluation point. The sequence of search directions is used to 
+ * build up an approximation to the curvature of the function in the neighborhood of the minimum.
+ * An initial search direction is chosen using the gradient, and line minimization is carried 
+ * out in that direction. 
+ * 
  * \tparam T      data type
- * \tparan TMFD   multimin differentiable function type
+ * \tparam TMFD   multimin differentiable function type
  */
 template <typename T, class TMFD>
 class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>, TMFD>
@@ -16,7 +22,7 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
     /*!
      * \brief constructor
      * 
-     * \param name name of the differentiable function minimizer type (default "conjugate_fr")
+     * \param name_ name of the differentiable function minimizer type (default "conjugate_fr")
      */
     conjugate_fr(const char *name_ = "conjugate_fr") : x1(nullptr),
                                                        dx1(nullptr),
@@ -60,12 +66,12 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
     /*!
      * \brief set
      * 
-     * \param fdf differentiable function minimizer
-     * \param x   array of data
-     * \param f   
-     * \param gradient
-     * \param step_size
-     * \param tol_
+     * \param fdf        differentiable function minimizer
+     * \param x          input data
+     * \param f          function value at x
+     * \param gradient   gradient
+     * \param step_size  step size
+     * \param tol_       It sets the accuracy of the line minimization
      */
     bool set(TMFD *fdf, T const *x, T *f, T *gradient, T step_size, T tol_)
     {

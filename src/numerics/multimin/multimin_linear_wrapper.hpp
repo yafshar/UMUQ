@@ -7,7 +7,7 @@
  * \brief 
  *  
  * \tparam T      data type
- * \tparan TMFD   multimin differentiable function type
+ * \tparam TMFD   multimin differentiable function type
  */
 template <typename T, class TMFD>
 class wrapper_t

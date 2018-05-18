@@ -12,7 +12,7 @@
  * 
  * 
  * \tparam T      data type
- * \tparan TMFD   multimin differentiable function type
+ * \tparam TMFD   multimin differentiable function type
  */
 template <typename T, class TMFD>
 class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>, TMFD>
