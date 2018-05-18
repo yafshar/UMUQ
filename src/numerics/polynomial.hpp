@@ -147,7 +147,7 @@ class polynomial
      *
      * \returns A pointer to monomial sequence
      */
-    int *monomial_basis() 
+    int *monomial_basis()
     {
         if (alpha)
         {
@@ -156,10 +156,19 @@ class polynomial
         else
         {
             int const N = nDim * monomialSize;
-            alpha.reset(new int[N]);
+            int *x;
 
-            int x[nDim];
-            std::fill(x, x + nDim, 0);
+            try
+            {
+                alpha.reset(new int[N]);
+                x = new int[nDim]();
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return nullptr;
+            }
 
             int n = 0;
 
@@ -172,14 +181,18 @@ class polynomial
 
                 if (x[0] == Order)
                 {
+                    delete[] x;
                     return alpha.get();
                 }
 
                 if (!graded_reverse_lexicographic_order(x))
                 {
+                    delete[] x;
                     return nullptr;
                 }
             }
+
+            delete[] x;
             return alpha.get();
         }
     }

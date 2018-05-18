@@ -163,7 +163,6 @@ class nmsimplex : public multimin_fminimizer_type<T, nmsimplex<T, TMF>, TMF>
         T dlo;
         T ds_hi;
 
-        int status;
         T val;
         T val2;
 

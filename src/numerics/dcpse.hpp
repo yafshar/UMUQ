@@ -335,19 +335,27 @@ class dcpse
                             EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
                         }
 
-                        //\f$ \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                        //{\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                        //{\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                        //\end{matrix}
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
                         BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                         AM = BMTimage * BMTimage.transpose();
                     }
                     else
                     {
-                        //\f$ \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                        //{\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                        //{\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                        //\end{matrix}
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
                         BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                         AM = BMT * BMT.transpose();
                     }
@@ -620,9 +628,11 @@ class dcpse
         {
             try
             {
-                //Finding K nearest neighbors
-                //The number of points K in the neighborhood of each point
-                //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                /*
+                 * Finding K nearest neighbors
+                 * The number of points K in the neighborhood of each point
+                 * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                 */
                 KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
             }
             catch (std::bad_alloc &e)
@@ -636,8 +646,10 @@ class dcpse
         //Construct a kd-tree index & do nearest neighbors search
         KNN->buildIndex(idata, qdata);
 
-        //Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
-        //\f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
+        /*
+         * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
+         * \f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
+         */
         EVectorX<T> B0(monomialSize);
         {
             //Get a pointer to the monomial basis
@@ -662,9 +674,11 @@ class dcpse
                 }
             }
 
-            //TODO : check this again
-            //At off-particle locations it should be always zero to obtain kernels
-            //with a vanishing zeroth-order moment that can be consistently evaluated
+            /* 
+             * TODO : check this again
+             * At off-particle locations it should be always zero to obtain kernels
+             * with a vanishing zeroth-order moment that can be consistently evaluated
+             */
             B0(0) = T{};
         }
 
@@ -710,8 +724,10 @@ class dcpse
             //A pointer to nearest neighbors distances from the point i
             T *nnDist = KNN->NearestNeighborsDistances(i);
 
-            //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
-            //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
+            /*
+             * For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
+             * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
+             */
 
             {
                 //pointer to query data
@@ -822,28 +838,38 @@ class dcpse
                             EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
                         }
 
-                        //\f$ \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                        //{\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                        //{\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                        //\end{matrix}
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
                         BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                         AM = BMTimage * BMTimage.transpose();
                     }
                     else
                     {
-                        //\f$ \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                        //{\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                        //{\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                        //\end{matrix}
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
                         BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                         AM = BMT * BMT.transpose();
                     }
                 }
                 else
                 {
-                    //We have enough neighbor points
-                    //Remove the columns which causes singularity and replace them
-                    //with the new columns from extra neighbor points
+                    /*
+                     * We have enough neighbor points
+                     * Remove the columns which causes singularity and replace them
+                     * with the new columns from extra neighbor points
+                     */
 
                     //Loop through the neighbors
                     for (int j = rank, k = monomialSize; j < monomialSize; j++, k++)
@@ -890,9 +916,11 @@ class dcpse
                     SV = svd.solve(B0);
                 }
 
-                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-                //Later I should check on SVD solution and to find out which columns are the
-                //Most important one, then I can correct the IndexId order
+                /*
+                 * TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                 * Later I should check on SVD solution and to find out which columns are the
+                 * Most important one, then I can correct the IndexId order
+                 */
 
                 if (rank < monomialSize - nENN)
                 {
@@ -1076,9 +1104,11 @@ class dcpse
             {
                 try
                 {
-                    //Finding K nearest neighbors
-                    //The number of points K in the neighborhood of each point
-                    //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                    /* 
+                     * Finding K nearest neighbors
+                     * The number of points K in the neighborhood of each point
+                     * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                     */
                     KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
                 }
                 catch (std::bad_alloc &e)
@@ -1093,9 +1123,11 @@ class dcpse
         {
             try
             {
-                //Finding K nearest neighbors
-                //The number of points K in the neighborhood of each point
-                //\f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                /* 
+                 * Finding K nearest neighbors
+                 * The number of points K in the neighborhood of each point
+                 * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                 */
                 KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, monomialSize + nENN));
             }
             catch (std::bad_alloc &e)
@@ -1720,7 +1752,7 @@ class dcpse
      * 
      * \returns Size of the neighborhood kernel
      */
-    inline int const neighborhoodKernelSize() const
+    inline int neighborhoodKernelSize() const
     {
         return monomialSize;
     }

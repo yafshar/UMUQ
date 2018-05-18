@@ -275,10 +275,10 @@ class kNearestNeighbor
      */
     inline T *minDist()
     {
-        T *dists = nullptr;
+        T *mindists = nullptr;
         try
         {
-            dists = new T[qrows];
+            mindists = new T[qrows];
         }
         catch (std::bad_alloc &e)
         {
@@ -290,10 +290,10 @@ class kNearestNeighbor
         for (std::size_t i = 0; i < qrows; ++i)
         {
             std::ptrdiff_t const Id = i * nn + the_same;
-            dists[i] = dists_ptr[Id];
+            mindists[i] = dists_ptr[Id];
         }
 
-        return dists;
+        return mindists;
     }
 
     /*!
@@ -301,7 +301,7 @@ class kNearestNeighbor
      * 
      * \returns number of nearest neighbors
      */
-    inline int const numNearestNeighbors() const
+    inline int numNearestNeighbors() const
     {
         return nn - the_same;
     }
@@ -319,7 +319,7 @@ class kNearestNeighbor
         }
 
         T const eps = std::numeric_limits<T>::epsilon();
-        int s(0);
+        std::size_t s(0);
         for (std::size_t i = 0; i < qrows; ++i)
         {
             std::ptrdiff_t const Id = i * nn;
@@ -358,14 +358,6 @@ class kNearestNeighbor
     }
 
   private:
-    std::unique_ptr<int[]> indices_ptr;
-    std::unique_ptr<T[]> dists_ptr;
-
-#ifdef HAVE_FLANN
-    flann::Matrix<int> indices;
-    flann::Matrix<T> dists;
-#endif
-
     //! Number of data rows
     std::size_t drows;
 
@@ -377,6 +369,14 @@ class kNearestNeighbor
 
     //! Number of nearest neighbors to find
     int nn;
+
+    std::unique_ptr<int[]> indices_ptr;
+    std::unique_ptr<T[]> dists_ptr;
+    
+#ifdef HAVE_FLANN
+    flann::Matrix<int> indices;
+    flann::Matrix<T> dists;
+#endif
 
     //! Flag to check if the input data and qury data are the same
     bool the_same;

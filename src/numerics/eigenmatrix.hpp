@@ -202,17 +202,17 @@ using CTEMapXd = Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::D
  * 
  */
 template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr *dataPtr, size_t nRows, size_t nCols)
+TEMX EMapX(TdataPtr *dataPtr, std::size_t nRows, std::size_t nCols)
 {
     return Eigen::Map<const TEMX>(dataPtr, nRows, nCols);
 }
 
 template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr **dataPtr, size_t nRows, size_t nCols)
+TEMX EMapX(TdataPtr **dataPtr, std::size_t nRows, std::size_t nCols)
 {
     TEMX MTemp(nRows, nCols);
 
-    for (size_t i = 0; i < nRows; i++)
+    for (std::size_t i = 0; i < nRows; i++)
     {
         MTemp.row(i) = Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], nCols);
     }
@@ -240,7 +240,7 @@ void EMapX(const TEMX EMX, TdataPtr *dataPtr)
 template <typename TEMX, typename TdataPtr>
 void EMapX(const TEMX EMX, TdataPtr **dataPtr)
 {
-    for (size_t i = 0; i < EMX.rows(); i++)
+    for (std::ptrdiff_t i = 0; i < EMX.rows(); i++)
     {
         Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
     }
@@ -256,16 +256,16 @@ void EMapX(const TEMX EMX, TdataPtr **dataPtr)
  * \param  nCols    Number of Columns
  * \param  EMapXd   Eigen Matrix representation of data
  */
-EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
+EMatrixXd EMapXd(double *dataPtr, std::size_t nRows, std::size_t nCols)
 {
     return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
 }
 
-EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
+EMatrixXd EMapXd(double **dataPtr, std::size_t nRows, std::size_t nCols)
 {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
 
-    for (size_t i = 0; i < nRows; i++)
+    for (std::size_t i = 0; i < nRows; i++)
     {
         MTemp.row(i) = EVectorXd::Map(&dataPtr[i][0], nCols);
     }
@@ -288,7 +288,7 @@ void EMapXd(EMatrixXd const EMXd, double *dataPtr)
 
 void EMapXd(EMatrixXd const EMXd, double **dataPtr)
 {
-    for (size_t i = 0; i < EMXd.rows(); i++)
+    for (std::ptrdiff_t i = 0; i < EMXd.rows(); i++)
     {
         EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
     }

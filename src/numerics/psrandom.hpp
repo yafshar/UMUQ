@@ -846,16 +846,16 @@ class mvnormdist
   private:
     //! Vector of size \f$n\f$
     EVectorX<T> mean;
-    
+
     //! Variance-covariance matrix of size \f$ n \times n \f$
     EMatrixX<T> covariance;
-    
+
     //! Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
-    
+
     //! LU decomposition of a matrix with complete pivoting
     Eigen::FullPivLU<EMatrixX<T>> lu;
-    
+
     //! Generates random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };
@@ -1035,12 +1035,12 @@ class Mvnormdist
     //! Matrix of size \f$n \times n\f$
     EMatrixX<T> transform;
     
-    //! LU decomposition of a matrix with complete pivoting
-    Eigen::FullPivLU<EMatrixX<T>> lu;
-    
     //! A random number engine based on Mersenne Twister algorithm
     std::mt19937 gen;
-    
+
+    //! LU decomposition of a matrix with complete pivoting
+    Eigen::FullPivLU<EMatrixX<T>> lu;
+      
     //! Generates random numbers according to the Normal (or Gaussian) random number distribution
     std::normal_distribution<T> d;
 };

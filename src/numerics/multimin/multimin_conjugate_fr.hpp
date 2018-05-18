@@ -24,10 +24,10 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
      * 
      * \param name_ name of the differentiable function minimizer type (default "conjugate_fr")
      */
-    conjugate_fr(const char *name_ = "conjugate_fr") : x1(nullptr),
+    conjugate_fr(const char *name_ = "conjugate_fr") : p(nullptr),
+                                                       x1(nullptr),
                                                        dx1(nullptr),
                                                        x2(nullptr),
-                                                       p(nullptr),
                                                        g0(nullptr) { this->name = name_; }
 
     /*!

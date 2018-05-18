@@ -22,7 +22,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     /*!
      * \brief constructor
      * 
-     * \param name_ name of the differentiable function minimizer type (default "nmsimplex2rand")
+     * \param name_ Name of the differentiable function minimizer type (default "nmsimplex2rand")
      */
     nmsimplex2rand(const char *name_ = "nmsimplex2rand") : x1(nullptr),
                                                            y1(nullptr),
@@ -38,11 +38,11 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     ~nmsimplex2rand() { free(); }
 
     /*!
-     * \brief allocate space for data type T
+     * \brief Allocate space for data type T
      * 
-     * \param n_ size of array
+     * \param n_ Array size
      * 
-     * \returns false if there is insufficient memory to create data array 
+     * \returns  False if there is insufficient memory to create data array 
      */
     bool alloc(std::size_t const n_)
     {
@@ -185,7 +185,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
                 for (std::size_t j = i + 1; j < n; j++)
                 {
                     //Rotate columns i and j by a random angle
-                    T const angle = 2 * M_PI * ran_unif(&seed);
+                    T const angle = M_2PI * ran_unif(&seed);
                     T const c = std::cos(angle);
                     T const s = std::sin(angle);
 
@@ -194,10 +194,10 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
                     {
                         std::ptrdiff_t const Id_ci = m.ID(r, i);
                         std::ptrdiff_t const Id_c_j = m.ID(r, j);
-                        T const x = x1[Id_ci];
-                        T const y = x1[Id_c_j];
-                        x1[Id_ci] = c * x + s * y;
-                        x1[Id_c_j] = -s * x + c * y;
+                        T const x_r = x1[Id_ci];
+                        T const y_r = x1[Id_c_j];
+                        x1[Id_ci] = c * x_r + s * y_r;
+                        x1[Id_c_j] = -s * x_r + c * y_r;
                     }
                 }
             }
@@ -457,14 +457,22 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         y1[i] = val;
     }
 
+    /*!
+     * \brief Contracts the simplex in respect to best valued corner
+     * 
+     * Function contracts the simplex in respect to best valued corner. 
+     * That is, all corners besides the best corner are moved.
+     * (This function is rarely called in practice, since it is the last
+     * choice, hence not optimized) 
+     * 
+     * \param best    best valued corner
+     * \param xc      work space 
+     * \param f       function
+     * \return true 
+     * \return false  Fining at least one bad function value
+     */
     bool contract_by_best(std::size_t best, T *xc, TMF *f)
     {
-        //Function contracts the simplex in respect to
-        //best valued corner. That is, all corners besides the
-        //best corner are moved.
-        //(This function is rarely called in practice, since it is the last
-        //choice, hence not optimized)
-
         //The xc vector is simply work space here
         T newval;
 
@@ -510,6 +518,11 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         return true;
     }
 
+    /*!
+     * \brief Calculates the center of the simplex and stores in center
+     * 
+     * \return true 
+     */
     bool compute_center()
     {
         //Calculates the center of the simplex and stores in center
@@ -536,6 +549,11 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         return true;
     }
 
+    /*!
+     * \brief Calculates simplex size 
+     * 
+     * \return Store squared size
+     */
     T compute_size()
     {
         //Calculates simplex size as rms sum of length of vectors
@@ -569,31 +587,34 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
     }
 
   private:
-    //Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
+    //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
     T *x1;
 
-    //Function value at corner points with size \f$ (n+1) \f$
+    //! Function value at corner points with size \f$ (n+1) \f$
     T *y1;
 
-    //Workspace 1 for algorithm
+    //! Workspace 1 for algorithm
     T *ws1;
 
-    //Workspace 2 for algorithm
+    //! Workspace 2 for algorithm
     T *ws2;
 
-    //Center of all points
+    //! Center of all points
     T *center;
 
-    //Current step
+    //! Current step
     T *delta;
 
-    //x - center (workspace)
+    //! x - center (workspace)
     T *xmc;
 
+    //! Store squared size
     T S2;
 
+    //! counter
     unsigned long count;
 
+    //! Array size
     std::size_t n;
 
   private:
@@ -620,21 +641,22 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
         /*!
          * \brief constructor
          * 
-         * \param NR number of rows in the original matrix
-         * \param NC number of columns in the original matrix
-         * \param k1 row number of the upper-left element of the submatrix
-         * \param k2 column number of the upper-left element of the submatrix
-         * \param n1 submatrix number of rows
-         * \param n2 submatrix number of columns
+         * \param NR  number of rows in the original matrix
+         * \param NC_ number of columns in the original matrix
+         * \param k1_ row number of the upper-left element of the submatrix
+         * \param k2_ column number of the upper-left element of the submatrix
+         * \param n1_ submatrix number of rows
+         * \param n2_ submatrix number of columns
          */
-        submatrix(std::size_t NR, std::size_t NC, std::size_t k1_, std::size_t k2_, std::size_t n1_, std::size_t n2_)
+        submatrix(std::size_t NR, std::size_t NC_, std::size_t k1_, std::size_t k2_, std::size_t n1_, std::size_t n2_)
         {
-            if (k1_ > NR || k2_ > NC || n1_ > NR || n2 > NC)
+            if (k1_ > NR || k2_ > NC_ || n1_ > NR || n2 > NC_)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << " Input data overrun the ends of the original matrix " << std::endl;
                 throw(std::runtime_error("Wrong Input!"));
             }
+            NC = NC_;
             k1 = k1_;
             k2 = k2_;
             n1 = n1_;
@@ -646,7 +668,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
          * 
          * \Returns memory id of an element in a matrix view of a submatrix of the matrix x1
          */
-        std::ptrdiff_t const ID(std::size_t i, std::size_t j) const
+        inline std::ptrdiff_t ID(std::size_t i, std::size_t j) const
         {
             return k1 * NC + k2 + i * NC + j;
         }
