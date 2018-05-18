@@ -30,18 +30,21 @@ Contents
 It should contain the following files:  
 
 -----------------------------------
-    multimin_function.hpp
-    multimin_linear_minimize.hpp
-    multimin_directional_minimize.hpp
-    multimin_linear_wrapper.hpp
-    multimin_steepest_descent.hpp
-    multimin_conjugate_fr.hpp
-    multimin_conjugate_pr.hpp
-    multimin_vector_bfgs.hpp
-    multimin_vector_bfgs2.hpp
-    multimin_nmsimplex.hpp
-    multimin_nmsimplex2.hpp
-    multimin_nmsimplex2rand.hpp
+    multimin
+    ├── COPYING
+    ├── multimin_conjugate_fr.hpp
+    ├── multimin_conjugate_pr.hpp
+    ├── multimin_directional_minimize.hpp
+    ├── multimin_function.hpp
+    ├── multimin_linear_minimize.hpp
+    ├── multimin_linear_wrapper.hpp
+    ├── multimin_nmsimplex2.hpp
+    ├── multimin_nmsimplex2rand.hpp
+    ├── multimin_nmsimplex.hpp
+    ├── multimin_steepest_descent.hpp
+    ├── multimin_vector_bfgs2.hpp
+    ├── multimin_vector_bfgs.hpp
+    └── README.md
 -----------------------------------
 
 Contributors

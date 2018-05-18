@@ -11,21 +11,26 @@ Contents
 It should contain the following files:    
 
 -----------------------------------
-    dcpse.hpp
-    eigenmatrix.hpp
-    factorial.hpp
-    knearestneighbors.hpp
-    multimin.hpp
-    polynomial.hpp
-    psrandom.hpp
-    saruprng.hpp
-    stats.hpp
+    numerics
+    ├── dcpse.hpp
+    ├── eigenmatrix.hpp
+    ├── factorial.hpp
+    ├── knearestneighbors.hpp
+    ├── multimin.hpp
+    ├── polynomial.hpp
+    ├── primitive.hpp
+    ├── psrandom.hpp
+    ├── README.md
+    ├── saruprng.hpp
+    └── stats.hpp
 -----------------------------------
 
-and the following directory:  
+and the following directories:  
 
 -----------------------------------
-    multimin
+    numerics
+    ├── multimin
+    └── testfunctions
 -----------------------------------
 
 Contributors       
