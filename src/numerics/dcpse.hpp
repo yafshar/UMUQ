@@ -1129,14 +1129,12 @@ class dcpse
 
         //Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
         //\f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
-        EVectorX<T> B0 = EVectorX<T>::Zero(monomialSize);
-        B0(0) = static_cast<T>(1);
+        EVectorX<T> B0I = EVectorX<T>::Zero(monomialSize);
+        B0I(0) = static_cast<T>(1);
+        EVectorX<T> B0(monomialSize);
 
         //Total number of nearest neighbours for each point
         int nNN = KNN->numNearestNeighbors();
-
-        //Array for keeping the component-wise L1 distances
-        T *L1Dist = new T[nNN * nDim];
 
         //Creating a transpose of the Vandermonde matrix
         //with the size of monomials * monomials \f$  = l \times l \f$
@@ -1159,10 +1157,26 @@ class dcpse
         //${\mathbf a}^T({\mathbf x})$ is the column vector of coefficients which is the solution of linear system
         EVectorX<T> SV(monomialSize);
 
-        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        T *column = new T[monomialSize];
+        //Array for keeping the component-wise L1 distances
+        T *L1Dist = nullptr;
 
-        int *IndexId = new int[monomialSize];
+        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+        T *column = nullptr;
+
+        int *IndexId = nullptr;
+
+        try
+        {
+            L1Dist = new T[nNN * nDim];
+            column = new T[monomialSize];
+            IndexId = new int[monomialSize];
+        }
+        catch (std::bad_alloc &e)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            return false;
+        }
 
         //Primitive (quartic spline) object
         quartic_spline<T> q;
@@ -1170,18 +1184,20 @@ class dcpse
         //Loop over all query points
         for (int i = 0; i < nqPoints; i++)
         {
+            //Index inside kernel
             std::ptrdiff_t const IdM = i * monomialSize;
+
+            //Index in qdata array
             std::ptrdiff_t const IdI = i * nDim;
 
             //A pointer to nearest neighbors indices of point i
             int *NearestNeighbors = KNN->NearestNeighbors(i);
 
-            //A pointer to nearest neighbors distances from the point i
+            //A pointer to nearest neighbors distances from point i
             T *nnDist = KNN->NearestNeighborsDistances(i);
 
             //For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
             //as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
-
             {
                 //pointer to query data
                 T *Idata = qdata + IdI;
@@ -1189,6 +1205,7 @@ class dcpse
                 //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
                 for (int j = 0, n = 0; j < nNN; j++)
                 {
+                    //Neighbor index in idata array
                     std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
                     //pointer to idata (neighbors of i)
@@ -1200,7 +1217,7 @@ class dcpse
                     }
                 }
             }
-            
+
             //Compute component-wise average neighbor spacing
             T h_avg(0);
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
@@ -1215,6 +1232,8 @@ class dcpse
 
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
+
+            B0 = B0I;
 
             //Loop through the neighbors
             for (int j = 0; j < monomialSize; j++)
@@ -1540,9 +1559,9 @@ class dcpse
 
         } //Loop over all points
 
-        delete[] L1Dist;
         delete[] IndexId;
         delete[] column;
+        delete[] L1Dist;
         delete[] idataminDist;
 
         return true;
