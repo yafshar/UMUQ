@@ -66,7 +66,7 @@ TEST(streamdatatype, HandlesConstruction)
     d2.destroy();
 
     EXPECT_EQ(NULL, d2.lowerbound);
-};
+}
 
 //! Tests read input file
 TEST(streamdatatype, HandlesIO)

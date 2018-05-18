@@ -72,37 +72,40 @@ class parser
 
     /*!
      * \brief parse element 
-     * @param  lineArg, input string which we want to parse
-     * @tparam value 
-     * @return value of type T
+     * 
+     * \param  lineArg_ input string which we want to parse
+     * \param  value    parsed value 
+     * \return value    value of type T
      */
     template <typename T>
-    inline T &parse(const char *lineArg, T &value)
+    inline T &parse(const char *lineArg_, T &value)
     {
-        std::stringstream str(lineArg);
+        std::stringstream str(lineArg_);
         str >> value;
         return value;
     }
 
     /*!
-     * \brief parse element 
-     * @param  lineArg, input string which we want to parse
-     * @return value of type T
+     * \brief parse element
+     *  
+     * \param  lineArg_ input string which we want to parse
+     * \return value of type T
      */
     template <typename T>
-    inline T parse(const char *lineArg)
+    inline T parse(const char *lineArg_)
     {
         T value;
-        return parse<T>(lineArg, value);
+        return parse<T>(lineArg_, value);
     }
 
     /*!
      * \brief access element at provided index
-     * @param id
-     * @return element @(id)
+     * 
+     * \param  id requested index 
+     * \return element @(id)
      */
     template <typename T>
-    T &at(size_t id)
+    inline T &at(std::size_t id)
     {
         T rvalue;
         return parse<T>(lineArg[id], rvalue);
@@ -110,11 +113,12 @@ class parser
 
     /*!
      * \brief access element at provided index 
-     * @param id
-     * @return element @(id)
+     * 
+     * param id requested id
+     * return element @(id)
      */
     template <typename T>
-    T &operator()(size_t id)
+    inline T &operator()(std::size_t id)
     {
         T rvalue;
         return parse<T>(lineArg[id], rvalue);
@@ -123,25 +127,25 @@ class parser
     /*!
      * \brief Get the pointer to lineArg
      */
-    char **getLineArg()
+    inline char **getLineArg()
     {
         return lineArg;
     }
 
   private:
     char *lineArg[LINESIZE];
-    size_t lineNum;
+    std::size_t lineNum;
     std::string svalue;
 };
 
 template <>
-std::string &parser::at<std::string>(size_t id)
+std::string &parser::at<std::string>(std::size_t id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
-};
+}
 
 template <>
-std::string &parser::operator()<std::string>(size_t id)
+std::string &parser::operator()<std::string>(std::size_t id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }

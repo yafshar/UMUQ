@@ -192,12 +192,14 @@ class stdata
             std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         }
 
-        int e = Nth;
-        while (e--)
         {
-            lowerbound[e] = 0;
-            upperbound[e] = 0;
-            prior_mu[e] = 0;
+            int e = Nth;
+            while (e--)
+            {
+                lowerbound[e] = 0;
+                upperbound[e] = 0;
+                prior_mu[e] = 0;
+            }
         }
 
         try
@@ -235,10 +237,13 @@ class stdata
             std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         }
 
-        e = MaxStages;
-        while (e--)
-            Num[e] = PopSize;
-
+        {
+            int e = MaxStages;
+            while (e--)
+            {
+                Num[e] = PopSize;
+            }
+        }
         try
         {
             local_cov = new double *[PopSize];
