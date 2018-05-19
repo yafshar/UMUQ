@@ -1329,81 +1329,81 @@ class dcpse
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
 
-                // //if necessary, remove redundant equations/coefficients
+                //if necessary, remove redundant equations/coefficients
 
-                // //Number of neighbor points are not enough
-                // if (dcrank < dcmonomialSize - nENN)
-                // {
-                //     std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
+                //Number of neighbor points are not enough
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
 
-                //     if (nENN > 0)
-                //     {
-                //         VMTimage.block(0, 0, dcmonomialSize, dcmonomialSize) << VMT;
-                //         EMimage.head(dcmonomialSize) << EM;
+                    if (nENN > 0)
+                    {
+                        VMTimage.block(0, 0, dcmonomialSize, dcmonomialSize) << VMT;
+                        EMimage.head(dcmonomialSize) << EM;
 
-                //         //Loop through the rest of nearest neighbors
-                //         for (int j = dcmonomialSize; j < nNN; j++)
-                //         {
-                //             //Id in the list
-                //             std::ptrdiff_t const Id = j * nDim;
+                        //Loop through the rest of nearest neighbors
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            //Id in the list
+                            std::ptrdiff_t const Id = j * nDim;
 
-                //             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                //             poly.monomial_value(L1Dist + Id, column);
+                            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                            poly.monomial_value(L1Dist + Id, column);
 
-                //             TEMapVectorX<T> columnV(column, dcmonomialSize);
+                            TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-                //             //Fill the Vandermonde matrix column by column
-                //             VMTimage.block(0, j, dcmonomialSize, 1) << columnV;
+                            //Fill the Vandermonde matrix column by column
+                            VMTimage.block(0, j, dcmonomialSize, 1) << columnV;
 
-                //             //Neighbor point number
-                //             int const IdJ = NearestNeighbors[j];
+                            //Neighbor point number
+                            int const IdJ = NearestNeighbors[j];
 
-                //             //Using a smooth correction function that satisfies
-                //             //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
-                //             //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
-                //             //between the point and its nearest neighbors
-                //             T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
+                            //Using a smooth correction function that satisfies
+                            //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
+                            //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
+                            //between the point and its nearest neighbors
+                            T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
 
-                //             //Compute the kernel value at the point
-                //             T dckernelV = q.f(&s);
+                            //Compute the kernel value at the point
+                            T dckernelV = q.f(&s);
 
-                //             //Assemble the right hand side
-                //             //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                //             B0 -= dckernelV * columnV;
-                //         }
+                            //Assemble the right hand side
+                            //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
+                            B0 -= dckernelV * columnV;
+                        }
 
-                //         for (int j = dcmonomialSize; j < nNN; j++)
-                //         {
-                //             EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
-                //         }
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        }
 
-                //         /* 
-                //          * \f[ 
-                //          * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                //          * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                //          * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                //          * \end{matrix} 
-                //          * \f]
-                //          */
-                //         BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
-                //         AM = BMTimage * BMTimage.transpose();
-                //     }
-                //     else
-                //     {
-                //         /* 
-                //          * \f[ 
-                //          * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-                //          * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                //          * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                //          * \end{matrix} 
-                //          * \f]
-                //          */
-                //         BMT = VMT * EMatrixX<T>(EM.asDiagonal());
-                //         AM = BMT * BMT.transpose();
-                //     }
-                // }
-                // else
-                // {
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                        AM = BMTimage * BMTimage.transpose();
+                    }
+                    else
+                    {
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                        AM = BMT * BMT.transpose();
+                    }
+                }
+                else
+                {
                 //     //We have enough neighbor points
                 //     //Remove the columns which causes singularity and replace them
                 //     //with the new columns from extra neighbor points
@@ -1474,7 +1474,7 @@ class dcpse
                 //      */
                 //     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                 //     AM = BMT * BMT.transpose();
-                // }
+                }
 
                 // {
                 //     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
