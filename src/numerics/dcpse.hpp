@@ -281,15 +281,15 @@ class dcpse
                 EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
             }
 
-            int rank;
+            int dcrank;
 
             {
                 //LU decomposition of a matrix with complete pivoting, and related features.
                 Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
 
-                rank = lu.rank();
+                dcrank = lu.rank();
 
-                if (rank < dcmonomialSize && rank >= dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize && dcrank >= dcmonomialSize - nENN)
                 {
                     for (int j = 0; j < dcmonomialSize; j++)
                     {
@@ -298,7 +298,7 @@ class dcpse
                 }
             }
 
-            if (rank < dcmonomialSize)
+            if (dcrank < dcmonomialSize)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
@@ -306,9 +306,9 @@ class dcpse
                 //if necessary, remove redundant equations/coefficients
 
                 //Number of neighbor points are not enough
-                if (rank < dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize - nENN)
                 {
-                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << rank << " < " << dcmonomialSize - nENN << std::endl;
+                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
 
                     if (nENN > 0)
                     {
@@ -367,7 +367,7 @@ class dcpse
                     //with the new columns from extra neighbor points
 
                     //Loop through the neighbors
-                    for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
                     {
                         //Get the column number which causes a singularity
                         int const l = IndexId[j];
@@ -384,7 +384,7 @@ class dcpse
                         VMT.block(0, l, dcmonomialSize, 1) << columnV;
                     }
 
-                    for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
                     {
                         //Get the column number which causes a singularity
                         int const l = IndexId[j];
@@ -410,7 +410,7 @@ class dcpse
                 //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
                 //Later I should check on SVD solution and to find out which columns are the
                 //Most important one, then I can correct the IndexId order
-                if (rank < dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize - nENN)
                 {
                     //Loop through the neighbors
                     for (int j = 0; j < dcmonomialSize; j++)
@@ -442,7 +442,7 @@ class dcpse
                         std::ptrdiff_t Id;
                         T expo;
 
-                        if (j >= rank)
+                        if (j >= dcrank)
                         {
                             //Id in the list
                             Id = m * nDim;
@@ -466,7 +466,7 @@ class dcpse
                     }
 
                     //Loop through the neighbors
-                    for (int j = rank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
                     {
                         //Get the right index
                         int const l = IndexId[j];
@@ -784,15 +784,15 @@ class dcpse
                 EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
             }
 
-            int rank;
+            int dcrank;
 
             {
                 //LU decomposition of a matrix with complete pivoting, and related features.
                 Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
 
-                rank = lu.rank();
+                dcrank = lu.rank();
 
-                if (rank < dcmonomialSize && rank >= dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize && dcrank >= dcmonomialSize - nENN)
                 {
                     for (int j = 0; j < dcmonomialSize; j++)
                     {
@@ -801,7 +801,7 @@ class dcpse
                 }
             }
 
-            if (rank < dcmonomialSize)
+            if (dcrank < dcmonomialSize)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
                 std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
@@ -809,9 +809,9 @@ class dcpse
                 //if necessary, remove redundant equations/coefficients
 
                 //Number of neighbor points are not enough
-                if (rank < dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize - nENN)
                 {
-                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << rank << " < " << dcmonomialSize - nENN << std::endl;
+                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
 
                     if (nENN > 0)
                     {
@@ -872,7 +872,7 @@ class dcpse
                      */
 
                     //Loop through the neighbors
-                    for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
                     {
                         //Get the column number which causes a singularity
                         int const l = IndexId[j];
@@ -889,7 +889,7 @@ class dcpse
                         VMT.block(0, l, dcmonomialSize, 1) << columnV;
                     }
 
-                    for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
                     {
                         //Get the column number which causes a singularity
                         int const l = IndexId[j];
@@ -922,7 +922,7 @@ class dcpse
                  * Most important one, then I can correct the IndexId order
                  */
 
-                if (rank < dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize - nENN)
                 {
                     //Loop through the neighbors
                     for (int j = 0; j < dcmonomialSize; j++)
@@ -954,7 +954,7 @@ class dcpse
                         std::ptrdiff_t Id;
                         T expo;
 
-                        if (j >= rank)
+                        if (j >= dcrank)
                         {
                             //Id in the list
                             Id = m * nDim;
@@ -978,7 +978,7 @@ class dcpse
                     }
 
                     //Loop through the neighbors
-                    for (int j = rank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
                     {
                         //Get the right index
                         int const l = IndexId[j];
@@ -1307,15 +1307,15 @@ class dcpse
                 EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
             }
 
-            int rank;
+            int dcrank;
 
             {
                 //LU decomposition of a matrix with complete pivoting, and related features.
                 Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
 
-                rank = lu.rank();
+                dcrank = lu.rank();
 
-                if (rank < dcmonomialSize && rank >= dcmonomialSize - nENN)
+                if (dcrank < dcmonomialSize && dcrank >= dcmonomialSize - nENN)
                 {
                     for (int j = 0; j < dcmonomialSize; j++)
                     {
@@ -1324,270 +1324,270 @@ class dcpse
                 }
             }
 
-            // if (rank < dcmonomialSize)
-            // {
-            //     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            //     std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
+            if (dcrank < dcmonomialSize)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
 
-            //     //if necessary, remove redundant equations/coefficients
+                //if necessary, remove redundant equations/coefficients
 
-            //     //Number of neighbor points are not enough
-            //     if (rank < dcmonomialSize - nENN)
-            //     {
-            //         std::cerr << "Number of neighbor points are not enough! Matrix rank = " << rank << " < " << dcmonomialSize - nENN << std::endl;
+                //Number of neighbor points are not enough
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
 
-            //         if (nENN > 0)
-            //         {
-            //             VMTimage.block(0, 0, dcmonomialSize, dcmonomialSize) << VMT;
-            //             EMimage.head(dcmonomialSize) << EM;
+                    if (nENN > 0)
+                    {
+                        VMTimage.block(0, 0, dcmonomialSize, dcmonomialSize) << VMT;
+                        EMimage.head(dcmonomialSize) << EM;
 
-            //             //Loop through the rest of nearest neighbors
-            //             for (int j = dcmonomialSize; j < nNN; j++)
-            //             {
-            //                 //Id in the list
-            //                 std::ptrdiff_t const Id = j * nDim;
+                        //Loop through the rest of nearest neighbors
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            //Id in the list
+                            std::ptrdiff_t const Id = j * nDim;
 
-            //                 //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-            //                 poly.monomial_value(L1Dist + Id, column);
+                            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                            poly.monomial_value(L1Dist + Id, column);
 
-            //                 TEMapVectorX<T> columnV(column, dcmonomialSize);
+                            TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-            //                 //Fill the Vandermonde matrix column by column
-            //                 VMTimage.block(0, j, dcmonomialSize, 1) << columnV;
+                            //Fill the Vandermonde matrix column by column
+                            VMTimage.block(0, j, dcmonomialSize, 1) << columnV;
 
-            //                 //Neighbor point number
-            //                 int const IdJ = NearestNeighbors[j];
+                            //Neighbor point number
+                            int const IdJ = NearestNeighbors[j];
 
-            //                 //Using a smooth correction function that satisfies
-            //                 //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
-            //                 //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
-            //                 //between the point and its nearest neighbors
-            //                 T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
+                            //Using a smooth correction function that satisfies
+                            //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
+                            //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
+                            //between the point and its nearest neighbors
+                            T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
 
-            //                 //Compute the kernel value at the point
-            //                 T dckernelV = q.f(&s);
+                            //Compute the kernel value at the point
+                            T dckernelV = q.f(&s);
 
-            //                 //Assemble the right hand side
-            //                 //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-            //                 B0 -= dckernelV * columnV;
-            //             }
+                            //Assemble the right hand side
+                            //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
+                            B0 -= dckernelV * columnV;
+                        }
 
-            //             for (int j = dcmonomialSize; j < nNN; j++)
-            //             {
-            //                 EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
-            //             }
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        }
 
-            //             /* 
-            //              * \f[ 
-            //              * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-            //              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-            //              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-            //              * \end{matrix} 
-            //              * \f]
-            //              */
-            //             BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
-            //             AM = BMTimage * BMTimage.transpose();
-            //         }
-            //         else
-            //         {
-            //             /* 
-            //              * \f[ 
-            //              * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-            //              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-            //              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-            //              * \end{matrix} 
-            //              * \f]
-            //              */
-            //             BMT = VMT * EMatrixX<T>(EM.asDiagonal());
-            //             AM = BMT * BMT.transpose();
-            //         }
-            //     }
-            //     else
-            //     {
-            //         //We have enough neighbor points
-            //         //Remove the columns which causes singularity and replace them
-            //         //with the new columns from extra neighbor points
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                        AM = BMTimage * BMTimage.transpose();
+                    }
+                    else
+                    {
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                        AM = BMT * BMT.transpose();
+                    }
+                }
+                else
+                {
+                    //We have enough neighbor points
+                    //Remove the columns which causes singularity and replace them
+                    //with the new columns from extra neighbor points
 
-            //         //Loop through the neighbors
-            //         for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
-            //         {
-            //             //Get the column number which causes a singularity
-            //             int const l = IndexId[j];
+                    //Loop through the neighbors
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    {
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
 
-            //             //Id in the list
-            //             std::ptrdiff_t const Id = k * nDim;
+                        //Id in the list
+                        std::ptrdiff_t const Id = k * nDim;
 
-            //             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-            //             poly.monomial_value(L1Dist + Id, column);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-            //             TEMapVectorX<T> columnV(column, dcmonomialSize);
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-            //             //Get the column l which causes singularity
-            //             columnL << VMT.block(0, l, dcmonomialSize, 1);
+                        //Get the column l which causes singularity
+                        columnL << VMT.block(0, l, dcmonomialSize, 1);
 
-            //             //Fill the Vandermonde matrix by the new column
-            //             VMT.block(0, l, dcmonomialSize, 1) << columnV;
+                        //Fill the Vandermonde matrix by the new column
+                        VMT.block(0, l, dcmonomialSize, 1) << columnV;
 
-            //             //Neighbor point number
-            //             int const IdJ = NearestNeighbors[k];
+                        //Neighbor point number
+                        int const IdJ = NearestNeighbors[k];
 
-            //             //Using a smooth correction function that satisfies
-            //             //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
-            //             //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
-            //             //between the point and its nearest neighbors
-            //             T s = nnDist[k] / (0.9 * idataminDist[IdJ]);
+                        //Using a smooth correction function that satisfies
+                        //\f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
+                        //Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
+                        //between the point and its nearest neighbors
+                        T s = nnDist[k] / (0.9 * idataminDist[IdJ]);
 
-            //             //Compute the kernel value at the point IdK
-            //             T dckernelV = q.f(&s);
+                        //Compute the kernel value at the point IdK
+                        T dckernelV = q.f(&s);
 
-            //             //Index of the column l inside the kernel
-            //             std::ptrdiff_t const IdK = IdM + j;
+                        //Index of the column l inside the kernel
+                        std::ptrdiff_t const IdK = IdM + j;
 
-            //             dckernel[IdK] = dckernelV;
+                        dckernel[IdK] = dckernelV;
 
-            //             //Assemble the right hand side
-            //             //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-            //             B0 -= dckernelV * columnV;
+                        //Assemble the right hand side
+                        //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
+                        B0 -= dckernelV * columnV;
 
-            //             //Neighbor point number of point l which causes singularity
-            //             int const IdJL = NearestNeighbors[l];
-            //             s = nnDist[l] / (0.9 * idataminDist[IdJL]);
-            //             dckernelV = q.f(&s);
-            //             B0 += dckernelV * columnL;
-            //         }
+                        //Neighbor point number of point l which causes singularity
+                        int const IdJL = NearestNeighbors[l];
+                        s = nnDist[l] / (0.9 * idataminDist[IdJL]);
+                        dckernelV = q.f(&s);
+                        B0 += dckernelV * columnL;
+                    }
 
-            //         for (int j = rank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
-            //         {
-            //             //Get the column number which causes a singularity
-            //             int const l = IndexId[j];
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    {
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
 
-            //             EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
-            //         }
+                        EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    }
 
-            //         /* 
-            //          * \f[ 
-            //          * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-            //          * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-            //          * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-            //          * \end{matrix} 
-            //          * \f]
-            //          */
-            //         BMT = VMT * EMatrixX<T>(EM.asDiagonal());
-            //         AM = BMT * BMT.transpose();
-            //     }
+                    /* 
+                     * \f[ 
+                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                     * \end{matrix} 
+                     * \f]
+                     */
+                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    AM = BMT * BMT.transpose();
+                }
 
-            //     {
-            //         Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
+                {
+                    Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
 
-            //         //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-            //         SV = svd.solve(B0);
-            //     }
+                    //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                    SV = svd.solve(B0);
+                }
 
-            //     //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-            //     //Later I should check on SVD solution and to find out which columns are the
-            //     //Most important one, then I can correct the IndexId order
+                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                //Later I should check on SVD solution and to find out which columns are the
+                //Most important one, then I can correct the IndexId order
 
-            //     if (rank < dcmonomialSize - nENN)
-            //     {
-            //         //Loop through the neighbors
-            //         for (int j = 0; j < dcmonomialSize; j++)
-            //         {
-            //             //Id in the list
-            //             std::ptrdiff_t const Id = j * nDim;
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    //Loop through the neighbors
+                    for (int j = 0; j < dcmonomialSize; j++)
+                    {
+                        //Id in the list
+                        std::ptrdiff_t const Id = j * nDim;
 
-            //             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-            //             poly.monomial_value(L1Dist + Id, column);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-            //             TEMapVectorX<T> columnV(column, dcmonomialSize);
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-            //             T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                        T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
 
-            //             //Index inside the kernel
-            //             std::ptrdiff_t const IdK = IdM + j;
-            //             dckernel[IdK] += SV.dot(columnV) * expo;
-            //         }
-            //     }
-            //     else
-            //     {
-            //         //Loop through the neighbors
-            //         for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
-            //         {
-            //             //Get the right index
-            //             int const l = IndexId[j];
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + j;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
+                }
+                else
+                {
+                    //Loop through the neighbors
+                    for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
 
-            //             //Id in the list
-            //             std::ptrdiff_t Id;
-            //             T expo;
+                        //Id in the list
+                        std::ptrdiff_t Id;
+                        T expo;
 
-            //             if (j >= rank)
-            //             {
-            //                 //Id in the list
-            //                 Id = m * nDim;
-            //                 expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
-            //                 m++;
-            //             }
-            //             else
-            //             {
-            //                 Id = l * nDim;
-            //                 expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
-            //             }
+                        if (j >= dcrank)
+                        {
+                            //Id in the list
+                            Id = m * nDim;
+                            expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                            m++;
+                        }
+                        else
+                        {
+                            Id = l * nDim;
+                            expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        }
 
-            //             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-            //             poly.monomial_value(L1Dist + Id, column);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-            //             TEMapVectorX<T> columnV(column, dcmonomialSize);
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-            //             //Index inside the kernel
-            //             std::ptrdiff_t const IdK = IdM + l;
-            //             dckernel[IdK] += SV.dot(columnV) * expo;
-            //         }
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + l;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
 
-            //         //Loop through the neighbors
-            //         for (int j = rank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
-            //         {
-            //             //Get the right index
-            //             int const l = IndexId[j];
+                    //Loop through the neighbors
+                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
 
-            //             //Correct the neighborhood order
-            //             KNN->IndexSwap(l, m);
-            //         }
-            //     }
-            // }
-            // else
-            // {
-            //     /* 
-            //      * \f[ 
-            //      * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
-            //      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-            //      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-            //      * \end{matrix} 
-            //      * \f]
-            //      */
-            //     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                        //Correct the neighborhood order
+                        KNN->IndexSwap(l, m);
+                    }
+                }
+            }
+            else
+            {
+                /* 
+                 * \f[ 
+                 * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                 * \end{matrix} 
+                 * \f]
+                 */
+                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
 
-            //     AM = BMT * BMT.transpose();
+                AM = BMT * BMT.transpose();
 
-            //     //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-            //     SV = AM.lu().solve(B0);
+                //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                SV = AM.lu().solve(B0);
 
-            //     //Loop through the neighbors
-            //     for (int j = 0; j < dcmonomialSize; j++)
-            //     {
-            //         //Id in the list
-            //         std::ptrdiff_t const Id = j * nDim;
+                //Loop through the neighbors
+                for (int j = 0; j < dcmonomialSize; j++)
+                {
+                    //Id in the list
+                    std::ptrdiff_t const Id = j * nDim;
 
-            //         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-            //         poly.monomial_value(L1Dist + Id, column);
+                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                    poly.monomial_value(L1Dist + Id, column);
 
-            //         TEMapVectorX<T> columnV(column, dcmonomialSize);
+                    TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-            //         T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
 
-            //         //Index inside the kernel
-            //         std::ptrdiff_t const IdK = IdM + j;
-            //         dckernel[IdK] += SV.dot(columnV) * expo;
-            //     }
-            // }
+                    //Index inside the kernel
+                    std::ptrdiff_t const IdK = IdM + j;
+                    dckernel[IdK] += SV.dot(columnV) * expo;
+                }
+            }
 
         } //Loop over all points
 
