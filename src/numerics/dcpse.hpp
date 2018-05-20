@@ -1655,11 +1655,11 @@ class dcpse
 					//Loop through the neighbors
 					for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
 					{
-				// 		//Get the right index
-				// 		int const l = IndexId[j];
+						//Get the right index
+						int const l = IndexId[j];
 
-				// 		//Correct the neighborhood order
-				// 		KNN->IndexSwap(l, m);
+						//Correct the neighborhood order
+						KNN->IndexSwap(l, m);
 					}
 				}
 			}
