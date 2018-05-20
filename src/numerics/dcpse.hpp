@@ -146,7 +146,7 @@ class dcpse
 
         //Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
         //\f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
-        EVectorX<T> B0(dcmonomialSize);
+        EVectorX<T> RHSB(dcmonomialSize);
         {
             //Get a pointer to the monomial basis
             int *alpha = poly.monomial_basis();
@@ -160,13 +160,13 @@ class dcpse
                 }
                 if (maxalpha)
                 {
-                    B0(i) = T{};
+                    RHSB(i) = T{};
                 }
                 else
                 {
                     T fact = static_cast<T>(1);
                     std::for_each(beta, beta + nDim, [&](int const b_j) { fact *= factorial<T>(b_j); });
-                    B0(i) = rhscoeff * fact;
+                    RHSB(i) = rhscoeff * fact;
                 }
             }
 
@@ -177,7 +177,7 @@ class dcpse
                 std::ptrdiff_t const id = alphamin * nDim;
                 if (std::accumulate(alpha + id, alpha + id + nDim, 0) == 0)
                 {
-                    B0(0) = static_cast<T>(5);
+                    RHSB(0) = static_cast<T>(5);
                 }
             }
         }
@@ -404,7 +404,7 @@ class dcpse
                     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
 
                     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                    SV = svd.solve(B0);
+                    SV = svd.solve(RHSB);
                 }
 
                 //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
@@ -491,7 +491,7 @@ class dcpse
                 AM = BMT * BMT.transpose();
 
                 //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                SV = AM.lu().solve(B0);
+                SV = AM.lu().solve(RHSB);
 
                 //Loop through the neighbors
                 for (int j = 0; j < dcmonomialSize; j++)
@@ -650,7 +650,7 @@ class dcpse
          * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
          * \f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
          */
-        EVectorX<T> B0(dcmonomialSize);
+        EVectorX<T> RHSB(dcmonomialSize);
         {
             //Get a pointer to the monomial basis
             int *alpha = poly.monomial_basis();
@@ -664,13 +664,13 @@ class dcpse
                 }
                 if (maxalpha)
                 {
-                    B0(i) = T{};
+                    RHSB(i) = T{};
                 }
                 else
                 {
                     T fact = static_cast<T>(1);
                     std::for_each(beta, beta + nDim, [&](int const b_j) { fact *= factorial<T>(b_j); });
-                    B0(i) = rhscoeff * fact;
+                    RHSB(i) = rhscoeff * fact;
                 }
             }
 
@@ -679,7 +679,7 @@ class dcpse
              * At off-particle locations it should be always zero to obtain kernels
              * with a vanishing zeroth-order moment that can be consistently evaluated
              */
-            B0(0) = T{};
+            RHSB(0) = T{};
         }
 
         //Total number of nearest neighbours for each point
@@ -913,7 +913,7 @@ class dcpse
                     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
 
                     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                    SV = svd.solve(B0);
+                    SV = svd.solve(RHSB);
                 }
 
                 /*
@@ -1003,7 +1003,7 @@ class dcpse
                 AM = BMT * BMT.transpose();
 
                 //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                SV = AM.lu().solve(B0);
+                SV = AM.lu().solve(RHSB);
 
                 //Loop through the neighbors
                 for (int j = 0; j < dcmonomialSize; j++)
@@ -1161,9 +1161,9 @@ class dcpse
 
         //Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
         //\f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
-        EVectorX<T> B0I = EVectorX<T>::Zero(dcmonomialSize);
-        B0I(0) = static_cast<T>(1);
-        EVectorX<T> B0(dcmonomialSize);
+        EVectorX<T> RHSB0 = EVectorX<T>::Zero(dcmonomialSize);
+        RHSB0(0) = static_cast<T>(1);
+        EVectorX<T> RHSB(dcmonomialSize);
 
         //Total number of nearest neighbours for each point
         int nNN = KNN->numNearestNeighbors();
@@ -1265,7 +1265,7 @@ class dcpse
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
 
-            B0 = B0I;
+            RHSB = RHSB0;
 
             //Loop through the neighbors
             for (int j = 0; j < dcmonomialSize; j++)
@@ -1295,7 +1295,7 @@ class dcpse
 
                 //Assemble the right hand side
                 //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                B0 -= dckernelV * columnV;
+                RHSB -= dckernelV * columnV;
 
                 //Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -1369,7 +1369,7 @@ class dcpse
 
                             //Assemble the right hand side
                             //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                            B0 -= dckernelV * columnV;
+                            RHSB -= dckernelV * columnV;
                         }
 
                         for (int j = dcmonomialSize; j < nNN; j++)
@@ -1447,13 +1447,13 @@ class dcpse
 
                         //Assemble the right hand side
                         //\f$ {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) \f$
-                        B0 -= dckernelV * columnV;
+                        RHSB -= dckernelV * columnV;
 
                         //Neighbor point number of point l which causes singularity
                         int const IdJL = NearestNeighbors[l];
                         s = nnDist[l] / (0.9 * idataminDist[IdJL]);
                         dckernelV = q.f(&s);
-                        B0 += dckernelV * columnL;
+                        RHSB += dckernelV * columnL;
                     }
 
                     for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
@@ -1476,82 +1476,82 @@ class dcpse
                     AM = BMT * BMT.transpose();
                 }
 
-                // {
-                //     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
+                {
+                    Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
 
-                //     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                //     SV = svd.solve(B0);
-                // }
+                    //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                    SV = svd.solve(RHSB);
+                }
 
-                // //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-                // //Later I should check on SVD solution and to find out which columns are the
-                // //Most important one, then I can correct the IndexId order
+                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                //Later I should check on SVD solution and to find out which columns are the
+                //Most important one, then I can correct the IndexId order
 
-                // if (dcrank < dcmonomialSize - nENN)
-                // {
-                //     //Loop through the neighbors
-                //     for (int j = 0; j < dcmonomialSize; j++)
-                //     {
-                //         //Id in the list
-                //         std::ptrdiff_t const Id = j * nDim;
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    //Loop through the neighbors
+                    for (int j = 0; j < dcmonomialSize; j++)
+                    {
+                        //Id in the list
+                        std::ptrdiff_t const Id = j * nDim;
 
-                //         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                //         poly.monomial_value(L1Dist + Id, column);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-                //         TEMapVectorX<T> columnV(column, dcmonomialSize);
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-                //         T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                        T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
 
-                //         //Index inside the kernel
-                //         std::ptrdiff_t const IdK = IdM + j;
-                //         dckernel[IdK] += SV.dot(columnV) * expo;
-                //     }
-                // }
-                // else
-                // {
-                //     //Loop through the neighbors
-                //     for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
-                //     {
-                //         //Get the right index
-                //         int const l = IndexId[j];
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + j;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
+                }
+                else
+                {
+                    //Loop through the neighbors
+                    for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
 
-                //         //Id in the list
-                //         std::ptrdiff_t Id;
-                //         T expo;
+                        //Id in the list
+                        std::ptrdiff_t Id;
+                        T expo;
 
-                //         if (j >= dcrank)
-                //         {
-                //             //Id in the list
-                //             Id = m * nDim;
-                //             expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
-                //             m++;
-                //         }
-                //         else
-                //         {
-                //             Id = l * nDim;
-                //             expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
-                //         }
+                        if (j >= dcrank)
+                        {
+                            //Id in the list
+                            Id = m * nDim;
+                            expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                            m++;
+                        }
+                        else
+                        {
+                            Id = l * nDim;
+                            expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        }
 
-                //         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                //         poly.monomial_value(L1Dist + Id, column);
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist + Id, column);
 
-                //         TEMapVectorX<T> columnV(column, dcmonomialSize);
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-                //         //Index inside the kernel
-                //         std::ptrdiff_t const IdK = IdM + l;
-                //         dckernel[IdK] += SV.dot(columnV) * expo;
-                //     }
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + l;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
 
-                //     //Loop through the neighbors
-                //     for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
-                //     {
-                //         //Get the right index
-                //         int const l = IndexId[j];
+                    //Loop through the neighbors
+                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
 
-                //         //Correct the neighborhood order
-                //         KNN->IndexSwap(l, m);
-                //     }
-                // }
+                        //Correct the neighborhood order
+                        KNN->IndexSwap(l, m);
+                    }
+                }
             }
             else
             {
@@ -1568,7 +1568,7 @@ class dcpse
                 AM = BMT * BMT.transpose();
 
                 //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                SV = AM.lu().solve(B0);
+                SV = AM.lu().solve(RHSB);
 
                 //Loop through the neighbors
                 for (int j = 0; j < dcmonomialSize; j++)
