@@ -1483,75 +1483,75 @@ class dcpse
                     SV = svd.solve(RHSB);
                 }
 
-                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-                //Later I should check on SVD solution and to find out which columns are the
-                //Most important one, then I can correct the IndexId order
+                // //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                // //Later I should check on SVD solution and to find out which columns are the
+                // //Most important one, then I can correct the IndexId order
 
-                if (dcrank < dcmonomialSize - nENN)
-                {
-                    //Loop through the neighbors
-                    for (int j = 0; j < dcmonomialSize; j++)
-                    {
-                        //Id in the list
-                        std::ptrdiff_t const Id = j * nDim;
+                // if (dcrank < dcmonomialSize - nENN)
+                // {
+                //     //Loop through the neighbors
+                //     for (int j = 0; j < dcmonomialSize; j++)
+                //     {
+                //         //Id in the list
+                //         std::ptrdiff_t const Id = j * nDim;
 
-                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                //         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                //         poly.monomial_value(L1Dist + Id, column);
 
-                        TEMapVectorX<T> columnV(column, dcmonomialSize);
+                //         TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-                        T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                //         T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
 
-                        //Index inside the kernel
-                        std::ptrdiff_t const IdK = IdM + j;
-                        dckernel[IdK] += SV.dot(columnV) * expo;
-                    }
-                }
-                else
-                {
-                    //Loop through the neighbors
-                    for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
-                    {
-                        //Get the right index
-                        int const l = IndexId[j];
+                //         //Index inside the kernel
+                //         std::ptrdiff_t const IdK = IdM + j;
+                //         dckernel[IdK] += SV.dot(columnV) * expo;
+                //     }
+                // }
+                // else
+                // {
+                //     //Loop through the neighbors
+                //     for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
+                //     {
+                //         //Get the right index
+                //         int const l = IndexId[j];
 
-                        //Id in the list
-                        std::ptrdiff_t Id;
-                        T expo;
+                //         //Id in the list
+                //         std::ptrdiff_t Id;
+                //         T expo;
 
-                        if (j >= dcrank)
-                        {
-                            //Id in the list
-                            Id = m * nDim;
-                            expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
-                            m++;
-                        }
-                        else
-                        {
-                            Id = l * nDim;
-                            expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
-                        }
+                //         if (j >= dcrank)
+                //         {
+                //             //Id in the list
+                //             Id = m * nDim;
+                //             expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                //             m++;
+                //         }
+                //         else
+                //         {
+                //             Id = l * nDim;
+                //             expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                //         }
 
-                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                //         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                //         poly.monomial_value(L1Dist + Id, column);
 
-                        TEMapVectorX<T> columnV(column, dcmonomialSize);
+                //         TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-                        //Index inside the kernel
-                        std::ptrdiff_t const IdK = IdM + l;
-                        dckernel[IdK] += SV.dot(columnV) * expo;
-                    }
+                //         //Index inside the kernel
+                //         std::ptrdiff_t const IdK = IdM + l;
+                //         dckernel[IdK] += SV.dot(columnV) * expo;
+                //     }
 
-                    //Loop through the neighbors
-                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
-                    {
-                        //Get the right index
-                        int const l = IndexId[j];
+                //     //Loop through the neighbors
+                //     for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                //     {
+                //         //Get the right index
+                //         int const l = IndexId[j];
 
-                        //Correct the neighborhood order
-                        KNN->IndexSwap(l, m);
-                    }
-                }
+                //         //Correct the neighborhood order
+                //         KNN->IndexSwap(l, m);
+                //     }
+                // }
             }
             else
             {
