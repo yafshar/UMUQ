@@ -337,132 +337,132 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
 	delete[] idata;
 }
 
-// /*! 
-//  * Test to check dcpse functionality for frank2d function
-//  */
-// TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
-// {
-// 	int nDim = 2;
-// 	int nPoints = 41;
-// 	int nqpoints = 20;
+/*! 
+ * Test to check dcpse functionality for frank2d function
+ */
+TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
+{
+	int nDim = 2;
+	int nPoints = 41;
+	int nqpoints = 20;
 
-// 	double *idata = nullptr;
+	double *idata = nullptr;
 
-// 	double Lb[] = {0, 0};
-// 	double Ub[] = {1, 1};
+	double Lb[] = {0, 0};
+	double Ub[] = {1, 1};
 
-// 	EXPECT_TRUE(meshgrid<double>(idata, nPoints * nPoints, nDim, Lb, Ub));
+	EXPECT_TRUE(meshgrid<double>(idata, nPoints * nPoints, nDim, Lb, Ub));
 
-// 	double *qdata = nullptr;
-// 	double *iFvalue = nullptr;
-// 	double *qFvalue = nullptr;
-// 	double *qFvalueExact = nullptr;
+	double *qdata = nullptr;
+	double *iFvalue = nullptr;
+	double *qFvalue = nullptr;
+	double *qFvalueExact = nullptr;
 
-// 	try
-// 	{
-// 		qdata = new double[nqpoints * nDim];
-// 		iFvalue = new double[nPoints * nPoints];
-// 		qFvalue = new double[nqpoints];
-// 		qFvalueExact = new double[nqpoints];
-// 	}
-// 	catch (std::bad_alloc &e)
-// 	{
-// 		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-// 		std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-// 	}
+	try
+	{
+		qdata = new double[nqpoints * nDim];
+		iFvalue = new double[nPoints * nPoints];
+		qFvalue = new double[nqpoints];
+		qFvalueExact = new double[nqpoints];
+	}
+	catch (std::bad_alloc &e)
+	{
+		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+		std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+	}
 
-// 	//create an instance of frank2d object
-// 	franke2d<double> f2d;
+	//create an instance of frank2d object
+	franke2d<double> f2d;
 
-// 	for (int i = 0, n = 0; i < nPoints * nPoints; i++)
-// 	{
-// 		iFvalue[i] = f2d.f(idata + n);
-// 		n += nDim;
-// 	}
+	for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+	{
+		iFvalue[i] = f2d.f(idata + n);
+		n += nDim;
+	}
 
-// 	{
-// 		// std::random_device rd;
-// 		std::mt19937 gen(1);
-// 		std::uniform_real_distribution<> dis(0.0, 1.0);
+	{
+		// std::random_device rd;
+		std::mt19937 gen(1);
+		std::uniform_real_distribution<> dis(0.0, 1.0);
 
-// 		for (int i = 0, l = 0; i < nqpoints; i++)
-// 		{
-// 			qdata[l] = dis(gen);
-// 			qdata[l + 1] = dis(gen);
-// 			l += 2;
-// 		}
+		for (int i = 0, l = 0; i < nqpoints; i++)
+		{
+			qdata[l] = dis(gen);
+			qdata[l + 1] = dis(gen);
+			l += 2;
+		}
 
-// 		for (int i = 0, n = 0; i < nqpoints; i++)
-// 		{
-// 			qFvalueExact[i] = f2d.f(qdata + n);
-// 			n += nDim;
-// 		}
-// 	}
+		for (int i = 0, n = 0; i < nqpoints; i++)
+		{
+			qFvalueExact[i] = f2d.f(qdata + n);
+			n += nDim;
+		}
+	}
 
-// 	//Create an instance of a DC-PSE object
-// 	dcpse<double> dc(nDim);
+	//Create an instance of a DC-PSE object
+	dcpse<double> dc(nDim);
 
-// 	//Compute the interpolator weights
-// 	EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints * nPoints, qdata, nqpoints));
+	//Compute the interpolator weights
+	EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints * nPoints, qdata, nqpoints));
 
-// 	//Compute the operator kernel for interpolation
-// 	EXPECT_TRUE(dc.interpolate(iFvalue, nPoints * nPoints, qFvalue, nqpoints));
+	//Compute the operator kernel for interpolation
+	EXPECT_TRUE(dc.interpolate(iFvalue, nPoints * nPoints, qFvalue, nqpoints));
 
-// 	// TEMapVectorX<double> A(qFvalueExact, nqpoints);
-// 	// TEMapVectorX<double> B(qFvalue, nqpoints);
+	// TEMapVectorX<double> A(qFvalueExact, nqpoints);
+	// TEMapVectorX<double> B(qFvalue, nqpoints);
 
-// 	// std::cout << "Relative error = " << (A-B).norm() << std::endl;
+	// std::cout << "Relative error = " << (A-B).norm() << std::endl;
 
-// 	// //Create an instance of io object
-// 	// io file;
+	// //Create an instance of io object
+	// io file;
 
-// 	// //!Open a file for reading and writing
-// 	// if (file.openFile("./dcpse/FRANK2D_EXACTRND", file.in | file.out | file.trunc))
-// 	// {
-// 	//     for (int i = 0, n = 0; i < nPoints * nPoints; i++)
-// 	//     {
-// 	//         //!Write the matrix in it
-// 	//         file.saveMatrix<double>(idata + n, 1, nDim, 2);
-// 	//         file.saveMatrix<double>(iFvalue + i, 1, 1);
-// 	//         n += nDim;
-// 	//     }
-// 	//     file.closeFile();
-// 	// }
+	// //!Open a file for reading and writing
+	// if (file.openFile("./dcpse/FRANK2D_EXACTRND", file.in | file.out | file.trunc))
+	// {
+	//     for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+	//     {
+	//         //!Write the matrix in it
+	//         file.saveMatrix<double>(idata + n, 1, nDim, 2);
+	//         file.saveMatrix<double>(iFvalue + i, 1, 1);
+	//         n += nDim;
+	//     }
+	//     file.closeFile();
+	// }
 
-// 	// //!Open a file for reading and writing
-// 	// if (file.openFile("./dcpse/FRANK2D_DCPSERND", file.in | file.out | file.trunc))
-// 	// {
-// 	//     for (int i = 0, n = 0; i < nqpoints; i++)
-// 	//     {
-// 	//         //!Write the matrix in it
-// 	//         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-// 	//         file.saveMatrix<double>(qFvalue + i, 1, 1);
-// 	//         n += nDim;
-// 	//     }
+	// //!Open a file for reading and writing
+	// if (file.openFile("./dcpse/FRANK2D_DCPSERND", file.in | file.out | file.trunc))
+	// {
+	//     for (int i = 0, n = 0; i < nqpoints; i++)
+	//     {
+	//         //!Write the matrix in it
+	//         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
+	//         file.saveMatrix<double>(qFvalue + i, 1, 1);
+	//         n += nDim;
+	//     }
 
-// 	//     file.closeFile();
-// 	// }
+	//     file.closeFile();
+	// }
 
-// 	// //!Open a file for reading and writing
-// 	// if (file.openFile("./dcpse/FRANK2D_DCPSE_EXACTRND", file.in | file.out | file.trunc))
-// 	// {
-// 	//     for (int i = 0, n = 0; i < nqpoints; i++)
-// 	//     {
-// 	//         //!Write the matrix in it
-// 	//         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-// 	//         file.saveMatrix<double>(qFvalueExact + i, 1, 1);
-// 	//         n += nDim;
-// 	//     }
+	// //!Open a file for reading and writing
+	// if (file.openFile("./dcpse/FRANK2D_DCPSE_EXACTRND", file.in | file.out | file.trunc))
+	// {
+	//     for (int i = 0, n = 0; i < nqpoints; i++)
+	//     {
+	//         //!Write the matrix in it
+	//         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
+	//         file.saveMatrix<double>(qFvalueExact + i, 1, 1);
+	//         n += nDim;
+	//     }
 
-// 	//     file.closeFile();
-// 	// }
+	//     file.closeFile();
+	// }
 
-// 	delete[] qFvalueExact;
-// 	delete[] qFvalue;
-// 	delete[] iFvalue;
-// 	delete[] qdata;
-// 	delete[] idata;
-// }
+	delete[] qFvalueExact;
+	delete[] qFvalue;
+	delete[] iFvalue;
+	delete[] qdata;
+	delete[] idata;
+}
 
 // /*! 
 //  * Test to check dcpse functionality for Rastrigin function
