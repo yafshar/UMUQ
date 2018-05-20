@@ -1479,15 +1479,18 @@ class dcpse
                 }
 
                 {
-                    Eigen::JacobiSVD<EMatrixX<T>> jsvd(AM);
+					//Thin U and V are all we need for (least squares) solving
+                    Eigen::JacobiSVD<EMatrixX<T>> jsvd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
                     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
                     SV = jsvd.solve(RHSB);
                 }
 
                 //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-                //Later I should check on SVD solution and to find out which columns are the
-                //Most important one, then I can correct the IndexId order
+                /*
+				 * Later I should check on SVD solution and to find out which columns are the
+                 * Most important one, then I can correct the IndexId order
+				 */
 
                 if (dcrank < dcmonomialSize - nENN)
                 {
