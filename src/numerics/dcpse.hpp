@@ -1622,34 +1622,34 @@ class dcpse
 					//Loop through the neighbors
 					for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
 					{
-				// 		//Get the right index
-				// 		int const l = IndexId[j];
+						//Get the right index
+						int const l = IndexId[j];
 
-				// 		//Id in the list
-				// 		std::ptrdiff_t Id;
-				// 		T expo;
+						//Id in the list
+						std::ptrdiff_t Id;
+						T expo;
 
-				// 		if (j >= dcrank)
-				// 		{
-				// 			//Id in the list
-				// 			Id = m * nDim;
-				// 			expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
-				// 			m++;
-				// 		}
-				// 		else
-				// 		{
-				// 			Id = l * nDim;
-				// 			expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
-				// 		}
+						if (j >= dcrank)
+						{
+							//Id in the list
+							Id = m * nDim;
+							expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+							m++;
+						}
+						else
+						{
+							Id = l * nDim;
+							expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+						}
 
-				// 		//Evaluates a monomial at a point \f$ {\mathbf x} \f$
-				// 		poly.monomial_value(L1Dist + Id, column);
+						//Evaluates a monomial at a point \f$ {\mathbf x} \f$
+						poly.monomial_value(L1Dist + Id, column);
 
-				// 		TEMapVectorX<T> columnV(column, dcmonomialSize);
+						TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-				// 		//Index inside the kernel
-				// 		std::ptrdiff_t const IdK = IdM + l;
-				// 		dckernel[IdK] += SV.dot(columnV) * expo;
+						//Index inside the kernel
+						std::ptrdiff_t const IdK = IdM + l;
+						dckernel[IdK] += SV.dot(columnV) * expo;
 					}
 
 					//Loop through the neighbors
