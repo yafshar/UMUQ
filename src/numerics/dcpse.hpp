@@ -1476,19 +1476,19 @@ class dcpse
                     AM = BMT * BMT.transpose();
                 }
 
-                {
-                    Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
-
-                    //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                    SV = svd.solve(RHSB);
-                }
-
-                // //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
-                // //Later I should check on SVD solution and to find out which columns are the
-                // //Most important one, then I can correct the IndexId order
-
-                // if (dcrank < dcmonomialSize - nENN)
                 // {
+                //     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
+
+                //     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                //     SV = svd.solve(RHSB);
+                // }
+
+                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                //Later I should check on SVD solution and to find out which columns are the
+                //Most important one, then I can correct the IndexId order
+
+                if (dcrank < dcmonomialSize - nENN)
+                {
                 //     //Loop through the neighbors
                 //     for (int j = 0; j < dcmonomialSize; j++)
                 //     {
@@ -1506,9 +1506,9 @@ class dcpse
                 //         std::ptrdiff_t const IdK = IdM + j;
                 //         dckernel[IdK] += SV.dot(columnV) * expo;
                 //     }
-                // }
-                // else
-                // {
+                }
+                else
+                {
                 //     //Loop through the neighbors
                 //     for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
                 //     {
@@ -1551,7 +1551,7 @@ class dcpse
                 //         //Correct the neighborhood order
                 //         KNN->IndexSwap(l, m);
                 //     }
-                // }
+                }
             }
             else
             {
