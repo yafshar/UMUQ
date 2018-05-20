@@ -37,6 +37,9 @@ install: make get-deps
   - . ./scripts/env-${TRAVIS_OS_NAME}.sh
   - ./scripts/log-config.sh
 
+# after_failure phase to dump the logs
+after_failure:
+  - cat ./tests/*.log
 
 # For sudo=false builds this section installs the necessary dependencies.
 addons:
