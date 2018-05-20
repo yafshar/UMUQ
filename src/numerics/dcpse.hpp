@@ -1602,19 +1602,19 @@ class dcpse
 					//Loop through the neighbors
 					for (int j = 0; j < dcmonomialSize; j++)
 					{
-					// 	//Id in the list
-					// 	std::ptrdiff_t const Id = j * nDim;
+						//Id in the list
+						std::ptrdiff_t const Id = j * nDim;
 
-					// 	//Evaluates a monomial at a point \f$ {\mathbf x} \f$
-					// 	poly.monomial_value(L1Dist + Id, column);
+						//Evaluates a monomial at a point \f$ {\mathbf x} \f$
+						poly.monomial_value(L1Dist + Id, column);
 
-					// 	TEMapVectorX<T> columnV(column, dcmonomialSize);
+						TEMapVectorX<T> columnV(column, dcmonomialSize);
 
-					// 	T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+						T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
 
-					// 	//Index inside the kernel
-					// 	std::ptrdiff_t const IdK = IdM + j;
-					// 	dckernel[IdK] += SV.dot(columnV) * expo;
+						//Index inside the kernel
+						std::ptrdiff_t const IdK = IdM + j;
+						dckernel[IdK] += SV.dot(columnV) * expo;
 					}
 				}
 				else
