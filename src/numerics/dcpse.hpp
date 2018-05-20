@@ -1481,8 +1481,8 @@ class dcpse
                 {
                     Eigen::JacobiSVD<EMatrixX<T>> jsvd(AM);
 
-                    // //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                    // SV = jsvd.solve(RHSB);
+                    //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                    SV = jsvd.solve(RHSB);
                 }
 
                 //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
