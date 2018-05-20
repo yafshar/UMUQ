@@ -1182,7 +1182,7 @@ class dcpse
         //Matrix A of a linear system for the kernel coefficients
         EMatrixX<T> AM(dcmonomialSize, dcmonomialSize);
 
-        //Matrix B
+        //Matrix B^T
         EMatrixX<T> BMT(dcmonomialSize, dcmonomialSize);
         EMatrixX<T> BMTimage(dcmonomialSize, nNN);
 
@@ -1195,6 +1195,7 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = nullptr;
 
+		//Array to kepp indexing
         int *IndexId = nullptr;
 
         try
@@ -1265,6 +1266,7 @@ class dcpse
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
             std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
 
+			//Use the correct RHS for each point
             RHSB = RHSB0;
 
             //Loop through the neighbors
@@ -1476,12 +1478,12 @@ class dcpse
                     AM = BMT * BMT.transpose();
                 }
 
-                // {
-                //     Eigen::JacobiSVD<EMatrixX<T>> svd(AM);
+                {
+                    Eigen::JacobiSVD<EMatrixX<T>> jsvd(AM);
 
-                //     //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
-                //     SV = svd.solve(RHSB);
-                // }
+                    // //SV contains the least-squares solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                    // SV = jsvd.solve(RHSB);
+                }
 
                 //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
                 //Later I should check on SVD solution and to find out which columns are the
