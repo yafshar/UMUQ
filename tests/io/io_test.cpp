@@ -35,7 +35,7 @@ TEST(openFile_test, HandlesFiles)
     f.closeFile();
     
     EXPECT_FALSE(f.isFileOpened());
-};
+}
 
 //! TEST how IO handles std::fstream
 TEST(openFilestream_test, HandlesFiles)
@@ -58,7 +58,7 @@ TEST(openFilestream_test, HandlesFiles)
     }
 
     std::remove(fileName);
-};
+}
 
 /*! 
  * Load and Save of an array with a matrix format
