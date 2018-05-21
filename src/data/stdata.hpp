@@ -281,7 +281,7 @@ class stdata
                 }
             }
         }
-    };
+    }
 
     /*!
     *  \brief read the input file fname
@@ -299,7 +299,7 @@ class stdata
     ~stdata()
     {
         destroy();
-    };
+    }
 
     /*!
     *  \brief destroy created memory 
@@ -809,7 +809,7 @@ bool stdata::read(const char *fname)
         return true;
     }
     return false;
-};
+}
 
 /*!
 *  \brief destroy the allocated memory 
