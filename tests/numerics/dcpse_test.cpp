@@ -122,7 +122,7 @@ bool meshgrid(T *&idata, int const *nDPoints, int const nDim, double *Lb, double
 
         //     d = idata + counter;
 
-        //     fillPagebyPage<T>(d, coords, nd2, dx[nd2], dx[nd1], nDPoints[nd2], nDPoints[nd1]);
+        //     fillPagebyPage<T>(d, coords, nd2, Lb[nd2], Lb[nd1], dx[nd2], dx[nd1], nDPoints[nd2], nDPoints[nd1]);
 
         //     counter += nDim * nDPoints[nd2] * nDPoints[nd1];
         // }

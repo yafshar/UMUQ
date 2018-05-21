@@ -23,7 +23,7 @@ TEST(parse_test, HandlesZeroInput)
     word = p.at<std::string>(0);
 
     EXPECT_EQ(word, "");
-};
+}
 
 /*! 
  * Tests parse class to make sure it can parse commands correctly
@@ -66,7 +66,7 @@ TEST(parse_test, HandlesInput)
     {
         EXPECT_EQ(word[i], p.at<std::string>(i));
     }
-};
+}
 
 /*! 
  * Tests parse class in translating the text file
@@ -102,7 +102,7 @@ TEST(parse_cmd, HandlesCmd)
 
     EXPECT_DOUBLE_EQ(p.at<double>(1), 1.0);
     EXPECT_DOUBLE_EQ(p.at<double>(2), 0.1);
-};
+}
 
 int main(int argc, char **argv)
 {

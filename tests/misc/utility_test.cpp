@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 // Tests
-TEST(execute_cmd_test, HandlesZeroInput){};
+TEST(execute_cmd_test, HandlesZeroInput){}
 
 int main(int argc, char **argv)
 {

@@ -764,7 +764,7 @@ class mvnormdist
 	EVectorX<T> operator()()
 	{
 		int const me = torc_i_worker_id();
-		return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T x) { return d(psrandom::NumberGenerator[me]); });
+		return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(psrandom::NumberGenerator[me]); });
 	}
 
 	/*!

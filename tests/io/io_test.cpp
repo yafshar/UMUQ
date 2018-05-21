@@ -9,7 +9,7 @@ TEST(isFileExist_test, HandlesFiles)
     io f;
     EXPECT_TRUE(f.isFileExist("test.txt"));
     EXPECT_FALSE(f.isFileExist("utility.txt"));
-};
+}
 
 //! TEST how IO handles files
 TEST(openFile_test, HandlesFiles)
