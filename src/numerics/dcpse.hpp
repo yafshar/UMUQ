@@ -1357,6 +1357,8 @@ class dcpse
 				 */
 				T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
 
+				std::cout << "j=" << j << "  s=" << s << "  &s=" << &s << "  nnDist[j]=" << nnDist[j] << "  IdJ=" << IdJ << "  idataminDist[IdJ]" << idataminDist[IdJ] << std::endl;
+
 				//Compute the kernel value at the point
 				T dckernelV = q.f(&s);
 
