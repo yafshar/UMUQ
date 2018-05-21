@@ -1332,6 +1332,13 @@ class dcpse
 			std::cout << "RHSB=" << std::endl;
 			std::cout << RHSB << std::endl;
 
+			std::cout << "i=" << i << " nNN" << nNN << " neighbors are:" << std::endl;
+			std::for_each(NearestNeighbors, NearestNeighbors + nNN, [](int const yy) { std::cout << yy  << std::endl; });
+			std::cout << "Distances=" << std::endl;
+			std::for_each(nnDist, nnDist + nNN, [](int const yy) { std::cout << yy << std::endl; });
+			std::cout << "idataminDist=" << std::endl;
+			std::for_each(NearestNeighbors, NearestNeighbors + nNN, [&](int const yy) { std::cout << idataminDist[yy] << std::endl; });
+
 			//Loop through the neighbors
 			for (int j = 0; j < dcmonomialSize; j++)
 			{
