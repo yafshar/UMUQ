@@ -1,14 +1,13 @@
 #ifndef UMUQ_KNEARESTNEIGHBORS_H
 #define UMUQ_KNEARESTNEIGHBORS_H
 
-#ifdef HAVE_FLANN
 /*!
  * FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces. 
  * It contains a collection of algorithms we found to work best for nearest neighbor search and a system 
  * for automatically choosing the best algorithm and optimum parameters depending on the dataset.
  */
 #include <flann/flann.hpp>
-#endif
+
 /*! \class kNearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
@@ -50,10 +49,8 @@ class kNearestNeighbor
                                                                             nn(nN + 1),
                                                                             indices_ptr(new int[ndataPoints * (nN + 1)]),
                                                                             dists_ptr(new T[ndataPoints * (nN + 1)]),
-#ifdef HAVE_FLANN
                                                                             indices(indices_ptr.get(), ndataPoints, (nN + 1)),
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
-#endif
                                                                             the_same(true)
     {
     }
@@ -72,10 +69,8 @@ class kNearestNeighbor
                                                                                                     nn(nN),
                                                                                                     indices_ptr(new int[nqueryPoints * nN]),
                                                                                                     dists_ptr(new T[nqueryPoints * nN]),
-#ifdef HAVE_FLANN
                                                                                                     indices(indices_ptr.get(), nqueryPoints, nN),
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
-#endif
                                                                                                     the_same(false)
     {
     }
@@ -90,10 +85,8 @@ class kNearestNeighbor
                                                                  nn(inputObj.nn),
                                                                  indices_ptr(std::move(inputObj.indices_ptr)),
                                                                  dists_ptr(std::move(inputObj.dists_ptr)),
-#ifdef HAVE_FLANN
                                                                  indices(std::move(inputObj.indices)),
                                                                  dists(std::move(inputObj.dists)),
-#endif
                                                                  the_same(inputObj.the_same)
     {
     }
@@ -108,10 +101,8 @@ class kNearestNeighbor
                                                                       nn(inputObj.nn),
                                                                       indices_ptr(new int[inputObj.qrows * inputObj.nn]),
                                                                       dists_ptr(new T[inputObj.qrows * inputObj.nn]),
-#ifdef HAVE_FLANN
                                                                       indices(indices_ptr.get(), inputObj.qrows, inputObj.nn),
                                                                       dists(dists_ptr.get(), inputObj.qrows, inputObj.nn),
-#endif
                                                                       the_same(inputObj.the_same)
     {
         {
@@ -139,10 +130,8 @@ class kNearestNeighbor
         the_same = std::move(inputObj.the_same);
         indices_ptr = std::move(inputObj.indices_ptr);
         dists_ptr = std::move(inputObj.dists_ptr);
-#ifdef HAVE_FLANN
         indices = std::move(inputObj.indices);
         dists = std::move(inputObj.dists);
-#endif
         return *this;
     }
 
@@ -159,7 +148,6 @@ class kNearestNeighbor
      */
     void buildIndex(T *idata)
     {
-#ifdef HAVE_FLANN
         flann::Matrix<T> dataset(idata, drows, cols);
 
         //Construct an randomized kd-tree index using 4 kd-trees
@@ -171,7 +159,6 @@ class kNearestNeighbor
         //Number of checks means: How many leafs to visit when searching
         //for neighbours (-1 for unlimited)
         index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
-#endif
     }
 
     /*!
@@ -182,7 +169,6 @@ class kNearestNeighbor
      */
     void buildIndex(T *idata, T *qdata)
     {
-#ifdef HAVE_FLANN
         flann::Matrix<T> dataset(idata, drows, cols);
 
         //Construct an randomized kd-tree index using 4 kd-trees
@@ -202,7 +188,6 @@ class kNearestNeighbor
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << "Input data & query data are the same!" << std::endl;
         }
-#endif
     }
 
     /*!
@@ -373,10 +358,8 @@ class kNearestNeighbor
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
     
-#ifdef HAVE_FLANN
     flann::Matrix<int> indices;
     flann::Matrix<T> dists;
-#endif
 
     //! Flag to check if the input data and qury data are the same
     bool the_same;
@@ -391,14 +374,9 @@ class kNearestNeighbor
  * \tparam T data type
  */
 template <typename T>
-#ifdef HAVE_FLANN
 class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
-#else
-class L2NearestNeighbor : public kNearestNeighbor<T, T>
-#endif
 {
   public:
-#ifdef HAVE_FLANN
     L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN)
     {
     }
@@ -418,18 +396,6 @@ class L2NearestNeighbor : public kNearestNeighbor<T, T>
         kNearestNeighbor<T, flann::L2<T>>::dists = std::move(inputObj.dists);
         return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(inputObj)));
     }
-#else
-    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nDim, nN)
-    {
-    }
-    L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, T>(ndataPoints, nqueryPoints, nDim, nN) {}
-    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, T>(std::move(inputObj)) {}
-    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, T>(inputObj) {}
-    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj)
-    {
-        return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, T>::operator=(std::move(inputObj)));
-    }
-#endif
 };
 
 #endif //UMUQ_FLANNLIB_H
