@@ -29,10 +29,11 @@ class TORCEnvironment : public ::testing::Environment
 };
 
 funcallcounter f;
+
 void taskf()
 {
     f.increment();
-};
+}
 
 /*! 
  * Test to check random functionality
