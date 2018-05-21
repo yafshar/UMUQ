@@ -1329,6 +1329,8 @@ class dcpse
 
 			//Use the correct RHS for each point
 			RHSB = RHSB0;
+			std::cout << "RHSB=" << std::endl;
+			std::cout << RHSB << std::endl;
 
 			//Loop through the neighbors
 			for (int j = 0; j < dcmonomialSize; j++)
@@ -1369,6 +1371,12 @@ class dcpse
 				 * 
 				 */
 				RHSB -= dckernelV * columnV;
+
+				std::cout << "columnV=" << std::endl;
+				std::cout << columnV << std::endl;
+
+				std::cout << "dckernelV=" << dckernelV << "RHSB=" << std::endl;
+				std::cout << RHSB << std::endl;
 
 				//Index inside the kernel
 				std::ptrdiff_t const IdK = IdM + j;
@@ -1451,6 +1459,12 @@ class dcpse
 							 * \f]
 							 */
 							RHSB -= dckernelV * columnV;
+
+							std::cout << "dcrank < dcmonomialSize - nENN  ----      >   columnV=" << std::endl;
+							std::cout << columnV << std::endl;
+
+							std::cout << "dckernelV=" << dckernelV << "RHSB=" << std::endl;
+							std::cout << RHSB << std::endl;
 						}
 
 						for (int j = dcmonomialSize; j < nNN; j++)
@@ -1541,11 +1555,23 @@ class dcpse
 						 */
 						RHSB -= dckernelV * columnV;
 
+						std::cout << "dcrank < dcmonomialSize  &&&&   columnV=" << std::endl;
+						std::cout << columnV << std::endl;
+
+						std::cout << "dckernelV=" << dckernelV << "RHSB=" << std::endl;
+						std::cout << RHSB << std::endl;
+
 						//Neighbor point number of point l which causes singularity
 						int const IdJL = NearestNeighbors[l];
 						s = nnDist[l] / (0.9 * idataminDist[IdJL]);
 						dckernelV = q.f(&s);
 						RHSB += dckernelV * columnL;
+
+						std::cout << "2nd 2nd 2nd 2nd 2nd   columnL=" << std::endl;
+						std::cout << columnL << std::endl;
+
+						std::cout << "dckernelV=" << dckernelV << "RHSB=" << std::endl;
+						std::cout << RHSB << std::endl;
 					}
 
 					for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
@@ -1589,7 +1615,6 @@ class dcpse
 				std::cout << RHSB << std::endl;
 				std::cout << "SV=" << std::endl;
 				std::cout << SV << std::endl;
-
 
 				//TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
 				/*
