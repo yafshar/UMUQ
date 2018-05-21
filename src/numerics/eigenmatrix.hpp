@@ -1,9 +1,5 @@
-#ifndef UMHBM_EIGENMATRIX_H
-#define UMHBM_EIGENMATRIX_H
-
-#include <iostream>
-#include <fstream>
-#include <string>
+#ifndef UMUQ_EIGENMATRIX_H
+#define UMUQ_EIGENMATRIX_H
 
 #include <Eigen/Dense>
 
@@ -116,27 +112,63 @@ typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
 typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
 typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
 
+template <typename T>
+using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+
+template <typename T>
+using ERowVectorX = Eigen::Matrix<T, 1, Eigen::Dynamic>;
+
+template <typename T>
+using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+
+/*!
+ * \brief Stores a set of parameters controlling the way matrices are printed
+ * 
+ * - precision \c FullPrecision.
+ * - coeffSeparator string printed between two coefficients of the same row
+ * - rowSeparator string printed between two rows
+ */
+Eigen::IOFormat fmt(Eigen::FullPrecision);
+
+/*!
+ * \brief New type is used to map the existing C++ memory buffer to an Eigen Vector object
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer 
+ */
+template <typename TdataPtr>
+using TEMapVectorX = Eigen::Map<EVectorX<TdataPtr>>;
+
+/*!
+ * \brief New type is used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
+ * 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam TdataPtr typedef of the data pointer 
+ */
+template <typename TdataPtr>
+using TEMapRowVectorX = Eigen::Map<ERowVectorX<TdataPtr>>;
+
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer    
- * 
+ * \tparam TdataPtr typedef of the data pointer
  */
-template <typename TdataPtr>
-using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+template <typename TdataPtr, int _Options = Eigen::RowMajor>
+using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
 
 /*!
  * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
  * 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer    
- * 
+ * \tparam TdataPtr typedef of the data pointer
  */
-template <typename TdataPtr>
-using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+template <typename TdataPtr, int _Options = Eigen::RowMajor>
+using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
 
 /*!
  * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
@@ -169,17 +201,17 @@ using CTEMapXd = Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::D
  * 
  */
 template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr *dataPtr, size_t nRows, size_t nCols)
+TEMX EMapX(TdataPtr *dataPtr, std::size_t nRows, std::size_t nCols)
 {
     return Eigen::Map<const TEMX>(dataPtr, nRows, nCols);
 }
 
 template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr **dataPtr, size_t nRows, size_t nCols)
+TEMX EMapX(TdataPtr **dataPtr, std::size_t nRows, std::size_t nCols)
 {
     TEMX MTemp(nRows, nCols);
 
-    for (size_t i = 0; i < nRows; i++)
+    for (std::size_t i = 0; i < nRows; i++)
     {
         MTemp.row(i) = Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], nCols);
     }
@@ -207,7 +239,7 @@ void EMapX(const TEMX EMX, TdataPtr *dataPtr)
 template <typename TEMX, typename TdataPtr>
 void EMapX(const TEMX EMX, TdataPtr **dataPtr)
 {
-    for (size_t i = 0; i < EMX.rows(); i++)
+    for (std::ptrdiff_t i = 0; i < EMX.rows(); i++)
     {
         Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
     }
@@ -223,16 +255,16 @@ void EMapX(const TEMX EMX, TdataPtr **dataPtr)
  * \param  nCols    Number of Columns
  * \param  EMapXd   Eigen Matrix representation of data
  */
-EMatrixXd EMapXd(double *dataPtr, size_t nRows, size_t nCols)
+EMatrixXd EMapXd(double *dataPtr, std::size_t nRows, std::size_t nCols)
 {
     return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
 }
 
-EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
+EMatrixXd EMapXd(double **dataPtr, std::size_t nRows, std::size_t nCols)
 {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
 
-    for (size_t i = 0; i < nRows; i++)
+    for (std::size_t i = 0; i < nRows; i++)
     {
         MTemp.row(i) = EVectorXd::Map(&dataPtr[i][0], nCols);
     }
@@ -248,126 +280,20 @@ EMatrixXd EMapXd(double **dataPtr, size_t nRows, size_t nCols)
  * \param  EMXd    Input Eigen’s matrix of type double
  * \param  dataPtr Pointer to the memory buffer of type double
  */
-void EMapXd(const EMatrixXd EMXd, double *dataPtr)
+
+void EMapXd(EMatrixXd const EMXd, double *dataPtr);
+void EMapXd(EMatrixXd const EMXd, double *dataPtr)
 {
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMXd.rows(), EMXd.cols()) = EMXd;
 }
 
-void EMapXd(const EMatrixXd EMXd, double **dataPtr)
+void EMapXd(EMatrixXd const EMXd, double **dataPtr);
+void EMapXd(EMatrixXd const EMXd, double **dataPtr)
 {
-    for (size_t i = 0; i < EMXd.rows(); i++)
+    for (std::ptrdiff_t i = 0; i < EMXd.rows(); i++)
     {
         EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
     }
-}
-
-/*!
- * \brief Helper function to print the matrix
- * 
- * \tparam  Tidata type of data
- * 
- * \param   title  string that should be written at the top 
- * \param   idata  array of input data of type Tidata
- * \param   nRows  number of rows
- * \param   nCols  number of columns
- */
-template <typename Tidata>
-void printMatrix(const char *title, Tidata **idata, size_t nRows, size_t nCols)
-{
-    std::string sep = "\n----------------------------------------\n";
-    std::cout << sep;
-    std::cout << title << "\n\n";
-    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
-}
-
-template <typename Tidata>
-void printMatrix(Tidata **idata, size_t nRows, size_t nCols)
-{
-    std::string sep = "\n----------------------------------------\n";
-    std::cout << sep;
-    std::cout << EMapX<typename Eigen::Matrix<Tidata, Eigen::Dynamic, Eigen::Dynamic>, Tidata>(idata, nRows, nCols) << sep;
-}
-
-template <typename Tidata>
-void printMatrix(const char *title, Tidata *idata, size_t nRows, size_t nCols)
-{
-    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
-
-    std::string sep = "\n----------------------------------------\n";
-    std::cout << sep;
-    std::cout << title << "\n\n";
-    std::cout << TiMatrix << sep;
-}
-
-template <typename Tidata>
-void printMatrix(Tidata *idata, size_t nRows, size_t nCols)
-{
-    TEMapX<Tidata> TiMatrix(idata, nRows, nCols);
-
-    std::string sep = "\n----------------------------------------\n";
-    std::cout << sep;
-    std::cout << TiMatrix << sep;
-}
-
-/*!
- * \brief Helper function to load the matrix of type TEMX from a file 
- * 
- * \tparam  TEMX   typedef for Eigen matrix 
- * \param   EMX    Eigen matrix
- */
-template <typename TEMX>
-inline bool loadMatrix(std::fstream &fs, TEMX &EMX)
-{
-    std::string line;
-
-    for (size_t i = 0; i < EMX.rows(); i++)
-    {
-        if (getline(fs, line))
-        {
-            std::stringstream input_line(line);
-
-            size_t j = 0;
-            while (!input_line.eof())
-            {
-                input_line >> EMX(i, j);
-                j++;
-            }
-            if (j != EMX.cols())
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-/*!
- * \brief Helper function to save the matrix of type TEMX into a file 
- * 
- * \tparam  TEMX   typedef for Eigen matrix 
- * \param   EMX    Eigen matrix
- */
-template <typename TEMX>
-inline bool saveMatrix(std::fstream &fs, TEMX EMX)
-{
-    if (!fs.is_open())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "This file stream is not open for writing." << std::endl;
-        return false;
-    }
-
-    Eigen::IOFormat fmt(Eigen::FullPrecision);
-
-    fs << std::fixed;
-    fs << EMX.format(fmt);
-    fs << '\n';
-
-    return true;
 }
 
 #endif

@@ -1,10 +1,11 @@
-#include "data_type/TMCMC_datatype.hpp"
+#include "core/core.hpp"
+#include "data/stdata.hpp"
 #include "gtest/gtest.h"
 
 //! Tests parse
-TEST(datatype, HandlesConstruction)
+TEST(streamdatatype, HandlesConstruction)
 {
-    data_t *d1 = new data_t;
+    stdata *d1 = new stdata;
 
     EXPECT_EQ(0, d1->Nth);
     EXPECT_EQ(0, d1->MaxStages);
@@ -34,7 +35,7 @@ TEST(datatype, HandlesConstruction)
 
     delete d1;
 
-    data_t d2(4, 20, 1024);
+    stdata d2(4, 20, 1024);
 
     EXPECT_EQ(4, d2.Nth);
     EXPECT_EQ(20, d2.MaxStages);
@@ -65,14 +66,14 @@ TEST(datatype, HandlesConstruction)
     d2.destroy();
 
     EXPECT_EQ(NULL, d2.lowerbound);
-};
+}
 
 //! Tests read input file
-TEST(datatype, HandlesIO)
+TEST(streamdatatype, HandlesIO)
 {
-    data_t d1;
-
+    stdata d1;
     EXPECT_TRUE(d1.read("test.txt"));
+
     EXPECT_EQ(4, d1.Nth);
     EXPECT_EQ(20, d1.MaxStages);
     EXPECT_EQ(5000, d1.PopSize);
@@ -103,6 +104,7 @@ TEST(datatype, HandlesIO)
     EXPECT_DOUBLE_EQ(3.0, d1.lowerbound[1]);
     EXPECT_DOUBLE_EQ(6.01, d1.lowerbound[2]);
     EXPECT_DOUBLE_EQ(0.0001, d1.lowerbound[3]);
+
     EXPECT_DOUBLE_EQ(10.0, d1.upperbound[0]);
     EXPECT_DOUBLE_EQ(4.0, d1.upperbound[1]);
     EXPECT_DOUBLE_EQ(15.0, d1.upperbound[2]);

@@ -1,25 +1,30 @@
-#include <iostream>
-#include <stdlib.h>
-#include <cmath>
-#include <iomanip>
-
-#include "./numerics/polynomial.hpp"
-#include "./numerics/eigenmatrix.hpp"
-#include "./numerics/flannlib.hpp"
-#include "./misc/timer.hpp"
-#include "./misc/utility.hpp"
-#include <lapacke.h>
+#include "core/core.hpp"
+#include "numerics/polynomial.hpp"
+#include "numerics/eigenmatrix.hpp"
+#include "numerics/knearestneighbors.hpp"
+#include "misc/timer.hpp"
+#include "misc/utility.hpp"
 #include <random>
+
+#include "data/stdata.hpp"
+#include "data/current.hpp"
+#include "data/datatype.hpp"
+
 int main()
 {
 
+    cgdb_t cgb;
+
     int d = 2;
     int r = 2;
-    int *alpha = NULL;
-    polynomial p;
+
+    int *alpha;
+
+    polynomial<double> p(d, r);
+
     UMTimer t;
 
-    p.monomial_basis(d, r, alpha);
+    alpha = p.monomial_basis();
     t.toc("monomial_basis");
 
     std::cout << " d =  " << d << std::endl;
@@ -44,14 +49,13 @@ int main()
 
     t.toc("binomial_coefficient");
 
-    double *value = NULL;
-    double *x = NULL;
-
-    x = new double[d];
+    double *value = nullptr;
+    double *x = nullptr;
 
     EMatrixXd A;
     A.resize(n, n);
 
+    x = new double[d];
     value = new double[n];
 
     for (i = 0; i < n; i++)
@@ -83,18 +87,23 @@ int main()
             x[1] = -.70710678118654752440;
         }
 
-        p.monomial_value(d, r, alpha, x, value);
-
-        for (int j = 0; j < n; j++)
+        if (p.monomial_value(x, value))
         {
-            A(i, j) = value[j];
+
+            for (int j = 0; j < n; j++)
+            {
+                A(i, j) = value[j];
+            }
+        }
+        else
+        {
+            std::exit(1);
         }
     }
 
-    delete[] alpha;
     delete[] value;
     delete[] x;
-   // // note, to understand this part take a look in the MAN pages, at section of parameters.
+    // // note, to understand this part take a look in the MAN pages, at section of parameters.
     // char TRANS = 'N';
     // int INFO = 3;
     // int LDA = 3;

@@ -1,5 +1,5 @@
-#ifndef UMHBM_META_H
-#define UMHBM_META_H
+#ifndef UMUQ_META_H
+#define UMUQ_META_H
 
 template <bool Condition, typename Then, typename Else>
 struct conditional
@@ -24,150 +24,6 @@ struct is_same
 
 template <typename T>
 struct is_same<T, T>
-{
-    enum
-    {
-        value = 1
-    };
-};
-
-template <typename T>
-struct is_arithmetic
-{
-    enum
-    {
-        value = false
-    };
-};
-
-template <>
-struct is_arithmetic<float>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<double>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<long double>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<bool>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<char>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<signed char>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<unsigned char>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<signed short>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<unsigned short>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<signed int>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<unsigned int>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<signed long>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <>
-struct is_arithmetic<unsigned long>
-{
-    enum
-    {
-        value = true
-    };
-};
-
-template <typename T>
-struct is_const
-{
-    enum
-    {
-        value = 0
-    };
-};
-
-template <typename T>
-struct is_const<T const>
 {
     enum
     {
@@ -232,4 +88,4 @@ struct meta_least_common_multiple<A, B, K, true>
     };
 };
 
-#endif //
+#endif 

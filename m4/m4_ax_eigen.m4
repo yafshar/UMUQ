@@ -10,7 +10,7 @@
 #	If no path to the installed eigen library is given the macro uses
 #	external folder and look for header files.
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
@@ -40,72 +40,95 @@ AC_DEFUN([AX_EIGEN], [
 		], [
 			ax_eigen_ok="no"
 		]
-	) 
-        
-	AS_IF([test x"$ax_eigen_ok" = xno], [  
-	AC_MSG_NOTICE(EIGEN)
-                
-	succeeded=no
-                
-	eigen_CPPFLAGS=
-	eigen_PATH=
-
-	if test x"$ac_eigen_path" != x; then
-		for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
-			if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
-				if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense" ; then
-					eigen_CPPFLAGS="-I$ac_eigen_path_tmp"
-					break;
-				fi
-			fi
-		done
-	else
-		for ac_eigen_path_tmp in external ; do
-			if !( test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen") ; then
-				git submodule update --init external/eigen
-			fi
-			if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
-				eigen_PATH=`pwd`
-				eigen_PATH+='/'"$ac_eigen_path_tmp"'/eigen'
-				if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then                 
-					eigen_CPPFLAGS="-I$eigen_PATH"
-					break;
-				fi
-			fi
-		done
-	fi
-
-	CPPFLAGS_SAVED="$CPPFLAGS"
-	CPPFLAGS+=" $eigen_CPPFLAGS"
-
-	AC_LANG_PUSH([C++])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ 
-			@%:@include <Eigen/Dense>
-		]], [[]]
-		)], [
-			AC_MSG_RESULT(checking Eigen/Dense usability...  yes)
-			AC_MSG_RESULT(checking Eigen/Dense presence... yes)
-			AC_MSG_RESULT(checking for Eigen/Dense... yes)
-			succeeded=yes
-		], [
-			AC_MSG_RESULT(checking Eigen/Dense usability...  no)
-			AC_MSG_RESULT(checking Eigen/Dense presence... no)
-			AC_MSG_RESULT(checking for Eigen/Dense... no)
-			AC_MSG_ERROR([ Unable to continue without the EIGEN header files !])
-		]
 	)
-	AC_LANG_POP([C++])
 
-	if test x"$succeeded" == xyes ; then
-		AC_SUBST(CPPFLAGS)
-		ax_eigen_ok="yes"
-		AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
-		:
-	else
-		ax_eigen_ok="no"
-		CPPFLAGS="$CPPFLAGS_SAVED"
-		:
-	fi
+	AS_IF([test x"$ax_eigen_ok" = xyes], [
+		AC_LANG_PUSH([C++])
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+				@%:@include <cstdlib>
+				@%:@include <Eigen/Dense>
+#if EIGEN_VERSION_AT_LEAST(3,3,2)
+#else
+				std::abort();
+#endif
+			]], [[]]
+			)], [], [
+				ax_eigen_ok="no"
+			]
+		)
+		AC_LANG_POP([C++])
+	])
+
+	AS_IF([test x"$ax_eigen_ok" = xno], [
+		AC_MSG_NOTICE(EIGEN)
+
+		succeeded=no
+
+		eigen_CPPFLAGS=
+		eigen_PATH=
+
+		if test x"$ac_eigen_path" != x; then
+			for ac_eigen_path_tmp in $ac_eigen_path $ac_eigen_path/include $ac_eigen_path/include/eigen3 ; do
+				if test -d "$ac_eigen_path_tmp/Eigen" && test -r "$ac_eigen_path_tmp/Eigen" ; then
+					if test -f "$ac_eigen_path_tmp/Eigen/Dense"  && test -r "$ac_eigen_path_tmp/Eigen/Dense" ; then
+						eigen_CPPFLAGS="-I$ac_eigen_path_tmp"
+						break;
+					fi
+				fi
+			done
+		else
+			for ac_eigen_path_tmp in external ; do
+				if !( test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen") ; then
+					git submodule update --init external/eigen
+				fi
+				if test -d "$ac_eigen_path_tmp/eigen/Eigen" && test -r "$ac_eigen_path_tmp/eigen/Eigen" ; then
+					eigen_PATH=`pwd`
+					eigen_PATH+='/'"$ac_eigen_path_tmp"'/eigen'
+					if test -f "$eigen_PATH/Eigen/Dense"  && test -r "$eigen_PATH/Eigen/Dense"; then
+						eigen_CPPFLAGS="-I$eigen_PATH"
+						break;
+					fi
+				fi
+			done
+		fi
+
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		CPPFLAGS+=" $eigen_CPPFLAGS"
+
+		AC_LANG_PUSH([C++])
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+				@%:@include <cstdlib>
+				@%:@include <Eigen/Dense>
+#if EIGEN_VERSION_AT_LEAST(3,3,2)
+#else
+				std::abort();
+#endif
+			]], [[]]
+			)], [
+				AC_MSG_RESULT(checking Eigen/Dense usability...  yes)
+				AC_MSG_RESULT(checking Eigen/Dense presence... yes)
+				AC_MSG_RESULT(checking for Eigen/Dense... yes)
+				succeeded=yes
+			], [
+				AC_MSG_RESULT(checking Eigen/Dense usability...  no)
+				AC_MSG_RESULT(checking Eigen/Dense presence... no)
+				AC_MSG_RESULT(checking for Eigen/Dense... no)
+				AC_MSG_RESULT(At least you need to use Eigen 3.3.2)
+				AC_MSG_ERROR([ Unable to continue without the EIGEN header files !])
+			]
+		)
+		AC_LANG_POP([C++])
+
+		if test x"$succeeded" == xyes ; then
+			AC_SUBST(CPPFLAGS)
+			ax_eigen_ok="yes"
+			AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
+			:
+		else
+			ax_eigen_ok="no"
+			CPPFLAGS="$CPPFLAGS_SAVED"
+			:
+		fi
 	])
 
 	AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])

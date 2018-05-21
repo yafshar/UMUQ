@@ -14,23 +14,24 @@
 #
 #	To link with BLAS, you should link with:
 #
-#	$BLAS_LIBS $LIBS $FLIBS
+#	$BLAS_LIBS $LIBS $FCLIBS
 #
-#	in that order. FLIBS is the output variable of the
-#	AC_F77_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
-#	sometimes necessary in order to link with F77 libraries. Users will also
-#	need to use AC_F77_DUMMY_MAIN (see the autoconf manual), for the same
+#	in that order. FCLIBS is the output variable of the
+#	AC_FC_LIBRARY_LDFLAGS macro (called if necessary by AX_BLAS), and is
+#	sometimes necessary in order to link with FC libraries. Users will also
+#	need to use AC_FC_DUMMY_MAIN (see the autoconf manual), for the same
 #	reason.
 #
 #	Many libraries are searched for, from ATLAS to CXML to ESSL. The user
-#	may also use --with-blas=<lib> in order to use some specific BLAS
+#	may also use --with-blaslib=<lib> in order to use some specific BLAS
 #	library <lib>. In order to link successfully, however, be aware that you
 #	will probably need to use the same Fortran compiler (which can be set
-#	via the F77 env. var.) as was used to compile the BLAS library.
+#	via the FC env. var.) as was used to compile the BLAS library.
 #
 #	ACTION-IF-FOUND is a list of shell commands to run if a BLAS library is
-#	found, and ACTION-IF-NOT-FOUND is a list of commands to run it if it is
-#	not found. If ACTION-IF-FOUND is not specified, the default action will
+#	found, and ACTION-IF-NOT-FOUND it stops with an Error message of
+#	not found (Unable to continue without the BLAS library !)
+#	If ACTION-IF-FOUND is not specified, the default action will
 #	define HAVE_BLAS.
 #
 # LICENSE
@@ -74,143 +75,101 @@ AC_DEFUN([AX_BLAS], [
 	AC_ARG_WITH([blas], 
 		AS_HELP_STRING([--with-blas@<:@=DIR@:>@], 
 			[use BLAS library (default is yes) - it is possible to specify the directory for BLAS library (optional)]
-		), [ 
+		), [
 			if test x"$withval" = xno ; then
 				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
-				ac_blas_path=no
 			elif test x"$withval" = xyes ; then
 				ac_blas_path=
+				BLAS_LDFLAGS=
 			elif test x"$withval" != x ; then
 				ac_blas_path="$withval"
+				BLAS_LDFLAGS=
+
+				# if the user provides the DIR root directory for BLAS, we check that first
+				for ac_blas_path_tmp in $ac_blas_path ; do
+					if test -d "$ac_blas_path_tmp/lib" && test -r "$ac_blas_path_tmp/lib" ; then
+						BLAS_LDFLAGS=" -L$ac_blas_path_tmp/lib"
+						break;
+					fi
+					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
+						BLAS_LDFLAGS=" -L$ac_blas_path_tmp"
+						break;
+					fi
+				done 
 			else
 				ac_blas_path=
+				BLAS_LDFLAGS=
 			fi
 		], [
 			ac_blas_path=
+			BLAS_LDFLAGS=
 		]
 	)
 	
 	AC_ARG_WITH([blaslib],
-		AS_HELP_STRING([--with-blaslib@<:@=lib@:>@], [use BLAS library (default is yes)])
+		AS_HELP_STRING([--with-blaslib@<:@=lib@:>@], [use BLAS library (default is yes)]),
+		[
+			if test x"$withval" = xno ; then
+				AC_MSG_ERROR([ Unable to continue without the BLAS library !])
+			elif test x"$withval" = xyes ; then
+				break;
+			elif test x"$withval" != x ; then
+				break;
+			else
+				with_blaslib=yes
+			fi
+		], [
+			 with_blaslib=yes
+		]
 	)
+
+	case $with_blaslib in
+	yes) ;;
+	-* | */* | *.a | *.so | *.so.* | *.o) BLAS_LIBS="$with_blaslib" ;;
+	*) BLAS_LIBS="-l$with_blaslib" ;;
+	esac
 
 	LDFLAGS_SAVED="$LDFLAGS"
 
-	blas_LDFLAGS=
-
-	case $with_blaslib in
-	yes | "")
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-					fi
-				done
-			]
-		)
-		;;
-	no) 
-		ac_blas_path=no 
-		;;
-	-* | */* | *.a | *.so | *.so.* | *.o) 
-		BLAS_LIBS="$with_blaslib"
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-					fi
-				done
-			]
-		)
-		;;
-	*) 
-		BLAS_LIBS="-l$with_blaslib" 
-		AS_IF([test x"$ac_blas_path" = x], [], 
-			[
-				for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-					if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-						if test -f "$ac_blas_path_tmp/$with_blaslib.a" && test -r "$ac_blas_path_tmp/$with_blaslib.a"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib.so" && test -r "$ac_blas_path_tmp/$with_blaslib.so"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib.o" && test -r "$ac_blas_path_tmp/$with_blaslib.o"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-						if test -f "$ac_blas_path_tmp/$with_blaslib" && test -r "$ac_blas_path_tmp/$with_blaslib"; then 
-							blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							break;
-						fi
-					fi
-				done
-				AS_IF([test x"$blas_LDFLAGS" = x], 
-					[
-						for ac_blas_path_tmp in $ac_blas_path $ac_blas_path/lib ; do
-							if test -d "$ac_blas_path_tmp" && test -r "$ac_blas_path_tmp" ; then
-								blas_LDFLAGS+=" -L$ac_blas_path_tmp"
-							fi
-						done
-					]
-				)
-			]
-		)
-		;;
-	esac
-
 	ax_blas_ok=no
 
-	dnl if the user does not provide the DIR root directory for BLAS, we search the default PATH
-	AS_IF([test x"$ac_blas_path" = no], [], [ 
+	# if the user does not provide the DIR root directory for BLAS, we search the default PATH
+	AS_IF([test x"$ac_blas_path" != xno], [ 
 		AC_MSG_NOTICE(BLAS)
-		
-		AC_PREREQ(2.50)
-		AC_REQUIRE([AC_F77_LIBRARY_LDFLAGS])
+
+		AC_REQUIRE([AC_FC_LIBRARY_LDFLAGS])
 		AC_REQUIRE([AC_CANONICAL_HOST])
 
 		# Get fortran linker names of BLAS functions to check for.
-		AC_F77_FUNC(sgemm)
-		AC_F77_FUNC(dgemm)
-		
-		ax_blas_save_LIBS="$LIBS"
-		LIBS="$LIBS $FLIBS"
+		AC_FC_FUNC(sgemm)
+		AC_FC_FUNC(dgemm)
 
-		AS_IF([test x"$ac_blas_path" = x], [], [
-				LDFLAGS+=" $blas_LDFLAGS"
-				LDFLAGS+=" $BLAS_LIBS"
-				
-				save_LIBS="$LIBS"; 
-				LIBS="$BLAS_LIBS $LIBS"
-				
-				AC_MSG_CHECKING([for $sgemm])
-				AC_TRY_LINK_FUNC($sgemm, [
-						ax_blas_ok=yes
-						AC_SUBST(LDFLAGS)
-						AC_SUBST(LIBS)
-					], [
-						LDFLAGS="$LDFLAGS_SAVED"
-						LIBS="$save_LIBS"
-					]
-				)
-				AC_MSG_RESULT($ax_blas_ok)			
-			]
-		)
-		
-		# First, check BLAS_LIBS environment variable
+		ax_blas_save_LIBS="$LIBS"
+		LIBS="$LIBS $FCLIBS"
+
+		# First check BLAS_PATH & BLAS_LIBS environment variables
+		AS_IF([test x"$ac_blas_path" != x], [
+			LDFLAGS+="$BLAS_LDFLAGS $BLAS_LIBS $LIBS"
+
+			save_LIBS="$LIBS"; 
+			LIBS="$BLAS_LIBS $LIBS"
+
+			AC_MSG_CHECKING([for $sgemm])
+			AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
+			AC_MSG_RESULT($ax_blas_ok)
+
+			LIBS="$save_LIBS"
+			LDFLAGS="$LDFLAGS_SAVED"
+		])
+
+		# Check BLAS_LIBS 
 		if test x"$ax_blas_ok" = xno; then
 			if test x"$BLAS_LIBS" != x; then
 				save_LIBS="$LIBS"; 
 				LIBS="$BLAS_LIBS $LIBS"
-				
+
 				AC_MSG_CHECKING([for $sgemm in $BLAS_LIBS])
-				AC_TRY_LINK_FUNC($sgemm, 
-					[ax_blas_ok=yes], [BLAS_LIBS=""]
-				)
+				AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes], [BLAS_LIBS=])
 				AC_MSG_RESULT($ax_blas_ok)
 
 				LIBS="$save_LIBS"
@@ -221,13 +180,11 @@ AC_DEFUN([AX_BLAS], [
 		if test x"$ax_blas_ok" = xno; then
 			save_LIBS="$LIBS"; 
 			LIBS="$LIBS"
-	
+
 			AC_MSG_CHECKING([if $sgemm is being linked in already])
-			AC_TRY_LINK_FUNC($sgemm, 
-				[ax_blas_ok=yes]
-			)
+			AC_TRY_LINK_FUNC($sgemm, [ax_blas_ok=yes])
 			AC_MSG_RESULT($ax_blas_ok)
-		
+
 			LIBS="$save_LIBS"
 		fi
 
@@ -352,7 +309,7 @@ AC_DEFUN([AX_BLAS], [
 		if test x"$ax_blas_ok" = xno; then
 			save_LIBS="$LIBS" 
 			LIBS="-framework vecLib $LIBS"
-	
+
 			AC_MSG_CHECKING([for $sgemm in -framework vecLib])
 			AC_TRY_LINK_FUNC($sgemm, 
 				[
@@ -361,7 +318,7 @@ AC_DEFUN([AX_BLAS], [
 				]
 			)
 			AC_MSG_RESULT($ax_blas_ok)
-	
+
 			LIBS="$save_LIBS"
 		fi
 
@@ -394,7 +351,7 @@ AC_DEFUN([AX_BLAS], [
 						AC_CHECK_LIB(sunperf, $sgemm,
 							[
 								BLAS_LIBS='-xlic_lib=sunperf -lsunmath'
-            				ax_blas_ok=yes
+								ax_blas_ok=yes
 							], [], [
 								-lsunmath
 							]
@@ -417,9 +374,9 @@ AC_DEFUN([AX_BLAS], [
 		# BLAS in SGIMATH library?
 		if test x"$ax_blas_ok" = xno; then
 			AC_CHECK_LIB(complib.sgimath, $sgemm,
-	     		[
+				[
 					ax_blas_ok=yes
-		 			BLAS_LIBS='-lcomplib.sgimath'
+					BLAS_LIBS='-lcomplib.sgimath'
 				]
 			)
 		fi
@@ -433,7 +390,7 @@ AC_DEFUN([AX_BLAS], [
 							ax_blas_ok=yes
 							BLAS_LIBS='-lessl -lblas'
 						], [], [
-							-lblas $FLIBS
+							-lblas $FCLIBS
 						]
 					)
 				]
@@ -451,16 +408,17 @@ AC_DEFUN([AX_BLAS], [
 		fi
 
 		AC_SUBST(BLAS_LIBS)
+		AC_SUBST(BLAS_LDFLAGS)
 
 		LIBS="$ax_blas_save_LIBS"
 	])
 
 	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 	if test x"$ax_blas_ok" = xyes; then
-        AC_DEFINE(HAVE_BLAS, 1, [Define if you have a BLAS library.])
-        :
+		AC_DEFINE(HAVE_BLAS, 1, [Define if you have a BLAS library.])
+		:
 	fi
 
 	AS_IF([test x"$ax_blas_ok" = xno], [ AC_MSG_ERROR([ Unable to find the BLAS library !])])
-    AC_MSG_RESULT()
+	AC_MSG_RESULT()
 ]) # AX_BLAS

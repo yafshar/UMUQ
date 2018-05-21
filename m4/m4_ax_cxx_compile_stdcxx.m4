@@ -4,49 +4,49 @@
 #
 # SYNOPSIS
 #
-#   AX_CXX_COMPILE_STDCXX(VERSION, [ext|noext], [mandatory|optional])
+#	AX_CXX_COMPILE_STDCXX(VERSION, [ext|noext], [mandatory|optional])
 #
 # DESCRIPTION
 #
-#   Check for baseline language coverage in the compiler for the specified
-#   version of the C++ standard.  If necessary, add switches to CXX and
-#   CXXCPP to enable support.  VERSION may be '11' (for the C++11 standard)
-#   or '14' (for the C++14 standard).
+#	Check for baseline language coverage in the compiler for the specified
+#	version of the C++ standard.  If necessary, add switches to CXX and
+#	CXXCPP to enable support.  VERSION may be '11' (for the C++11 standard)
+#	or '14' (for the C++14 standard).
 #
-#   The second argument, if specified, indicates whether you insist on an
-#   extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
-#   -std=c++11).  If neither is specified, you get whatever works, with
-#   preference for an extended mode.
+#	The second argument, if specified, indicates whether you insist on an
+#	extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
+#	-std=c++11).  If neither is specified, you get whatever works, with
+#	preference for an extended mode.
 #
-#   The third argument, if specified 'mandatory' or if left unspecified,
-#   indicates that baseline support for the specified C++ standard is
-#   required and that the macro should error out if no mode with that
-#   support is found.  If specified 'optional', then configuration proceeds
-#   regardless, after defining HAVE_CXX${VERSION} if and only if a
-#   supporting mode is found.
+#	The third argument, if specified 'mandatory' or if left unspecified,
+#	indicates that baseline support for the specified C++ standard is
+#	required and that the macro should error out if no mode with that
+#	support is found.  If specified 'optional', then configuration proceeds
+#	regardless, after defining HAVE_CXX${VERSION} if and only if a
+#	supporting mode is found.
 #
 # LICENSE
 #
-#   Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
-#   Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
-#   Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
-#   Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
-#   Copyright (c) 2015 Paul Norman <penorman@mac.com>
-#   Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
+#	Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
+#	Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
+#	Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
+#	Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+#	Copyright (c) 2015 Paul Norman <penorman@mac.com>
+#	Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
 #
-#   Copying and distribution of this file, with or without modification, are
-#   permitted in any medium without royalty provided the copyright notice
-#   and this notice are preserved.  This file is offered as-is, without any
-#   warranty.
+#	Copying and distribution of this file, with or without modification, are
+#	permitted in any medium without royalty provided the copyright notice
+#	and this notice are preserved.  This file is offered as-is, without any
+#	warranty.
 
-#serial 8
+#	serial 8
 
 dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
 dnl  (serial version number 13).
 #
 # ADAPTED 
-#  Yaser Afshar @ ya.afshar@gmail.com
-#  Dept of Aerospace Engineering | University of Michigan
+#	Yaser Afshar @ ya.afshar@gmail.com
+#	Dept of Aerospace Engineering | University of Michigan
 
 AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
   AC_MSG_NOTICE()

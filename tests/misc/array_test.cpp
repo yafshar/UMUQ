@@ -69,7 +69,7 @@ TEST(arraywrapper_test, HandlesVectors)
     }
 
     delete[] srtarray;
-};
+}
 
 int main(int argc, char **argv)
 {

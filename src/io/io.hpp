@@ -1,69 +1,48 @@
-#ifndef UMHBM_IO_H
-#define UMHBM_IO_H
+#ifndef UMUQ_IO_H
+#define UMUQ_IO_H
 
-#define _XOPEN_SOURCE 700
-#define _BSD_SOURCE 1
+#include "../core/digits10.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <limits>
-#include <ios>
-
-#include <cstdio>     //fopen, rewind
-#include <cstring>    //strlen
-#include <sys/stat.h> //stat
-
-#define LINESIZE 256
-
-/*! 
-  * \brief Stores a set of parameters controlling the way matrices are printed
-  *
-  * List of available parameters:
-  *  - \b coeffSeparator string printed between two coefficients of the same row
-  *  - \b rowSeparator string printed between two rows
-  *  - \b rowPrefix string printed at the beginning of each row
-  *  - \b rowSuffix string printed at the end of each row
-  *  - \b matPrefix string printed at the beginning of the matrix
-  *  - \b matSuffix string printed at the end of the matrix
-  *
-  */
-struct IOFormat
+/*! \class ioFormat
+ *
+ * \brief Stores a set of parameters controlling the way matrices are printed
+ *
+ * List of available parameters:
+ *  - \b coeffSeparator string printed between two coefficients of the same row
+ *  - \b rowSeparator   string printed between two rows
+ *  - \b rowPrefix      string printed at the beginning of each row
+ *  - \b rowSuffix      string printed at the end of each row
+ *
+ */
+struct ioFormat
 {
-    /** Default constructor, see class IOFormat for the meaning of the parameters */
-    IOFormat(const std::string &_coeffSeparator = " ",
+    /** Default constructor, see ioFormat for the meaning of the parameters */
+    ioFormat(const std::string &_coeffSeparator = " ",
              const std::string &_rowSeparator = "\n",
              const std::string &_rowPrefix = "",
-             const std::string &_rowSuffix = "",
-             const std::string &_matPrefix = "",
-             const std::string &_matSuffix = "") : matPrefix(_matPrefix),
-                                                   matSuffix(_matSuffix),
-                                                   rowPrefix(_rowPrefix),
-                                                   rowSuffix(_rowSuffix),
+             const std::string &_rowSuffix = "") : coeffSeparator(_coeffSeparator),
                                                    rowSeparator(_rowSeparator),
-                                                   rowSpacer(""),
-                                                   coeffSeparator(_coeffSeparator)
-    {
-        int i = int(matSuffix.length()) - 1;
-        while (i >= 0 && matSuffix[i] != '\n')
-        {
-            rowSpacer += ' ';
-            i--;
-        }
-    }
+                                                   rowPrefix(_rowPrefix),
+                                                   rowSuffix(_rowSuffix) {}
 
     std::string coeffSeparator;
     std::string rowSeparator;
     std::string rowPrefix;
     std::string rowSuffix;
-    std::string matPrefix;
-    std::string matSuffix;
-    std::string rowSpacer;
 };
 
 /*! \class io
-*   \brief io is a class which includes some IO functionality.
-*	
-*/
+ * \brief io is a class which includes some IO functionality.
+ *
+ * Available file open flags
+ * - \b app    seek to the end of stream before each write
+ * - \b binary open in binary mode
+ * - \b in     open for reading
+ * - \b out    open for writing
+ * - \b trunc  discard the contents of the stream when opening
+ * - \b ate	   seek to the end of stream immediately after open 
+ * 
+ */
 class io
 {
   public:
@@ -74,21 +53,24 @@ class io
     static const std::ios_base::openmode ate = std::fstream::ate;
     static const std::ios_base::openmode trunc = std::fstream::trunc;
 
-    io() : f(NULL), line(NULL), lineArg(NULL){};
+    //!default constrcutor
+    io(){}
 
     ~io()
     {
         closeFile();
-    };
+    }
 
     /*!
      * \brief return true if file is opened
+     * \returns true if the file is already opened 
      */
-    inline bool isFileOpened() const { return f != NULL; }
+    inline bool isFileOpened() const { return fs.is_open(); }
 
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
      *  
+     * \returns true if the file exists 
      */
     inline bool isFileExist(const char *fileName)
     {
@@ -97,108 +79,23 @@ class io
     }
 
     /*!
-     * \brief Opens the file whose name is specified in the parameter filename 
-     *  
-     * Opens the file whose name is specified in the parameter filename and
-     * associates it with a stream that can be identified in future operations 
-     * by the FILE pointer returned.inline   
-     */
-    inline bool openFile(const char *fileName)
-    {
-        if (!isFileExist(fileName))
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
-
-        if (isFileOpened())
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-            return false;
-        }
-
-        f = fopen(fileName, "r");
-
-        if (f == NULL)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
-
-        try
-        {
-            line = new char[LINESIZE];
-            lineArg = new char *[LINESIZE];
-        }
-        catch (const std::bad_alloc &e)
-        {
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    inline bool openFile(const char *fileName, const char *mode)
-    {
-        if (*mode != 'r' || isFileExist(fileName))
-        {
-            if (isFileOpened())
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-                return false;
-            }
-
-            f = fopen(fileName, mode);
-            if (f == NULL)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-                return false;
-            }
-
-            try
-            {
-                line = new char[LINESIZE];
-                lineArg = new char *[LINESIZE];
-            }
-            catch (const std::bad_alloc &e)
-            {
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            return true;
-        }
-        else
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
-        }
-    }
-
-    /*!
-     * \brief Opens the file whose name is specified in the parameter filename 
+     * \brief Opens the file whose name is specified with the parameter filename 
      *  
      * Opens the file whose name is specified in the parameter filename and
      * associates it with a stream that can be identified in future operations 
      * by the FILE pointer returned.inline   
      * 
-     * stream open mode type
+     * Available file open flags
+     * - \b std::fstream::app 	  seek to the end of stream before each write
+     * - \b std::fstream::binary  open in binary mode
+     * - \b std::fstream::in 	  open for reading
+     * - \b std::fstream::out 	  open for writing
+     * - \b std::fstream::trunc   discard the contents of the stream when opening
+     * - \b std::fstream::ate 	  seek to the end of stream immediately after open
      * 
-     * std::fstream::app 	  seek to the end of stream before each write
-     * std::fstream::binary   open in binary mode
-     * std::fstream::in 	  open for reading
-     * std::fstream::out 	  open for writing
-     * std::fstream::trunc 	  discard the contents of the stream when opening
-     * std::fstream::ate 	  seek to the end of stream immediately after open
+     * \returns true if everything goes OK
      */
-    inline bool openFile(const char *fileName, const std::ios_base::openmode mode)
+    inline bool openFile(const char *fileName, const std::ios_base::openmode mode = in)
     {
         if (fs.is_open())
         {
@@ -229,84 +126,831 @@ class io
     /*!
      * \brief Get string from stream
      * 
-     * Get string from stream and stores them into line until (LINESIZE-1) characters 
-     * have been read or either a newline or the end-of-file is reached, whichever happens first.
+     * Get a string from stream and stores them into line until 
+     * a newline or the end-of-file is reached, whichever happens first.
+     * 
+     * \returns true if no error occurs on the associated stream
      */
-    inline bool readLine() const { return fgets(line, LINESIZE, f) != NULL; }
+    inline bool readLine(const char comment = '#')
+    {
+        std::string linetmp;
+        for (;;)
+        {
+            std::getline(fs, linetmp);
+            if (fs.good())
+            {
+                const std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
 
-    /*!
-     * \brief Check if the length of the line is empty or commented with "#"  
-     */
-    inline bool emptyLine() const { return (line[0] == '#') || (strlen(line) == 0); }
+                // See if we found a valid line
+                if (linetmp.length() > 0 && linetmp[linePos] != comment)
+                {
+                    //Trim the empty space at the start of the line
+                    line = linetmp.substr(linePos);
+                    return true;
+                }
+            }
+            else
+            {
+                linetmp.clear();
+                return false;
+            }
+        }
+    }
 
     /*!
      * \brief Set position of stream to the beginning
      * Sets the position indicator associated with stream to the beginning of the file.
      */
-    inline void rewindFile() { rewind(f); }
+    inline void rewindFile()
+    {
+        //clearing all error state flags if there is any
+        fs.clear();
+
+        //!Rewind the file
+        fs.seekg(0);
+        return;
+    }
 
     /*!
      * \brief Close the File
      */
     inline void closeFile()
     {
-        if (isFileOpened())
-        {
-            fclose(f);
-            f = NULL;
-
-            delete[] line;
-            line = NULL;
-
-            delete[] lineArg;
-            lineArg = NULL;
-
-            return;
-        }
-        if (fs.is_open())
-        {
-            fs.close();
-        }
+        fs.close();
+        return;
     }
-    
+
     /*!
      * \brief Get the stream
      */
     std::fstream &getFstream()
     {
-        return io::fs;
+        return fs;
     }
 
-    /*!
-     * \brief Get the pointer to the FILE *f
-     */
-    FILE *getFile()
-    {
-        return f;
-    }
-
-    /*!
-     * \brief Get the pointer line
-     */
-    char *getLine()
+    std::string &getLine()
     {
         return line;
     }
 
     /*!
-     * \brief Get the pointer lineArg
+     * \brief Helper function to save the matrix of type TM with TF format into a file 
+     * 
+     * \tparam  TM    typedef for matrix 
+     * \tparam  TF    typedef for format of writing
+     * \param   MX    matrix
+     * \param   IOfmt IO format for the matrix type
+     *
+     * \returns true if no error occurs during writing the matrix
      */
-    char **getLineArg()
+    template <typename TM, typename TF>
+    inline bool saveMatrix(TM MX, TF const IOfmt)
     {
-        return lineArg;
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        fs << std::fixed;
+        fs << MX.format(IOfmt);
+        fs << fmt.rowSeparator;
+
+        return true;
+    }
+
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam  TD     data type 
+     * \param   idata  array of input data of type TD
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
+     *                           1 save matrix in vector format and proceed the position indicator to the next line &
+     *                           2 save matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true if no error occurs during writing the matrix
+     */
+    template <typename TD>
+    inline bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<TD>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<TD>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(fs);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs.width(Width);
+                fs << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.coeffSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam  TD     data type 
+     * \param   idata  array of input data of type TD
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns for each row
+     * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
+     *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
+     *                           2 saves matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true if no error occurs during writing the matrix
+     */
+    template <typename TD>
+    inline bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<TD>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<TD>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols[i]; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(fs);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs.width(Width);
+                fs << idata[i][0];
+                for (int j = 1; j < nCols[i]; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                fs << idata[i][0];
+                for (int j = 1; j < nCols[i]; ++j)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i][j];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.coeffSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    template <typename TD>
+    inline bool saveMatrix(TD *idata, const int nRows, const int nCols = 1, const int options = 0)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        std::string rowSeparator;
+
+        if (options > 0)
+        {
+            rowSeparator = fmt.rowSeparator;
+            fmt.rowSeparator = fmt.coeffSeparator;
+        }
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<TD>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<TD>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows * nCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (Width)
+        {
+            if (nCols == 1)
+            {
+                fs.width(Width);
+                fs << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[i];
+                }
+                fs << fmt.rowSeparator;
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    fs.width(Width);
+                    fs << idata[l];
+                    for (int j = 1; j < nCols; j++)
+                    {
+                        l++;
+                        fs << fmt.coeffSeparator;
+                        fs.width(Width);
+                        fs << idata[l];
+                    }
+                    l++;
+                    fs << fmt.rowSeparator;
+                }
+            }
+        }
+        else
+        {
+            if (nCols == 1)
+            {
+                fs << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[i];
+                }
+                fs << fmt.rowSeparator;
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    fs << idata[l];
+                    for (int j = 1; j < nCols; j++)
+                    {
+                        l++;
+                        fs << fmt.coeffSeparator;
+                        fs << idata[l];
+                    }
+                    l++;
+                    fs << fmt.rowSeparator;
+                }
+            }
+        }
+
+        if (options == 0)
+        {
+            return true;
+        }
+        else if (options == 1)
+        {
+            fmt.rowSeparator = rowSeparator;
+            fs << fmt.rowSeparator;
+            return true;
+        }
+        else if (options == 2)
+        {
+            fmt.rowSeparator = rowSeparator;
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix of type TM from a file 
+     * 
+     * \tparam  TM   typedef for matrix 
+     * \param   MX   Matrix
+     *
+     * \returns true if no error occurs during reading a matrix
+     */
+    template <typename TM>
+    inline bool loadMatrix(TM &MX)
+    {
+        std::string Line;
+
+        for (int i = 0; i < MX.rows(); i++)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+
+                for (int j = 0; j < MX.cols(); j++)
+                {
+                    inLine >> MX(i, j);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam  TD data type 
+     * \param   idata  array of input data of type TD
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     *
+     * \returns true if no error occurs during reading a matrix
+     */
+    template <typename TD>
+    inline bool loadMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
+    {
+        std::string Line;
+
+        if (options == 0)
+        {
+            for (int i = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (options == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    for (int j = 0; j < nCols; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam  TD data type 
+     * \param   idata  array of input data of type TD
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns for each row
+     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     *
+     * \returns true if no error occurs during reading a matrix
+     */
+    template <typename TD>
+    inline bool loadMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
+    {
+        std::string Line;
+
+        if (options == 0)
+        {
+            for (int i = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols[i]; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (options == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    for (int j = 0; j < nCols[i]; j++)
+                    {
+                        inLine >> idata[i][j];
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    template <typename TD>
+    inline bool loadMatrix(TD *idata, const int nRows, const int nCols = 1)
+    {
+        std::string Line;
+
+        if (nCols == 1)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+                for (int i = 0; i < nRows; i++)
+                {
+                    inLine >> idata[i];
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
+        }
+        else
+        {
+            for (int i = 0, l = 0; i < nRows; i++)
+            {
+                if (std::getline(fs, Line))
+                {
+                    std::stringstream inLine(Line);
+
+                    for (int j = 0; j < nCols; j++, l++)
+                    {
+                        inLine >> idata[l];
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam  TD type of data
+     * 
+     * \param   title  string that should be written at the top 
+     * \param   idata  array of input data of type TD
+     * \param   nRows  number of rows
+     * \param   nCols  number of columns
+     */
+    template <typename TD>
+    void printMatrix(const char *title, TD **idata, const int nRows, const int nCols)
+    {
+        std::string sep = "\n----------------------------------------\n";
+        std::cout << sep;
+        if (std::strlen(title) > 0)
+        {
+            std::cout << title << "\n\n";
+        }
+
+        if (std::numeric_limits<TD>::is_integer)
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(0);
+        }
+        else
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(digits10<TD>());
+        }
+        std::cout << std::fixed;
+
+        Width = 0;
+
+        for (int i = 0; i < nRows; i++)
+        {
+            for (int j = 0; j < nCols; j++)
+            {
+                std::stringstream sstr;
+                sstr.copyfmt(std::cout);
+                sstr << idata[i][j];
+                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+            }
+        }
+
+        if (Width)
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                std::cout.width(Width);
+                std::cout << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << idata[i][j];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < nRows; ++i)
+            {
+                std::cout << idata[i][0];
+                for (int j = 1; j < nCols; ++j)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << idata[i][j];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+        std::cout << sep;
+    }
+
+    template <typename TD>
+    void printMatrix(TD **idata, const int nRows, const int nCols)
+    {
+        printMatrix<TD>("", idata, nRows, nCols);
+    }
+
+    template <typename TD>
+    void printMatrix(const char *title, TD *idata, const int nRows, const int nCols = 1)
+    {
+        std::string sep = "\n----------------------------------------\n";
+        std::cout << sep;
+        if (std::strlen(title) > 0)
+        {
+            std::cout << title << "\n\n";
+        }
+
+        if (std::numeric_limits<TD>::is_integer)
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(0);
+        }
+        else
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(digits10<TD>());
+        }
+        std::cout << std::fixed;
+
+        Width = 0;
+
+        for (int i = 0; i < nRows * nCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(std::cout);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (nCols == 1)
+        {
+            if (Width)
+            {
+                std::cout.width(Width);
+                std::cout << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << idata[i];
+                }
+            }
+            else
+            {
+                std::cout << idata[0];
+                for (int i = 1; i < nRows; i++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << idata[i];
+                }
+            }
+            std::cout << fmt.rowSeparator;
+            std::cout << sep;
+        }
+        else
+        {
+            if (Width)
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    std::cout.width(Width);
+                    std::cout << idata[l];
+                    for (int j = 1; j < nCols; j++, l++)
+                    {
+                        std::cout << fmt.coeffSeparator;
+                        std::cout.width(Width);
+                        std::cout << idata[l];
+                    }
+                    std::cout << fmt.rowSeparator;
+                }
+            }
+            else
+            {
+                for (int i = 0, l = 0; i < nRows; i++)
+                {
+                    std::cout << idata[l];
+                    for (int j = 1; j < nCols; j++, l++)
+                    {
+                        std::cout << fmt.coeffSeparator;
+                        std::cout << idata[l];
+                    }
+                    std::cout << fmt.rowSeparator;
+                }
+            }
+            std::cout << sep;
+        }
+    }
+
+    template <typename TD>
+    void printMatrix(TD *idata, const int nRows, const int nCols = 1)
+    {
+        printMatrix<TD>("", idata, nRows, nCols);
     }
 
   private:
-    FILE *f;
+    //Input/output operations on file based streams
     std::fstream fs;
+    
+    //Line for reading the string of data
+    std::string line;
 
-    char *line;
-    char **lineArg;
+    typedef std::ptrdiff_t Idx;
+    std::ptrdiff_t Width;
+
+    //IO format
+    ioFormat fmt;
 };
 
 #endif

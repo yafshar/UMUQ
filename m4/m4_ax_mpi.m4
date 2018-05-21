@@ -65,6 +65,10 @@ AC_DEFUN([AX_MPI], [
 	AS_IF([test x"$ax_mpi_ok" = xno], [  
 		AC_MSG_NOTICE(MPI)
 
+		ax_mpi_save_CC="$CC"
+		ax_mpi_save_CXX="$CXX"
+		ax_mpi_save_FC="$FC"
+
 		succeeded=no
 
 		ac_mpi_bin=
@@ -106,7 +110,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
 				[		
-					ax_mpi_save_CC="$CC"
 					if test -x "$ac_mpi_bin"'/'"$MPICC"; then
 						MPICC="$ac_mpi_bin"'/'"$MPICC"
 					fi
@@ -135,12 +138,39 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
 				[
-					ax_mpi_save_CXX="$CXX"
 					if test -x "$ac_mpi_bin"'/'"$MPICXX"; then
 						MPICXX="$ac_mpi_bin"'/'"$MPICXX"
 					fi  
 					CXX="$MPICXX"	
 					AC_SUBST(MPICXX)
+				]
+			)
+
+			AC_REQUIRE([AC_PROG_FC])
+			AC_ARG_VAR(MPIFC, [MPI Fortran compiler command])
+			MPIFC=
+			for ac_prog_fc_tmp in mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c ; do
+				AS_VAR_IF(MPIFC, ["$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+				AS_VAR_IF(FC, ["$ac_mpi_bin"'/'"$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPIFC" = x; then
+				AC_CHECK_PROGS(MPIFC, mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, [no], [$PATH])
+			fi
+			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
+				[		
+					if test -x "$ac_mpi_bin"'/'"$MPIFC"; then
+						MPIFC="$ac_mpi_bin"'/'"$MPIFC"
+					fi
+					FC="$MPIFC"	
+					AC_SUBST(MPIFC)
 				]
 			)
 
@@ -195,7 +225,6 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICC, [no], [AC_MSG_ERROR([Could not find MPI C compiler command !])], 
 				[
-					ax_mpi_save_CC="$CC"
 					CC="$MPICC"
 					AC_SUBST(MPICC)
 				]
@@ -216,9 +245,28 @@ AC_DEFUN([AX_MPI], [
 			fi
 			AS_VAR_IF(MPICXX, [no], [AC_MSG_ERROR([Could not find MPI C++ compiler command !])], 
 				[
-					ax_mpi_save_CXX="$CXX"
 					CXX="$MPICXX"
 					AC_SUBST(MPICXX)
+				]
+			)
+
+			AC_REQUIRE([AC_PROG_FC])
+			AC_ARG_VAR(MPIFC, [MPI Fortran compiler command])
+			MPIFC=
+			for ac_prog_fc_tmp in mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c ; do
+				AS_VAR_IF(FC, ["$ac_prog_fc_tmp"], [
+						MPIFC="$FC"
+						break;
+					], []
+				)
+			done
+			if test x"$MPIFC" = x; then
+				AC_CHECK_PROGS(MPIFC, mpifort mpif90 mpxlf95_r mpxlf90_r mpxlf95 mpxlf90 mpf90 cmpif90c, [no])
+			fi
+			AS_VAR_IF(MPIFC, [no], [AC_MSG_ERROR([Could not find MPI Fortran compiler command !])], 
+				[
+					FC="$MPIFC"
+					AC_SUBST(MPIFC)
 				]
 			)
 
@@ -259,12 +307,15 @@ AC_DEFUN([AX_MPI], [
 
 		CC="$ax_mpi_save_CC"
 		CXX="$ax_mpi_save_CXX"
+		FC="$ax_mpi_save_FC"
 
 		AC_SUBST(MPILIBS)
 
 		# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 		if test x"$MPILIBS" != x; then
 			ax_mpi_ok="yes"
+			#substitute the default compiler and preprocessor
+			AX_PROG_SUBSTITUTE
 			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 			:
 		fi

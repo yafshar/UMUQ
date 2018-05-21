@@ -10,7 +10,7 @@
 #	If no path to the installed googletest framework is given the macro uses
 #	the external folder and creates and builds googletest library and header files. 
 #
-# AUTHOR 
+# AUTHOR
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
@@ -133,7 +133,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 							if test x"$googletest_LDFLAGS" = x ; then
 								AC_LANG_PUSH([C++])
-								(cd "$googletest_PATH" && mkdir -p build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX="$googletest_PATH" && make)
+								(cd "$googletest_PATH" && mkdir -p build && cd build && export CC=$CC && export CXX=$CXX && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$googletest_PATH" ../ && make -j 2)
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
 								AC_LANG_POP([C++])
 							fi
