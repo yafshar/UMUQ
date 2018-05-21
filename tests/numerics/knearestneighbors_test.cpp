@@ -9,7 +9,6 @@
  */
 TEST(knearestneighbors_test, HandlesKNN)
 {
-#ifdef HAVE_FLANN
 
 	io f;
 	EXPECT_TRUE(f.isFileExist("numerics/knearestneighbors_test.txt"));
@@ -153,8 +152,6 @@ TEST(knearestneighbors_test, HandlesKNN)
 
 	delete[] data;
 	delete[] dists;
-
-#endif //HAVE_FLANN
 }
 
 int main(int argc, char **argv)

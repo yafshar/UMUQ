@@ -2,7 +2,6 @@
 #include "numerics/eigenmatrix.hpp"
 #include "gtest/gtest.h"
 
-#ifdef HAVE_EIGEN
 /*! 
  * Test to check about map type handling is done correctly
  */
@@ -140,7 +139,7 @@ TEST(eigen_test, HandlesMap)
 
     delete[] * D;
     delete[] D;
-};
+}
 
 /*! 
  * Linear Algebra test
@@ -228,15 +227,6 @@ TEST(eigen_lu_test, HandlesLU)
     //true as the matrix m with lu decomposition is invertible.
     EXPECT_TRUE(lu.isInvertible());
 }
-#endif
-#ifndef HAVE_EIGEN
-/*! 
- * Test to check about map type handling is done correctly
- */
-TEST(eigen_test, HandlesMap)
-{
-}
-#endif
 
 int main(int argc, char **argv)
 {
