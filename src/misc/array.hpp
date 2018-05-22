@@ -64,7 +64,7 @@ class ArrayWrapper
      *
      */
     ArrayWrapper() : iArray(nullptr), iNumOfElements(0) {}
-    ArrayWrapper(T const *InputArray, size_t NumOfElements) : iArray(InputArray), iNumOfElements(NumOfElements) {}
+    ArrayWrapper(T const *InputArray, std::size_t NumOfElements) : iArray(InputArray), iNumOfElements(NumOfElements) {}
     ArrayWrapper(ArrayWrapper &&InputArrayObj)
     {
         iArray = InputArrayObj.iArray;
@@ -83,7 +83,7 @@ class ArrayWrapper
 
     ~ArrayWrapper(){};
 
-    inline void set(T *InputArray, size_t NumOfElements)
+    inline void set(T *InputArray, std::size_t NumOfElements)
     {
         iArray = InputArray;
         iNumOfElements = NumOfElements;
@@ -117,7 +117,7 @@ class ArrayWrapper
         return iterator(iArray + iNumOfElements);
     }
 
-    inline size_t size() const { return iNumOfElements; }
+    inline std::size_t size() const { return iNumOfElements; }
 
     inline void swap(ArrayWrapper<T> &aObj)
     {
@@ -130,7 +130,7 @@ class ArrayWrapper
     T const *iArray;
     
     //! Size of InputArray
-    size_t iNumOfElements;
+    std::size_t iNumOfElements;
 
     // make it noncopyable
     ArrayWrapper(const ArrayWrapper &) = delete;

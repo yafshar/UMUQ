@@ -14,7 +14,7 @@ class data
 {
   public:
     ArrayWrapper<T> entry;
-    size_t entries;
+    std::size_t entries;
 
   private:
     std::unique_ptr<T[]> entryData;
@@ -94,7 +94,7 @@ class data
      * @param id
      * @return element @(id)
      */
-    T &operator()(size_t id)
+    T &operator()(std::size_t id)
     {
         return entry[id];
     }
@@ -104,7 +104,7 @@ class data
      * @param id
      * @return element @(id)
      */
-    T &at(size_t id)
+    T &at(std::size_t id)
     {
         return entry[id];
     }
@@ -114,7 +114,7 @@ class data
      * @param id
      * @return element @(id)
      */
-    const T &at(size_t id) const
+    const T &at(std::size_t id) const
     {
         return entry[id];
     }

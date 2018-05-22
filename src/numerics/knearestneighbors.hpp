@@ -20,11 +20,11 @@
  * \b MANHATTAN      Manhattan distance functor, optimized version
  * \b L1             Manhattan distance functor, optimized version
  * \b L2_SIMPLE      Squared Euclidean distance functor
- * \b MINKOWSKI
+ * \b MINKOWSKI      The Minkowsky (L_p) distance between two vectors.
  * \b MAX
  * \b HIST_INTERSECT
- * \b HELLINGER
- * \b CHI_SQUARE
+ * \b HELLINGER      The Hellinger distance, quantify the similarity between two probability distributions.
+ * \b CHI_SQUARE     The distance between two histograms
  * \b KULLBACK_LEIBLER
  * \b HAMMING
  * \b HAMMING_LUT    Hamming distance functor - counts the bit differences between two strings - 
@@ -53,6 +53,12 @@ class kNearestNeighbor
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
                                                                             the_same(true)
     {
+        if (drows < nn)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
+            throw(std::runtime_error("Not enough points!"));
+        }
     }
 
     /*!
@@ -73,6 +79,12 @@ class kNearestNeighbor
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
                                                                                                     the_same(false)
     {
+        if (drows < nn)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
+            throw(std::runtime_error("Not enough points!"));
+        }
     }
 
     /*!
@@ -357,7 +369,7 @@ class kNearestNeighbor
 
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
-    
+
     flann::Matrix<int> indices;
     flann::Matrix<T> dists;
 
