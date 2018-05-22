@@ -1,5 +1,5 @@
 # UMUQ
-[![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=matser)](https://travis-ci.com/yafshar/UMUQ)
+[![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=master)](https://travis-ci.com/yafshar/UMUQ)
 
 Welcome to **UMUQ**, University of Michigan's Uncertainty Quantification framework!
 
