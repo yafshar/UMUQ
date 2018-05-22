@@ -15,7 +15,7 @@
  * \tparam T Data type
  */
 
-//TODO : Currently the class is for one term and it should be extended to multi terms
+//TODO : Currently the class works only for one term and it should be extended to multi terms
 
 template <typename T>
 class dcpse
@@ -25,8 +25,9 @@ class dcpse
      * \brief Default constructor
      * 
      * \param ndim             Dimensiononality
+     * \param nterms           Number of terms (currently only one term is implemented)
      */
-    explicit dcpse(int ndim) : nDim(ndim), dcmonomialSize(0), dckernelSize(0) {}
+    explicit dcpse(int ndim, int nterms = 1) : nDim(ndim), nTerms(nterms), dcmonomialSize(0), dckernelSize(0), Order{new int[nterms]} {}
 
     /*! \fn computeWeights
      * \brief Computes generalized DC-PSE differential operators on set of input points
@@ -40,7 +41,10 @@ class dcpse
      * \param nPoints          Number of data points
      * \param beta             In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
      *                         Notation for partial derivatives:
-     *                         \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
+     *                         \f[ 
+     *                              \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
+     *                              \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
+     *                          \f]
      * \param order            Order of accuracy (default is 2nd order accurate)
      * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
      * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
@@ -57,6 +61,10 @@ class dcpse
 
         //Extra check on the order
         order = (order > 0) ? order : 2;
+        {
+            int *o = Order.get();
+            std::fill(o, o + nTerms, order);
+        }
 
         //Extra check on the number of extra nearest neighbors
         nENN = (nENN > 0) ? nENN : 0;
@@ -594,6 +602,10 @@ class dcpse
 
         //Extra check on the order
         order = (order > 0) ? order : 2;
+        {
+            int *o = Order.get();
+            std::fill(o, o + nTerms, order);
+        }
 
         //Extra check on the number of extra nearest neighbors
         nENN = (nENN > 0) ? nENN : 0;
@@ -1115,6 +1127,10 @@ class dcpse
 
         //Extra check on the order
         order = (order > 0) ? order : 2;
+        {
+            int *o = Order.get();
+            std::fill(o, o + nTerms, order);
+        }
 
         //Extra check on the number of extra nearest neighbors
         nENN = (nENN > 0) ? nENN : 0;
@@ -1708,8 +1724,8 @@ class dcpse
      * been previously computed to compute the query values and put the results as the query data 
      * function values. 
      * 
-     * At first it checks the computed kernel size to be equal to the number of qury points times the 
-     * size of monomials which has been previously computed for the required degree of DC-PSE operator.
+     * At first it checks the computed kernel size to be equal to the number of query points times the 
+     * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
      * 
      * \param iFvalue          A pointer to input data function value
      * \param nPoints          Number of data points
@@ -1760,7 +1776,7 @@ class dcpse
      * been previously computed to compute the query values and put the results as the query data 
      * function values. 
      * 
-     * At first it checks the computed kernel size to be equal to the number of qury points times the 
+     * At first it checks the computed kernel size to be equal to the number of query points times the 
      * size of monomials which has been previously computed for the required degree of DC-PSE operator
      * or interpolator.
      * 
@@ -1834,7 +1850,7 @@ class dcpse
      * 
      * \returns A (pointer to a) row of the nearest neighbors kernel values.
      */
-    inline T *neighborhoodKernel(int const &index) const
+    inline T *neighborhoodKernel(int const index) const
     {
         return dckernel.get() + index * dcmonomialSize;
     }
@@ -1859,9 +1875,23 @@ class dcpse
         return dcmonomialSize;
     }
 
+    /*!
+     * \brief order of accuracy of DC-PSE kernel at index
+     * 
+     * \param  index Index number in nTerms array
+     * \return order of accuracy of DC-PSE kernel at index
+     */
+    inline int orderofAccuracy(int const index = 0) const
+    {
+        return Order[index];
+    }
+
   private:
     //! Dimensiononality
     int nDim;
+
+    //! Number of terms
+    int nTerms;
 
     //! The monomial size
     /* 
@@ -1869,17 +1899,20 @@ class dcpse
      */
     int dcmonomialSize;
 
-    //! Operator kernel
-    std::unique_ptr<T[]> dckernel;
-
     //! Size of the kernel
     int dckernelSize;
 
-    //! The sign is chosen positive for odd \f$ | \beta | \f$ and negative for even \f$ | \beta | \f$
-    T rhscoeff;
+    //Order of accuracy for each term
+    std::unique_ptr<int[]> Order;
+
+    //! Operator kernel
+    std::unique_ptr<T[]> dckernel;
 
     //! k-NearestNeighbor Object
     std::unique_ptr<L2NearestNeighbor<T>> KNN;
+
+    //! The sign is chosen positive for odd \f$ | \beta | \f$ and negative for even \f$ | \beta | \f$
+    T rhscoeff;
 };
 
 #endif
