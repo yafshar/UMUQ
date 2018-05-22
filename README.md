@@ -46,6 +46,19 @@ $ git clone git@github.com:yafshar/UMUQ.git
 $ git clone https://github.com/yafshar/UMUQ.git
 ````
 
+Licenses
+------------
+UMUQ is LGPL 3.0 licensed. See these links:    
+    [LGPL3](https://www.gnu.org/licenses/lgpl-3.0.en.html)    
+    [GPL-FAQ](https://www.gnu.org/licenses/gpl-faq.html)
+
+The [LICENSE](https://github.com/yafshar/UMUQ/blob/master/LICENSE) file contains the LGPL 3.0 text.
+
+Packages in [external](https://github.com/yafshar/UMUQ/tree/master/external) folder contain 
+third-party code under 
+[MPL2](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.MPL2), [GPL](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.GPL), 
+[BSD](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD) and [BSD3](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD3) licenses.
+
 Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>
