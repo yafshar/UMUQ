@@ -7,14 +7,15 @@
 template <typename T>
 void fillPagebyPage(T *idata, T *coords, int const d, T lx, T ly, T dx, T dy, int x, int y)
 {
+    T *data = idata;
     for (int r = 0; r < x; r++)
     {
         for (int c = 0; c < y; c++)
         {
-            std::copy(coords, coords + d, idata);
-            idata += d;
-            *idata++ = lx + r * dx;
-            *idata++ = ly + c * dy;
+            std::copy(coords, coords + d, data);
+            data += d;
+            *data++ = lx + r * dx;
+            *data++ = ly + c * dy;
         }
     }
 }
@@ -209,33 +210,36 @@ bool meshgrid(T *&idata, int const nPoints, int const nDim, double *Lb, double *
 }
 
 /*! 
- * Test to check dcpse functionality for frank2d function
+ * Test to check dcpse functionality for Qian function
  */
-TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
+TEST(dcpse_test, HandlesQianFunction)
 {
-    int nDim = 2;
-    int nPoints = 41;
-    int nqpoints = 20;
+    int nDim = 1;
+    double Lb[] = {0};
+    double Ub[] = {1};
+    int nDPoints[] = {20};
+    int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
+    int nqPoints = 3;
 
-    double *idata = nullptr;
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
 
-    int nDPoints[] = {nPoints, nPoints};
-    double Lb[] = {0, 0};
-    double Ub[] = {1, 1};
-
-    EXPECT_TRUE(meshgrid<double>(idata, nDPoints, nDim, Lb, Ub));
-
-    double *qdata = nullptr;
-    double *iFvalue = nullptr;
-    double *qFvalue = nullptr;
-    double *qFvalueExact = nullptr;
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
 
     try
     {
-        qdata = new double[nqpoints * nDim];
-        iFvalue = new double[nPoints * nPoints];
-        qFvalue = new double[nqpoints];
-        qFvalueExact = new double[nqpoints];
+        idata.reset(new double[nPoints * nDim]);
+        iqdata.reset(new double[nqPoints * nDim]);
+
+        iFvalue.reset(new double[nPoints]);
+        iqFvalue.reset(new double[nqPoints]);
+        iqFvalueExact.reset(new double[nqPoints]);
     }
     catch (std::bad_alloc &e)
     {
@@ -243,48 +247,221 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //create an instance of frank2d object
-    franke2d<double> f2d;
+    //Create input points
+    data = idata.get();
+    EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
 
-    double *data = idata;
-    for (int i = 0; i < nPoints * nPoints; i++)
+    //Create an instance of frank2d object
+    qian<double> Qian;
+
+    //Compute the function value at each input point
     {
-        iFvalue[i] = f2d.f(data);
-        data += 2;
+        data = idata.get();
+        for (int i = 0; i < nPoints; i++)
+        {
+            iFvalue[i] = Qian.f(data);
+            data += nDim;
+        }
     }
 
+    //Create random query data points
     {
+        qdata = iqdata.get();
+
         // std::random_device rd;
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        for (int i = 0, l = 0; i < nqpoints; i++)
+        for (int i = 0; i < nqPoints; i++)
         {
-            qdata[l] = dis(gen);
-            qdata[l + 1] = dis(gen);
-            l += 2;
+            std::for_each(qdata, qdata + nDim, [&](double &i) { i = dis(gen); });
+            qdata += nDim;
         }
 
-        for (int i = 0, n = 0; i < nqpoints; i++)
+        //Compute the function value at each query point
+        qdata = iqdata.get();
+        for (int i = 0; i < nqPoints; i++)
         {
-            qFvalueExact[i] = f2d.f(qdata + n);
-            n += nDim;
+            iqFvalueExact[i] = Qian.f(qdata);
+            qdata += nDim;
         }
     }
 
     //Create an instance of a DC-PSE object
     dcpse<double> dc(nDim);
 
-    //Compute the interpolator weights
-    EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints * nPoints, qdata, nqpoints));
+    data = idata.get();
+    qdata = iqdata.get();
 
-    //Compute the operator kernel for interpolation
-    EXPECT_TRUE(dc.interpolate(iFvalue, nPoints * nPoints, qFvalue, nqpoints));
+    //Compute the interpolator weights & operator kernel
+    EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
-    // TEMapVectorX<double> A(qFvalueExact, nqpoints);
-    // TEMapVectorX<double> B(qFvalue, nqpoints);
+    fvalue = iFvalue.get();
+    qfvalue = iqFvalue.get();
 
-    // std::cout << "Relative error = " << (A-B).norm() << std::endl;
+    //Compute the interpolated values
+    EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
+
+    {
+        int order = dc.orderofAccuracy();
+
+        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+    }
+
+    // //Create an instance of io object
+    // io file;
+
+    // //!Open a file for reading and writing
+    // if (file.openFile("./dcpse/QIAN_EXACT", file.in | file.out | file.trunc))
+    // {
+    //     data = idata.get();
+    //     fvalue = iFvalue.get();
+    //     for (int i = 0; i < nPoints; i++)
+    //     {
+    //         //!Write the matrix in it
+    //         file.saveMatrix<double>(data, 1, nDim, 2);
+    //         file.saveMatrix<double>(fvalue, 1, 1);
+    //         data += nDim;
+    //         fvalue++;
+    //     }
+    //     file.closeFile();
+    // }
+
+    // //!Open a file for reading and writing
+    // if (file.openFile("./dcpse/QIAN_DCPSE", file.in | file.out | file.trunc))
+    // {
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalue.get();
+    //     for (int i = 0; i < nqPoints; i++)
+    //     {
+    //         //!Write the matrix in it
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
+    //     }
+
+    //     file.closeFile();
+    // }
+
+    // //!Open a file for reading and writing
+    // if (file.openFile("./dcpse/QIAN_DCPSE_EXACT", file.in | file.out | file.trunc))
+    // {
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalueExact.get();
+    //     for (int i = 0; i < nqPoints; i++)
+    //     {
+    //         //!Write the matrix in it
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
+    //     }
+
+    //     file.closeFile();
+    // }
+}
+
+/*! 
+ * Test to check dcpse functionality for frank2d function
+ */
+TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
+{
+    int nDim = 2;
+    double Lb[] = {0, 0};
+    double Ub[] = {1, 1};
+    int nDPoints[] = {21, 21};
+    int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
+    int nqPoints = 20;
+
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    try
+    {
+        idata.reset(new double[nPoints * nDim]);
+        iqdata.reset(new double[nqPoints * nDim]);
+
+        iFvalue.reset(new double[nPoints]);
+        iqFvalue.reset(new double[nqPoints]);
+        iqFvalueExact.reset(new double[nqPoints]);
+    }
+    catch (std::bad_alloc &e)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+    }
+
+    //Create input points
+    data = idata.get();
+    EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
+
+    //create an instance of frank2d object
+    franke2d<double> f2d;
+
+    //Compute the function value at each input point
+    {
+        data = idata.get();
+        for (int i = 0; i < nPoints; i++)
+        {
+            iFvalue[i] = f2d.f(data);
+            data += nDim;
+        }
+    }
+
+    //Create random query data points
+    {
+        qdata = iqdata.get();
+
+        // std::random_device rd;
+        std::mt19937 gen(1);
+        std::uniform_real_distribution<> dis(0.0, 1.0);
+
+        for (int i = 0; i < nqPoints; i++)
+        {
+            std::for_each(qdata, qdata + nDim, [&](double &i) { i = dis(gen); });
+            qdata += nDim;
+        }
+
+        //Compute the function value at each query point
+        qdata = iqdata.get();
+        for (int i = 0; i < nqPoints; i++)
+        {
+            iqFvalueExact[i] = f2d.f(qdata);
+            qdata += nDim;
+        }
+    }
+
+    //Create an instance of a DC-PSE object
+    dcpse<double> dc(nDim);
+
+    data = idata.get();
+    qdata = iqdata.get();
+
+    //Compute the interpolator weights & operator kernel
+    EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints));
+
+    fvalue = iFvalue.get();
+    qfvalue = iqFvalue.get();
+
+    //Compute the interpolated values
+    EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
+
+    {
+        int order = dc.orderofAccuracy();
+
+        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+    }
 
     // //Create an instance of io object
     // io file;
@@ -292,12 +469,15 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_EXACT", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+    //     data = idata.get();
+    //     fvalue = iFvalue.get();
+    //     for (int i = 0; i < nPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(idata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(iFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(data, 1, nDim, 2);
+    //         file.saveMatrix<double>(fvalue, 1, 1);
+    //         data += nDim;
+    //         fvalue++;
     //     }
     //     file.closeFile();
     // }
@@ -305,12 +485,15 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_DCPSE", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalue.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
@@ -319,22 +502,19 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_DCPSE_EXACT", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalueExact.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalueExact + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
     // }
-
-    delete[] qFvalueExact;
-    delete[] qFvalue;
-    delete[] iFvalue;
-    delete[] qdata;
-    delete[] idata;
 }
 
 /*! 
@@ -343,27 +523,31 @@ TEST(dcpse_test, HandlesFrank2dFunctionCartesianPoints)
 TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
 {
     int nDim = 2;
-    int nPoints = 41;
-    int nqpoints = 20;
-
-    double *idata = nullptr;
-
     double Lb[] = {0, 0};
     double Ub[] = {1, 1};
+    int nDPoints[] = {21, 21};
+    int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
+    int nqPoints = 20;
 
-    EXPECT_TRUE(meshgrid<double>(idata, nPoints * nPoints, nDim, Lb, Ub));
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
 
-    double *qdata = nullptr;
-    double *iFvalue = nullptr;
-    double *qFvalue = nullptr;
-    double *qFvalueExact = nullptr;
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
 
     try
     {
-        qdata = new double[nqpoints * nDim];
-        iFvalue = new double[nPoints * nPoints];
-        qFvalue = new double[nqpoints];
-        qFvalueExact = new double[nqpoints];
+        idata.reset(new double[nPoints * nDim]);
+        iqdata.reset(new double[nqPoints * nDim]);
+
+        iFvalue.reset(new double[nPoints]);
+        iqFvalue.reset(new double[nqPoints]);
+        iqFvalueExact.reset(new double[nqPoints]);
     }
     catch (std::bad_alloc &e)
     {
@@ -371,47 +555,67 @@ TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
+    //Create input points
+    data = idata.get();
+    EXPECT_TRUE(meshgrid<double>(data, nPoints, nDim, Lb, Ub));
+
     //create an instance of frank2d object
     franke2d<double> f2d;
 
-    for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+    //Compute the function value at each input point
     {
-        iFvalue[i] = f2d.f(idata + n);
-        n += nDim;
+        data = idata.get();
+        for (int i = 0; i < nPoints; i++)
+        {
+            iFvalue[i] = f2d.f(data);
+            data += nDim;
+        }
     }
 
+    //Create random query data points
     {
+        qdata = iqdata.get();
+
         // std::random_device rd;
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        for (int i = 0, l = 0; i < nqpoints; i++)
+        for (int i = 0; i < nqPoints; i++)
         {
-            qdata[l] = dis(gen);
-            qdata[l + 1] = dis(gen);
-            l += 2;
+            std::for_each(qdata, qdata + nDim, [&](double &i) { i = dis(gen); });
+            qdata += nDim;
         }
 
-        for (int i = 0, n = 0; i < nqpoints; i++)
+        //Compute the function value at each query point
+        qdata = iqdata.get();
+        for (int i = 0; i < nqPoints; i++)
         {
-            qFvalueExact[i] = f2d.f(qdata + n);
-            n += nDim;
+            iqFvalueExact[i] = f2d.f(qdata);
+            qdata += nDim;
         }
     }
 
     //Create an instance of a DC-PSE object
     dcpse<double> dc(nDim);
 
-    //Compute the interpolator weights
-    EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints * nPoints, qdata, nqpoints));
+    data = idata.get();
+    qdata = iqdata.get();
 
-    //Compute the operator kernel for interpolation
-    EXPECT_TRUE(dc.interpolate(iFvalue, nPoints * nPoints, qFvalue, nqpoints));
+    //Compute the interpolator weights & operator kernel
+    EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints));
 
-    // TEMapVectorX<double> A(qFvalueExact, nqpoints);
-    // TEMapVectorX<double> B(qFvalue, nqpoints);
+    fvalue = iFvalue.get();
+    qfvalue = iqFvalue.get();
 
-    // std::cout << "Relative error = " << (A-B).norm() << std::endl;
+    //Compute the interpolated values
+    EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
+
+    {
+        int order = dc.orderofAccuracy();
+
+        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+    }
 
     // //Create an instance of io object
     // io file;
@@ -419,12 +623,15 @@ TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_EXACTRND", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+    //     data = idata.get();
+    //     fvalue = iFvalue.get();
+    //     for (int i = 0; i < nPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(idata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(iFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(data, 1, nDim, 2);
+    //         file.saveMatrix<double>(fvalue, 1, 1);
+    //         data += nDim;
+    //         fvalue++;
     //     }
     //     file.closeFile();
     // }
@@ -432,12 +639,15 @@ TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_DCPSERND", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalue.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
@@ -446,22 +656,19 @@ TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/FRANK2D_DCPSE_EXACTRND", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalueExact.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalueExact + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
     // }
-
-    delete[] qFvalueExact;
-    delete[] qFvalue;
-    delete[] iFvalue;
-    delete[] qdata;
-    delete[] idata;
 }
 
 /*! 
@@ -470,28 +677,31 @@ TEST(dcpse_test, HandlesFrank2dFunctionRandomPoints)
 TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
 {
     int nDim = 2;
-    int nPoints = 41;
-    int nqpoints = 20;
-
-    double *idata = nullptr;
-
-    int nDPoints[] = {nPoints, nPoints};
     double Lb[] = {-5.12, -5.12};
     double Ub[] = {5.12, 5.12};
+    int nDPoints[] = {21, 21};
+    int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
+    int nqPoints = 20;
 
-    EXPECT_TRUE(meshgrid<double>(idata, nDPoints, nDim, Lb, Ub));
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
 
-    double *qdata = nullptr;
-    double *iFvalue = nullptr;
-    double *qFvalue = nullptr;
-    double *qFvalueExact = nullptr;
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
 
     try
     {
-        qdata = new double[nqpoints * nDim];
-        iFvalue = new double[nPoints * nPoints];
-        qFvalue = new double[nqpoints];
-        qFvalueExact = new double[nqpoints];
+        idata.reset(new double[nPoints * nDim]);
+        iqdata.reset(new double[nqPoints * nDim]);
+
+        iFvalue.reset(new double[nPoints]);
+        iqFvalue.reset(new double[nqPoints]);
+        iqFvalueExact.reset(new double[nqPoints]);
     }
     catch (std::bad_alloc &e)
     {
@@ -499,47 +709,67 @@ TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
+    //Create input points
+    data = idata.get();
+    EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
+
     //create an instance of rastrigin 2d object
     rastrigin<double> r2d(nDim);
 
-    for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+    //Compute the function value at each input point
     {
-        iFvalue[i] = r2d.f(idata + n);
-        n += 2;
+        data = idata.get();
+        for (int i = 0; i < nPoints; i++)
+        {
+            iFvalue[i] = r2d.f(data);
+            data += nDim;
+        }
     }
 
+    //Create random query data points
     {
+        qdata = iqdata.get();
+
         // std::random_device rd;
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(-5.12, 5.12);
 
-        for (int i = 0, l = 0; i < nqpoints; i++)
+        for (int i = 0; i < nqPoints; i++)
         {
-            qdata[l] = dis(gen);
-            qdata[l + 1] = dis(gen);
-            l += 2;
+            std::for_each(qdata, qdata + nDim, [&](double &i) { i = dis(gen); });
+            qdata += nDim;
         }
 
-        for (int i = 0, n = 0; i < nqpoints; i++)
+        //Compute the function value at each query point
+        qdata = iqdata.get();
+        for (int i = 0; i < nqPoints; i++)
         {
-            qFvalueExact[i] = r2d.f(qdata + n);
-            n += nDim;
+            iqFvalueExact[i] = r2d.f(qdata);
+            qdata += nDim;
         }
     }
 
     //Create an instance of a DC-PSE object
     dcpse<double> dc(nDim);
 
-    //Compute the interpolator weights
-    EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints * nPoints, qdata, nqpoints));
+    data = idata.get();
+    qdata = iqdata.get();
 
-    //Compute the operator kernel for interpolation
-    EXPECT_TRUE(dc.interpolate(iFvalue, nPoints * nPoints, qFvalue, nqpoints));
+    //Compute the interpolator weights & operator kernel
+    EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 4));
 
-    // TEMapVectorX<double> A(qFvalueExact, nqpoints);
-    // TEMapVectorX<double> B(qFvalue, nqpoints);
+    fvalue = iFvalue.get();
+    qfvalue = iqFvalue.get();
 
-    // std::cout << "Relative error = " << (A-B).norm() << std::endl;
+    //Compute the interpolated values
+    EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
+
+    {
+        int order = dc.orderofAccuracy();
+
+        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+    }
 
     // //Create an instance of io object
     // io file;
@@ -547,12 +777,15 @@ TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/RASTRIGIN2D_EXACT", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nPoints * nPoints; i++)
+    //     data = idata.get();
+    //     fvalue = iFvalue.get();
+    //     for (int i = 0; i < nPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(idata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(iFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(data, 1, nDim, 2);
+    //         file.saveMatrix<double>(fvalue, 1, 1);
+    //         data += nDim;
+    //         fvalue++;
     //     }
     //     file.closeFile();
     // }
@@ -560,12 +793,15 @@ TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/RASTRIGIN2D_DCPSE", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalue.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalue + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
@@ -574,22 +810,19 @@ TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
     // //!Open a file for reading and writing
     // if (file.openFile("./dcpse/RASTRIGIN2D_DCPSE_EXACT", file.in | file.out | file.trunc))
     // {
-    //     for (int i = 0, n = 0; i < nqpoints; i++)
+    //     qdata = iqdata.get();
+    //     qfvalue = iqFvalueExact.get();
+    //     for (int i = 0; i < nqPoints; i++)
     //     {
     //         //!Write the matrix in it
-    //         file.saveMatrix<double>(qdata + n, 1, nDim, 2);
-    //         file.saveMatrix<double>(qFvalueExact + i, 1, 1);
-    //         n += nDim;
+    //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+    //         file.saveMatrix<double>(qfvalue, 1, 1);
+    //         qdata += nDim;
+    //         qfvalue++;
     //     }
 
     //     file.closeFile();
     // }
-
-    delete[] qFvalueExact;
-    delete[] qFvalue;
-    delete[] iFvalue;
-    delete[] qdata;
-    delete[] idata;
 }
 
 int main(int argc, char **argv)
