@@ -1,10 +1,50 @@
 #ifndef UMUQ_PREDICTIONTESTFUNCTIONS_H
 #define UMUQ_PREDICTIONTESTFUNCTIONS_H
 
+/*! \class qian
+ * \brief Qian's 1-Dimensional Function class
+ * 
+ * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ */
+template <typename T>
+struct qian
+{
+  /*!
+   * \brief Construct a new qian object
+   * 
+   */
+  qian() {}
+
+  /*! \fn f
+   * \brief Qian's function
+   * 
+   * Qian's function
+   * \f[
+   * f(x) = e^{(3x)} \cos \left(\frac{7\pi x}{2} \right),~~ x \in [0 \codts 1] 
+   * \f]
+   * 
+   * \param  x  input data point
+   * 
+   * \return f  function value at input data point
+   */
+  inline T f(T const *x)
+  {
+    return std::exp(3 * (*x)) * std::cos(3.5 * M_PI * (*x));
+  }
+};
+
 /*! \class franke2d
  * \brief Franke's 2-Dimensional Function class
  * 
  * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 struct franke2d
@@ -46,6 +86,11 @@ struct franke2d
  * \brief Rastrigin's N-Dimensional Function class 
  * 
  * \tparam T data type
+ * 
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 class rastrigin
@@ -85,6 +130,10 @@ private:
  * \brief Ackley's N-Dimensional Function class 
  * 
  * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 class ackley
