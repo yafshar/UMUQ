@@ -318,8 +318,8 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
  */
 int compar_desc(const void *p1, const void *p2)
 {
-    sort_t *s1 = (sort_t *)p1;
-    sort_t *s2 = (sort_t *)p2;
+    const sort_t *s1 = static_cast<const sort_t *>(p1);
+    const sort_t *s2 = static_cast<const sort_t *>(p2);
 
     /* -: ascending order, +: descending order */
     return (s2->nsel - s1->nsel);
