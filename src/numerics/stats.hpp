@@ -11,13 +11,14 @@ struct stats
      * \brief Finds the smallest element in the array of data
      * 
      * \tparam T data type
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
      * \returns The smallest element in the array of data
      */
     template <typename T>
-    inline T const minelement(T const *idata, int const nSize) const
+    inline T minelement(T const *idata, int const nSize) const
     {
         return *std::min_element(idata, idata + nSize);
     }
@@ -26,13 +27,14 @@ struct stats
      * \brief Finds the greatest element in the array of data
      * 
      * \tparam T data type
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
      * \returns The greatest element in the array of data
      */
     template <typename T>
-    inline T const maxelement(T const *idata, int const nSize) const
+    inline T maxelement(T const *idata, int const nSize) const
     {
         return *std::max_element(idata, idata + nSize);
     }
@@ -41,6 +43,7 @@ struct stats
      * \brief Finds the position of the smallest element in the array of data
      * 
      * \tparam T data type
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
@@ -50,13 +53,14 @@ struct stats
     template <typename T>
     inline int minelement_index(T const *idata, int const nSize) const
     {
-        return (int)std::distance(idata, std::min_element(idata, idata + nSize));
+        return static_cast<int>(std::distance(idata, std::min_element(idata, idata + nSize)));
     }
 
     /*!
      * \brief Finds the position of the greatest element in the array of data
      * 
      * \tparam T data type
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
@@ -65,14 +69,15 @@ struct stats
     template <typename T>
     inline int maxelement_index(T const *idata, int const nSize) const
     {
-        return (int)std::distance(idata, std::max_element(idata, idata + nSize));
+        return static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize)));
     }
 
     /*!
      * \brief Computes the sum of the elements in the array of data
      * 
-     * \tparam T data type
-     * \tparam TOut type of return output result (default is double)
+     * \tparam T    data type
+     * \tparam TOut data type of return output result (default is double)
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
@@ -103,8 +108,9 @@ struct stats
     /*!
      * \brief Computes the standard deviation of the elements in the array of data
      * 
-     * \tparam T data type
-     * \tparam TOut type of return output result (default is double)
+     * \tparam T    data type
+     * \tparam TOut data type of return output result (default is double)
+     * 
      * \param idata array of data
      * \param nSize size of the array
      * 
@@ -140,7 +146,7 @@ struct stats
         T fMaxValue = maxelement<T>(fValue, fSize);
 
         TOut *weight = new TOut[fSize];
-        
+
         TOut diff = static_cast<TOut>(x - p);
 
         //Compute the weight
