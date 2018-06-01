@@ -71,6 +71,41 @@ TEST(arraywrapper_test, HandlesVectors)
     delete[] srtarray;
 }
 
+TEST(arraywrapper_test, HandlesVectorsWithStride)
+{
+    //! check for array of int with stride 2
+    std::unique_ptr<int> ia(new int[10]);
+    int *iarray = ia.get();
+
+    std::iota(iarray, iarray + 10, 0);
+    ArrayWrapper<int> it(iarray, 10, 2);
+
+    int j = 0;
+    for (auto i = it.begin(); i != it.end(); i++)
+    {
+        EXPECT_EQ(*i, j);
+        j += 2;
+    }
+
+    EXPECT_EQ(it.size(), 5);
+
+    //! check for array of double with stride 9
+    std::unique_ptr<double> da(new double[100]);
+    double *darray = da.get();
+
+    std::iota(darray, darray + 100, 1000.);
+    ArrayWrapper<double> itd(darray, 100, 9);
+
+    double sd = 1000.;
+    for (auto i = itd.begin(); i != itd.end(); i++)
+    {
+        EXPECT_DOUBLE_EQ(*i, sd);
+        sd += 9.;
+    }
+
+    EXPECT_EQ(itd.size(), 11);
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
