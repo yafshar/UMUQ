@@ -20,16 +20,19 @@ class ArrayWrapper
          *  \brief iterator constructor
          *
          */
-        iterator() : iPosition(nullptr) {}
-        iterator(T const *aPointer) : iPosition(aPointer) {}
+        iterator() : iPosition(nullptr), iStride(1) {}
+        iterator(std::size_t Stride) : iPosition(nullptr), iStride(Stride) {}
+        iterator(T const *aPointer) : iPosition(aPointer), iStride(1) {}
+        iterator(T const *aPointer, std::size_t Stride) : iPosition(aPointer), iStride(Stride) {}
+
         ~iterator(){}; // nothing to do
 
         bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
-        bool operator!=(iterator const &rhs) { return iPosition != rhs.iPosition; }
+        bool operator!=(iterator const &rhs) { return iStride == 1 ? iPosition != rhs.iPosition : iPosition < rhs.iPosition; }
 
         iterator &operator++()
         {
-            ++iPosition;
+            iPosition += iStride;
             return *this;
         }
 
@@ -57,36 +60,69 @@ class ArrayWrapper
 
       private:
         T const *iPosition;
+        std::size_t iStride;
     };
 
     /*! 
      *  \brief ArrayWrapper constructor
      *
      */
-    ArrayWrapper() : iArray(nullptr), iNumOfElements(0) {}
-    ArrayWrapper(T const *InputArray, std::size_t NumOfElements) : iArray(InputArray), iNumOfElements(NumOfElements) {}
+    ArrayWrapper() : iArray(nullptr), iNumOfElements(0), iStride(1) {}
+    ArrayWrapper(T const *InputArray, std::size_t NumOfElements, std::size_t Stride = 1) : iArray(InputArray),
+                                                                                           iNumOfElements(NumOfElements),
+                                                                                           iStride(Stride) {}
+    /*!
+     * \brief Move constructor Construct a new Array Wrapper object
+     * 
+     * \param InputArrayObj 
+     */
     ArrayWrapper(ArrayWrapper &&InputArrayObj)
     {
         iArray = InputArrayObj.iArray;
-        InputArrayObj.iArray = nullptr;
         iNumOfElements = InputArrayObj.iNumOfElements;
+        iStride = InputArrayObj.iStride;
+
+        InputArrayObj.iArray = nullptr;
         InputArrayObj.iNumOfElements = 0;
+        InputArrayObj.iStride = 1;
     }
+
+    /*!
+     * \brief Move assignment 
+     * 
+     * \param InputArrayObj 
+     * \return ArrayWrapper& 
+     */
     ArrayWrapper &operator=(ArrayWrapper &&InputArrayObj)
     {
         iArray = InputArrayObj.iArray;
-        InputArrayObj.iArray = nullptr;
         iNumOfElements = InputArrayObj.iNumOfElements;
+        iStride = InputArrayObj.iStride;
+
+        InputArrayObj.iArray = nullptr;
         InputArrayObj.iNumOfElements = 0;
+        InputArrayObj.iStride = 1;
+
         return *this;
     }
 
+    /*!
+     * \brief Destroy the Array Wrapper object
+     * 
+     */
     ~ArrayWrapper(){};
 
-    inline void set(T *InputArray, std::size_t NumOfElements)
+    /*!
+     * \brief set the wrapper
+     * 
+     * \param InputArray 
+     * \param NumOfElements 
+     */
+    inline void set(T *InputArray, std::size_t NumOfElements, std::size_t Stride = 1)
     {
         iArray = InputArray;
         iNumOfElements = NumOfElements;
+        iStride = Stride;
     }
 
     /*! 
@@ -96,11 +132,12 @@ class ArrayWrapper
      */
     inline iterator begin()
     {
-        return iterator(iArray);
+        return iStride == 1 ? iterator(iArray) : iterator(iArray, iStride);
     }
-    inline const iterator begin() const
+
+    inline iterator begin() const
     {
-        return iterator(iArray);
+        return iStride == 1 ? iterator(iArray) : iterator(iArray, iStride);
     }
 
     /*! 
@@ -112,25 +149,40 @@ class ArrayWrapper
     {
         return iterator(iArray + iNumOfElements);
     }
-    inline const iterator end() const
+
+    inline iterator end() const
     {
         return iterator(iArray + iNumOfElements);
     }
 
-    inline std::size_t size() const { return iNumOfElements; }
+    /*!
+     * \brief get the size of array
+     * 
+     * \return Size of the array
+     */
+    inline std::size_t size() const { return iStride == 1 ? iNumOfElements : iNumOfElements / iStride; }
 
-    inline void swap(ArrayWrapper<T> &aObj)
+    /*!
+     * \brief Swap with the input arraywrapper object
+     * 
+     * \param InputArrayWrapperObj 
+     */
+    inline void swap(ArrayWrapper<T> &InputArrayWrapperObj)
     {
-        std::swap(iNumOfElements, aObj.iNumOfElements);
-        std::swap(iArray, aObj.iArray);
+        std::swap(iNumOfElements, InputArrayWrapperObj.iNumOfElements);
+        std::swap(iStride, InputArrayWrapperObj.iStride);
+        std::swap(iArray, InputArrayWrapperObj.iArray);
     }
 
   private:
     //! Pointer to the actual Input
     T const *iArray;
-    
+
     //! Size of InputArray
     std::size_t iNumOfElements;
+
+    //! stride
+    std::size_t iStride;
 
     // make it noncopyable
     ArrayWrapper(const ArrayWrapper &) = delete;
