@@ -1,6 +1,8 @@
 #ifndef UMUQ_STATS_H
 #define UMUQ_STATS_H
 
+#include "../misc/array.hpp"
+
 /*! \class stats
 * \brief stats is a class which includes some functionality for applying statistics to input data
 *	
@@ -24,6 +26,26 @@ struct stats
     }
 
     /*!
+     * \brief Finds the smallest element in the array of data with stride
+     * 
+     * \tparam T data type
+     * 
+     * \param idata  array of data
+     * \param nSize  size of the array
+     * \param Stride element stride
+     * 
+     * \returns The smallest element in the array of data
+     */
+    template <typename T>
+    inline T minelement(T const *idata, int const nSize, std::size_t const Stride) const
+    {
+        ArrayWrapper<T> a(idata, nSize, Stride);
+        auto start = a.begin();
+        auto end = a.end();
+        return *std::min_element(start, end);
+    }
+
+    /*!
      * \brief Finds the greatest element in the array of data
      * 
      * \tparam T data type
@@ -37,6 +59,26 @@ struct stats
     inline T maxelement(T const *idata, int const nSize) const
     {
         return *std::max_element(idata, idata + nSize);
+    }
+
+    /*!
+     * \brief Finds the greatest element in the array of data with stride
+     * 
+     * \tparam T data type
+     * 
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * \returns The greatest element in the array of data
+     */
+    template <typename T>
+    inline T maxelement(T const *idata, int const nSize, std::size_t const Stride) const
+    {
+        ArrayWrapper<T> a(idata, nSize, Stride);
+        auto start = a.begin();
+        auto end = a.end();
+        return *std::max_element(start, end);
     }
 
     /*!
@@ -57,6 +99,24 @@ struct stats
     }
 
     /*!
+     * \brief Finds the position of the smallest element in the array of data with stride
+     * 
+     * \tparam T data type
+     * 
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * 
+     * \returns The the position of the smallest element
+     */
+    template <typename T>
+    inline int minelement_index(T const *idata, int const nSize, std::size_t const Stride) const
+    {
+        return static_cast<int>(std::distance(idata, std::min_element(idata, idata + nSize, Stride)));
+    }
+
+    /*!
      * \brief Finds the position of the greatest element in the array of data
      * 
      * \tparam T data type
@@ -71,6 +131,24 @@ struct stats
     {
         return static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize)));
     }
+
+    /*!
+     * \brief Finds the position of the greatest element in the array of data with Stride
+     * 
+     * \tparam T data type
+     * 
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * \returns The the position of the greatest element
+     */
+    template <typename T>
+    inline int maxelement_index(T const *idata, int const nSize, std::size_t const Stride) const
+    {
+        return static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize, Stride)));
+    }
+
 
     /*!
      * \brief Computes the sum of the elements in the array of data
@@ -90,6 +168,27 @@ struct stats
     }
 
     /*!
+     * \brief Computes the sum of the elements in the array of data with stride
+     * 
+     * \tparam T    data type
+     * \tparam TOut data type of return output result (default is double)
+     * 
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * \returns The sum of the elements in the array of data
+     */
+    template <typename T, typename TOut = double>
+    inline TOut sum(T const *idata, int const nSize, std::size_t const Stride) const
+    {
+        ArrayWrapper<T> a(idata, nSize, Stride);
+        auto start = a.begin();
+        auto end = a.end();
+        return static_cast<TOut>(std::accumulate(start, end, T{}));
+    }
+
+    /*!
      * \brief Computes the mean of the elements in the array of data
      * 
      * \tparam T data type
@@ -103,6 +202,26 @@ struct stats
     inline TOut mean(T const *idata, const int nSize) const
     {
         return sum<T, TOut>(idata, nSize) / nSize;
+    }
+
+    /*!
+     * \brief Computes the mean of the elements in the array of data with stride
+     * 
+     * \tparam T data type
+     * \tparam TOut type of return output result (default is double)
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * \returns The mean of the elements in the array of data
+     */
+    template <typename T, typename TOut = double>
+    inline TOut mean(T const *idata, const int nSize, std::size_t const Stride) const
+    {
+        ArrayWrapper<T> a(idata, nSize, Stride);
+        auto start = a.begin();
+        auto end = a.end();
+        return static_cast<TOut>(std::accumulate(start, end, T{})) / a.size();
     }
 
     /*!
@@ -123,6 +242,30 @@ struct stats
         TOut s(0);
         std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
         return std::sqrt(s / (nSize - 1));
+    }
+
+    /*!
+     * \brief Computes the standard deviation of the elements in the array of data with stride
+     * 
+     * \tparam T    data type
+     * \tparam TOut data type of return output result (default is double)
+     * 
+     * \param idata array of data
+     * \param nSize size of the array
+     * \param Stride element stride
+     * 
+     * \returns The standard deviation of the elements in the array of data
+     */
+    template <typename T, typename TOut = double>
+    inline TOut stddev(T const *idata, int const nSize, std::size_t const Stride, TOut const idatamean = std::numeric_limits<TOut>::max()) const
+    {
+        TOut m = (idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata, nSize, Stride));
+        ArrayWrapper<T> a(idata, nSize, Stride);
+        auto start = a.begin();
+        auto end = a.end();      
+        TOut s(0);
+        std::for_each(start, end, [&](T const d) { s += (d - m) * (d - m); });
+        return std::sqrt(s / (a.size() - 1));
     }
 
     /*!
