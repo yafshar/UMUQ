@@ -1,3 +1,4 @@
+#include "core/core.hpp"
 #include "misc/array.hpp"
 #include "gtest/gtest.h"
 
