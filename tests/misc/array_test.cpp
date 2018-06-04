@@ -76,10 +76,14 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
 {
     //! check for array of int with stride 2
     std::unique_ptr<int[]> ia{new int[10]};
-    int *iarray = ia.get();
 
-    std::iota(iarray, iarray + 10, 0);
-    ArrayWrapper<int> it(iarray, 10, 2);
+    //Fill the array with some values
+    {
+        int *iarray = ia.get();
+        std::iota(iarray, iarray + 10, 0);
+    }
+
+    ArrayWrapper<int> it(ia, 10, 2);
 
     int j = 0;
     for (auto i = it.begin(); i != it.end(); i++)
@@ -92,10 +96,14 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
 
     //! check for array of double with stride 9
     std::unique_ptr<double[]> da{new double[100]};
-    double *darray = da.get();
 
-    std::iota(darray, darray + 100, 1000.);
-    ArrayWrapper<double> itd(darray, 100, 9);
+    //Fill the array with some values
+    {
+        double *darray = da.get();
+        std::iota(darray, darray + 100, 1000.);
+    }
+
+    ArrayWrapper<double> itd(da, 100, 9);
 
     double sd = 1000.;
     for (auto i = itd.begin(); i != itd.end(); i++)
