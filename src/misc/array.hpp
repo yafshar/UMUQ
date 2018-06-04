@@ -71,6 +71,11 @@ class ArrayWrapper
     ArrayWrapper(T const *InputArray, std::size_t NumOfElements, std::size_t Stride = 1) : iArray(InputArray),
                                                                                            iNumOfElements(NumOfElements),
                                                                                            iStride(Stride) {}
+
+    ArrayWrapper(std::unique_ptr<T[]> const &InputArray, std::size_t NumOfElements, std::size_t Stride = 1) : iArray(InputArray.get()),
+                                                                                                              iNumOfElements(NumOfElements),
+                                                                                                              iStride(Stride) {}
+
     /*!
      * \brief Move constructor Construct a new Array Wrapper object
      * 
@@ -156,7 +161,7 @@ class ArrayWrapper
     }
 
     /*!
-     * \brief get the size of array
+     * \brief Get the size of array
      * 
      * \return Size of the array
      */
