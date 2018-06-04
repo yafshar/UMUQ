@@ -74,7 +74,7 @@ TEST(arraywrapper_test, HandlesVectors)
 TEST(arraywrapper_test, HandlesVectorsWithStride)
 {
     //! check for array of int with stride 2
-    std::unique_ptr<int[]> ia(new int[10]);
+    std::unique_ptr<int[]> ia{new int[10]};
     int *iarray = ia.get();
 
     std::iota(iarray, iarray + 10, 0);
@@ -90,7 +90,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
     EXPECT_EQ(it.size(), 5);
 
     //! check for array of double with stride 9
-    std::unique_ptr<double[]> da(new double[100]);
+    std::unique_ptr<double[]> da{new double[100]};
     double *darray = da.get();
 
     std::iota(darray, darray + 100, 1000.);
