@@ -53,16 +53,24 @@ class io
     static const std::ios_base::openmode ate = std::fstream::ate;
     static const std::ios_base::openmode trunc = std::fstream::trunc;
 
-    //!default constrcutor
+    /*!
+     * \brief Construct a new io object
+     * 
+     */
     io(){}
 
+    /*!
+     * \brief Destroy the io object
+     * 
+     */
     ~io()
     {
         closeFile();
     }
 
     /*!
-     * \brief return true if file is opened
+     * \brief   It is true if the file is opened
+     * 
      * \returns true if the file is already opened 
      */
     inline bool isFileOpened() const { return fs.is_open(); }
@@ -173,6 +181,7 @@ class io
 
     /*!
      * \brief Close the File
+     * 
      */
     inline void closeFile()
     {
@@ -182,12 +191,18 @@ class io
 
     /*!
      * \brief Get the stream
+     * 
      */
     std::fstream &getFstream()
     {
         return fs;
     }
 
+    /*!
+     * \brief Get the Line object
+     * 
+     * \return std::string& 
+     */
     std::string &getLine()
     {
         return line;
@@ -940,16 +955,19 @@ class io
     }
 
   private:
-    //Input/output operations on file based streams
+    //! Input/output operations on file based streams
     std::fstream fs;
     
-    //Line for reading the string of data
+    //! Line for reading the string of data
     std::string line;
 
+    //! Index
     typedef std::ptrdiff_t Idx;
+    
+    //! Width parameter of the stream out or in
     std::ptrdiff_t Width;
 
-    //IO format
+    //! IO format
     ioFormat fmt;
 };
 
