@@ -1,5 +1,7 @@
 # UMUQ
 [![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=develop)](https://travis-ci.com/yafshar/UMUQ)
+[![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](LICENSE)
+
 
 Welcome to **UMUQ**, University of Michigan's Uncertainty Quantification framework!
 
@@ -45,6 +47,45 @@ $ git clone git@github.com:yafshar/UMUQ.git
 ## For HTTP-based Git interaction
 $ git clone https://github.com/yafshar/UMUQ.git
 ````
+
+Prerequisites
+------------
+If you wish to compile UMUQ from source, you will require the following components (these are **not** necessary for running the statically linked binary):
+
+1. **Torc**; _latest version_ (https://github.com/cselab/torc_lite)
+
+   A tasking library that allows to write platform-independent code.
+
+2. **Eigen**; _at least 3.3.2_ release (http://eigen.tuxfamily.org)
+
+   Eigen forms the core mathematics library of UMUQ, with all its linear algebra routines.
+
+3. **FLANN**; _latest version 1.8_ (http://www.cs.ubc.ca/research/flann)
+
+   FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces.
+
+4. **Google Test** (optional); _at least 1.8.0_ (https://github.com/google/googletest)
+
+   Google's framework for writing and using C++ test & mock classes.
+
+Furthermore, you will require a compiler that can handle **C++0x** (which includes all C++11 compilers). 
+UMUQ has been successfully compiled with GCC 5.0, GCC 6.0 and GCC 8.0 on Gentoo/Debian. 
+
+If you wish to do development, you will require parts of the extended GNU toolchain (the infamous Autotools):
+
+1. **Autoconf**; latest 2.69 release (http://www.gnu.org/software/autoconf/)
+
+   GNU Autoconf produces the ./configure script from configure.ac.
+
+2. **Automake**; latest 1.14 release (http://www.gnu.org/software/automake/)
+
+   GNU Automake produces the Makefile.in precursor, that is processed with ./configure to yield the final Makefile.
+
+3. **Libtool**; latest 2.4.2 release (http://www.gnu.org/software/libtool/)
+
+   GNU Libtool is required as a dependency in configure.
+
+UMUQ is tested and developed on UNIX-like systems, hence supporting Microsoft Windows is not a goal at the moment.
 
 Licenses
 ------------
