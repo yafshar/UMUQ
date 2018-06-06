@@ -1,6 +1,7 @@
 #include "core/core.hpp"
 #include "io/io.hpp"
 #include "numerics/dcpse.hpp"
+#include "numerics/fitness.hpp"
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
 #include "gtest/gtest.h"
 
@@ -863,75 +864,229 @@ TEST(dcpse_1d_test, HandlesCFDDATA)
                               1.39900000000000462e-03, 7.52330802551779646e-04};
 
     std::unique_ptr<double[]> iqFvalue(new double[nqPoints]);
-    double *qfvalue = iqFvalue.get();
+    double *qfvalue;
 
-    //Create an instance of a DC-PSE object
-    dcpse<double> dc(nDim);
-
-    //Compute the interpolator weights & operator kernel
-    EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 2));
-
-    //Compute the interpolated values
-    EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
-
+    //2nd order accuracy
     {
-        int order = dc.orderofAccuracy();
-
-        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
-                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
-    }
-
-    //Create an instance of io object
-    io file;
-
-    //!Open a file for reading and writing
-    if (file.openFile("./dcpse/CFD_EXACT", file.in | file.out | file.trunc))
-    {
-        double *data = idata;
-        double *fvalue = iFvalue;
-        for (int i = 0; i < nPoints; i++)
-        {
-            //!Write the matrix in it
-            file.saveMatrix<double>(data, 1, nDim, 2);
-            file.saveMatrix<double>(fvalue, 1, 1);
-            data += nDim;
-            fvalue++;
-        }
-        file.closeFile();
-    }
-
-    //!Open a file for reading and writing
-    if (file.openFile("./dcpse/CFD_DCPSE", file.in | file.out | file.trunc))
-    {
-        double *qdata = iqdata;
         qfvalue = iqFvalue.get();
-        for (int i = 0; i < nqPoints; i++)
+
+        //Create an instance of a DC-PSE object
+        dcpse<double> dc(nDim);
+
+        //Compute the interpolator weights & operator kernel
+        EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 2));
+
+        //Compute the interpolated values
+        EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
+
         {
-            //!Write the matrix in it
-            file.saveMatrix<double>(qdata, 1, nDim, 2);
-            file.saveMatrix<double>(qfvalue, 1, 1);
-            qdata += nDim;
-            qfvalue++;
+            int order = dc.orderofAccuracy();
+
+            std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                      << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
-        file.closeFile();
+
+        //Create an instance of io object
+        io file;
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_EXACT", file.in | file.out | file.trunc))
+        {
+            double *data = idata;
+            double *fvalue = iFvalue;
+            for (int i = 0; i < nPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(data, 1, nDim, 2);
+                file.saveMatrix<double>(fvalue, 1, 1);
+                data += nDim;
+                fvalue++;
+            }
+            file.closeFile();
+        }
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_DCPSE_2", file.in | file.out | file.trunc))
+        {
+            double *qdata = iqdata;
+            qfvalue = iqFvalue.get();
+            for (int i = 0; i < nqPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(qdata, 1, nDim, 2);
+                file.saveMatrix<double>(qfvalue, 1, 1);
+                qdata += nDim;
+                qfvalue++;
+            }
+            file.closeFile();
+        }
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_DCPSE_EXACT", file.in | file.out | file.trunc))
+        {
+            double *qdata = iqdata;
+            qfvalue = iqFvalueExact;
+            for (int i = 0; i < nqPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(qdata, 1, nDim, 2);
+                file.saveMatrix<double>(qfvalue, 1, 1);
+                qdata += nDim;
+                qfvalue++;
+            }
+
+            file.closeFile();
+        }
+
+        fitness<double> f("root_mean_squared");
+
+        double *observations = iqFvalueExact;
+        qfvalue = iqFvalue.get();
+
+        std::cout << "For " << f.getMetricName() << " : " << f.getFitness(observations, qfvalue, nqPoints) << std::endl;
     }
 
-    //!Open a file for reading and writing
-    if (file.openFile("./dcpse/CFD_DCPSE_EXACT", file.in | file.out | file.trunc))
+    //3rd order accuracy
     {
-        double *qdata = iqdata;
-        qfvalue = iqFvalueExact;
-        for (int i = 0; i < nqPoints; i++)
+        qfvalue = iqFvalue.get();
+
+        //Create an instance of a DC-PSE object
+        dcpse<double> dc(nDim);
+
+        //Compute the interpolator weights & operator kernel
+        EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 3));
+
+        //Compute the interpolated values
+        EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
+
         {
-            //!Write the matrix in it
-            file.saveMatrix<double>(qdata, 1, nDim, 2);
-            file.saveMatrix<double>(qfvalue, 1, 1);
-            qdata += nDim;
-            qfvalue++;
+            int order = dc.orderofAccuracy();
+
+            std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                      << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
 
-        file.closeFile();
+        //Create an instance of io object
+        io file;
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_DCPSE_3", file.in | file.out | file.trunc))
+        {
+            double *qdata = iqdata;
+            qfvalue = iqFvalue.get();
+            for (int i = 0; i < nqPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(qdata, 1, nDim, 2);
+                file.saveMatrix<double>(qfvalue, 1, 1);
+                qdata += nDim;
+                qfvalue++;
+            }
+            file.closeFile();
+        }
+
+        fitness<double> f("root_mean_squared");
+
+        double *observations = iqFvalueExact;
+        qfvalue = iqFvalue.get();
+
+        std::cout << "For " << f.getMetricName() << " : " << f.getFitness(observations, qfvalue, nqPoints) << std::endl;
     }
+
+    //4rd order accuracy
+    {
+        qfvalue = iqFvalue.get();
+
+        //Create an instance of a DC-PSE object
+        dcpse<double> dc(nDim);
+
+        //Compute the interpolator weights & operator kernel
+        EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 4));
+
+        //Compute the interpolated values
+        EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
+
+        {
+            int order = dc.orderofAccuracy();
+
+            std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                      << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+        }
+
+        //Create an instance of io object
+        io file;
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_DCPSE_4", file.in | file.out | file.trunc))
+        {
+            double *qdata = iqdata;
+            qfvalue = iqFvalue.get();
+            for (int i = 0; i < nqPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(qdata, 1, nDim, 2);
+                file.saveMatrix<double>(qfvalue, 1, 1);
+                qdata += nDim;
+                qfvalue++;
+            }
+            file.closeFile();
+        }
+
+        fitness<double> f("root_mean_squared");
+
+        double *observations = iqFvalueExact;
+        qfvalue = iqFvalue.get();
+
+        std::cout << "For " << f.getMetricName() << " : " << f.getFitness(observations, qfvalue, nqPoints) << std::endl;
+    }
+
+    //7rd order accuracy
+    {
+        qfvalue = iqFvalue.get();
+
+        //Create an instance of a DC-PSE object
+        dcpse<double> dc(nDim);
+
+        //Compute the interpolator weights & operator kernel
+        EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 7));
+
+        //Compute the interpolated values
+        EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
+
+        {
+            int order = dc.orderofAccuracy();
+
+            std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                      << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+        }
+
+        //Create an instance of io object
+        io file;
+
+        //!Open a file for reading and writing
+        if (file.openFile("./dcpse/CFD_DCPSE_7", file.in | file.out | file.trunc))
+        {
+            double *qdata = iqdata;
+            qfvalue = iqFvalue.get();
+            for (int i = 0; i < nqPoints; i++)
+            {
+                //!Write the matrix in it
+                file.saveMatrix<double>(qdata, 1, nDim, 2);
+                file.saveMatrix<double>(qfvalue, 1, 1);
+                qdata += nDim;
+                qfvalue++;
+            }
+            file.closeFile();
+        }
+
+        fitness<double> f("root_mean_squared");
+
+        double *observations = iqFvalueExact;
+        qfvalue = iqFvalue.get();
+
+        std::cout << "For " << f.getMetricName() << " : " << f.getFitness(observations, qfvalue, nqPoints) << std::endl;
+    }
+
 }
 
 int main(int argc, char **argv)
