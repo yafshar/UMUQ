@@ -825,6 +825,115 @@ TEST(dcpse_test, HandlesRastriginFunctionCartesianPoints)
     // }
 }
 
+/*! 
+ * Test to check dcpse functionality for Rastrigin function
+ */
+TEST(dcpse_1d_test, HandlesCFDDATA)
+{
+    int nDim = 1;
+    double Lb[] = {-4};
+    double Ub[] = {1.2};
+
+    int nPoints = 9;
+    int nqPoints = 27;
+
+    double idata[] = {1, 0.4, -0.2, -0.8, -1.4, -2, -2.6, -3.2, -3.8};
+    double iFvalue[] = {0.001399, 0.002119, 0.000223, 0.000265, 0.001145, -0.001141, -0.002576, -0.004553, -0.005357};
+    double iqdata[] = {-4.00000000000000000e+00, -3.79999999999999982e+00, -3.60000000000000009e+00,
+                       -3.39999999999999991e+00, -3.20000000000000018e+00, -3.00000000000000000e+00,
+                       -2.79999999999999982e+00, -2.60000000000000009e+00, -2.39999999999999991e+00,
+                       -2.19999999999999973e+00, -2.00000000000000000e+00, -1.79999999999999982e+00,
+                       -1.59999999999999987e+00, -1.39999999999999991e+00, -1.19999999999999973e+00,
+                       -9.99999999999999778e-01, -7.99999999999999822e-01, -5.99999999999999867e-01,
+                       -3.99999999999999800e-01, -1.99999999999999789e-01, 2.22044604925031308e-16,
+                       2.00000000000000233e-01, 4.00000000000000244e-01, 6.00000000000000311e-01,
+                       8.00000000000000266e-01, 1.00000000000000022e+00, 1.20000000000000018e+00};
+
+    double iqFvalueExact[] = {-4.86257420168973407e-03, -5.35699999999999978e-03, -5.48294572673046956e-03,
+                              -5.18719553406514142e-03, -4.55299999999999976e-03, -3.77857337305603086e-03,
+                              -3.08158623047766591e-03, -2.57599999999999973e-03, -2.20345834008881187e-03,
+                              -1.77996424185716470e-03, -1.14099999999999879e-03,
+                              -2.88267401909034519e-04, 5.73070180457921569e-04,
+                              1.14500000000000040e-03, 1.22525475319120000e-03,
+                              8.45239315114444537e-04, 2.65000000000000912e-04,
+                              -1.67025267563533728e-04, -1.95990586912018171e-04,
+                              2.23000000000003577e-04, 9.26826735582121424e-04,
+                              1.64304202219159681e-03, 2.11900000000000456e-03,
+                              2.21642368852469247e-03, 1.93903577793026120e-03,
+                              1.39900000000000462e-03, 7.52330802551779646e-04};
+
+    std::unique_ptr<double[]> iqFvalue(new double[nqPoints]);
+    double *qfvalue = iqFvalue.get();
+
+    //Create an instance of a DC-PSE object
+    dcpse<double> dc(nDim);
+
+    //Compute the interpolator weights & operator kernel
+    EXPECT_TRUE(dc.computeInterpolatorWeights(idata, nPoints, iqdata, nqPoints, 2));
+
+    //Compute the interpolated values
+    EXPECT_TRUE(dc.interpolate(iFvalue, nPoints, qfvalue, nqPoints));
+
+    {
+        int order = dc.orderofAccuracy();
+
+        std::cout << "DC-PSE uses " << dc.neighborhoodKernelSize() << " number of points in the neighborhood of each query points to do a \n"
+                  << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
+    }
+
+    //Create an instance of io object
+    io file;
+
+    //!Open a file for reading and writing
+    if (file.openFile("./dcpse/CFD_EXACT", file.in | file.out | file.trunc))
+    {
+        double *data = idata;
+        double *fvalue = iFvalue;
+        for (int i = 0; i < nPoints; i++)
+        {
+            //!Write the matrix in it
+            file.saveMatrix<double>(data, 1, nDim, 2);
+            file.saveMatrix<double>(fvalue, 1, 1);
+            data += nDim;
+            fvalue++;
+        }
+        file.closeFile();
+    }
+
+    //!Open a file for reading and writing
+    if (file.openFile("./dcpse/CFD_DCPSE", file.in | file.out | file.trunc))
+    {
+        double *qdata = iqdata;
+        qfvalue = iqFvalue.get();
+        for (int i = 0; i < nqPoints; i++)
+        {
+            //!Write the matrix in it
+            file.saveMatrix<double>(qdata, 1, nDim, 2);
+            file.saveMatrix<double>(qfvalue, 1, 1);
+            qdata += nDim;
+            qfvalue++;
+        }
+        file.closeFile();
+    }
+
+    //!Open a file for reading and writing
+    if (file.openFile("./dcpse/CFD_DCPSE_EXACT", file.in | file.out | file.trunc))
+    {
+        double *qdata = iqdata;
+        qfvalue = iqFvalueExact;
+        for (int i = 0; i < nqPoints; i++)
+        {
+            //!Write the matrix in it
+            file.saveMatrix<double>(qdata, 1, nDim, 2);
+            file.saveMatrix<double>(qfvalue, 1, 1);
+            qdata += nDim;
+            qfvalue++;
+        }
+
+        file.closeFile();
+    }
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
