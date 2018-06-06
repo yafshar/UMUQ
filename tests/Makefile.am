@@ -42,6 +42,10 @@ TESTS += dcpse_test
 check_PROGRAMS += dcpse_test
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
 
+TESTS += fitness_test
+check_PROGRAMS += fitness_test
+fitness_test_SOURCES = numerics/fitness_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test
