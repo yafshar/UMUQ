@@ -121,6 +121,8 @@ class residual
             return std::abs(observed - predicted) / std::abs(observed);
         case SquredError:
             return (observed - predicted) * (observed - predicted);
+        case default:
+            return std::abs(observed - predicted);
         }
     }
 
