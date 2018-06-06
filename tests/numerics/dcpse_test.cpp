@@ -886,57 +886,57 @@ TEST(dcpse_1d_test, HandlesCFDDATA)
                       << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
 
-        //Create an instance of io object
-        io file;
+        // //Create an instance of io object
+        // io file;
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_EXACT", file.in | file.out | file.trunc))
-        {
-            double *data = idata;
-            double *fvalue = iFvalue;
-            for (int i = 0; i < nPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(data, 1, nDim, 2);
-                file.saveMatrix<double>(fvalue, 1, 1);
-                data += nDim;
-                fvalue++;
-            }
-            file.closeFile();
-        }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_EXACT", file.in | file.out | file.trunc))
+        // {
+        //     double *data = idata;
+        //     double *fvalue = iFvalue;
+        //     for (int i = 0; i < nPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(data, 1, nDim, 2);
+        //         file.saveMatrix<double>(fvalue, 1, 1);
+        //         data += nDim;
+        //         fvalue++;
+        //     }
+        //     file.closeFile();
+        // }
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_DCPSE_2", file.in | file.out | file.trunc))
-        {
-            double *qdata = iqdata;
-            qfvalue = iqFvalue.get();
-            for (int i = 0; i < nqPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(qdata, 1, nDim, 2);
-                file.saveMatrix<double>(qfvalue, 1, 1);
-                qdata += nDim;
-                qfvalue++;
-            }
-            file.closeFile();
-        }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_DCPSE_2", file.in | file.out | file.trunc))
+        // {
+        //     double *qdata = iqdata;
+        //     qfvalue = iqFvalue.get();
+        //     for (int i = 0; i < nqPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+        //         file.saveMatrix<double>(qfvalue, 1, 1);
+        //         qdata += nDim;
+        //         qfvalue++;
+        //     }
+        //     file.closeFile();
+        // }
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_DCPSE_EXACT", file.in | file.out | file.trunc))
-        {
-            double *qdata = iqdata;
-            qfvalue = iqFvalueExact;
-            for (int i = 0; i < nqPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(qdata, 1, nDim, 2);
-                file.saveMatrix<double>(qfvalue, 1, 1);
-                qdata += nDim;
-                qfvalue++;
-            }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_DCPSE_EXACT", file.in | file.out | file.trunc))
+        // {
+        //     double *qdata = iqdata;
+        //     qfvalue = iqFvalueExact;
+        //     for (int i = 0; i < nqPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+        //         file.saveMatrix<double>(qfvalue, 1, 1);
+        //         qdata += nDim;
+        //         qfvalue++;
+        //     }
 
-            file.closeFile();
-        }
+        //     file.closeFile();
+        // }
 
         fitness<double> f("root_mean_squared");
 
@@ -966,24 +966,24 @@ TEST(dcpse_1d_test, HandlesCFDDATA)
                       << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
 
-        //Create an instance of io object
-        io file;
+        // //Create an instance of io object
+        // io file;
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_DCPSE_3", file.in | file.out | file.trunc))
-        {
-            double *qdata = iqdata;
-            qfvalue = iqFvalue.get();
-            for (int i = 0; i < nqPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(qdata, 1, nDim, 2);
-                file.saveMatrix<double>(qfvalue, 1, 1);
-                qdata += nDim;
-                qfvalue++;
-            }
-            file.closeFile();
-        }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_DCPSE_3", file.in | file.out | file.trunc))
+        // {
+        //     double *qdata = iqdata;
+        //     qfvalue = iqFvalue.get();
+        //     for (int i = 0; i < nqPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+        //         file.saveMatrix<double>(qfvalue, 1, 1);
+        //         qdata += nDim;
+        //         qfvalue++;
+        //     }
+        //     file.closeFile();
+        // }
 
         fitness<double> f("root_mean_squared");
 
@@ -1013,24 +1013,24 @@ TEST(dcpse_1d_test, HandlesCFDDATA)
                       << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
 
-        //Create an instance of io object
-        io file;
+        // //Create an instance of io object
+        // io file;
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_DCPSE_4", file.in | file.out | file.trunc))
-        {
-            double *qdata = iqdata;
-            qfvalue = iqFvalue.get();
-            for (int i = 0; i < nqPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(qdata, 1, nDim, 2);
-                file.saveMatrix<double>(qfvalue, 1, 1);
-                qdata += nDim;
-                qfvalue++;
-            }
-            file.closeFile();
-        }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_DCPSE_4", file.in | file.out | file.trunc))
+        // {
+        //     double *qdata = iqdata;
+        //     qfvalue = iqFvalue.get();
+        //     for (int i = 0; i < nqPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+        //         file.saveMatrix<double>(qfvalue, 1, 1);
+        //         qdata += nDim;
+        //         qfvalue++;
+        //     }
+        //     file.closeFile();
+        // }
 
         fitness<double> f("root_mean_squared");
 
@@ -1060,24 +1060,24 @@ TEST(dcpse_1d_test, HandlesCFDDATA)
                       << order << (order == 1 ? "st  " : order == 2 ? "nd  " : order == 3 ? "rd  " : "th  ") << "order interpolation." << std::endl;
         }
 
-        //Create an instance of io object
-        io file;
+        // //Create an instance of io object
+        // io file;
 
-        //!Open a file for reading and writing
-        if (file.openFile("./dcpse/CFD_DCPSE_7", file.in | file.out | file.trunc))
-        {
-            double *qdata = iqdata;
-            qfvalue = iqFvalue.get();
-            for (int i = 0; i < nqPoints; i++)
-            {
-                //!Write the matrix in it
-                file.saveMatrix<double>(qdata, 1, nDim, 2);
-                file.saveMatrix<double>(qfvalue, 1, 1);
-                qdata += nDim;
-                qfvalue++;
-            }
-            file.closeFile();
-        }
+        // //!Open a file for reading and writing
+        // if (file.openFile("./dcpse/CFD_DCPSE_7", file.in | file.out | file.trunc))
+        // {
+        //     double *qdata = iqdata;
+        //     qfvalue = iqFvalue.get();
+        //     for (int i = 0; i < nqPoints; i++)
+        //     {
+        //         //!Write the matrix in it
+        //         file.saveMatrix<double>(qdata, 1, nDim, 2);
+        //         file.saveMatrix<double>(qfvalue, 1, 1);
+        //         qdata += nDim;
+        //         qfvalue++;
+        //     }
+        //     file.closeFile();
+        // }
 
         fitness<double> f("root_mean_squared");
 
