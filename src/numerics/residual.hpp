@@ -11,13 +11,13 @@ enum
 /*! \class residual
  * \ingroup numerics
  *
- * \brief computes residuals of observation and predicted data based on Error type
+ * \brief Computes residuals of observation and predicted data based on different Error type
  *
- * List of available Error type:
- *  - \b AbsoluteError Absolute difference between observed data and predicted one
- *  - \b ScaledError   It is a ratio of absolute difference between observed data and predicted one towards 
- *                     absolute value of observation data
- *  - \b SquredError   Squre value of the difference between observed data and predicted one
+ * List of available Error types:
+ *  - \b AbsoluteError Absolute difference between observed and predicted data
+ *  - \b ScaledError   It is a ratio of absolute difference between observed and predicted data  
+ *                     to the absolute value of observed data
+ *  - \b SquredError   Squred value of the difference between observed and predicted data
  */
 template <typename T>
 class residual
@@ -60,7 +60,7 @@ class residual
     /*!
      * \brief set the new error type
      * 
-     * \param  errorType_  Error type is a residual type
+     * \param  errorType_  Error type in computing residual
      * 
      * \return true 
      * \return false  if the error type is unknown 
@@ -87,7 +87,15 @@ class residual
         }
         return true;
     }
-
+    
+    /*!
+     * \brief set the new error type
+     * 
+     * \param  errorType_  Error type in computing residual
+     * 
+     * \return true 
+     * \return false  if the error type is unknown 
+     */
     bool set(int errorType_)
     {
         if (errorType_ == AbsoluteError || errorType_ == ScaledError || errorType_ == SquredError)
@@ -104,7 +112,7 @@ class residual
     }
 
     /*!
-     * \brief compute the residual based on error type
+     * \brief Compute the residual based on error type
      * 
      * \param observed  Observed data
      * \param predicted Predicted data
@@ -121,12 +129,13 @@ class residual
             return std::abs(observed - predicted) / std::abs(observed);
         case SquredError:
             return (observed - predicted) * (observed - predicted);
-        case default:
+        default:
             return std::abs(observed - predicted);
         }
     }
 
   private:
+    //! Error type in computing residuals
     int errorType;
 };
 
