@@ -58,7 +58,7 @@ class fitness
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << " Error fitness is unknown : By default it is set to sum_squared" << std::endl;
-            
+
             fitnessResidual.set(SquredError);
             errorFit = errorFitSum;
         }
@@ -236,9 +236,8 @@ class fitness
             T favg = s.mean<T, T>(observations, nSize);
 
             T nomin = computeResiduals(predictions, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
-            ;
+
             T denom = computeResiduals(observations, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
-            ;
 
             return nomin / denom;
         }
