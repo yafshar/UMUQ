@@ -1894,7 +1894,7 @@ class dcpse
     {
         for (int i = 0; i < nTerms; i++)
         {
-            std::cout << Order[i] << (Order[i] == 1 ? "st " : Order[i] == 2 ? "nd " : Order[i] == 3 ? "rd " : "th ") << "order DC-PSE kernel uses \n"
+            std::cout << Order[i] << (Order[i] % 10 == 1 ? "st " : Order[i] % 10 == 2 ? "nd " : Order[i] % 10 == 3 ? "rd " : "th ") << "order DC-PSE kernel uses \n"
                       << neighborhoodKernelSize() << " points in the neighborhood of each query points." << std::endl;
         }
     }
