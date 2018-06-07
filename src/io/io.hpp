@@ -57,7 +57,7 @@ class io
      * \brief Construct a new io object
      * 
      */
-    io(){}
+    io() {}
 
     /*!
      * \brief Destroy the io object
@@ -103,7 +103,7 @@ class io
      * 
      * \returns true if everything goes OK
      */
-    inline bool openFile(const char *fileName, const std::ios_base::openmode mode = in)
+    bool openFile(const char *fileName, const std::ios_base::openmode mode = in)
     {
         if (fs.is_open())
         {
@@ -139,7 +139,7 @@ class io
      * 
      * \returns true if no error occurs on the associated stream
      */
-    inline bool readLine(const char comment = '#')
+    bool readLine(const char comment = '#')
     {
         std::string linetmp;
         for (;;)
@@ -193,7 +193,7 @@ class io
      * \brief Get the stream
      * 
      */
-    std::fstream &getFstream()
+    inline std::fstream &getFstream()
     {
         return fs;
     }
@@ -203,7 +203,7 @@ class io
      * 
      * \return std::string& 
      */
-    std::string &getLine()
+    inline std::string &getLine()
     {
         return line;
     }
@@ -219,7 +219,7 @@ class io
      * \returns true if no error occurs during writing the matrix
      */
     template <typename TM, typename TF>
-    inline bool saveMatrix(TM MX, TF const IOfmt)
+    bool saveMatrix(TM MX, TF const IOfmt)
     {
         if (!fs.is_open())
         {
@@ -249,7 +249,7 @@ class io
      * \returns true if no error occurs during writing the matrix
      */
     template <typename TD>
-    inline bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
+    bool saveMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -360,7 +360,7 @@ class io
      * \returns true if no error occurs during writing the matrix
      */
     template <typename TD>
-    inline bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
+    bool saveMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -458,7 +458,7 @@ class io
     }
 
     template <typename TD>
-    inline bool saveMatrix(TD *idata, const int nRows, const int nCols = 1, const int options = 0)
+    bool saveMatrix(TD *idata, const int nRows, const int nCols = 1, const int options = 0)
     {
         if (!fs.is_open())
         {
@@ -581,6 +581,97 @@ class io
             return true;
         }
         return false;
+    }
+
+    template <typename TD>
+    bool saveMatrix(TD *idata, const int idataCols, TD *ifvalue, const int ifvalueCols, const int nRows)
+    {
+        if (!fs.is_open())
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << "This file stream is not open for writing." << std::endl;
+            return false;
+        }
+
+        //!IF the output position indicator of the current associated streambuf object is at the startline
+        if (fs.tellp() == 0)
+        {
+            if (std::numeric_limits<TD>::is_integer)
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(0);
+            }
+            else
+            {
+                //!Manages the precision (i.e. how many digits are generated)
+                fs.precision(digits10<TD>());
+            }
+            fs << std::fixed;
+
+            Width = 0;
+        }
+        else
+        {
+            Width = std::max<std::ptrdiff_t>(0, Width);
+        }
+
+        for (int i = 0; i < nRows * idataCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        for (int i = 0; i < nRows * ifvalueCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(fs);
+            sstr << ifvalue[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (Width)
+        {
+            for (int i = 0, l = 0, k = 0; i < nRows; i++)
+            {
+                fs.width(Width);
+                fs << idata[l++];
+                for (int j = 1; j < idataCols; j++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[l++];
+                }
+                for (int j = 0; j < ifvalueCols; j++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << ifvalue[k++];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0, l = 0, k=0; i < nRows; i++)
+            {
+                fs << idata[l++];
+                for (int j = 1; j < idataCols; j++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << idata[l++];
+                }
+                for (int j = 0; j < ifvalueCols; j++)
+                {
+                    fs << fmt.coeffSeparator;
+                    fs << ifvalue[k++];
+                }
+                fs << fmt.rowSeparator;
+            }
+        }
+
+        return true;
     }
 
     /*!
@@ -957,13 +1048,13 @@ class io
   private:
     //! Input/output operations on file based streams
     std::fstream fs;
-    
+
     //! Line for reading the string of data
     std::string line;
 
     //! Index
     typedef std::ptrdiff_t Idx;
-    
+
     //! Width parameter of the stream out or in
     std::ptrdiff_t Width;
 
