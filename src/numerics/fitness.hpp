@@ -19,10 +19,10 @@ enum
  * \brief This class evalutes the model fitness 
  *
  * List of available Fitness type:
- *  - \b errorFitSum      Sum of the absolute difference between observed data and predicted one
- *  - \b errorFitMean     Average of the absolute difference between observed data and predicted one
- *  - \b errorFitRootMean Square root of the average of the absolute difference between observed data and predicted one
- *  - \b errorFitMax      Maximum value of the absolute difference between observed data and predicted one
+ *  - \b errorFitSum      Sum of the absolute difference between observed and predicted data
+ *  - \b errorFitMean     Average of the absolute difference between observed and predicted data
+ *  - \b errorFitRootMean Squared root of the average of the absolute difference between observed and predicted data
+ *  - \b errorFitMax      Maximum value of the absolute difference between observed and predicted data
  */
 template <typename T>
 class fitness
@@ -151,7 +151,7 @@ class fitness
     }
 
     /*!
-     * \brief Get the Residuals 
+     * \brief Compute residuals  
      * 
      * \param observations array of observations data
      * \param predictions  array of predicted data
@@ -160,7 +160,7 @@ class fitness
      * \return true        
      * \return false       If there is not enoug hmemory to continue
      */
-    bool getResiduals(T *observations, T *predictions, int const nSize, T *&results)
+    bool computeResiduals(T *observations, T *predictions, int const nSize, T *&results)
     {
         if (results == nullptr)
         {
@@ -183,7 +183,7 @@ class fitness
         return true;
     }
 
-    bool getResiduals(T *observations, T const prediction, int const nSize, T *&results)
+    bool computeResiduals(T *observations, T const prediction, int const nSize, T *&results)
     {
         if (results == nullptr)
         {
@@ -235,9 +235,9 @@ class fitness
 
             T favg = s.mean<T, T>(observations, nSize);
 
-            T nomin = getResiduals(predictions, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
+            T nomin = computeResiduals(predictions, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
             ;
-            T denom = getResiduals(observations, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
+            T denom = computeResiduals(observations, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
             ;
 
             return nomin / denom;
@@ -305,7 +305,7 @@ class fitness
                 }
 
                 T *results = r.get();
-                if (getResiduals(observations, predictions, nSize, results))
+                if (computeResiduals(observations, predictions, nSize, results))
                 {
                     stats s;
                     switch (errorFit)
@@ -334,7 +334,7 @@ class fitness
         else
         {
             T *results = r.get();
-            if (getResiduals(observations, predictions, nSize, results))
+            if (computeResiduals(observations, predictions, nSize, results))
             {
                 stats s;
 
