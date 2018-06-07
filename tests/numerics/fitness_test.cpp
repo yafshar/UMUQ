@@ -37,22 +37,36 @@ TEST(fitness_test, HandlesLinearRegression)
     double *p = predictions.get();
     std::for_each(p, p + nPoints, [&](double &i) { i = *o++ + (dis(gen) - 0.5) * 0.01; });
 
-
     o = observations.get();
     p = predictions.get();
 
-
     fitness<double> f("sum_squared");
-    std::cout << "For " << f.getMetricName() << " : " <<  f.getFitness(o, p, nPoints) << std::endl;
+    std::cout << "For " << f.getMetricName() << " : " << f.getFitness(o, p, nPoints) << std::endl;
 
     f.setMetricName("mean_squared");
-    std::cout << "For " << f.getMetricName() << " : " <<  f.getFitness(o, p, nPoints) << std::endl;
+    std::cout << "For " << f.getMetricName() << " : " << f.getFitness(o, p, nPoints) << std::endl;
 
     f.setMetricName("root_mean_squared");
-    std::cout << "For " << f.getMetricName() << " : " <<  f.getFitness(o, p, nPoints) << std::endl;
+    std::cout << "For " << f.getMetricName() << " : " << f.getFitness(o, p, nPoints) << std::endl;
 
     f.setMetricName("max_squared");
-    std::cout << "For " << f.getMetricName() << " : " <<  f.getFitness(o, p, nPoints) << std::endl;
+    std::cout << "For " << f.getMetricName() << " : " << f.getFitness(o, p, nPoints) << std::endl;
+
+    d = idata.get();
+    std::iota(d, d + nPoints, double{});
+
+    d = idata.get();
+    o = observations.get();
+    std::for_each(o, o + nPoints, [&](double &i) { i = (*d) * (*d++); });
+
+    d = idata.get();
+    p = predictions.get();
+    std::for_each(p, p + nPoints, [&](double &i) { i = *d * *d + 0.1; d++;});
+
+    o = observations.get();
+    p = predictions.get();
+    f.setMetricName("root_mean_squared");
+    EXPECT_NEAR(f.getFitness(o, p, nPoints), 0.1, 1.e-8);
 }
 
 int main(int argc, char **argv)
