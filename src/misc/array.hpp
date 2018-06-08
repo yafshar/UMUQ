@@ -203,6 +203,7 @@ class ArrayWrapper
     //! stride
     std::size_t iStride;
 
+  private:
     // make it noncopyable
     ArrayWrapper(const ArrayWrapper &) = delete;
 
