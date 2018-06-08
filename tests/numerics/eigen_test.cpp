@@ -7,12 +7,8 @@
  */
 TEST(eigen_test, HandlesMap)
 {
-    double *A = nullptr;
-    A = new double[12];
-    for (int i = 0; i < 12; i++)
-    {
-        A[i] = (double)i;
-    }
+    double *A = new double[12];
+    std::iota(A, A + 12, double{});
 
     //!Copy the buffer to the new Eigen object
     EMatrixXd ACopy = EMapXd(A, 3, 4);
@@ -63,11 +59,7 @@ TEST(eigen_test, HandlesMap)
 
     EXPECT_EQ(nullptr, A);
 
-    A = new double[625];
-    for (int i = 0; i < 625; i++)
-    {
-        A[i] = 0;
-    }
+    A = new double[625]();
 
     //!create a new 25*25 Eigen Matrix C and initialize to random values
     EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
