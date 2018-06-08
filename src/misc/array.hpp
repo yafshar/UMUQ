@@ -95,7 +95,7 @@ class ArrayWrapper
      * 
      * \param InputArrayObj 
      */
-    ArrayWrapper(ArrayWrapper &&InputArrayObj)
+    ArrayWrapper(ArrayWrapper<T> &&InputArrayObj)
     {
         iArray = InputArrayObj.iArray;
         iNumOfElements = InputArrayObj.iNumOfElements;
@@ -112,7 +112,7 @@ class ArrayWrapper
      * \param InputArrayObj 
      * \return ArrayWrapper& 
      */
-    ArrayWrapper &operator=(ArrayWrapper &&InputArrayObj)
+    ArrayWrapper<T> &operator=(ArrayWrapper<T> &&InputArrayObj)
     {
         iArray = InputArrayObj.iArray;
         iNumOfElements = InputArrayObj.iNumOfElements;
@@ -205,7 +205,7 @@ class ArrayWrapper
 
   private:
     // make it noncopyable
-    ArrayWrapper(const ArrayWrapper &) = delete;
+    ArrayWrapper(ArrayWrapper const &) = delete;
 
     // make it not assignable
     ArrayWrapper &operator=(const ArrayWrapper &) = delete;
