@@ -35,6 +35,12 @@ class polynomial
         }
 
         monomialSize = binomial_coefficient(nDim + Order, Order);
+        if (monomialSize == 0)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Fatal error! Monomial size of zero degree!" << std::endl;
+            throw(std::runtime_error("Monomial size of zero degree !"));
+        }
     }
 
     /*! 
@@ -64,6 +70,12 @@ class polynomial
         }
 
         monomialSize = binomial_coefficient(nDim + Order, Order);
+        if (monomialSize == 0)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Fatal error! Monomial size of zero degree!" << std::endl;
+            throw(std::runtime_error("Monomial size of zero degree !"));
+        }
 
         alpha.reset(nullptr);
     }
@@ -170,7 +182,7 @@ class polynomial
                 return nullptr;
             }
 
-            int n = 0;
+            int n(0);
 
             for (;;)
             {
@@ -214,6 +226,8 @@ class polynomial
 
             if (tmp == nullptr)
             {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " St went wrong in creating monomial sequence !" << std::endl;
                 return 0;
             }
         }
@@ -245,16 +259,31 @@ class polynomial
         return monomialSize;
     }
 
+    /*!
+     * \brief Get the monomial size
+     * 
+     * \return monomial size
+     */
     int monomialsize() const
     {
         return monomialSize;
     }
 
+    /*!
+     * \brief get the dimension
+     * 
+     * \return Dimension
+     */
     int dim() const
     {
         return nDim;
     }
 
+    /*!
+     * \brief Polynomial order 
+     * 
+     * \return Polynomial order
+     */
     int order() const
     {
         return Order;
