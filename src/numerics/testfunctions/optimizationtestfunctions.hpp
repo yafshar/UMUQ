@@ -17,8 +17,18 @@ template <typename T>
 class rosenbrock_fmin : public multimin_function<T, rosenbrock_fmin<T>>
 {
   public:
+    /*!
+     * \brief Construct a new rosenbrock fmin object
+     * 
+     */
     rosenbrock_fmin() { this->n = 2; }
 
+    /*!
+     * \brief function definition
+     * 
+     * \param  x input
+     * \return f
+     */
     T f(T const *x)
     {
         T u = x[0];
@@ -28,6 +38,11 @@ class rosenbrock_fmin : public multimin_function<T, rosenbrock_fmin<T>>
         return a * a + 10 * b * b;
     }
 
+    /*!
+     * \brief Set the initial point
+     * 
+     * \param x input data point
+     */
     void initpt(T *x)
     {
         x[0] = -1.2;
@@ -48,8 +63,18 @@ template <typename T>
 class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
 {
   public:
+    /*!
+     * \brief Construct a new rosenbrock object
+     * 
+     */
     rosenbrock() { this->n = 2; }
-
+    
+    /*!
+     * \brief function definition
+     * 
+     * \param  x input data 
+     * \return f
+     */
     T f(T const *x)
     {
         T u = x[0];
@@ -58,7 +83,13 @@ class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
         T b = u * u - v;
         return a * a + 10 * b * b;
     }
-
+    
+    /*!
+     * \brief derivative of a function
+     * 
+     * \param x   input data 
+     * \param df_ function derivative \f$ \frac{\partial f}{\partial x_0} \text{and} \frac{\partial f}{\partial x_1} \f$
+     */
     T df(T const *x, T *df_)
     {
         T u = x[0];
@@ -70,6 +101,13 @@ class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
         return 0;
     }
 
+    /*!
+     * \brief function and its derivative
+     * 
+     * \param x   input data
+     * \param f_  function
+     * \param df_ derivative
+     */
     void fdf(T const *x, T *f_, T *df_)
     {
         T u = x[0];
@@ -80,7 +118,12 @@ class rosenbrock : public multimin_function_fdf<T, rosenbrock<T>>
         df_[0] = 2 * (u - 1) + 40 * u * b;
         df_[1] = -20 * b;
     }
-
+    
+    /*!
+     * \brief Set the default initial point
+     * 
+     * \param x input data point
+     */
     void initpt(T *x)
     {
         x[0] = -1.2;
@@ -103,6 +146,12 @@ class Nrosenbrock : public multimin_function_fdf<T, Nrosenbrock<T>>
   public:
     Nrosenbrock() { this->n = 2; }
 
+    /*!
+     * \brief function
+     * 
+     * \param x input data
+     * \return  the function value at point x
+     */
     T f(T const *x)
     {
         T u = x[0];
@@ -112,17 +161,36 @@ class Nrosenbrock : public multimin_function_fdf<T, Nrosenbrock<T>>
         return a * a + 10 * b * b;
     }
 
+    /*!
+     * \brief derivative
+     *  
+     * \param x   input data
+     * \param df_ derivative at point x
+     * \return T  derivative at point x
+     */
     T df(T const *x, T *df_)
     {
         return multimin_diff<T, Nrosenbrock<T>>(this, x, df_);
     }
 
+    /*!
+     * \brief function and its derivative
+     * 
+     * \param x   input point
+     * \param f_  function at point x
+     * \param df_ derivative at point x
+     */
     void fdf(T const *x, T *f_, T *df_)
     {
         *f_ = f(x);
         df(x, df_);
     }
 
+    /*!
+     * \brief Set the default initial point
+     * 
+     * \param x input data point
+     */
     void initpt(T *x)
     {
         x[0] = -1.2;
@@ -134,8 +202,18 @@ template <typename T>
 class roth_fmin : public multimin_function<T, roth_fmin<T>>
 {
   public:
+    /*!
+     * \brief Construct a new roth fmin object
+     * 
+     */
     roth_fmin() { this->n = 2; }
-
+    
+    /*!
+     * \brief function
+     * 
+     * \param x input data
+     * \return  the function value at point x
+     */
     T f(T const *x)
     {
         T u = x[0];
@@ -144,7 +222,12 @@ class roth_fmin : public multimin_function<T, roth_fmin<T>>
         T b = -29 + u + ((v + 1) * v - 14) * v;
         return a * a + b * b;
     }
-
+    
+    /*!
+     * \brief Set the default initial point
+     * 
+     * \param x input data point
+     */
     void initpt(T *x)
     {
         x[0] = 4.5;
