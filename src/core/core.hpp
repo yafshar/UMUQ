@@ -1,8 +1,10 @@
 #ifndef UMUQ_CORE_H
 #define UMUQ_CORE_H
 
+#ifdef HAVE_CONFIG_H
 //Include this file where all configuration variables are defined.
 #include <UMUQ_config.h>
+#endif /* HAVE_CONFIG_H */
 
 //Include this file where all our macros are defined.
 #include "macros.hpp"
