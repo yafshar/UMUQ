@@ -9,18 +9,13 @@
 class funcallcounter
 {
   public:
-    static pthread_mutex_t function_counter_mutex;
-
-    static int num_of_local_function_counter;
-    static int num_of_global_function_counter;
-    static int num_of_total_function_counter;
-
     /*! 
      * \brief Registers tasks
      */
     bool init()
     {
-        auto initialized = 0;
+        auto initialized(0);
+
         MPI_Initialized(&initialized);
         if (!initialized)
         {
@@ -40,7 +35,9 @@ class funcallcounter
     {
         //lock a mutex
         pthread_mutex_lock(&function_counter_mutex);
+
         num_of_local_function_counter++;
+        
         //unlock the mutex
         pthread_mutex_unlock(&function_counter_mutex);
     }
@@ -79,6 +76,19 @@ class funcallcounter
      * \returns the Total number of function calls
      */
     int get_ntotalfc() { return funcallcounter::num_of_total_function_counter; }
+
+  public:
+    //! Mutex object
+    static pthread_mutex_t function_counter_mutex;
+
+    //! Local number of function calls
+    static int num_of_local_function_counter;
+
+    //! Global number of function calls
+    static int num_of_global_function_counter;
+
+    //! Total number of function calls
+    static int num_of_total_function_counter;
 };
 
 pthread_mutex_t funcallcounter::function_counter_mutex = PTHREAD_MUTEX_INITIALIZER;
