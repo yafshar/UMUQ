@@ -29,7 +29,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(0, d1->local_scale);
 
     EXPECT_EQ(100, d1->options.MaxIter);
-    EXPECT_DOUBLE_EQ(1e-6, d1->options.Tol);
+    EXPECT_DOUBLE_EQ(1e-6, d1->options.Tolerance);
     EXPECT_EQ(0, d1->options.Display);
     EXPECT_DOUBLE_EQ(1e-5, d1->options.Step);
 
@@ -59,7 +59,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(0, d2.local_scale);
 
     EXPECT_EQ(100, d2.options.MaxIter);
-    EXPECT_DOUBLE_EQ(1e-6, d2.options.Tol);
+    EXPECT_DOUBLE_EQ(1e-6, d2.options.Tolerance);
     EXPECT_EQ(0, d2.options.Display);
     EXPECT_DOUBLE_EQ(1e-5, d2.options.Step);
 
@@ -96,7 +96,7 @@ TEST(streamdatatype, HandlesIO)
     EXPECT_DOUBLE_EQ(0, d1.local_scale);
 
     EXPECT_EQ(1000, d1.options.MaxIter);
-    EXPECT_DOUBLE_EQ(1e-12, d1.options.Tol);
+    EXPECT_DOUBLE_EQ(1e-12, d1.options.Tolerance);
     EXPECT_EQ(1, d1.options.Display);
     EXPECT_DOUBLE_EQ(1e-4, d1.options.Step);
 

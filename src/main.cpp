@@ -13,7 +13,7 @@
 int main()
 {
 
-    cgdb_t cgb;
+    cgdb_t<double> cgb;
 
     int d = 2;
     int r = 2;

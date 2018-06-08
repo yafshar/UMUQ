@@ -5,6 +5,30 @@
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
 
+/*! \class optimizationParameters
+ * \brief This is a class to set the optimization parameters 
+ * 
+ * \tparam T 
+ */
+template <typename T>
+struct optimizationParameters
+{
+    int MaxIter;
+    int Display;
+    T Tolerance;
+    T Step;
+
+    //! constructor
+    /*!
+     *  \brief constructor for the default variables
+     *    
+     */
+    optimizationParameters() : MaxIter(100),
+                               Display(0),
+                               Tolerance(1e-6),
+                               Step(1e-5){};
+};
+
 /*! \file stdata.hpp
 *  \brief stream Data type
 *
@@ -68,23 +92,7 @@ class stdata
     double bbeta;
     long seed;
 
-    struct optim_options
-    {
-        int MaxIter;
-        double Tol;
-        int Display;
-        double Step;
-
-        //! constructor
-        /*!
-        *  \brief constructor for the default variables
-        *    
-        */
-        optim_options() : MaxIter(100),
-                          Tol(1e-6),
-                          Display(0),
-                          Step(1e-5){};
-    } options;
+    optimizationParameters<double> options;
 
     int sampling_type; /* 0: uniform, 1: gaussian, 2: file */
     int prior_type;    /* 0: lognormal, 1: gaussian */
@@ -360,7 +368,7 @@ bool stdata::read(const char *fname)
             }
             else if (p.at<std::string>(0) == "opt.Tol")
             {
-                options.Tol = p.at<double>(1);
+                options.Tolerance = p.at<double>(1);
             }
             else if (p.at<std::string>(0) == "opt.Display")
             {
