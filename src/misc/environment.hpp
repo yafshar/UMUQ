@@ -7,6 +7,8 @@
 
 #ifdef HAVE_LIBTORC
 #ifdef HAVE_LIBGTEST
+#include "gtest/gtest.h"
+
 /*!
  * \brief torcEnvironment class
  * 
