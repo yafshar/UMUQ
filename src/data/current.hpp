@@ -9,7 +9,8 @@
 * \param queue an integer argument for submission of leaders only
 * \param error double argument for measuring error
 */
-struct cgdbp_t : basic
+template<typename T>
+struct cgdbp_t : basic<T>
 {
 
     int queue;
@@ -27,7 +28,8 @@ struct cgdbp_t : basic
 * \brief database generation structure
 *    
 */
-struct dbp_t : basic
+template<typename T>
+struct dbp_t : basic<T>
 {
 };
 
@@ -35,7 +37,8 @@ struct dbp_t : basic
 * \brief database generation structure
 *    
 */
-struct resdbp_t : basic
+template<typename T>
+struct resdbp_t : basic<T>
 {
 };
 

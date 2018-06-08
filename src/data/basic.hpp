@@ -1,6 +1,8 @@
 #ifndef UMUQ_BASIC_H
 #define UMUQ_BASIC_H
 
+#include "../misc/array.hpp"
+
 /*!
 *  \brief basic structure
 *    
@@ -12,26 +14,37 @@
 *  \param surrogate  an integer argument shows the surrogate model
 *  \param nsel       an integer argument for selection of leaders only
 */
-struct basic
+template <typename T>
+class basic
 {
-    double *Parray;
-    int ndimParray;
-    double *Garray;
-    int ndimGarray;
-    double Fvalue;
-    int surrogate;
-    int nsel;
-    /*!
+   /*!
     *  \brief constructor for the default variables
     *    
     */
-    basic() : Parray(nullptr),
+    basic() : Parray(),
               ndimParray(0),
-              Garray(nullptr),
+              Garray(),
               ndimGarray(0),
               Fvalue(0),
               surrogate(0),
               nsel(0){};
+
+  public:
+    //! Wrapper to the actual data
+    ArrayWrapper<T> Parray;
+    int ndimParray;
+
+    //! Wrapper to the actual data
+    ArrayWrapper<T> Garray;
+    int ndimGarray;
+
+    T Fvalue;
+
+    int surrogate;
+    int nsel;
+
+  private:
+    std::unique_ptr<T[]> arrayData;
 };
 
 #endif

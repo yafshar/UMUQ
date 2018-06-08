@@ -7,35 +7,33 @@
 /*!
 * \brief structure for sorting Fvalue for entires of database structure
 * 
+* \tparam T data type
+*
 * \param idx      an intger argument for indexing
 * \param nsel     an integer argument for selection of leaders only
 * \param Fvalue   a double argument for function value
 */
+template <typename T>
 struct sort_t
 {
     int idx;
     int nsel;
-    double Fvalue;
+    T Fvalue;
 };
 
 /*!
  * \brief database structure
  *
+ * \tparam T data type
  * \tparam T type of database structure
+ * 
  * \param entry
  * \param entries an integer argument shows the size of entry
  * \param m A mutex object
  */
-template <class T>
+template <class DBT>
 class database
 {
-  public:
-    T *entry;
-    int entries;
-
-  private:
-    pthread_mutex_t m;
-
   public:
     /*!
      *  \brief constructor for the database structure
@@ -72,7 +70,7 @@ class database
      *  Sorts the entries elements of the array pointed to by list, each 
      *  element size bytes long, using the compar function to determine the order.
      */
-    inline void sort(sort_t *list);
+    inline void sort(sort_t<double> *list);
 
     /*!
      * /brief function for printing  the data
@@ -218,6 +216,18 @@ class database
         }
         return false;
     }
+
+  public:
+    //! Data container
+    DBT *entry;
+
+    //! Number of entries
+    int entries;
+
+  private:
+  
+    //! Mutex object
+    pthread_mutex_t m;
 };
 
 template <class T>
@@ -312,34 +322,44 @@ bool database<T>::update(double *Parray, int ndimParray, double Fvalue, double *
 }
 
 /*!
- *  \brief Pointer to a function that compares two elements.
+ * \brief Pointer to a function that compares two elements.
  *   
  *  This function is called repeatedly by qsort to compare two elements.
  */
 int compar_desc(const void *p1, const void *p2)
 {
-    const sort_t *s1 = static_cast<const sort_t *>(p1);
-    const sort_t *s2 = static_cast<const sort_t *>(p2);
+    const sort_t<double> *s1 = static_cast<const sort_t<double> *>(p1);
+    const sort_t<double> *s2 = static_cast<const sort_t<double> *>(p2);
 
     /* -: ascending order, +: descending order */
     return (s2->nsel - s1->nsel);
 }
 
+/*!
+ * \brief quick sort
+ * 
+ * \tparam T 
+ * 
+ * \param list array which we want to sort it 
+ */
 template <class T>
-inline void database<T>::sort(sort_t *list)
+inline void database<T>::sort(sort_t<double> *list)
 {
-    qsort(list, entries, sizeof(sort_t), compar_desc);
+    qsort(list, entries, sizeof(sort_t<double>), compar_desc);
 }
 
-struct cgdb_t : public database<cgdbp_t>
+template<typename T>
+struct cgdb_t : public database<cgdbp_t<T>>
 {
 };
 
-struct db_t : public database<dbp_t>
+template<typename T>
+struct db_t : public database<dbp_t<T>>
 {
 };
 
-struct resdb_t : public database<resdbp_t>
+template<typename T>
+struct resdb_t : public database<resdbp_t<T>>
 {
 };
 

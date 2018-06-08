@@ -3,6 +3,7 @@
 
 #include "datatype.hpp"
 
+template <typename T>
 class tmcmc
 {
   public:
