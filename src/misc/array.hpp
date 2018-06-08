@@ -68,10 +68,24 @@ class ArrayWrapper
      *
      */
     ArrayWrapper() : iArray(nullptr), iNumOfElements(0), iStride(1) {}
+
+    /*!
+     * \brief Construct a new Array Wrapper object
+     * 
+     * \param InputArray    Input array data 
+     * \param NumOfElements Size of the array 
+     * \param Stride        Stride in the array elements
+     */
     ArrayWrapper(T const *InputArray, std::size_t NumOfElements, std::size_t Stride = 1) : iArray(InputArray),
                                                                                            iNumOfElements(NumOfElements),
                                                                                            iStride(Stride) {}
-
+    /*!
+     * \brief Construct a new Array Wrapper object
+     * 
+     * \param InputArray    Input array data 
+     * \param NumOfElements Size of the input array
+     * \param Stride        Stride in the array elements
+     */
     ArrayWrapper(std::unique_ptr<T[]> const &InputArray, std::size_t NumOfElements, std::size_t Stride = 1) : iArray(InputArray.get()),
                                                                                                               iNumOfElements(NumOfElements),
                                                                                                               iStride(Stride) {}
