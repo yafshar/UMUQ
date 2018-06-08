@@ -46,6 +46,10 @@ TESTS += fitness_test
 check_PROGRAMS += fitness_test
 fitness_test_SOURCES = numerics/fitness_test.cpp 
 
+TESTS += linearregression_test
+check_PROGRAMS += linearregression_test
+linearregression_test_SOURCES = numerics/linearregression_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test
