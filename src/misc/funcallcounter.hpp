@@ -37,7 +37,7 @@ class funcallcounter
         pthread_mutex_lock(&function_counter_mutex);
 
         num_of_local_function_counter++;
-        
+
         //unlock the mutex
         pthread_mutex_unlock(&function_counter_mutex);
     }
@@ -119,12 +119,28 @@ void funcallcounter::reset()
  */
 void funcallcounter::count_Task(int *x) { *x = funcallcounter::num_of_local_function_counter; }
 
+/*!
+ * \brief Get task of the local function call counters
+ * 
+ */
 void funcallcounter::count()
 {
-    //TODO correct the number of nodes
-    int c[1024]; /* MAX_NODES*/
+    int maxNumNodes = torc_num_nodes();
 
-    for (int i = 0; i < torc_num_nodes(); i++)
+    int *c;
+
+    try
+    {
+        c = new int[maxNumNodes]();
+    }
+    catch (std::bad_alloc &e)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        throw(std::runtime_error("Failed to allocate memory !"));
+    }
+
+    for (int i = 0; i < maxNumNodes; i++)
     {
         torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())funcallcounter::count_Task, 1,
                        1, MPI_INT, CALL_BY_RES,
@@ -132,9 +148,11 @@ void funcallcounter::count()
     }
     torc_waitall();
 
-    funcallcounter::num_of_global_function_counter = std::accumulate(c, c + torc_num_nodes(), 0);
+    funcallcounter::num_of_global_function_counter = std::accumulate(c, c + maxNumNodes, 0);
 
     funcallcounter::num_of_total_function_counter += funcallcounter::num_of_global_function_counter;
+
+    delete[] c;
 }
 
 #endif
