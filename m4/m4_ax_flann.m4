@@ -162,7 +162,6 @@ AC_DEFUN([AX_FLANN], [
 			AC_SUBST(LDFLAGS)
 			AC_SUBST(FLANN_LD_LIBRARY_PATH)
 			ax_flann_ok="yes"
-			AC_DEFINE(HAVE_FLANN, 1, [Define if you have FLANN Library.])
 			:
 		else
 			ax_flann_ok="no"
@@ -173,5 +172,11 @@ AC_DEFUN([AX_FLANN], [
 	])
 
 	AS_IF([test x"$ax_flann_ok" = xno], [ AC_MSG_ERROR([ Unable to find the FLANN library !])])
+	AM_CONDITIONAL([HAVE_FLANN], [test x"$ax_flann_ok" = xyes])
+	AM_COND_IF([HAVE_FLANN], [
+			AC_DEFINE(HAVE_FLANN, 1, [Define if you have FLANN Library.])
+		], []
+	)
+
 	AC_MSG_RESULT()
 ])
