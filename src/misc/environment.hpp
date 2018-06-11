@@ -5,8 +5,8 @@
 #include <UMUQ_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#ifdef HAVE_LIBTORC
-#ifdef HAVE_LIBGTEST
+#ifdef HAVE_TORC
+#ifdef HAVE_GOOGLETEST
 #include "gtest/gtest.h"
 
 /*!
@@ -16,7 +16,7 @@
 class torcEnvironment : public ::testing::Environment
 #else
 class torcEnvironment
-#endif
+#endif //HAVE_GOOGLETEST
 {
   public:
     /*!
@@ -91,5 +91,5 @@ class torcEnvironment
      */
     virtual ~torcEnvironment() {}
 };
-#endif //HAVE_LIBTORC
+#endif //HAVE_TORC
 #endif //UMUQ_ENVIRONMENT_H
