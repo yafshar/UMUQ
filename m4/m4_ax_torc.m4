@@ -114,28 +114,28 @@ AC_DEFUN([AX_TORC], [
 		else
 			if test x"$torc_PATH" != x ; then
 				if test -f "$torc_PATH/src/libtorc.so" && test -r "$torc_PATH/src/libtorc.so"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
 					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test -f "$torc_PATH/src/libtorc.a" && test -r "$torc_PATH/src/libtorc.a"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
 					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test -f "$torc_PATH/src/libtorc.dylib" && test -r "$torc_PATH/src/libtorc.dylib"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
 					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test x"$torc_LDFLAGS" = x ; then
 					AC_LANG_PUSH([C])
 					(cd "$torc_PATH" && autoreconf -i && ./configure && make)
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
 					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 					AC_LANG_POP([C])
 				fi
 			fi
 		fi
 
-		LDFLAGS+=" $torc_LDFLAGS"' -ltorc '" $PTHREAD_LIBS "
+		LDFLAGS+=" $torc_LDFLAGS"' -ltorc'" $PTHREAD_LIBS"
 
 		AC_LANG_PUSH([C])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
