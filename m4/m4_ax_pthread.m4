@@ -267,7 +267,7 @@ AC_DEFUN([AX_PTHREAD], [
 	AM_COND_IF([HAVE_PTHREAD],
 		[
 			AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
-		], []
+		]
 	)
 
 	AC_MSG_RESULT()

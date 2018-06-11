@@ -22,6 +22,6 @@ AC_ARG_ENABLE([debug],
 	AM_CONDITIONAL([DEBUG], [test x$debug = xtrue])
 	AM_COND_IF([DEBUG], [
 			AC_DEFINE(DEBUG, 1, [Define if you enable debugging.])
-		], []
+		]
 	)
 ])

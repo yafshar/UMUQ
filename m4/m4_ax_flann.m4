@@ -175,7 +175,7 @@ AC_DEFUN([AX_FLANN], [
 	AM_CONDITIONAL([HAVE_FLANN], [test x"$ax_flann_ok" = xyes])
 	AM_COND_IF([HAVE_FLANN], [
 			AC_DEFINE(HAVE_FLANN, 1, [Define if you have FLANN Library.])
-		], []
+		]
 	)
 
 	AC_MSG_RESULT()

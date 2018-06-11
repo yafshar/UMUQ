@@ -134,7 +134,7 @@ AC_DEFUN([AX_EIGEN], [
 	AM_CONDITIONAL([HAVE_EIGEN], [test x"$ax_eigen_ok" = xyes])
 	AM_COND_IF([HAVE_EIGEN], [
 			AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
-		], []
+		]
 	)
 
 	AC_MSG_RESULT()

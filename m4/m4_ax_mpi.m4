@@ -324,7 +324,7 @@ AC_DEFUN([AX_MPI], [
 	AM_CONDITIONAL([HAVE_MPI], [test x"$ax_mpi_ok" = xyes])
 	AM_COND_IF([HAVE_MPI], [
 			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
-		], []
+		]
 	)
 
 	AC_MSG_RESULT()

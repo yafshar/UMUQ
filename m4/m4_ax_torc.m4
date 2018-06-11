@@ -172,7 +172,7 @@ AC_DEFUN([AX_TORC], [
 	AM_COND_IF([HAVE_TORC],
 		[
 			AC_DEFINE(HAVE_TORC, 1, [Define if you have TORC Library.])
-		], []
+		]
 	)
 
 	AC_MSG_RESULT()
