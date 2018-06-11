@@ -168,5 +168,12 @@ AC_DEFUN([AX_TORC], [
 	])
 
 	AS_IF([test x"$ax_torc_ok" = xno], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
+	AM_CONDITIONAL([HAVE_TORC], [test x"$ax_torc_ok" = xyes])
+	AM_COND_IF([HAVE_TORC],
+		[
+			AC_DEFINE(HAVE_TORC, 1, [Define if you have TORC Library.])
+		], []
+	)
+
 	AC_MSG_RESULT()
 ])
