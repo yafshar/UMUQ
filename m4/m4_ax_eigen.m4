@@ -122,7 +122,6 @@ AC_DEFUN([AX_EIGEN], [
 		if test x"$succeeded" == xyes ; then
 			AC_SUBST(CPPFLAGS)
 			ax_eigen_ok="yes"
-			AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
 			:
 		else
 			ax_eigen_ok="no"
@@ -132,5 +131,11 @@ AC_DEFUN([AX_EIGEN], [
 	])
 
 	AS_IF([test x"$ax_eigen_ok" = xno], [ AC_MSG_ERROR([ Unable to find the EIGEN library !])])
+	AM_CONDITIONAL([HAVE_EIGEN], [test x"$ax_eigen_ok" = xyes])
+	AM_COND_IF([HAVE_EIGEN], [
+			AC_DEFINE(HAVE_EIGEN, 1, [Define if you have EIGEN Library.])
+		], []
+	)
+
 	AC_MSG_RESULT()
 ])
