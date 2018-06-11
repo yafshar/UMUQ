@@ -4,7 +4,8 @@
 #include "../core/digits10.hpp"
 
 /*! \class ioFormat
- *
+ * \ingroup io
+ * 
  * \brief Stores a set of parameters controlling the way matrices are printed
  *
  * List of available parameters:
@@ -16,7 +17,9 @@
  */
 struct ioFormat
 {
-    /** Default constructor, see ioFormat for the meaning of the parameters */
+    /*!
+     * Default constructor, see ioFormat for the meaning of the parameters 
+     */
     ioFormat(const std::string &_coeffSeparator = " ",
              const std::string &_rowSeparator = "\n",
              const std::string &_rowPrefix = "",
@@ -32,15 +35,30 @@ struct ioFormat
 };
 
 /*! \class io
- * \brief io is a class which includes some IO functionality.
+ * \ingroup io
+ * 
+ * \brief This class includes IO functionality.
  *
- * Available file open flags
- * - \b app    seek to the end of stream before each write
- * - \b binary open in binary mode
- * - \b in     open for reading
- * - \b out    open for writing
- * - \b trunc  discard the contents of the stream when opening
- * - \b ate	   seek to the end of stream immediately after open 
+ * List of available functions:
+ * - \b isFileOpened  Check if the file is opened
+ * - \b isFileExist   Check if the file exists
+ * 
+ * - \b openFile      Opens the file with the vailable file open flags:
+ *      - \b app      Seeks to the end of stream before each write
+ *      - \b binary   Open in binary mode
+ *      - \b in       Open for reading
+ *      - \b out      Open for writing
+ *      - \b trunc    Discard the contents of the stream when opening
+ *      - \b ate	  Seeks to the end of stream immediately after open 
+ *  
+ * - \b readLine      Get the string from stream file
+ * - \b rewindFile    Set the position of stream to the beginning of a file
+ * - \b closeFile     Close the file
+ * - \b getFstream    Get the stream
+ * - \b getLine       Get the Line 
+ * - \b saveMatrix    Helper function to save the matrix into a file
+ * - \b loadMatrix    Helper function to load a matrix from a file
+ * - \b printMatrix   Helper function to print the matrix to the output stream
  * 
  */
 class io
@@ -93,13 +111,13 @@ class io
      * associates it with a stream that can be identified in future operations 
      * by the FILE pointer returned.inline   
      * 
-     * Available file open flags
-     * - \b std::fstream::app 	  seek to the end of stream before each write
-     * - \b std::fstream::binary  open in binary mode
-     * - \b std::fstream::in 	  open for reading
-     * - \b std::fstream::out 	  open for writing
-     * - \b std::fstream::trunc   discard the contents of the stream when opening
-     * - \b std::fstream::ate 	  seek to the end of stream immediately after open
+     * Available file open flags:
+     * - \b std::fstream::app 	  Seeks to the end of stream before each write
+     * - \b std::fstream::binary  Open in binary mode
+     * - \b std::fstream::in 	  Open for reading
+     * - \b std::fstream::out 	  Open for writing
+     * - \b std::fstream::trunc   Discard the contents of the stream when opening
+     * - \b std::fstream::ate 	  Seeks to the end of stream immediately after open
      * 
      * \returns true if everything goes OK
      */
@@ -193,27 +211,22 @@ class io
      * \brief Get the stream
      * 
      */
-    inline std::fstream &getFstream()
-    {
-        return fs;
-    }
+    inline std::fstream &getFstream() { return fs; }
 
     /*!
      * \brief Get the Line object
      * 
      * \return std::string& 
      */
-    inline std::string &getLine()
-    {
-        return line;
-    }
+    inline std::string &getLine() { return line; }
 
     /*!
      * \brief Helper function to save the matrix of type TM with TF format into a file 
      * 
-     * \tparam  TM    typedef for matrix 
-     * \tparam  TF    typedef for format of writing
-     * \param   MX    matrix
+     * \tparam  TM    Matrix type 
+     * \tparam  TF    IO format type (We can use either of ioFormat or Eigen::IOFormat)
+     * 
+     * \param   MX    Input matrix of data
      * \param   IOfmt IO format for the matrix type
      *
      * \returns true if no error occurs during writing the matrix
@@ -238,13 +251,14 @@ class io
     /*!
      * \brief Helper function to save the matrix into a file 
      * 
-     * \tparam  TD     data type 
-     * \param   idata  array of input data of type TD
-     * \param   nRows  number of rows
-     * \param   nCols  number of columns
-     * \param options  (default) 0 save matrix in matrix format and proceed the position indicator to the next line & 
-     *                           1 save matrix in vector format and proceed the position indicator to the next line &
-     *                           2 save matrix in vector format and keep the position indicator on the same line
+     * \tparam  TD     Data type 
+     * 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns
+     * \param options  (Default) 0 Save matrix in matrix format and proceed the position indicator to the next line & 
+     *                           1 Save matrix in vector format and proceed the position indicator to the next line &
+     *                           2 Save matrix in vector format and keep the position indicator on the same line
      * 
      * \returns true if no error occurs during writing the matrix
      */
@@ -349,13 +363,14 @@ class io
     /*!
      * \brief Helper function to save the matrix into a file 
      * 
-     * \tparam  TD     data type 
-     * \param   idata  array of input data of type TD
-     * \param   nRows  number of rows
-     * \param   nCols  number of columns for each row
-     * \param options  (default) 0 saves matrix in matrix format and proceeds the position indicator to the next line & 
-     *                           1 saves matrix in vector format and proceeds the position indicator to the next line &
-     *                           2 saves matrix in vector format and keep the position indicator on the same line
+     * \tparam  TD     Data type 
+     * 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns for each row
+     * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
+     *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
+     *                           2 Saves matrix in vector format and keep the position indicator on the same line
      * 
      * \returns true if no error occurs during writing the matrix
      */
@@ -457,6 +472,18 @@ class io
         return false;
     }
 
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam TD      Data type 
+     * 
+     * \param idata    Array of input data of type TD
+     * \param nRows    Number of rows 
+     * \param nCols    Number of columns for each row (default is 1)
+     * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
+     *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
+     *                           2 Saves matrix in vector format and keep the position indicator on the same line
+     */
     template <typename TD>
     bool saveMatrix(TD *idata, const int nRows, const int nCols = 1, const int options = 0)
     {
@@ -583,6 +610,18 @@ class io
         return false;
     }
 
+    /*!
+     * \brief Helper function to save the matrix into a file 
+     * 
+     * \tparam TD          Data type 
+     * 
+     * \param idata        Array of input data of type TD
+     * \param idata        Array of input data of type TD
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type TD
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows
+     */
     template <typename TD>
     bool saveMatrix(TD *idata, const int idataCols, TD *ifvalue, const int ifvalueCols, const int nRows)
     {
@@ -654,7 +693,7 @@ class io
         }
         else
         {
-            for (int i = 0, l = 0, k=0; i < nRows; i++)
+            for (int i = 0, l = 0, k = 0; i < nRows; i++)
             {
                 fs << idata[l++];
                 for (int j = 1; j < idataCols; j++)
@@ -677,13 +716,14 @@ class io
     /*!
      * \brief Helper function to load the matrix of type TM from a file 
      * 
-     * \tparam  TM   typedef for matrix 
-     * \param   MX   Matrix
+     * \tparam  TM   Matrix type
+     * 
+     * \param   MX   Input matrix of data
      *
      * \returns true if no error occurs during reading a matrix
      */
     template <typename TM>
-    inline bool loadMatrix(TM &MX)
+    bool loadMatrix(TM &MX)
     {
         std::string Line;
 
@@ -709,16 +749,17 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  TD data type 
-     * \param   idata  array of input data of type TD
-     * \param   nRows  number of rows
-     * \param   nCols  number of columns
+     * \tparam  TD     Data type 
+     * 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      *
-     * \returns true if no error occurs during reading a matrix
+     * \returns true if no error occurs during reading data
      */
     template <typename TD>
-    inline bool loadMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
+    bool loadMatrix(TD **idata, const int nRows, const int nCols, const int options = 0)
     {
         std::string Line;
 
@@ -767,16 +808,17 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  TD data type 
-     * \param   idata  array of input data of type TD
-     * \param   nRows  number of rows
-     * \param   nCols  number of columns for each row
-     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     * \tparam  TD     Data type 
+     * 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns for each row
+     * \param options  (Default) 0 load matrix from matrix format and 1 load matrix from vector format
      *
-     * \returns true if no error occurs during reading a matrix
+     * \returns true if no error occurs during reading data
      */
     template <typename TD>
-    inline bool loadMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
+    bool loadMatrix(TD **idata, const int nRows, const int *nCols, const int options = 0)
     {
         std::string Line;
 
@@ -821,9 +863,20 @@ class io
         }
         return false;
     }
-
+    
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam  TD     Data type 
+     * 
+     * \param   idata  Input array of data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns for each row (default is 1)
+     *
+     * \returns true if no error occurs during reading data
+     */
     template <typename TD>
-    inline bool loadMatrix(TD *idata, const int nRows, const int nCols = 1)
+    bool loadMatrix(TD *idata, const int nRows, const int nCols = 1)
     {
         std::string Line;
 
@@ -867,14 +920,56 @@ class io
     }
 
     /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam TD          Data type 
+     * 
+     * \param idata        Input array of data of type TD
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type TD
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows
+     * 
+     * \returns true if no error occurs during reading data
+     */
+    template <typename TD>
+    bool loadMatrix(TD *idata, const int idataCols, TD *ifvalue, const int ifvalueCols, const int nRows)
+    {
+        std::string Line;
+
+        for (int i = 0, k = 0, l = 0; i < nRows; i++)
+        {
+            if (std::getline(fs, Line))
+            {
+                std::stringstream inLine(Line);
+
+                for (int j = 0; j < idataCols; j++, k++)
+                {
+                    inLine >> idata[k];
+                }
+
+                for (int j = 0; j < ifvalueCols; j++, l++)
+                {
+                    inLine >> ifvalue[k];
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD type of data
+     * \tparam  TD     Data type
      * 
-     * \param   title  string that should be written at the top 
-     * \param   idata  array of input data of type TD
-     * \param   nRows  number of rows
-     * \param   nCols  number of columns
+     * \param   title  Title (string) that should be written at the top 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns
      */
     template <typename TD>
     void printMatrix(const char *title, TD **idata, const int nRows, const int nCols)
@@ -942,12 +1037,31 @@ class io
         std::cout << sep;
     }
 
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam TD    TD type of data
+     * 
+     * \param idata  Array of input data of type TD
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns
+     */
     template <typename TD>
     void printMatrix(TD **idata, const int nRows, const int nCols)
     {
         printMatrix<TD>("", idata, nRows, nCols);
     }
-
+    
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam  TD     Data type
+     * 
+     * \param   title  Title (string) that should be written at the top 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns (default is 1)
+     */
     template <typename TD>
     void printMatrix(const char *title, TD *idata, const int nRows, const int nCols = 1)
     {
@@ -1039,10 +1153,129 @@ class io
         }
     }
 
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam  TD     Data type
+     * 
+     * \param   idata  Array of input data of type TD
+     * \param   nRows  Number of rows
+     * \param   nCols  Number of columns (default is 1)
+     */
     template <typename TD>
     void printMatrix(TD *idata, const int nRows, const int nCols = 1)
     {
         printMatrix<TD>("", idata, nRows, nCols);
+    }
+
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam TD            Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type TD
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type TD
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     */
+    template <typename TD>
+    void printMatrix(const char *title, TD *idata, const int idataCols, TD *ifvalue, const int ifvalueCols, const int nRows)
+    {
+        std::string sep = "\n----------------------------------------\n";
+        std::cout << sep;
+        if (std::strlen(title) > 0)
+        {
+            std::cout << title << "\n\n";
+        }
+
+        if (std::numeric_limits<TD>::is_integer)
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(0);
+        }
+        else
+        {
+            //!Manages the precision (i.e. how many digits are generated)
+            std::cout.precision(digits10<TD>());
+        }
+        std::cout << std::fixed;
+
+        Width = 0;
+
+        for (int i = 0; i < nRows * idataCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(std::cout);
+            sstr << idata[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        for (int i = 0; i < nRows * ifvalueCols; i++)
+        {
+            std::stringstream sstr;
+            sstr.copyfmt(std::cout);
+            sstr << ifvalue[i];
+            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+        }
+
+        if (Width)
+        {
+            for (int i = 0, l = 0, k = 0; i < nRows; i++)
+            {
+                std::cout.width(Width);
+                std::cout << idata[l++];
+                for (int j = 1; j < idataCols; j++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << idata[l++];
+                }
+                for (int j = 0; j < ifvalueCols; j++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
+                    std::cout << ifvalue[k++];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+        else
+        {
+            for (int i = 0, l = 0, k = 0; i < nRows; i++)
+            {
+                std::cout << idata[l++];
+                for (int j = 1; j < idataCols; j++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << idata[l++];
+                }
+                for (int j = 0; j < ifvalueCols; j++)
+                {
+                    std::cout << fmt.coeffSeparator;
+                    std::cout << ifvalue[k++];
+                }
+                std::cout << fmt.rowSeparator;
+            }
+        }
+    }
+    
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam TD            Data type
+     * 
+     * \param idata          Array of input data of type TD
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type TD
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     */
+    template <typename TD>
+    void printMatrix(TD *idata, const int idataCols, TD *ifvalue, const int ifvalueCols, const int nRows)
+    {
+        printMatrix<TD>("", idata, idataCols, ifvalue, ifvalueCols, nRows);
     }
 
   private:
