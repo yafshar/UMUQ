@@ -104,6 +104,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 					fi
 
 					CPPFLAGS+="$googletest_CPPFLAGS"
+					GTEST_CPPFLAGS="$googletest_CPPFLAGS"
 
 					if test x"$ac_googletest_path" != x; then
 						if test -d "$ac_googletest_path/lib" && test -r "$ac_googletest_path/lib" ; then
@@ -141,6 +142,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 					fi
 
 					LDFLAGS+="$googletest_LDFLAGS"' -lgtest'
+					GTEST_LDFLAGS="$googletest_LDFLAGS"' -lgtest'
 
 					AC_LANG_PUSH([C++])
 					AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -160,7 +162,9 @@ AC_DEFUN([AX_GOOGLETEST], [
 					)
 
 					AC_CHECK_LIB([gtest], [main], 
-						[], [
+						[
+							GTEST_LIBS=' -lgtest'
+						], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
 						]
@@ -171,13 +175,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 		]
 
 		if test x"$succeeded" == xyes ; then
-			GTEST_CPPFLAGS="$CPPFLAGS"
-			GTEST_CXXFLAGS="$CXXFLAGS"
-			GTEST_LDFLAGS="$LDFLAGS"
-			GTEST_LIBS="$LIBS"
-
 			AC_SUBST(GTEST_CPPFLAGS)
-			AC_SUBST(GTEST_CXXFLAGS)
 			AC_SUBST(GTEST_LDFLAGS)
 			AC_SUBST(GTEST_LIBS)
 
@@ -191,10 +189,11 @@ AC_DEFUN([AX_GOOGLETEST], [
 		AC_SUBST(LIBS)
 	)
 
-
 	AM_CONDITIONAL([HAVE_GOOGLETEST], [test x"$ax_googletest_ok" = xyes])
 	AM_COND_IF([HAVE_GOOGLETEST],
-		[], [
+		[
+			AC_DEFINE(HAVE_GOOGLETEST, 1, [Define if you have GOOGLETEST Library.])
+		], [
 			AC_MSG_RESULT(Unable to locate GOOGLETEST !)
 			AC_MSG_RESULT(You can not test the library without GOOGLETEST framework !!!)
 		]
