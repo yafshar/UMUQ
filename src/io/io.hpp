@@ -712,48 +712,98 @@ class io
 
                 if (Width)
                 {
-                    TD *ePointer;
-                    for (int e = 0; e < entries; e++)
+                    if (options == 1)
                     {
-                        for (int i = 0; i < nRows; ++i)
+                        TD *ePointer;
+                        for (int e = 0; e < entries; e++)
                         {
-                            ePointer = idata[i] + e * nCols[i];
-
-                            fs << fmt.rowPrefix;
-                            fs.width(Width);
-                            fs << *ePointer++;
-                            for (int j = 1; j < nCols[i]; ++j)
+                            for (int i = 0; i < nRows; ++i)
                             {
-                                fs << fmt.coeffSeparator;
+                                ePointer = idata[i] + e * nCols[i];
+
+                                fs << fmt.rowPrefix;
                                 fs.width(Width);
                                 fs << *ePointer++;
+                                for (int j = 1; j < nCols[i]; ++j)
+                                {
+                                    fs << fmt.coeffSeparator;
+                                    fs.width(Width);
+                                    fs << *ePointer++;
+                                }
+                                fs << fmt.rowSuffix;
+                                fs << fmt.rowSeparator;
                             }
-                            fs << fmt.rowSuffix;
-                            fs << fmt.rowSeparator;
+                            fs << rowSeparator;
                         }
-                        fs << rowSeparator;
+                    }
+                    else
+                    {
+                        TD *ePointer;
+                        for (int e = 0; e < entries; e++)
+                        {
+                            for (int i = 0; i < nRows; ++i)
+                            {
+                                ePointer = idata[i] + e * nCols[i];
+
+                                fs << fmt.rowPrefix;
+                                fs.width(Width);
+                                fs << *ePointer++;
+                                for (int j = 1; j < nCols[i]; ++j)
+                                {
+                                    fs << fmt.coeffSeparator;
+                                    fs.width(Width);
+                                    fs << *ePointer++;
+                                }
+                                fs << fmt.rowSuffix;
+                                fs << fmt.rowSeparator;
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    TD *ePointer;
-                    for (int e = 0; e < entries; e++)
+                    if (options == 1)
                     {
-                        for (int i = 0; i < nRows; ++i)
+                        TD *ePointer;
+                        for (int e = 0; e < entries; e++)
                         {
-                            ePointer = idata[i] + e * nCols[i];
-
-                            fs << fmt.rowPrefix;
-                            fs << *ePointer++;
-                            for (int j = 1; j < nCols[i]; ++j)
+                            for (int i = 0; i < nRows; ++i)
                             {
-                                fs << fmt.coeffSeparator;
+                                ePointer = idata[i] + e * nCols[i];
+
+                                fs << fmt.rowPrefix;
                                 fs << *ePointer++;
+                                for (int j = 1; j < nCols[i]; ++j)
+                                {
+                                    fs << fmt.coeffSeparator;
+                                    fs << *ePointer++;
+                                }
+                                fs << fmt.rowSuffix;
+                                fs << fmt.rowSeparator;
                             }
-                            fs << fmt.rowSuffix;
-                            fs << fmt.rowSeparator;
+                            fs << rowSeparator;
                         }
-                        fs << rowSeparator;
+                    }
+                    else
+                    {
+                        TD *ePointer;
+                        for (int e = 0; e < entries; e++)
+                        {
+                            for (int i = 0; i < nRows; ++i)
+                            {
+                                ePointer = idata[i] + e * nCols[i];
+
+                                fs << fmt.rowPrefix;
+                                fs << *ePointer++;
+                                for (int j = 1; j < nCols[i]; ++j)
+                                {
+                                    fs << fmt.coeffSeparator;
+                                    fs << *ePointer++;
+                                }
+                                fs << fmt.rowSuffix;
+                                fs << fmt.rowSeparator;
+                            }
+                        }
                     }
                 }
 
@@ -1286,8 +1336,8 @@ class io
                     {
                         return false;
                     }
-                    return true;
                 }
+                return true;
             }
             return false;
         }
