@@ -13,6 +13,11 @@ template <class T>
 class ArrayWrapper
 {
   public:
+    /*! \class iterator
+     *
+     * \brief This class defines an iterator based on std::iterator
+     * 
+     */
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
       public:
@@ -21,45 +26,101 @@ class ArrayWrapper
          *
          */
         iterator() : iPosition(nullptr), iStride(1) {}
+
+        /*!
+         * \brief Construct a new iterator object
+         * 
+         * \param Stride 
+         */
         iterator(std::size_t Stride) : iPosition(nullptr), iStride(Stride) {}
+
+        /*!
+         * \brief Construct a new iterator object
+         * 
+         * \param aPointer 
+         */
         iterator(T const *aPointer) : iPosition(aPointer), iStride(1) {}
+
+        /*!
+         * \brief Construct a new iterator object
+         * 
+         * \param aPointer 
+         * \param Stride 
+         */
         iterator(T const *aPointer, std::size_t Stride) : iPosition(aPointer), iStride(Stride) {}
 
+        /*!
+         * \brief Destroy the iterator object
+         * 
+         */
         ~iterator(){}; // nothing to do
 
-        bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
-        bool operator!=(iterator const &rhs) { return iStride == 1 ? iPosition != rhs.iPosition : iPosition < rhs.iPosition; }
+        /*!
+         * \brief Operator ==
+         * 
+         * \param rhs  
+         * \return true 
+         * \return false 
+         */
+        inline bool operator==(iterator const &rhs) { return iPosition == rhs.iPosition; }
 
-        iterator &operator++()
+        /*!
+         * \brief Operator !=
+         * 
+         * \param rhs 
+         * \return true 
+         * \return false 
+         */
+        inline bool operator!=(iterator const &rhs) { return iStride == 1 ? iPosition != rhs.iPosition : iPosition < rhs.iPosition; }
+
+        /*!
+         * \brief Operator ++
+         * 
+         * \return iterator& 
+         */
+        inline iterator &operator++()
         {
             iPosition += iStride;
             return *this;
         }
 
-        iterator operator++(int)
+        /*!
+         * \brief Operator ++
+         * 
+         * \return iterator 
+         */
+        inline iterator operator++(int)
         {
             iterator t(*this);
             operator++();
             return t;
         }
 
-        T operator*()
+        /*!
+         * \brief Access element at the current index 
+         * 
+         * \return Actual value at the current index 
+         */
+        inline T operator*()
         {
             return *iPosition;
         }
 
         /*! 
-         *  \brief Get the actual value
+         * \brief Get a pointer to the managed object or nullptr if no object is owned
          * 
-         * \return the actual value
+         * \returns a pointer to the managed object or nullptr if no object is owned 
          */
-        inline T get()
+        inline T *get() const
         {
-            return *iPosition;
+            return const_cast<T *>(iPosition);
         }
 
       private:
+        //! Iterator position
         T const *iPosition;
+
+        //! Input stride
         std::size_t iStride;
     };
 
