@@ -7,13 +7,58 @@
 #include <random>
 
 #include "data/stdata.hpp"
-#include "data/current.hpp"
-#include "data/datatype.hpp"
+// #include "data/current.hpp"
+// #include "data/datatype.hpp"
+#include "data/basic.hpp"
 
 int main()
 {
 
-    cgdb_t<double> cgb;
+    database<double> db1(2, 3);
+
+    {
+        double yarr[] = {1, -1};
+        db1.update_Task(yarr, 1000, nullptr, -1);
+    }
+    {
+        double yarr[] = {2, 3.4};
+        db1.update_Task(yarr, 10000, nullptr, -2);
+    }
+    {
+        double yarr[] = {4., 14};
+        db1.update_Task(yarr, 2000, nullptr, -3);
+    }
+
+    // db1.Parray[0] = 1.0;
+    // db1.Parray[1] = -1.0;
+    // db1.Parray[2] = 2.0;
+    // db1.Parray[3] = 3.4;
+    // db1.Parray[4] = 4.0;
+    // db1.Parray[5] = 14.0;
+
+    // db1.Fvalue[0] = 1000.;
+    // db1.Fvalue[1] = 10000.;
+    // db1.Fvalue[2] = 2000.0;
+
+    // db1.Surrogate[0] = -1;
+    // db1.Surrogate[1] = -2;
+    // db1.Surrogate[2] = -3;
+
+    // db1.nSelection[0] = 100;
+    // db1.nSelection[1] = 200;
+    // db1.nSelection[2] = 10;
+
+    db1.print();
+
+    db1.dump(1200, "yaser");
+
+    database<double> db2(2, 3);
+
+    std::cout << "     db2    " << std::endl;
+
+    db2.load(1200, "yaser");
+
+    db2.print();
 
     int d = 2;
     int r = 2;
