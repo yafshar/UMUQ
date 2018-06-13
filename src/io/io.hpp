@@ -418,7 +418,7 @@ class io
     }
 
     /*!
-     * \brief Helper function to save the matrix into a file 
+     * \brief Helper function to save one matrix into a file 
      * 
      * \tparam  TD     Data type 
      * 
@@ -519,7 +519,7 @@ class io
     }
 
     /*!
-     * \brief Helper function to save the matrix into a file 
+     * \brief Helper function to save one matrix (or entries number matrices) into a file 
      * 
      * \tparam  TD     Data type 
      * 
@@ -529,11 +529,13 @@ class io
      * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                           2 Saves matrix in vector format and keep the position indicator on the same line
+     * \param  entries           Number of data entry (Input data contains pointer to array of data)
+     * \param  form              Print format for each row 
      * 
      * \returns true if no error occurs during writing the matrix
      */
     template <typename TD>
-    bool saveMatrix(TD **idata, int const nRows, int const *nCols, int const options = 0, std::vector<ioFormat> const &form = std::vector<ioFormat>())
+    bool saveMatrix(TD **idata, int const nRows, int const *nCols, int const options = 0, int const entries = 1, std::vector<ioFormat> const &form = std::vector<ioFormat>())
     {
         if (!fs.is_open())
         {
@@ -544,139 +546,309 @@ class io
 
         setPrecision<TD>(fs);
 
-        if (form.size() != nRows)
+        //Default case, only one set of data
+        if (entries == 1)
         {
-            std::string rowSeparator;
-            if (options > 0)
+            if (form.size() != nRows)
             {
-                rowSeparator = fmt.rowSeparator;
-                fmt.rowSeparator = fmt.coeffSeparator;
-            }
-
-            if (!FixedWidth)
-            {
-                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
-
-                for (int i = 0; i < nRows; i++)
+                std::string rowSeparator;
+                if (options > 0)
                 {
-                    for (int j = 0; j < nCols[i]; j++)
+                    rowSeparator = fmt.rowSeparator;
+                    fmt.rowSeparator = fmt.coeffSeparator;
+                }
+
+                if (!FixedWidth)
+                {
+                    Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
+
+                    for (int i = 0; i < nRows; i++)
                     {
-                        std::stringstream sstr;
-                        sstr.copyfmt(fs);
-                        sstr << idata[i][j];
-                        Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            std::stringstream sstr;
+                            sstr.copyfmt(fs);
+                            sstr << idata[i][j];
+                            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        }
                     }
                 }
-            }
 
-            if (Width)
-            {
-                for (int i = 0; i < nRows; ++i)
+                if (Width)
                 {
-                    fs << fmt.rowPrefix;
-                    fs.width(Width);
-                    fs << idata[i][0];
-                    for (int j = 1; j < nCols[i]; ++j)
+                    for (int i = 0; i < nRows; ++i)
                     {
-                        fs << fmt.coeffSeparator;
+                        fs << fmt.rowPrefix;
                         fs.width(Width);
-                        fs << idata[i][j];
+                        fs << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            fs << fmt.coeffSeparator;
+                            fs.width(Width);
+                            fs << idata[i][j];
+                        }
+                        fs << fmt.rowSuffix;
+                        fs << fmt.rowSeparator;
                     }
-                    fs << fmt.rowSuffix;
-                    fs << fmt.rowSeparator;
                 }
+                else
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        fs << fmt.rowPrefix;
+                        fs << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            fs << fmt.coeffSeparator;
+                            fs << idata[i][j];
+                        }
+                        fs << fmt.rowSuffix;
+                        fs << fmt.rowSeparator;
+                    }
+                }
+
+                if (options == 0)
+                {
+                    return true;
+                }
+                else if (options == 1)
+                {
+                    fmt.rowSeparator = rowSeparator;
+                    fs << fmt.rowSeparator;
+                    return true;
+                }
+                else if (options == 2)
+                {
+                    fmt.rowSeparator = rowSeparator;
+                    fs << fmt.coeffSeparator;
+                    return true;
+                }
+                return false;
             }
             else
             {
-                for (int i = 0; i < nRows; ++i)
+                if (!FixedWidth)
                 {
-                    fs << fmt.rowPrefix;
-                    fs << idata[i][0];
-                    for (int j = 1; j < nCols[i]; ++j)
-                    {
-                        fs << fmt.coeffSeparator;
-                        fs << idata[i][j];
-                    }
-                    fs << fmt.rowSuffix;
-                    fs << fmt.rowSeparator;
-                }
-            }
+                    Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
-            if (options == 0)
-            {
+                    for (int i = 0; i < nRows; i++)
+                    {
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            std::stringstream sstr;
+                            sstr.copyfmt(fs);
+                            sstr << idata[i][j];
+                            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        }
+                    }
+                }
+
+                if (Width)
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        fs << form[i].rowPrefix;
+                        fs.width(Width);
+                        fs << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            fs << form[i].coeffSeparator;
+                            fs.width(Width);
+                            fs << idata[i][j];
+                        }
+                        fs << form[i].rowSuffix;
+                        fs << form[i].rowSeparator;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        fs << form[i].rowPrefix;
+                        fs << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            fs << form[i].coeffSeparator;
+                            fs << idata[i][j];
+                        }
+                        fs << form[i].rowSuffix;
+                        fs << form[i].rowSeparator;
+                    }
+                }
+
                 return true;
             }
-            else if (options == 1)
-            {
-                fmt.rowSeparator = rowSeparator;
-                fs << fmt.rowSeparator;
-                return true;
-            }
-            else if (options == 2)
-            {
-                fmt.rowSeparator = rowSeparator;
-                fs << fmt.coeffSeparator;
-                return true;
-            }
-            return false;
         }
         else
         {
-            if (!FixedWidth)
+            if (form.size() != nRows)
             {
-                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
-
-                for (int i = 0; i < nRows; i++)
+                std::string rowSeparator;
+                if (options > 0)
                 {
-                    for (int j = 0; j < nCols[i]; j++)
+                    rowSeparator = fmt.rowSeparator;
+                    fmt.rowSeparator = fmt.coeffSeparator;
+                }
+
+                if (!FixedWidth)
+                {
+                    Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
+
+                    for (int i = 0; i < nRows; i++)
                     {
-                        std::stringstream sstr;
-                        sstr.copyfmt(fs);
-                        sstr << idata[i][j];
-                        Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        TD *ePointer = idata[i];
+                        for (int e = 0; e < entries; e++)
+                        {
+                            for (int j = 0; j < nCols[i]; j++)
+                            {
+                                std::stringstream sstr;
+                                sstr.copyfmt(fs);
+                                sstr << *ePointer++;
+                                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                            }
+                        }
                     }
                 }
-            }
 
-            if (Width)
-            {
-                for (int i = 0; i < nRows; ++i)
+                if (Width)
                 {
-                    fs << form[i].rowPrefix;
-                    fs.width(Width);
-                    fs << idata[i][0];
-                    for (int j = 1; j < nCols[i]; ++j)
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
                     {
-                        fs << form[i].coeffSeparator;
-                        fs.width(Width);
-                        fs << idata[i][j];
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            fs << fmt.rowPrefix;
+                            fs.width(Width);
+                            fs << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                fs << fmt.coeffSeparator;
+                                fs.width(Width);
+                                fs << *ePointer++;
+                            }
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
+                        }
+                        fs << rowSeparator;
                     }
-                    fs << form[i].rowSuffix;
-                    fs << form[i].rowSeparator;
                 }
+                else
+                {
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            fs << fmt.rowPrefix;
+                            fs << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                fs << fmt.coeffSeparator;
+                                fs << *ePointer++;
+                            }
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
+                        }
+                        fs << rowSeparator;
+                    }
+                }
+
+                if (options == 0)
+                {
+                    return true;
+                }
+                else if (options == 1)
+                {
+                    fmt.rowSeparator = rowSeparator;
+                    fs << fmt.rowSeparator;
+                    return true;
+                }
+                else if (options == 2)
+                {
+                    fmt.rowSeparator = rowSeparator;
+                    fs << fmt.coeffSeparator;
+                    return true;
+                }
+                return false;
             }
             else
             {
-                for (int i = 0; i < nRows; ++i)
+                if (!FixedWidth)
                 {
-                    fs << form[i].rowPrefix;
-                    fs << idata[i][0];
-                    for (int j = 1; j < nCols[i]; ++j)
-                    {
-                        fs << form[i].coeffSeparator;
-                        fs << idata[i][j];
-                    }
-                    fs << form[i].rowSuffix;
-                    fs << form[i].rowSeparator;
-                }
-            }
+                    Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
-            return true;
+                    for (int i = 0; i < nRows; i++)
+                    {
+                        TD *ePointer = idata[i];
+                        for (int e = 0; e < entries; e++)
+                        {
+                            for (int j = 0; j < nCols[i]; j++)
+                            {
+                                std::stringstream sstr;
+                                sstr.copyfmt(fs);
+                                sstr << *ePointer++;
+                                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                            }
+                        }
+                    }
+                }
+
+                if (Width)
+                {
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            fs << form[i].rowPrefix;
+                            fs.width(Width);
+                            fs << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                fs << form[i].coeffSeparator;
+                                fs.width(Width);
+                                fs << *ePointer++;
+                            }
+                            fs << form[i].rowSuffix;
+                            fs << form[i].rowSeparator;
+                        }
+                    }
+                }
+                else
+                {
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            fs << form[i].rowPrefix;
+                            fs << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                fs << form[i].coeffSeparator;
+                                fs << *ePointer++;
+                            }
+                            fs << form[i].rowSuffix;
+                            fs << form[i].rowSeparator;
+                        }
+                    }
+                }
+
+                return true;
+            }
         }
     }
 
     /*!
-     * \brief Helper function to save the matrix into a file 
+     * \brief Helper function to save the matrix or a vector into a file 
      * 
      * \tparam TD      Data type 
      * 
@@ -813,16 +985,15 @@ class io
     }
 
     /*!
-     * \brief Helper function to save the matrix into a file 
+     * \brief Helper function to save two arrays of data into a file 
      * 
      * \tparam TD          Data type 
      * 
      * \param idata        Array of input data of type TD
-     * \param idata        Array of input data of type TD
      * \param idataCols    Number of columns of inpput array data (idata)
      * \param ifvalue      Array of input value data of type TD
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
-     * \param nRows        Number of rows
+     * \param nRows        Number of rows in each data set
      */
     template <typename TD>
     bool saveMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifvalueCols, int const nRows)
@@ -1003,7 +1174,7 @@ class io
     }
 
     /*!
-     * \brief Helper function to load the matrix from a file 
+     * \brief Helper function to load one matrix (or entries number of matrcies) from a file 
      * 
      * \tparam  TD     Data type 
      * 
@@ -1011,54 +1182,115 @@ class io
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row
      * \param options  (Default) 0 load matrix from matrix format and 1 load matrix from vector format
+     * \param  entries Number of data entry
      *
      * \returns true if no error occurs during reading data
      */
     template <typename TD>
-    bool loadMatrix(TD **idata, int const nRows, int const *nCols, int const options = 0)
+    bool loadMatrix(TD **idata, int const nRows, int const *nCols, int const options = 0, int const entries = 1)
     {
         std::string Line;
 
-        if (options == 0)
+        //Default case
+        if (entries == 1)
         {
-            for (int i = 0; i < nRows; i++)
+            if (options == 0)
+            {
+                for (int i = 0; i < nRows; i++)
+                {
+                    if (std::getline(fs, Line))
+                    {
+                        std::stringstream inLine(Line);
+
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            inLine >> idata[i][j];
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else if (options == 1)
             {
                 if (std::getline(fs, Line))
                 {
                     std::stringstream inLine(Line);
-
-                    for (int j = 0; j < nCols[i]; j++)
+                    for (int i = 0; i < nRows; i++)
                     {
-                        inLine >> idata[i][j];
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            inLine >> idata[i][j];
+                        }
                     }
                 }
                 else
                 {
                     return false;
                 }
+                return true;
             }
-            return true;
+            return false;
         }
-        else if (options == 1)
+        else
         {
-            if (std::getline(fs, Line))
+            if (options == 0)
             {
-                std::stringstream inLine(Line);
-                for (int i = 0; i < nRows; i++)
+                TD *ePointer;
+                for (int e = 0; e < entries; e++)
                 {
-                    for (int j = 0; j < nCols[i]; j++)
+                    for (int i = 0; i < nRows; i++)
                     {
-                        inLine >> idata[i][j];
+                        if (std::getline(fs, Line))
+                        {
+                            std::stringstream inLine(Line);
+
+                            ePointer = idata[i] + e * nCols[i];
+
+                            for (int j = 0; j < nCols[i]; j++)
+                            {
+                                inLine >> ePointer[j];
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                 }
+                return true;
             }
-            else
+            else if (options == 1)
             {
-                return false;
+                TD *ePointer;
+                for (int e = 0; e < entries; e++)
+                {
+                    if (std::getline(fs, Line))
+                    {
+                        std::stringstream inLine(Line);
+
+                        for (int i = 0; i < nRows; i++)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            for (int j = 0; j < nCols[i]; j++)
+                            {
+                                inLine >> ePointer[j];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    return true;
+                }
             }
-            return true;
+            return false;
         }
-        return false;
     }
 
     /*!
@@ -1123,7 +1355,7 @@ class io
     }
 
     /*!
-     * \brief Helper function to load the matrix from a file 
+     * \brief Helper function to load two vector of data from a file
      * 
      * \tparam TD          Data type 
      * 
@@ -1131,7 +1363,7 @@ class io
      * \param idataCols    Number of columns of inpput array data (idata)
      * \param ifvalue      Array of input value data of type TD
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
-     * \param nRows        Number of rows
+     * \param nRows        Number of rows in each data set
      * 
      * \returns true if no error occurs during reading data
      */
@@ -1329,14 +1561,15 @@ class io
      * 
      * \tparam  TD     Data type
      * 
-     * \param  title  Title (string) that should be written at the top 
-     * \param  idata  Array of input data of type TD
-     * \param  nRows  Number of rows
-     * \param  nCols  Number of columns for each row
+     * \param  title       Title (string) that should be written at the top 
+     * \param  idata       Array of input data of type TD
+     * \param  nRows       Number of rows
+     * \param  nCols       Number of columns for each row
+     * \param  entries     Number of data entry   
      * \param  printPrefix Prefix and suffix of the print  
      */
     template <typename TD>
-    void printMatrix(const char *title, TD **idata, int const nRows, int const *nCols, std::string const &printPrefix = "\n----------------------------------------\n")
+    void printMatrix(const char *title, TD **idata, int const nRows, int const *nCols, int const entries = 1, std::string const &printPrefix = "\n----------------------------------------\n")
     {
         std::cout << printPrefix;
         if (std::strlen(title) > 0)
@@ -1350,93 +1583,9 @@ class io
 
         setPrecision<TD>(std::cout);
 
-        if (!FixedWidth)
+        //DEfault case one set of data
+        if (entries == 1)
         {
-            for (int i = 0; i < nRows; i++)
-            {
-                for (int j = 0; j < nCols[i]; j++)
-                {
-                    std::stringstream sstr;
-                    sstr.copyfmt(std::cout);
-                    sstr << idata[i][j];
-                    Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
-                }
-            }
-        }
-
-        if (Width)
-        {
-            for (int i = 0; i < nRows; ++i)
-            {
-                std::cout << fmt.rowPrefix;
-                std::cout.width(Width);
-                std::cout << idata[i][0];
-                for (int j = 1; j < nCols[i]; ++j)
-                {
-                    std::cout << fmt.coeffSeparator;
-                    std::cout.width(Width);
-                    std::cout << idata[i][j];
-                }
-                std::cout << fmt.rowSuffix;
-                std::cout << fmt.rowSeparator;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < nRows; ++i)
-            {
-                std::cout << fmt.rowPrefix;
-                std::cout << idata[i][0];
-                for (int j = 1; j < nCols[i]; ++j)
-                {
-                    std::cout << fmt.coeffSeparator;
-                    std::cout << idata[i][j];
-                }
-                std::cout << fmt.rowSuffix;
-                std::cout << fmt.rowSeparator;
-            }
-        }
-        std::cout << printPrefix;
-    }
-
-    /*!
-     * \brief Helper function to print the matrix
-     * 
-     * \tparam TD          Data type
-     * 
-     * \param  idata       Array of input data of type TD
-     * \param  nRows       Number of rows
-     * \param  nCols       Number of columns for each row
-     * \param  printPrefix Prefix and suffix of the print  
-     */
-    template <typename TD>
-    void printMatrix(TD **idata, int const nRows, int const *nCols, std::string const &printPrefix = "\n----------------------------------------\n")
-    {
-        printMatrix<TD>("", idata, nRows, nCols, printPrefix);
-    }
-
-    /*!
-     * \brief Helper function to print the matrix
-     * 
-     * \tparam  TD     Data type
-     * 
-     * \param  title  Title (string) that should be written at the top 
-     * \param  idata  Array of input data of type TD
-     * \param  nRows  Number of rows
-     * \param  nCols  Number of columns for each row
-     * \param  form   Print format for each row 
-     */
-    template <typename TD>
-    void printMatrix(TD **idata, int const nRows, int const *nCols, std::vector<ioFormat> &form)
-    {
-        if (form.size() != nRows)
-        {
-            printMatrix<TD>(idata, nRows, nCols);
-        }
-        else
-        {
-            setPrecision<TD>(std::cout);
-
             if (!FixedWidth)
             {
                 for (int i = 0; i < nRows; i++)
@@ -1455,32 +1604,255 @@ class io
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    std::cout << form[i].rowPrefix;
+                    std::cout << fmt.rowPrefix;
                     std::cout.width(Width);
                     std::cout << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        std::cout << form[i].coeffSeparator;
+                        std::cout << fmt.coeffSeparator;
                         std::cout.width(Width);
                         std::cout << idata[i][j];
                     }
-                    std::cout << form[i].rowSuffix;
-                    std::cout << form[i].rowSeparator;
+                    std::cout << fmt.rowSuffix;
+                    std::cout << fmt.rowSeparator;
                 }
             }
             else
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    std::cout << form[i].rowPrefix;
+                    std::cout << fmt.rowPrefix;
                     std::cout << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        std::cout << form[i].coeffSeparator;
+                        std::cout << fmt.coeffSeparator;
                         std::cout << idata[i][j];
                     }
-                    std::cout << form[i].rowSuffix;
-                    std::cout << form[i].rowSeparator;
+                    std::cout << fmt.rowSuffix;
+                    std::cout << fmt.rowSeparator;
+                }
+            }
+        }
+        else
+        {
+            if (!FixedWidth)
+            {
+                for (int i = 0; i < nRows; i++)
+                {
+                    TD *ePointer = idata[i];
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            std::stringstream sstr;
+                            sstr.copyfmt(std::cout);
+                            sstr << *ePointer++;
+                            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        }
+                    }
+                }
+            }
+
+            if (Width)
+            {
+                TD *ePointer;
+                for (int e = 0; e < entries; e++)
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        ePointer = idata[i] + e * nCols[i];
+
+                        std::cout << fmt.rowPrefix;
+                        std::cout.width(Width);
+                        std::cout << *ePointer++;
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            std::cout << fmt.coeffSeparator;
+                            std::cout.width(Width);
+                            std::cout << *ePointer++;
+                        }
+                        std::cout << fmt.rowSuffix;
+                        std::cout << fmt.rowSeparator;
+                    }
+                }
+            }
+            else
+            {
+                TD *ePointer;
+                for (int e = 0; e < entries; e++)
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        ePointer = idata[i] + e * nCols[i];
+
+                        std::cout << fmt.rowPrefix;
+                        std::cout << *ePointer++;
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            std::cout << fmt.coeffSeparator;
+                            std::cout << *ePointer++;
+                        }
+                        std::cout << fmt.rowSuffix;
+                        std::cout << fmt.rowSeparator;
+                    }
+                }
+            }
+        }
+        std::cout << printPrefix;
+    }
+
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam TD          Data type
+     * 
+     * \param  idata       Array of input data of type TD
+     * \param  nRows       Number of rows
+     * \param  nCols       Number of columns for each row
+     * \param  printPrefix Prefix and suffix of the print  
+     */
+    template <typename TD>
+    void printMatrix(TD **idata, int const nRows, int const *nCols, int const entries = 1, std::string const &printPrefix = "\n----------------------------------------\n")
+    {
+        printMatrix<TD>("", idata, nRows, nCols, entries, printPrefix);
+    }
+
+    /*!
+     * \brief Helper function to print one matrix (or @entries number of matrices)
+     * 
+     * \tparam  TD     Data type
+     * 
+     * \param  title   Title (string) that should be written at the top 
+     * \param  idata   Array of input data of type TD
+     * \param  nRows   Number of rows
+     * \param  nCols   Number of columns for each row
+     * \param  entries Number of data entry   
+     * \param  form    Print format for each row 
+     */
+    template <typename TD>
+    void printMatrix(TD **idata, int const nRows, int const *nCols, int const entries = 1, std::vector<ioFormat> const &form = std::vector<ioFormat>())
+    {
+        if (form.size() != nRows)
+        {
+            printMatrix<TD>(idata, nRows, nCols, entries);
+        }
+        else
+        {
+            setPrecision<TD>(std::cout);
+
+            //Default case
+            if (entries == 1)
+            {
+                if (!FixedWidth)
+                {
+                    for (int i = 0; i < nRows; i++)
+                    {
+                        for (int j = 0; j < nCols[i]; j++)
+                        {
+                            std::stringstream sstr;
+                            sstr.copyfmt(std::cout);
+                            sstr << idata[i][j];
+                            Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                        }
+                    }
+                }
+
+                if (Width)
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        std::cout << form[i].rowPrefix;
+                        std::cout.width(Width);
+                        std::cout << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            std::cout << form[i].coeffSeparator;
+                            std::cout.width(Width);
+                            std::cout << idata[i][j];
+                        }
+                        std::cout << form[i].rowSuffix;
+                        std::cout << form[i].rowSeparator;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < nRows; ++i)
+                    {
+                        std::cout << form[i].rowPrefix;
+                        std::cout << idata[i][0];
+                        for (int j = 1; j < nCols[i]; ++j)
+                        {
+                            std::cout << form[i].coeffSeparator;
+                            std::cout << idata[i][j];
+                        }
+                        std::cout << form[i].rowSuffix;
+                        std::cout << form[i].rowSeparator;
+                    }
+                }
+            }
+            else
+            {
+                if (!FixedWidth)
+                {
+                    for (int i = 0; i < nRows; i++)
+                    {
+                        TD *ePointer = idata[i];
+                        for (int e = 0; e < entries; e++)
+                        {
+                            for (int j = 0; j < nCols[i]; j++)
+                            {
+                                std::stringstream sstr;
+                                sstr.copyfmt(std::cout);
+                                sstr << *ePointer++;
+                                Width = std::max<std::ptrdiff_t>(Width, Idx(sstr.str().length()));
+                            }
+                        }
+                    }
+                }
+
+                if (Width)
+                {
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            std::cout << form[i].rowPrefix;
+                            std::cout.width(Width);
+                            std::cout << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                std::cout << form[i].coeffSeparator;
+                                std::cout.width(Width);
+                                std::cout << *ePointer++;
+                            }
+                            std::cout << form[i].rowSuffix;
+                            std::cout << form[i].rowSeparator;
+                        }
+                    }
+                }
+                else
+                {
+                    TD *ePointer;
+                    for (int e = 0; e < entries; e++)
+                    {
+                        for (int i = 0; i < nRows; ++i)
+                        {
+                            ePointer = idata[i] + e * nCols[i];
+
+                            std::cout << form[i].rowPrefix;
+                            std::cout << *ePointer++;
+                            for (int j = 1; j < nCols[i]; ++j)
+                            {
+                                std::cout << form[i].coeffSeparator;
+                                std::cout << *ePointer++;
+                            }
+                            std::cout << form[i].rowSuffix;
+                            std::cout << form[i].rowSeparator;
+                        }
+                    }
                 }
             }
         }
@@ -1613,7 +1985,6 @@ class io
         }
         else
         {
-
             setPrecision<TD>(std::cout);
 
             if (!FixedWidth)
@@ -1729,9 +2100,9 @@ class io
     }
 
     /*!
-     * \brief Helper function to print the matrix
+     * \brief Helper function to print two vectors of data
      * 
-     * \tparam TD            Data type
+     * \tparam TD             Data type
      * 
      * \param  title          Title (string) that should be written at the top 
      * \param  idata          Array of input data of type TD
@@ -1828,18 +2199,6 @@ class io
         printMatrix<TD>(title, idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, printPrefix);
     }
 
-    /*!
-     * \brief Helper function to print the matrix
-     * 
-     * \tparam TD             Data type
-     * 
-     * \param  idata          Array of input data of type TD
-     * \param  idataCols      Number of columns of inpput array data (idata)
-     * \param  ifvalue        Array of input value data of type TD
-     * \param  ifvalueCols    Number of columns of inpput value data (ifvalue)
-     * \param  nRows          Number of rows
-     * \param  printPrefix    Prefix and suffix of the print  
-     */
     template <typename TD>
     void printMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifvalueCols, int const nRows, std::string const &printPrefix = "\n----------------------------------------\n")
     {
@@ -1853,7 +2212,7 @@ class io
     }
 
     /*!
-     * \brief Helper function to print the matrix
+     * \brief Helper function to print two vectors of data with stream format for each
      * 
      * \tparam TD             Data type
      * 
