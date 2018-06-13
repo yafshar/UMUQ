@@ -64,9 +64,9 @@ TEST(arraywrapper_test, HandlesVectors)
     {
         auto e = i.get();
 
-        EXPECT_EQ(e.i, j);
-        EXPECT_EQ(e.n, j * 10);
-        EXPECT_EQ(e.s, (double)j * 10.0);
+        EXPECT_EQ(e->i, j);
+        EXPECT_EQ(e->n, j * 10);
+        EXPECT_EQ(e->s, (double)j * 10.0);
     }
 
     delete[] srtarray;
