@@ -53,6 +53,10 @@ extern "C" {
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1
 
+#ifdef HAVE_TORC
+#include <torc.h>
+#endif
+
 #include <sys/stat.h> //stat
 
 #include <cassert>
