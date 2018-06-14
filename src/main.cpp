@@ -1,4 +1,5 @@
 #include "core/core.hpp"
+#include "core/environment.hpp"
 #include "numerics/polynomial.hpp"
 #include "numerics/eigenmatrix.hpp"
 #include "numerics/knearestneighbors.hpp"
@@ -11,143 +12,140 @@
 // #include "data/datatype.hpp"
 #include "data/basic.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
+    torc_init(argc, argv, 0);
 
-    database<double> db1(2, 3);
+    database<double> db1(2, 2, 3);
+
+    std::cout << db1.ndimParray << " " << db1.ndimGarray << " " << db1.entries << std::endl;
 
     {
-        double yarr[] = {1, -1};
-        db1.update_Task(yarr, 1000, nullptr, -1);
+        double yarr[] = {1., -1.};
+        double gyarr[] = {120., 321.};
+        db1.update(yarr, 1000., gyarr, -1);
     }
+
     {
         double yarr[] = {2, 3.4};
-        db1.update_Task(yarr, 10000, nullptr, -2);
+        double gyarr[] = {1206., 3621.};
+        db1.update(yarr, 10000., gyarr, -2);
     }
+
     {
         double yarr[] = {4., 14};
-        db1.update_Task(yarr, 2000, nullptr, -3);
+        double gyarr[] = {506., 132621.};
+        db1.update(yarr, 2000, gyarr, 30);
     }
 
-    // db1.Parray[0] = 1.0;
-    // db1.Parray[1] = -1.0;
-    // db1.Parray[2] = 2.0;
-    // db1.Parray[3] = 3.4;
-    // db1.Parray[4] = 4.0;
-    // db1.Parray[5] = 14.0;
+    torc_waitall();
 
-    // db1.Fvalue[0] = 1000.;
-    // db1.Fvalue[1] = 10000.;
-    // db1.Fvalue[2] = 2000.0;
-
-    // db1.Surrogate[0] = -1;
-    // db1.Surrogate[1] = -2;
-    // db1.Surrogate[2] = -3;
-
-    // db1.nSelection[0] = 100;
-    // db1.nSelection[1] = 200;
-    // db1.nSelection[2] = 10;
+    // // // db1.nSelection[0] = 100;
+    // // // db1.nSelection[1] = 200;
+    // // // db1.nSelection[2] = 10;
 
     db1.print();
 
-    db1.dump(1200, "yaser");
+    // db1.dump(1200, "yaser");
 
-    database<double> db2(2, 3);
+    // database<double> db2(2, 3);
 
-    std::cout << "     db2    " << std::endl;
+    // std::cout << "     db2    " << std::endl;
 
-    db2.load(1200, "yaser");
+    // db2.load(1200, "yaser");
 
-    db2.print();
+    // db2.print();
 
-    int d = 2;
-    int r = 2;
+    torc_finalize();
 
-    int *alpha;
+    // int d = 2;
+    // int r = 2;
 
-    polynomial<double> p(d, r);
+    // int *alpha;
 
-    UMTimer t;
+    // polynomial<double> p(d, r);
 
-    alpha = p.monomial_basis();
-    t.toc("monomial_basis");
+    // UMTimer t;
 
-    std::cout << " d =  " << d << std::endl;
-    std::cout << " r =  " << r << std::endl;
-    std::cout << "  i   [] []" << std::endl;
+    // alpha = p.monomial_basis();
+    // t.toc("monomial_basis");
 
-    int i, n;
-    n = 0;
-    for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
-    {
-        std::cout << std::setw(3) << i << "   ";
-        for (int j = 0; j < d; j++)
-        {
-            std::cout << std::setw(2) << alpha[n];
-            n++;
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "----------------" << std::endl;
+    // std::cout << " d =  " << d << std::endl;
+    // std::cout << " r =  " << r << std::endl;
+    // std::cout << "  i   [] []" << std::endl;
 
-    n = p.binomial_coefficient(d + r, r);
+    // int i, n;
+    // n = 0;
+    // for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
+    // {
+    //     std::cout << std::setw(3) << i << "   ";
+    //     for (int j = 0; j < d; j++)
+    //     {
+    //         std::cout << std::setw(2) << alpha[n];
+    //         n++;
+    //     }
+    //     std::cout << std::endl;
+    // }
+    // std::cout << "----------------" << std::endl;
 
-    t.toc("binomial_coefficient");
+    // n = p.binomial_coefficient(d + r, r);
 
-    double *value = nullptr;
-    double *x = nullptr;
+    // t.toc("binomial_coefficient");
 
-    EMatrixXd A;
-    A.resize(n, n);
+    // double *value = nullptr;
+    // double *x = nullptr;
 
-    x = new double[d];
-    value = new double[n];
+    // EMatrixXd A;
+    // A.resize(n, n);
 
-    for (i = 0; i < n; i++)
-    {
-        switch (i)
-        {
-        case (0):
-            x[0] = 1;
-            x[1] = 0;
-            break;
-        case (1):
-            x[0] = 0;
-            x[1] = 1;
-            break;
-        case (2):
-            x[0] = -1;
-            x[1] = 0;
-            break;
-        case (3):
-            x[0] = 0;
-            x[1] = -1;
-            break;
-        case (4):
-            x[0] = .70710678118654752440;
-            x[1] = .70710678118654752440;
-            break;
-        case (5):
-            x[0] = -.70710678118654752440;
-            x[1] = -.70710678118654752440;
-        }
+    // x = new double[d];
+    // value = new double[n];
 
-        if (p.monomial_value(x, value))
-        {
+    // for (i = 0; i < n; i++)
+    // {
+    //     switch (i)
+    //     {
+    //     case (0):
+    //         x[0] = 1;
+    //         x[1] = 0;
+    //         break;
+    //     case (1):
+    //         x[0] = 0;
+    //         x[1] = 1;
+    //         break;
+    //     case (2):
+    //         x[0] = -1;
+    //         x[1] = 0;
+    //         break;
+    //     case (3):
+    //         x[0] = 0;
+    //         x[1] = -1;
+    //         break;
+    //     case (4):
+    //         x[0] = .70710678118654752440;
+    //         x[1] = .70710678118654752440;
+    //         break;
+    //     case (5):
+    //         x[0] = -.70710678118654752440;
+    //         x[1] = -.70710678118654752440;
+    //     }
 
-            for (int j = 0; j < n; j++)
-            {
-                A(i, j) = value[j];
-            }
-        }
-        else
-        {
-            std::exit(1);
-        }
-    }
+    //     if (p.monomial_value(x, value))
+    //     {
 
-    delete[] value;
-    delete[] x;
+    //         for (int j = 0; j < n; j++)
+    //         {
+    //             A(i, j) = value[j];
+    //         }
+    //     }
+    //     else
+    //     {
+    //         std::exit(1);
+    //     }
+    // }
+
+    // delete[] value;
+    // delete[] x;
     // // note, to understand this part take a look in the MAN pages, at section of parameters.
     // char TRANS = 'N';
     // int INFO = 3;
