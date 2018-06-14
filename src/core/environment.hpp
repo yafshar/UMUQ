@@ -6,6 +6,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_TORC
+#include <torc.h>
 #ifdef HAVE_GOOGLETEST
 #include "gtest/gtest.h"
 
