@@ -1,7 +1,6 @@
-#include "torc.h"
 #include "core/core.hpp"
+#include "core/environment.hpp"
 #include "misc/funcallcounter.hpp"
-#include "misc/environment.hpp"
 #include "gtest/gtest.h"
 
 funcallcounter f;
