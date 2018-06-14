@@ -1,6 +1,5 @@
-#include "torc.h"
 #include "core/core.hpp"
-#include "misc/environment.hpp"
+#include "core/environment.hpp"
 #include "numerics/eigenmatrix.hpp"
 #include "numerics/psrandom.hpp"
 #include "gtest/gtest.h"
