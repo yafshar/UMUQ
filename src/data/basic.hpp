@@ -22,7 +22,7 @@ struct sortType
  *
  * \brief basic data base
  * 
- * \tparam T         Data type
+ * \tparam T         Data type 
  *
  * \param Parray     Array for points in space
  * \param ndimParray An integer argument shows the size of Parray
@@ -40,12 +40,14 @@ public:
    * \brief Construct a new database object
    * 
    */
-  database() : ndimParray(0),
-               ndimGarray(0),
-               idxPos(0),
-               entries(0)
+  database()
   {
-    pthread_mutex_init(&m, NULL);
+    if (getType() == MPI_INT)
+    {
+      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+      std::cerr << " This type is not supported in this class!" << std::endl;
+      throw(std::runtime_error("Wrong type!"));
+    }
   }
 
   /*!
@@ -54,11 +56,16 @@ public:
    * \param nDim   Dimension of space (points)
    * \param nSize  Number of points 
    */
-  database(int nDim, int nSize) : ndimParray(nDim),
-                                  ndimGarray(0),
-                                  idxPos(0)
+  database(int nDim, int nSize)
   {
-    pthread_mutex_init(&m, NULL);
+    database<T>::ndimParray = nDim;
+
+    if (getType() == MPI_INT)
+    {
+      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+      std::cerr << " This type is not supported in this class!" << std::endl;
+      throw(std::runtime_error("Wrong type!"));
+    }
 
     if (!init(nSize))
     {
@@ -73,11 +80,17 @@ public:
    * \param nDim2  Dimension of the second array which could be prior
    * \param nSize  Number of points
    */
-  database(int nDim1, int nDim2, int nSize) : ndimParray(nDim1),
-                                              ndimGarray(nDim2),
-                                              idxPos(0)
+  database(int nDim1, int nDim2, int nSize)
   {
-    pthread_mutex_init(&m, NULL);
+    database<T>::ndimParray = nDim1;
+    database<T>::ndimGarray = nDim2;
+
+    if (getType() == MPI_INT)
+    {
+      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+      std::cerr << " This type is not supported in this class!" << std::endl;
+      throw(std::runtime_error("Wrong type!"));
+    }
 
     if (!init(nSize))
     {
@@ -92,18 +105,18 @@ public:
    */
   database(database<T> &&inputDB)
   {
-    ndimParray = inputDB.ndimParray;
-    ndimGarray = inputDB.ndimGarray;
-    idxPos = inputDB.idxPos;
-    entries = inputDB.entries;
-    Parray = std::move(inputDB.Parray);
-    Garray = std::move(inputDB.Garray);
-    Fvalue = std::move(inputDB.Fvalue);
-    Surrogate = std::move(inputDB.Surrogate);
-    nSelection = std::move(inputDB.nSelection);
-    idxNumber = std::move(inputDB.idxNumber);
-    m = std::move(inputDB.m);
-    list = std::move(inputDB.list);
+    database<T>::ndimParray = inputDB.ndimParray;
+    database<T>::ndimGarray = inputDB.ndimGarray;
+    database<T>::idxPos = inputDB.idxPos;
+    database<T>::entries = inputDB.entries;
+    database<T>::Parray = std::move(inputDB.Parray);
+    database<T>::Garray = std::move(inputDB.Garray);
+    database<T>::Fvalue = std::move(inputDB.Fvalue);
+    database<T>::Surrogate = std::move(inputDB.Surrogate);
+    database<T>::nSelection = std::move(inputDB.nSelection);
+    database<T>::idxNumber = std::move(inputDB.idxNumber);
+    database<T>::m = std::move(inputDB.m);
+    database<T>::list = std::move(inputDB.list);
   }
 
   /*!
@@ -114,18 +127,18 @@ public:
    */
   database<T> &operator=(database<T> &&inputDB)
   {
-    ndimParray = inputDB.ndimParray;
-    ndimGarray = inputDB.ndimGarray;
-    idxPos = inputDB.idxPos;
-    entries = inputDB.entries;
-    Parray = std::move(inputDB.Parray);
-    Garray = std::move(inputDB.Garray);
-    Fvalue = std::move(inputDB.Fvalue);
-    Surrogate = std::move(inputDB.Surrogate);
-    nSelection = std::move(inputDB.nSelection);
-    idxNumber = std::move(inputDB.idxNumber);
-    m = std::move(inputDB.m);
-    list = std::move(inputDB.list);
+    database<T>::ndimParray = inputDB.ndimParray;
+    database<T>::ndimGarray = inputDB.ndimGarray;
+    database<T>::idxPos = inputDB.idxPos;
+    database<T>::entries = inputDB.entries;
+    database<T>::Parray = std::move(inputDB.Parray);
+    database<T>::Garray = std::move(inputDB.Garray);
+    database<T>::Fvalue = std::move(inputDB.Fvalue);
+    database<T>::Surrogate = std::move(inputDB.Surrogate);
+    database<T>::nSelection = std::move(inputDB.nSelection);
+    database<T>::idxNumber = std::move(inputDB.idxNumber);
+    database<T>::m = std::move(inputDB.m);
+    database<T>::list = std::move(inputDB.list);
 
     return *this;
   }
@@ -139,6 +152,19 @@ public:
    */
   bool init(int nSize)
   {
+    auto initialized(0);
+
+    MPI_Initialized(&initialized);
+    if (!initialized)
+    {
+      return false;
+    }
+
+    torc_register_task((void *)database<T>::update_Task1);
+    torc_register_task((void *)database<T>::update_Task2);
+    torc_register_task((void *)database<T>::update_Task3);
+    torc_register_task((void *)database<T>::update_Task4);
+
     return reset(nSize);
   }
 
@@ -158,13 +184,13 @@ public:
       return false;
     }
 
-    entries = static_cast<std::size_t>(nSize);
+    database<T>::entries = static_cast<std::size_t>(nSize);
 
-    if (ndimParray > 0)
+    if (database<T>::ndimParray > 0)
     {
       try
       {
-        Parray.reset(new T[entries * ndimParray]);
+        database<T>::Parray.reset(new T[database<T>::entries * database<T>::ndimParray]);
       }
       catch (std::bad_alloc &e)
       {
@@ -174,11 +200,11 @@ public:
       }
     }
 
-    if (ndimGarray > 0)
+    if (database<T>::ndimGarray > 0)
     {
       try
       {
-        Garray.reset(new T[entries * ndimGarray]);
+        database<T>::Garray.reset(new T[database<T>::entries * database<T>::ndimGarray]);
       }
       catch (std::bad_alloc &e)
       {
@@ -190,10 +216,10 @@ public:
 
     try
     {
-      Fvalue.reset(new T[entries]);
-      Surrogate.reset(new int[entries]());
-      nSelection.reset(new int[entries]());
-      idxNumber.reset(new std::size_t[entries]);
+      database<T>::Fvalue.reset(new T[database<T>::entries]);
+      database<T>::Surrogate.reset(new int[database<T>::entries]());
+      database<T>::nSelection.reset(new int[database<T>::entries]());
+      database<T>::idxNumber.reset(new std::size_t[database<T>::entries]);
     }
     catch (std::bad_alloc &e)
     {
@@ -202,55 +228,55 @@ public:
       return false;
     }
 
-    std::iota(idxNumber.get(), idxNumber.get() + entries, std::size_t{});
+    std::iota(database<T>::idxNumber.get(), database<T>::idxNumber.get() + database<T>::entries, std::size_t{});
 
     return true;
   }
 
   /*!
    * \brief reset the Index position to a @IdxPos position
-   * 
-   * \param IdxPos 
-   * 
-   * \return true 
-   * \return false  If it is out of number of entries 
+   *
+   * \param IdxPos
+   *
+   * \return true
+   * \return false  If it is out of number of entries
    */
   inline bool resetIdxPos(int IdxPos)
   {
-    if (IdxPos > entries || IdxPos < 0)
+    if (IdxPos > database<T>::entries || IdxPos < 0)
     {
       return false;
     }
-    idxPos = static_cast<std::size_t>(IdxPos);
+    database<T>::idxPos = static_cast<std::size_t>(IdxPos);
     return true;
   }
 
   /*!
    * \brief Swaps databses
-   * 
+   *
    * \param inputDB Input database object
    */
   void swap(database<T> &inputDB)
   {
-    std::swap(ndimParray, inputDB.ndimParray);
-    std::swap(ndimGarray, inputDB.ndimGarray);
-    std::swap(entries, inputDB.entries);
-    Parray.swap(inputDB.Parray);
-    Garray.swap(inputDB.Garray);
-    Fvalue.swap(inputDB.Fvalue);
-    Surrogate.swap(inputDB.Surrogate);
-    nSelection.swap(inputDB.nSelection);
-    idxNumber.swap(inputDB.idxNumber);
-    list.swap(inputDB.list);
-    std::swap(m, inputDB.m);
+    std::swap(database<T>::ndimParray, inputDB.ndimParray);
+    std::swap(database<T>::ndimGarray, inputDB.ndimGarray);
+    std::swap(database<T>::entries, inputDB.entries);
+    database<T>::Parray.swap(inputDB.Parray);
+    database<T>::Garray.swap(inputDB.Garray);
+    database<T>::Fvalue.swap(inputDB.Fvalue);
+    database<T>::Surrogate.swap(inputDB.Surrogate);
+    database<T>::nSelection.swap(inputDB.nSelection);
+    database<T>::idxNumber.swap(inputDB.idxNumber);
+    database<T>::list.swap(inputDB.list);
+    std::swap(database<T>::m, inputDB.m);
   }
 
   /*!
    * \brief Get the size of database
-   * 
+   *
    * \return Size of the database
    */
-  inline std::size_t size() const { return entries; }
+  inline std::size_t size() const { return database<T>::entries; }
 
   /*!
    * \brief quick sort
@@ -261,7 +287,7 @@ public:
     //Allocate memory
     try
     {
-      list.reset(new sortType[entries]);
+      list.reset(new sortType[database<T>::entries]);
     }
     catch (std::bad_alloc &e)
     {
@@ -271,14 +297,14 @@ public:
     }
 
     //Get the pointer
-    int *nsel = nSelection.get();
-    std::size_t *idx = idxNumber.get();
+    int *nsel = database<T>::nSelection.get();
+    std::size_t *idx = database<T>::idxNumber.get();
 
     //Fill the list
-    std::for_each(list.get(), list.get() + entries, [&](sortType &si) {si.nsel = *nsel++; si.idx = *idx++; });
+    std::for_each(list.get(), list.get() + database<T>::entries, [&](sortType &si) {si.nsel = *nsel++; si.idx = *idx++; });
 
     //Sort the list using standard library quick sort
-    std::qsort(list.get(), entries, sizeof(sortType), [](const void *p1, const void *p2) {
+    std::qsort(list.get(), database<T>::entries, sizeof(sortType), [](const void *p1, const void *p2) {
       sortType const *s1 = static_cast<sortType const *>(p1);
       sortType const *s2 = static_cast<sortType const *>(p2);
       /* -: ascending order, +: descending order */
@@ -286,11 +312,11 @@ public:
     });
 
     //Get the pointer
-    nsel = nSelection.get();
-    idx = idxNumber.get();
+    nsel = database<T>::nSelection.get();
+    idx = database<T>::idxNumber.get();
 
     //Correct the arrays based on the sorted list
-    std::for_each(list.get(), list.get() + entries, [&](sortType &si) {*nsel = si.nsel; *idx = si.idx; nsel++; idx++; });
+    std::for_each(list.get(), list.get() + database<T>::entries, [&](sortType &si) {*nsel = si.nsel; *idx = si.idx; nsel++; idx++; });
 
     //Free the memory
     list.reset();
@@ -298,11 +324,11 @@ public:
 
   /*!
    * \brief Printing the database data on the standard output
-   * 
+   *
    */
   bool print()
   {
-    if (entries > 0 && ndimParray > 0)
+    if (database<T>::entries > 0 && database<T>::ndimParray > 0)
     {
       std::cout << "---- database priniting ----" << std::endl;
 
@@ -314,37 +340,37 @@ public:
       ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
 
       //Getting the maximum width in the data for nice printing
-      int pWidth = f.getWidth<T>(Parray, entries, ndimParray, std::cout);
-      int fWidth = f.getWidth<T>(Fvalue, entries, 1, std::cout);
+      int pWidth = f.getWidth<T>(database<T>::Parray, database<T>::entries, database<T>::ndimParray, std::cout);
+      int fWidth = f.getWidth<T>(database<T>::Fvalue, database<T>::entries, 1, std::cout);
       int Width = std::max<int>(pWidth, fWidth);
-      int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
+      int sWidth = f.getWidth<int>(database<T>::Surrogate, database<T>::entries, 1, std::cout);
 
       //Array wrapper on the data
-      ArrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
-      ArrayWrapper<T> FvalueWrapper(Fvalue, entries);
-      ArrayWrapper<int> SurrogateWrapper(Surrogate, entries);
+      ArrayWrapper<T> ParrayWrapper(database<T>::Parray, database<T>::entries * database<T>::ndimParray, database<T>::ndimParray);
+      ArrayWrapper<T> FvalueWrapper(database<T>::Fvalue, database<T>::entries);
+      ArrayWrapper<int> SurrogateWrapper(database<T>::Surrogate, database<T>::entries);
 
       auto fIt = FvalueWrapper.begin();
       auto sIt = SurrogateWrapper.begin();
 
-      if (ndimGarray > 0)
+      if (database<T>::ndimGarray > 0)
       {
         ioFormat gvFormat = {",", "\n", "Garray=[", "]"};
 
-        int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
+        int gWidth = f.getWidth<T>(database<T>::Garray, database<T>::entries, database<T>::ndimGarray, std::cout);
 
-        ArrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
+        ArrayWrapper<T> GarrayWrapper(database<T>::Garray, database<T>::entries * database<T>::ndimGarray, database<T>::ndimGarray);
 
         auto gIt = GarrayWrapper.begin();
 
         for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
         {
           f.setWidth(Width);
-          f.printMatrix<T>(pIt.get(), ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
+          f.printMatrix<T>(pIt.get(), database<T>::ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
           f.setWidth(sWidth);
           f.printMatrix<int>(sIt.get(), suFormat);
           f.setWidth(gWidth);
-          f.printMatrix<T>(gIt.get(), gvFormat);
+          f.printMatrix<T>(gIt.get(), database<T>::ndimGarray, 1, gvFormat);
           fIt++;
           sIt++;
           gIt++;
@@ -355,7 +381,7 @@ public:
         for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
         {
           f.setWidth(Width);
-          f.printMatrix<T>(pIt.get(), ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
+          f.printMatrix<T>(pIt.get(), database<T>::ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
           f.setWidth(sWidth);
           f.printMatrix<int>(sIt.get(), suFormat);
           fIt++;
@@ -376,7 +402,7 @@ public:
    */
   bool dump(int const IdNumber, const char *fname = "")
   {
-    if (entries > 0 && ndimParray > 0)
+    if (database<T>::entries > 0 && database<T>::ndimParray > 0)
     {
       char fileName[256];
       if (strlen(fname) == 0)
@@ -391,23 +417,23 @@ public:
       io f;
       if (f.openFile(fileName, f.out | f.trunc))
       {
-        if (ndimGarray > 0)
+        if (database<T>::ndimGarray > 0)
         {
           //Getting the maximum width in the data for nice printing
           {
-            int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
-            int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());
+            int pWidth = f.getWidth<T>(database<T>::Parray, database<T>::entries, database<T>::ndimParray, f.getFstream());
+            int fWidth = f.getWidth<T>(database<T>::Fvalue, database<T>::entries, 1, f.getFstream());
             int Width = std::max<int>(pWidth, fWidth);
-            int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, f.getFstream());
+            int gWidth = f.getWidth<T>(database<T>::Garray, database<T>::entries, database<T>::ndimGarray, f.getFstream());
             Width = std::max<int>(Width, gWidth);
 
             f.setWidth(Width);
           }
 
-          T *tmp[3] = {Parray.get(), Fvalue.get(), Garray.get()};
-          int nCols[3] = {ndimParray, 1, ndimGarray};
+          T *tmp[3] = {database<T>::Parray.get(), database<T>::Fvalue.get(), database<T>::Garray.get()};
+          int nCols[3] = {database<T>::ndimParray, 1, database<T>::ndimGarray};
 
-          if (!f.saveMatrix<T>(tmp, 3, nCols, 1, entries))
+          if (!f.saveMatrix<T>(tmp, 3, nCols, 1, database<T>::entries))
           {
             return false;
           }
@@ -416,18 +442,18 @@ public:
         {
           //Getting the maximum width in the data for nice printing
           {
-            int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
-            int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());
+            int pWidth = f.getWidth<T>(database<T>::Parray, database<T>::entries, database<T>::ndimParray, f.getFstream());
+            int fWidth = f.getWidth<T>(database<T>::Fvalue, database<T>::entries, 1, f.getFstream());
 
             int Width = std::max<int>(pWidth, fWidth);
 
             f.setWidth(Width);
           }
 
-          T *tmp[2] = {Parray.get(), Fvalue.get()};
-          int nCols[2] = {ndimParray, 1};
+          T *tmp[2] = {database<T>::Parray.get(), database<T>::Fvalue.get()};
+          int nCols[2] = {database<T>::ndimParray, 1};
 
-          if (!f.saveMatrix<T>(tmp, 2, nCols, 1, entries))
+          if (!f.saveMatrix<T>(tmp, 2, nCols, 1, database<T>::entries))
           {
             return false;
           }
@@ -448,7 +474,7 @@ public:
    */
   bool load(int const IdNumber, const char *fname = "")
   {
-    if (entries > 0 && ndimParray > 0)
+    if (database<T>::entries > 0 && database<T>::ndimParray > 0)
     {
       char fileName[256];
       if (strlen(fname) == 0)
@@ -463,22 +489,22 @@ public:
       io f;
       if (f.openFile(fileName, f.in))
       {
-        if (ndimGarray > 0)
+        if (database<T>::ndimGarray > 0)
         {
-          T *tmp[3] = {Parray.get(), Fvalue.get(), Garray.get()};
-          int nCols[3] = {ndimParray, 1, ndimGarray};
+          T *tmp[3] = {database<T>::Parray.get(), database<T>::Fvalue.get(), database<T>::Garray.get()};
+          int nCols[3] = {database<T>::ndimParray, 1, database<T>::ndimGarray};
 
-          if (!f.loadMatrix<T>(tmp, 3, nCols, 1, entries))
+          if (!f.loadMatrix<T>(tmp, 3, nCols, 1, database<T>::entries))
           {
             return false;
           }
         }
         else
         {
-          T *tmp[2] = {Parray.get(), Fvalue.get()};
-          int nCols[2] = {ndimParray, 1};
+          T *tmp[2] = {database<T>::Parray.get(), database<T>::Fvalue.get()};
+          int nCols[2] = {database<T>::ndimParray, 1};
 
-          if (!f.loadMatrix<T>(tmp, 2, nCols, 1, entries))
+          if (!f.loadMatrix<T>(tmp, 2, nCols, 1, database<T>::entries))
           {
             return false;
           }
@@ -493,38 +519,107 @@ public:
     return false;
   }
 
-  /*!
-   * \brief Update the data
-   * 
-   * \param  iParray     Input array of data (input sample points)
-   * \param  iFvalue     Input function value
-   * \param  iGarray     Input array of data
-   * \param  iSurrogate  Input data for surrogate
-   */
-  void update_Task(T const *iParray, T const iFvalue, T const *iGarray = nullptr, int const iSurrogate = std::numeric_limits<int>::max())
+  inline MPI_Datatype getType()
+  {
+    char name = typeid(T).name()[0];
+    switch (name)
+    {
+    case 'f':
+      return MPI_FLOAT;
+      break;
+    case 'd':
+      return MPI_DOUBLE;
+      break;
+    case 'e':
+      return MPI_DOUBLE;
+      break;
+    default:
+      return MPI_INT;
+      break;
+    }
+  }
+
+  static void update_Task1(T const *iParray, T const *iFvalue, T const *iGarray, int const *iSurrogate)
   {
     std::size_t pos;
 
-    pthread_mutex_lock(&m);
-    pos = idxPos;
-    idxPos++;
-    pthread_mutex_unlock(&m);
+    pthread_mutex_lock(&database<T>::m);
+    pos = database<T>::idxPos;
+    database<T>::idxPos++;
+    pthread_mutex_unlock(&database<T>::m);
 
-    if (pos < entries)
+    if (pos < database<T>::entries)
     {
-      std::copy(iParray, iParray + ndimParray, Parray.get() + pos * ndimParray);
+      std::copy(iParray, iParray + database<T>::ndimParray, database<T>::Parray.get() + pos * database<T>::ndimParray);
 
-      Fvalue[pos] = iFvalue;
+      database<T>::Fvalue[pos] = *iFvalue;
 
       if (iGarray != nullptr)
       {
-        std::copy(iGarray, iGarray + ndimGarray, Garray.get() + pos * ndimGarray);
+        std::copy(iGarray, iGarray + database<T>::ndimGarray, database<T>::Garray.get() + pos * database<T>::ndimGarray);
       }
 
-      if (iSurrogate < std::numeric_limits<int>::max())
+      if (*iSurrogate < std::numeric_limits<int>::max())
       {
-        Surrogate[pos] = iSurrogate;
+        database<T>::Surrogate[pos] = *iSurrogate;
       }
+    }
+  }
+
+  static void update_Task2(T const *iParray, T const *iFvalue, int const *iSurrogate)
+  {
+    std::size_t pos;
+
+    pthread_mutex_lock(&database<T>::m);
+    pos = database<T>::idxPos;
+    database<T>::idxPos++;
+    pthread_mutex_unlock(&database<T>::m);
+
+    if (pos < database<T>::entries)
+    {
+      std::copy(iParray, iParray + database<T>::ndimParray, database<T>::Parray.get() + pos * database<T>::ndimParray);
+
+      database<T>::Fvalue[pos] = *iFvalue;
+
+      database<T>::Surrogate[pos] = *iSurrogate;
+    }
+  }
+
+  static void update_Task3(T const *iParray, T const *iFvalue, T const *iGarray)
+  {
+    std::size_t pos;
+
+    pthread_mutex_lock(&database<T>::m);
+    pos = database<T>::idxPos;
+    database<T>::idxPos++;
+    pthread_mutex_unlock(&database<T>::m);
+
+    std::cout << pos << " " << iParray[0] << " " << iParray[1] << "  F " << *iFvalue << " G " << iGarray[0] << " " << iGarray[1] << std::endl;
+
+    if (pos < database<T>::entries)
+    {
+      std::copy(iParray, iParray + database<T>::ndimParray, database<T>::Parray.get() + pos * database<T>::ndimParray);
+
+      database<T>::Fvalue[pos] = *iFvalue;
+
+      std::copy(iGarray, iGarray + database<T>::ndimGarray, database<T>::Garray.get() + pos * database<T>::ndimGarray);
+    }
+  }
+
+  static void update_Task4(T const *iParray, T const *iFvalue)
+  {
+    std::size_t pos;
+
+    pthread_mutex_lock(&database<T>::m);
+    pos = database<T>::idxPos;
+    database<T>::idxPos++;
+    pthread_mutex_unlock(&database<T>::m);
+
+    if (pos < database<T>::entries)
+    {
+      std::copy(iParray, iParray + database<T>::ndimParray, database<T>::Parray.get() + pos * database<T>::ndimParray);
+
+      database<T>::Fvalue[pos] = *iFvalue;
     }
   }
 
@@ -532,31 +627,37 @@ public:
   {
     // if (torc_node_id() == 0)
     // {
-    //   update_Task(iParray, iFvalue, iGarray, iSurrogate);
+    //   update_Task1(iParray, &iFvalue, iGarray, &iSurrogate);
     //   return;
     // }
 
-    // if (iGarray == nullptr)
-    // {
-    //   //Message to the database manager (separate process?) 
-    //   //or direct execution by server thread
-    //   torc_create_direct(0, (void (*)())update_Task, 3,
-    //                      data.Nth, MPI_DOUBLE, CALL_BY_VAL,
-    //                      1, MPI_DOUBLE, CALL_BY_COP,
-    //                      1, MPI_INT, CALL_BY_COP,
-    //                      point, &F, &surrogate);
-    // }
-    // else
-    // {
-    //   /* xxx: for CALL_BY_VAL: in the full-version of the library, with n=1 we had segv */
-    //   torc_create_direct(0, (void (*)())torc_update_full_db_task_p5, 5,
-    //                      data.Nth, MPI_DOUBLE, CALL_BY_VAL,
-    //                      1, MPI_DOUBLE, CALL_BY_COP,
-    //                      n, MPI_DOUBLE, CALL_BY_COP,
-    //                      1, MPI_INT, CALL_BY_COP,
-    //                      1, MPI_INT, CALL_BY_COP,
-    //                      point, &F, G, &n, &surrogate);
-    // }
+    if (iSurrogate < std::numeric_limits<int>::max())
+    {
+      if (iGarray != nullptr)
+      {
+        //Message to the database manager (separate process?)
+        //or direct execution by server thread
+        torc_create_direct(0, (void (*)())database<T>::update_Task1, 4,
+                           database<T>::ndimParray, database<T>::getType(), CALL_BY_VAL,
+                           1, database<T>::getType(), CALL_BY_VAL,
+                           database<T>::ndimGarray, database<T>::getType(), CALL_BY_VAL,
+                           1, MPI_INT, CALL_BY_VAL,
+                           iParray, &iFvalue, iGarray, &iSurrogate);
+      }
+      else
+      {
+      }
+    }
+    else
+    {
+      if (iGarray != nullptr)
+      {
+      }
+      else
+      {
+      }
+    }
+
     // torc_waitall3();
   }
 
@@ -569,43 +670,75 @@ private:
 
 public:
   //! Space dimension (Sampling points dimension)
-  int ndimParray;
+  static int ndimParray;
 
   //! Dimension of G data array
-  int ndimGarray;
+  static int ndimGarray;
 
 private:
   //! Index position
-  std::size_t idxPos;
+  static std::size_t idxPos;
 
 public:
   //! Number of entries in the data
-  std::size_t entries;
+  static std::size_t entries;
 
   //! Points or sampling points array
-  std::unique_ptr<T[]> Parray;
+  static std::unique_ptr<T[]> Parray;
 
   //! G data array
-  std::unique_ptr<T[]> Garray;
+  static std::unique_ptr<T[]> Garray;
 
   //! Function value
-  std::unique_ptr<T[]> Fvalue;
+  static std::unique_ptr<T[]> Fvalue;
 
   //! Surrogate
-  std::unique_ptr<int[]> Surrogate;
+  static std::unique_ptr<int[]> Surrogate;
 
   //! Number of selection or Weighting number for each point
-  std::unique_ptr<int[]> nSelection;
+  static std::unique_ptr<int[]> nSelection;
 
   //! Index number for sorting
-  std::unique_ptr<std::size_t[]> idxNumber;
+  static std::unique_ptr<std::size_t[]> idxNumber;
 
 private:
   //! Mutex object
-  pthread_mutex_t m;
+  static pthread_mutex_t m;
 
   //! List of sort data
   std::unique_ptr<sortType[]> list;
 };
 
+template <typename T>
+int database<T>::ndimParray = 0;
+
+template <typename T>
+int database<T>::ndimGarray = 0;
+
+template <typename T>
+std::size_t database<T>::idxPos = 0;
+
+template <typename T>
+std::size_t database<T>::entries = 0;
+
+template <typename T>
+std::unique_ptr<T[]> database<T>::Parray;
+
+template <typename T>
+std::unique_ptr<T[]> database<T>::Garray;
+
+template <typename T>
+std::unique_ptr<T[]> database<T>::Fvalue;
+
+template <typename T>
+std::unique_ptr<int[]> database<T>::Surrogate;
+
+template <typename T>
+std::unique_ptr<int[]> database<T>::nSelection;
+
+template <typename T>
+std::unique_ptr<std::size_t[]> database<T>::idxNumber;
+
+template <typename T>
+pthread_mutex_t database<T>::m = PTHREAD_MUTEX_INITIALIZER;
 #endif
