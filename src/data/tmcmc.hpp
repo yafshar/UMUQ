@@ -6,7 +6,10 @@
 template <typename T>
 class tmcmc
 {
-  public:
+public:
+  tmcmc() {}
+
+public:
 };
 
 #endif
