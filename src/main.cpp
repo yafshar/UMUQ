@@ -8,9 +8,7 @@
 #include <random>
 
 #include "data/stdata.hpp"
-// #include "data/current.hpp"
-// #include "data/datatype.hpp"
-#include "data/basic.hpp"
+#include "data/datatype.hpp"
 
 int main(int argc, char **argv)
 {
@@ -18,43 +16,52 @@ int main(int argc, char **argv)
 
     database<double> db1(2, 2, 3);
 
-    std::cout << db1.ndimParray << " " << db1.ndimGarray << " " << db1.entries << std::endl;
+    currentData = std::move(db1);
 
-    {
-        double yarr[] = {1., -1.};
-        double gyarr[] = {120., 321.};
-        db1.update(yarr, 1000., gyarr, -1);
-    }
+    currentData.print();
 
-    {
-        double yarr[] = {2, 3.4};
-        double gyarr[] = {1206., 3621.};
-        db1.update(yarr, 10000., gyarr, -2);
-    }
+    std::cout << "--------------------------------------------" << std::endl;
 
+    currentData.set(current_updateTask<double>);
+
+    if (currentData.init())
     {
-        double yarr[] = {4., 14};
-        double gyarr[] = {506., 132621.};
-        db1.update(yarr, 2000, gyarr, 30);
+        {
+            double yarr[] = {1., -1.};
+            double gyarr[] = {120., 321.};
+            currentData.update(yarr, 1000., gyarr, -1);
+        }
+
+        {
+            double yarr[] = {2, 3.4};
+            double gyarr[] = {1206., 3621.};
+            currentData.update(yarr, 10000., gyarr, -2);
+        }
+
+        {
+            double yarr[] = {4., 14};
+            double gyarr[] = {506., 132621.};
+            currentData.update(yarr, 2000, gyarr, -3);
+        }
     }
 
     torc_waitall();
 
-    // // // db1.nSelection[0] = 100;
-    // // // db1.nSelection[1] = 200;
-    // // // db1.nSelection[2] = 10;
+    currentData.print();
 
-    db1.print();
+    currentData.nSelection[0] = 100;
+    currentData.nSelection[1] = 200;
+    currentData.nSelection[2] = 10;
 
-    // db1.dump(1200, "yaser");
+    currentData.dump(1200, "yaser");
 
-    // database<double> db2(2, 3);
+    std::cout << "     db2    " << std::endl;
 
-    // std::cout << "     db2    " << std::endl;
+    database<double> db2(2, 2, 3);
 
-    // db2.load(1200, "yaser");
+    db2.load(1200, "yaser");
 
-    // db2.print();
+    db2.print();
 
     torc_finalize();
 
