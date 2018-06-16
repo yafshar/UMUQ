@@ -68,11 +68,11 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(NULL, d2.lowerbound);
 }
 
-//! Tests read input file
+//! Tests load input file
 TEST(streamdatatype, HandlesIO)
 {
     stdata d1;
-    EXPECT_TRUE(d1.read("test.txt"));
+    EXPECT_TRUE(d1.load("test.txt"));
 
     EXPECT_EQ(4, d1.Nth);
     EXPECT_EQ(20, d1.MaxStages);
