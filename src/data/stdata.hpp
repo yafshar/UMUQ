@@ -32,167 +32,116 @@ struct optimizationParameters
 /*! \file stdata.hpp
 *  \brief stream Data type
 *
-* \param Nth
-* \param MaxStages
-* \param PopSize
-* \param lowerbound
-* \param upperbound
-* \param compositeprior_distr
-* \param prior_mu
-* \param prior_sigma
-* \param auxil_size
-* \param auxil_data
-* \param MinChainLength
-* \param MaxChainLength
+* \param nDim
+* \param maxGenerations
+* \param populationSize
+* \param lowerBound
+* \param upperBound
+* \param compositePriorDistribution
+* \param priorMu
+* \param priorSigma
+* \param auxilSize
+* \param auxilData
+* \param minChainLength
+* \param maxChainLength
 * \param lb                  generic lower bound
 * \param ub                  generic upper bound
 * \param TolCOV
 * \param bbeta
 * \param seed
 * \param options
-* \param sampling_type       sampling type which can be 0: uniform, 1: gaussian, 2: file 
-* \param prior_type          prior type which can be  0: lognormal, 1: gaussian
-* \param prior_count
-* \param iplot
-* \param icdump              dump current dataset of accepted points
-* \param ifdump              dump complete dataset of points
-* \param Num
-* \param LastNum
-* \param use_proposal_cma
-* \param init_mean
-* \param local_cov
-* \param use_local_cov
-* \param local_scale
+* \param samplingType       sampling type which can be 0: uniform, 1: gaussian, 2: file 
+* \param priorType          prior type which can be  0: lognormal, 1: gaussian
+* \param priorCount
+* \param iPlot
+* \param saveData              dump current dataset of accepted points
+* \param eachPopulationSize
+* \param lastPopulationSize
+* \param useCmaProposal
+* \param initMean
+* \param localCovariance
+* \param useLocalCovariance
+* \param localScale
 */
+template <typename T>
 class stdata
 {
   public:
-	int Nth;
-	int MaxStages; /* = MAXGENS*/
-	int PopSize;   /* = DATANUM*/
-
-	double *lowerbound; /*[PROBDIM];*/
-	double *upperbound; /*[PROBDIM];*/
-
-	double *compositeprior_distr; /*[PROBDIM]*/
-
-	double *prior_mu;
-	double *prior_sigma;
-
-	int auxil_size;
-	double *auxil_data;
-
-	int MinChainLength;
-	int MaxChainLength;
-
-	double lb; /*generic lower bound*/
-	double ub; /*generic upper bound*/
-
-	double TolCOV; /*a prescribed tolerance*/
-	double bbeta;
-	long seed;
-
-	optimizationParameters<double> options;
-
-	int sampling_type; /* 0: uniform, 1: gaussian, 2: file */
-	int prior_type;	/* 0: lognormal, 1: gaussian */
-
-	/* prior information needed for hiegherarchical analysis */
-	/* this number = prior + number of datasets = 1 + N_IND */
-	/* if it is 0, we only do the TMCMC */
-	int prior_count;
-
-	int iplot;
-	int icdump;
-	int ifdump;
-
-	int *Num; /*[MAXGENS];*/
-	int LastNum;
-
-	int use_proposal_cma;
-	double **init_mean; /* [DATANUM][PROBDIM] */
-
-	double **local_cov; /* [DATANUM][PROBDIM*PROBDIM] */
-	int use_local_cov;
-	double local_scale;
-
 	//! constructor
 	/*!
     * \brief constructor for the default variables
     *    
     */
-	stdata() : Nth(0),
-			   MaxStages(0),
-			   PopSize(0),
-			   lowerbound(nullptr),
-			   upperbound(nullptr),
-			   compositeprior_distr(nullptr),
-			   prior_mu(nullptr),
-			   prior_sigma(nullptr),
-			   auxil_size(0),
-			   auxil_data(nullptr),
-			   MinChainLength(0),
-			   MaxChainLength(1e6),
+	stdata() : nDim(0),
+			   maxGenerations(0),
+			   populationSize(0),
+			   lowerBound(nullptr),
+			   upperBound(nullptr),
+			   compositePriorDistribution(nullptr),
+			   priorMu(nullptr),
+			   priorSigma(nullptr),
+			   auxilSize(0),
+			   auxilData(nullptr),
+			   minChainLength(0),
+			   maxChainLength(1e6),
 			   lb(0), /* Default LB, same for all */
 			   ub(0),
 			   TolCOV(1.0),
 			   bbeta(0.2),
 			   seed(280675),
 			   options(),
-			   prior_type(0),
-			   prior_count(0),
-			   iplot(0),
-			   icdump(1),
-			   ifdump(0),
-			   Num(nullptr),
-			   LastNum(0),
-			   use_proposal_cma(0),
-			   init_mean(nullptr),
-			   local_cov(nullptr),
-			   use_local_cov(0),
-			   local_scale(0){};
+			   priorType(0),
+			   priorCount(0),
+			   iPlot(0),
+			   saveData(1),
+			   eachPopulationSize(nullptr),
+			   lastPopulationSize(0),
+			   useCmaProposal(0),
+			   initMean(nullptr),
+			   localCovariance(nullptr),
+			   useLocalCovariance(0),
+			   localScale(0){};
 
 	//! constructor
 	/*!
     *  \brief constructor for the default input variables
     *    
     */
-	stdata(int probdim, int maxgens, int datanum) : Nth(probdim),
-													MaxStages(maxgens),
-													PopSize(datanum),
-													lowerbound(nullptr),
-													upperbound(nullptr),
-													compositeprior_distr(nullptr),
-													prior_mu(nullptr),
-													prior_sigma(nullptr),
-													auxil_size(0),
-													auxil_data(nullptr),
-													MinChainLength(0),
-													MaxChainLength(1e6),
+	stdata(int probdim, int maxgens, int datanum) : nDim(probdim),
+													maxGenerations(maxgens),
+													populationSize(datanum),
+													lowerBound(nullptr),
+													upperBound(nullptr),
+													compositePriorDistribution(nullptr),
+													priorMu(nullptr),
+													priorSigma(nullptr),
+													auxilSize(0),
+													auxilData(nullptr),
+													minChainLength(0),
+													maxChainLength(1e6),
 													lb(-6), /* Default LB, same for all */
 													ub(6),
 													TolCOV(1.0),
 													bbeta(0.2),
 													seed(280675),
 													options(),
-													prior_type(0),
-													prior_count(0),
-													iplot(0),
-													icdump(1),
-													ifdump(0),
-													Num(nullptr),
-													LastNum(datanum),
-													use_proposal_cma(0),
-													init_mean(nullptr),
-													local_cov(nullptr),
-													use_local_cov(0),
-													local_scale(0)
+													priorType(0),
+													priorCount(0),
+													iPlot(0),
+													saveData(1),
+													eachPopulationSize(nullptr),
+													lastPopulationSize(datanum),
+													useCmaProposal(0),
+													initMean(nullptr),
+													localCovariance(nullptr),
+													useLocalCovariance(0),
+													localScale(0)
 	{
 		try
 		{
-			lowerbound = new double[Nth];
-			upperbound = new double[Nth];
-			prior_mu = new double[Nth];
+			lowerBound = new T[nDim];
+			upperBound = new T[nDim];
+			priorMu = new T[nDim];
 		}
 		catch (std::bad_alloc &e)
 		{
@@ -201,18 +150,18 @@ class stdata
 		}
 
 		{
-			int e = Nth;
+			int e = nDim;
 			while (e--)
 			{
-				lowerbound[e] = 0;
-				upperbound[e] = 0;
-				prior_mu[e] = 0;
+				lowerBound[e] = 0;
+				upperBound[e] = 0;
+				priorMu[e] = 0;
 			}
 		}
 
 		try
 		{
-			prior_sigma = new double[Nth * Nth];
+			priorSigma = new T[nDim * nDim];
 		}
 		catch (std::bad_alloc &e)
 		{
@@ -220,24 +169,24 @@ class stdata
 			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
 		}
 
-		for (int i = 0, k = 0; i < Nth; i++)
+		for (int i = 0, k = 0; i < nDim; i++)
 		{
-			for (int j = 0; j < Nth; j++, k++)
+			for (int j = 0; j < nDim; j++, k++)
 			{
 				if (i == j)
 				{
-					prior_sigma[k] = 1.0;
+					priorSigma[k] = 1.0;
 				}
 				else
 				{
-					prior_sigma[k] = 0.0;
+					priorSigma[k] = 0.0;
 				}
 			}
 		}
 
 		try
 		{
-			Num = new int[MaxStages];
+			eachPopulationSize = new int[maxGenerations];
 		}
 		catch (std::bad_alloc &e)
 		{
@@ -246,15 +195,15 @@ class stdata
 		}
 
 		{
-			int e = MaxStages;
+			int e = maxGenerations;
 			while (e--)
 			{
-				Num[e] = PopSize;
+				eachPopulationSize[e] = populationSize;
 			}
 		}
 		try
 		{
-			local_cov = new double *[PopSize];
+			localCovariance = new T *[populationSize];
 		}
 		catch (std::bad_alloc &e)
 		{
@@ -262,11 +211,11 @@ class stdata
 			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
 		}
 
-		for (int i = 0; i < PopSize; i++)
+		for (int i = 0; i < populationSize; i++)
 		{
 			try
 			{
-				local_cov[i] = new double[Nth * Nth];
+				localCovariance[i] = new T[nDim * nDim];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -274,17 +223,17 @@ class stdata
 				std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
 			}
 
-			for (int j = 0, l = 0; j < Nth; j++)
+			for (int j = 0, l = 0; j < nDim; j++)
 			{
-				for (int k = 0; k < Nth; k++, l++)
+				for (int k = 0; k < nDim; k++, l++)
 				{
 					if (j == k)
 					{
-						local_cov[i][l] = 1.0;
+						localCovariance[i][l] = 1.0;
 					}
 					else
 					{
-						local_cov[i][l] = 0.0;
+						localCovariance[i][l] = 0.0;
 					}
 				}
 			}
@@ -314,10 +263,60 @@ class stdata
     *
     */
 	void destroy();
+
+  public:
+	int nDim;
+	int maxGenerations; /* = MAXGENS*/
+	int populationSize; /* = DATANUM*/
+
+	int *eachPopulationSize; /*[MAXGENS];*/
+	int lastPopulationSize;
+
+	T *lowerBound; /*[PROBDIM];*/
+	T *upperBound; /*[PROBDIM];*/
+
+	T *compositePriorDistribution; /*[PROBDIM]*/
+
+	T *priorMu;
+	T *priorSigma;
+
+	int auxilSize;
+	T *auxilData;
+
+	int minChainLength;
+	int maxChainLength;
+
+	T lb; /*generic lower bound*/
+	T ub; /*generic upper bound*/
+
+	T TolCOV; /*a prescribed tolerance*/
+	T bbeta;
+	long seed;
+
+	optimizationParameters<T> options;
+
+	int samplingType; /* 0: uniform, 1: gaussian, 2: file */
+	int priorType;	/* 0: lognormal, 1: gaussian */
+
+	/* prior information needed for hiegherarchical analysis */
+	/* this number = prior + number of datasets = 1 + N_IND */
+	/* if it is 0, we only do the TMCMC */
+	int priorCount;
+
+	int iPlot;
+	int saveData;
+
+	int useCmaProposal;
+	T **initMean; /* [DATANUM][PROBDIM] */
+
+	T **localCovariance; /* [DATANUM][PROBDIM*PROBDIM] */
+	int useLocalCovariance;
+	T localScale;
 };
 
 // load the input file fname for setting the input variables
-bool stdata::load(const char *fname)
+template<typename T>
+bool stdata<T>::load(const char *fname)
 {
 	// We use an IO object to open and read a file
 	io f;
@@ -327,9 +326,9 @@ bool stdata::load(const char *fname)
 		// We need a parser object to parse
 		parser p;
 
-		int probdim = Nth;
-		int maxgens = MaxStages;
-		int datanum = PopSize;
+		int probdim = nDim;
+		int maxgens = maxGenerations;
+		int datanum = populationSize;
 		bool linit;
 
 		//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
@@ -338,25 +337,25 @@ bool stdata::load(const char *fname)
 			// Parse the line into line arguments
 			p.parse(f.getLine());
 
-			if (p.at<std::string>(0) == "Nth")
+			if (p.at<std::string>(0) == "nDim")
 			{
-				Nth = p.at<int>(1);
+				nDim = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "MaxStages")
+			else if (p.at<std::string>(0) == "maxGenerations")
 			{
-				MaxStages = p.at<int>(1);
+				maxGenerations = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "PopSize")
+			else if (p.at<std::string>(0) == "populationSize")
 			{
-				PopSize = p.at<int>(1);
+				populationSize = p.at<int>(1);
 			}
 			else if (p.at<std::string>(0) == "TolCOV")
 			{
-				TolCOV = p.at<double>(1);
+				TolCOV = p.at<T>(1);
 			}
 			else if (p.at<std::string>(0) == "bbeta")
 			{
-				bbeta = p.at<double>(1);
+				bbeta = p.at<T>(1);
 			}
 			else if (p.at<std::string>(0) == "seed")
 			{
@@ -368,7 +367,7 @@ bool stdata::load(const char *fname)
 			}
 			else if (p.at<std::string>(0) == "opt.Tol")
 			{
-				options.Tolerance = p.at<double>(1);
+				options.Tolerance = p.at<T>(1);
 			}
 			else if (p.at<std::string>(0) == "opt.Display")
 			{
@@ -376,58 +375,54 @@ bool stdata::load(const char *fname)
 			}
 			else if (p.at<std::string>(0) == "opt.Step")
 			{
-				options.Step = p.at<double>(1);
+				options.Step = p.at<T>(1);
 			}
-			else if (p.at<std::string>(0) == "prior_type")
+			else if (p.at<std::string>(0) == "priorType")
 			{
-				prior_type = p.at<int>(1);
+				priorType = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "prior_count")
+			else if (p.at<std::string>(0) == "priorCount")
 			{
-				prior_count = p.at<int>(1);
+				priorCount = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "iplot")
+			else if (p.at<std::string>(0) == "iPlot")
 			{
-				iplot = p.at<int>(1);
+				iPlot = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "icdump")
+			else if (p.at<std::string>(0) == "saveData")
 			{
-				icdump = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "ifdump")
-			{
-				ifdump = p.at<int>(1);
+				saveData = p.at<int>(1);
 			}
 			else if (p.at<std::string>(0) == "Bdef")
 			{
-				lb = p.at<double>(1);
-				ub = p.at<double>(2);
+				lb = p.at<T>(1);
+				ub = p.at<T>(2);
 			}
-			else if (p.at<std::string>(0) == "MinChainLength")
+			else if (p.at<std::string>(0) == "minChainLength")
 			{
-				MinChainLength = p.at<int>(1);
+				minChainLength = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "MaxChainLength")
+			else if (p.at<std::string>(0) == "maxChainLength")
 			{
-				MaxChainLength = p.at<int>(1);
+				maxChainLength = p.at<int>(1);
 			}
-			else if (p.at<std::string>(0) == "use_local_cov")
+			else if (p.at<std::string>(0) == "useLocalCovariance")
 			{
-				use_local_cov = p.at<int>(1);
+				useLocalCovariance = p.at<int>(1);
 			}
 		}
 
-		linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != nullptr);
+		linit = !(probdim == nDim && maxgens == maxGenerations && datanum == populationSize && lowerBound != nullptr);
 		if (linit)
 		{
-			if (lowerbound != nullptr)
+			if (lowerBound != nullptr)
 			{
-				delete[] lowerbound;
+				delete[] lowerBound;
 			}
 
 			try
 			{
-				lowerbound = new double[Nth];
+				lowerBound = new T[nDim];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -436,14 +431,14 @@ bool stdata::load(const char *fname)
 				return false;
 			}
 
-			if (upperbound != nullptr)
+			if (upperBound != nullptr)
 			{
-				delete[] upperbound;
+				delete[] upperBound;
 			}
 
 			try
 			{
-				upperbound = new double[Nth];
+				upperBound = new T[nDim];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -453,7 +448,7 @@ bool stdata::load(const char *fname)
 			}
 		}
 
-		int n = Nth;
+		int n = nDim;
 		int found;
 		while (n--)
 		{
@@ -468,8 +463,8 @@ bool stdata::load(const char *fname)
 
 				if (p.at<std::string>(0) == strt)
 				{
-					lowerbound[n] = p.at<double>(1);
-					upperbound[n] = p.at<double>(2);
+					lowerBound[n] = p.at<T>(1);
+					upperBound[n] = p.at<T>(2);
 					found = 1;
 					break;
 				}
@@ -477,24 +472,24 @@ bool stdata::load(const char *fname)
 
 			if (!found)
 			{
-				lowerbound[n] = lb; /* Bdef value or Default LB */
-				upperbound[n] = ub; /* Bdef value of Default UB */
+				lowerBound[n] = lb; /* Bdef value or Default LB */
+				upperBound[n] = ub; /* Bdef value of Default UB */
 			}
 		}
 
-		if (prior_type == 1) /* gaussian */
+		if (priorType == 1) /* gaussian */
 		{
 			if (linit)
 			{
-				/* new, parse prior_mu */
-				if (prior_mu != nullptr)
+				/* new, parse priorMu */
+				if (priorMu != nullptr)
 				{
-					delete[] prior_mu;
+					delete[] priorMu;
 				}
 
 				try
 				{
-					prior_mu = new double[Nth];
+					priorMu = new T[nDim];
 				}
 				catch (std::bad_alloc &e)
 				{
@@ -511,11 +506,11 @@ bool stdata::load(const char *fname)
 			{
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == "prior_mu")
+				if (p.at<std::string>(0) == "priorMu")
 				{
-					for (n = 0; n < Nth; n++)
+					for (n = 0; n < nDim; n++)
 					{
-						prior_mu[n] = p.at<double>(n + 1);
+						priorMu[n] = p.at<T>(n + 1);
 					}
 					found = 1;
 					break;
@@ -524,24 +519,24 @@ bool stdata::load(const char *fname)
 
 			if (!found)
 			{
-				n = Nth;
+				n = nDim;
 				while (n--)
 				{
-					prior_mu[n] = 0.0;
+					priorMu[n] = 0.0;
 				}
 			}
 
 			if (linit)
 			{
-				/* new, parse prior_sigma */
-				if (prior_sigma != nullptr)
+				/* new, parse priorSigma */
+				if (priorSigma != nullptr)
 				{
-					delete[] prior_sigma;
+					delete[] priorSigma;
 				}
 
 				try
 				{
-					prior_sigma = new double[Nth * Nth];
+					priorSigma = new T[nDim * nDim];
 				}
 				catch (std::bad_alloc &e)
 				{
@@ -558,11 +553,11 @@ bool stdata::load(const char *fname)
 			{
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == "prior_sigma")
+				if (p.at<std::string>(0) == "priorSigma")
 				{
-					for (n = 0; n < Nth * Nth; n++)
+					for (n = 0; n < nDim * nDim; n++)
 					{
-						prior_sigma[n] = p.at<double>(n + 1);
+						priorSigma[n] = p.at<T>(n + 1);
 					}
 					found = 1;
 					break;
@@ -572,32 +567,32 @@ bool stdata::load(const char *fname)
 			if (!found)
 			{
 				int i, j, k;
-				for (i = 0, k = 0; i < Nth; i++)
+				for (i = 0, k = 0; i < nDim; i++)
 				{
-					for (j = 0; j < Nth; j++, k++)
+					for (j = 0; j < nDim; j++, k++)
 					{
 						if (i == j)
 						{
-							prior_sigma[k] = 1.0;
+							priorSigma[k] = 1.0;
 						}
 						else
 						{
-							prior_sigma[k] = 0.0;
+							priorSigma[k] = 0.0;
 						}
 					}
 				}
 			}
 		}
 
-		if (prior_type == 3) /* composite */
+		if (priorType == 3) /* composite */
 		{
-			if (compositeprior_distr != nullptr)
+			if (compositePriorDistribution != nullptr)
 			{
-				delete[] compositeprior_distr;
+				delete[] compositePriorDistribution;
 			}
 			try
 			{
-				compositeprior_distr = new double[Nth];
+				compositePriorDistribution = new T[nDim];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -608,14 +603,14 @@ bool stdata::load(const char *fname)
 
 			if (linit)
 			{
-				if (prior_mu != nullptr)
+				if (priorMu != nullptr)
 				{
-					delete[] prior_mu;
+					delete[] priorMu;
 				}
 
 				try
 				{
-					prior_mu = new double[Nth];
+					priorMu = new T[nDim];
 				}
 				catch (std::bad_alloc &e)
 				{
@@ -624,14 +619,14 @@ bool stdata::load(const char *fname)
 					return false;
 				}
 
-				if (prior_sigma != nullptr)
+				if (priorSigma != nullptr)
 				{
-					delete[] prior_sigma;
+					delete[] priorSigma;
 				}
 
 				try
 				{
-					prior_sigma = new double[Nth * Nth];
+					priorSigma = new T[nDim * nDim];
 				}
 				catch (std::bad_alloc &e)
 				{
@@ -641,7 +636,7 @@ bool stdata::load(const char *fname)
 				}
 			}
 
-			n = Nth;
+			n = nDim;
 			while (n--)
 			{
 				f.rewindFile();
@@ -655,9 +650,9 @@ bool stdata::load(const char *fname)
 
 					if (p.at<std::string>(0) == strt)
 					{
-						compositeprior_distr[n] = p.at<double>(1);
-						lowerbound[n] = p.at<double>(2);
-						upperbound[n] = p.at<double>(3);
+						compositePriorDistribution[n] = p.at<T>(1);
+						lowerBound[n] = p.at<T>(2);
+						upperBound[n] = p.at<T>(3);
 						found = 1;
 						break;
 					}
@@ -665,14 +660,14 @@ bool stdata::load(const char *fname)
 
 				if (!found)
 				{
-					compositeprior_distr[n] = 0;
-					lowerbound[n] = lb; /* Bdef value or Default LB */
-					upperbound[n] = ub; /* Bdef value of Default UB */
+					compositePriorDistribution[n] = 0;
+					lowerBound[n] = lb; /* Bdef value or Default LB */
+					upperBound[n] = ub; /* Bdef value of Default UB */
 				}
 			}
 		}
 
-		/* new, parse auxil_size and auxil_data */
+		/* new, parse auxilSize and auxilData */
 		f.rewindFile();
 		found = 0;
 
@@ -680,24 +675,24 @@ bool stdata::load(const char *fname)
 		{
 			p.parse(f.getLine());
 
-			if (p.at<std::string>(0) == "auxil_size")
+			if (p.at<std::string>(0) == "auxilSize")
 			{
-				auxil_size = p.at<int>(1);
+				auxilSize = p.at<int>(1);
 				found = 1;
 				break;
 			}
 		}
 
-		if (auxil_size > 0)
+		if (auxilSize > 0)
 		{
-			if (auxil_data != nullptr)
+			if (auxilData != nullptr)
 			{
-				delete[] auxil_data;
+				delete[] auxilData;
 			}
 
 			try
 			{
-				auxil_data = new double[auxil_size];
+				auxilData = new T[auxilSize];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -714,11 +709,11 @@ bool stdata::load(const char *fname)
 			{
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == "auxil_data")
+				if (p.at<std::string>(0) == "auxilData")
 				{
-					for (n = 0; n < auxil_size; n++)
+					for (n = 0; n < auxilSize; n++)
 					{
-						auxil_data[n] = p.at<double>(n + 1);
+						auxilData[n] = p.at<T>(n + 1);
 					}
 					found = 1;
 					break;
@@ -728,9 +723,9 @@ bool stdata::load(const char *fname)
 			if (!found)
 			{
 				int i;
-				for (i = 0; i < auxil_size; i++)
+				for (i = 0; i < auxilSize; i++)
 				{
-					auxil_data[i] = 0;
+					auxilData[i] = 0;
 				}
 			}
 		}
@@ -739,14 +734,14 @@ bool stdata::load(const char *fname)
 
 		if (linit)
 		{
-			if (Num != nullptr)
+			if (eachPopulationSize != nullptr)
 			{
-				delete[] Num;
+				delete[] eachPopulationSize;
 			}
 
 			try
 			{
-				Num = new int[MaxStages];
+				eachPopulationSize = new int[maxGenerations];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -755,30 +750,30 @@ bool stdata::load(const char *fname)
 				return false;
 			}
 
-			n = MaxStages;
+			n = maxGenerations;
 			while (n--)
 			{
-				Num[n] = PopSize;
+				eachPopulationSize[n] = populationSize;
 			}
-			LastNum = PopSize;
+			lastPopulationSize = populationSize;
 
-			if (local_cov != nullptr)
+			if (localCovariance != nullptr)
 			{
-				n = PopSize;
+				n = populationSize;
 				while (n--)
 				{
-					if (local_cov[n] != nullptr)
+					if (localCovariance[n] != nullptr)
 					{
-						delete[] local_cov[n];
+						delete[] localCovariance[n];
 					}
 				}
 
-				delete[] local_cov;
+				delete[] localCovariance;
 			}
 
 			try
 			{
-				local_cov = new double *[PopSize];
+				localCovariance = new T *[populationSize];
 			}
 			catch (std::bad_alloc &e)
 			{
@@ -786,11 +781,11 @@ bool stdata::load(const char *fname)
 				std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
 				return false;
 			}
-			for (n = 0; n < PopSize; n++)
+			for (n = 0; n < populationSize; n++)
 			{
 				try
 				{
-					local_cov[n] = new double[Nth * Nth];
+					localCovariance[n] = new T[nDim * nDim];
 				}
 				catch (std::bad_alloc &e)
 				{
@@ -798,17 +793,17 @@ bool stdata::load(const char *fname)
 					std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
 					return false;
 				}
-				for (int i = 0, l = 0; i < Nth; i++)
+				for (int i = 0, l = 0; i < nDim; i++)
 				{
-					for (int j = 0; j < Nth; j++, l++)
+					for (int j = 0; j < nDim; j++, l++)
 					{
 						if (i == j)
 						{
-							local_cov[n][l] = 1;
+							localCovariance[n][l] = 1;
 						}
 						else
 						{
-							local_cov[n][l] = 0;
+							localCovariance[n][l] = 0;
 						}
 					}
 				}
@@ -823,54 +818,55 @@ bool stdata::load(const char *fname)
 *  \brief destroy the allocated memory 
 *    
 */
-void stdata::destroy()
+template<typename T>
+void stdata<T>::destroy()
 {
-	if (lowerbound != nullptr)
+	if (lowerBound != nullptr)
 	{
-		delete[] lowerbound;
-		lowerbound = nullptr;
+		delete[] lowerBound;
+		lowerBound = nullptr;
 	}
-	if (upperbound != nullptr)
+	if (upperBound != nullptr)
 	{
-		delete[] upperbound;
-		upperbound = nullptr;
+		delete[] upperBound;
+		upperBound = nullptr;
 	}
-	if (compositeprior_distr != nullptr)
+	if (compositePriorDistribution != nullptr)
 	{
-		delete[] compositeprior_distr;
-		compositeprior_distr = nullptr;
+		delete[] compositePriorDistribution;
+		compositePriorDistribution = nullptr;
 	}
-	if (prior_mu != nullptr)
+	if (priorMu != nullptr)
 	{
-		delete[] prior_mu;
-		prior_mu = nullptr;
+		delete[] priorMu;
+		priorMu = nullptr;
 	}
-	if (prior_sigma != nullptr)
+	if (priorSigma != nullptr)
 	{
-		delete[] prior_sigma;
-		prior_sigma = nullptr;
+		delete[] priorSigma;
+		priorSigma = nullptr;
 	}
-	if (auxil_data != nullptr)
+	if (auxilData != nullptr)
 	{
-		delete[] auxil_data;
-		auxil_data = nullptr;
+		delete[] auxilData;
+		auxilData = nullptr;
 	}
-	if (Num != nullptr)
+	if (eachPopulationSize != nullptr)
 	{
-		delete[] Num;
-		Num = nullptr;
+		delete[] eachPopulationSize;
+		eachPopulationSize = nullptr;
 	}
-	if (init_mean != nullptr)
+	if (initMean != nullptr)
 	{
-		delete[] * init_mean;
-		delete[] init_mean;
-		init_mean = nullptr;
+		delete[] * initMean;
+		delete[] initMean;
+		initMean = nullptr;
 	}
-	if (local_cov != nullptr)
+	if (localCovariance != nullptr)
 	{
-		delete[] * local_cov;
-		delete[] local_cov;
-		local_cov = nullptr;
+		delete[] * localCovariance;
+		delete[] localCovariance;
+		localCovariance = nullptr;
 	}
 }
 
