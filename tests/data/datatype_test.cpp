@@ -18,10 +18,10 @@ TEST(datatype_test, HandlesGlobalData)
         auto *d = &Data1<double>;
 
         //Set the update Task function to be used for updating on multi threads or processors
-        d->set(updateTask1<double>);
+        d->setTask(updateTask1<double>);
 
         //Initilize the update Task 
-        EXPECT_TRUE(d->init());
+        EXPECT_TRUE(d->initTask());
 
         //Update the data using different threads
         {
