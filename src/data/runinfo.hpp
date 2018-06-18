@@ -138,7 +138,7 @@ class runinfo
 	 * 
 	 * \param inputRI Input runinfo object
 	 */
-	void swap(database<T> &inputRI)
+	void swap(runinfo<T> &inputRI)
 	{
 		std::swap(nDim, inputRI.nDim);
 		std::swap(maxGenerations, inputRI.maxGenerations);
