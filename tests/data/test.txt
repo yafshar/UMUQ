@@ -3,19 +3,19 @@
 
 #------------------------ GENERAL PARAMETERS ----------------------------------
 # Problem dimension
-Nth               4
+nDim               4
 
 # Max number of generations
-MaxStages        20
+maxGenerations        20
 
 # Population size
-PopSize        5000
+populationSize        5000
 
 # Chain lengths:
-# 1) TMCMC (biased): min=0, max>=PopSize
+# 1) TMCMC (biased): min=0, max>=populationSize
 # 2) BASIS (unbiased): min=max=1
-MinChainLength    1
-MaxChainLength    1
+minChainLength    1
+maxChainLength    1
 
 # Desired coefficient of variation (=std/mean) of the weights
 TolCOV    1
@@ -25,12 +25,12 @@ TolCOV    1
 # 0 - uniform
 # 1 - gaussian
 # 3 - composite (for every parameter its own distribution)
-prior_type  0
+priorType  0
 
 # prior information needed for hiegherarchical analysis
 # this number = prior + number of datasets = 1 + N_IND
 # if it is 0, we only do the TMCMC
-prior_count      1
+priorCount      1
 
 # Parameters of the uniform prior
 # Bdef: same boundaries in each dimension
@@ -44,27 +44,27 @@ B3              0.0001          1.0
 
 
 # Parameters of the Gaussian prior
-# Note: prior_mu size is 1 x Nth, prior_sigma size is Nth x Nth
-prior_mu    0.0,0.0
-prior_sigma    10,0;0,10
+# Note: priorMu size is 1 x nDim, priorSigma size is nDim x nDim
+priorMu    0.0,0.0
+priorSigma    10,0;0,10
 
 # Parameters of the composite prior: <distribution type> <parameter_1> ... <parameter_k>
 C0        0    0.25    16
 C1        1    0    1
 
-#auxil_size    5
-#auxil_data    0.1,0.2,0.3,0.4,5
+#auxilSize    5
+#auxilData    0.1,0.2,0.3,0.4,5
 
 #------------------------------ MCMC OPTIONS ----------------------------------
 # Flag to use local proposal covariance;
 # should be used if the global covariance fails
-use_local_cov   0
+useLocalCovariance   0
 
 # Scaling for the global proposal covariance
 bbeta            0.04
 
 # Use or not CMA-style proposal in MCMC (experimental)
-use_proposal_cma 0
+useCmaProposal 0
 
 #---------------------------- OTHER OPTIONS -----------------------------------
 # RNG seed
@@ -77,6 +77,5 @@ opt.Display    1
 opt.Step    1e-4
 
 # Online plotting of data, useful for 2D data and debugging
-iplot        0
-icdump        1
-ifdump        1
+iPlot           0
+saveData        1
