@@ -7,183 +7,93 @@
 #include "misc/utility.hpp"
 #include <random>
 
-#include "data/stdata.hpp"
-#include "data/datatype.hpp"
-#include "data/runinfo.hpp"
-
 int main(int argc, char **argv)
 {
-	torc_init(argc, argv, 0);
+	int d = 2;
+	int r = 2;
 
+	int *alpha;
+
+	polynomial<double> p(d, r);
+
+	UMTimer t;
+
+	alpha = p.monomial_basis();
+	t.toc("monomial_basis");
+
+	std::cout << " d =  " << d << std::endl;
+	std::cout << " r =  " << r << std::endl;
+	std::cout << "  i   [] []" << std::endl;
+
+	int i, n;
+	n = 0;
+	for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
 	{
-		database<double> db1(2, 2, 3);
-		currentData<double> = std::move(db1);
+	    std::cout << std::setw(3) << i << "   ";
+	    for (int j = 0; j < d; j++)
+	    {
+	        std::cout << std::setw(2) << alpha[n];
+	        n++;
+	    }
+	    std::cout << std::endl;
 	}
-	database<double> db1(std::move(currentData<double>));
+	std::cout << "----------------" << std::endl;
 
-	db1.set(current_updateTask<double>);
+	n = p.binomial_coefficient(d + r, r);
 
-	if (db1.init())
+	t.toc("binomial_coefficient");
+
+	double *value = nullptr;
+	double *x = nullptr;
+
+	EMatrixXd A;
+	A.resize(n, n);
+
+	x = new double[d];
+	value = new double[n];
+
+	for (i = 0; i < n; i++)
 	{
-		{
-			double yarr[] = {1., -1.};
-			double gyarr[] = {120., 321.};
-			db1.update(yarr, 1000., gyarr, -1);
-		}
+	    switch (i)
+	    {
+	    case (0):
+	        x[0] = 1;
+	        x[1] = 0;
+	        break;
+	    case (1):
+	        x[0] = 0;
+	        x[1] = 1;
+	        break;
+	    case (2):
+	        x[0] = -1;
+	        x[1] = 0;
+	        break;
+	    case (3):
+	        x[0] = 0;
+	        x[1] = -1;
+	        break;
+	    case (4):
+	        x[0] = .70710678118654752440;
+	        x[1] = .70710678118654752440;
+	        break;
+	    case (5):
+	        x[0] = -.70710678118654752440;
+	        x[1] = -.70710678118654752440;
+	    }
 
-		{
-			double yarr[] = {2, 3.4};
-			double gyarr[] = {1206., 3621.};
-			db1.update(yarr, 10000., gyarr, -2);
-		}
+	    if (p.monomial_value(x, value))
+	    {
 
-		{
-			double yarr[] = {4., 14};
-			double gyarr[] = {506., 132621.};
-			db1.update(yarr, 2000, gyarr, -3);
-		}
+	        for (int j = 0; j < n; j++)
+	        {
+	            A(i, j) = value[j];
+	        }
+	    }
+	    else
+	    {
+	        std::exit(1);
+	    }
 	}
-
-	torc_waitall();
-
-	db1.print();
-
-	db1.nSelection[0] = 100;
-	db1.nSelection[1] = 200;
-	db1.nSelection[2] = 10;
-
-	db1.save("yaser", 1200);
-
-	std::cout << "     db2    " << std::endl;
-
-	database<double> db2(2, 2, 3);
-
-	db2.load("yaser", 1200);
-
-	db2.print();
-
-	runinfo<double> ri(2, 10);
-
-	ri.Generation = 9;
-
-	for (int i = 0; i < ri.maxGenerations; i++)
-	{
-		ri.CoefVar[i] = static_cast<double>(i);
-		ri.p[i] = static_cast<double>(i * i);
-		ri.currentuniques[i] = i;
-		ri.logselection[i] = static_cast<double>(i * i * i);
-		ri.acceptance[i] = static_cast<double>(i) / 10.;
-		ri.meantheta[i * ri.nDim] = static_cast<double>(i);
-		ri.meantheta[i * ri.nDim + 1] = static_cast<double>(i);
-	}
-	ri.SS[0] = 12.;
-	ri.SS[1] = 123.;
-	ri.SS[2] = 112.;
-	ri.SS[3] = 13.;
-	ri.SS[0] = 12.;
-
-	ri.save();
-
-	runinfo<double> ri2;
-
-	if (ri2.load())
-	{
-
-		std::cout << ri2.nDim << " " << ri2.maxGenerations << std::endl;
-
-		for (int i=0;i<ri2.maxGenerations;i++)
-		{
-			std::cout << ri.acceptance[i] << std::endl;
-		}
-	}
-
-	torc_finalize();
-
-	// int d = 2;
-	// int r = 2;
-
-	// int *alpha;
-
-	// polynomial<double> p(d, r);
-
-	// UMTimer t;
-
-	// alpha = p.monomial_basis();
-	// t.toc("monomial_basis");
-
-	// std::cout << " d =  " << d << std::endl;
-	// std::cout << " r =  " << r << std::endl;
-	// std::cout << "  i   [] []" << std::endl;
-
-	// int i, n;
-	// n = 0;
-	// for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
-	// {
-	//     std::cout << std::setw(3) << i << "   ";
-	//     for (int j = 0; j < d; j++)
-	//     {
-	//         std::cout << std::setw(2) << alpha[n];
-	//         n++;
-	//     }
-	//     std::cout << std::endl;
-	// }
-	// std::cout << "----------------" << std::endl;
-
-	// n = p.binomial_coefficient(d + r, r);
-
-	// t.toc("binomial_coefficient");
-
-	// double *value = nullptr;
-	// double *x = nullptr;
-
-	// EMatrixXd A;
-	// A.resize(n, n);
-
-	// x = new double[d];
-	// value = new double[n];
-
-	// for (i = 0; i < n; i++)
-	// {
-	//     switch (i)
-	//     {
-	//     case (0):
-	//         x[0] = 1;
-	//         x[1] = 0;
-	//         break;
-	//     case (1):
-	//         x[0] = 0;
-	//         x[1] = 1;
-	//         break;
-	//     case (2):
-	//         x[0] = -1;
-	//         x[1] = 0;
-	//         break;
-	//     case (3):
-	//         x[0] = 0;
-	//         x[1] = -1;
-	//         break;
-	//     case (4):
-	//         x[0] = .70710678118654752440;
-	//         x[1] = .70710678118654752440;
-	//         break;
-	//     case (5):
-	//         x[0] = -.70710678118654752440;
-	//         x[1] = -.70710678118654752440;
-	//     }
-
-	//     if (p.monomial_value(x, value))
-	//     {
-
-	//         for (int j = 0; j < n; j++)
-	//         {
-	//             A(i, j) = value[j];
-	//         }
-	//     }
-	//     else
-	//     {
-	//         std::exit(1);
-	//     }
-	// }
 
 	// delete[] value;
 	// delete[] x;
