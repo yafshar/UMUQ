@@ -96,7 +96,8 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
+	datatype_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
@@ -105,7 +106,8 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
+	datatype_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -134,6 +136,12 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_database_test_OBJECTS = data/database_test.$(OBJEXT)
+database_test_OBJECTS = $(am_database_test_OBJECTS)
+database_test_LDADD = $(LDADD)
+am_datatype_test_OBJECTS = data/datatype_test.$(OBJEXT)
+datatype_test_OBJECTS = $(am_datatype_test_OBJECTS)
+datatype_test_LDADD = $(LDADD)
 am_dcpse_test_OBJECTS = numerics/dcpse_test.$(OBJEXT)
 dcpse_test_OBJECTS = $(am_dcpse_test_OBJECTS)
 dcpse_test_LDADD = $(LDADD)
@@ -221,7 +229,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(array_test_SOURCES) $(dcpse_test_SOURCES) \
+SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
+	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
 	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
@@ -231,7 +240,8 @@ SOURCES = $(array_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
 	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
 	$(utility_test_SOURCES)
-DIST_SOURCES = $(array_test_SOURCES) $(dcpse_test_SOURCES) \
+DIST_SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
+	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
 	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
@@ -639,6 +649,8 @@ io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
 stdata_test_SOURCES = data/stdata_test.cpp
 runinfo_test_SOURCES = data/runinfo_test.cpp
+database_test_SOURCES = data/database_test.cpp
+datatype_test_SOURCES = data/datatype_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -693,6 +705,24 @@ misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
 array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
 	@rm -f array_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+data/$(am__dirstamp):
+	@$(MKDIR_P) data
+	@: > data/$(am__dirstamp)
+data/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) data/$(DEPDIR)
+	@: > data/$(DEPDIR)/$(am__dirstamp)
+data/database_test.$(OBJEXT): data/$(am__dirstamp) \
+	data/$(DEPDIR)/$(am__dirstamp)
+
+database_test$(EXEEXT): $(database_test_OBJECTS) $(database_test_DEPENDENCIES) $(EXTRA_database_test_DEPENDENCIES) 
+	@rm -f database_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(database_test_OBJECTS) $(database_test_LDADD) $(LIBS)
+data/datatype_test.$(OBJEXT): data/$(am__dirstamp) \
+	data/$(DEPDIR)/$(am__dirstamp)
+
+datatype_test$(EXEEXT): $(datatype_test_OBJECTS) $(datatype_test_DEPENDENCIES) $(EXTRA_datatype_test_DEPENDENCIES) 
+	@rm -f datatype_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(datatype_test_OBJECTS) $(datatype_test_LDADD) $(LIBS)
 numerics/$(am__dirstamp):
 	@$(MKDIR_P) numerics
 	@: > numerics/$(am__dirstamp)
@@ -782,12 +812,6 @@ numerics/psrandom_test.$(OBJEXT): numerics/$(am__dirstamp) \
 psrandom_test$(EXEEXT): $(psrandom_test_OBJECTS) $(psrandom_test_DEPENDENCIES) $(EXTRA_psrandom_test_DEPENDENCIES) 
 	@rm -f psrandom_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(psrandom_test_OBJECTS) $(psrandom_test_LDADD) $(LIBS)
-data/$(am__dirstamp):
-	@$(MKDIR_P) data
-	@: > data/$(am__dirstamp)
-data/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) data/$(DEPDIR)
-	@: > data/$(DEPDIR)/$(am__dirstamp)
 data/runinfo_test.$(OBJEXT): data/$(am__dirstamp) \
 	data/$(DEPDIR)/$(am__dirstamp)
 
@@ -823,6 +847,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/database_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/datatype_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/runinfo_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
@@ -1187,6 +1213,20 @@ stdata_test.log: stdata_test$(EXEEXT)
 runinfo_test.log: runinfo_test$(EXEEXT)
 	@p='runinfo_test$(EXEEXT)'; \
 	b='runinfo_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+database_test.log: database_test$(EXEEXT)
+	@p='database_test$(EXEEXT)'; \
+	b='database_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+datatype_test.log: datatype_test$(EXEEXT)
+	@p='datatype_test$(EXEEXT)'; \
+	b='datatype_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

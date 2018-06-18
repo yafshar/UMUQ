@@ -85,3 +85,11 @@ stdata_test_SOURCES = data/stdata_test.cpp
 TESTS += runinfo_test
 check_PROGRAMS += runinfo_test
 runinfo_test_SOURCES = data/runinfo_test.cpp
+
+TESTS += database_test
+check_PROGRAMS += database_test
+database_test_SOURCES = data/database_test.cpp
+
+TESTS += datatype_test
+check_PROGRAMS += datatype_test
+datatype_test_SOURCES = data/datatype_test.cpp
