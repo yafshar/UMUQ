@@ -9,211 +9,245 @@
 
 #include "data/stdata.hpp"
 #include "data/datatype.hpp"
+#include "data/runinfo.hpp"
 
 int main(int argc, char **argv)
 {
-    torc_init(argc, argv, 0);
+	torc_init(argc, argv, 0);
 
-    database<double> db1(2, 2, 3);
+	{
+		database<double> db1(2, 2, 3);
+		currentData<double> = std::move(db1);
+	}
+	database<double> db1(std::move(currentData<double>));
 
-    currentData = std::move(db1);
+	db1.set(current_updateTask<double>);
 
-    currentData.print();
+	if (db1.init())
+	{
+		{
+			double yarr[] = {1., -1.};
+			double gyarr[] = {120., 321.};
+			db1.update(yarr, 1000., gyarr, -1);
+		}
 
-    std::cout << "--------------------------------------------" << std::endl;
+		{
+			double yarr[] = {2, 3.4};
+			double gyarr[] = {1206., 3621.};
+			db1.update(yarr, 10000., gyarr, -2);
+		}
 
-    currentData.set(current_updateTask<double>);
+		{
+			double yarr[] = {4., 14};
+			double gyarr[] = {506., 132621.};
+			db1.update(yarr, 2000, gyarr, -3);
+		}
+	}
 
-    if (currentData.init())
-    {
-        {
-            double yarr[] = {1., -1.};
-            double gyarr[] = {120., 321.};
-            currentData.update(yarr, 1000., gyarr, -1);
-        }
+	torc_waitall();
 
-        {
-            double yarr[] = {2, 3.4};
-            double gyarr[] = {1206., 3621.};
-            currentData.update(yarr, 10000., gyarr, -2);
-        }
+	db1.print();
 
-        {
-            double yarr[] = {4., 14};
-            double gyarr[] = {506., 132621.};
-            currentData.update(yarr, 2000, gyarr, -3);
-        }
-    }
+	db1.nSelection[0] = 100;
+	db1.nSelection[1] = 200;
+	db1.nSelection[2] = 10;
 
-    torc_waitall();
+	db1.save("yaser", 1200);
 
-    currentData.print();
+	std::cout << "     db2    " << std::endl;
 
-    currentData.nSelection[0] = 100;
-    currentData.nSelection[1] = 200;
-    currentData.nSelection[2] = 10;
+	database<double> db2(2, 2, 3);
 
-    currentData.dump(1200, "yaser");
+	db2.load("yaser", 1200);
 
-    std::cout << "     db2    " << std::endl;
+	db2.print();
 
-    database<double> db2(2, 2, 3);
+	runinfo<double> ri(2, 10);
 
-    db2.load(1200, "yaser");
+	ri.Generation = 9;
 
-    db2.print();
+	for (int i = 0; i < ri.maxGenerations; i++)
+	{
+		ri.CoefVar[i] = static_cast<double>(i);
+		ri.p[i] = static_cast<double>(i * i);
+		ri.currentuniques[i] = i;
+		ri.logselection[i] = static_cast<double>(i * i * i);
+		ri.acceptance[i] = static_cast<double>(i) / 10.;
+		ri.meantheta[i * ri.nDim] = static_cast<double>(i);
+		ri.meantheta[i * ri.nDim + 1] = static_cast<double>(i);
+	}
+	ri.SS[0] = 12.;
+	ri.SS[1] = 123.;
+	ri.SS[2] = 112.;
+	ri.SS[3] = 13.;
+	ri.SS[0] = 12.;
 
-    torc_finalize();
+	ri.save();
 
-    // int d = 2;
-    // int r = 2;
+	runinfo<double> ri2;
 
-    // int *alpha;
+	if (ri2.load())
+	{
 
-    // polynomial<double> p(d, r);
+		std::cout << ri2.nDim << " " << ri2.maxGenerations << std::endl;
 
-    // UMTimer t;
+		for (int i=0;i<ri2.maxGenerations;i++)
+		{
+			std::cout << ri.acceptance[i] << std::endl;
+		}
+	}
 
-    // alpha = p.monomial_basis();
-    // t.toc("monomial_basis");
+	torc_finalize();
 
-    // std::cout << " d =  " << d << std::endl;
-    // std::cout << " r =  " << r << std::endl;
-    // std::cout << "  i   [] []" << std::endl;
+	// int d = 2;
+	// int r = 2;
 
-    // int i, n;
-    // n = 0;
-    // for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
-    // {
-    //     std::cout << std::setw(3) << i << "   ";
-    //     for (int j = 0; j < d; j++)
-    //     {
-    //         std::cout << std::setw(2) << alpha[n];
-    //         n++;
-    //     }
-    //     std::cout << std::endl;
-    // }
-    // std::cout << "----------------" << std::endl;
+	// int *alpha;
 
-    // n = p.binomial_coefficient(d + r, r);
+	// polynomial<double> p(d, r);
 
-    // t.toc("binomial_coefficient");
+	// UMTimer t;
 
-    // double *value = nullptr;
-    // double *x = nullptr;
+	// alpha = p.monomial_basis();
+	// t.toc("monomial_basis");
 
-    // EMatrixXd A;
-    // A.resize(n, n);
+	// std::cout << " d =  " << d << std::endl;
+	// std::cout << " r =  " << r << std::endl;
+	// std::cout << "  i   [] []" << std::endl;
 
-    // x = new double[d];
-    // value = new double[n];
+	// int i, n;
+	// n = 0;
+	// for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
+	// {
+	//     std::cout << std::setw(3) << i << "   ";
+	//     for (int j = 0; j < d; j++)
+	//     {
+	//         std::cout << std::setw(2) << alpha[n];
+	//         n++;
+	//     }
+	//     std::cout << std::endl;
+	// }
+	// std::cout << "----------------" << std::endl;
 
-    // for (i = 0; i < n; i++)
-    // {
-    //     switch (i)
-    //     {
-    //     case (0):
-    //         x[0] = 1;
-    //         x[1] = 0;
-    //         break;
-    //     case (1):
-    //         x[0] = 0;
-    //         x[1] = 1;
-    //         break;
-    //     case (2):
-    //         x[0] = -1;
-    //         x[1] = 0;
-    //         break;
-    //     case (3):
-    //         x[0] = 0;
-    //         x[1] = -1;
-    //         break;
-    //     case (4):
-    //         x[0] = .70710678118654752440;
-    //         x[1] = .70710678118654752440;
-    //         break;
-    //     case (5):
-    //         x[0] = -.70710678118654752440;
-    //         x[1] = -.70710678118654752440;
-    //     }
+	// n = p.binomial_coefficient(d + r, r);
 
-    //     if (p.monomial_value(x, value))
-    //     {
+	// t.toc("binomial_coefficient");
 
-    //         for (int j = 0; j < n; j++)
-    //         {
-    //             A(i, j) = value[j];
-    //         }
-    //     }
-    //     else
-    //     {
-    //         std::exit(1);
-    //     }
-    // }
+	// double *value = nullptr;
+	// double *x = nullptr;
 
-    // delete[] value;
-    // delete[] x;
-    // // note, to understand this part take a look in the MAN pages, at section of parameters.
-    // char TRANS = 'N';
-    // int INFO = 3;
-    // int LDA = 3;
-    // int LDB = 3;
-    // int NDIM = 3;
-    // int NRHS = 1;
-    // int IPIV[3];
+	// EMatrixXd A;
+	// A.resize(n, n);
 
-    // double AAA[9] =
-    //     {
-    //         1, 2, 3,
-    //         2, 3, 4,
-    //         3, 4, 1};
+	// x = new double[d];
+	// value = new double[n];
 
-    // double BBB[3] =
-    //     {
-    //         -4,
-    //         -1,
-    //         -2};
-    // // end of declarations
+	// for (i = 0; i < n; i++)
+	// {
+	//     switch (i)
+	//     {
+	//     case (0):
+	//         x[0] = 1;
+	//         x[1] = 0;
+	//         break;
+	//     case (1):
+	//         x[0] = 0;
+	//         x[1] = 1;
+	//         break;
+	//     case (2):
+	//         x[0] = -1;
+	//         x[1] = 0;
+	//         break;
+	//     case (3):
+	//         x[0] = 0;
+	//         x[1] = -1;
+	//         break;
+	//     case (4):
+	//         x[0] = .70710678118654752440;
+	//         x[1] = .70710678118654752440;
+	//         break;
+	//     case (5):
+	//         x[0] = -.70710678118654752440;
+	//         x[1] = -.70710678118654752440;
+	//     }
 
-    // std::cout << "compute the LU factorization..." << std::endl
-    //           << std::endl;
+	//     if (p.monomial_value(x, value))
+	//     {
 
-    // //void LAPACK_dgetrf( lapack_int* m, lapack_int* n, double* a, lapack_int* lda, lapack_int* ipiv, lapack_int *info );
-    // LAPACK_dgetrf(&NDIM, &NDIM, AAA, &LDA, IPIV, &INFO);
+	//         for (int j = 0; j < n; j++)
+	//         {
+	//             A(i, j) = value[j];
+	//         }
+	//     }
+	//     else
+	//     {
+	//         std::exit(1);
+	//     }
+	// }
 
-    // // checks INFO, if INFO != 0 something goes wrong, for more information see the MAN page of dgetrf.
-    // if (INFO)
-    // {
-    //     std::cout << "an error occured : " << INFO << std::endl
-    //               << std::endl;
-    // }
-    // else
-    // {
-    //     std::cout << "solving the system..." << std::endl
-    //               << std::endl;
-    //     // void LAPACK_dgetrs( char* trans, lapack_int* n, lapack_int* nrhs, const double* a, lapack_int* lda, const lapack_int* ipiv,double* b, lapack_int* ldb, lapack_int *info );
-    //     dgetrs_(&TRANS, &NDIM, &NRHS, AAA, &LDA, IPIV, BBB, &LDB, &INFO);
+	// delete[] value;
+	// delete[] x;
+	// // note, to understand this part take a look in the MAN pages, at section of parameters.
+	// char TRANS = 'N';
+	// int INFO = 3;
+	// int LDA = 3;
+	// int LDB = 3;
+	// int NDIM = 3;
+	// int NRHS = 1;
+	// int IPIV[3];
 
-    //     if (INFO)
-    //     {
-    //         // checks INFO, if INFO != 0 something goes wrong, for more information see the MAN page of dgetrs.
-    //         std::cout << "an error occured : " << INFO << std::endl
-    //                   << std::endl;
-    //     }
-    //     else
-    //     {
-    //         std::cout << "print the result : {";
-    //         for (i = 0; i < NDIM; i++)
-    //         {
-    //             std::cout << BBB[i] << " ";
-    //         }
-    //         std::cout << "}" << std::endl
-    //                   << std::endl;
-    //     }
-    // }
+	// double AAA[9] =
+	//     {
+	//         1, 2, 3,
+	//         2, 3, 4,
+	//         3, 4, 1};
 
-    // std::cout << "program terminated." << std::endl
-    //           << std::endl;
+	// double BBB[3] =
+	//     {
+	//         -4,
+	//         -1,
+	//         -2};
+	// // end of declarations
 
-    return 0;
+	// std::cout << "compute the LU factorization..." << std::endl
+	//           << std::endl;
+
+	// //void LAPACK_dgetrf( lapack_int* m, lapack_int* n, double* a, lapack_int* lda, lapack_int* ipiv, lapack_int *info );
+	// LAPACK_dgetrf(&NDIM, &NDIM, AAA, &LDA, IPIV, &INFO);
+
+	// // checks INFO, if INFO != 0 something goes wrong, for more information see the MAN page of dgetrf.
+	// if (INFO)
+	// {
+	//     std::cout << "an error occured : " << INFO << std::endl
+	//               << std::endl;
+	// }
+	// else
+	// {
+	//     std::cout << "solving the system..." << std::endl
+	//               << std::endl;
+	//     // void LAPACK_dgetrs( char* trans, lapack_int* n, lapack_int* nrhs, const double* a, lapack_int* lda, const lapack_int* ipiv,double* b, lapack_int* ldb, lapack_int *info );
+	//     dgetrs_(&TRANS, &NDIM, &NRHS, AAA, &LDA, IPIV, BBB, &LDB, &INFO);
+
+	//     if (INFO)
+	//     {
+	//         // checks INFO, if INFO != 0 something goes wrong, for more information see the MAN page of dgetrs.
+	//         std::cout << "an error occured : " << INFO << std::endl
+	//                   << std::endl;
+	//     }
+	//     else
+	//     {
+	//         std::cout << "print the result : {";
+	//         for (i = 0; i < NDIM; i++)
+	//         {
+	//             std::cout << BBB[i] << " ";
+	//         }
+	//         std::cout << "}" << std::endl
+	//                   << std::endl;
+	//     }
+	// }
+
+	// std::cout << "program terminated." << std::endl
+	//           << std::endl;
+
+	return 0;
 }
