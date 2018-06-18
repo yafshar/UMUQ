@@ -44,125 +44,129 @@
 dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
 dnl  (serial version number 13).
 #
-# ADAPTED 
+# ADAPTED
 #	Yaser Afshar @ ya.afshar@gmail.com
 #	Dept of Aerospace Engineering | University of Michigan
 
 AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
-  AC_MSG_NOTICE()
+	AC_MSG_NOTICE()
 
-  m4_if([$1], [11], [],
-        [$1], [14], [],
-        [$1], [17], [m4_fatal([support for C++17 not yet implemented in AX_CXX_COMPILE_STDCXX])],
-        [m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
+	m4_if([$1], [11], [],
+				[$1], [14], [],
+				[$1], [17], [m4_fatal([support for C++17 not yet implemented in AX_CXX_COMPILE_STDCXX])],
+				[m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
 
-  m4_if([$2], [], [],
-        [$2], [ext], [],
-        [$2], [noext], [],
-        [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
-  
-  m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
-        [$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
-        [$3], [optional], [ax_cxx_compile_cxx$1_required=false],
-        [m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])dnl
-  
-  AC_LANG_PUSH([C++])dnl
+	m4_if([$2], [], [],
+				[$2], [ext], [],
+				[$2], [noext], [],
+				[m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
 
-  ac_success=no
-  
-  AC_CACHE_CHECK(whether $CXX supports C++$1 features by default, 
-    ax_cv_cxx_compile_cxx$1, [
-      AC_COMPILE_IFELSE(
-        [AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])], 
-        [ax_cv_cxx_compile_cxx$1=yes], 
-        [ax_cv_cxx_compile_cxx$1=no]
-      )
-    ]
-  )
-  
-  if test x"$ax_cv_cxx_compile_cxx$1" = xyes; then
-    ac_success=yes
-  fi
+	m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
+				[$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
+				[$3], [optional], [ax_cxx_compile_cxx$1_required=false],
+				[m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])dnl
 
-  m4_if([$2], [noext], [], 
-        [ 
-          if test x"$ac_success" = xno; then
-            for switch in -std=gnu++$1 -std=gnu++0x; do
-              cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-              AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-                $cachevar, [
-                  ac_save_CXX="$CXX"  
-                  CXX="$CXX $switch"
-                  AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-                    [eval $cachevar=yes],
-                    [eval $cachevar=no]
-                  )
-                  CXX="$ac_save_CXX"
-                ]
-              )
-              if eval test x"\$$cachevar" = xyes; then
-                CXX="$CXX $switch"
-                if test -n "$CXXCPP" ; then
-                  CXXCPP="$CXXCPP $switch"
-                fi
-                ac_success=yes
-                break
-              fi
-            done
-          fi
-        ]
-  ) dnl
+	AC_LANG_PUSH([C++])dnl
 
-  m4_if([$2], [ext], [], 
-        [
-          if test x$ac_success = xno; then
-            dnl HP's aCC needs +std=c++11 according to:
-            dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
-            dnl Cray's crayCC needs "-h std=c++11"
-            for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
-              cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-              AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-              $cachevar, [
-                ac_save_CXX="$CXX"
-                CXX="$CXX $switch"
-                AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-                  [eval $cachevar=yes],
-                  [eval $cachevar=no]
-                )
-                CXX="$ac_save_CXX"]
-              )
-              if eval test x"\$$cachevar" = xyes; then
-                CXX="$CXX $switch"
-                if test -n "$CXXCPP" ; then
-                  CXXCPP="$CXXCPP $switch"
-                fi
-                ac_success=yes
-                break
-              fi
-            done
-          fi
-        ]
-  ) dnl
+	ac_success=no
 
-  AC_LANG_POP([C++])
-  
-  if test x"$ax_cxx_compile_cxx$1_required" = xtrue; then
-    if test x"$ac_success" = xno; then
-      AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
-    fi
-  fi
+	AC_CACHE_CHECK(whether $CXX supports C++$1 features by default, 
+		ax_cv_cxx_compile_cxx$1, [
+			AC_COMPILE_IFELSE(
+				[AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])], 
+				[ax_cv_cxx_compile_cxx$1=yes], 
+				[ax_cv_cxx_compile_cxx$1=no]
+			)
+		]
+	)
 
-  if test x"$ac_success" = xno; then
-    HAVE_CXX$1=0
-    AC_MSG_NOTICE([No compiler with C++$1 support was found])
-  else
-    HAVE_CXX$1=1
-    AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports basic C++$1 syntax])
-  fi
-  
-  AC_SUBST(HAVE_CXX$1)
 
-  AC_MSG_RESULT()
+	if test x"$ax_cv_cxx_compile_cxx$1" = xyes; then
+		ac_success=yes
+	fi
+
+
+	m4_if([$2], [noext], [], 
+		[
+			if test x"$ac_success" = xno; then
+				for switch in -std=gnu++$1 -std=gnu++0x; do
+					cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+					AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
+						$cachevar, [
+							ac_save_CXX="$CXX"
+							CXX="$CXX $switch"
+							AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+								[eval $cachevar=yes],
+								[eval $cachevar=no]
+							)
+							CXX="$ac_save_CXX"
+						]
+					)
+					if eval test x"\$$cachevar" = xyes; then
+						CXX="$CXX $switch"
+						if test -n "$CXXCPP" ; then
+							CXXCPP="$CXXCPP $switch"
+						fi
+						ac_success=yes
+						break
+					fi
+				done
+			fi
+		]
+	) dnl
+
+
+	m4_if([$2], [ext], [], 
+		[
+			if test x$ac_success = xno; then
+				dnl HP's aCC needs +std=c++11 according to:
+				dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
+				dnl Cray's crayCC needs "-h std=c++11"
+				for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
+					cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+					AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
+					$cachevar, [
+						ac_save_CXX="$CXX"
+						CXX="$CXX $switch"
+						AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+							[eval $cachevar=yes],
+							[eval $cachevar=no]
+						)
+					CXX="$ac_save_CXX"]
+					)
+					if eval test x"\$$cachevar" = xyes; then
+						CXX="$CXX $switch"
+						if test -n "$CXXCPP" ; then
+							CXXCPP="$CXXCPP $switch"
+						fi
+						ac_success=yes
+						break
+				fi
+				done
+			fi
+		]
+	) dnl
+
+
+	AC_LANG_POP([C++])
+	
+	if test x"$ax_cxx_compile_cxx$1_required" = xtrue; then
+		if test x"$ac_success" = xno; then
+			AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
+		fi
+	fi
+	
+	if test x"$ac_success" = xno; then
+		HAVE_CXX$1=0
+		AC_MSG_NOTICE([No compiler with C++$1 support was found])
+	else
+		HAVE_CXX$1=1
+		AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports basic C++$1 syntax])
+	fi
+	
+	AC_SUBST(HAVE_CXX$1)
+	
+	AC_MSG_RESULT()
 ])
 
 dnl Test body for checking C++11 support
@@ -171,13 +175,13 @@ m4_define([_AX_CXX_COMPILE_STDCXX_testbody_11], _AX_CXX_COMPILE_STDCXX_testbody_
 
 dnl  Test body for checking C++14 support
 m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14], 
-  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11 
-  _AX_CXX_COMPILE_STDCXX_testbody_new_in_14
+	_AX_CXX_COMPILE_STDCXX_testbody_new_in_11 
+	_AX_CXX_COMPILE_STDCXX_testbody_new_in_14
 )
 
 dnl  Tests for new features in C++11
 m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11], 
-  [[
+	[[
 
 // If the compiler admits that it is not ready for C++11, why torture it?
 // Hopefully, this will speed up the test.
@@ -431,7 +435,7 @@ namespace cxx11
 
 dnl  Tests for new features in C++14
 m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14], 
-  [[
+	[[
 
 // If the compiler admits that it is not ready for C++14, why torture it?
 // Hopefully, this will speed up the test.
@@ -530,5 +534,5 @@ namespace cxx14
 
 #endif  // __cplusplus >= 201402L
 
-  ]]
+	]]
 ) dnl
