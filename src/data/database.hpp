@@ -263,14 +263,14 @@ public:
   }
 
   /*!
-   * \brief Initialize the database class register task
+   * \brief Initialize the database register task
    * Before calling this function one should set the external functor otherwise it would crash!
    *  
    * \returns false if Task pointer is not correctly assigned 
    */
-  inline bool init()
+  inline bool initTask()
   {
-    return register_task();
+    return registerTask();
   }
 
   /*!
@@ -280,7 +280,7 @@ public:
    * \return true 
    * \return false if Task pointer is not correctly assigned
    */
-  inline bool register_task()
+  inline bool registerTask()
   {
     auto initialized(0);
     MPI_Initialized(&initialized);
@@ -307,7 +307,7 @@ public:
    * 
    * \param func 
    */
-  inline void set(FUNCTIONPOINTER<T> const &func)
+  inline void setTask(FUNCTIONPOINTER<T> const &func)
   {
     update_TaskP = func;
   }
