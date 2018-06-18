@@ -192,6 +192,21 @@ public:
 
     entries = static_cast<std::size_t>(nSize);
 
+    if (entries == 0)
+    {
+      std::cerr << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+      std::cerr << " No entries -> Reseting the databse object to size 0! " << std::endl;
+
+      Parray.reset();
+      Garray.reset();
+      Fvalue.reset();
+      Surrogate.reset();
+      nSelection.reset();
+      idxNumber.reset();
+
+      return true;
+    }
+
     if (ndimParray > 0)
     {
       try
@@ -204,6 +219,10 @@ public:
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         return false;
       }
+    }
+    else
+    {
+      Parray.reset();
     }
 
     if (ndimGarray > 0)
@@ -218,6 +237,10 @@ public:
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
         return false;
       }
+    }
+    else
+    {
+      Garray.reset();
     }
 
     try
@@ -241,6 +264,7 @@ public:
 
   /*!
    * \brief Initialize the database class register task
+   * Before calling this function one should set the external functor otherwise it would crash!
    *  
    * \returns false if Task pointer is not correctly assigned 
    */
@@ -251,6 +275,7 @@ public:
 
   /*!
    * \brief Register task on the TORC task library
+   * Before calling this function one should set the external functor otherwise it would crash!
    * 
    * \return true 
    * \return false if Task pointer is not correctly assigned
@@ -269,7 +294,11 @@ public:
       }
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
       std::cerr << " Task Pointer is not assigend to the external function! " << std::endl;
+      return false;
     }
+    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+    std::cerr << " MPI is not initialized! " << std::endl;
+    std::cerr << " You should Initialize torc first! " << std::endl;
     return false;
   }
 
@@ -281,24 +310,6 @@ public:
   inline void set(FUNCTIONPOINTER<T> const &func)
   {
     update_TaskP = func;
-  }
-
-  /*!
-   * \brief reset the Index position to a @IdxPos position
-   *
-   * \param IdxPos
-   *
-   * \return true
-   * \return false  If it is out of number of entries
-   */
-  inline bool resetIdxPos(int IdxPos)
-  {
-    if (IdxPos > entries || IdxPos < 0)
-    {
-      return false;
-    }
-    idxPos = static_cast<std::size_t>(IdxPos);
-    return true;
   }
 
   /*!
@@ -324,11 +335,36 @@ public:
   }
 
   /*!
-   * \brief Get the size of database
+   * \brief Get the size of database in terms of its number of entries
    *
-   * \return Size of the database
+   * \return Size of the database in terms of its number of entries
    */
-  inline std::size_t size() const { return entries; }
+  inline std::size_t getSize() const { return entries; }
+
+  /*!
+   * \brief Get the Index of the current position @idxPos
+   *
+   * \return the Index of the current position @idxPos
+   */
+  inline std::size_t getIndex() const { return idxPos; }
+
+  /*!
+   * \brief reset the Index position to a @IdxPos position
+   *
+   * \param IdxPos
+   *
+   * \return true
+   * \return false  If it is out of number of entries
+   */
+  inline bool resetIdxPos(int IdxPos)
+  {
+    if (IdxPos > entries || IdxPos < 0)
+    {
+      return false;
+    }
+    idxPos = static_cast<std::size_t>(IdxPos);
+    return true;
+  }
 
   /*!
    * \brief quick sort
@@ -451,6 +487,7 @@ public:
   /*!
    * /brief helper function for writing the data into a file
    *
+   * Written data includes Parray, Fvalue, Garray (if it exists)
    */
   bool save(const char *fname = "", int const IdNumber = 0)
   {
@@ -572,31 +609,6 @@ public:
   }
 
   /*!
-   * \brief Get the corresponding MPI Data Type
-   * 
-   * \return MPI_Datatype 
-   */
-  inline MPI_Datatype getType()
-  {
-    char name = typeid(T).name()[0];
-    switch (name)
-    {
-    case 'f':
-      return MPI_FLOAT;
-      break;
-    case 'd':
-      return MPI_DOUBLE;
-      break;
-    case 'e':
-      return MPI_DOUBLE;
-      break;
-    default:
-      return MPI_INT;
-      break;
-    }
-  }
-
-  /*!
    * \brief Updating the data information at each point @iParray 
    * 
    * \param iParray      Points or sampling points array
@@ -653,9 +665,9 @@ public:
     int const indimSurroga = iSurrogate < std::numeric_limits<int>::max();
 
     torc_create_direct(0, (void (*)())update_TaskP, 5,
-                       ndimParray, getType(), CALL_BY_VAL,
-                       1, getType(), CALL_BY_VAL,
-                       indimGarray2, getType(), CALL_BY_VAL,
+                       ndimParray, MPIDatatype<T>, CALL_BY_VAL,
+                       1, MPIDatatype<T>, CALL_BY_VAL,
+                       indimGarray2, MPIDatatype<T>, CALL_BY_VAL,
                        indimGarray1, MPI_INT, CALL_BY_VAL,
                        indimSurroga, MPI_INT, CALL_BY_VAL,
                        iParray, &iFvalue, iGarray, &ndimGarray, &iSurrogate);
