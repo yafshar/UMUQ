@@ -99,7 +99,7 @@ class parser
     }
 
     /*!
-     * \brief access element at provided index
+     * \brief access element at provided index @id with checking bounds
      * 
      * \param  id requested index 
      * \return element @(id)
