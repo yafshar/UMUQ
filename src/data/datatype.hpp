@@ -4,25 +4,25 @@
 #include "database.hpp"
 
 /*!
- * \brief Instance of database object for current database
+ * \brief Instance of database object 
  * 
  */
 template<typename T>
-database<T> currentData;
+database<T> Data1;
 
 /*!
- * \brief Instance of database object for the full database information
+ * \brief Instance of database object 
  * 
  */
 template<typename T>
-database<T> fullData;
+database<T> Data2;
 
 /*!
- * \brief Instance of database object for experimental data
+ * \brief Instance of database object
  * 
  */
 template<typename T>
-database<T> exprimentData;
+database<T> Data3;
 
 /*!
  * \brief Updating the data information at each point @iParray 
@@ -36,29 +36,29 @@ database<T> exprimentData;
  * \param iSurrogate  Surrogate
  */
 template <typename T>
-void current_updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
+void updateTask1(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
 {
     std::size_t pos;
 
-    pthread_mutex_lock(&currentData<T>.m);
-    pos = currentData<T>.idxPos;
-    currentData<T>.idxPos++;
-    pthread_mutex_unlock(&currentData<T>.m);
+    pthread_mutex_lock(&Data1<T>.m);
+    pos = Data1<T>.idxPos;
+    Data1<T>.idxPos++;
+    pthread_mutex_unlock(&Data1<T>.m);
 
-    if (pos < currentData<T>.entries)
+    if (pos < Data1<T>.entries)
     {
-        std::copy(iParray, iParray + currentData<T>.ndimParray, currentData<T>.Parray.get() + pos * currentData<T>.ndimParray);
+        std::copy(iParray, iParray + Data1<T>.ndimParray, Data1<T>.Parray.get() + pos * Data1<T>.ndimParray);
 
-        currentData<T>.Fvalue[pos] = *iFvalue;
+        Data1<T>.Fvalue[pos] = *iFvalue;
 
         if (*ndimGarray > 0)
         {
-            std::copy(iGarray, iGarray + currentData<T>.ndimGarray, currentData<T>.Garray.get() + pos * currentData<T>.ndimGarray);
+            std::copy(iGarray, iGarray + Data1<T>.ndimGarray, Data1<T>.Garray.get() + pos * Data1<T>.ndimGarray);
         }
 
         if (*iSurrogate < std::numeric_limits<int>::max())
         {
-            currentData<T>.Surrogate[pos] = *iSurrogate;
+            Data1<T>.Surrogate[pos] = *iSurrogate;
         }
     }
 }
@@ -75,29 +75,29 @@ void current_updateTask(T const *iParray, T const *iFvalue, T const *iGarray, in
  * \param iSurrogate  Surrogate
  */
 template <typename T>
-void full_updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
+void updateTask2(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
 {
     std::size_t pos;
 
-    pthread_mutex_lock(&fullData<T>.m);
-    pos = fullData<T>.idxPos;
-    fullData<T>.idxPos++;
-    pthread_mutex_unlock(&fullData<T>.m);
+    pthread_mutex_lock(&Data2<T>.m);
+    pos = Data2<T>.idxPos;
+    Data2<T>.idxPos++;
+    pthread_mutex_unlock(&Data2<T>.m);
 
-    if (pos < fullData<T>.entries)
+    if (pos < Data2<T>.entries)
     {
-        std::copy(iParray, iParray + fullData<T>.ndimParray, fullData<T>.Parray.get() + pos * fullData<T>.ndimParray);
+        std::copy(iParray, iParray + Data2<T>.ndimParray, Data2<T>.Parray.get() + pos * Data2<T>.ndimParray);
 
-        fullData<T>.Fvalue[pos] = *iFvalue;
+        Data2<T>.Fvalue[pos] = *iFvalue;
 
         if (*ndimGarray > 0)
         {
-            std::copy(iGarray, iGarray + fullData<T>.ndimGarray, fullData<T>.Garray.get() + pos * fullData<T>.ndimGarray);
+            std::copy(iGarray, iGarray + Data2<T>.ndimGarray, Data2<T>.Garray.get() + pos * Data2<T>.ndimGarray);
         }
 
         if (*iSurrogate < std::numeric_limits<int>::max())
         {
-            fullData<T>.Surrogate[pos] = *iSurrogate;
+            Data2<T>.Surrogate[pos] = *iSurrogate;
         }
     }
 }
@@ -114,29 +114,29 @@ void full_updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int c
  * \param iSurrogate  Surrogate
  */
 template <typename T>
-void expr_updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
+void updateTask3(T const *iParray, T const *iFvalue, T const *iGarray, int const *ndimGarray, int const *iSurrogate)
 {
     std::size_t pos;
 
-    pthread_mutex_lock(&exprimentData<T>.m);
-    pos = exprimentData<T>.idxPos;
-    exprimentData<T>.idxPos++;
-    pthread_mutex_unlock(&exprimentData<T>.m);
+    pthread_mutex_lock(&Data3<T>.m);
+    pos = Data3<T>.idxPos;
+    Data3<T>.idxPos++;
+    pthread_mutex_unlock(&Data3<T>.m);
 
-    if (pos < exprimentData<T>.entries)
+    if (pos < Data3<T>.entries)
     {
-        std::copy(iParray, iParray + exprimentData<T>.ndimParray, exprimentData<T>.Parray.get() + pos * exprimentData<T>.ndimParray);
+        std::copy(iParray, iParray + Data3<T>.ndimParray, Data3<T>.Parray.get() + pos * Data3<T>.ndimParray);
 
-        exprimentData<T>.Fvalue[pos] = *iFvalue;
+        Data3<T>.Fvalue[pos] = *iFvalue;
 
         if (*ndimGarray > 0)
         {
-            std::copy(iGarray, iGarray + exprimentData<T>.ndimGarray, exprimentData<T>.Garray.get() + pos * exprimentData<T>.ndimGarray);
+            std::copy(iGarray, iGarray + Data3<T>.ndimGarray, Data3<T>.Garray.get() + pos * Data3<T>.ndimGarray);
         }
 
         if (*iSurrogate < std::numeric_limits<int>::max())
         {
-            exprimentData<T>.Surrogate[pos] = *iSurrogate;
+            Data3<T>.Surrogate[pos] = *iSurrogate;
         }
     }
 }
