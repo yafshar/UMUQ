@@ -7,7 +7,7 @@
 TEST(isFileExist_test, HandlesFiles)
 {
     io f;
-    EXPECT_TRUE(f.isFileExist("test.txt"));
+    EXPECT_TRUE(f.isFileExist("./data/test.txt"));
     EXPECT_FALSE(f.isFileExist("utility.txt"));
 }
 
@@ -19,7 +19,7 @@ TEST(openFile_test, HandlesFiles)
 
     EXPECT_FALSE(f.isFileOpened());
 
-    EXPECT_TRUE(f.openFile("test.txt"));
+    EXPECT_TRUE(f.openFile("./data/test.txt"));
 
     EXPECT_TRUE(f.isFileOpened());
     
@@ -30,7 +30,7 @@ TEST(openFile_test, HandlesFiles)
         n++;
     }
     
-    EXPECT_EQ(n, 27);
+    EXPECT_EQ(n, 26);
     
     f.closeFile();
     
