@@ -4,6 +4,7 @@
 #include "../core/core.hpp"
 #include "../misc/array.hpp"
 #include "../io/io.hpp"
+#include "mpidatatype.hpp"
 
 /*! \class sortType
  *
@@ -451,7 +452,7 @@ public:
    * /brief helper function for writing the data into a file
    *
    */
-  bool dump(int const IdNumber, const char *fname = "")
+  bool save(const char *fname = "", int const IdNumber = 0)
   {
     if (entries > 0 && ndimParray > 0)
     {
@@ -523,7 +524,7 @@ public:
    * /brief Helper function for loading the data from file
    *
    */
-  bool load(int const IdNumber, const char *fname = "")
+  bool load(const char *fname = "", int const IdNumber = 0)
   {
     if (entries > 0 && ndimParray > 0)
     {
