@@ -94,8 +94,8 @@ AC_CHECK_HEADERS([stdlib.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
 
-# Ensure we are using c11 C++ standard.
-AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+# Ensure we are using c14 C++ standard.
+AX_CXX_COMPILE_STDCXX([14], [noext], [mandatory])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])
