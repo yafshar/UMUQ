@@ -396,6 +396,11 @@ class stdata
      */
 	bool load(const char *fname = "tmcmc.par");
 
+	bool load(std::string const &fname = "tmcmc.par")
+	{
+		return load(&fname[0]);
+	}
+
 	/*!
      * \brief Default destructor 
      *    
@@ -557,7 +562,7 @@ bool stdata<T>::load(const char *fname)
 		}
 
 		f.rewindFile();
-		
+
 		//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
 		while (f.readLine())
 		{

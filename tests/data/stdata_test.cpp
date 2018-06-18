@@ -46,7 +46,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(0, d2.iPlot);
     EXPECT_EQ(1, d2.saveData);
     EXPECT_EQ(0, d2.useCmaProposal);
-    EXPECT_EQ(0, d2.useLocalCovariance);  
+    EXPECT_EQ(0, d2.useLocalCovariance);
     EXPECT_DOUBLE_EQ(1.0, d2.TolCOV);
     EXPECT_DOUBLE_EQ(0.2, d2.bbeta);
     EXPECT_EQ(0, d2.localScale);
@@ -63,8 +63,10 @@ TEST(streamdatatype, HandlesConstruction)
 TEST(streamdatatype, HandlesIO)
 {
     stdata<double> d1;
-    
-    EXPECT_TRUE(d1.load("./data/test.txt"));
+
+    std::string fileName = "./data/test.txt";
+
+    EXPECT_TRUE(d1.load(fileName));
 
     EXPECT_EQ(4, d1.nDim);
     EXPECT_EQ(20, d1.maxGenerations);
