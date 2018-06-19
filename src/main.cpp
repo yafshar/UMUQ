@@ -7,7 +7,7 @@
 #include "misc/utility.hpp"
 #include <random>
 
-#include "tmcmc/tmcmc.hpp"
+#include "inference/tmcmc/tmcmc.hpp"
 
 int main(int argc, char **argv)
 {
