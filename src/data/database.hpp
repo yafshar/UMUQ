@@ -544,7 +544,7 @@ public:
     return false;
   }
 
-  bool save(std::string const &fname = "", int const IdNumber = 0)
+  bool save(std::string const &fname, int const IdNumber = 0)
   {
     return save(&fname[0], IdNumber);
   }
@@ -600,7 +600,7 @@ public:
     return false;
   }
 
-  bool load(std::string const &fname = "", int const IdNumber = 0)
+  bool load(std::string const &fname, int const IdNumber = 0)
   {
     return load(&fname[0], IdNumber);
   }

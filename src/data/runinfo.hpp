@@ -202,7 +202,7 @@ class runinfo
 		return false;
 	}
 
-	bool save(std::string const &fileName = "runinfo.txt")
+	bool save(std::string const &fileName)
 	{
 		return save(&fileName[0]);
 	}
@@ -272,7 +272,7 @@ class runinfo
 		return false;
 	}
 
-	bool load(std::string const &fileName = "runinfo.txt")
+	bool load(std::string const &fileName)
 	{
 		return load(&fileName[0]);
 	}
