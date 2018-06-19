@@ -7,93 +7,101 @@
 #include "misc/utility.hpp"
 #include <random>
 
+#include "tmcmc/tmcmc.hpp"
+
 int main(int argc, char **argv)
 {
-	int d = 2;
-	int r = 2;
+	torc_init(argc, argv, 0);
 
-	int *alpha;
+	tmcmc<double> t;
 
-	polynomial<double> p(d, r);
+	torc_finalize();
 
-	UMTimer t;
+	// int d = 2;
+	// int r = 2;
 
-	alpha = p.monomial_basis();
-	t.toc("monomial_basis");
+	// int *alpha;
 
-	std::cout << " d =  " << d << std::endl;
-	std::cout << " r =  " << r << std::endl;
-	std::cout << "  i   [] []" << std::endl;
+	// polynomial<double> p(d, r);
 
-	int i, n;
-	n = 0;
-	for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
-	{
-	    std::cout << std::setw(3) << i << "   ";
-	    for (int j = 0; j < d; j++)
-	    {
-	        std::cout << std::setw(2) << alpha[n];
-	        n++;
-	    }
-	    std::cout << std::endl;
-	}
-	std::cout << "----------------" << std::endl;
+	// UMTimer t;
 
-	n = p.binomial_coefficient(d + r, r);
+	// alpha = p.monomial_basis();
+	// t.toc("monomial_basis");
 
-	t.toc("binomial_coefficient");
+	// std::cout << " d =  " << d << std::endl;
+	// std::cout << " r =  " << r << std::endl;
+	// std::cout << "  i   [] []" << std::endl;
 
-	double *value = nullptr;
-	double *x = nullptr;
+	// int i, n;
+	// n = 0;
+	// for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
+	// {
+	//     std::cout << std::setw(3) << i << "   ";
+	//     for (int j = 0; j < d; j++)
+	//     {
+	//         std::cout << std::setw(2) << alpha[n];
+	//         n++;
+	//     }
+	//     std::cout << std::endl;
+	// }
+	// std::cout << "----------------" << std::endl;
 
-	EMatrixXd A;
-	A.resize(n, n);
+	// n = p.binomial_coefficient(d + r, r);
 
-	x = new double[d];
-	value = new double[n];
+	// t.toc("binomial_coefficient");
 
-	for (i = 0; i < n; i++)
-	{
-	    switch (i)
-	    {
-	    case (0):
-	        x[0] = 1;
-	        x[1] = 0;
-	        break;
-	    case (1):
-	        x[0] = 0;
-	        x[1] = 1;
-	        break;
-	    case (2):
-	        x[0] = -1;
-	        x[1] = 0;
-	        break;
-	    case (3):
-	        x[0] = 0;
-	        x[1] = -1;
-	        break;
-	    case (4):
-	        x[0] = .70710678118654752440;
-	        x[1] = .70710678118654752440;
-	        break;
-	    case (5):
-	        x[0] = -.70710678118654752440;
-	        x[1] = -.70710678118654752440;
-	    }
+	// double *value = nullptr;
+	// double *x = nullptr;
 
-	    if (p.monomial_value(x, value))
-	    {
+	// EMatrixXd A;
+	// A.resize(n, n);
 
-	        for (int j = 0; j < n; j++)
-	        {
-	            A(i, j) = value[j];
-	        }
-	    }
-	    else
-	    {
-	        std::exit(1);
-	    }
-	}
+	// x = new double[d];
+	// value = new double[n];
+
+	// for (i = 0; i < n; i++)
+	// {
+	//     switch (i)
+	//     {
+	//     case (0):
+	//         x[0] = 1;
+	//         x[1] = 0;
+	//         break;
+	//     case (1):
+	//         x[0] = 0;
+	//         x[1] = 1;
+	//         break;
+	//     case (2):
+	//         x[0] = -1;
+	//         x[1] = 0;
+	//         break;
+	//     case (3):
+	//         x[0] = 0;
+	//         x[1] = -1;
+	//         break;
+	//     case (4):
+	//         x[0] = .70710678118654752440;
+	//         x[1] = .70710678118654752440;
+	//         break;
+	//     case (5):
+	//         x[0] = -.70710678118654752440;
+	//         x[1] = -.70710678118654752440;
+	//     }
+
+	//     if (p.monomial_value(x, value))
+	//     {
+
+	//         for (int j = 0; j < n; j++)
+	//         {
+	//             A(i, j) = value[j];
+	//         }
+	//     }
+	//     else
+	//     {
+	//         std::exit(1);
+	//     }
+	// }
 
 	// delete[] value;
 	// delete[] x;
