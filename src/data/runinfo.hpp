@@ -202,6 +202,11 @@ class runinfo
 		return false;
 	}
 
+	bool save(std::string const &fileName = "runinfo.txt")
+	{
+		return save(&fileName[0]);
+	}
+
 	/*!
      * \brief load inofmration from a file @fileName
      * 
@@ -265,6 +270,11 @@ class runinfo
 			return tmp;
 		}
 		return false;
+	}
+
+	bool load(std::string const &fileName = "runinfo.txt")
+	{
+		return load(&fileName[0]);
 	}
 
   private:
