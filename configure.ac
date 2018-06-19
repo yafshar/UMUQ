@@ -39,7 +39,7 @@ AC_CANONICAL_TARGET
 # Check for architectures
 AX_ARCH
 
-AC_CONFIG_HEADERS(src/UMUQ_config.h)
+AC_CONFIG_HEADERS(include/UMUQ_config.h)
 
 #
 # Init automake
