@@ -153,6 +153,11 @@ class io
         return (stat(fileName, &buffer) == 0);
     }
 
+    inline bool isFileExist(std::string const &fileName)
+    {
+        return isFileExist(&fileName[0]);
+    }
+
     /*!
      * \brief Opens the file whose name is specified with the parameter filename 
      *  
@@ -196,6 +201,11 @@ class io
         }
 
         return true;
+    }
+
+    bool openFile(std::string const &fileName, const std::ios_base::openmode mode = in)
+    {
+        return openFile(&fileName[0], mode);
     }
 
     /*!
