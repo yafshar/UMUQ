@@ -6,19 +6,6 @@
 #include "../io/io.hpp"
 #include "mpidatatype.hpp"
 
-/*! \class sortType
- *
- * \brief structure for sorting entires of database structur
- *
- * \param nsel An integer argument for selection of leaders only
- * \param idx  An intger argument for indexing
- */
-struct sortType
-{
-  int nsel;
-  std::size_t idx;
-};
-
 /*!
  * \brief A polymorphic function wrapper type for update Task
  * 
@@ -557,6 +544,11 @@ public:
     return false;
   }
 
+  bool save(std::string const &fname = "", int const IdNumber = 0)
+  {
+    return save(&fname[0], IdNumber);
+  }
+
   /*!
    * /brief Helper function for loading the data from file
    *
@@ -607,6 +599,12 @@ public:
     }
     return false;
   }
+
+  bool load(std::string const &fname = "", int const IdNumber = 0)
+  {
+    return load(&fname[0], IdNumber);
+  }
+
 
   /*!
    * \brief Updating the data information at each point @iParray 
@@ -681,6 +679,19 @@ private:
 
   // Make it not assignable
   database<T> &operator=(database<T> const &) = delete;
+
+  /*! \class sortType
+   *
+   * \brief structure for sorting entires of database structur
+   *
+   * \param nsel An integer argument for selection of leaders only
+   * \param idx  An intger argument for indexing
+   */
+  struct sortType
+  {
+    int nsel;
+    std::size_t idx;
+  };
 
 public:
   //! Space dimension (Sampling points dimension)
