@@ -1,9 +1,9 @@
 #ifndef UMUQ_TMCMC_H
 #define UMUQ_TMCMC_H
 
-#include "../data/stdata.hpp"
-#include "../data/datatype.hpp"
-#include "../data/runinfo.hpp"
+#include "data/stdata.hpp"
+#include "data/datatype.hpp"
+#include "data/runinfo.hpp"
 
 template <typename T>
 class tmcmc
