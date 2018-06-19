@@ -1,9 +1,9 @@
 #ifndef UMUQ_TMCMC_H
 #define UMUQ_TMCMC_H
 
-#include "stdata.hpp"
-#include "datatype.hpp"
-#include "runinfo.hpp"
+#include "../data/stdata.hpp"
+#include "../data/datatype.hpp"
+#include "../data/runinfo.hpp"
 
 template <typename T>
 class tmcmc
@@ -22,7 +22,7 @@ public:
     if (Data.load(inputFilename))
     {
       {
-        //Creating an temporary database
+        //Creating a temporary database
         database<T> d(Data.nDim, Data.maxGenerations);
         Data1<T> = std::move(d);
 
@@ -40,7 +40,7 @@ public:
       }
 
       {
-        //Creating an temporary database
+        //Creating a temporary database
         database<T> d(Data.nDim, Data.maxGenerations);
         Data2<T> = std::move(d);
 
@@ -59,7 +59,7 @@ public:
 
       if (runData.reset(Data.nDim, Data.maxGenerations))
       {
-        
+
 
         return true;
       }

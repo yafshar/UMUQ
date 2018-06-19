@@ -10,9 +10,9 @@ class fitfunction
         return static_cast<F *>(this)->init();
     }
 
-    T likelihood(T *iData, int ndimiData, T *oData, int ndimoData, int *info)
+    T fit(T *iData, int ndimiData, T *oData, int ndimoData, int *info)
     {
-        return static_cast<F *>(this)->likelihood(iData, ndimiData, oData, ndimoData, info);
+        return static_cast<F *>(this)->fit(iData, ndimiData, oData, ndimoData, info);
     }
 
   private:
