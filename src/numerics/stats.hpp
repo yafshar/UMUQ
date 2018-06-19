@@ -19,7 +19,7 @@
 * \b CoefVar
 * \b minmaxNormal
 * \b zscoreNormal
-* \b rpbustzscoreNormal
+* \b robustzscoreNormal
 */
 struct stats
 {
