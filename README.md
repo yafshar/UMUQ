@@ -69,9 +69,9 @@ If you wish to compile UMUQ from source, you will require the following componen
    Google's framework for writing and using C++ test & mock classes.
 
 Furthermore, you will require a compiler that can handle **C++0x** (which includes all c++14 compilers with Variable templates feature). 
-(GCC 5, Clang 3.4, MSVC 19.0, EDG eccp 4.11, Intel C++ 17.0, IBM XLC++ 13.1.2, Sun/Oracle C++ 5.15, Cray 8.6, and Portland Group (PGI) 17.4)
+(GCC >= 5, Clang >= 3.4, MSVC >= 19.0, EDG eccp >= 4.11, Intel C++ >= 17.0, IBM XLC++ >= 13.1.2, Sun/Oracle C++ >= 5.15, Cray >= 8.6, and Portland Group (PGI) >= 17.4)
 
-UMUQ has been successfully compiled with GCC 5.0, GCC 6.0 and GCC 8.0 on Gentoo/Debian. 
+UMUQ has been successfully compiled with GCC 5.0 and GCC 8.0 on Gentoo/Debian and compiled with GCC 6.0 and Apple LLVM version 9.0.0 (clang-900.0.37) on macOS.
 
 If you wish to do development, you will require parts of the extended GNU toolchain (the infamous Autotools):
 
