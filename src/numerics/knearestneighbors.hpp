@@ -414,7 +414,7 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 // {
 // /*! \class Mahalanobis
 //  * \brief Mahalanobis distance functor
-//  * 
+//  *
 //  */
 // template <class T>
 // struct Mahalanobis
