@@ -102,6 +102,8 @@ class dcpse
             {
                 //Make sure of the correct kernel size
                 dckernel.reset(new T[dckernelSize]);
+
+                h_average.reset(new T[nPoints]);
             }
             catch (std::bad_alloc &e)
             {
@@ -203,9 +205,6 @@ class dcpse
         //Total number of nearest neighbours for each point
         int nNN = KNN->numNearestNeighbors();
 
-        //Array for keeping the component-wise L1 distances
-        T *L1Dist = new T[nNN * nDim];
-
         /*
          * Creating a transpose of the Vandermonde matrix
          * with the size of monomials * monomials \f$  = l \times l \f$
@@ -227,10 +226,13 @@ class dcpse
         //${\mathbf a}^T({\mathbf x})$ is the column vector of coefficients which is the solution of linear system
         EVectorX<T> SV(dcmonomialSize);
 
+        //Array for keeping the component-wise L1 distances
+        std::vector<T> L1Dist(nNN * nDim);
+
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[dcmonomialSize + alphamin];
 
-        int *IndexId = new int[dcmonomialSize];
+        std::vector<int> IndexId(dcmonomialSize);
 
         //Loop over all points
         for (int i = 0; i < nPoints; i++)
@@ -276,10 +278,12 @@ class dcpse
 
             //Compute component-wise average neighbor spacing
             T h_avg(0);
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T const l_i) { h_avg += std::abs(l_i); });
 
             //Component-wise average neighbor spacing \f$ h \f$
             h_avg /= static_cast<T>(nNN);
+
+            h_average[i] = h_avg;
 
             //Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
             T const byEpsilon = ratio / h_avg;
@@ -288,7 +292,7 @@ class dcpse
             T const byEpsilonPowerBeta = std::pow(byEpsilon, Beta);
 
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
 
             //Loop through the neighbors
             for (int j = 0; j < dcmonomialSize; j++)
@@ -297,7 +301,7 @@ class dcpse
                 std::ptrdiff_t const Id = j * nDim;
 
                 //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                poly.monomial_value(L1Dist + Id, column);
+                poly.monomial_value(L1Dist.data() + Id, column);
 
                 TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -351,7 +355,7 @@ class dcpse
                             std::ptrdiff_t const Id = j * nDim;
 
                             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                            poly.monomial_value(L1Dist + Id, column);
+                            poly.monomial_value(L1Dist.data() + Id, column);
 
                             TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -407,7 +411,7 @@ class dcpse
                         std::ptrdiff_t const Id = k * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -464,7 +468,7 @@ class dcpse
                         std::ptrdiff_t const Id = j * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -501,7 +505,7 @@ class dcpse
                         }
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -545,7 +549,7 @@ class dcpse
                     std::ptrdiff_t const Id = j * nDim;
 
                     //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                    poly.monomial_value(L1Dist + Id, column);
+                    poly.monomial_value(L1Dist.data() + Id, column);
 
                     TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -558,8 +562,6 @@ class dcpse
             }
         } //Loop over all points
 
-        delete[] L1Dist;
-        delete[] IndexId;
         delete[] column;
 
         return true;
@@ -643,6 +645,8 @@ class dcpse
             {
                 //Make sure of the correct kernel size
                 dckernel.reset(new T[dckernelSize]);
+
+                h_average.reset(new T[nqPoints]);
             }
             catch (std::bad_alloc &e)
             {
@@ -739,7 +743,7 @@ class dcpse
         int nNN = KNN->numNearestNeighbors();
 
         //Array for keeping the component-wise L1 distances
-        T *L1Dist = new T[nNN * nDim];
+        std::vector<T> L1Dist(nNN * nDim);
 
         /*
          * Creating a transpose of the Vandermonde matrix
@@ -765,7 +769,7 @@ class dcpse
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
         T *column = new T[dcmonomialSize + alphamin];
 
-        int *IndexId = new int[dcmonomialSize];
+        std::vector<int> IndexId(dcmonomialSize);
 
         //Loop over all query points
         for (int i = 0; i < nqPoints; i++)
@@ -805,10 +809,12 @@ class dcpse
 
             //Compute component-wise average neighbor spacing
             T h_avg(0);
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T const l_i) { h_avg += std::abs(l_i); });
 
             //Component-wise average neighbor spacing \f$ h \f$
             h_avg /= static_cast<T>(nNN);
+
+            h_average[i] = h_avg;
 
             //Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
             T const byEpsilon = ratio / h_avg;
@@ -817,7 +823,7 @@ class dcpse
             T const byEpsilonPowerBeta = std::pow(byEpsilon, Beta);
 
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
 
             //Loop through the neighbors
             for (int j = 0; j < dcmonomialSize; j++)
@@ -826,7 +832,7 @@ class dcpse
                 std::ptrdiff_t const Id = j * nDim;
 
                 //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                poly.monomial_value(L1Dist + Id, column);
+                poly.monomial_value(L1Dist.data() + Id, column);
 
                 TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -880,7 +886,7 @@ class dcpse
                             std::ptrdiff_t const Id = j * nDim;
 
                             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                            poly.monomial_value(L1Dist + Id, column);
+                            poly.monomial_value(L1Dist.data() + Id, column);
 
                             TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -936,7 +942,7 @@ class dcpse
                         std::ptrdiff_t const Id = k * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -994,7 +1000,7 @@ class dcpse
                         std::ptrdiff_t const Id = j * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -1031,7 +1037,7 @@ class dcpse
                         }
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -1075,7 +1081,7 @@ class dcpse
                     std::ptrdiff_t const Id = j * nDim;
 
                     //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                    poly.monomial_value(L1Dist + Id, column);
+                    poly.monomial_value(L1Dist.data() + Id, column);
 
                     TEMapVectorX<T> columnV(column + alphamin, dcmonomialSize);
 
@@ -1088,9 +1094,497 @@ class dcpse
             }
         } //Loop over all points
 
-        delete[] IndexId;
         delete[] column;
-        delete[] L1Dist;
+
+        return true;
+    }
+
+    /*! \fn computeInterpolatorWeights
+     * \brief Computes generalized DC-PSE interpolator operators on the set of points.
+     * 
+     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     * interpolator operators on them.
+     * 
+     * \param idata            A pointer to input data 
+     * \param nPoints          Number of data points
+     * \param order            Order of accuracy (default is 2nd order accurate)
+     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     */
+    bool computeInterpolatorWeights(T *idata, int const nPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1))
+    {
+        if (nPoints < 1)
+        {
+            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+            std::cerr << " Number of input data points are negative! " << std::endl;
+            return false;
+        }
+
+        //Extra check on the order
+        order = (order > 0) ? order : 2;
+        {
+            int *o = Order.get();
+            std::fill(o, o + nTerms, order);
+        }
+
+        //Extra check on the number of extra nearest neighbors
+        nENN = (nENN > 0) ? nENN : 0;
+
+        //Extra check on the ratio
+        ratio = (ratio > 0) ? ratio : static_cast<T>(1);
+
+        //Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
+        polynomial<T> poly(nDim, order - 1);
+
+        /* 
+         * Get the monomials size
+         * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
+         */
+        dcmonomialSize = poly.monomialsize();
+
+        if (nPoints * dcmonomialSize > dckernelSize)
+        {
+            dckernelSize = nPoints * dcmonomialSize;
+            try
+            {
+                //Make sure of the correct kernel size
+                dckernel.reset(new T[dckernelSize]);
+
+                h_average.reset(new T[nPoints]);
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            dckernelSize = nPoints * dcmonomialSize;
+        }
+
+        if (KNN)
+        {
+            if (nPoints != KNN->numInputdata() || nPoints != KNN->numQuerydata())
+            {
+                try
+                {
+                    /* 
+                     * Finding K nearest neighbors
+                     * The number of points K in the neighborhood of each point
+                     * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                     */
+                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+                }
+                catch (std::bad_alloc &e)
+                {
+                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            try
+            {
+                /* 
+                 * Finding K nearest neighbors
+                 * The number of points K in the neighborhood of each point
+                 * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
+                 */
+                KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+            }
+            catch (std::bad_alloc &e)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                return false;
+            }
+        }
+
+        //Construct a kd-tree index & do nearest neighbors search
+        KNN->buildIndex(idata);
+
+        /*
+         * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
+         * \f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
+         */
+        EVectorX<T> RHSB0 = EVectorX<T>::Zero(dcmonomialSize);
+        RHSB0(0) = static_cast<T>(1);
+        EVectorX<T> RHSB(dcmonomialSize);
+
+        //Total number of nearest neighbours for each point
+        int nNN = KNN->numNearestNeighbors();
+
+        /*
+         * Creating a transpose of the Vandermonde matrix
+         * with the size of monomials * monomials \f$  = l \times l \f$
+         */
+        EMatrixX<T> VMT(dcmonomialSize, dcmonomialSize);
+        EMatrixX<T> VMTimage(dcmonomialSize, nNN);
+
+        //Matrix of exponential window function
+        EVectorX<T> EM(dcmonomialSize);
+        EVectorX<T> EMimage(nNN);
+
+        EVectorX<T> columnL(dcmonomialSize);
+
+        //Matrix A of a linear system for the kernel coefficients
+        EMatrixX<T> AM(dcmonomialSize, dcmonomialSize);
+
+        //Matrix B^T
+        EMatrixX<T> BMT(dcmonomialSize, dcmonomialSize);
+        EMatrixX<T> BMTimage(dcmonomialSize, nNN);
+
+        //${\mathbf a}^T({\mathbf x})$ is the column vector of coefficients which is the solution of linear system
+        EVectorX<T> SV(dcmonomialSize);
+
+        //Array for keeping the component-wise L1 distances
+        std::vector<T> L1Dist(nNN * nDim);
+
+        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+        T *column = new T[dcmonomialSize];
+
+        //Array to kepp indexing
+        std::vector<int> IndexId(dcmonomialSize);
+
+        //Loop over all query points
+        for (int i = 0; i < nPoints; i++)
+        {
+            //Index inside kernel
+            std::ptrdiff_t const IdM = i * dcmonomialSize;
+
+            //Index in idata array
+            std::ptrdiff_t const IdI = i * nDim;
+
+            //A pointer to nearest neighbors indices of point i
+            int *NearestNeighbors = KNN->NearestNeighbors(i);
+
+            //A pointer to nearest neighbors distances from point i
+            T *nnDist = KNN->NearestNeighborsDistances(i);
+
+            /*
+             * For each point \f$ {\mathbf x} \f$ we define 
+             * \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
+             * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points 
+             * \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
+             */
+            {
+                //pointer to query data
+                T *Idata = idata + IdI;
+
+                //\f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
+                for (int j = 0, n = 0; j < nNN; j++)
+                {
+                    //Neighbor index in idata array
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
+
+                    //pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    for (int d = 0; d < nDim; d++, n++)
+                    {
+                        L1Dist[n] = Idata[d] - Jdata[d];
+                    }
+                }
+            }
+
+            //Compute component-wise average neighbor spacing
+            T h_avg(0);
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T const l_i) { h_avg += std::abs(l_i); });
+
+            //Component-wise average neighbor spacing \f$ h \f$
+            h_avg /= static_cast<T>(nNN);
+
+            h_average[i] = h_avg;
+
+            //Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
+            T const byEpsilon = ratio / h_avg;
+            T const byEpsilonsq = byEpsilon * byEpsilon;
+            T const byEpsilonsq2 = 0.5 * byEpsilonsq;
+
+            //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
+
+            //Use the correct RHS for each point
+            RHSB = RHSB0;
+
+            //Loop through the neighbors
+            for (int j = 0; j < dcmonomialSize; j++)
+            {
+                //Id in the L1 distance list
+                std::ptrdiff_t const Id = j * nDim;
+
+                //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                poly.monomial_value(L1Dist.data() + Id, column);
+
+                TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                //Fill the Vandermonde matrix column by column
+                VMT.block(0, j, dcmonomialSize, 1) << columnV;
+            }
+
+            for (int j = 0; j < dcmonomialSize; j++)
+            {
+                EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+            }
+
+            int dcrank;
+
+            {
+                //LU decomposition of a matrix with complete pivoting, and related features.
+                Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+
+                dcrank = lu.rank();
+
+                if (dcrank < dcmonomialSize && dcrank >= dcmonomialSize - nENN)
+                {
+                    for (int j = 0; j < dcmonomialSize; j++)
+                    {
+                        IndexId[j] = lu.permutationQ().indices()(j);
+                    }
+                }
+            }
+
+            if (dcrank < dcmonomialSize)
+            {
+                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+                std::cerr << "There are some singularities! we use a least-squares solution!" << std::endl;
+
+                //if necessary, remove redundant equations/coefficients
+
+                //Number of neighbor points are not enough
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    std::cerr << "Number of neighbor points are not enough! Matrix rank = " << dcrank << " < " << dcmonomialSize - nENN << std::endl;
+
+                    if (nENN > 0)
+                    {
+                        VMTimage.block(0, 0, dcmonomialSize, dcmonomialSize) << VMT;
+                        EMimage.head(dcmonomialSize) << EM;
+
+                        //Loop through the rest of nearest neighbors
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            //Id in the list
+                            std::ptrdiff_t const Id = j * nDim;
+
+                            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                            poly.monomial_value(L1Dist.data() + Id, column);
+
+                            TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                            //Fill the Vandermonde matrix column by column
+                            VMTimage.block(0, j, dcmonomialSize, 1) << columnV;
+                        }
+
+                        for (int j = dcmonomialSize; j < nNN; j++)
+                        {
+                            EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        }
+
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                        AM = BMTimage * BMTimage.transpose();
+                    }
+                    else
+                    {
+                        /* 
+                         * \f[ 
+                         * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                         * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                         * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                         * \end{matrix} 
+                         * \f]
+                         */
+                        BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                        AM = BMT * BMT.transpose();
+                    }
+                }
+                else
+                {
+                    /*
+                     * We have enough neighbor points
+                     * Remove the columns which causes singularity and replace them
+                     * with the new columns from extra neighbor points
+                     */
+
+                    //Loop through the neighbors
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    {
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
+
+                        //Id in the list
+                        std::ptrdiff_t const Id = k * nDim;
+
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist.data() + Id, column);
+
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                        //Get the column l which causes singularity
+                        columnL << VMT.block(0, l, dcmonomialSize, 1);
+
+                        //Fill the Vandermonde matrix by the new column
+                        VMT.block(0, l, dcmonomialSize, 1) << columnV;
+                    }
+
+                    for (int j = dcrank, k = dcmonomialSize; j < dcmonomialSize; j++, k++)
+                    {
+                        //Get the column number which causes a singularity
+                        int const l = IndexId[j];
+
+                        EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    }
+
+                    /* 
+                     * \f[ 
+                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                     * \end{matrix} 
+                     * \f]
+                     */
+                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    AM = BMT * BMT.transpose();
+                }
+
+                {
+                    /*
+                     * Two-sided Jacobi SVD decomposition, ensuring optimal reliability and accuracy.
+                     * Thin U and V are all we need for (least squares) solving.
+                     */
+                    Eigen::JacobiSVD<EMatrixX<T>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
+
+                    /*
+                     * SV contains the least-squares solution of 
+                     * \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                     * using the current SVD decomposition of A.
+                     */
+                    SV = svd.solve(RHSB);
+                }
+
+                //TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+                /*
+                 * Later I should check on SVD solution and to find out which columns are the
+                 * Most important one, then I can correct the IndexId order
+                 */
+
+                if (dcrank < dcmonomialSize - nENN)
+                {
+                    //Loop through the neighbors
+                    for (int j = 0; j < dcmonomialSize; j++)
+                    {
+                        //Id in the list
+                        std::ptrdiff_t const Id = j * nDim;
+
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist.data() + Id, column);
+
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                        T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + j;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
+                }
+                else
+                {
+                    //Loop through the neighbors
+                    for (int j = 0, m = dcmonomialSize; j < dcmonomialSize; j++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
+
+                        //Id in the list
+                        std::ptrdiff_t Id;
+                        T expo;
+
+                        if (j >= dcrank)
+                        {
+                            //Id in the list
+                            Id = m * nDim;
+                            expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                            m++;
+                        }
+                        else
+                        {
+                            Id = l * nDim;
+                            expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        }
+
+                        //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                        poly.monomial_value(L1Dist.data() + Id, column);
+
+                        TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                        //Index inside the kernel
+                        std::ptrdiff_t const IdK = IdM + l;
+                        dckernel[IdK] += SV.dot(columnV) * expo;
+                    }
+
+                    //Loop through the neighbors
+                    for (int j = dcrank, m = dcmonomialSize; j < dcmonomialSize; j++, m++)
+                    {
+                        //Get the right index
+                        int const l = IndexId[j];
+
+                        //Correct the neighborhood order
+                        KNN->IndexSwap(l, m);
+                    }
+                }
+            }
+            else
+            {
+                /* 
+                 * \f[ 
+                 * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
+                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                 * \end{matrix} 
+                 * \f]
+                 */
+                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+
+                AM = BMT * BMT.transpose();
+
+                //SV contains the solution of \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b} \f$
+                SV = AM.lu().solve(RHSB);
+
+                //Loop through the neighbors
+                for (int j = 0; j < dcmonomialSize; j++)
+                {
+                    //Id in the list
+                    std::ptrdiff_t const Id = j * nDim;
+
+                    //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+                    poly.monomial_value(L1Dist.data() + Id, column);
+
+                    TEMapVectorX<T> columnV(column, dcmonomialSize);
+
+                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+
+                    //Index inside the kernel
+                    std::ptrdiff_t const IdK = IdM + j;
+                    dckernel[IdK] += SV.dot(columnV) * expo;
+                }
+            }
+
+        } //Loop over all points
+
+        delete[] column;
 
         return true;
     }
@@ -1154,6 +1648,7 @@ class dcpse
             {
                 //Make sure of the correct kernel size
                 dckernel.reset(new T[dckernelSize]);
+                h_average.reset(new T[nqPoints]);
             }
             catch (std::bad_alloc &e)
             {
@@ -1263,26 +1758,13 @@ class dcpse
         EVectorX<T> SV(dcmonomialSize);
 
         //Array for keeping the component-wise L1 distances
-        T *L1Dist = nullptr;
+        std::vector<T> L1Dist(nNN * nDim);
 
         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        T *column = nullptr;
+        T *column = new T[dcmonomialSize];
 
         //Array to kepp indexing
-        int *IndexId = nullptr;
-
-        try
-        {
-            L1Dist = new T[nNN * nDim];
-            column = new T[dcmonomialSize];
-            IndexId = new int[dcmonomialSize];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
+        std::vector<int> IndexId(dcmonomialSize);
 
         //Primitive (quartic spline) object
         quartic_spline<T> q;
@@ -1330,10 +1812,12 @@ class dcpse
 
             //Compute component-wise average neighbor spacing
             T h_avg(0);
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T const l_i) { h_avg += std::abs(l_i); });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T const l_i) { h_avg += std::abs(l_i); });
 
             //Component-wise average neighbor spacing \f$ h \f$
             h_avg /= static_cast<T>(nNN);
+
+            h_average[i] = h_avg;
 
             //Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
             T const byEpsilon = ratio / h_avg;
@@ -1341,7 +1825,7 @@ class dcpse
             T const byEpsilonsq2 = 0.5 * byEpsilonsq;
 
             //Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
-            std::for_each(L1Dist, L1Dist + nNN * nDim, [&](T &l_i) { l_i *= byEpsilon; });
+            std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
 
             //Use the correct RHS for each point
             RHSB = RHSB0;
@@ -1353,7 +1837,7 @@ class dcpse
                 std::ptrdiff_t const Id = j * nDim;
 
                 //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                poly.monomial_value(L1Dist + Id, column);
+                poly.monomial_value(L1Dist.data() + Id, column);
 
                 TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1437,7 +1921,7 @@ class dcpse
                             std::ptrdiff_t const Id = j * nDim;
 
                             //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                            poly.monomial_value(L1Dist + Id, column);
+                            poly.monomial_value(L1Dist.data() + Id, column);
 
                             TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1517,7 +2001,7 @@ class dcpse
                         std::ptrdiff_t const Id = k * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1614,7 +2098,7 @@ class dcpse
                         std::ptrdiff_t const Id = j * nDim;
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1651,7 +2135,7 @@ class dcpse
                         }
 
                         //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                        poly.monomial_value(L1Dist + Id, column);
+                        poly.monomial_value(L1Dist.data() + Id, column);
 
                         TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1695,7 +2179,7 @@ class dcpse
                     std::ptrdiff_t const Id = j * nDim;
 
                     //Evaluates a monomial at a point \f$ {\mathbf x} \f$
-                    poly.monomial_value(L1Dist + Id, column);
+                    poly.monomial_value(L1Dist.data() + Id, column);
 
                     TEMapVectorX<T> columnV(column, dcmonomialSize);
 
@@ -1709,9 +2193,7 @@ class dcpse
 
         } //Loop over all points
 
-        delete[] IndexId;
         delete[] column;
-        delete[] L1Dist;
         delete[] idataminDist;
 
         return true;
@@ -1900,7 +2382,7 @@ class dcpse
     }
 
   private:
-    //! Dimensiononality
+    //! Dimensionality
     int nDim;
 
     //! Number of terms
@@ -1923,6 +2405,9 @@ class dcpse
 
     //! k-NearestNeighbor Object
     std::unique_ptr<L2NearestNeighbor<T>> KNN;
+
+    //! component-wise average neighbor spacing \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
+    std::unique_ptr<T[]> h_average;
 
     //! The sign is chosen positive for odd \f$ | \beta | \f$ and negative for even \f$ | \beta | \f$
     T rhscoeff;
