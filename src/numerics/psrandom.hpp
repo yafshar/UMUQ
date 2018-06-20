@@ -167,7 +167,7 @@ struct psrandom
      * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
      */
 	template <typename T = int>
-	void shuffle(T *idata, int const nSize)
+	inline void shuffle(T *idata, int const nSize)
 	{
 		//Get the thread ID
 		int const me = torc_i_worker_id();
@@ -180,7 +180,7 @@ struct psrandom
 	}
 
 	template <typename T = int>
-	void Shuffle(T *idata, int const nSize)
+	inline void Shuffle(T *idata, int const nSize)
 	{
 		for (int i = nSize - 1; i > 0; --i)
 		{
