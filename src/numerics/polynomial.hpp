@@ -19,7 +19,7 @@ class polynomial
      * \param dim  Dimension
      * \param ord Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    polynomial(int dim, int ord = 2) : nDim(dim), Order(ord)
+    polynomial(int const dim, int const ord = 2) : nDim(dim), Order(ord)
     {
         if (nDim <= 0)
         {
@@ -27,6 +27,7 @@ class polynomial
             std::cerr << " Fatal error! dimension <= 0!" << std::endl;
             throw(std::runtime_error("Can not have dimension <= 0!"));
         }
+
         if (Order < 0)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
@@ -51,7 +52,7 @@ class polynomial
      * \param dim new Dimension
      * \param ord new Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    void reset(int dim, int ord = 2)
+    void reset(int const dim, int const ord = 2)
     {
         nDim = dim;
         if (nDim <= 0)
@@ -168,12 +169,12 @@ class polynomial
         else
         {
             int const N = nDim * monomialSize;
-            int *x;
+            
+            std::vector<int> x(nDim, 0);
 
             try
             {
                 alpha.reset(new int[N]);
-                x = new int[nDim]();
             }
             catch (std::bad_alloc &e)
             {
@@ -193,18 +194,15 @@ class polynomial
 
                 if (x[0] == Order)
                 {
-                    delete[] x;
                     return alpha.get();
                 }
 
-                if (!graded_reverse_lexicographic_order(x))
+                if (!graded_reverse_lexicographic_order(x.data()))
                 {
-                    delete[] x;
                     return nullptr;
                 }
             }
 
-            delete[] x;
             return alpha.get();
         }
     }
@@ -217,7 +215,7 @@ class polynomial
      * 
      * \returns the size of the monomial array
      */
-    int monomial_value(T *x, T *&value)
+    int monomial_value(T const *x, T *&value)
     {
         if (!alpha)
         {
@@ -227,7 +225,7 @@ class polynomial
             if (tmp == nullptr)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " St went wrong in creating monomial sequence !" << std::endl;
+                std::cerr << " Something went wrong in creating monomial sequence !" << std::endl;
                 return 0;
             }
         }
