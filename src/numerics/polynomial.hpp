@@ -169,7 +169,7 @@ class polynomial
         else
         {
             int const N = nDim * monomialSize;
-            
+
             std::vector<int> x(nDim, 0);
 
             try
@@ -262,7 +262,7 @@ class polynomial
      * 
      * \return monomial size
      */
-    int monomialsize() const
+    inline int monomialsize() const
     {
         return monomialSize;
     }
@@ -272,7 +272,7 @@ class polynomial
      * 
      * \return Dimension
      */
-    int dim() const
+    inline int dim() const
     {
         return nDim;
     }
@@ -282,7 +282,7 @@ class polynomial
      * 
      * \return Polynomial order
      */
-    int order() const
+    inline int order() const
     {
         return Order;
     }
@@ -361,6 +361,13 @@ class polynomial
         }
         return true;
     }
+
+  private:
+    // Make it noncopyable
+    polynomial(polynomial<T> const &) = delete;
+
+    // Make it not assignable
+    polynomial<T> &operator=(polynomial<T> const &) = delete;
 
   private:
     //! Dimension
