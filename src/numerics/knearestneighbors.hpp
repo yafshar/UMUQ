@@ -332,7 +332,7 @@ class kNearestNeighbor
     /*!
      * \brief swap two indexes values
      */
-    void IndexSwap(int Indx1, int Indx2)
+    inline void IndexSwap(int Indx1, int Indx2)
     {
         std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
         std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
