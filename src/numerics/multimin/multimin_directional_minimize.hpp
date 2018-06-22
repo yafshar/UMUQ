@@ -11,10 +11,19 @@
 
 /*!
  * \brief take_step
- *
+ * 
+ * \tparam T      Data type 
+ * 
+ * \param n       Size of the data
+ * \param x       Array of data of size n
+ * \param p       Array of data of size n
+ * \param step    Step size
+ * \param lambda  Coefficient
+ * \param x1      Array of data of size n which contains output results (\f$ x1 = x + dx \f$)
+ * \param dx      Array of data of size n which contains part of out put results (\f$ dx = \alpha p \f$)
  */
 template <typename T>
-inline void take_step(std::size_t n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
+inline void take_step(std::size_t const n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
 {
     //Compute the sum \f$y = \alpha x + y\f$ for the vectors x and y (set dx to zero).
     T const alpha = -step * lambda;
@@ -33,10 +42,27 @@ inline void take_step(std::size_t n, T const *x, T const *p, T const step, T con
 
 /*!
  * \brief intermediate_point
- *
+ * 
+ * \tparam T      Data type 
+ * \tparam TMFD   Multimin differentiable function type
+ * 
+ * \param fdf     pointer to multimin differentiable function
+ * \param x       Array of data of size n
+ * \param p       Array of data of size n
+ * \param lambda  Coefficient
+ * \param pg      
+ * \param stepa 
+ * \param stepc 
+ * \param fa 
+ * \param fc 
+ * \param x1 
+ * \param dx 
+ * \param gradient 
+ * \param step 
+ * \param f 
  */
 template <typename T, class TMFD>
-void intermediate_point(TMFD *fdf, T const *x, T const *p, T const lambda, T pg, T stepa, T stepc, T fa, T fc, T *x1, T *dx, T *gradient, T *step, T *f)
+void intermediate_point(TMFD *fdf, T const *x, T const *p, T const lambda, T const pg, T stepa, T stepc, T fa, T fc, T *x1, T *dx, T *gradient, T *step, T *f)
 {
     T stepb(1);
     T fb(fa);
