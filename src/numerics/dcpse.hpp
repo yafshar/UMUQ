@@ -29,7 +29,52 @@ class dcpse
      */
     explicit dcpse(int ndim, int nterms = 1) : nDim(ndim), nTerms(nterms), dcmonomialSize(0), dckernelSize(0), Order{new int[nterms]} {}
 
-    /*! \fn computeWeights
+    /*!
+     * \brief Move constructor, construct a new dcpse object from input dcpse object
+     * 
+     * \param inputDC 
+     */
+    dcpse(dcpse<T> &&inputDC)
+    {
+        nDim = inputDC.nDim;
+        nTerms = inputDC.nTerms;
+        dcmonomialSize = inputDC.dcmonomialSize;
+        dckernelSize = inputDC.dckernelSize;
+        Order = std::move(inputDC.Order);
+        dckernel = std::move(inputDC.dckernel);
+        KNN = std::move(inputDC.KNN);
+        h_average = std::move(inputDC.h_average);
+        rhscoeff = inputDC.rhscoeff;
+    }
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param inputDB 
+     * \return dcpse<T>& 
+     */
+    dcpse<T> &operator=(dcpse<T> &&inputDC)
+    {
+        nDim = inputDC.nDim;
+        nTerms = inputDC.nTerms;
+        dcmonomialSize = inputDC.dcmonomialSize;
+        dckernelSize = inputDC.dckernelSize;
+        Order = std::move(inputDC.Order);
+        dckernel = std::move(inputDC.dckernel);
+        KNN = std::move(inputDC.KNN);
+        h_average = std::move(inputDC.h_average);
+        rhscoeff = inputDC.rhscoeff;
+
+        return *this;
+    }
+
+    /*!
+     * \brief Destroy the dcpse object
+     * 
+     */
+    ~dcpse(){}
+
+    /*! \fn ComputeWeights
      * \brief Computes generalized DC-PSE differential operators on set of input points
      *
      * This function uses one set of points as input data to compute the generalized DC-PSE 
@@ -1175,7 +1220,7 @@ class dcpse
                      * The number of points K in the neighborhood of each point
                      * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                      */
-                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+                    KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, nDim, dcmonomialSize + nENN));
                 }
                 catch (std::bad_alloc &e)
                 {
@@ -1194,7 +1239,7 @@ class dcpse
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+                KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, nDim, dcmonomialSize + nENN));
             }
             catch (std::bad_alloc &e)
             {
@@ -1497,7 +1542,7 @@ class dcpse
 
                         //Index inside the kernel
                         std::ptrdiff_t const IdK = IdM + j;
-                        dckernel[IdK] += SV.dot(columnV) * expo;
+                        dckernel[IdK] = SV.dot(columnV) * expo;
                     }
                 }
                 else
@@ -1532,7 +1577,7 @@ class dcpse
 
                         //Index inside the kernel
                         std::ptrdiff_t const IdK = IdM + l;
-                        dckernel[IdK] += SV.dot(columnV) * expo;
+                        dckernel[IdK] = SV.dot(columnV) * expo;
                     }
 
                     //Loop through the neighbors
@@ -1578,7 +1623,7 @@ class dcpse
 
                     //Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
-                    dckernel[IdK] += SV.dot(columnV) * expo;
+                    dckernel[IdK] = SV.dot(columnV) * expo;
                 }
             }
 
@@ -2312,13 +2357,16 @@ class dcpse
 
             T sum(0);
 
+            std::cout << "For point i=" << i << " dckernel=";
             //Loop through the neighbors
             for (int j = 0; j < dcmonomialSize; j++, IdI++)
             {
                 int const IdJ = NearestNeighbors[j];
                 sum += dckernel[IdI] * iFvalue[IdJ];
-            }
 
+                std::cout << dckernel[IdI] << " ";
+            }
+            std::cout << "Fvalue=" << sum << " h_average=" << h_average[i] << std::endl;
             qFvalue[i] = sum;
         }
 
@@ -2381,6 +2429,35 @@ class dcpse
         }
     }
 
+    /*!
+     * \brief Component-wise average neighbor spacing @index
+     * 
+     * \param index Index of a point (from data points) to get its average neighbor spacing
+     * 
+     * \returns A component-wise average neighbor spacing @index 
+     */
+    inline T averageSpace(int const index) const
+    {
+        return h_average[index];
+    }
+
+    /*!
+     * \brief A pointer to component-wise average neighbor spacing
+     * 
+     * \returns A pointer to component-wise average neighbor spacing
+     */
+    inline T *averageSpace() const
+    {
+        return h_average.get();
+    }
+
+  private:
+    // Make it noncopyable
+    dcpse(dcpse<T> const &) = delete;
+
+    // Make it not assignable
+    dcpse<T> &operator=(dcpse<T> const &) = delete;
+
   private:
     //! Dimensionality
     int nDim;
@@ -2406,7 +2483,7 @@ class dcpse
     //! k-NearestNeighbor Object
     std::unique_ptr<L2NearestNeighbor<T>> KNN;
 
-    //! component-wise average neighbor spacing \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
+    //! Component-wise average neighbor spacing \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
     std::unique_ptr<T[]> h_average;
 
     //! The sign is chosen positive for odd \f$ | \beta | \f$ and negative for even \f$ | \beta | \f$
