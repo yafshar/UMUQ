@@ -412,6 +412,16 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 
 // namespace flann
 // {
+// /*!
+//  * \brief covariance variable to be used inside flann
+//  * 
+//  * \tparam T Data type
+//  */
+// template <class T>
+// std::unique_ptr<T[]> covariance;
+
+// std::size_t covarianceIdx;
+
 // /*! \class Mahalanobis
 //  * \brief Mahalanobis distance functor
 //  *
@@ -435,6 +445,8 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 //         ResultType diff0, diff1, diff2, diff3;
 //         Iterator1 last = a + size;
 //         Iterator1 lastgroup = last - 3;
+
+//         ArrayWrapper<T> cArray(covariance.get() + covarianceIdx, size * size, size);
 
 //         /* Process 4 items with each loop for efficiency. */
 //         while (a < lastgroup)
