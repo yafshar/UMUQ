@@ -101,7 +101,28 @@ void intermediate_point(TMFD *fdf, T const *x, T const *p, T const lambda, T con
 
 /*!
  * \brief minimize
- *
+ * 
+ * \tparam T 
+ * \tparam TMFD 
+ * \param fdf 
+ * \param x 
+ * \param p 
+ * \param lambda 
+ * \param stepa 
+ * \param stepb 
+ * \param stepc 
+ * \param fa 
+ * \param fb 
+ * \param fc 
+ * \param tol 
+ * \param x1 
+ * \param dx1 
+ * \param x2 
+ * \param dx2 
+ * \param gradient 
+ * \param step 
+ * \param f 
+ * \param gnorm 
  */
 template <typename T, class TMFD>
 void minimize(TMFD *fdf, T const *x, T const *p, T lambda, T stepa, T stepb, T stepc, T fa, T fb, T fc, T tol, T *x1, T *dx1, T *x2, T *dx2, T *gradient, T *step, T *f, T *gnorm)
@@ -140,139 +161,145 @@ void minimize(TMFD *fdf, T const *x, T const *p, T lambda, T stepa, T stepb, T s
 
     int iter(0);
 
-mid_trial:
-
-    iter++;
-
-    if (iter > 10)
+    //mid_trial:
+    for (;;)
     {
-        //MAX ITERATIONS
-        return;
-    }
+        iter++;
 
-    {
-        T dw = w - u;
-        T dv = v - u;
-
-        T e1 = ((fv - fu) * dw * dw + (fu - fw) * dv * dv);
-        T e2 = 2 * ((fv - fu) * dw + (fu - fw) * dv);
-
-        T du(0);
-        if (e2 != T{})
+        if (iter > 10)
         {
-            du = e1 / e2;
-        }
-
-        if (du > T{} && du < (stepc - stepb) && std::abs(du) < 0.5 * old2)
-        {
-            stepm = u + du;
-        }
-        else if (du < T{} && du > (stepa - stepb) && std::abs(du) < 0.5 * old2)
-        {
-            stepm = u + du;
-        }
-        else if ((stepc - stepb) > (stepb - stepa))
-        {
-            stepm = 0.38 * (stepc - stepb) + stepb;
-        }
-        else
-        {
-            stepm = stepb - 0.38 * (stepb - stepa);
-        }
-    }
-
-    take_step<T>(n, x, p, stepm, lambda, x1, dx1);
-
-    fm = fdf->f(x1);
-
-#ifdef DEBUG
-    std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
-#endif
-
-    if (fm > fb)
-    {
-        if (fm < fv)
-        {
-            w = v;
-            v = stepm;
-            fw = fv;
-            fv = fm;
-        }
-        else if (fm < fw)
-        {
-            w = stepm;
-            fw = fm;
-        }
-
-        if (stepm < stepb)
-        {
-            stepa = stepm;
-            fa = fm;
-        }
-        else
-        {
-            stepc = stepm;
-            fc = fm;
-        }
-        goto mid_trial;
-    }
-    else if (fm <= fb)
-    {
-        old2 = old1;
-        old1 = std::abs(u - stepm);
-        w = v;
-        v = u;
-        u = stepm;
-        fw = fv;
-        fv = fu;
-        fu = fm;
-
-        std::copy(x1, x1 + n, x2);
-        std::copy(dx1, dx1 + n, dx2);
-
-        fdf->df(x1, gradient);
-
-        pg = T{};
-        for (std::size_t i = 0; i < n; i++)
-        {
-            pg += p[i] * gradient[i];
-        }
-
-        s = (T)0;
-        std::for_each(gradient, gradient + n, [&](T const g_i) { s += g_i * g_i; });
-        gnorm1 = std::sqrt(s);
-
-#ifdef DEBUG
-        //TODO Use IO class to print out p, gradient, pg for debugging purpose
-#endif
-        *f = fm;
-        *step = stepm;
-        *gnorm = gnorm1;
-
-        if (std::abs(pg * lambda / gnorm1) < tol)
-        {
-#ifdef DEBUG
-            std::cout << "Ok!" << std::endl;
-#endif
-            //SUCCESS
+            //MAX ITERATIONS
             return;
         }
 
-        if (stepm < stepb)
         {
-            stepc = stepb;
-            fc = fb;
-            stepb = stepm;
-            fb = fm;
+            T dw = w - u;
+            T dv = v - u;
+
+            T e1 = ((fv - fu) * dw * dw + (fu - fw) * dv * dv);
+            T e2 = 2 * ((fv - fu) * dw + (fu - fw) * dv);
+
+            T du(0);
+            if (e2 != T{})
+            {
+                du = e1 / e2;
+            }
+
+            if (du > T{} && du < (stepc - stepb) && std::abs(du) < 0.5 * old2)
+            {
+                stepm = u + du;
+            }
+            else if (du < T{} && du > (stepa - stepb) && std::abs(du) < 0.5 * old2)
+            {
+                stepm = u + du;
+            }
+            else if ((stepc - stepb) > (stepb - stepa))
+            {
+                stepm = 0.38 * (stepc - stepb) + stepb;
+            }
+            else
+            {
+                stepm = stepb - 0.38 * (stepb - stepa);
+            }
         }
-        else
+
+        take_step<T>(n, x, p, stepm, lambda, x1, dx1);
+
+        fm = fdf->f(x1);
+
+#ifdef DEBUG
+        std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
+#endif
+
+        if (fm > fb)
         {
-            stepa = stepb;
-            fa = fb;
-            stepb = stepm;
-            fb = fm;
+            if (fm < fv)
+            {
+                w = v;
+                v = stepm;
+                fw = fv;
+                fv = fm;
+            }
+            else if (fm < fw)
+            {
+                w = stepm;
+                fw = fm;
+            }
+
+            if (stepm < stepb)
+            {
+                stepa = stepm;
+                fa = fm;
+            }
+            else
+            {
+                stepc = stepm;
+                fc = fm;
+            }
+
+            // goto mid_trial;
+            continue;
         }
-        goto mid_trial;
+        else if (fm <= fb)
+        {
+            old2 = old1;
+            old1 = std::abs(u - stepm);
+            w = v;
+            v = u;
+            u = stepm;
+            fw = fv;
+            fv = fu;
+            fu = fm;
+
+            std::copy(x1, x1 + n, x2);
+            std::copy(dx1, dx1 + n, dx2);
+
+            fdf->df(x1, gradient);
+
+            pg = T{};
+            for (std::size_t i = 0; i < n; i++)
+            {
+                pg += p[i] * gradient[i];
+            }
+
+            s = (T)0;
+            std::for_each(gradient, gradient + n, [&](T const g_i) { s += g_i * g_i; });
+            gnorm1 = std::sqrt(s);
+
+#ifdef DEBUG
+            //TODO Use IO class to print out p, gradient, pg for debugging purpose
+#endif
+            *f = fm;
+            *step = stepm;
+            *gnorm = gnorm1;
+
+            if (std::abs(pg * lambda / gnorm1) < tol)
+            {
+#ifdef DEBUG
+                std::cout << "Ok!" << std::endl;
+#endif
+                //SUCCESS
+                return;
+            }
+
+            if (stepm < stepb)
+            {
+                stepc = stepb;
+                fc = fb;
+                stepb = stepm;
+                fb = fm;
+            }
+            else
+            {
+                stepa = stepb;
+                fa = fb;
+                stepb = stepm;
+                fb = fm;
+            }
+
+            //goto mid_trial;
+            continue;
+        }
     }
 }
 
