@@ -10,61 +10,81 @@ TEST(stats_test, HandlesStats)
     //Create an instane of stats object
     stats s;
 
-    int Iarray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
+    int iArray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
 
-    EXPECT_EQ(s.minelement<int>(Iarray, 10), 1);
-    EXPECT_EQ(s.maxelement<int>(Iarray, 10), 10);
-    EXPECT_EQ(s.minelement_index<int>(Iarray, 10), 4);
-    EXPECT_EQ(s.maxelement_index<int>(Iarray, 10), 7);
+    EXPECT_EQ(s.minelement<int>(iArray, 10), 1);
+    EXPECT_EQ(s.maxelement<int>(iArray, 10), 10);
+    EXPECT_EQ(s.minelement_index<int>(iArray, 10), 4);
+    EXPECT_EQ(s.maxelement_index<int>(iArray, 10), 7);
 
-    double sum = s.sum<int, double>(Iarray, 10);
-    double mean = s.mean<int, double>(Iarray, 10);
-    double stddev = s.stddev<int, double>(Iarray, 10);
+    double sum = s.sum<int, double>(iArray, 10);
+    double mean = s.mean<int, double>(iArray, 10);
+    double stddev = s.stddev<int, double>(iArray, 10);
 
     EXPECT_DOUBLE_EQ(sum, 55.0);
     EXPECT_DOUBLE_EQ(mean, 5.5);
     EXPECT_DOUBLE_EQ(stddev, 3.027650354097491);
 }
 
+/*!
+ * \brief Construct a new TEST object for data arrays with stride
+ * 
+ */
 TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 {
     //Create an instane of stats object
     stats s;
 
-    //Iarray is a two column array of size 10 * 2 = 20 
+    //iArray is a two column array of size 10 * 2 = 20
     //we are interested to the first column so the Stride is 2
-    int Iarray[] = {2, 0, 3, 0, 5, 0, 7, 0, 1, 0, 6, 0, 8, 0, 10, 0, 9, 0, 4, 0};
+    int iArray[] = {2, 0,
+                    3, 0,
+                    5, 0,
+                    7, 0,
+                    1, 0,
+                    6, 0,
+                    8, 0,
+                    10, 0,
+                    9, 0,
+                    4, 0};
 
-    EXPECT_EQ(s.minelement<int>(Iarray, 20, 2), 1);
-    EXPECT_EQ(s.minelement_index<int>(Iarray, 20, 2), 8);
-    EXPECT_EQ(s.maxelement<int>(Iarray, 20, 2), 10);
-    EXPECT_EQ(s.maxelement_index<int>(Iarray, 20, 2), 14);
+    EXPECT_EQ(s.minelement<int>(iArray, 20, 2), 1);
+    EXPECT_EQ(s.minelement_index<int>(iArray, 20, 2), 8);
+    EXPECT_EQ(s.maxelement<int>(iArray, 20, 2), 10);
+    EXPECT_EQ(s.maxelement_index<int>(iArray, 20, 2), 14);
 
-    //Darray is an array of size 4 * 3 = 12
+    //dArray is an array of size 4 * 3 = 12
     //We need to compute the sum of different columns
-    double Darray[] = {1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3};
+    double dArray[] = {1, 2, 3,
+                       1, 2, 3,
+                       1, 2, 3,
+                       1, 2, 3};
 
     //Compute sum of column 0
-    double sum = s.sum<double>(Darray, 12, 3);
+    double sum = s.sum<double>(dArray, 12, 3);
     EXPECT_DOUBLE_EQ(sum, 4.0);
 
     //Compute sum of column 1
-    sum = s.sum<double>(Darray + 1, 11, 3);
+    sum = s.sum<double>(dArray + 1, 11, 3);
     EXPECT_DOUBLE_EQ(sum, 8.0);
-    
+
     // Compute sum of column 2
-    sum = s.sum<double>(Darray + 2, 10, 3);
+    sum = s.sum<double>(dArray + 2, 10, 3);
     EXPECT_DOUBLE_EQ(sum, 12.0);
 }
 
+/*!
+ * \brief Construct a new TEST object for testing median
+ * 
+ */
 TEST(stats_test, HandlesMedianandMad)
 {
     //Create an instane of stats object
     stats s;
 
-    int Iarray[] = {1, 1, 2, 2, 4, 6, 9};
+    int iArray[] = {1, 1, 2, 2, 4, 6, 9};
     int med;
-    int mad = s.medianAbs<int, int>(Iarray, 7, 1, med);
+    int mad = s.medianAbs<int, int>(iArray, 7, 1, med);
 
     //the dataset has a median value of 2.
     EXPECT_EQ(med, 2);
@@ -78,6 +98,46 @@ TEST(stats_test, HandlesMedianandMad)
     EXPECT_EQ(mad, 1);
 }
 
+/*!
+ * \brief Construct a new TEST object for covariance
+ * 
+ */
+TEST(stats_test, HandlesCovariance)
+{
+    //Create an instane of stats object
+    stats s;
+
+    //Create two vectors and compute their covariance.
+    {
+        double idata[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+        double jdata[] = {8, 10, 12, 14};      // (mean = 11)
+
+        double Covariance = s.covariance<double, double>(idata, jdata, 4);
+
+        EXPECT_DOUBLE_EQ(Covariance, 6.8 / 3);
+    }
+
+    //Create a 3-by-4 matrix and compute its covariance.
+    {
+        double idata[] = {5, 0, 3, 7,
+                          1, -5, 7, 3,
+                          4, 9, 8, 10};
+
+        //Compute the covariance
+        double *Covariance = s.covariance<double, double>(idata, 12, 4, 4);
+
+        //Covariance computed with MATLAB
+        double c[] = {4.333333333333334, 8.833333333333332, -3.0, 5.666666666666667,
+                      8.833333333333332, 50.333333333333336, 6.50, 24.166666666666668,
+                      -3.0, 6.50, 7.0, 1.0,
+                      5.666666666666667, 24.166666666666668, 1.0, 12.333333333333334};
+
+        for (int i = 0; i < 12; i++)
+        {
+            EXPECT_DOUBLE_EQ(Covariance[i], c[i]);
+        }
+    }
+}
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
