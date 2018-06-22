@@ -26,6 +26,43 @@ class linearRegression
                                                           linearRegressionkernelSize(0) {}
 
     /*!
+     * \brief Move constructor, construct a new linearRegression object from input linearRegression object
+     * 
+     * \param inputLR 
+     */
+    linearRegression(linearRegression<T> &&inputLR)
+    {
+        nDim = inputLR.nDim;
+        polynomialOrder = inputLR.polynomialOrder;
+        linearRegressionMonomialSize = inputLR.linearRegressionMonomialSize;
+        linearRegressionkernelSize = inputLR.linearRegressionkernelSize;
+        linearRegressionkernel = std::move(inputLR.linearRegressionkernel);
+    }
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param inputDB 
+     * \return linearRegression<T>& 
+     */
+    linearRegression<T> &operator=(linearRegression<T> &&inputLR)
+    {
+        nDim = inputLR.nDim;
+        polynomialOrder = inputLR.polynomialOrder;
+        linearRegressionMonomialSize = inputLR.linearRegressionMonomialSize;
+        linearRegressionkernelSize = inputLR.linearRegressionkernelSize;
+        linearRegressionkernel = std::move(inputLR.linearRegressionkernel);
+
+        return *this;
+    }
+
+    /*!
+     * \brief Destroy the dcpse object
+     * 
+     */
+    ~linearRegression() {}
+
+    /*!
      * \brief Compute the linear regression kernel weights 
      * 
      * \param idata    Input data points
@@ -222,6 +259,13 @@ class linearRegression
         linearRegressionkernelSize = 0;
         linearRegressionkernel.reset(nullptr);
     }
+
+  private:
+    // Make it noncopyable
+    linearRegression(linearRegression<T> const &) = delete;
+
+    // Make it not assignable
+    linearRegression<T> &operator=(linearRegression<T> const &) = delete;
 
   private:
     //! Dimensiononality
