@@ -4,19 +4,33 @@
 #define LINESIZE 256
 
 /*! \class parser
-* \brief parser is a class which prase string of data to seperate words
+* \brief This class prases string of data to seperate words
 *	
 */
 class parser
 {
   public:
     /*!
+     * \brief Construct a new parser object
+     * 
+     */
+    parser(){}
+
+    /*!
+     * \brief Destroy the parser object
+     * 
+     */
+    ~parser() {}
+
+    /*!
      * \brief parse a line to seperate arguments
      */
-    inline void parse(const std::string &line_)
+    void parse(std::string const &line_)
     {
-        char *line = (char *) &line_[0];
-        lineNum = 0;
+        char *line = const_cast<char *>(&line_[0]);
+
+        //At the start of parsing each line set the argument number to zero
+        lineArgNum = 0;
 
         /* if not the end of line ....... */
         while (*line != '\0')
@@ -26,29 +40,31 @@ class parser
                 line++;
             }
 
-            /* save the argument position */
-            lineArg[lineNum++] = line;
+            // Save the argument position
+            lineArg[lineArgNum++] = line;
 
-            /* skip the argument until ...*/
+            // Skip the argument until ...
             while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',')
             {
                 line++;
             }
         }
 
-        /* mark the end of argument list */
-        lineArg[lineNum] = NULL;
+        // Mark the end of argument list
+        lineArg[lineArgNum] = nullptr;
     }
 
     /*!
      * \brief parse a line to seperate arguments
      */
-    inline void parse(const char *line_)
+    void parse(const char *line_)
     {
-        char *line = (char *)line_;
-        lineNum = 0;
+        char *line = const_cast<char *>(line_);
 
-        /* if not the end of line ....... */
+        //At the start of parsing each line set the argument number to zero
+        lineArgNum = 0;
+
+        // if not the end of line .......
         while (*line != '\0')
         {
             while (*line == ' ' || *line == '\t' || *line == '\n' || *line == ':' || *line == ',')
@@ -56,18 +72,18 @@ class parser
                 line++;
             }
 
-            /* save the argument position */
-            lineArg[lineNum++] = line;
+            // Save the argument position
+            lineArg[lineArgNum++] = line;
 
-            /* skip the argument until ...*/
+            // Skip the argument until ...
             while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',')
             {
                 line++;
             }
         }
 
-        /* mark the end of argument list */
-        lineArg[lineNum] = NULL;
+        // Mark the end of argument list
+        lineArg[lineArgNum] = nullptr;
     }
 
     /*!
@@ -92,7 +108,7 @@ class parser
      * \return value of type T
      */
     template <typename T>
-    inline T parse(const char *lineArg_)
+    inline T &parse(const char *lineArg_)
     {
         T value;
         return parse<T>(lineArg_, value);
@@ -105,20 +121,38 @@ class parser
      * \return element @(id)
      */
     template <typename T>
-    inline T &at(std::size_t id)
+    inline T &at(std::size_t const id)
+    {
+        if (id >= lineArgNum)
+        {
+            throw(std::runtime_error("Wrong argument index number!"));
+        }
+
+        T rvalue;
+        return parse<T>(lineArg[id], rvalue);
+    }
+
+    /*!
+     * \brief access element at provided index @id with no check
+     * 
+     * param id requested id
+     * return element @(id)
+     */
+    template <typename T>
+    inline T &operator()(std::size_t const id)
     {
         T rvalue;
         return parse<T>(lineArg[id], rvalue);
     }
 
     /*!
-     * \brief access element at provided index 
+     * \brief access element at provided index @id with no check
      * 
      * param id requested id
      * return element @(id)
      */
     template <typename T>
-    inline T &operator()(std::size_t id)
+    inline T &operator[](std::size_t const id)
     {
         T rvalue;
         return parse<T>(lineArg[id], rvalue);
@@ -133,19 +167,35 @@ class parser
     }
 
   private:
+    //! Array of pointers to each word in the parsed line
     char *lineArg[LINESIZE];
-    std::size_t lineNum;
+
+    //! The number of last argument in the parsed line into different words
+    std::size_t lineArgNum;
+
+    //! Word as an rvalue in parsing string
     std::string svalue;
 };
 
+//Template specialization for string input
 template <>
-std::string &parser::at<std::string>(std::size_t id)
+std::string &parser::at<std::string>(std::size_t const id)
+{
+    if (id >= lineArgNum)
+    {
+        throw(std::runtime_error("Wrong argument index number!"));
+    }
+    return parse<std::string>(parser::lineArg[id], parser::svalue);
+}
+
+template <>
+std::string &parser::operator()<std::string>(std::size_t const id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }
 
 template <>
-std::string &parser::operator()<std::string>(std::size_t id)
+std::string &parser::operator[]<std::string>(std::size_t const id)
 {
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }

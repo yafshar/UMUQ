@@ -243,6 +243,13 @@ class ArrayWrapper
     inline std::size_t size() const { return iStride == 1 ? iNumOfElements : iNumOfElements / iStride; }
 
     /*!
+     * \brief Get the Stride
+     * 
+     * \return stride of the array
+     */
+    inline std::size_t stride() const { return iStride; }
+
+    /*!
      * \brief Swap with the input arraywrapper object
      * 
      * \param InputArrayWrapperObj 
@@ -254,6 +261,50 @@ class ArrayWrapper
         std::swap(iArray, InputArrayWrapperObj.iArray);
     }
 
+    /*!
+     * \brief Access element at provided index @id with checking bounds
+     * 
+     * \param  id Requested index 
+     * 
+     * \returns Element @(id)
+     */
+    inline T at(std::size_t const id) const
+    {
+        std::size_t const i = id * iStride;
+        return i < iNumOfElements ? iArray[i] : throw(std::runtime_error("Index out of bound!"));
+    }
+
+    /*!
+     * \brief Access element at provided index
+     * 
+     * \param id Requested id
+     * 
+     * \returns Element @(id)
+     */
+    inline T operator()(std::size_t const id) const
+    {
+        return iArray[id * iStride];
+    }
+
+    /*!
+     * \brief Access element at provided index
+     * 
+     * \param id Requested id
+     * 
+     * \returns Element @(id)
+     */
+    inline T operator[](std::size_t const id) const
+    {
+        return iArray[id * iStride];
+    }
+
+  private:
+    // make it noncopyable
+    ArrayWrapper(ArrayWrapper const &) = delete;
+
+    // make it not assignable
+    ArrayWrapper &operator=(const ArrayWrapper &) = delete;
+
   private:
     //! Pointer to the actual Input
     T const *iArray;
@@ -263,13 +314,6 @@ class ArrayWrapper
 
     //! stride
     std::size_t iStride;
-
-  private:
-    // make it noncopyable
-    ArrayWrapper(ArrayWrapper const &) = delete;
-
-    // make it not assignable
-    ArrayWrapper &operator=(const ArrayWrapper &) = delete;
 };
 
 #endif
