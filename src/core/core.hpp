@@ -84,6 +84,15 @@ extern "C" {
 #include <memory>
 #include <random>
 
+#ifdef HAVE_PYTHON
+#include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+#if PY_MAJOR_VERSION >= 3
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+
 /*!
  * \brief Namespace containing all symbols from the %UMUQ library. 
  */
