@@ -83,6 +83,7 @@ extern "C" {
 #include <system_error>
 #include <memory>
 #include <random>
+#include <map>
 
 #ifdef HAVE_PYTHON
 #include <Python.h>
