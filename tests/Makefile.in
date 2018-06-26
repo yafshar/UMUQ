@@ -95,9 +95,9 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
-	datatype_test$(EXEEXT)
+	eigen_io_test$(EXEEXT) matplotlib_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
+	database_test$(EXEEXT) datatype_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
@@ -105,9 +105,9 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
 	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
-	datatype_test$(EXEEXT)
+	eigen_io_test$(EXEEXT) matplotlib_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
+	database_test$(EXEEXT) datatype_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -171,6 +171,9 @@ am_linearregression_test_OBJECTS =  \
 	numerics/linearregression_test.$(OBJEXT)
 linearregression_test_OBJECTS = $(am_linearregression_test_OBJECTS)
 linearregression_test_LDADD = $(LDADD)
+am_matplotlib_test_OBJECTS = io/matplotlib_test.$(OBJEXT)
+matplotlib_test_OBJECTS = $(am_matplotlib_test_OBJECTS)
+matplotlib_test_LDADD = $(LDADD)
 am_multimin_test_OBJECTS = numerics/multimin_test.$(OBJEXT)
 multimin_test_OBJECTS = $(am_multimin_test_OBJECTS)
 multimin_test_LDADD = $(LDADD)
@@ -235,22 +238,22 @@ SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
 	$(knearestneighbors_test_SOURCES) \
-	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(linearregression_test_SOURCES) $(matplotlib_test_SOURCES) \
+	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
 	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
 	$(knearestneighbors_test_SOURCES) \
-	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
-	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(utility_test_SOURCES)
+	$(linearregression_test_SOURCES) $(matplotlib_test_SOURCES) \
+	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
+	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -647,6 +650,7 @@ array_test_SOURCES = misc/array_test.cpp
 funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
+matplotlib_test_SOURCES = io/matplotlib_test.cpp
 stdata_test_SOURCES = data/stdata_test.cpp
 runinfo_test_SOURCES = data/runinfo_test.cpp
 database_test_SOURCES = data/database_test.cpp
@@ -788,6 +792,12 @@ numerics/linearregression_test.$(OBJEXT): numerics/$(am__dirstamp) \
 linearregression_test$(EXEEXT): $(linearregression_test_OBJECTS) $(linearregression_test_DEPENDENCIES) $(EXTRA_linearregression_test_DEPENDENCIES) 
 	@rm -f linearregression_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(linearregression_test_OBJECTS) $(linearregression_test_LDADD) $(LIBS)
+io/matplotlib_test.$(OBJEXT): io/$(am__dirstamp) \
+	io/$(DEPDIR)/$(am__dirstamp)
+
+matplotlib_test$(EXEEXT): $(matplotlib_test_OBJECTS) $(matplotlib_test_DEPENDENCIES) $(EXTRA_matplotlib_test_DEPENDENCIES) 
+	@rm -f matplotlib_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(matplotlib_test_OBJECTS) $(matplotlib_test_LDADD) $(LIBS)
 numerics/multimin_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -853,6 +863,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/matplotlib_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/funcallcounter_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
@@ -1199,6 +1210,13 @@ io_test.log: io_test$(EXEEXT)
 eigen_io_test.log: eigen_io_test$(EXEEXT)
 	@p='eigen_io_test$(EXEEXT)'; \
 	b='eigen_io_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+matplotlib_test.log: matplotlib_test$(EXEEXT)
+	@p='matplotlib_test$(EXEEXT)'; \
+	b='matplotlib_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

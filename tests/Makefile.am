@@ -76,6 +76,9 @@ TESTS += eigen_io_test
 check_PROGRAMS += eigen_io_test
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
 
+TESTS += matplotlib_test
+check_PROGRAMS += matplotlib_test
+matplotlib_test_SOURCES = io/matplotlib_test.cpp
 
 #data
 TESTS += stdata_test
