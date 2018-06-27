@@ -102,6 +102,13 @@ third-party code under
 [MPL2](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.MPL2), [GPL](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.GPL), 
 [BSD](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD) and [BSD3](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD3) licenses.
 
+Contact us
+------------
+If something is not working as you think it should or would like it to, please get in touch with us! Further, if you have an algorithm or any idea that you would want to try using the UMUQ, please get in touch with us, we would be glad to help!
+
+[![Join the chat at https://gitter.im/UMUQ](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/UMUQ/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>
