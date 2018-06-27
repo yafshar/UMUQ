@@ -169,7 +169,7 @@ TEST(Matplotlib_test, HandlesFill_Between)
 // }
 
 //! TEST for histogram functionality
-TEST(Matplotlib_test2, HandlesHist)
+TEST(Matplotlib_test, HandlesHist)
 {
     std::string fileName = "./hist.png";
     std::remove(fileName.c_str());
@@ -194,8 +194,8 @@ TEST(Matplotlib_test2, HandlesHist)
     // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    // save figure
-    EXPECT_TRUE(plt.hist<double>(x, 50, true, "r", "Histogram", 0.5));
+    // histogram figure
+    EXPECT_TRUE(plt.hist<double>(x, 50, true, "", "Histogram", 1.0, 51, 255, 51));
 
     // Add graph title
     EXPECT_TRUE(plt.title("Histogram"));
@@ -203,11 +203,57 @@ TEST(Matplotlib_test2, HandlesHist)
     // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    // // Set x-axis to interval \f$ \[0,9\] \f$
-    // EXPECT_TRUE(plt.xlim<double>(-1., 11.));
+    // save figure
+    EXPECT_TRUE(plt.savefig(fileName));
 
-    // Set y-axis to interval \f$ \[0,1\] \f$
-    // EXPECT_TRUE(plt.ylim<double>(0, 400.));
+    // Delete the file
+    std::remove(fileName.c_str());
+}
+
+//! TEST for scatter functionality
+TEST(Matplotlib_test, HandlesScatter)
+{
+    std::string fileName = "./scatter.png";
+    std::remove(fileName.c_str());
+
+    // Prepare data.
+    int n = 100;
+
+    std::vector<double> x(n);
+    std::vector<double> y(n);
+    std::vector<double> s(1, 50);
+    std::vector<double> c(n);
+
+    // std::random_device rd;
+    std::mt19937 gen(123);
+    std::uniform_real_distribution<> dis(0, 1.0);
+    std::uniform_int_distribution<> idis(0, 255);
+
+    std::for_each(x.begin(), x.end(), [&](double &x_i) { x_i = dis(gen); });
+    std::for_each(y.begin(), y.end(), [&](double &y_i) { y_i = dis(gen); });
+    std::for_each(c.begin(), c.end(), [&](double &c_i) { c_i = idis(gen); });
+
+    // Prepare keywords to pass to PolyCollection. See
+    std::map<std::string, std::string> keywords;
+    keywords["marker"] = "o";
+
+    // Create an instance of the Pyplot from Matplotlib library
+    pyplot plt;
+
+    // Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    // Set the size of output image = 1200x780 pixels
+    EXPECT_TRUE(plt.figure(1200, 780));
+
+    // Create scatter plot
+    EXPECT_TRUE(plt.scatter<double>(x, y, s, c, keywords));
+
+    // Add graph title
+    EXPECT_TRUE(plt.title("Scatter"));
+
+    // Enable legend.
+    EXPECT_TRUE(plt.legend());
 
     // save figure
     EXPECT_TRUE(plt.savefig(fileName));
