@@ -1248,8 +1248,8 @@ class pyplot
          */
         ~matplotlib()
         {
-            //Undo all initializations made by Py_Initialize() and subsequent use
-            //of Python/C API functions, and destroy all sub-interpreters
+            // Undo all initializations made by Py_Initialize() and subsequent use
+            // of Python/C API functions, and destroy all sub-interpreters
             Py_Finalize();
         }
 
@@ -1361,7 +1361,7 @@ bool pyplot::annotate<double>(std::string const &annotation, double x, double y)
         PyTuple_SetItem(args, 0, str);
     }
 
-    //Create a new empty dictionary
+    // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
     {
         // Construct keyword args
@@ -1683,7 +1683,7 @@ inline bool pyplot::figure()
  */
 bool pyplot::figure(std::size_t const width, std::size_t const height, std::size_t const dpi)
 {
-    //Create a new empty dictionary
+    // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
     {
         // Construct keyword args
@@ -2390,10 +2390,10 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std
         return false;
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x);
         PyObject *yarray = PyArray<T>(y);
 
@@ -2458,10 +2458,10 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
         }
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
 
@@ -2509,10 +2509,10 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
 
@@ -2568,10 +2568,10 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string 
         return false;
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x);
         PyObject *yarray = PyArray<T>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -2639,10 +2639,10 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
         }
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -2693,10 +2693,10 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -2800,10 +2800,10 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         }
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
         PyObject *PyArrayS = s.size() > 1 ? PyArray<T>(s) : PyFloat_FromDouble(static_cast<double>(s[0]));
@@ -2870,10 +2870,10 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         return false;
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
         PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
@@ -3321,7 +3321,7 @@ bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
 
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -3375,7 +3375,7 @@ bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const
 {
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -3505,7 +3505,7 @@ bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
 
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -3559,7 +3559,7 @@ bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const
 {
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -3652,13 +3652,13 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << "Two vectors should have the same size!" << std::endl;
-        throw std::runtime_error("Two vectors of different sizes!");
+        return false;
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x);
         PyObject *yarray = PyArray<T>(y);
 
@@ -3724,10 +3724,10 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
         }
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
 
@@ -3776,10 +3776,10 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
 
@@ -3832,7 +3832,7 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string 
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
         std::cerr << "Two vectors should have the same size!" << std::endl;
-        throw std::runtime_error("Two vectors of different sizes!");
+        return false;
     }
 
     // Construct positional args
@@ -3906,10 +3906,10 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
         }
     }
 
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
         PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -3960,10 +3960,10 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        //Using numpy arrays
+        // Using numpy arrays
         PyObject *xarray = PyArray<T>(x, nSize);
         PyObject *yarray = PyArray<T>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
@@ -4008,7 +4008,7 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fm
  */
 bool pyplot::subplot(long const nrows, long const ncols, long const index)
 {
-    //Construct positional args
+    // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
         PyTuple_SetItem(args, 0, PyFloat_FromDouble(nrows));
@@ -4341,7 +4341,7 @@ pyplot::matplotlib::matplotlib()
             throw std::runtime_error("Error loading module matplotlib.pyplot!");
         }
 
-        //Decrementing of the reference count
+        // Decrementing of the reference count
         Py_DECREF(pyplotName);
     }
 
@@ -4370,11 +4370,11 @@ pyplot::matplotlib::matplotlib()
             throw std::runtime_error("Error loading pylab!");
         }
 
-        //Decrementing of the reference count
+        // Decrementing of the reference count
         Py_DECREF(pylabName);
     }
 
-    //Retrieve an attribute named annotate from object pyplotModule.
+    // Retrieve an attribute named annotate from object pyplotModule.
     pyannotate = PyObject_GetAttrString(pyplotModule, "annotate");
     if (!pyannotate)
     {
@@ -4388,7 +4388,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named show from object pyplotModule.
+    // Retrieve an attribute named show from object pyplotModule.
     pyshow = PyObject_GetAttrString(pyplotModule, "show");
     if (!pyshow)
     {
@@ -4403,7 +4403,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named close from object pyplotModule.
+    // Retrieve an attribute named close from object pyplotModule.
     pyclose = PyObject_GetAttrString(pyplotModule, "close");
     if (!pyclose)
     {
@@ -4417,7 +4417,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named draw from object pyplotModule.
+    // Retrieve an attribute named draw from object pyplotModule.
     pydraw = PyObject_GetAttrString(pyplotModule, "draw");
     if (!pydraw)
     {
@@ -4431,7 +4431,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named pause from object pyplotModule.
+    // Retrieve an attribute named pause from object pyplotModule.
     pypause = PyObject_GetAttrString(pyplotModule, "pause");
     if (!pypause)
     {
@@ -4445,7 +4445,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named figure from object pyplotModule.
+    // Retrieve an attribute named figure from object pyplotModule.
     pyfigure = PyObject_GetAttrString(pyplotModule, "figure");
     if (!pyfigure)
     {
@@ -4459,7 +4459,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named plot from object pyplotModule.
+    // Retrieve an attribute named plot from object pyplotModule.
     pyplot = PyObject_GetAttrString(pyplotModule, "plot");
     if (!pyplot)
     {
@@ -4473,7 +4473,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named semilogx from object pyplotModule.
+    // Retrieve an attribute named semilogx from object pyplotModule.
     pysemilogx = PyObject_GetAttrString(pyplotModule, "semilogx");
     if (!pysemilogx)
     {
@@ -4487,7 +4487,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named semilogy from object pyplotModule.
+    // Retrieve an attribute named semilogy from object pyplotModule.
     pysemilogy = PyObject_GetAttrString(pyplotModule, "semilogy");
     if (!pysemilogy)
     {
@@ -4501,7 +4501,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named loglog from object pyplotModule.
+    // Retrieve an attribute named loglog from object pyplotModule.
     pyloglog = PyObject_GetAttrString(pyplotModule, "loglog");
     if (!pyloglog)
     {
@@ -4515,7 +4515,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named fill_between from object pyplotModule.
+    // Retrieve an attribute named fill_between from object pyplotModule.
     pyfill_between = PyObject_GetAttrString(pyplotModule, "fill_between");
     if (!pyfill_between)
     {
@@ -4529,7 +4529,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named hist from object pyplotModule.
+    // Retrieve an attribute named hist from object pyplotModule.
     pyhist = PyObject_GetAttrString(pyplotModule, "hist");
     if (!pyhist)
     {
@@ -4543,7 +4543,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named subplot from object pyplotModule.
+    // Retrieve an attribute named subplot from object pyplotModule.
     pysubplot = PyObject_GetAttrString(pyplotModule, "subplot");
     if (!pysubplot)
     {
@@ -4557,7 +4557,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named legend from object pyplotModule.
+    // Retrieve an attribute named legend from object pyplotModule.
     pylegend = PyObject_GetAttrString(pyplotModule, "legend");
     if (!pylegend)
     {
@@ -4571,7 +4571,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named ylim from object pyplotModule.
+    // Retrieve an attribute named ylim from object pyplotModule.
     pyylim = PyObject_GetAttrString(pyplotModule, "ylim");
     if (!pyylim)
     {
@@ -4585,7 +4585,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named title from object pyplotModule.
+    // Retrieve an attribute named title from object pyplotModule.
     pytitle = PyObject_GetAttrString(pyplotModule, "title");
     if (!pytitle)
     {
@@ -4599,7 +4599,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named axis from object pyplotModule.
+    // Retrieve an attribute named axis from object pyplotModule.
     pyaxis = PyObject_GetAttrString(pyplotModule, "axis");
     if (!pyaxis)
     {
@@ -4613,7 +4613,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named xlabel from object pyplotModule.
+    // Retrieve an attribute named xlabel from object pyplotModule.
     pyxlabel = PyObject_GetAttrString(pyplotModule, "xlabel");
     if (!pyxlabel)
     {
@@ -4627,7 +4627,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named ylabel from object pyplotModule.
+    // Retrieve an attribute named ylabel from object pyplotModule.
     pyylabel = PyObject_GetAttrString(pyplotModule, "ylabel");
     if (!pyylabel)
     {
@@ -4641,7 +4641,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named grid from object pyplotModule.
+    // Retrieve an attribute named grid from object pyplotModule.
     pygrid = PyObject_GetAttrString(pyplotModule, "grid");
     if (!pygrid)
     {
@@ -4655,7 +4655,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named xlim from object pyplotModule.
+    // Retrieve an attribute named xlim from object pyplotModule.
     pyxlim = PyObject_GetAttrString(pyplotModule, "xlim");
     if (!pyxlim)
     {
@@ -4669,7 +4669,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named ion from object pyplotModule.
+    // Retrieve an attribute named ion from object pyplotModule.
     pyion = PyObject_GetAttrString(pyplotModule, "ion");
     if (!pyion)
     {
@@ -4683,7 +4683,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named savefig from object pylabModule.
+    // Retrieve an attribute named savefig from object pylabModule.
     pysavefig = PyObject_GetAttrString(pylabModule, "savefig");
     if (!pysavefig)
     {
@@ -4697,7 +4697,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named scatter from object pyplotModule.
+    // Retrieve an attribute named scatter from object pyplotModule.
     pyscatter = PyObject_GetAttrString(pyplotModule, "scatter");
     if (!pyscatter)
     {
@@ -4711,7 +4711,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named cla from object pyplotModule.
+    // Retrieve an attribute named cla from object pyplotModule.
     pycla = PyObject_GetAttrString(pyplotModule, "cla");
     if (!pycla)
     {
@@ -4725,7 +4725,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named clf from object pyplotModule.
+    // Retrieve an attribute named clf from object pyplotModule.
     pyclf = PyObject_GetAttrString(pyplotModule, "clf");
     if (!pyclf)
     {
@@ -4739,7 +4739,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named errorbar from object pyplotModule.
+    // Retrieve an attribute named errorbar from object pyplotModule.
     pyerrorbar = PyObject_GetAttrString(pyplotModule, "errorbar");
     if (!pyerrorbar)
     {
@@ -4753,7 +4753,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named tight_layout from object pyplotModule.
+    // Retrieve an attribute named tight_layout from object pyplotModule.
     pytight_layout = PyObject_GetAttrString(pyplotModule, "tight_layout");
     if (!pytight_layout)
     {
@@ -4767,7 +4767,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named stem from object pyplotModule.
+    // Retrieve an attribute named stem from object pyplotModule.
     pystem = PyObject_GetAttrString(pyplotModule, "stem");
     if (!pystem)
     {
@@ -4781,7 +4781,7 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-    //Retrieve an attribute named xkcd from object pyplotModule.
+    // Retrieve an attribute named xkcd from object pyplotModule.
     pyxkcd = PyObject_GetAttrString(pyplotModule, "xkcd");
     if (!pyxkcd)
     {
