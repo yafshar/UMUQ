@@ -299,6 +299,13 @@ class pyplot
     ~pyplot() {}
 
     /*!
+     * \brief Get the name of the current backend
+     * 
+     * \return The name of the current backend
+     */
+    inline std::string get_backend();
+
+    /*!
      * \brief Annotate the point xy with text s
      * 
      * \tparam Data type
@@ -1293,6 +1300,9 @@ class pyplot
         matplotlib &operator=(matplotlib const &) = delete;
 
       public:
+        //!
+        PyObject *pyget_backend;
+
         //! Tuple object
         PyObject *pyEmpty;
 
@@ -1366,6 +1376,25 @@ class pyplot
 
 //! An instance of matplotlib object
 pyplot::matplotlib pyplot::mpl;
+
+/*!
+ * \brief Get the name of the current backend
+ * 
+ * \return The name of the current backend
+ */
+inline std::string pyplot::get_backend()
+{
+    PyObject *res = PyObject_CallObject(pyplot::mpl.pyget_backend, pyplot::mpl.pyEmpty);
+    if (res)
+    {
+        std::string backendName = PyString_AsString(res);
+        Py_DECREF(res);
+        return backendName;
+    }
+    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+    std::cerr << "Couldn't get the name of the current backend!" << std::endl;
+    return static_cast<std::string>("Error: Couldn't get the name of the current backend!");
+}
 
 /*!
  * \brief Annotate the point xy with text s
@@ -4322,7 +4351,7 @@ pyplot::matplotlib::matplotlib()
     char name[] = "umuq";
 #endif
 
-    // Pass name to the Python 
+    // Pass name to the Python
     Py_SetProgramName(name);
 
     // Initialize the Python. Required.
@@ -4411,6 +4440,24 @@ pyplot::matplotlib::matplotlib()
         // Decrementing of the reference count
         Py_DECREF(pylabName);
     }
+
+    // Retrieve an attribute named get_backend from object matplotlibModule.
+    pyget_backend = PyObject_GetAttrString(matplotlibModule, "get_backend");
+    if (!pyget_backend)
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Couldn't find get_backend function!" << std::endl;
+        throw std::runtime_error("Couldn't find get_backend function!");
+    }
+    if (!PyFunction_Check(pyget_backend))
+    {
+        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
+        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
+    }
+
+    //Return a new tuple object of size 0
+    pyEmpty = PyTuple_New(0);
 
     // Retrieve an attribute named annotate from object pyplotModule.
     pyannotate = PyObject_GetAttrString(pyplotModule, "annotate");
@@ -4833,9 +4880,6 @@ pyplot::matplotlib::matplotlib()
         std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
         throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
     }
-
-    //Return a new tuple object of size 0
-    pyEmpty = PyTuple_New(0);
 }
 
 /*!
