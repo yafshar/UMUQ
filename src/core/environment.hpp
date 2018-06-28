@@ -59,14 +59,6 @@ class torcEnvironment
     virtual ~torcEnvironment() {}
 };
 #else
-
-void torc_init(int argc, char *argv[], int ms);
-void torc_reset_statistics();
-int torc_i_worker_id(void);
-int torc_i_num_workers();
-int torc_worker_id();
-int torc_num_workers();
-int torc_getlevel();
 #define CALL_BY_COP (int)(0x0001)
 #define CALL_BY_REF (int)(0x0002)
 #define CALL_BY_RES (int)(0x0003)
@@ -74,6 +66,16 @@ int torc_getlevel();
 #define CALL_BY_VAL (int)(0x0001)
 #define CALL_BY_COP2 (int)(0x0005)
 #define CALL_BY_VAD (int)(0x0006)
+
+void torc_init(int argc, char *argv[], int ms);
+void torc_reset_statistics();
+
+int torc_i_worker_id(void);
+int torc_i_num_workers();
+int torc_worker_id();
+int torc_num_workers();
+int torc_getlevel();
+
 void torc_enable_stealing();
 void torc_disable_stealing();
 void torc_i_enable_stealing();
@@ -85,15 +87,19 @@ void torc_waitall();
 void torc_waitall2();
 void torc_waitall3();
 void torc_tasksync();
+
 int torc_scheduler_loop(int);
+
 void torc_task(int queue, void (*f)(), int narg, ...);
 void torc_task_detached(int queue, void (*f)(), int narg, ...);
 void torc_task_ex(int queue, int invisible, void (*f)(), int narg, ...);
 void torc_task_direct(int queue, void (*f)(), int narg, ...);
+
 #define torc_create torc_task
 #define torc_create_detached torc_task_detached
 #define torc_create_ex torc_task_ex
 #define torc_create_direct torc_task_direct
+
 int torc_node_id();
 int torc_num_nodes();
 void torc_broadcast(void *a, long count, MPI_Datatype dtype);
