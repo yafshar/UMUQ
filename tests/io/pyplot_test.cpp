@@ -30,6 +30,8 @@ TEST(Pyplot_test, HandlesBasic)
     //Create an instance of the Pyplot from Pyplot library
     pyplot plt;
 
+    std::cout << plt.get_backend() << std::endl;
+
     // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
@@ -99,6 +101,12 @@ TEST(Pyplot_test, HandlesFill_Between)
 
     // Add graph title
     EXPECT_TRUE(plt.title("Fill_between"));
+
+    // Plot line from given x and y data. Color is selected automatically.
+    EXPECT_TRUE(plt.plot<double>(x, y, "b:", "cos(x)"));
+
+    // Plot a red dashed line from given x and z data and show up as "log(x)" in the legend
+    EXPECT_TRUE(plt.plot<double>(x, z, "r--", "sin(x) + cos(x)"));
 
     // save figure
     EXPECT_TRUE(plt.fill_between<double>(x, y, z, keywords));
@@ -212,7 +220,7 @@ TEST(Pyplot_test, HandlesHist)
 //! TEST for scatter functionality
 TEST(Pyplot_test, HandlesScatter)
 {
-    std::string fileName = "./scatter.png";
+    std::string fileName = "./scatter.svg";
     std::remove(fileName.c_str());
 
     // Prepare data.
