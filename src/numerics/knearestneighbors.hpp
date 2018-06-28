@@ -162,14 +162,14 @@ class kNearestNeighbor
     {
         flann::Matrix<T> dataset(idata, drows, cols);
 
-        //Construct an randomized kd-tree index using 4 kd-trees
-        //For the number of parallel kd-trees to use (Good values are in the range [1..16])
+        // Construct an randomized kd-tree index using 4 kd-trees
+        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
         flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
         index.buildIndex();
 
-        //Do a knn search, using 128 checks
-        //Number of checks means: How many leafs to visit when searching
-        //for neighbours (-1 for unlimited)
+        // Do a knn search, using 128 checks
+        // Number of checks means: How many leafs to visit when searching
+        // for neighbours (-1 for unlimited)
         index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
     }
 
@@ -183,16 +183,16 @@ class kNearestNeighbor
     {
         flann::Matrix<T> dataset(idata, drows, cols);
 
-        //Construct an randomized kd-tree index using 4 kd-trees
-        //For the number of parallel kd-trees to use (Good values are in the range [1..16])
+        // Construct an randomized kd-tree index using 4 kd-trees
+        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
         flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
         index.buildIndex();
 
         flann::Matrix<T> query(qdata, qrows, cols);
 
-        //Do a knn search, using 128 checks
-        //Number of checks means: How many leafs to visit when searching
-        //for neighbours (-1 for unlimited)
+        // Do a knn search, using 128 checks
+        // Number of checks means: How many leafs to visit when searching
+        // for neighbours (-1 for unlimited)
         index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
 
         if (!checkNearestNeighbors())
@@ -211,7 +211,7 @@ class kNearestNeighbor
      */
     inline int *NearestNeighbors(int const &index) const
     {
-        //+1 is that we do not want the index of the point itself
+        // +1 is that we do not want the index of the point itself
         return indices_ptr.get() + index * nn + the_same;
     }
 
@@ -248,7 +248,7 @@ class kNearestNeighbor
      */
     inline T *NearestNeighborsDistances(int const &index) const
     {
-        //+1 is that we do not want the index of the point itself
+        // +1 is that we do not want the index of the point itself
         return dists_ptr.get() + index * nn + the_same;
     }
 
@@ -377,8 +377,8 @@ class kNearestNeighbor
     bool the_same;
 };
 
-//TODO : Somehow the specialized template did not work.
-//FIXME: to the correct templated version
+// TODO : Somehow the specialized template did not work.
+// FIXME: to the correct templated version
 
 /*! \class L2NearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces using L2 distance functor
@@ -487,4 +487,4 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 // };
 // }
 
-#endif //UMUQ_FLANNLIB_H
+#endif // UMUQ_FLANNLIB_H

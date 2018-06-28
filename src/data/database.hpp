@@ -359,7 +359,7 @@ public:
    */
   inline bool sort()
   {
-    //Allocate memory
+    // Allocate memory
     try
     {
       list.reset(new sortType[entries]);
@@ -371,14 +371,14 @@ public:
       return false;
     }
 
-    //Get the pointer
+    // Get the pointer
     int *nsel = nSelection.get();
     std::size_t *idx = idxNumber.get();
 
-    //Fill the list
+    // Fill the list
     std::for_each(list.get(), list.get() + entries, [&](sortType &si) {si.nsel = *nsel++; si.idx = *idx++; });
 
-    //Sort the list using standard library quick sort
+    // Sort the list using standard library quick sort
     std::qsort(list.get(), entries, sizeof(sortType), [](const void *p1, const void *p2) {
       sortType const *s1 = static_cast<sortType const *>(p1);
       sortType const *s2 = static_cast<sortType const *>(p2);
@@ -386,14 +386,14 @@ public:
       return (s2->nsel - s1->nsel);
     });
 
-    //Get the pointer
+    // Get the pointer
     nsel = nSelection.get();
     idx = idxNumber.get();
 
-    //Correct the arrays based on the sorted list
+    // Correct the arrays based on the sorted list
     std::for_each(list.get(), list.get() + entries, [&](sortType &si) {*nsel = si.nsel; *idx = si.idx; nsel++; idx++; });
 
-    //Free the memory
+    // Free the memory
     list.reset();
   }
 
@@ -409,18 +409,18 @@ public:
 
       io f;
 
-      //Define the printing format
+      // Define the printing format
       ioFormat poFormat = {",", "", "POINT(", ") "};
       ioFormat fvFormat = {"", "", "Fvalue=", " "};
       ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
 
-      //Getting the maximum width in the data for nice printing
+      // Getting the maximum width in the data for nice printing
       int pWidth = f.getWidth<T>(Parray, entries, ndimParray, std::cout);
       int fWidth = f.getWidth<T>(Fvalue, entries, 1, std::cout);
       int Width = std::max<int>(pWidth, fWidth);
       int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
 
-      //Array wrapper on the data
+      // Array wrapper on the data
       ArrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
       ArrayWrapper<T> FvalueWrapper(Fvalue, entries);
       ArrayWrapper<int> SurrogateWrapper(Surrogate, entries);
@@ -495,7 +495,7 @@ public:
       {
         if (ndimGarray > 0)
         {
-          //Getting the maximum width in the data for nice printing
+          // Getting the maximum width in the data for nice printing
           {
             int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
             int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());
@@ -516,7 +516,7 @@ public:
         }
         else
         {
-          //Getting the maximum width in the data for nice printing
+          // Getting the maximum width in the data for nice printing
           {
             int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
             int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());

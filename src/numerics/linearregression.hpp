@@ -81,10 +81,10 @@ class linearRegression
             return false;
         }
 
-        //Create an instance of a polynomial object with polynomial order
+        // Create an instance of a polynomial object with polynomial order
         polynomial<T> poly(nDim, polynomialOrder);
 
-        //Get the monomials size
+        // Get the monomials size
         linearRegressionMonomialSize = poly.monomialsize();
 
         if (linearRegressionMonomialSize > linearRegressionkernelSize)
@@ -92,7 +92,7 @@ class linearRegression
             linearRegressionkernelSize = linearRegressionMonomialSize;
             try
             {
-                //Make sure of the correct kernel size
+                // Make sure of the correct kernel size
                 linearRegressionkernel.reset(new T[linearRegressionkernelSize]);
             }
             catch (std::bad_alloc &e)
@@ -107,36 +107,36 @@ class linearRegression
             linearRegressionkernelSize = linearRegressionMonomialSize;
         }
 
-        //Right hand side vector
+        // Right hand side vector
         TEMapVectorX<T> BV(iFvalue, nPoints);
 
-        //Matrix A
+        // Matrix A
         EMatrixX<T> AM(nPoints, linearRegressionMonomialSize);
 
-        //Solution vector
+        // Solution vector
         T *sv = linearRegressionkernel.get();
         TEMapVectorX<T> SV(sv, linearRegressionMonomialSize);
 
-        //dummy array of data
+        // dummy array of data
         std::unique_ptr<T[]> rowData(new T[linearRegressionMonomialSize]);
         T *rowdata = rowData.get();
 
-        //Loop over all query points
+        // Loop over all query points
         for (int i = 0; i < nPoints; i++)
         {
-            //Index in idata array
+            // Index in idata array
             std::ptrdiff_t const IdI = i * nDim;
 
-            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+            // Evaluates a monomial at a point \f$ {\mathbf x} \f$
             poly.monomial_value(idata + IdI, rowdata);
 
-            //Loop through the neighbors
+            // Loop through the neighbors
             for (int j = 0; j < linearRegressionMonomialSize; j++)
             {
                 AM(i, j) = rowData[j];
             }
 
-        } //Loop over all points
+        } // Loop over all points
 
         {
             /*
@@ -169,7 +169,7 @@ class linearRegression
      */
     bool solve(T *qdata, T *qFvalue, int const nqPoints)
     {
-        //Create an instance of a polynomial object with polynomial order
+        // Create an instance of a polynomial object with polynomial order
         polynomial<T> poly(nDim, polynomialOrder);
 
         if (poly.monomialsize() != linearRegressionkernelSize)
@@ -193,22 +193,22 @@ class linearRegression
             }
         }
 
-        //Get the pointer to the kernel weights
+        // Get the pointer to the kernel weights
         T *sv = linearRegressionkernel.get();
 
-        //dummy array of data
+        // dummy array of data
         std::unique_ptr<T[]> rowData(new T[linearRegressionMonomialSize]);
         T *rowdata;
 
-        //Loop over all query points
+        // Loop over all query points
         for (int i = 0; i < nqPoints; i++)
         {
-            //Index in qdata array
+            // Index in qdata array
             std::ptrdiff_t const IdI = i * nDim;
 
             rowdata = rowData.get();
 
-            //Evaluates a monomial at a point \f$ {\mathbf x} \f$
+            // Evaluates a monomial at a point \f$ {\mathbf x} \f$
             poly.monomial_value(qdata + IdI, rowdata);
 
             T sum(0);
@@ -227,7 +227,7 @@ class linearRegression
      */
     inline int minPointsRequired()
     {
-        //Create an instance of a polynomial object with polynomial order
+        // Create an instance of a polynomial object with polynomial order
         polynomial<T> poly(nDim, polynomialOrder);
         /* 
          * Get the monomials size
@@ -271,7 +271,7 @@ class linearRegression
     //! Dimensiononality
     int nDim;
 
-    //Polynomial order
+    //! Polynomial order
     int polynomialOrder;
 
     //! The monomial size
@@ -284,4 +284,4 @@ class linearRegression
     std::unique_ptr<T[]> linearRegressionkernel;
 };
 
-#endif //UMUQ_LINEARREGRESSION_H
+#endif // UMUQ_LINEARREGRESSION_H

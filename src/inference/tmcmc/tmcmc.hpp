@@ -88,7 +88,7 @@ public:
   //! Experimental data pointer
   database<T> *expData;
 
-  //Running data
+  //! Running data
   runinfo<T> runData;
 
   //! stream data for getting the problem size and variables from the input file

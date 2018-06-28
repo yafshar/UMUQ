@@ -111,7 +111,7 @@ class runinfo
 			return false;
 		}
 
-		//set the first value to a high number
+		// set the first value to a high number
 		CoefVar[0] = std::numeric_limits<T>::max();
 
 		return true;
@@ -161,11 +161,11 @@ class runinfo
      */
 	bool save(const char *fileName = "runinfo.txt")
 	{
-		//Create an instance of the IO object
+		// Create an instance of the IO object
 		io f;
 		if (f.openFile(fileName, f.out | f.trunc))
 		{
-			//Get the IO stream
+			// Get the IO stream
 			std::fstream &fs = f.getFstream();
 			bool tmp = true;
 
@@ -216,11 +216,11 @@ class runinfo
      */
 	bool load(const char *fileName = "runinfo.txt")
 	{
-		//Create an instance of the IO object
+		// Create an instance of the IO object
 		io f;
 		if (f.openFile(fileName, f.in))
 		{
-			//Create an instance of the parser object
+			// Create an instance of the parser object
 			parser prs;
 			bool tmp;
 

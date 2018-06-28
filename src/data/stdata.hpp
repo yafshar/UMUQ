@@ -533,7 +533,7 @@ bool stdata<T>::load(const char *fname)
 			int maxgens = maxGenerations;
 			int datanum = populationSize;
 
-			//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+			// read each line in the file and skip all the commented and empty line with the defaukt comment "#"
 			while (f.readLine())
 			{
 				// Parse the line into line arguments
@@ -564,7 +564,7 @@ bool stdata<T>::load(const char *fname)
 
 			f.rewindFile();
 
-			//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+			// read each line in the file and skip all the commented and empty line with the defaukt comment "#"
 			while (f.readLine())
 			{
 				// Parse the line into line arguments
@@ -651,7 +651,7 @@ bool stdata<T>::load(const char *fname)
 					}
 				}
 
-				//In case we do not find the value, we use the default lower bound and upper bound
+				// In case we do not find the value, we use the default lower bound and upper bound
 				if (!found)
 				{
 					lowerBound[n] = lb;
