@@ -84,7 +84,9 @@ extern "C" {
 #include <memory>
 #include <random>
 #include <map>
+#include <mutex>
 
+#define HAVE_PYTHON 0
 #ifdef HAVE_PYTHON
 #include <Python.h>
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
