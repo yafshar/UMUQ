@@ -136,7 +136,7 @@ void funcallcounter::count()
     catch (std::bad_alloc &e)
     {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
         throw(std::runtime_error("Failed to allocate memory !"));
     }
 

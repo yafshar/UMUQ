@@ -56,7 +56,7 @@ class kNearestNeighbor
         if (drows < nn)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
+            std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
             throw(std::runtime_error("Not enough points!"));
         }
     }
@@ -82,7 +82,7 @@ class kNearestNeighbor
         if (drows < nn)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
+            std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
             throw(std::runtime_error("Not enough points!"));
         }
     }
@@ -280,7 +280,7 @@ class kNearestNeighbor
         catch (std::bad_alloc &e)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
             return nullptr;
         }
 

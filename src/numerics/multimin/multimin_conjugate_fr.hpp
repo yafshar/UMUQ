@@ -56,7 +56,7 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
         catch (std::bad_alloc &e)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
             return false;
         }
 
@@ -150,8 +150,8 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
             std::fill(dx, dx + n, T{});
 
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
+            std::cerr << "The minimizer is unable to improve on its current estimate, either due" << std::endl;
+            std::cerr << "to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
             return false;
         }
 
@@ -196,8 +196,8 @@ class conjugate_fr : public multimin_fdfminimizer_type<T, conjugate_fr<T, TMFD>,
         if (stepb == T{})
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
+            std::cerr << "The minimizer is unable to improve on its current estimate, either due" << std::endl;
+            std::cerr << "to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
 
             return false;
         }

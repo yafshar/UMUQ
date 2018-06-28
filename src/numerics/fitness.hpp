@@ -57,7 +57,7 @@ class fitness
         if (!setMetricName(metric))
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Error fitness is unknown : By default it is set to sum_squared" << std::endl;
+            std::cerr << "Error fitness is unknown : By default it is set to sum_squared" << std::endl;
 
             fitnessResidual.set(SquredError);
             errorFit = errorFitSum;
@@ -171,7 +171,7 @@ class fitness
             catch (std::bad_alloc &e)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
                 return false;
             }
         }
@@ -194,7 +194,7 @@ class fitness
             catch (std::bad_alloc &e)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
                 return false;
             }
         }
@@ -223,7 +223,7 @@ class fitness
         catch (std::bad_alloc &e)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+            std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
             return std::numeric_limits<T>::max();
         }
 
@@ -299,7 +299,7 @@ class fitness
                 else
                 {
                     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Error fitness is unknown : " << std::endl;
+                    std::cerr << "Error fitness is unknown : " << std::endl;
                     throw(std::runtime_error("Unknown fitness type!"));
                 }
 

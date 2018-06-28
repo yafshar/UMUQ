@@ -45,7 +45,7 @@ public:
     if (!std::is_floating_point<T>::value)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " This type is not supported in this class!" << std::endl;
+      std::cerr << "This type is not supported in this class!" << std::endl;
       throw(std::runtime_error("Wrong type!"));
     }
 
@@ -67,7 +67,7 @@ public:
     if (!std::is_floating_point<T>::value)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " This class only supports float, double & long double type!" << std::endl;
+      std::cerr << "This class only supports float, double & long double type!" << std::endl;
       throw(std::runtime_error("Wrong type!"));
     }
 
@@ -95,7 +95,7 @@ public:
     if (!std::is_floating_point<T>::value)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " This type is not supported in this class!" << std::endl;
+      std::cerr << "This type is not supported in this class!" << std::endl;
       throw(std::runtime_error("Wrong type!"));
     }
 
@@ -173,7 +173,7 @@ public:
     if (nSize < 0)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " Wrong input size! " << std::endl;
+      std::cerr << "Wrong input size! " << std::endl;
       return false;
     }
 
@@ -182,7 +182,7 @@ public:
     if (entries == 0)
     {
       std::cerr << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " No entries -> Reseting the databse object to size 0! " << std::endl;
+      std::cerr << "No entries -> Reseting the databse object to size 0! " << std::endl;
 
       Parray.reset();
       Garray.reset();
@@ -203,7 +203,7 @@ public:
       catch (std::bad_alloc &e)
       {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
         return false;
       }
     }
@@ -221,7 +221,7 @@ public:
       catch (std::bad_alloc &e)
       {
         std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
         return false;
       }
     }
@@ -240,7 +240,7 @@ public:
     catch (std::bad_alloc &e)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+      std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
       return false;
     }
 
@@ -280,12 +280,12 @@ public:
         return true;
       }
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " Task Pointer is not assigend to the external function! " << std::endl;
+      std::cerr << "Task Pointer is not assigend to the external function! " << std::endl;
       return false;
     }
     std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " MPI is not initialized! " << std::endl;
-    std::cerr << " You should Initialize torc first! " << std::endl;
+    std::cerr << "MPI is not initialized! " << std::endl;
+    std::cerr << "You should Initialize torc first! " << std::endl;
     return false;
   }
 
@@ -367,7 +367,7 @@ public:
     catch (std::bad_alloc &e)
     {
       std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+      std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
       return false;
     }
 

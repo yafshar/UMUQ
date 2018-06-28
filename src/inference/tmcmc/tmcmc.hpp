@@ -5,6 +5,8 @@
 #include "data/datatype.hpp"
 #include "data/runinfo.hpp"
 
+#include "io/io.hpp"
+
 template <typename T>
 class tmcmc
 {
@@ -22,17 +24,17 @@ public:
     if (Data.load(inputFilename))
     {
       {
-        //Creating a temporary database
+        // Creating a temporary database
         database<T> d(Data.nDim, Data.maxGenerations);
         Data1<T> = std::move(d);
 
-        //Set the pointer to the created databse object
+        // Set the pointer to the created databse object
         currentData = &Data1<T>;
 
-        //Set the update Task function to be used for updating on multi threads or processors
+        // Set the update Task function to be used for updating on multi threads or processors
         currentData->setTask(updateTask1<T>);
 
-        //Initilize the update Task 
+        // Initilize the update Task
         if (!currentData->registerTask())
         {
           return false;
@@ -40,17 +42,17 @@ public:
       }
 
       {
-        //Creating a temporary database
+        // Creating a temporary database
         database<T> d(Data.nDim, Data.maxGenerations);
         Data2<T> = std::move(d);
 
-        //Set the pointer to the created databse object
+        // Set the pointer to the created databse object
         fullData = &Data2<T>;
 
-        //Set the update Task function to be used for updating on multi threads or processors
+        // Set the update Task function to be used for updating on multi threads or processors
         fullData->setTask(updateTask2<T>);
 
-        //Initilize the update Task 
+        // Initilize the update Task
         if (!fullData->registerTask())
         {
           return false;
@@ -60,10 +62,8 @@ public:
       if (runData.reset(Data.nDim, Data.maxGenerations))
       {
 
-
         return true;
       }
-
 
       return false;
     }
@@ -73,18 +73,6 @@ public:
   inline void setInputFileName(std::string const &fileName = "tmcmc.par")
   {
     inputFilename = fileName;
-  }
-
-private:
-  /*!
-   * \brief Check to see whether the file fileName exists and accessible to read or write!
-   *  
-   * \returns true if the file exists 
-   */
-  inline bool isFileExist(const char *fileName)
-  {
-    struct stat buffer;
-    return (stat(fileName, &buffer) == 0);
   }
 
 public:

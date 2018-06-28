@@ -598,15 +598,14 @@ struct stats
      * \param imean  Mean of idata array
      * \param jmean  Mean of jdata array
      * 
-     * \returns covariance between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors     
      */
     template <typename T, typename TOut = double>
     TOut covariance(T const *idata, T const *jdata, int const nSize, T const imean, T const jmean)
     {
         //TODO If the data size is too big, maybe we should force long double
-
         TOut Covariance(0);
-        for (std::size_t i = 0; i < nSize; i++)
+        for (int i = 0; i < nSize; i++)
         {
             TOut const d1 = idata[i] - imean;
             TOut const d2 = jdata[i] - jmean;
@@ -627,13 +626,13 @@ struct stats
      * \param imean   Mean of iArray 
      * \param jmean   Mean of jArray
      * 
-     * \returns covariance between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors     
      */
     template <typename T, typename TOut = double>
     TOut covariance(ArrayWrapper<T> const &iArray, ArrayWrapper<T> const &jArray, T const imean, T const jmean)
     {
         TOut Covariance(0);
-        std::size_t iSize = 1;
+        int iSize = 1;
         for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
         {
             TOut const d1 = *i - imean;
@@ -658,7 +657,7 @@ struct stats
      * \param nSize  Size of array
      * \param Stride sride of the data in the array (default is 1)
      * 
-     * \returns covariance between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors     
      */
     template <typename T, typename TOut = double>
     TOut covariance(T const *idata, T const *jdata, int const nSize, std::size_t const Stride = 1)
@@ -667,13 +666,12 @@ struct stats
         T jmean = mean<T, T>(jdata, nSize, Stride);
 
         TOut Covariance(0);
-
         if (Stride != 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
             ArrayWrapper<T> jArray(jdata, nSize, Stride);
 
-            std::size_t iSize = 1;
+            int iSize = 1;
             for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
             {
                 TOut const d1 = *i - imean;
@@ -687,7 +685,7 @@ struct stats
             return iSize > 1 ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
         }
 
-        for (std::size_t i = 0; i < nSize; i++)
+        for (int i = 0; i < nSize; i++)
         {
             TOut const d1 = idata[i] - imean;
             TOut const d2 = jdata[i] - jmean;
@@ -707,7 +705,7 @@ struct stats
      * \param iArray  Array of data 
      * \param jArray  Array of data
      * 
-     * \returns covariance between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors     
      */
     template <typename T, typename TOut = double>
     TOut covariance(ArrayWrapper<T> const &iArray, ArrayWrapper<T> const &jArray)
@@ -716,7 +714,7 @@ struct stats
         T const jmean = mean<T, T>(jArray);
 
         TOut Covariance(0);
-        std::size_t iSize = 1;
+        int iSize = 1;
         for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
         {
             TOut const d1 = *i - imean;
@@ -731,33 +729,45 @@ struct stats
     }
 
     /*!
-     * \brief Compute the covariance array of N-dimensional idata and jdata which must both be of the same length nSize
+     * \brief Compute the covariance array of N-dimensional idata
      * 
      * \tparam T     Data type (should be double or long double) 
      * \tparam TOut  Data type of the return output result (default is double)
      * 
      * \param idata  Array of N-dimensional data 
-     * \param nSize  Size of the array
-     * \param Stride sride of the data in the array (default is 1). 
+     * \param nSize  Total size of the array
+     * \param nDim   Data dimension
+     * \param Stride Sride of the data in the array (default is 1). 
      * 
      * The reason for having parameter stride is the case where we have coordinates and function value 
-     * and would like to avoid copying the data 
+     * and would like to avoid unnecessary copying the data 
      * 
-     * \returns covariance array of N-dimensional idata and jdata
+     * \returns Covariance (array of N by N) from N-dimensional idata
      */
     template <typename T, typename TOut = double>
     TOut *covariance(T const *idata, int const nSize, int const nDim, std::size_t const Stride = 1)
     {
-        TOut *Covariance = new TOut[nDim * nDim]();
+        TOut *Covariance;
+		try
+		{
+			Covariance = new TOut[nDim * nDim]();
+		}
+		catch (std::bad_alloc &e)
+		{
+			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			return nullptr;
+		}
 
         std::vector<T> imean(nDim);
 
         //We should make sure of the correct stride
-        std::size_t const stride = Stride > nDim ? Stride : nDim;
+        std::size_t const stride = Stride > static_cast<std::size_t>(nDim) ? Stride : static_cast<std::size_t>(nDim);
 
-        for (int d = 0; d < nDim; d++)
+        //Compute the mean for each dimension
+        for (int i = 0; i < nDim; i++)
         {
-            imean[d] = mean<T, T>(idata + d, nSize, stride);
+            imean[i] = mean<T, T>(idata + i, nSize, stride);
         }
 
         for (int i = 0; i < nDim; i++)

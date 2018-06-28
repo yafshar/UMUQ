@@ -107,7 +107,7 @@ class runinfo
 		catch (std::bad_alloc &e)
 		{
 			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
 			return false;
 		}
 

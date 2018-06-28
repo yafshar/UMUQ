@@ -127,7 +127,7 @@ class stdata
 		catch (std::bad_alloc &e)
 		{
 			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
 			throw(std::runtime_error("Failed to allocate memory!"));
 		}
 
@@ -354,7 +354,7 @@ class stdata
 		catch (std::bad_alloc &e)
 		{
 			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
 			return false;
 		}
 
@@ -521,199 +521,122 @@ bool stdata<T>::load(const char *fname)
 {
 	// We use an IO object to open and read a file
 	io f;
-
-	if (f.openFile(fname, f.in))
+	if (f.FileExists(fname))
 	{
-		// We need a parser object to parse
-		parser p;
-
-		//! These are temporary variables
-		int probdim = nDim;
-		int maxgens = maxGenerations;
-		int datanum = populationSize;
-
-		//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
-		while (f.readLine())
+		if (f.openFile(fname, f.in))
 		{
-			// Parse the line into line arguments
-			p.parse(f.getLine());
+			// We need a parser object to parse
+			parser p;
 
-			if (p.at<std::string>(0) == "nDim")
-			{
-				nDim = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "maxGenerations")
-			{
-				maxGenerations = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "populationSize")
-			{
-				populationSize = p.at<int>(1);
-			}
-		}
+			//! These are temporary variables
+			int probdim = nDim;
+			int maxgens = maxGenerations;
+			int datanum = populationSize;
 
-		bool linit = !(probdim == nDim && maxgens == maxGenerations && datanum == populationSize);
-		if (linit)
-		{
-			if (!reset(nDim, maxGenerations, populationSize))
-			{
-				return false;
-			}
-		}
-
-		f.rewindFile();
-
-		//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
-		while (f.readLine())
-		{
-			// Parse the line into line arguments
-			p.parse(f.getLine());
-
-			if (p.at<std::string>(0) == "TolCOV")
-			{
-				TolCOV = p.at<T>(1);
-			}
-			else if (p.at<std::string>(0) == "bbeta")
-			{
-				bbeta = p.at<T>(1);
-			}
-			else if (p.at<std::string>(0) == "seed")
-			{
-				seed = p.at<long>(1);
-			}
-			else if (p.at<std::string>(0) == "opt.MaxIter")
-			{
-				options.MaxIter = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "opt.Tol")
-			{
-				options.Tolerance = p.at<T>(1);
-			}
-			else if (p.at<std::string>(0) == "opt.Display")
-			{
-				options.Display = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "opt.Step")
-			{
-				options.Step = p.at<T>(1);
-			}
-			else if (p.at<std::string>(0) == "priorType")
-			{
-				priorType = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "iPlot")
-			{
-				iPlot = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "saveData")
-			{
-				saveData = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "Bdef")
-			{
-				lb = p.at<T>(1);
-				ub = p.at<T>(2);
-			}
-			else if (p.at<std::string>(0) == "minChainLength")
-			{
-				minChainLength = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "maxChainLength")
-			{
-				maxChainLength = p.at<int>(1);
-			}
-			else if (p.at<std::string>(0) == "useLocalCovariance")
-			{
-				useLocalCovariance = p.at<int>(1);
-			}
-		}
-
-		int n = nDim;
-		int found;
-		while (n--)
-		{
-			f.rewindFile();
-
-			found = 0;
-			std::string strt("B" + std::to_string(n));
-
+			//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
 			while (f.readLine())
 			{
+				// Parse the line into line arguments
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == strt)
+				if (p.at<std::string>(0) == "nDim")
 				{
-					lowerBound[n] = p.at<T>(1);
-					upperBound[n] = p.at<T>(2);
-					found = 1;
-					break;
+					nDim = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "maxGenerations")
+				{
+					maxGenerations = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "populationSize")
+				{
+					populationSize = p.at<int>(1);
 				}
 			}
 
-			//In case we do not find the value, we use the default lower bound and upper bound
-			if (!found)
+			bool linit = !(probdim == nDim && maxgens == maxGenerations && datanum == populationSize);
+			if (linit)
 			{
-				lowerBound[n] = lb;
-				upperBound[n] = ub;
-			}
-		}
-
-		if (priorType == 1) /* gaussian */
-		{
-			f.rewindFile();
-
-			while (f.readLine())
-			{
-				p.parse(f.getLine());
-
-				if (p.at<std::string>(0) == "priorMu")
+				if (!reset(nDim, maxGenerations, populationSize))
 				{
-					for (n = 0; n < nDim; n++)
-					{
-						priorMu[n] = p.at<T>(n + 1);
-					}
-					break;
+					return false;
 				}
 			}
 
 			f.rewindFile();
 
+			//read each line in the file and skip all the commented and empty line with the defaukt comment "#"
 			while (f.readLine())
 			{
+				// Parse the line into line arguments
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == "priorSigma")
+				if (p.at<std::string>(0) == "TolCOV")
 				{
-					for (n = 0; n < nDim * nDim; n++)
-					{
-						priorSigma[n] = p.at<T>(n + 1);
-					}
-					break;
+					TolCOV = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "bbeta")
+				{
+					bbeta = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "seed")
+				{
+					seed = p.at<long>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.MaxIter")
+				{
+					options.MaxIter = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Tol")
+				{
+					options.Tolerance = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Display")
+				{
+					options.Display = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Step")
+				{
+					options.Step = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "priorType")
+				{
+					priorType = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "iPlot")
+				{
+					iPlot = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "saveData")
+				{
+					saveData = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "Bdef")
+				{
+					lb = p.at<T>(1);
+					ub = p.at<T>(2);
+				}
+				else if (p.at<std::string>(0) == "minChainLength")
+				{
+					minChainLength = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "maxChainLength")
+				{
+					maxChainLength = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "useLocalCovariance")
+				{
+					useLocalCovariance = p.at<int>(1);
 				}
 			}
-		}
 
-		// Composite prior at input
-		if (priorType == 3)
-		{
-			try
-			{
-				compositePriorDistribution.reset(new T[nDim]());
-			}
-			catch (std::bad_alloc &e)
-			{
-				std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-				std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-				return false;
-			}
-
-			n = nDim;
+			int n = nDim;
+			int found;
 			while (n--)
 			{
 				f.rewindFile();
 
 				found = 0;
-				std::string strt("C" + std::to_string(n));
+				std::string strt("B" + std::to_string(n));
 
 				while (f.readLine())
 				{
@@ -721,71 +644,153 @@ bool stdata<T>::load(const char *fname)
 
 					if (p.at<std::string>(0) == strt)
 					{
-						compositePriorDistribution[n] = p.at<T>(1);
-						lowerBound[n] = p.at<T>(2);
-						upperBound[n] = p.at<T>(3);
+						lowerBound[n] = p.at<T>(1);
+						upperBound[n] = p.at<T>(2);
 						found = 1;
 						break;
 					}
 				}
 
+				//In case we do not find the value, we use the default lower bound and upper bound
 				if (!found)
 				{
-					compositePriorDistribution[n] = 0;
-					lowerBound[n] = lb; /* Bdef value or Default LB */
-					upperBound[n] = ub; /* Bdef value of Default UB */
+					lowerBound[n] = lb;
+					upperBound[n] = ub;
 				}
 			}
-		}
 
-		/* new, parse auxilSize and auxilData */
-		f.rewindFile();
-
-		while (f.readLine())
-		{
-			p.parse(f.getLine());
-
-			if (p.at<std::string>(0) == "auxilSize")
+			if (priorType == 1) /* gaussian */
 			{
-				auxilSize = p.at<int>(1);
-				break;
-			}
-		}
+				f.rewindFile();
 
-		if (auxilSize > 0)
-		{
-			try
-			{
-				auxilData.reset(new T[auxilSize]());
-			}
-			catch (std::bad_alloc &e)
-			{
-				std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-				std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-				return false;
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "priorMu")
+					{
+						for (n = 0; n < nDim; n++)
+						{
+							priorMu[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "priorSigma")
+					{
+						for (n = 0; n < nDim * nDim; n++)
+						{
+							priorSigma[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
 			}
 
+			// Composite prior at input
+			if (priorType == 3)
+			{
+				try
+				{
+					compositePriorDistribution.reset(new T[nDim]());
+				}
+				catch (std::bad_alloc &e)
+				{
+					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+					std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
+					return false;
+				}
+
+				n = nDim;
+				while (n--)
+				{
+					f.rewindFile();
+
+					found = 0;
+					std::string strt("C" + std::to_string(n));
+
+					while (f.readLine())
+					{
+						p.parse(f.getLine());
+
+						if (p.at<std::string>(0) == strt)
+						{
+							compositePriorDistribution[n] = p.at<T>(1);
+							lowerBound[n] = p.at<T>(2);
+							upperBound[n] = p.at<T>(3);
+							found = 1;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						compositePriorDistribution[n] = 0;
+						lowerBound[n] = lb; /* Bdef value or Default LB */
+						upperBound[n] = ub; /* Bdef value of Default UB */
+					}
+				}
+			}
+
+			/* new, parse auxilSize and auxilData */
 			f.rewindFile();
 
 			while (f.readLine())
 			{
 				p.parse(f.getLine());
 
-				if (p.at<std::string>(0) == "auxilData")
+				if (p.at<std::string>(0) == "auxilSize")
 				{
-					for (n = 0; n < auxilSize; n++)
-					{
-						auxilData[n] = p.at<T>(n + 1);
-					}
+					auxilSize = p.at<int>(1);
 					break;
 				}
 			}
+
+			if (auxilSize > 0)
+			{
+				try
+				{
+					auxilData.reset(new T[auxilSize]());
+				}
+				catch (std::bad_alloc &e)
+				{
+					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+					std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
+					return false;
+				}
+
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "auxilData")
+					{
+						for (n = 0; n < auxilSize; n++)
+						{
+							auxilData[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+			}
+
+			f.closeFile();
+
+			return true;
 		}
-
-		f.closeFile();
-
-		return true;
+		return false;
 	}
+	std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+	std::cerr << "File " << fname << " does not exist in the current PATH!" << std::endl;
 	return false;
 }
 

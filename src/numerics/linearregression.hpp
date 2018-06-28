@@ -77,7 +77,7 @@ class linearRegression
         if (nPoints < 1 || nPoints < minPointsRequired())
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Number of input data points are not enough! " << std::endl;
+            std::cerr << "Number of input data points are not enough! " << std::endl;
             return false;
         }
 
@@ -98,7 +98,7 @@ class linearRegression
             catch (std::bad_alloc &e)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
                 return false;
             }
         }
@@ -175,7 +175,7 @@ class linearRegression
         if (poly.monomialsize() != linearRegressionkernelSize)
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Polynomial order has changed between Linear regression construction and its solution! " << std::endl;
+            std::cerr << "Polynomial order has changed between Linear regression construction and its solution! " << std::endl;
             return false;
         }
 
@@ -188,7 +188,7 @@ class linearRegression
             catch (std::bad_alloc &e)
             {
                 std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
                 return false;
             }
         }
