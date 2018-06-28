@@ -6,8 +6,8 @@
  * \file io/pyplot.hpp
  * \brief This module contains functions that allows to generate many kinds of plots
  *
- * The pyplot Module contains addition, adaptation and modification to the 
- * original c++ interface to matplotlib source codes made available under 
+ * The pyplot Module contains additions, adaptations and modifications to the 
+ * original c++ interface to the matplotlib source codes made available under 
  * the following LICENSE:
  * 
  * \verbatim
