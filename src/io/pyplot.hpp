@@ -85,11 +85,17 @@
 #include "../misc/array.hpp"
 
 /*!
- * \brief Type selector for numpy type
+ * \brief numpy data types variable template wrapper for the given C++ type
  * 
  * \tparam T Data type
  * 
- * Currently it includes these types:
+ */
+template <typename T>
+constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
+
+/*!
+ * \brief Explicit instantiation for
+ * 
  * \b bool
  * \b int8_t
  * \b uint8_t
@@ -103,37 +109,43 @@
  * \b double
  * \b long double
  * 
+ * TODO: Complete the list
+ * Any valid data type value must have a corresponding explicit template instantiation below.
+ * 
  */
-template <typename T>
-constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
-// bool
 template <>
 constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
-// int8
+
 template <>
 constexpr NPY_TYPES NPIDatatype<int8_t> = NPY_INT8;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<uint8_t> = NPY_UINT8;
-// short
+
 template <>
 constexpr NPY_TYPES NPIDatatype<int16_t> = NPY_SHORT;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<uint16_t> = NPY_USHORT;
-// int
+
 template <>
 constexpr NPY_TYPES NPIDatatype<int32_t> = NPY_INT;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<uint32_t> = NPY_ULONG;
-// int64
+
 template <>
 constexpr NPY_TYPES NPIDatatype<int64_t> = NPY_INT64;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<uint64_t> = NPY_UINT64;
-// float
+
 template <>
 constexpr NPY_TYPES NPIDatatype<float> = NPY_FLOAT;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<double> = NPY_DOUBLE;
+
 template <>
 constexpr NPY_TYPES NPIDatatype<long double> = NPY_LONGDOUBLE;
 
