@@ -1,13 +1,14 @@
-#ifndef UMUQ_MATPLOTLIB_H
-#define UMUQ_MATPLOTLIB_H
+#ifndef UMUQ_PYPLOT_H
+#define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
 /*!
- * \file io/matplotlib.hpp
+ * \file io/pyplot.hpp
  * \brief This module contains functions that allows to generate many kinds of plots
  *
- * The matplotlib Module contains addition, adaptation and modification to the 
- * original c++ interface to matplotlib source codes made available under the following LICENSE:
+ * The pyplot Module contains addition, adaptation and modification to the 
+ * original c++ interface to matplotlib source codes made available under 
+ * the following LICENSE:
  * 
  * \verbatim
  * The MIT License (MIT)
@@ -26,7 +27,7 @@
  * \endverbatim
  * 
  * 
- * Matplotlib made available under the following LICENSE:
+ * Matplotlib library made available under the following LICENSE:
  * 
  * \verbatim
  * License agreement for matplotlib versions 1.3.0 and later
@@ -84,36 +85,51 @@
 #include "../misc/array.hpp"
 
 /*!
- * \brief Type selector for numpy array conversion
+ * \brief Type selector for numpy type
  * 
  * \tparam T Data type
+ * 
+ * Currently it includes these types:
+ * \b bool
+ * \b int8_t
+ * \b uint8_t
+ * \b int16_t
+ * \b uint16_t
+ * \b int32_t
+ * \b uint32_t
+ * \b int64_t
+ * \b uint64_t
+ * \b float
+ * \b double
+ * \b long double
+ * 
  */
 template <typename T>
 constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
-//bool
+// bool
 template <>
 constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
-//int8
+// int8
 template <>
 constexpr NPY_TYPES NPIDatatype<int8_t> = NPY_INT8;
 template <>
 constexpr NPY_TYPES NPIDatatype<uint8_t> = NPY_UINT8;
-//short
+// short
 template <>
 constexpr NPY_TYPES NPIDatatype<int16_t> = NPY_SHORT;
 template <>
 constexpr NPY_TYPES NPIDatatype<uint16_t> = NPY_USHORT;
-//int
+// int
 template <>
 constexpr NPY_TYPES NPIDatatype<int32_t> = NPY_INT;
 template <>
 constexpr NPY_TYPES NPIDatatype<uint32_t> = NPY_ULONG;
-//int64
+// int64
 template <>
 constexpr NPY_TYPES NPIDatatype<int64_t> = NPY_INT64;
 template <>
 constexpr NPY_TYPES NPIDatatype<uint64_t> = NPY_UINT64;
-//float
+// float
 template <>
 constexpr NPY_TYPES NPIDatatype<float> = NPY_FLOAT;
 template <>
@@ -141,9 +157,9 @@ PyObject *PyArray(std::vector<TIn> const &idata);
  * 
  * \tparam T Data type
  * 
- * \param idata array of data
- * \param nSize size of the array
- * \param Stride element stride (default is 1)
+ * \param idata   Input array of data
+ * \param nSize   Size of the array
+ * \param Stride  Element stride (default is 1)
  * 
  * \return PyObject* Python array
  */
@@ -217,7 +233,7 @@ inline void setbackend(std::string const &WXbackends)
 }
 
 /*! \class pyplot
- * \brief This module contains several common approaches to plotting with Matplotlib
+ * \brief This module contains several common approaches to plotting with Matplotlib python 2D library
  *
  * It contains below functions that allow you to generate many kinds of plots quickly:
  * 
@@ -1224,9 +1240,13 @@ class pyplot
      * \brief This class sets and initializes python matplotlib for different use cases
      * 
      * \verbatim
-     * To support all of use cases, matplotlib can target different outputs, and each of these capabilities is called a backend
-     * the “frontend” is the user facing code, i.e., the plotting code, whereas the “backend” does all the hard work
-     * behind-the-scenes to make the figure.
+     * Matplotlib is a Python 2D plotting library which produces publication quality figures 
+     * in a variety of hardcopy formats and interactive environments across platforms. 
+     * 
+     * To support all of use cases, matplotlib can target different outputs, and each of these 
+     * capabilities is called a backend the “frontend” is the user facing code, i.e., the 
+     * plotting code, whereas the “backend” does all the hard work behind-the-scenes to make 
+     * the figure.
      * \endverbatim
      * 
      * Reference:
@@ -1237,19 +1257,19 @@ class pyplot
     {
       public:
         /*!
-         * \brief Construct a new matplotlib interpreter object
+         * \brief Construct a new matplotlib object
          * 
          */
         matplotlib();
 
         /*!
-         * \brief Destroy the matplotlib interpreter object
+         * \brief Destroy the matplotlib object
          * 
          */
         ~matplotlib()
         {
             // Undo all initializations made by Py_Initialize() and subsequent use
-            // of Python/C API functions, and destroy all sub-interpreters
+            // of Python/C API functions
             Py_Finalize();
         }
 
@@ -4278,7 +4298,7 @@ bool pyplot::ylabel(std::string const &label)
 }
 
 /*!
- * \brief Construct a new pyplot::matplotlib interpreter object
+ * \brief Construct a new pyplot::matplotlib object
  * 
  */
 pyplot::matplotlib::matplotlib()
@@ -4290,10 +4310,10 @@ pyplot::matplotlib::matplotlib()
     char name[] = "umuq";
 #endif
 
-    // Pass name to the Python interpreter
+    // Pass name to the Python 
     Py_SetProgramName(name);
 
-    // Initialize the Python interpreter. Required.
+    // Initialize the Python. Required.
     Py_Initialize();
 
     // Initialize numpy
@@ -4304,6 +4324,8 @@ pyplot::matplotlib::matplotlib()
     PyObject *pylabModule = NULL;
 
     {
+        // import matplotlib
+
         PyObject *matplotlibName = PyString_FromString("matplotlib");
         if (!matplotlibName)
         {
@@ -4325,6 +4347,8 @@ pyplot::matplotlib::matplotlib()
     }
 
     {
+        // import matplotlib.pyplot
+
         PyObject *pyplotName = PyString_FromString("matplotlib.pyplot");
         if (!pyplotName)
         {
@@ -4354,6 +4378,8 @@ pyplot::matplotlib::matplotlib()
     }
 
     {
+        // import pylab
+
         PyObject *pylabName = PyString_FromString("pylab");
         if (!pylabName)
         {
@@ -4801,13 +4827,13 @@ pyplot::matplotlib::matplotlib()
 }
 
 /*!
- * \brief Converts a data array idata to Python array
+ * \brief Converts a data array idata to a Python array
  * 
  * \tparam T Data type
  * 
  * \param idata Input array of data
  * 
- * \return PyObject* 
+ * \return PyObject* Python array
  */
 template <typename T>
 PyObject *PyArray(std::vector<T> const &idata)
@@ -4863,11 +4889,11 @@ PyObject *PyArray(std::vector<TIn> const &idata)
  * 
  * \tparam T Data type
  * 
- * \param idata array of data
- * \param nSize size of the array
- * \param Stride element stride (default is 1)
+ * \param idata   Input array of data
+ * \param nSize   Size of the array
+ * \param Stride  Element stride (default is 1)
  * 
- * \return PyObject* 
+ * \return PyObject* Python array 
  */
 template <typename T>
 PyObject *PyArray(T *idata, int const nSize, std::size_t const Stride)
@@ -4962,4 +4988,4 @@ PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride)
 }
 
 #endif //HAVE_PYTHON
-#endif //UMUQ_MATPLOTLIB_H
+#endif //UMUQ_PYPLOT_H
