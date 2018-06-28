@@ -1,11 +1,10 @@
 #include "core/core.hpp"
-#include "io/matplotlib.hpp"
+#include "io/pyplot.hpp"
 #include "gtest/gtest.h"
-
 #ifdef HAVE_PYTHON
 
 //! TEST for Basic functionality
-TEST(Matplotlib_test, HandlesBasic)
+TEST(Pyplot_test, HandlesBasic)
 {
     std::string fileName = "./basic.png";
     std::remove(fileName.c_str());
@@ -28,7 +27,7 @@ TEST(Matplotlib_test, HandlesBasic)
         t += dx;
     }
 
-    //Create an instance of the Pyplot from Matplotlib library
+    //Create an instance of the Pyplot from Pyplot library
     pyplot plt;
 
     // Clear previous plot
@@ -60,7 +59,7 @@ TEST(Matplotlib_test, HandlesBasic)
 }
 
 //! TEST for fill_between functionality
-TEST(Matplotlib_test, HandlesFill_Between)
+TEST(Pyplot_test, HandlesFill_Between)
 {
     std::string fileName = "./fill_between.png";
     std::remove(fileName.c_str());
@@ -83,7 +82,7 @@ TEST(Matplotlib_test, HandlesFill_Between)
         t += dx;
     }
 
-    // Create an instance of the Pyplot from Matplotlib library
+    // Create an instance of the Pyplot from Pyplot library
     pyplot plt;
 
     // Prepare keywords to pass to PolyCollection. See
@@ -115,7 +114,7 @@ TEST(Matplotlib_test, HandlesFill_Between)
 }
 
 // //! TEST for animation functionality
-// TEST(Matplotlib_test, HandlesAnimation)
+// TEST(Pyplot_test, HandlesAnimation)
 // {
 //     // Prepare data.
 //     int n = 50;
@@ -127,7 +126,7 @@ TEST(Matplotlib_test, HandlesFill_Between)
 //     double const dx = 4 * M_PI / (n - 1);
 //     double t(0);
 
-//     // Create an instance of the Pyplot from Matplotlib library
+//     // Create an instance of the Pyplot from Pyplot library
 //     pyplot plt;
 
 //     for (int i = 0; i < n; ++i)
@@ -169,7 +168,7 @@ TEST(Matplotlib_test, HandlesFill_Between)
 // }
 
 //! TEST for histogram functionality
-TEST(Matplotlib_test, HandlesHist)
+TEST(Pyplot_test, HandlesHist)
 {
     std::string fileName = "./hist.png";
     std::remove(fileName.c_str());
@@ -185,7 +184,7 @@ TEST(Matplotlib_test, HandlesHist)
 
     std::for_each(x.begin(), x.end(), [&](double &x_i) { x_i = d(gen); });
 
-    // Create an instance of the Pyplot from Matplotlib library
+    // Create an instance of the Pyplot from Pyplot library
     pyplot plt;
 
     // Clear previous plot
@@ -211,7 +210,7 @@ TEST(Matplotlib_test, HandlesHist)
 }
 
 //! TEST for scatter functionality
-TEST(Matplotlib_test, HandlesScatter)
+TEST(Pyplot_test, HandlesScatter)
 {
     std::string fileName = "./scatter.png";
     std::remove(fileName.c_str());
@@ -237,7 +236,7 @@ TEST(Matplotlib_test, HandlesScatter)
     std::map<std::string, std::string> keywords;
     keywords["marker"] = "o";
 
-    // Create an instance of the Pyplot from Matplotlib library
+    // Create an instance of the Pyplot from Pyplot library
     pyplot plt;
 
     // Clear previous plot
@@ -263,7 +262,7 @@ TEST(Matplotlib_test, HandlesScatter)
 }
 
 #else
-TEST(Matplotlib_test, HandlesBasic)
+TEST(Pyplot_test, HandlesBasic)
 {
 }
 #endif //HAVE_PYTHON
