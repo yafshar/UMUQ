@@ -5,15 +5,13 @@
  * \brief MPI data types variable template wrapper for the given C++ type.
  *
  * \tparam T Data type
- * Any valid MPI data type value must have a corresponding explicit template instantiation below.
+ * 
  */
 template <typename T>
 constexpr MPI_Datatype MPIDatatype = MPI_DATATYPE_NULL; // variable template
 
-//!TODO: Complete the list
-
 /*!
- * \brief Explicit instantiation for 
+ * \brief Explicit instantiation for:
  * 
  * \b char
  * \b signed short
@@ -27,6 +25,9 @@ constexpr MPI_Datatype MPIDatatype = MPI_DATATYPE_NULL; // variable template
  * \b unsigned short
  * \b unsigned int
  * \b unsigned long
+ * 
+ * TODO: Complete the list
+ * Any valid MPI data type value must have a corresponding explicit template instantiation below.
  */
 template <>
 constexpr MPI_Datatype MPIDatatype<char> = MPI_CHAR;
