@@ -53,7 +53,7 @@ class kNearestNeighbor
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
                                                                             the_same(true)
     {
-        if (drows < nn)
+        if (drows < static_cast<std::size_t>(nn))
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
@@ -79,7 +79,7 @@ class kNearestNeighbor
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
                                                                                                     the_same(false)
     {
-        if (drows < nn)
+        if (drows < static_cast<std::size_t>(nn))
         {
             std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
             std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
@@ -358,7 +358,7 @@ class kNearestNeighbor
     //! Number of data rows
     std::size_t drows;
 
-    //! Number of qury rows
+    //! Number of query rows
     std::size_t qrows;
 
     //! Number of columns
