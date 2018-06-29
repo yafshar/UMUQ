@@ -3,22 +3,24 @@
 #include "misc/funcallcounter.hpp"
 #include "gtest/gtest.h"
 
-funcallcounter f;
+//! Create an instance of funcallcounter object
+funcallcounter fc;
 
+//! Global task
 void taskf()
 {
-    f.increment();
+    fc.increment();
 }
 
 /*! 
- * Test to check random functionality
+ * Test to check Function call counters functionality
  */
 TEST(funcallcounter_test, HandlesFunctioncounter)
 {
-    EXPECT_TRUE(f.init());
+    EXPECT_TRUE(fc.init());
     torc_register_task((void *)taskf);
 
-    //Number of nodes
+    // Number of nodes
     int nnodes = torc_num_nodes();
     int ntasks = 100;
 
@@ -28,11 +30,13 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     }
     torc_waitall();
 
-    f.count();
-    f.reset();
+    fc.count();
+    
+    //! Reset the local counter to zero
+    fc.reset();
 
-    EXPECT_EQ(f.get_nglobalfc(), nnodes * ntasks);
-    EXPECT_EQ(f.get_ntotalfc(), nnodes * ntasks);
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks);
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks);
 
     for (int i = 0; i < ntasks * 2; i++)
     {
@@ -40,11 +44,11 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     }
     torc_waitall();
 
-    f.count();
-    f.reset();
+    fc.count();
+    fc.reset();
 
-    EXPECT_EQ(f.get_nglobalfc(), nnodes * ntasks * 2);
-    EXPECT_EQ(f.get_ntotalfc(), nnodes * ntasks * 3);
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks * 2);
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks * 3);
 }
 
 int main(int argc, char **argv)

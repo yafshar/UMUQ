@@ -10,76 +10,67 @@ class funcallcounter
 {
   public:
     /*! 
-     * \brief Registers tasks
+     * \brief Initize and registers tasks on TORC library
+     * 
+     * NOTE: 
+     * init should be called before calling any other functions
      */
-    bool init()
-    {
-        auto initialized(0);
-
-        MPI_Initialized(&initialized);
-        if (!initialized)
-        {
-            return false;
-        }
-
-        torc_register_task((void *)reset_Task);
-        torc_register_task((void *)count_Task);
-
-        return true;
-    }
+    inline bool init();
 
     /*! 
      * \brief Increment the local function call counters
+     * 
      */
-    void increment()
-    {
-        //lock a mutex
-        pthread_mutex_lock(&function_counter_mutex);
-
-        num_of_local_function_counter++;
-
-        //unlock the mutex
-        pthread_mutex_unlock(&function_counter_mutex);
-    }
+    inline void increment();
 
     /*! 
      * \brief Reset task of setting the local function call counters to zero
+     * 
      */
-    static void reset_Task();
+    static inline void reset_Task();
 
     /*! 
      * \brief Resetting the local function call counters to zero
+     * 
      */
-    void reset();
+    inline void reset();
 
     /*! 
-     * \brief task of getting the local function call counters
+     * \brief Task of getting the local function call counters
+     * 
      */
-    static void count_Task(int *x);
+    static inline void count_Task(int *x);
 
     /*! 
-     * \returns count the Global number of function calls
+     * \returns Count the Global number of function calls
+     * 
      */
-    void count();
+    inline void count();
 
-    /*! 
-     * \returns the Total number of function calls
+    /*!
+     * \brief Get the number of local function calls
+     * 
+     * \returns The number of local function calls
      */
-    int get_nlocalfc() { return funcallcounter::num_of_local_function_counter; }
+    inline int getLocalFunctionCallsNumber() { return funcallcounter::num_of_local_function_counter; }
 
-    /*! 
-     * \returns the Total number of function calls
+    /*!
+     * \brief Get the number of global function calls
+     * 
+     * \return The number of global function calls 
      */
-    int get_nglobalfc() { return funcallcounter::num_of_global_function_counter; }
+    inline int getGlobalFunctionCallsNumber() { return funcallcounter::num_of_global_function_counter; }
 
-    /*! 
-     * \returns the Total number of function calls
+    /*!
+     * \brief Get the total number of function calls
+     * 
+     * \return The total number of function calls
      */
-    int get_ntotalfc() { return funcallcounter::num_of_total_function_counter; }
+    inline int getTotalFunctionCallsNumber() { return funcallcounter::num_of_total_function_counter; }
 
   public:
     //! Mutex object
-    static pthread_mutex_t function_counter_mutex;
+    static std::mutex function_counter_mutex;
 
     //! Local number of function calls
     static int num_of_local_function_counter;
@@ -91,21 +82,57 @@ class funcallcounter
     static int num_of_total_function_counter;
 };
 
-pthread_mutex_t funcallcounter::function_counter_mutex = PTHREAD_MUTEX_INITIALIZER;
-
+// Initialization of the static members outside of the class declaration
+//! Mutex object
+std::mutex funcallcounter::function_counter_mutex;
+//! Local number of function calls
 int funcallcounter::num_of_local_function_counter = 0;
+//! Global number of function calls
 int funcallcounter::num_of_global_function_counter = 0;
+//! Total number of function calls
 int funcallcounter::num_of_total_function_counter = 0;
 
 /*! 
- * \brief Resetting the local function call counters to zero
+ * \brief Initize and registers tasks on TORC library
+ * 
+ * NOTE: 
+ * init should be called before calling any other functions
  */
-void funcallcounter::reset_Task() { funcallcounter::num_of_local_function_counter = 0; }
+inline bool funcallcounter::init()
+{
+    auto initialized(0);
+    MPI_Initialized(&initialized);
+    if (initialized)
+    {
+        torc_register_task((void *)funcallcounter::reset_Task);
+        torc_register_task((void *)funcallcounter::count_Task);
+
+        return true;
+    }
+    UMUQFAILRETURN("MPI is not initialized! \n You should Initialize torc first!");
+}
+
+/*! 
+ * \brief Increment the local function call counters
+ * 
+ */
+inline void funcallcounter::increment()
+{
+    std::lock_guard<std::mutex> lock(funcallcounter::function_counter_mutex);
+    funcallcounter::num_of_local_function_counter++;
+}
 
 /*! 
  * \brief Resetting the local function call counters to zero
+ * 
  */
-void funcallcounter::reset()
+inline void funcallcounter::reset_Task() { funcallcounter::num_of_local_function_counter = 0; }
+
+/*! 
+ * \brief Resetting the local function call counters to zero
+ * 
+ */
+inline void funcallcounter::reset()
 {
     for (int i = 0; i < torc_num_nodes(); i++)
     {
@@ -115,44 +142,30 @@ void funcallcounter::reset()
 }
 
 /*! 
- * \brief Get task of the local function call counters
- */
-void funcallcounter::count_Task(int *x) { *x = funcallcounter::num_of_local_function_counter; }
-
-/*!
- * \brief Get task of the local function call counters
+ * \brief Task of getting the local function call counters
  * 
  */
-void funcallcounter::count()
+inline void funcallcounter::count_Task(int *x) { *x = funcallcounter::num_of_local_function_counter; }
+
+/*!
+ * \returns Count the Global number of function calls
+ * 
+ */
+inline void funcallcounter::count()
 {
     int maxNumNodes = torc_num_nodes();
-
-    int *c;
-
-    try
-    {
-        c = new int[maxNumNodes]();
-    }
-    catch (std::bad_alloc &e)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-        throw(std::runtime_error("Failed to allocate memory !"));
-    }
-
+    std::vector<int> c(maxNumNodes, 0);
     for (int i = 0; i < maxNumNodes; i++)
     {
+        int *cp = c.data() + i;
         torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())funcallcounter::count_Task, 1,
-                       1, MPI_INT, CALL_BY_RES,
-                       &c[i]);
+                       1, MPI_INT, CALL_BY_VAL,
+                       cp);
     }
     torc_waitall();
 
-    funcallcounter::num_of_global_function_counter = std::accumulate(c, c + maxNumNodes, 0);
-
+    funcallcounter::num_of_global_function_counter = std::accumulate(c.begin(), c.end(), 0);
     funcallcounter::num_of_total_function_counter += funcallcounter::num_of_global_function_counter;
-
-    delete[] c;
 }
 
 #endif

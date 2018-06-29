@@ -179,25 +179,19 @@ class io
     {
         if (fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Pointer to the File '" << fileName << "' is busy!" << std::endl;
-            return false;
+            UMUQFAILRETURN("The requested File is already open by another stream!");
         }
 
         fs.open(fileName, mode);
         if (!fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "'" << fileName << "' does not exists!" << std::endl;
-            return false;
+            UMUQFAILRETURN("The requested File to open does not exists!");
         }
 
         //! Returns false if an error has occurred on the associated stream.
         if (fs.fail())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "An error has occurred on the associated stream from opening '" << fileName << "' ." << std::endl;
-            return false;
+            UMUQFAILRETURN("An error has occurred on the associated stream from opening the file!");
         }
 
         return true;
@@ -421,10 +415,7 @@ class io
 
             return true;
         }
-
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "This file stream is not open for writing." << std::endl;
-        return false;
+        UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
     /*!
@@ -446,9 +437,7 @@ class io
     {
         if (!fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "This file stream is not open for writing." << std::endl;
-            return false;
+            UMUQFAILRETURN("This file stream is not open for writing!");
         }
 
         std::string rowSeparator;
@@ -549,9 +538,7 @@ class io
     {
         if (!fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "This file stream is not open for writing." << std::endl;
-            return false;
+            UMUQFAILRETURN("This file stream is not open for writing!");
         }
 
         setPrecision<TD>(fs);
@@ -924,9 +911,7 @@ class io
     {
         if (!fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "This file stream is not open for writing." << std::endl;
-            return false;
+            UMUQFAILRETURN("This file stream is not open for writing!");
         }
 
         std::string rowSeparator;
@@ -1060,9 +1045,7 @@ class io
     {
         if (!fs.is_open())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "This file stream is not open for writing." << std::endl;
-            return false;
+            UMUQFAILRETURN("This file stream is not open for writing!");
         }
 
         setPrecision<TD>(fs);

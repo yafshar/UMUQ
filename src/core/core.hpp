@@ -86,7 +86,7 @@ extern "C" {
 #include <map>
 #include <mutex>
 
-#define HAVE_PYTHON 0
+// #define HAVE_PYTHON 0
 #ifdef HAVE_PYTHON
 #include <Python.h>
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -101,6 +101,7 @@ extern "C" {
  */
 namespace UMUQ
 {
+
 inline static const char *SimdInstructionSetsInUse(void)
 {
 #if defined(UMUQ_VECTORIZE_SSE4_2)
@@ -117,31 +118,25 @@ inline static const char *SimdInstructionSetsInUse(void)
     return "None";
 #endif
 }
-}
 
 #ifdef M_PI
 #undef M_PI
 #endif
-// source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
+
+/*!
+ * Reference:
+ * http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html 
+ */
 #define M_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406l
 #define M_2PI 6.283185307179586476925286766559005768394338798750211641949889184615632812l
 #define M_LPI std::log(M_PI)
 #define M_L2PI std::log(M_2PI)
 
+} // namespace UMUQ
+
 /*! 
  * This is the main module of UMUQ
  */
 #include "meta.hpp"
-
-/*! 
- * Handles runtime error
- */
-class UMUQexception : public std::runtime_error
-{
-  public:
-    UMUQexception(const char *message) : std::runtime_error(message) {}
-
-    UMUQexception(const std::string &message) : std::runtime_error(message) {}
-};
 
 #endif // UMUQ_CORE_H

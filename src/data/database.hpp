@@ -44,12 +44,8 @@ public:
   {
     if (!std::is_floating_point<T>::value)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "This type is not supported in this class!" << std::endl;
-      throw(std::runtime_error("Wrong type!"));
+      UMUQFAIL("This type is not supported in this class!");
     }
-
-    pthread_mutex_init(&m, NULL);
   }
 
   /*!
@@ -66,16 +62,11 @@ public:
   {
     if (!std::is_floating_point<T>::value)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "This class only supports float, double & long double type!" << std::endl;
-      throw(std::runtime_error("Wrong type!"));
+      UMUQFAIL("This type is not supported in this class!");
     }
-
-    pthread_mutex_init(&m, NULL);
-
     if (!reset(nSize))
     {
-      throw(std::runtime_error("Failed to initialiaze the data!"));
+      UMUQFAIL("Failed to initialiaze the data!");
     }
   }
 
@@ -94,16 +85,11 @@ public:
   {
     if (!std::is_floating_point<T>::value)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "This type is not supported in this class!" << std::endl;
-      throw(std::runtime_error("Wrong type!"));
+      UMUQFAIL("This type is not supported in this class!");
     }
-
-    pthread_mutex_init(&m, NULL);
-
     if (!reset(nSize))
     {
-      throw(std::runtime_error("Failed to initialiaze the data!"));
+      UMUQFAIL("Failed to initialiaze the data!");
     }
   }
 
@@ -112,21 +98,20 @@ public:
    * 
    * \param inputDB  Input database object
    */
-  database(database<T> &&inputDB)
+  database(database<T> &&inputDB) : ndimParray(inputDB.ndimParray),
+                                    ndimGarray(inputDB.ndimGarray),
+                                    idxPos(inputDB.idxPos),
+                                    entries(inputDB.entries),
+                                    Parray(std::move(inputDB.Parray)),
+                                    Garray(std::move(inputDB.Garray)),
+                                    Fvalue(std::move(inputDB.Fvalue)),
+                                    Surrogate(std::move(inputDB.Surrogate)),
+                                    nSelection(std::move(inputDB.nSelection)),
+                                    idxNumber(std::move(inputDB.idxNumber)),
+                                    update_TaskP(std::move(inputDB.update_TaskP)),
+                                    list(std::move(inputDB.list))
   {
-    ndimParray = inputDB.ndimParray;
-    ndimGarray = inputDB.ndimGarray;
-    idxPos = inputDB.idxPos;
-    entries = inputDB.entries;
-    Parray = std::move(inputDB.Parray);
-    Garray = std::move(inputDB.Garray);
-    Fvalue = std::move(inputDB.Fvalue);
-    Surrogate = std::move(inputDB.Surrogate);
-    nSelection = std::move(inputDB.nSelection);
-    idxNumber = std::move(inputDB.idxNumber);
-    m = std::move(inputDB.m);
-    update_TaskP = std::move(inputDB.update_TaskP);
-    list = std::move(inputDB.list);
+    // m is default-initialized
   }
 
   /*!
@@ -147,7 +132,7 @@ public:
     Surrogate = std::move(inputDB.Surrogate);
     nSelection = std::move(inputDB.nSelection);
     idxNumber = std::move(inputDB.idxNumber);
-    m = std::move(inputDB.m);
+    // m is default-initialized
     update_TaskP = std::move(inputDB.update_TaskP);
     list = std::move(inputDB.list);
 
@@ -172,17 +157,14 @@ public:
   {
     if (nSize < 0)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "Wrong input size! " << std::endl;
-      return false;
+      UMUQFAILRETURN("Wrong input size!");
     }
 
     entries = static_cast<std::size_t>(nSize);
 
     if (entries == 0)
     {
-      std::cerr << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "No entries -> Reseting the databse object to size 0! " << std::endl;
+      UMUQWARNING("No entries -> Reseting the databse object to size 0!");
 
       Parray.reset();
       Garray.reset();
@@ -202,9 +184,7 @@ public:
       }
       catch (std::bad_alloc &e)
       {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-        return false;
+        UMUQFAILRETURN("Failed to allocate memory!");
       }
     }
     else
@@ -220,9 +200,7 @@ public:
       }
       catch (std::bad_alloc &e)
       {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-        return false;
+        UMUQFAILRETURN("Failed to allocate memory!");
       }
     }
     else
@@ -239,9 +217,7 @@ public:
     }
     catch (std::bad_alloc &e)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-      return false;
+      UMUQFAILRETURN("Failed to allocate memory!");
     }
 
     std::iota(idxNumber.get(), idxNumber.get() + entries, std::size_t{});
@@ -279,14 +255,9 @@ public:
 
         return true;
       }
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "Task Pointer is not assigend to the external function! " << std::endl;
-      return false;
+      UMUQFAILRETURN("Task Pointer is not assigend to the external function!");
     }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << "MPI is not initialized! " << std::endl;
-    std::cerr << "You should Initialize torc first! " << std::endl;
-    return false;
+    UMUQFAILRETURN("MPI is not initialized! \n You should Initialize torc first!");
   }
 
   /*!
@@ -366,9 +337,7 @@ public:
     }
     catch (std::bad_alloc &e)
     {
-      std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-      std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-      return false;
+      UMUQFAILRETURN("Failed to allocate memory!");
     }
 
     // Get the pointer
@@ -605,7 +574,6 @@ public:
     return load(&fname[0], IdNumber);
   }
 
-
   /*!
    * \brief Updating the data information at each point @iParray 
    * 
@@ -619,10 +587,11 @@ public:
   {
     std::size_t pos;
 
-    pthread_mutex_lock(&m);
-    pos = idxPos;
-    idxPos++;
-    pthread_mutex_unlock(&m);
+    {
+      std::lock_guard<std::mutex> lock(m);
+      pos = idxPos;
+      idxPos++;
+    }
 
     if (pos < entries)
     {
@@ -630,6 +599,7 @@ public:
 
       Fvalue[pos] = *iFvalue;
 
+      //! indimGarray is just an indicator if we have iGarray input data or not
       if (*indimGarray > 0)
       {
         std::copy(iGarray, iGarray + ndimGarray, Garray.get() + pos * ndimGarray);
@@ -725,7 +695,7 @@ public:
   std::unique_ptr<std::size_t[]> idxNumber;
 
   //! Mutex object
-  pthread_mutex_t m;
+  std::mutex m;
 
 private:
   //! Function pointer

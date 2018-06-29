@@ -411,9 +411,6 @@ TEST(dcpse_1d, HandlesCFDResults)
 {
     //! Dimension
     int nDim = 1;
-    //! Bounds
-    double Lb[] = {-4};
-    double Ub[] = {1.2};
     //! Number of points in each direction
     int nDPoints[] = {9};
     //! Total number of training points

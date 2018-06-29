@@ -126,9 +126,7 @@ class stdata
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-			throw(std::runtime_error("Failed to allocate memory!"));
+			UMUQFAIL("Failed to allocate memory!");
 		}
 
 		for (int i = 0, k = 0; i < nDim; i++)
@@ -353,9 +351,7 @@ class stdata
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-			return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
 		}
 
 		for (int i = 0, k = 0; i < nDim; i++)
@@ -703,9 +699,7 @@ bool stdata<T>::load(const char *fname)
 				}
 				catch (std::bad_alloc &e)
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-					return false;
+					UMUQFAILRETURN("Failed to allocate memory!");
 				}
 
 				n = nDim;
@@ -761,9 +755,7 @@ bool stdata<T>::load(const char *fname)
 				}
 				catch (std::bad_alloc &e)
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-					return false;
+					UMUQFAILRETURN("Failed to allocate memory!");
 				}
 
 				f.rewindFile();
@@ -789,9 +781,7 @@ bool stdata<T>::load(const char *fname)
 		}
 		return false;
 	}
-	std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-	std::cerr << "File " << fname << " does not exist in the current PATH!" << std::endl;
-	return false;
+	UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
 }
 
 #endif

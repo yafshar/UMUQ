@@ -82,72 +82,9 @@
  * \endverbatim
  */
 
+#include "../data/npydatatype.hpp"
 #include "../misc/array.hpp"
 
-/*!
- * \brief numpy data types variable template wrapper for the given C++ type
- * 
- * \tparam T Data type
- * 
- */
-template <typename T>
-constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
-
-/*!
- * \brief Explicit instantiation for
- * 
- * \b bool
- * \b int8_t
- * \b uint8_t
- * \b int16_t
- * \b uint16_t
- * \b int32_t
- * \b uint32_t
- * \b int64_t
- * \b uint64_t
- * \b float
- * \b double
- * \b long double
- * 
- * TODO: Complete the list
- * Any valid data type value must have a corresponding explicit template instantiation below.
- * 
- */
-template <>
-constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<int8_t> = NPY_INT8;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<uint8_t> = NPY_UINT8;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<int16_t> = NPY_SHORT;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<uint16_t> = NPY_USHORT;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<int32_t> = NPY_INT;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<uint32_t> = NPY_ULONG;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<int64_t> = NPY_INT64;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<uint64_t> = NPY_UINT64;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<float> = NPY_FLOAT;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<double> = NPY_DOUBLE;
-
-template <>
-constexpr NPY_TYPES NPIDatatype<long double> = NPY_LONGDOUBLE;
 
 /*!
  * \brief Converts a data array idata to Python array
@@ -1391,9 +1328,7 @@ inline std::string pyplot::get_backend()
         Py_DECREF(res);
         return backendName;
     }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << "Couldn't get the name of the current backend!" << std::endl;
-    return static_cast<std::string>("Error: Couldn't get the name of the current backend!");
+    UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
 }
 
 /*!
@@ -5042,6 +4977,24 @@ PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride)
     }
     return pArray;
 }
+
+#else
+
+class pyplot
+{
+  public:
+    /*!
+     * \brief Construct a new pyplot object
+     *
+     */
+    pyplot() {}
+
+    /*!
+     * \brief Destroy the pyplot object
+     * 
+     */
+    ~pyplot() {}
+};
 
 #endif //HAVE_PYTHON
 #endif //UMUQ_PYPLOT_H

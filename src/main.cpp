@@ -15,6 +15,8 @@ int main(int argc, char **argv)
 
 	tmcmc<double> t;
 
+	UMUQWARNING("something went wrong!");
+
 	torc_finalize();
 
 	// int d = 2;

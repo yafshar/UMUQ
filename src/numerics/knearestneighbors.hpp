@@ -55,9 +55,7 @@ class kNearestNeighbor
     {
         if (drows < static_cast<std::size_t>(nn))
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
-            throw(std::runtime_error("Not enough points!"));
+            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
         }
     }
 
@@ -81,9 +79,7 @@ class kNearestNeighbor
     {
         if (drows < static_cast<std::size_t>(nn))
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Not enough points to create " << nN << " nearest neighbors for each point !" << std::endl;
-            throw(std::runtime_error("Not enough points!"));
+            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
         }
     }
 
@@ -197,8 +193,7 @@ class kNearestNeighbor
 
         if (!checkNearestNeighbors())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Input data & query data are the same!" << std::endl;
+            UMUQWARNING("Input data & query data are the same!");
         }
     }
 
@@ -279,9 +274,7 @@ class kNearestNeighbor
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-            return nullptr;
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
         }
 
         for (std::size_t i = 0; i < qrows; ++i)
@@ -414,7 +407,7 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 // {
 // /*!
 //  * \brief covariance variable to be used inside flann
-//  * 
+//  *
 //  * \tparam T Data type
 //  */
 // template <class T>

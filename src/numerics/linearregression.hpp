@@ -76,9 +76,7 @@ class linearRegression
     {
         if (nPoints < 1 || nPoints < minPointsRequired())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Number of input data points are not enough! " << std::endl;
-            return false;
+            UMUQFAILRETURN("Number of input data points are not enough!");
         }
 
         // Create an instance of a polynomial object with polynomial order
@@ -97,9 +95,7 @@ class linearRegression
             }
             catch (std::bad_alloc &e)
             {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-                return false;
+                UMUQFAILRETURN("Failed to allocate memory!");
             }
         }
         else
@@ -174,9 +170,7 @@ class linearRegression
 
         if (poly.monomialsize() != linearRegressionkernelSize)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Polynomial order has changed between Linear regression construction and its solution! " << std::endl;
-            return false;
+            UMUQFAILRETURN("Polynomial order has changed between Linear regression construction and its solution!");
         }
 
         if (qFvalue == nullptr)
@@ -187,9 +181,7 @@ class linearRegression
             }
             catch (std::bad_alloc &e)
             {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << "Failed to allocate memory : " << e.what() << std::endl;
-                return false;
+                UMUQFAILRETURN("Failed to allocate memory!");
             }
         }
 

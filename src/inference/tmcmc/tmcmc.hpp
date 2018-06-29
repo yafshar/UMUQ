@@ -24,7 +24,7 @@ public:
     if (Data.load(inputFilename))
     {
       {
-        // Creating a temporary database
+        // Creating a temporary database based on the read information
         database<T> d(Data.nDim, Data.maxGenerations);
         Data1<T> = std::move(d);
 

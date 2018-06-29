@@ -26,7 +26,7 @@ class torcEnvironment
      */
     virtual void SetUp()
     {
-        char **argv;
+        char **argv = NULL;
         int argc = 0;
 
         torc_init(argc, argv, 0);

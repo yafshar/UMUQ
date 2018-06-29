@@ -1,8 +1,11 @@
 #include "core/core.hpp"
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
-#ifdef HAVE_PYTHON
 
+// Create a global instance of the Pyplot from Pyplot library
+pyplot plt;
+
+#ifdef HAVE_PYTHON
 //! TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)
 {
@@ -26,9 +29,6 @@ TEST(Pyplot_test, HandlesBasic)
         z[i] = std::sin(t) + std::cos(t);
         t += dx;
     }
-
-    //Create an instance of the Pyplot from Pyplot library
-    pyplot plt;
 
     std::cout << plt.get_backend() << std::endl;
 
@@ -84,9 +84,6 @@ TEST(Pyplot_test, HandlesFill_Between)
         t += dx;
     }
 
-    // Create an instance of the Pyplot from Pyplot library
-    pyplot plt;
-
     // Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
     keywords["alpha"] = "0.4";
@@ -133,9 +130,6 @@ TEST(Pyplot_test, HandlesFill_Between)
 
 //     double const dx = 4 * M_PI / (n - 1);
 //     double t(0);
-
-//     // Create an instance of the Pyplot from Pyplot library
-//     pyplot plt;
 
 //     for (int i = 0; i < n; ++i)
 //     {
@@ -192,9 +186,6 @@ TEST(Pyplot_test, HandlesHist)
 
     std::for_each(x.begin(), x.end(), [&](double &x_i) { x_i = d(gen); });
 
-    // Create an instance of the Pyplot from Pyplot library
-    pyplot plt;
-
     // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
@@ -244,9 +235,6 @@ TEST(Pyplot_test, HandlesScatter)
     std::map<std::string, std::string> keywords;
     keywords["marker"] = "o";
 
-    // Create an instance of the Pyplot from Pyplot library
-    pyplot plt;
-
     // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
@@ -270,9 +258,11 @@ TEST(Pyplot_test, HandlesScatter)
 }
 
 #else
+
 TEST(Pyplot_test, HandlesBasic)
 {
 }
+
 #endif //HAVE_PYTHON
 
 int main(int argc, char **argv)
