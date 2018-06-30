@@ -85,7 +85,6 @@
 #include "../data/npydatatype.hpp"
 #include "../misc/array.hpp"
 
-
 /*!
  * \brief Converts a data array idata to Python array
  * 
@@ -178,7 +177,7 @@ static std::string backend;
  */
 inline void setbackend(std::string const &WXbackends)
 {
-    backend = WXbackends;
+	backend = WXbackends;
 }
 
 /*! \class pyplot
@@ -223,26 +222,26 @@ inline void setbackend(std::string const &WXbackends)
 class pyplot
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new pyplot object
      *
      */
-    pyplot() {}
+	pyplot() {}
 
-    /*!
+	/*!
      * \brief Destroy the pyplot object
      * 
      */
-    ~pyplot() {}
+	~pyplot() {}
 
-    /*!
+	/*!
      * \brief Get the name of the current backend
      * 
      * \return The name of the current backend
      */
-    inline std::string get_backend();
+	inline std::string get_backend();
 
-    /*!
+	/*!
      * \brief Annotate the point xy with text s
      * 
      * \tparam Data type
@@ -254,44 +253,44 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool annotate(std::string const &annotation, T x, T y);
+	template <typename T>
+	bool annotate(std::string const &annotation, T x, T y);
 
-    /*!
+	/*!
      * \brief Convenience method to get or set axis properties
      * 
      * \param axisArguments 
      */
-    inline bool axis(std::string const &axisArguments);
+	inline bool axis(std::string const &axisArguments);
 
-    /*!
+	/*!
      * \brief Clear the current axes
      * 
      */
-    inline bool cla();
+	inline bool cla();
 
-    /*!
+	/*!
      * \brief Clear the current figure
      * 
      */
-    inline bool clf();
+	inline bool clf();
 
-    /*!
+	/*!
      * \brief Close a figure window
      * 
      */
-    inline bool close();
+	inline bool close();
 
-    /*!
+	/*!
      * \brief Redraw the current figure
      * This is used to update a figure that has been altered, 
      * but not automatically re-drawn. If interactive mode is 
      * on (ion()), this should be only rarely needed
      * 
      */
-    inline bool draw();
+	inline bool draw();
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
      * \tparam T      Data type
@@ -304,11 +303,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr,
-                  std::string const &fmt = "");
+	template <typename T>
+	bool errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr,
+				  std::string const &fmt = "");
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
      * \tparam T Data type
@@ -327,13 +326,13 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  T const *yerr, int const nSizeE, std::size_t const StrideE,
-                  std::string const &fmt = "");
+	template <typename T>
+	bool errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  T const *yerr, int const nSizeE, std::size_t const StrideE,
+				  std::string const &fmt = "");
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
      * \tparam T Data type
@@ -347,17 +346,17 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool errorbar(T const *x, T const *y, T const *yerr, int const nSize,
-                  std::string const &fmt = "");
+	template <typename T>
+	bool errorbar(T const *x, T const *y, T const *yerr, int const nSize,
+				  std::string const &fmt = "");
 
-    /*!
+	/*!
      * \brief Creates a new figure
      * 
      */
-    inline bool figure();
+	inline bool figure();
 
-    /*!
+	/*!
      * \brief Creates a new figure
      * 
      * \param width   width in inches
@@ -367,9 +366,9 @@ class pyplot
      * \return true 
      * \return false 
      */
-    bool figure(std::size_t const width, std::size_t const height, std::size_t const dpi = 100);
+	bool figure(std::size_t const width, std::size_t const height, std::size_t const dpi = 100);
 
-    /*!
+	/*!
      * \brief Fill the area between two horizontal curves
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
@@ -384,11 +383,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2,
-                      std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2,
+					  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Fill the area between two horizontal curves
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
@@ -409,13 +408,13 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y1, int const nSizeY1, std::size_t const StrideY1,
-                      T const *y2, int const nSizeY2, std::size_t const StrideY2,
-                      std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
+					  T const *y1, int const nSizeY1, std::size_t const StrideY1,
+					  T const *y2, int const nSizeY2, std::size_t const StrideY2,
+					  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Fill the area between two horizontal curves.
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
@@ -431,18 +430,18 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool fill_between(T const *x, T const *y1, T const *y2, int const nSize,
-                      std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool fill_between(T const *x, T const *y1, T const *y2, int const nSize,
+					  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Turn the axes grids on or off
      * 
      * \param flag 
      */
-    bool grid(bool flag);
+	bool grid(bool flag);
 
-    /*!
+	/*!
      * \brief Plot a histogram
      * Compute and draw the histogram of x
      * 
@@ -466,12 +465,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool hist(std::vector<T> const &x, long const bins = 50, bool const density = false,
-              std::string const &color = "b", std::string const &label = "", double const alpha = 1.0,
-              int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
+	template <typename T>
+	bool hist(std::vector<T> const &x, long const bins = 50, bool const density = false,
+			  std::string const &color = "b", std::string const &label = "", double const alpha = 1.0,
+			  int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
 
-    /*!
+	/*!
      * \brief Plot a histogram
      * Compute and draw the histogram of x
      * 
@@ -497,25 +496,25 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool hist(T const *x, int const nSizeX, std::size_t const StrideX = 1,
-              long const bins = 50, bool const density = false, std::string const &color = "b",
-              std::string const &label = "", double const alpha = 1.0,
-              int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
+	template <typename T>
+	bool hist(T const *x, int const nSizeX, std::size_t const StrideX = 1,
+			  long const bins = 50, bool const density = false, std::string const &color = "b",
+			  std::string const &label = "", double const alpha = 1.0,
+			  int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
 
-    /*!
+	/*!
      * \brief Turn interactive mode on
      * 
      */
-    inline bool ion();
+	inline bool ion();
 
-    /*!
+	/*!
      * \brief Places a legend on the axes
      * 
      */
-    inline bool legend();
+	inline bool legend();
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on both the x and y axis
      * This is just a thin wrapper around plot which additionally changes 
      * both the x-axis and the y-axis to log scaling. All of the concepts 
@@ -531,11 +530,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool loglog(std::vector<T> const &x, std::vector<T> const &y,
-                std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool loglog(std::vector<T> const &x, std::vector<T> const &y,
+				std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on both the x and y axis
      * This is just a thin wrapper around plot which additionally changes 
      * both the x-axis and the y-axis to log scaling. All of the concepts 
@@ -555,12 +554,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool loglog(T const *x, int const nSizeX, std::size_t const StrideX,
-                T const *y, int const nSizeY, std::size_t const StrideY,
-                std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool loglog(T const *x, int const nSizeX, std::size_t const StrideX,
+				T const *y, int const nSizeY, std::size_t const StrideY,
+				std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on both the x and y axis
      * This is just a thin wrapper around plot which additionally changes 
      * both the x-axis and the y-axis to log scaling. All of the concepts 
@@ -577,20 +576,20 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool loglog(T const *x, T const *y, int const nSize,
-                std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool loglog(T const *x, T const *y, int const nSize,
+				std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Pause for interval seconds
      * 
      * \tparam T 
      * 
      * \param interval 
      */
-    bool pause(double const interval);
+	bool pause(double const interval);
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -602,11 +601,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(std::vector<T> const &x, std::vector<T> const &y,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool plot(std::vector<T> const &x, std::vector<T> const &y,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -622,12 +621,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
+			  T const *y, int const nSizeY, std::size_t const StrideY,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -640,11 +639,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(T const *x, T const *y, int const nSize,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool plot(T const *x, T const *y, int const nSize,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -658,11 +657,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(std::vector<T> const &x, std::vector<T> const &y,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool plot(std::vector<T> const &x, std::vector<T> const &y,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -680,12 +679,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
+			  T const *y, int const nSizeY, std::size_t const StrideY,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Plot y versus x as lines and/or markers
      * 
      * \tparam T        Data type 
@@ -700,18 +699,18 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool plot(T const *x, T const *y, int const nSize,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool plot(T const *x, T const *y, int const nSize,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Save the current figure
      * 
      * \param filename A string containing a path to a filename
      */
-    bool savefig(std::string const &filename);
+	bool savefig(std::string const &filename);
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
      * \tparam T        Data type 
@@ -725,12 +724,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
-                 std::vector<T> const &s, std::vector<T> const &c,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(std::vector<T> const &x, std::vector<T> const &y,
+				 std::vector<T> const &s, std::vector<T> const &c,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with scaler marker size and color
      * 
      * \tparam T        Data type 
@@ -744,12 +743,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
-                 T const s, T const c,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(std::vector<T> const &x, std::vector<T> const &y,
+				 T const s, T const c,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
      * \tparam T        Data type 
@@ -771,14 +770,14 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                 T const *y, int const nSizeY, std::size_t const StrideY,
-                 T const *s, int const nSizeS, std::size_t const StrideS,
-                 T const *c, int const nSizeC, std::size_t const StrideC,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
+				 T const *y, int const nSizeY, std::size_t const StrideY,
+				 T const *s, int const nSizeS, std::size_t const StrideS,
+				 T const *c, int const nSizeC, std::size_t const StrideC,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with scaler marker size and color
      * 
      * \tparam T        Data type 
@@ -796,13 +795,13 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                 T const *y, int const nSizeY, std::size_t const StrideY,
-                 T const s, T const c,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
+				 T const *y, int const nSizeY, std::size_t const StrideY,
+				 T const s, T const c,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
      * \tparam T        Data type 
@@ -817,12 +816,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(T const *x, T const *y, int const nSize,
-                 T const *s, T const *c,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(T const *x, T const *y, int const nSize,
+				 T const *s, T const *c,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief A scatter plot of y vs x with scaler marker size and/or color
      * 
      * \tparam T        Data type 
@@ -837,12 +836,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool scatter(T const *x, T const *y, int const nSize,
-                 T const s, T const c,
-                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool scatter(T const *x, T const *y, int const nSize,
+				 T const s, T const c,
+				 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
@@ -857,11 +856,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogx(std::vector<T> const &x, std::vector<T> const &y,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogx(std::vector<T> const &x, std::vector<T> const &y,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
@@ -880,12 +879,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
@@ -901,11 +900,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogx(T const *x, T const *y, int const nSize,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogx(T const *x, T const *y, int const nSize,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the y axis
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
@@ -920,11 +919,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogy(std::vector<T> const &x, std::vector<T> const &y,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogy(std::vector<T> const &x, std::vector<T> const &y,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the y axis
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
@@ -943,12 +942,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Make a plot with log scaling on the y axis
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
@@ -964,18 +963,18 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool semilogy(T const *x, T const *y, int const nSize,
-                  std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool semilogy(T const *x, T const *y, int const nSize,
+				  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Display a figure
      * 
      * \param block 
      */
-    bool show(bool const block = true);
+	bool show(bool const block = true);
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
@@ -988,11 +987,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(std::vector<T> const &x, std::vector<T> const &y,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool stem(std::vector<T> const &x, std::vector<T> const &y,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
@@ -1009,12 +1008,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
+			  T const *y, int const nSizeY, std::size_t const StrideY,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
@@ -1028,11 +1027,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(T const *x, T const *y, int const nSize,
-              std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+	template <typename T>
+	bool stem(T const *x, T const *y, int const nSize,
+			  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
@@ -1046,11 +1045,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(std::vector<T> const &x, std::vector<T> const &y,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool stem(std::vector<T> const &x, std::vector<T> const &y,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
@@ -1068,12 +1067,12 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
+			  T const *y, int const nSizeY, std::size_t const StrideY,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
@@ -1088,11 +1087,11 @@ class pyplot
      * \return true 
      * \return false 
      */
-    template <typename T>
-    bool stem(T const *x, T const *y, int const nSize,
-              std::string const &fmt = "", std::string const &label = "");
+	template <typename T>
+	bool stem(T const *x, T const *y, int const nSize,
+			  std::string const &fmt = "", std::string const &label = "");
 
-    /*!
+	/*!
      * \brief Return a subplot axes at the given grid position
      * In the current figure, create and return an Axes, at position index of a (virtual) grid of nrows by ncols axes. 
      * Indexes go from 1 to nrows * ncols, incrementing in row-major order.
@@ -1101,25 +1100,25 @@ class pyplot
      * \param ncols 
      * \param index 
      */
-    bool subplot(long const nrows, long const ncols, long const index);
+	bool subplot(long const nrows, long const ncols, long const index);
 
-    /*!
+	/*!
      * \brief Set a title of the current axes
      * 
      * \param label Text to use for the title
      */
-    bool title(std::string const &label);
+	bool title(std::string const &label);
 
-    /*!
+	/*!
      * \brief Automatically adjust subplot parameters to give specified padding
      * 
      * TOCHECK:
      * NOTE: We should call this automatically for every plot!
      * 
      */
-    inline bool tight_layout();
+	inline bool tight_layout();
 
-    /*!
+	/*!
      * \brief Set the x limits of the current axes
      * 
      * \tparam T Data type
@@ -1127,10 +1126,10 @@ class pyplot
      * \param left  xmin
      * \param right xmax
      */
-    template <typename T>
-    bool xlim(T left, T right);
+	template <typename T>
+	bool xlim(T left, T right);
 
-    /*!
+	/*!
      * \brief Get the x limits of the current axes
      * 
      * \tparam T Data type
@@ -1138,24 +1137,24 @@ class pyplot
      * \param left  xmin
      * \param right xmax
      */
-    template <typename T>
-    bool xlim(T *left, T *right);
+	template <typename T>
+	bool xlim(T *left, T *right);
 
-    /*!
+	/*!
      * \brief Set the x-axis label of the current axes
      * 
      * \param label The label text
      */
-    bool xlabel(std::string const &label);
+	bool xlabel(std::string const &label);
 
-    /*!
+	/*!
      * \brief Turns on xkcd sketch-style drawing mode
      * This will only have effect on things drawn after this function is called
      * 
      */
-    inline bool xkcd();
+	inline bool xkcd();
 
-    /*!
+	/*!
      * \brief Set the y limits of the current axes
      * 
      * \tparam T Data type
@@ -1163,10 +1162,10 @@ class pyplot
      * \param left  ymin
      * \param right ymax
      */
-    template <typename T>
-    bool ylim(T left, T right);
+	template <typename T>
+	bool ylim(T left, T right);
 
-    /*!
+	/*!
      * \brief Get the y limits of the current axes
      * 
      * \tparam T Data type
@@ -1174,25 +1173,25 @@ class pyplot
      * \param left  ymin
      * \param right ymax
      */
-    template <typename T>
-    bool ylim(T *left, T *right);
+	template <typename T>
+	bool ylim(T *left, T *right);
 
-    /*!
+	/*!
      * \brief Set the y-axis label of the current axes
      * 
      * \param label The label text
      */
-    bool ylabel(std::string const &label);
+	bool ylabel(std::string const &label);
 
   private:
-    // Make it noncopyable
-    pyplot(pyplot const &) = delete;
+	// Make it noncopyable
+	pyplot(pyplot const &) = delete;
 
-    // Make it not assignable
-    pyplot &operator=(pyplot const &) = delete;
+	// Make it not assignable
+	pyplot &operator=(pyplot const &) = delete;
 
   private:
-    /*! \class matplotlib
+	/*! \class matplotlib
      * \brief This class sets and initializes python matplotlib for different use cases
      * 
      * \verbatim
@@ -1209,106 +1208,106 @@ class pyplot
      * https://matplotlib.org
      * 
      */
-    class matplotlib
-    {
-      public:
-        /*!
+	class matplotlib
+	{
+	  public:
+		/*!
          * \brief Construct a new matplotlib object
          * 
          */
-        matplotlib();
+		matplotlib();
 
-        /*!
+		/*!
          * \brief Destroy the matplotlib object
          * 
          */
-        ~matplotlib()
-        {
-            // Undo all initializations made by Py_Initialize() and subsequent use
-            // of Python/C API functions
-            Py_Finalize();
-        }
+		~matplotlib()
+		{
+			// Undo all initializations made by Py_Initialize() and subsequent use
+			// of Python/C API functions
+			Py_Finalize();
+		}
 
-      public:
-        // Make it noncopyable
-        matplotlib(matplotlib const &) = delete;
+	  public:
+		// Make it noncopyable
+		matplotlib(matplotlib const &) = delete;
 
-        // Make it not assignable
-        matplotlib &operator=(matplotlib const &) = delete;
+		// Make it not assignable
+		matplotlib &operator=(matplotlib const &) = delete;
 
-      public:
-        //!
-        PyObject *pyget_backend;
+	  public:
+		//!
+		PyObject *pyget_backend;
 
-        //! Tuple object
-        PyObject *pyEmpty;
+		//! Tuple object
+		PyObject *pyEmpty;
 
-      public:
-        //! Annotate the point xy with text s
-        PyObject *pyannotate;
-        //! Convenience method to get or set axis properties
-        PyObject *pyaxis;
-        //! Clear the current axes
-        PyObject *pycla;
-        //! Clear the current figure
-        PyObject *pyclf;
-        //! Close the current figure
-        PyObject *pyclose;
-        //! Redraw the current figure
-        PyObject *pydraw;
-        //! Plot y versus x as lines and/or markers with attached errorbars
-        PyObject *pyerrorbar;
-        //! Creates a new figure
-        PyObject *pyfigure;
-        //! Fill the area between two horizontal curves
-        PyObject *pyfill_between;
-        //! Turn the axes grids on or off
-        PyObject *pygrid;
-        //! Plot a histogram
-        PyObject *pyhist;
-        //! Turn interactive mode on
-        PyObject *pyion;
-        //! Places a legend on the axes
-        PyObject *pylegend;
-        //! Make a plot with log scaling on both the x and y axis
-        PyObject *pyloglog;
-        //! Pause for interval seconds
-        PyObject *pypause;
-        //! Plot y versus x as lines and/or markers
-        PyObject *pyplot;
-        //! Save the current figure
-        PyObject *pysavefig;
-        //! A scatter plot of y vs x with varying marker size and/or color
-        PyObject *pyscatter;
-        //! Make a plot with log scaling on the x axis
-        PyObject *pysemilogx;
-        //! Make a plot with log scaling on the y axis
-        PyObject *pysemilogy;
-        //! Display the figure window
-        PyObject *pyshow;
-        //! Create a stem plot
-        PyObject *pystem;
-        //! Return a subplot axes at the given grid position
-        PyObject *pysubplot;
-        //! Set a title of the current axes
-        PyObject *pytitle;
-        //! Automatically adjust subplot parameters to give specified padding
-        PyObject *pytight_layout;
-        //! Get or set the x limits of the current axes
-        PyObject *pyxlim;
-        //! Set the x-axis label of the current axes
-        PyObject *pyxlabel;
-        //! Turns on xkcd sketch-style drawing mode
-        PyObject *pyxkcd;
-        //! Get or set the y limits of the current axes
-        PyObject *pyylim;
-        //! Set the y-axis label of the current axes.
-        PyObject *pyylabel;
-    };
+	  public:
+		//! Annotate the point xy with text s
+		PyObject *pyannotate;
+		//! Convenience method to get or set axis properties
+		PyObject *pyaxis;
+		//! Clear the current axes
+		PyObject *pycla;
+		//! Clear the current figure
+		PyObject *pyclf;
+		//! Close the current figure
+		PyObject *pyclose;
+		//! Redraw the current figure
+		PyObject *pydraw;
+		//! Plot y versus x as lines and/or markers with attached errorbars
+		PyObject *pyerrorbar;
+		//! Creates a new figure
+		PyObject *pyfigure;
+		//! Fill the area between two horizontal curves
+		PyObject *pyfill_between;
+		//! Turn the axes grids on or off
+		PyObject *pygrid;
+		//! Plot a histogram
+		PyObject *pyhist;
+		//! Turn interactive mode on
+		PyObject *pyion;
+		//! Places a legend on the axes
+		PyObject *pylegend;
+		//! Make a plot with log scaling on both the x and y axis
+		PyObject *pyloglog;
+		//! Pause for interval seconds
+		PyObject *pypause;
+		//! Plot y versus x as lines and/or markers
+		PyObject *pyplot;
+		//! Save the current figure
+		PyObject *pysavefig;
+		//! A scatter plot of y vs x with varying marker size and/or color
+		PyObject *pyscatter;
+		//! Make a plot with log scaling on the x axis
+		PyObject *pysemilogx;
+		//! Make a plot with log scaling on the y axis
+		PyObject *pysemilogy;
+		//! Display the figure window
+		PyObject *pyshow;
+		//! Create a stem plot
+		PyObject *pystem;
+		//! Return a subplot axes at the given grid position
+		PyObject *pysubplot;
+		//! Set a title of the current axes
+		PyObject *pytitle;
+		//! Automatically adjust subplot parameters to give specified padding
+		PyObject *pytight_layout;
+		//! Get or set the x limits of the current axes
+		PyObject *pyxlim;
+		//! Set the x-axis label of the current axes
+		PyObject *pyxlabel;
+		//! Turns on xkcd sketch-style drawing mode
+		PyObject *pyxkcd;
+		//! Get or set the y limits of the current axes
+		PyObject *pyylim;
+		//! Set the y-axis label of the current axes.
+		PyObject *pyylabel;
+	};
 
   public:
-    //! An instance of matplotlib object
-    static matplotlib mpl;
+	//! An instance of matplotlib object
+	static matplotlib mpl;
 };
 
 //! An instance of matplotlib object
@@ -1321,14 +1320,14 @@ pyplot::matplotlib pyplot::mpl;
  */
 inline std::string pyplot::get_backend()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyget_backend, pyplot::mpl.pyEmpty);
-    if (res)
-    {
-        std::string backendName = PyString_AsString(res);
-        Py_DECREF(res);
-        return backendName;
-    }
-    UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyget_backend, pyplot::mpl.pyEmpty);
+	if (res)
+	{
+		std::string backendName = PyString_AsString(res);
+		Py_DECREF(res);
+		return backendName;
+	}
+	UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
 }
 
 /*!
@@ -1346,44 +1345,42 @@ inline std::string pyplot::get_backend()
 template <typename T>
 bool pyplot::annotate(std::string const &annotation, T x, T y)
 {
-    return annotate<double>(annotation, static_cast<double>(x), static_cast<double>(y));
+	return annotate<double>(annotation, static_cast<double>(x), static_cast<double>(y));
 }
 template <>
 bool pyplot::annotate<double>(std::string const &annotation, double x, double y)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *str = PyString_FromString(annotation.c_str());
-        PyTuple_SetItem(args, 0, str);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *str = PyString_FromString(annotation.c_str());
+		PyTuple_SetItem(args, 0, str);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyObject *xy = PyTuple_New(2);
-        {
-            PyTuple_SetItem(xy, 0, PyFloat_FromDouble(x));
-            PyTuple_SetItem(xy, 1, PyFloat_FromDouble(y));
-        }
-        //Insert value into the dictionary kwargs using xy as a key
-        PyDict_SetItemString(kwargs, "xy", xy);
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyObject *xy = PyTuple_New(2);
+		{
+			PyTuple_SetItem(xy, 0, PyFloat_FromDouble(x));
+			PyTuple_SetItem(xy, 1, PyFloat_FromDouble(y));
+		}
+		//Insert value into the dictionary kwargs using xy as a key
+		PyDict_SetItemString(kwargs, "xy", xy);
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyannotate, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyannotate, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to annotate failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to annotate failed!");
 }
 
 /*!
@@ -1393,24 +1390,22 @@ bool pyplot::annotate<double>(std::string const &annotation, double x, double y)
  */
 bool pyplot::axis(std::string const &axisArguments)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *str = PyString_FromString(axisArguments.c_str());
-        PyTuple_SetItem(args, 0, str);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *str = PyString_FromString(axisArguments.c_str());
+		PyTuple_SetItem(args, 0, str);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyaxis, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyaxis, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to axis failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to axis failed!");
 }
 
 /*!
@@ -1419,16 +1414,14 @@ bool pyplot::axis(std::string const &axisArguments)
  */
 inline bool pyplot::cla()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pycla, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pycla, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to cla failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to cla failed!");
 }
 
 /*!
@@ -1437,16 +1430,14 @@ inline bool pyplot::cla()
  */
 inline bool pyplot::clf()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyclf, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyclf, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to clf failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to clf failed!");
 }
 
 /*!
@@ -1455,16 +1446,14 @@ inline bool pyplot::clf()
  */
 inline bool pyplot::close()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyclose, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyclose, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to close failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to close failed!");
 }
 
 /*!
@@ -1476,16 +1465,14 @@ inline bool pyplot::close()
  */
 inline bool pyplot::draw()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pydraw, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pydraw, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to draw failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to draw failed!");
 }
 
 /*!
@@ -1504,38 +1491,34 @@ inline bool pyplot::draw()
 template <typename T>
 bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr, std::string const &fmt)
 {
-    if (x.size() != y.size() || x.size() != yerr.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size() || x.size() != yerr.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    PyObject *args = PyTuple_New(4);
-    {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *yerrarray = PyArray<T>(yerr);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(4);
+	{
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *yerrarray = PyArray<T>(yerr);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, yerrarray);
-        PyTuple_SetItem(args, 3, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, yerrarray);
+		PyTuple_SetItem(args, 3, pystring);
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to errorbar failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to errorbar failed!");
 }
 
 /*!
@@ -1559,49 +1542,45 @@ bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vec
  */
 template <typename T>
 bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
-                      T const *yerr, int const nSizeE, std::size_t const StrideE,
-                      std::string const &fmt)
+					  T const *y, int const nSizeY, std::size_t const StrideY,
+					  T const *yerr, int const nSizeE, std::size_t const StrideE,
+					  std::string const &fmt)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
-        std::size_t nsizeE = StrideE == 1 ? nSizeE : nSizeE / StrideE;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+		std::size_t nsizeE = StrideE == 1 ? nSizeE : nSizeE / StrideE;
 
-        if (nsizeX != nsizeY || nsizeX != nsizeE)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY || nsizeX != nsizeE)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    PyObject *args = PyTuple_New(4);
-    {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *yerrarray = PyArray<T>(yerr, nSizeE, StrideE);
+	PyObject *args = PyTuple_New(4);
+	{
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *yerrarray = PyArray<T>(yerr, nSizeE, StrideE);
 
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, yerrarray);
-        PyTuple_SetItem(args, 3, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, yerrarray);
+		PyTuple_SetItem(args, 3, pystring);
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to errorbar failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to errorbar failed!");
 }
 
 /*!
@@ -1621,32 +1600,30 @@ bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::errorbar(T const *x, T const *y, T const *yerr, int const nSize, std::string const &fmt)
 {
-    PyObject *args = PyTuple_New(4);
-    {
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *yerrarray = PyArray<T>(yerr, nSize);
+	PyObject *args = PyTuple_New(4);
+	{
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *yerrarray = PyArray<T>(yerr, nSize);
 
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, yerrarray);
-        PyTuple_SetItem(args, 3, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, yerrarray);
+		PyTuple_SetItem(args, 3, pystring);
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyerrorbar, args, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to errorbar failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to errorbar failed!");
 }
 
 /*!
@@ -1655,16 +1632,14 @@ bool pyplot::errorbar(T const *x, T const *y, T const *yerr, int const nSize, st
  */
 inline bool pyplot::figure()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyfigure, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyfigure, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to figure failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to figure failed!");
 }
 
 /*!
@@ -1679,31 +1654,29 @@ inline bool pyplot::figure()
  */
 bool pyplot::figure(std::size_t const width, std::size_t const height, std::size_t const dpi)
 {
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyObject *size = PyTuple_New(2);
-        {
-            PyTuple_SetItem(size, 0, PyFloat_FromDouble(static_cast<double>(width) / static_cast<double>(dpi)));
-            PyTuple_SetItem(size, 1, PyFloat_FromDouble(static_cast<double>(height) / static_cast<double>(dpi)));
-        }
-        PyDict_SetItemString(kwargs, "figsize", size);
-        PyDict_SetItemString(kwargs, "dpi", PyLong_FromSize_t(dpi));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyObject *size = PyTuple_New(2);
+		{
+			PyTuple_SetItem(size, 0, PyFloat_FromDouble(static_cast<double>(width) / static_cast<double>(dpi)));
+			PyTuple_SetItem(size, 1, PyFloat_FromDouble(static_cast<double>(height) / static_cast<double>(dpi)));
+		}
+		PyDict_SetItemString(kwargs, "figsize", size);
+		PyDict_SetItemString(kwargs, "dpi", PyLong_FromSize_t(dpi));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyfigure, pyplot::mpl.pyEmpty, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyfigure, pyplot::mpl.pyEmpty, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to figure failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	UMUQFAILRETURN("Call to figure failed!");
 }
 
 /*!
@@ -1724,48 +1697,44 @@ bool pyplot::figure(std::size_t const width, std::size_t const height, std::size
 template <typename T>
 bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2, std::map<std::string, std::string> const &keywords)
 {
-    if (x.size() != y1.size() || x.size() != y2.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y1.size() || x.size() != y2.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *y1array = PyArray<T>(y1);
-        PyObject *y2array = PyArray<T>(y2);
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *y1array = PyArray<T>(y1);
+		PyObject *y2array = PyArray<T>(y2);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, y1array);
-        PyTuple_SetItem(args, 2, y2array);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, y1array);
+		PyTuple_SetItem(args, 2, y2array);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to fill_between failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to fill_between failed!");
 }
 
 /*!
@@ -1791,58 +1760,54 @@ bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std
  */
 template <typename T>
 bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
-                          T const *y1, int const nSizeY1, std::size_t const StrideY1,
-                          T const *y2, int const nSizeY2, std::size_t const StrideY2,
-                          std::map<std::string, std::string> const &keywords)
+						  T const *y1, int const nSizeY1, std::size_t const StrideY1,
+						  T const *y2, int const nSizeY2, std::size_t const StrideY2,
+						  std::map<std::string, std::string> const &keywords)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY1 = StrideY1 == 1 ? nSizeY1 : nSizeY1 / StrideY1;
-        std::size_t nsizeY2 = StrideY2 == 1 ? nSizeY2 : nSizeY2 / StrideY2;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY1 = StrideY1 == 1 ? nSizeY1 : nSizeY1 / StrideY1;
+		std::size_t nsizeY2 = StrideY2 == 1 ? nSizeY2 : nSizeY2 / StrideY2;
 
-        if (nsizeX != nsizeY1 || nsizeX != nsizeY2)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY1 || nsizeX != nsizeY2)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *y1array = PyArray<T>(y1, nSizeY1, StrideY1);
-        PyObject *y2array = PyArray<T>(y2, nSizeY2, StrideY2);
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *y1array = PyArray<T>(y1, nSizeY1, StrideY1);
+		PyObject *y2array = PyArray<T>(y2, nSizeY2, StrideY2);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, y1array);
-        PyTuple_SetItem(args, 2, y2array);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, y1array);
+		PyTuple_SetItem(args, 2, y2array);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to fill_between failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to fill_between failed!");
 }
 
 /*!
@@ -1864,41 +1829,39 @@ bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const Stride
 template <typename T>
 bool pyplot::fill_between(T const *x, T const *y1, T const *y2, int const nSize, std::map<std::string, std::string> const &keywords)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *y1array = PyArray<T>(y1, nSize);
-        PyObject *y2array = PyArray<T>(y2, nSize);
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *y1array = PyArray<T>(y1, nSize);
+		PyObject *y2array = PyArray<T>(y2, nSize);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, y1array);
-        PyTuple_SetItem(args, 2, y2array);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, y1array);
+		PyTuple_SetItem(args, 2, y2array);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyfill_between, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to fill_between failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to fill_between failed!");
 }
 
 /*!
@@ -1908,26 +1871,24 @@ bool pyplot::fill_between(T const *x, T const *y1, T const *y2, int const nSize,
  */
 bool pyplot::grid(bool flag)
 {
-    PyObject *pyflag;
-    PyObject *args = PyTuple_New(1);
-    {
-        pyflag = flag ? Py_True : Py_False;
-        Py_INCREF(pyflag);
-        PyTuple_SetItem(args, 0, pyflag);
-    }
+	PyObject *pyflag;
+	PyObject *args = PyTuple_New(1);
+	{
+		pyflag = flag ? Py_True : Py_False;
+		Py_INCREF(pyflag);
+		PyTuple_SetItem(args, 0, pyflag);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pygrid, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pygrid, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to grid failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to grid failed!");
 }
 
 /*!
@@ -1956,69 +1917,67 @@ bool pyplot::grid(bool flag)
  */
 template <typename T>
 bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
-                  std::string const &color, std::string const &label, double const alpha,
-                  int const Rcolor, int const Gcolor, int const Bcolor)
+				  std::string const &color, std::string const &label, double const alpha,
+				  int const Rcolor, int const Gcolor, int const Bcolor)
 {
-    PyObject *args = PyTuple_New(2);
-    {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *pybins = PyInt_FromLong(bins);
+	PyObject *args = PyTuple_New(2);
+	{
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *pybins = PyInt_FromLong(bins);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, pybins);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, pybins);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    PyObject *pyColor = NULL;
-    {
-        // Construct keyword args
-        if (density)
-        {
-            PyDict_SetItemString(kwargs, "normed", Py_True);
-        }
-        if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
-        {
-            pyColor = PyTuple_New(3);
-            {
-                PyObject *pyRcolor = PyFloat_FromDouble(static_cast<double>(Rcolor) / 255.);
-                PyObject *pyGcolor = PyFloat_FromDouble(static_cast<double>(Gcolor) / 255.);
-                PyObject *pyBcolor = PyFloat_FromDouble(static_cast<double>(Bcolor) / 255.);
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	PyObject *pyColor = NULL;
+	{
+		// Construct keyword args
+		if (density)
+		{
+			PyDict_SetItemString(kwargs, "normed", Py_True);
+		}
+		if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
+		{
+			pyColor = PyTuple_New(3);
+			{
+				PyObject *pyRcolor = PyFloat_FromDouble(static_cast<double>(Rcolor) / 255.);
+				PyObject *pyGcolor = PyFloat_FromDouble(static_cast<double>(Gcolor) / 255.);
+				PyObject *pyBcolor = PyFloat_FromDouble(static_cast<double>(Bcolor) / 255.);
 
-                PyTuple_SetItem(pyColor, 0, pyRcolor);
-                PyTuple_SetItem(pyColor, 1, pyGcolor);
-                PyTuple_SetItem(pyColor, 2, pyBcolor);
-            }
+				PyTuple_SetItem(pyColor, 0, pyRcolor);
+				PyTuple_SetItem(pyColor, 1, pyGcolor);
+				PyTuple_SetItem(pyColor, 2, pyBcolor);
+			}
 
-            PyDict_SetItemString(kwargs, "color", pyColor);
-        }
-        else
-        {
-            PyDict_SetItemString(kwargs, "color", PyString_FromString(color.c_str()));
-        }
-        PyDict_SetItemString(kwargs, "ec", PyString_FromString("black"));
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-        PyDict_SetItemString(kwargs, "alpha", PyFloat_FromDouble(alpha));
-    }
+			PyDict_SetItemString(kwargs, "color", pyColor);
+		}
+		else
+		{
+			PyDict_SetItemString(kwargs, "color", PyString_FromString(color.c_str()));
+		}
+		PyDict_SetItemString(kwargs, "ec", PyString_FromString("black"));
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+		PyDict_SetItemString(kwargs, "alpha", PyFloat_FromDouble(alpha));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyhist, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyhist, args, kwargs);
 
-    if (pyColor)
-    {
-        Py_DECREF(pyColor);
-    }
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to hist failed!" << std::endl;
-    return false;
+	if (pyColor)
+	{
+		Py_DECREF(pyColor);
+	}
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to hist failed!");
 }
 
 /*!
@@ -2049,70 +2008,68 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
  */
 template <typename T>
 bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
-                  long const bins, bool const density, std::string const &color,
-                  std::string const &label, double const alpha,
-                  int const Rcolor, int const Gcolor, int const Bcolor)
+				  long const bins, bool const density, std::string const &color,
+				  std::string const &label, double const alpha,
+				  int const Rcolor, int const Gcolor, int const Bcolor)
 {
-    PyObject *args = PyTuple_New(2);
-    {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *pybins = PyInt_FromLong(bins);
+	PyObject *args = PyTuple_New(2);
+	{
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *pybins = PyInt_FromLong(bins);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, pybins);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, pybins);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    PyObject *pyColor = NULL;
-    {
-        // Construct keyword args
-        if (density)
-        {
-            PyDict_SetItemString(kwargs, "normed", Py_True);
-        }
-        if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
-        {
-            pyColor = PyTuple_New(3);
-            {
-                PyObject *pyRcolor = PyFloat_FromDouble(static_cast<double>(Rcolor) / 255.);
-                PyObject *pyGcolor = PyFloat_FromDouble(static_cast<double>(Gcolor) / 255.);
-                PyObject *pyBcolor = PyFloat_FromDouble(static_cast<double>(Bcolor) / 255.);
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	PyObject *pyColor = NULL;
+	{
+		// Construct keyword args
+		if (density)
+		{
+			PyDict_SetItemString(kwargs, "normed", Py_True);
+		}
+		if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
+		{
+			pyColor = PyTuple_New(3);
+			{
+				PyObject *pyRcolor = PyFloat_FromDouble(static_cast<double>(Rcolor) / 255.);
+				PyObject *pyGcolor = PyFloat_FromDouble(static_cast<double>(Gcolor) / 255.);
+				PyObject *pyBcolor = PyFloat_FromDouble(static_cast<double>(Bcolor) / 255.);
 
-                PyTuple_SetItem(pyColor, 0, pyRcolor);
-                PyTuple_SetItem(pyColor, 1, pyGcolor);
-                PyTuple_SetItem(pyColor, 2, pyBcolor);
-            }
+				PyTuple_SetItem(pyColor, 0, pyRcolor);
+				PyTuple_SetItem(pyColor, 1, pyGcolor);
+				PyTuple_SetItem(pyColor, 2, pyBcolor);
+			}
 
-            PyDict_SetItemString(kwargs, "color", pyColor);
-        }
-        else
-        {
-            PyDict_SetItemString(kwargs, "color", PyString_FromString(color.c_str()));
-        }
-        PyDict_SetItemString(kwargs, "ec", PyString_FromString("black"));
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-        PyDict_SetItemString(kwargs, "alpha", PyFloat_FromDouble(alpha));
-    }
+			PyDict_SetItemString(kwargs, "color", pyColor);
+		}
+		else
+		{
+			PyDict_SetItemString(kwargs, "color", PyString_FromString(color.c_str()));
+		}
+		PyDict_SetItemString(kwargs, "ec", PyString_FromString("black"));
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+		PyDict_SetItemString(kwargs, "alpha", PyFloat_FromDouble(alpha));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyhist, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyhist, args, kwargs);
 
-    if (pyColor)
-    {
-        Py_DECREF(pyColor);
-    }
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to hist failed!" << std::endl;
-    return false;
+	if (pyColor)
+	{
+		Py_DECREF(pyColor);
+	}
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to hist failed!");
 }
 
 /*!
@@ -2121,16 +2078,14 @@ bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
  */
 inline bool pyplot::ion()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyion, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyion, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to ion failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to ion failed!");
 }
 
 /*!
@@ -2139,16 +2094,14 @@ inline bool pyplot::ion()
  */
 inline bool pyplot::legend()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pylegend, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pylegend, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to legend failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to legend failed!");
 }
 
 /*!
@@ -2170,45 +2123,41 @@ inline bool pyplot::legend()
 template <typename T>
 bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to loglog failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to loglog failed!");
 }
 
 /*!
@@ -2233,53 +2182,49 @@ bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::strin
  */
 template <typename T>
 bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
-                    T const *y, int const nSizeY, std::size_t const StrideY,
-                    std::string const &fmt, std::string const &label)
+					T const *y, int const nSizeY, std::size_t const StrideY,
+					std::string const &fmt, std::string const &label)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to loglog failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to loglog failed!");
 }
 
 /*!
@@ -2302,38 +2247,36 @@ bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::loglog(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    PyObject *args = PyTuple_New(3);
-    {
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyloglog, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to loglog failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to loglog failed!");
 }
 
 /*!
@@ -2345,23 +2288,21 @@ bool pyplot::loglog(T const *x, T const *y, int const nSize, std::string const &
  */
 bool pyplot::pause(double const interval)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyTuple_SetItem(args, 0, PyFloat_FromDouble(interval));
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyTuple_SetItem(args, 0, PyFloat_FromDouble(interval));
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pypause, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pypause, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to pause failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to pause failed!");
 }
 
 /*!
@@ -2379,46 +2320,42 @@ bool pyplot::pause(double const interval)
 template <typename T>
 bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2439,54 +2376,50 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std
  */
 template <typename T>
 bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::map<std::string, std::string> const &keywords)
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::map<std::string, std::string> const &keywords)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2505,39 +2438,37 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2557,47 +2488,43 @@ bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string,
 template <typename T>
 bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2620,55 +2547,51 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string 
  */
 template <typename T>
 bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::string const &fmt, std::string const &label)
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::string const &fmt, std::string const &label)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2689,40 +2612,38 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyplot, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to plot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to plot failed!");
 }
 
 /*!
@@ -2732,24 +2653,22 @@ bool pyplot::plot(T const *x, T const *y, int const nSize, std::string const &fm
  */
 bool pyplot::savefig(std::string const &filename)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *pyfilename = PyString_FromString(filename.c_str());
-        PyTuple_SetItem(args, 0, pyfilename);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *pyfilename = PyString_FromString(filename.c_str());
+		PyTuple_SetItem(args, 0, pyfilename);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pysavefig, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pysavefig, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to savefig failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to savefig failed!");
 }
 
 /*!
@@ -2768,76 +2687,68 @@ bool pyplot::savefig(std::string const &filename)
  */
 template <typename T>
 bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
-                     std::vector<T> const &s, std::vector<T> const &c,
-                     std::map<std::string, std::string> const &keywords)
+					 std::vector<T> const &s, std::vector<T> const &c,
+					 std::map<std::string, std::string> const &keywords)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
-    if (s.size() > 1)
-    {
-        if (x.size() != s.size())
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
-    if (c.size() > 1)
-    {
-        if (x.size() != c.size())
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
+	if (s.size() > 1)
+	{
+		if (x.size() != s.size())
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
+	if (c.size() > 1)
+	{
+		if (x.size() != c.size())
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x);
-        PyObject *PyArrayY = PyArray<T>(y);
-        PyObject *PyArrayS = s.size() > 1 ? PyArray<T>(s) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = c.size() > 1 ? PyArray<T>(c) : PyFloat_FromDouble(static_cast<double>(c[0]));
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x);
+		PyObject *PyArrayY = PyArray<T>(y);
+		PyObject *PyArrayS = s.size() > 1 ? PyArray<T>(s) : PyFloat_FromDouble(static_cast<double>(s[0]));
+		PyObject *PyArrayC = c.size() > 1 ? PyArray<T>(c) : PyFloat_FromDouble(static_cast<double>(c[0]));
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -2856,58 +2767,54 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
  */
 template <typename T>
 bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
-                     T const s, T const c,
-                     std::map<std::string, std::string> const &keywords)
+					 T const s, T const c,
+					 std::map<std::string, std::string> const &keywords)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x);
-        PyObject *PyArrayY = PyArray<T>(y);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x);
+		PyObject *PyArrayY = PyArray<T>(y);
+		PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
+		PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -2934,84 +2841,76 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
  */
 template <typename T>
 bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                     T const *y, int const nSizeY, std::size_t const StrideY,
-                     T const *s, int const nSizeS, std::size_t const StrideS,
-                     T const *c, int const nSizeC, std::size_t const StrideC,
-                     std::map<std::string, std::string> const &keywords)
+					 T const *y, int const nSizeY, std::size_t const StrideY,
+					 T const *s, int const nSizeS, std::size_t const StrideS,
+					 T const *c, int const nSizeC, std::size_t const StrideC,
+					 std::map<std::string, std::string> const &keywords)
 {
 
-    auto nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-    auto nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
-    auto nsizeS = StrideS == 1 ? nSizeS : nSizeS / StrideS;
-    auto nsizeC = StrideC == 1 ? nSizeC : nSizeC / StrideC;
+	auto nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+	auto nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	auto nsizeS = StrideS == 1 ? nSizeS : nSizeS / StrideS;
+	auto nsizeC = StrideC == 1 ? nSizeC : nSizeC / StrideC;
 
-    if (nsizeX != nsizeY)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
-    if (nsizeS > 1)
-    {
-        if (nsizeX != nsizeS)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
-    if (nsizeC > 1)
-    {
-        if (nsizeX != nsizeC)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+	if (nsizeX != nsizeY)
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
+	if (nsizeS > 1)
+	{
+		if (nsizeX != nsizeS)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
+	if (nsizeC > 1)
+	{
+		if (nsizeX != nsizeC)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *PyArrayS = nsizeS > 1 ? PyArray<T>(s, nSizeS, StrideS) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = nsizeC > 1 ? PyArray<T>(c, nSizeC, StrideC) : PyFloat_FromDouble(static_cast<double>(c[0]));
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *PyArrayS = nsizeS > 1 ? PyArray<T>(s, nSizeS, StrideS) : PyFloat_FromDouble(static_cast<double>(s[0]));
+		PyObject *PyArrayC = nsizeC > 1 ? PyArray<T>(c, nSizeC, StrideC) : PyFloat_FromDouble(static_cast<double>(c[0]));
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -3034,62 +2933,58 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
  */
 template <typename T>
 bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                     T const *y, int const nSizeY, std::size_t const StrideY,
-                     T const s, T const c,
-                     std::map<std::string, std::string> const &keywords)
+					 T const *y, int const nSizeY, std::size_t const StrideY,
+					 T const s, T const c,
+					 std::map<std::string, std::string> const &keywords)
 {
 
-    auto nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-    auto nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
-    if (nsizeX != nsizeY)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	auto nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+	auto nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	if (nsizeX != nsizeY)
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
+		PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -3109,51 +3004,49 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
  */
 template <typename T>
 bool pyplot::scatter(T const *x, T const *y, int const nSize,
-                     T const *s, T const *c,
-                     std::map<std::string, std::string> const &keywords)
+					 T const *s, T const *c,
+					 std::map<std::string, std::string> const &keywords)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSize);
-        PyObject *PyArrayY = PyArray<T>(y, nSize);
-        PyObject *PyArrayS = PyArray<T>(s, nSize);
-        PyObject *PyArrayC = PyArray<T>(c, nSize);
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x, nSize);
+		PyObject *PyArrayY = PyArray<T>(y, nSize);
+		PyObject *PyArrayS = PyArray<T>(s, nSize);
+		PyObject *PyArrayC = PyArray<T>(c, nSize);
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -3173,51 +3066,49 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
  */
 template <typename T>
 bool pyplot::scatter(T const *x, T const *y, int const nSize,
-                     T const s, T const c,
-                     std::map<std::string, std::string> const &keywords)
+					 T const s, T const c,
+					 std::map<std::string, std::string> const &keywords)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(4);
-    {
-        // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSize);
-        PyObject *PyArrayY = PyArray<T>(y, nSize);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+	// Construct positional args
+	PyObject *args = PyTuple_New(4);
+	{
+		// Using numpy arrays
+		PyObject *PyArrayX = PyArray<T>(x, nSize);
+		PyObject *PyArrayY = PyArray<T>(y, nSize);
+		PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
+		PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
 
-        PyTuple_SetItem(args, 0, PyArrayX);
-        PyTuple_SetItem(args, 1, PyArrayY);
-        PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
-    }
+		PyTuple_SetItem(args, 0, PyArrayX);
+		PyTuple_SetItem(args, 1, PyArrayY);
+		PyTuple_SetItem(args, 2, PyArrayS);
+		PyTuple_SetItem(args, 3, PyArrayC);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // No patch boundary will be drawn
-        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
-        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
-    }
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// No patch boundary will be drawn
+		// For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+		PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+	}
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to scatter failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to scatter failed!");
 }
 
 /*!
@@ -3238,45 +3129,41 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
 template <typename T>
 bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogx failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogx failed!");
 }
 
 /*!
@@ -3300,54 +3187,50 @@ bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::str
  */
 template <typename T>
 bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
-                      std::string const &fmt, std::string const &label)
+					  T const *y, int const nSizeY, std::size_t const StrideY,
+					  std::string const &fmt, std::string const &label)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogx failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogx failed!");
 }
 
 /*!
@@ -3369,39 +3252,37 @@ bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogx, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogx failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogx failed!");
 }
 
 /*!
@@ -3422,45 +3303,41 @@ bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const
 template <typename T>
 bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogy failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogy failed!");
 }
 
 /*!
@@ -3484,54 +3361,50 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
  */
 template <typename T>
 bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
-                      std::string const &fmt, std::string const &label)
+					  T const *y, int const nSizeY, std::size_t const StrideY,
+					  std::string const &fmt, std::string const &label)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogy failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogy failed!");
 }
 
 /*!
@@ -3553,39 +3426,37 @@ bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pysemilogy, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to semilogy failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to semilogy failed!");
 }
 
 /*!
@@ -3595,37 +3466,35 @@ bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const
  */
 bool pyplot::show(bool const block)
 {
-    PyObject *res;
-    if (block)
-    {
-        res = PyObject_CallObject(pyplot::mpl.pyshow, pyplot::mpl.pyEmpty);
+	PyObject *res;
+	if (block)
+	{
+		res = PyObject_CallObject(pyplot::mpl.pyshow, pyplot::mpl.pyEmpty);
 
-        if (res)
-        {
-            Py_DECREF(res);
-            return true;
-        }
-    }
-    else
-    {
-        // Create a new empty dictionary
-        PyObject *kwargs = PyDict_New();
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "block", Py_False);
+		if (res)
+		{
+			Py_DECREF(res);
+			return true;
+		}
+	}
+	else
+	{
+		// Create a new empty dictionary
+		PyObject *kwargs = PyDict_New();
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "block", Py_False);
 
-        res = PyObject_Call(pyplot::mpl.pyshow, pyplot::mpl.pyEmpty, kwargs);
+		res = PyObject_Call(pyplot::mpl.pyshow, pyplot::mpl.pyEmpty, kwargs);
 
-        if (res)
-        {
-            Py_DECREF(res);
-            Py_DECREF(kwargs);
-            return true;
-        }
-        Py_DECREF(kwargs);
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to show failed!" << std::endl;
-    return false;
+		if (res)
+		{
+			Py_DECREF(res);
+			Py_DECREF(kwargs);
+			return true;
+		}
+		Py_DECREF(kwargs);
+	}
+	UMUQFAILRETURN("Call to show failed!");
 }
 
 /*!
@@ -3644,46 +3513,42 @@ bool pyplot::show(bool const block)
 template <typename T>
 bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -3705,54 +3570,50 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std
  */
 template <typename T>
 bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::map<std::string, std::string> const &keywords)
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::map<std::string, std::string> const &keywords)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -3772,39 +3633,37 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(2);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+	// Construct positional args
+	PyObject *args = PyTuple_New(2);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -3824,47 +3683,43 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string,
 template <typename T>
 bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
-    if (x.size() != y.size())
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << "Two vectors should have the same size!" << std::endl;
-        return false;
-    }
+	if (x.size() != y.size())
+	{
+		UMUQFAILRETURN("Two input vectors do not have the same size!");
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x);
+		PyObject *yarray = PyArray<T>(y);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -3887,55 +3742,51 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string 
  */
 template <typename T>
 bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  std::string const &fmt, std::string const &label)
+				  T const *y, int const nSizeY, std::size_t const StrideY,
+				  std::string const &fmt, std::string const &label)
 {
-    {
-        std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
-        std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
+	{
+		std::size_t nsizeX = StrideX == 1 ? nSizeX : nSizeX / StrideX;
+		std::size_t nsizeY = StrideY == 1 ? nSizeY : nSizeY / StrideY;
 
-        if (nsizeX != nsizeY)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Two vectors should have the same size!" << std::endl;
-            return false;
-        }
-    }
+		if (nsizeX != nsizeY)
+		{
+			UMUQFAILRETURN("Two input vectors do not have the same size!");
+		}
+	}
 
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+		PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -3956,40 +3807,38 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *pystring = PyString_FromString(fmt.c_str());
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		// Using numpy arrays
+		PyObject *xarray = PyArray<T>(x, nSize);
+		PyObject *yarray = PyArray<T>(y, nSize);
+		PyObject *pystring = PyString_FromString(fmt.c_str());
 
-        PyTuple_SetItem(args, 0, xarray);
-        PyTuple_SetItem(args, 1, yarray);
-        PyTuple_SetItem(args, 2, pystring);
-    }
+		PyTuple_SetItem(args, 0, xarray);
+		PyTuple_SetItem(args, 1, yarray);
+		PyTuple_SetItem(args, 2, pystring);
+	}
 
-    // Create a new empty dictionary
-    PyObject *kwargs = PyDict_New();
-    {
-        // Construct keyword args
-        PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
-    }
+	// Create a new empty dictionary
+	PyObject *kwargs = PyDict_New();
+	{
+		// Construct keyword args
+		PyDict_SetItemString(kwargs, "label", PyString_FromString(label.c_str()));
+	}
 
-    PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
+	PyObject *res = PyObject_Call(pyplot::mpl.pystem, args, kwargs);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to stem failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to stem failed!");
 }
 
 /*!
@@ -4004,26 +3853,24 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fm
  */
 bool pyplot::subplot(long const nrows, long const ncols, long const index)
 {
-    // Construct positional args
-    PyObject *args = PyTuple_New(3);
-    {
-        PyTuple_SetItem(args, 0, PyFloat_FromDouble(nrows));
-        PyTuple_SetItem(args, 1, PyFloat_FromDouble(ncols));
-        PyTuple_SetItem(args, 2, PyFloat_FromDouble(index));
-    }
+	// Construct positional args
+	PyObject *args = PyTuple_New(3);
+	{
+		PyTuple_SetItem(args, 0, PyFloat_FromDouble(nrows));
+		PyTuple_SetItem(args, 1, PyFloat_FromDouble(ncols));
+		PyTuple_SetItem(args, 2, PyFloat_FromDouble(index));
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pysubplot, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pysubplot, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to subplot failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to subplot failed!");
 }
 
 /*!
@@ -4033,24 +3880,22 @@ bool pyplot::subplot(long const nrows, long const ncols, long const index)
  */
 bool pyplot::title(std::string const &label)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *pylabel = PyString_FromString(label.c_str());
-        PyTuple_SetItem(args, 0, pylabel);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *pylabel = PyString_FromString(label.c_str());
+		PyTuple_SetItem(args, 0, pylabel);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pytitle, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pytitle, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to title failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to title failed!");
 }
 
 // Actually, is there any reason not to call this automatically for every plot?
@@ -4060,16 +3905,14 @@ bool pyplot::title(std::string const &label)
  */
 inline bool pyplot::tight_layout()
 {
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pytight_layout, pyplot::mpl.pyEmpty);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pytight_layout, pyplot::mpl.pyEmpty);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        return true;
-    }
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to tight_layout failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		return true;
+	}
+	UMUQFAILRETURN("Call to tight_layout failed!");
 }
 
 /*!
@@ -4083,27 +3926,25 @@ inline bool pyplot::tight_layout()
 template <typename T>
 bool pyplot::xlim(T left, T right)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *list = PyList_New(2);
-        PyList_SetItem(list, 0, PyFloat_FromDouble(static_cast<double>(left)));
-        PyList_SetItem(list, 1, PyFloat_FromDouble(static_cast<double>(right)));
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *list = PyList_New(2);
+		PyList_SetItem(list, 0, PyFloat_FromDouble(static_cast<double>(left)));
+		PyList_SetItem(list, 1, PyFloat_FromDouble(static_cast<double>(right)));
 
-        PyTuple_SetItem(args, 0, list);
-    }
+		PyTuple_SetItem(args, 0, list);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlim, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlim, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to xlim failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to xlim failed!");
 }
 /*!
  * \brief Get the x limits of the current axes
@@ -4116,24 +3957,22 @@ bool pyplot::xlim(T left, T right)
 template <typename T>
 bool pyplot::xlim(T *left, T *right)
 {
-    PyObject *args = pyplot::mpl.pyEmpty;
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlim, args);
-    PyObject *pleft = PyTuple_GetItem(res, 0);
-    PyObject *pright = PyTuple_GetItem(res, 1);
+	PyObject *args = pyplot::mpl.pyEmpty;
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlim, args);
+	PyObject *pleft = PyTuple_GetItem(res, 0);
+	PyObject *pright = PyTuple_GetItem(res, 1);
 
-    *left = static_cast<T>(PyFloat_AsDouble(pleft));
-    *right = static_cast<T>(PyFloat_AsDouble(pright));
+	*left = static_cast<T>(PyFloat_AsDouble(pleft));
+	*right = static_cast<T>(PyFloat_AsDouble(pright));
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to xlim failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to xlim failed!");
 }
 
 /*!
@@ -4143,23 +3982,21 @@ bool pyplot::xlim(T *left, T *right)
  */
 bool pyplot::xlabel(std::string const &label)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *pystr = PyString_FromString(label.c_str());
-        PyTuple_SetItem(args, 0, pystr);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *pystr = PyString_FromString(label.c_str());
+		PyTuple_SetItem(args, 0, pystr);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlabel, args);
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to xlabel failed!" << std::endl;
-    return false;
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlabel, args);
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to xlabel failed!");
 }
 
 /*!
@@ -4169,18 +4006,16 @@ bool pyplot::xlabel(std::string const &label)
  */
 inline bool pyplot::xkcd()
 {
-    PyObject *kwargs = PyDict_New();
-    PyObject *res = PyObject_Call(pyplot::mpl.pyxkcd, pyplot::mpl.pyEmpty, kwargs);
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(kwargs);
-        return true;
-    }
-    Py_DECREF(kwargs);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to xkcd failed!" << std::endl;
-    return false;
+	PyObject *kwargs = PyDict_New();
+	PyObject *res = PyObject_Call(pyplot::mpl.pyxkcd, pyplot::mpl.pyEmpty, kwargs);
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(kwargs);
+		return true;
+	}
+	Py_DECREF(kwargs);
+	UMUQFAILRETURN("Call to xkcd failed!");
 }
 
 /*!
@@ -4194,27 +4029,25 @@ inline bool pyplot::xkcd()
 template <typename T>
 bool pyplot::ylim(T left, T right)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *list = PyList_New(2);
-        PyList_SetItem(list, 0, PyFloat_FromDouble(static_cast<double>(left)));
-        PyList_SetItem(list, 1, PyFloat_FromDouble(static_cast<double>(right)));
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *list = PyList_New(2);
+		PyList_SetItem(list, 0, PyFloat_FromDouble(static_cast<double>(left)));
+		PyList_SetItem(list, 1, PyFloat_FromDouble(static_cast<double>(right)));
 
-        PyTuple_SetItem(args, 0, list);
-    }
+		PyTuple_SetItem(args, 0, list);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyylim, args);
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyylim, args);
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to ylim failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to ylim failed!");
 }
 /*!
  * \brief Get the y limits of the current axes
@@ -4227,24 +4060,22 @@ bool pyplot::ylim(T left, T right)
 template <typename T>
 bool pyplot::ylim(T *left, T *right)
 {
-    PyObject *args = pyplot::mpl.pyEmpty;
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyylim, args);
-    PyObject *pleft = PyTuple_GetItem(res, 0);
-    PyObject *pright = PyTuple_GetItem(res, 1);
+	PyObject *args = pyplot::mpl.pyEmpty;
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyylim, args);
+	PyObject *pleft = PyTuple_GetItem(res, 0);
+	PyObject *pright = PyTuple_GetItem(res, 1);
 
-    *left = static_cast<T>(PyFloat_AsDouble(pleft));
-    *right = static_cast<T>(PyFloat_AsDouble(pright));
+	*left = static_cast<T>(PyFloat_AsDouble(pleft));
+	*right = static_cast<T>(PyFloat_AsDouble(pright));
 
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to ylim failed!" << std::endl;
-    return false;
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to ylim failed!");
 }
 
 /*!
@@ -4254,23 +4085,21 @@ bool pyplot::ylim(T *left, T *right)
  */
 bool pyplot::ylabel(std::string const &label)
 {
-    PyObject *args = PyTuple_New(1);
-    {
-        PyObject *pystr = PyString_FromString(label.c_str());
-        PyTuple_SetItem(args, 0, pystr);
-    }
+	PyObject *args = PyTuple_New(1);
+	{
+		PyObject *pystr = PyString_FromString(label.c_str());
+		PyTuple_SetItem(args, 0, pystr);
+	}
 
-    PyObject *res = PyObject_CallObject(pyplot::mpl.pyylabel, args);
-    if (res)
-    {
-        Py_DECREF(res);
-        Py_DECREF(args);
-        return true;
-    }
-    Py_DECREF(args);
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " Call to ylabel failed!" << std::endl;
-    return false;
+	PyObject *res = PyObject_CallObject(pyplot::mpl.pyylabel, args);
+	if (res)
+	{
+		Py_DECREF(res);
+		Py_DECREF(args);
+		return true;
+	}
+	Py_DECREF(args);
+	UMUQFAILRETURN("Call to ylabel failed!");
 }
 
 /*!
@@ -4281,540 +4110,404 @@ pyplot::matplotlib::matplotlib()
 {
 // optional but recommended
 #if PY_MAJOR_VERSION >= 3
-    wchar_t name[] = L"umuq";
+	wchar_t name[] = L"umuq";
 #else
-    char name[] = "umuq";
+	char name[] = "umuq";
 #endif
 
-    // Pass name to the Python
-    Py_SetProgramName(name);
+	// Pass name to the Python
+	Py_SetProgramName(name);
 
-    // Initialize the Python. Required.
-    Py_Initialize();
+	// Initialize the Python. Required.
+	Py_Initialize();
 
-    // Initialize numpy
-    import_array();
+	// Initialize numpy
+	import_array();
 
-    PyObject *matplotlibModule = NULL;
-    PyObject *pyplotModule = NULL;
-    PyObject *pylabModule = NULL;
+	PyObject *matplotlibModule = NULL;
+	PyObject *pyplotModule = NULL;
+	PyObject *pylabModule = NULL;
 
-    {
-        // import matplotlib
+	{
+		// import matplotlib
 
-        PyObject *matplotlibName = PyString_FromString("matplotlib");
-        if (!matplotlibName)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't create matplotlib PyObject!" << std::endl;
-            throw std::runtime_error("Error creating matplotlib PyObject!");
-        }
+		PyObject *matplotlibName = PyString_FromString("matplotlib");
+		if (!matplotlibName)
+		{
+			UMUQFAIL("Error creating matplotlib PyObject!");
+		}
 
-        matplotlibModule = PyImport_Import(matplotlibName);
-        if (!matplotlibModule)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't load matplotlib!" << std::endl;
-            throw std::runtime_error("Error loading matplotlib!");
-        }
+		matplotlibModule = PyImport_Import(matplotlibName);
+		if (!matplotlibModule)
+		{
+			UMUQFAIL("Error loading matplotlib!");
+		}
 
-        // Decrementing of the reference count
-        Py_DECREF(matplotlibName);
-    }
+		// Decrementing of the reference count
+		Py_DECREF(matplotlibName);
+	}
 
-    {
-        // import matplotlib.pyplot
+	{
+		// import matplotlib.pyplot
 
-        PyObject *pyplotName = PyString_FromString("matplotlib.pyplot");
-        if (!pyplotName)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't create pyplot PyObject!" << std::endl;
-            throw std::runtime_error("Error creating pyplot PyObject!");
-        }
+		PyObject *pyplotName = PyString_FromString("matplotlib.pyplot");
+		if (!pyplotName)
+		{
+			UMUQFAIL("Error creating matplotlib.pyplot PyObject!");
+		}
 
-        pyplotModule = PyImport_Import(pyplotName);
-        if (!pyplotModule)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't load matplotlib.pyplot!" << std::endl;
-            throw std::runtime_error("Error loading module matplotlib.pyplot!");
-        }
+		pyplotModule = PyImport_Import(pyplotName);
+		if (!pyplotModule)
+		{
+			UMUQFAIL("Error loading matplotlib.pyplot!");
+		}
 
-        // Decrementing of the reference count
-        Py_DECREF(pyplotName);
-    }
+		// Decrementing of the reference count
+		Py_DECREF(pyplotName);
+	}
 
-    // matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
-    // or matplotlib.backends is imported for the first time
-    if (!backend.empty())
-    {
-        // Call the method named use of object matplotlib with a variable number of C arguments.
-        PyObject_CallMethod(matplotlibModule, const_cast<char *>("use"), const_cast<char *>("s"), backend.c_str());
-    }
+	// matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
+	// or matplotlib.backends is imported for the first time
+	if (!backend.empty())
+	{
+		// Call the method named use of object matplotlib with a variable number of C arguments.
+		PyObject_CallMethod(matplotlibModule, const_cast<char *>("use"), const_cast<char *>("s"), backend.c_str());
+	}
 
-    {
-        // import pylab
+	{
+		// import pylab
 
-        PyObject *pylabName = PyString_FromString("pylab");
-        if (!pylabName)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't create pylab PyObject!" << std::endl;
-            throw std::runtime_error("Error creating pylab PyObject!");
-        }
+		PyObject *pylabName = PyString_FromString("pylab");
+		if (!pylabName)
+		{
+			UMUQFAIL("Error creating pylab PyObject!");
+		}
 
-        pylabModule = PyImport_Import(pylabName);
-        if (!pylabModule)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Couldn't load pylab!" << std::endl;
-            throw std::runtime_error("Error loading pylab!");
-        }
+		pylabModule = PyImport_Import(pylabName);
+		if (!pylabModule)
+		{
+			UMUQFAIL("Error loading pylab!");
+		}
 
-        // Decrementing of the reference count
-        Py_DECREF(pylabName);
-    }
+		// Decrementing of the reference count
+		Py_DECREF(pylabName);
+	}
 
-    // Retrieve an attribute named get_backend from object matplotlibModule.
-    pyget_backend = PyObject_GetAttrString(matplotlibModule, "get_backend");
-    if (!pyget_backend)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find get_backend function!" << std::endl;
-        throw std::runtime_error("Couldn't find get_backend function!");
-    }
-    if (!PyFunction_Check(pyget_backend))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
+	// Retrieve an attribute named get_backend from object matplotlibModule.
+	pyget_backend = PyObject_GetAttrString(matplotlibModule, "get_backend");
+	if (!pyget_backend)
+	{
+		UMUQFAIL("Couldn't find get_backend function!");
+	}
+	if (!PyFunction_Check(pyget_backend))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
 
-    //Return a new tuple object of size 0
-    pyEmpty = PyTuple_New(0);
+	//Return a new tuple object of size 0
+	pyEmpty = PyTuple_New(0);
 
-    // Retrieve an attribute named annotate from object pyplotModule.
-    pyannotate = PyObject_GetAttrString(pyplotModule, "annotate");
-    if (!pyannotate)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find annotate function!" << std::endl;
-        throw std::runtime_error("Couldn't find annotate function!");
-    }
-    if (!PyFunction_Check(pyannotate))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named show from object pyplotModule.
-    pyshow = PyObject_GetAttrString(pyplotModule, "show");
-    if (!pyshow)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find show function!" << std::endl;
-        throw std::runtime_error("Couldn't find show function!");
-    }
-    //Return true if it is a function object
-    if (!PyFunction_Check(pyshow))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named close from object pyplotModule.
-    pyclose = PyObject_GetAttrString(pyplotModule, "close");
-    if (!pyclose)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find close function!" << std::endl;
-        throw std::runtime_error("Couldn't find close function!");
-    }
-    if (!PyFunction_Check(pyclose))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named draw from object pyplotModule.
-    pydraw = PyObject_GetAttrString(pyplotModule, "draw");
-    if (!pydraw)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find draw function!" << std::endl;
-        throw std::runtime_error("Couldn't find draw function!");
-    }
-    if (!PyFunction_Check(pydraw))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named pause from object pyplotModule.
-    pypause = PyObject_GetAttrString(pyplotModule, "pause");
-    if (!pypause)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find pause function!" << std::endl;
-        throw std::runtime_error("Couldn't find pause function!");
-    }
-    if (!PyFunction_Check(pypause))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named figure from object pyplotModule.
-    pyfigure = PyObject_GetAttrString(pyplotModule, "figure");
-    if (!pyfigure)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find figure function!" << std::endl;
-        throw std::runtime_error("Couldn't find figure function!");
-    }
-    if (!PyFunction_Check(pyfigure))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named plot from object pyplotModule.
-    pyplot = PyObject_GetAttrString(pyplotModule, "plot");
-    if (!pyplot)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find plot function!" << std::endl;
-        throw std::runtime_error("Couldn't find plot function!");
-    }
-    if (!PyFunction_Check(pyplot))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named semilogx from object pyplotModule.
-    pysemilogx = PyObject_GetAttrString(pyplotModule, "semilogx");
-    if (!pysemilogx)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find semilogx function!" << std::endl;
-        throw std::runtime_error("Couldn't find semilogx function!");
-    }
-    if (!PyFunction_Check(pysemilogx))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named semilogy from object pyplotModule.
-    pysemilogy = PyObject_GetAttrString(pyplotModule, "semilogy");
-    if (!pysemilogy)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find semilogy function!" << std::endl;
-        throw std::runtime_error("Couldn't find semilogy function!");
-    }
-    if (!PyFunction_Check(pysemilogy))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named loglog from object pyplotModule.
-    pyloglog = PyObject_GetAttrString(pyplotModule, "loglog");
-    if (!pyloglog)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find loglog function!" << std::endl;
-        throw std::runtime_error("Couldn't find loglog function!");
-    }
-    if (!PyFunction_Check(pyloglog))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named fill_between from object pyplotModule.
-    pyfill_between = PyObject_GetAttrString(pyplotModule, "fill_between");
-    if (!pyfill_between)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find fill_between function!" << std::endl;
-        throw std::runtime_error("Couldn't find fill_between function!");
-    }
-    if (!PyFunction_Check(pyfill_between))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named hist from object pyplotModule.
-    pyhist = PyObject_GetAttrString(pyplotModule, "hist");
-    if (!pyhist)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find hist function!" << std::endl;
-        throw std::runtime_error("Couldn't find hist function!");
-    }
-    if (!PyFunction_Check(pyhist))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named subplot from object pyplotModule.
-    pysubplot = PyObject_GetAttrString(pyplotModule, "subplot");
-    if (!pysubplot)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find subplot function!" << std::endl;
-        throw std::runtime_error("Couldn't find subplot function!");
-    }
-    if (!PyFunction_Check(pysubplot))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named legend from object pyplotModule.
-    pylegend = PyObject_GetAttrString(pyplotModule, "legend");
-    if (!pylegend)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find legend function!" << std::endl;
-        throw std::runtime_error("Couldn't find legend function!");
-    }
-    if (!PyFunction_Check(pylegend))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named ylim from object pyplotModule.
-    pyylim = PyObject_GetAttrString(pyplotModule, "ylim");
-    if (!pyylim)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find ylim function!" << std::endl;
-        throw std::runtime_error("Couldn't find ylim function!");
-    }
-    if (!PyFunction_Check(pyylim))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named title from object pyplotModule.
-    pytitle = PyObject_GetAttrString(pyplotModule, "title");
-    if (!pytitle)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find title function!" << std::endl;
-        throw std::runtime_error("Couldn't find title function!");
-    }
-    if (!PyFunction_Check(pytitle))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named axis from object pyplotModule.
-    pyaxis = PyObject_GetAttrString(pyplotModule, "axis");
-    if (!pyaxis)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find axis function!" << std::endl;
-        throw std::runtime_error("Couldn't find axis function!");
-    }
-    if (!PyFunction_Check(pyaxis))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named xlabel from object pyplotModule.
-    pyxlabel = PyObject_GetAttrString(pyplotModule, "xlabel");
-    if (!pyxlabel)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find xlabel function!" << std::endl;
-        throw std::runtime_error("Couldn't find xlabel function!");
-    }
-    if (!PyFunction_Check(pyxlabel))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named ylabel from object pyplotModule.
-    pyylabel = PyObject_GetAttrString(pyplotModule, "ylabel");
-    if (!pyylabel)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find ylabel function!" << std::endl;
-        throw std::runtime_error("Couldn't find ylabel function!");
-    }
-    if (!PyFunction_Check(pyylabel))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named grid from object pyplotModule.
-    pygrid = PyObject_GetAttrString(pyplotModule, "grid");
-    if (!pygrid)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find grid function!" << std::endl;
-        throw std::runtime_error("Couldn't find grid function!");
-    }
-    if (!PyFunction_Check(pygrid))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named xlim from object pyplotModule.
-    pyxlim = PyObject_GetAttrString(pyplotModule, "xlim");
-    if (!pyxlim)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find xlim function!" << std::endl;
-        throw std::runtime_error("Couldn't find xlim function!");
-    }
-    if (!PyFunction_Check(pyxlim))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named ion from object pyplotModule.
-    pyion = PyObject_GetAttrString(pyplotModule, "ion");
-    if (!pyion)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find ion function!" << std::endl;
-        throw std::runtime_error("Couldn't find ion function!");
-    }
-    if (!PyFunction_Check(pyion))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named savefig from object pylabModule.
-    pysavefig = PyObject_GetAttrString(pylabModule, "savefig");
-    if (!pysavefig)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find savefig function!" << std::endl;
-        throw std::runtime_error("Couldn't find savefig function!");
-    }
-    if (!PyFunction_Check(pysavefig))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named scatter from object pyplotModule.
-    pyscatter = PyObject_GetAttrString(pyplotModule, "scatter");
-    if (!pyscatter)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find scatter function!" << std::endl;
-        throw std::runtime_error("Couldn't find scatter function!");
-    }
-    if (!PyFunction_Check(pyscatter))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named cla from object pyplotModule.
-    pycla = PyObject_GetAttrString(pyplotModule, "cla");
-    if (!pycla)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find cla function!" << std::endl;
-        throw std::runtime_error("Couldn't find cla function!");
-    }
-    if (!PyFunction_Check(pycla))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named clf from object pyplotModule.
-    pyclf = PyObject_GetAttrString(pyplotModule, "clf");
-    if (!pyclf)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find clf function!" << std::endl;
-        throw std::runtime_error("Couldn't find clf function!");
-    }
-    if (!PyFunction_Check(pyclf))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named errorbar from object pyplotModule.
-    pyerrorbar = PyObject_GetAttrString(pyplotModule, "errorbar");
-    if (!pyerrorbar)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find errorbar function!" << std::endl;
-        throw std::runtime_error("Couldn't find errorbar function!");
-    }
-    if (!PyFunction_Check(pyerrorbar))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named tight_layout from object pyplotModule.
-    pytight_layout = PyObject_GetAttrString(pyplotModule, "tight_layout");
-    if (!pytight_layout)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find tight_layout function!" << std::endl;
-        throw std::runtime_error("Couldn't find tight_layout function!");
-    }
-    if (!PyFunction_Check(pytight_layout))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named stem from object pyplotModule.
-    pystem = PyObject_GetAttrString(pyplotModule, "stem");
-    if (!pystem)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find stem function!" << std::endl;
-        throw std::runtime_error("Couldn't find stem function!");
-    }
-    if (!PyFunction_Check(pystem))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
-    // Retrieve an attribute named xkcd from object pyplotModule.
-    pyxkcd = PyObject_GetAttrString(pyplotModule, "xkcd");
-    if (!pyxkcd)
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Couldn't find xkcd function!" << std::endl;
-        throw std::runtime_error("Couldn't find xkcd function!");
-    }
-    if (!PyFunction_Check(pyxkcd))
-    {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Python object is unexpectedly not a PyFunction !" << std::endl;
-        throw std::runtime_error("Python object is unexpectedly not a PyFunction.");
-    }
+	// Retrieve an attribute named annotate from object pyplotModule.
+	pyannotate = PyObject_GetAttrString(pyplotModule, "annotate");
+	if (!pyannotate)
+	{
+		UMUQFAIL("Couldn't find annotate function!");
+	}
+	if (!PyFunction_Check(pyannotate))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named axis from object pyplotModule.
+	pyaxis = PyObject_GetAttrString(pyplotModule, "axis");
+	if (!pyaxis)
+	{
+		UMUQFAIL("Couldn't find axis function!");
+	}
+	if (!PyFunction_Check(pyaxis))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named cla from object pyplotModule.
+	pycla = PyObject_GetAttrString(pyplotModule, "cla");
+	if (!pycla)
+	{
+		UMUQFAIL("Couldn't find cla function!");
+	}
+	if (!PyFunction_Check(pycla))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named clf from object pyplotModule.
+	pyclf = PyObject_GetAttrString(pyplotModule, "clf");
+	if (!pyclf)
+	{
+		UMUQFAIL("Couldn't find clf function!");
+	}
+	if (!PyFunction_Check(pyclf))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named close from object pyplotModule.
+	pyclose = PyObject_GetAttrString(pyplotModule, "close");
+	if (!pyclose)
+	{
+		UMUQFAIL("Couldn't find close function!");
+	}
+	if (!PyFunction_Check(pyclose))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named draw from object pyplotModule.
+	pydraw = PyObject_GetAttrString(pyplotModule, "draw");
+	if (!pydraw)
+	{
+		UMUQFAIL("Couldn't find draw function!");
+	}
+	if (!PyFunction_Check(pydraw))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named errorbar from object pyplotModule.
+	pyerrorbar = PyObject_GetAttrString(pyplotModule, "errorbar");
+	if (!pyerrorbar)
+	{
+		UMUQFAIL("Couldn't find errorbar function!");
+	}
+	if (!PyFunction_Check(pyerrorbar))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named figure from object pyplotModule.
+	pyfigure = PyObject_GetAttrString(pyplotModule, "figure");
+	if (!pyfigure)
+	{
+		UMUQFAIL("Couldn't find figure function!");
+	}
+	if (!PyFunction_Check(pyfigure))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named fill_between from object pyplotModule.
+	pyfill_between = PyObject_GetAttrString(pyplotModule, "fill_between");
+	if (!pyfill_between)
+	{
+		UMUQFAIL("Couldn't find fill_between function!");
+	}
+	if (!PyFunction_Check(pyfill_between))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named grid from object pyplotModule.
+	pygrid = PyObject_GetAttrString(pyplotModule, "grid");
+	if (!pygrid)
+	{
+		UMUQFAIL("Couldn't find grid function!");
+	}
+	if (!PyFunction_Check(pygrid))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named hist from object pyplotModule.
+	pyhist = PyObject_GetAttrString(pyplotModule, "hist");
+	if (!pyhist)
+	{
+		UMUQFAIL("Couldn't find hist function!");
+	}
+	if (!PyFunction_Check(pyhist))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named ion from object pyplotModule.
+	pyion = PyObject_GetAttrString(pyplotModule, "ion");
+	if (!pyion)
+	{
+		UMUQFAIL("Couldn't find ion function!");
+	}
+	if (!PyFunction_Check(pyion))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named legend from object pyplotModule.
+	pylegend = PyObject_GetAttrString(pyplotModule, "legend");
+	if (!pylegend)
+	{
+		UMUQFAIL("Couldn't find legend function!");
+	}
+	if (!PyFunction_Check(pylegend))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named loglog from object pyplotModule.
+	pyloglog = PyObject_GetAttrString(pyplotModule, "loglog");
+	if (!pyloglog)
+	{
+		UMUQFAIL("Couldn't find loglog function!");
+	}
+	if (!PyFunction_Check(pyloglog))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named pause from object pyplotModule.
+	pypause = PyObject_GetAttrString(pyplotModule, "pause");
+	if (!pypause)
+	{
+		UMUQFAIL("Couldn't find pause function!");
+	}
+	if (!PyFunction_Check(pypause))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named plot from object pyplotModule.
+	pyplot = PyObject_GetAttrString(pyplotModule, "plot");
+	if (!pyplot)
+	{
+		UMUQFAIL("Couldn't find plot function!");
+	}
+	if (!PyFunction_Check(pyplot))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named savefig from object pylabModule.
+	pysavefig = PyObject_GetAttrString(pylabModule, "savefig");
+	if (!pysavefig)
+	{
+		UMUQFAIL("Couldn't find savefig function!");
+	}
+	if (!PyFunction_Check(pysavefig))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named scatter from object pyplotModule.
+	pyscatter = PyObject_GetAttrString(pyplotModule, "scatter");
+	if (!pyscatter)
+	{
+		UMUQFAIL("Couldn't find scatter function!");
+	}
+	if (!PyFunction_Check(pyscatter))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named semilogx from object pyplotModule.
+	pysemilogx = PyObject_GetAttrString(pyplotModule, "semilogx");
+	if (!pysemilogx)
+	{
+		UMUQFAIL("Couldn't find semilogx function!");
+	}
+	if (!PyFunction_Check(pysemilogx))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named semilogy from object pyplotModule.
+	pysemilogy = PyObject_GetAttrString(pyplotModule, "semilogy");
+	if (!pysemilogy)
+	{
+		UMUQFAIL("Couldn't find semilogy function!");
+	}
+	if (!PyFunction_Check(pysemilogy))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named show from object pyplotModule.
+	pyshow = PyObject_GetAttrString(pyplotModule, "show");
+	if (!pyshow)
+	{
+		UMUQFAIL("Couldn't find show function!");
+	}
+	//Return true if it is a function object
+	if (!PyFunction_Check(pyshow))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named stem from object pyplotModule.
+	pystem = PyObject_GetAttrString(pyplotModule, "stem");
+	if (!pystem)
+	{
+		UMUQFAIL("Couldn't find stem function!");
+	}
+	if (!PyFunction_Check(pystem))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named subplot from object pyplotModule.
+	pysubplot = PyObject_GetAttrString(pyplotModule, "subplot");
+	if (!pysubplot)
+	{
+		UMUQFAIL("Couldn't find subplot function!");
+	}
+	if (!PyFunction_Check(pysubplot))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named tight_layout from object pyplotModule.
+	pytight_layout = PyObject_GetAttrString(pyplotModule, "tight_layout");
+	if (!pytight_layout)
+	{
+		UMUQFAIL("Couldn't find tight_layout function!");
+	}
+	if (!PyFunction_Check(pytight_layout))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named title from object pyplotModule.
+	pytitle = PyObject_GetAttrString(pyplotModule, "title");
+	if (!pytitle)
+	{
+		UMUQFAIL("Couldn't find title function!");
+	}
+	if (!PyFunction_Check(pytitle))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named xlabel from object pyplotModule.
+	pyxlabel = PyObject_GetAttrString(pyplotModule, "xlabel");
+	if (!pyxlabel)
+	{
+		UMUQFAIL("Couldn't find xlabel function!");
+	}
+	if (!PyFunction_Check(pyxlabel))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named xlim from object pyplotModule.
+	pyxlim = PyObject_GetAttrString(pyplotModule, "xlim");
+	if (!pyxlim)
+	{
+		UMUQFAIL("Couldn't find xlim function!");
+	}
+	if (!PyFunction_Check(pyxlim))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named xkcd from object pyplotModule.
+	pyxkcd = PyObject_GetAttrString(pyplotModule, "xkcd");
+	if (!pyxkcd)
+	{
+		UMUQFAIL("Couldn't find xkcd function!");
+	}
+	if (!PyFunction_Check(pyxkcd))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named ylabel from object pyplotModule.
+	pyylabel = PyObject_GetAttrString(pyplotModule, "ylabel");
+	if (!pyylabel)
+	{
+		UMUQFAIL("Couldn't find ylabel function!");
+	}
+	if (!PyFunction_Check(pyylabel))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
+	// Retrieve an attribute named ylim from object pyplotModule.
+	pyylim = PyObject_GetAttrString(pyplotModule, "ylim");
+	if (!pyylim)
+	{
+		UMUQFAIL("Couldn't find ylim function!");
+	}
+	if (!PyFunction_Check(pyylim))
+	{
+		UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+	}
 }
 
 /*!
@@ -4829,50 +4522,50 @@ pyplot::matplotlib::matplotlib()
 template <typename T>
 PyObject *PyArray(std::vector<T> const &idata)
 {
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(idata.size());
-        if (NPIDatatype<T> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(nsize);
-            std::copy(idata.begin(), idata.end(), vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
+	PyObject *pArray;
+	{
+		npy_intp nsize = static_cast<npy_intp>(idata.size());
+		if (NPIDatatype<T> == NPY_NOTYPE)
+		{
+			std::vector<double> vd(nsize);
+			std::copy(idata.begin(), idata.end(), vd.begin());
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+		}
+		else
+		{
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata.data()));
+		}
+	}
+	return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata)
 {
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(idata.size());
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(nsize);
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
+	PyObject *pArray;
+	{
+		npy_intp nsize = static_cast<npy_intp>(idata.size());
+		if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+		{
+			if (NPIDatatype<TOut> == NPY_NOTYPE)
+			{
+				std::vector<double> vd(nsize);
+				std::copy(idata.begin(), idata.end(), vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+			}
+			else
+			{
+				std::vector<TOut> vd(nsize);
+				std::copy(idata.begin(), idata.end(), vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+			}
+		}
+		else
+		{
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata.data()));
+		}
+	}
+	return pArray;
 }
 
 /*!
@@ -4889,93 +4582,93 @@ PyObject *PyArray(std::vector<TIn> const &idata)
 template <typename T>
 PyObject *PyArray(T *idata, int const nSize, std::size_t const Stride)
 {
-    PyObject *pArray;
-    {
-        npy_intp nsize;
+	PyObject *pArray;
+	{
+		npy_intp nsize;
 
-        if (Stride != 1)
-        {
-            ArrayWrapper<T> iArray(idata, nSize, Stride);
-            nsize = static_cast<npy_intp>(iArray.size());
-            if (NPIDatatype<T> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(iArray.begin(), iArray.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<T> vd(nsize);
-                std::copy(iArray.begin(), iArray.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(vd.data()));
-            }
-            return pArray;
-        }
+		if (Stride != 1)
+		{
+			ArrayWrapper<T> iArray(idata, nSize, Stride);
+			nsize = static_cast<npy_intp>(iArray.size());
+			if (NPIDatatype<T> == NPY_NOTYPE)
+			{
+				std::vector<double> vd(nsize);
+				std::copy(iArray.begin(), iArray.end(), vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+			}
+			else
+			{
+				std::vector<T> vd(nsize);
+				std::copy(iArray.begin(), iArray.end(), vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(vd.data()));
+			}
+			return pArray;
+		}
 
-        nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<T> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(nsize);
-            std::copy(idata, idata + nSize, vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata));
-        }
-    }
-    return pArray;
+		nsize = static_cast<npy_intp>(nSize);
+		if (NPIDatatype<T> == NPY_NOTYPE)
+		{
+			std::vector<double> vd(nsize);
+			std::copy(idata, idata + nSize, vd.begin());
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+		}
+		else
+		{
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata));
+		}
+	}
+	return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride)
 {
-    PyObject *pArray;
-    {
-        npy_intp nsize;
+	PyObject *pArray;
+	{
+		npy_intp nsize;
 
-        if (Stride != 1)
-        {
-            ArrayWrapper<TIn> iArray(idata, nSize, Stride);
-            nsize = static_cast<npy_intp>(iArray.size());
-            if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-            {
-                if (NPIDatatype<TOut> == NPY_NOTYPE)
-                {
-                    std::vector<double> vd(nsize);
-                    std::copy(iArray.begin(), iArray.end(), vd.begin());
-                    pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-                    return pArray;
-                }
-            }
-            std::vector<TOut> vd(nsize);
-            std::copy(iArray.begin(), iArray.end(), vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            return pArray;
-        }
+		if (Stride != 1)
+		{
+			ArrayWrapper<TIn> iArray(idata, nSize, Stride);
+			nsize = static_cast<npy_intp>(iArray.size());
+			if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+			{
+				if (NPIDatatype<TOut> == NPY_NOTYPE)
+				{
+					std::vector<double> vd(nsize);
+					std::copy(iArray.begin(), iArray.end(), vd.begin());
+					pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+					return pArray;
+				}
+			}
+			std::vector<TOut> vd(nsize);
+			std::copy(iArray.begin(), iArray.end(), vd.begin());
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+			return pArray;
+		}
 
-        nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(idata, idata + nSize, vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(nsize);
-                std::copy(idata, idata + nSize, vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata));
-        }
-    }
-    return pArray;
+		nsize = static_cast<npy_intp>(nSize);
+		if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+		{
+			if (NPIDatatype<TOut> == NPY_NOTYPE)
+			{
+				std::vector<double> vd(nsize);
+				std::copy(idata, idata + nSize, vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+			}
+			else
+			{
+				std::vector<TOut> vd(nsize);
+				std::copy(idata, idata + nSize, vd.begin());
+				pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+			}
+		}
+		else
+		{
+			pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata));
+		}
+	}
+	return pArray;
 }
 
 #else
@@ -4983,17 +4676,17 @@ PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride)
 class pyplot
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new pyplot object
      *
      */
-    pyplot() {}
+	pyplot() {}
 
-    /*!
+	/*!
      * \brief Destroy the pyplot object
      * 
      */
-    ~pyplot() {}
+	~pyplot() {}
 };
 
 #endif //HAVE_PYTHON

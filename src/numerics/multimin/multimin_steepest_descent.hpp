@@ -50,9 +50,7 @@ class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
         }
         return true;
     }
@@ -115,10 +113,7 @@ class steepest_descent : public multimin_fdfminimizer_type<T, steepest_descent<T
             //set dx to zero
             std::fill(dx, dx + n, T{});
 
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            return false;
+			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
         }
 
         gnorm = std::sqrt(gnorm);

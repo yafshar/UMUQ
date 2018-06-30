@@ -479,8 +479,7 @@ struct stats
         T denom = MaxValue - MinValue;
         if (denom < std::numeric_limits<T>::epsilon())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Maximum and Minimum Value are identical!" << std::endl;
+			UMUQWARNING("Maximum and Minimum Value are identical!");
             denom = std::numeric_limits<T>::epsilon();
         }
 
@@ -502,8 +501,7 @@ struct stats
         T denom = MaxValue - MinValue;
         if (denom < std::numeric_limits<T>::epsilon())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Maximum and Minimum Value are identical!" << std::endl;
+			UMUQWARNING("Maximum and Minimum Value are identical!");
             denom = std::numeric_limits<T>::epsilon();
         }
 
@@ -754,9 +752,7 @@ struct stats
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-			return nullptr;
+			UMUQFAILRETURNNULL("Failed to allocate memory!");
 		}
 
         std::vector<T> imean(nDim);

@@ -332,10 +332,7 @@ bool minimize(TFD *fn, T rho, T sigma, T tau1, T tau2, T tau3, int order, T alph
         if ((a - alpha) * fpa <= std::numeric_limits<T>::epsilon())
         {
             //Roundoff prevents progress
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            return false;
+			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
         };
 
         if (falpha > f0 + rho * alpha * fp0 || falpha >= fa)

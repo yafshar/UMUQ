@@ -55,11 +55,8 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
         }
-
         return true;
     }
 
@@ -166,10 +163,7 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
             //Set dx to zero
             std::fill(dx, dx + n, T{});
 
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            return false;
+			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
         }
 
         T pg(0);
@@ -212,10 +206,7 @@ class vector_bfgs : public multimin_fdfminimizer_type<T, vector_bfgs<T, TMFD>, T
         intermediate_point<T, TMFD>(fdf, x, p, dir / pnorm, pg, stepa, stepc, fa, fc, x1, dx1, gradient, &stepb, &fb);
         if (stepb == T{})
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            return false;
+			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to numerical difficulty or because a genuine local minimum has been reached!");
         }
 
         minimize<T, TMFD>(fdf, x, p, dir / pnorm, stepa, stepb, stepc, fa, fb, fc, tol, x1, dx1, x2, dx, gradient, &step, f, &g1norm);

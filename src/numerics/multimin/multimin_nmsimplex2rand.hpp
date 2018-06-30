@@ -51,9 +51,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 	{
 		if (n_ <= 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Invalid number of parameters specified : " << std::endl;
-			return false;
+			UMUQFAILRETURN("Invalid number of parameters specified!");
 		}
 
 		n = n_;
@@ -71,9 +69,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-			return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
 		}
 
 		count = 0;
@@ -142,9 +138,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 
 		if (!std::isfinite(val))
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "Non-finite function value " << val << " encountered ! " << std::endl;
-			return false;
+			UMUQFAILRETURN("Non-finite function value encountered!");
 		}
 
 		//Copy the elements of the vector x into the 0-th row of the matrix x1
@@ -232,9 +226,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 
 				if (!std::isfinite(val))
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << "Non-finite function value encountered ! " << std::endl;
-					return false;
+					UMUQFAILRETURN("Non-finite function value encountered!");
 				}
 
 				y1[i + 1] = val;
@@ -332,9 +324,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 				//Contract the whole simplex in respect to the best point
 				if (!contract_by_best(lo, xc, f))
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << "contract_by_best failed ! " << std::endl;
-					return false;
+					UMUQFAILRETURN("contract_by_best failed!");
 				}
 			}
 		}
@@ -506,9 +496,7 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 				 */
 				if (!std::isfinite(newval))
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << " The iteration encountered a singular point where the function or its derivative evaluated to Inf or NaN.! " << std::endl;
-					return false;
+					UMUQFAILRETURN("The iteration encountered a singular point where the function or its derivative evaluated to Inf or NaN!");
 				}
 			}
 		}
@@ -650,12 +638,11 @@ class nmsimplex2rand : public multimin_fminimizer_type<T, nmsimplex2rand<T, TMF>
 		{
 			if (k1_ > NR || k2_ > NC_ || n1_ > NR || n2_ > NC_)
 			{
-				std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
 				std::cerr << "submatrix of size " << n1_ << " " << n2_ << std::endl;
 				std::cerr << "from matrix of size " << NR << " " << NC_ << std::endl;
 				std::cerr << "start index of " << k1_ << " " << k2_ << std::endl;
-				std::cerr << " Input data overrun the ends of the original matrix " << std::endl;
-				throw(std::runtime_error("Wrong Input!"));
+				std::cerr << "  " << std::endl;
+				UMUQFAIL("Input data overrun the ends of the original matrix!");
 			}
 			NC = NC_;
 			k1 = k1_;

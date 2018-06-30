@@ -58,11 +58,8 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
         }
-
         return true;
     }
 
@@ -183,10 +180,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
             //set dx to zero
             std::fill(dx, dx + n, T{});
 
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " The minimizer is unable to improve on its current estimate, either due" << std::endl;
-            std::cerr << " to numerical difficulty or because a genuine local minimum has been reached." << std::endl;
-            return false;
+			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
         }
 
         T alpha(0);

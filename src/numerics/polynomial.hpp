@@ -13,38 +13,32 @@ template <typename T>
 class polynomial
 {
   public:
-    /*! 
+	/*! 
      * \brief constructor
      * 
      * \param dim  Dimension
      * \param ord Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    polynomial(int const dim, int const ord = 2) : nDim(dim), Order(ord)
-    {
-        if (nDim <= 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! dimension <= 0!" << std::endl;
-            throw(std::runtime_error("Can not have dimension <= 0!"));
-        }
+	polynomial(int const dim, int const ord = 2) : nDim(dim), Order(ord)
+	{
+		if (nDim <= 0)
+		{
+			UMUQFAIL("Can not have dimension <= 0!");
+		}
 
-        if (Order < 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! maximum accuracy order < 0!" << std::endl;
-            throw(std::runtime_error("Maximum accuracy order < 0!"));
-        }
+		if (Order < 0)
+		{
+			UMUQFAIL("Maximum accuracy order < 0!");
+		}
 
-        monomialSize = binomial_coefficient(nDim + Order, Order);
-        if (monomialSize == 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! Monomial size of zero degree!" << std::endl;
-            throw(std::runtime_error("Monomial size of zero degree !"));
-        }
-    }
+		monomialSize = binomial_coefficient(nDim + Order, Order);
+		if (monomialSize == 0)
+		{
+			UMUQFAIL("Monomial size of zero degree is requested!");
+		}
+	}
 
-    /*! 
+	/*! 
      * \brief reset
      * 
      * Reset the values to the new ones
@@ -52,36 +46,30 @@ class polynomial
      * \param dim new Dimension
      * \param ord new Order (the default order or degree of r in a space of dm dimensions is 2)
      */
-    void reset(int const dim, int const ord = 2)
-    {
-        nDim = dim;
-        if (nDim <= 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! dimension <= 0!" << std::endl;
-            throw(std::runtime_error("Can not have dimension <= 0!"));
-        }
+	void reset(int const dim, int const ord = 2)
+	{
+		nDim = dim;
+		if (nDim <= 0)
+		{
+			UMUQFAIL("Can not have dimension <= 0!");
+		}
 
-        Order = ord;
-        if (Order < 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! maximum accuracy order < 0!" << std::endl;
-            throw(std::runtime_error("Maximum accuracy order < 0!"));
-        }
+		Order = ord;
+		if (Order < 0)
+		{
+			UMUQFAIL("Maximum accuracy order < 0!");
+		}
 
-        monomialSize = binomial_coefficient(nDim + Order, Order);
-        if (monomialSize == 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! Monomial size of zero degree!" << std::endl;
-            throw(std::runtime_error("Monomial size of zero degree !"));
-        }
+		monomialSize = binomial_coefficient(nDim + Order, Order);
+		if (monomialSize == 0)
+		{
+			UMUQFAIL("Monomial size of zero degree is requested!");
+		}
 
-        alpha.reset(nullptr);
-    }
+		alpha.reset(nullptr);
+	}
 
-    /*! 
+	/*! 
      * \brief Computes the binomial coefficient C(n, k).
      *
      * 1) A binomial coefficient C(n, k) can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n \f$
@@ -97,46 +85,43 @@ class polynomial
      * 
      * \returns The binomial coefficient \f$ C(n, k) \f$
      */
-    int binomial_coefficient(int const n, int const k)
-    {
-        if ((k < 0) || (n < 0))
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! k or n < 0" << std::endl;
-            throw(std::runtime_error("Wrong Input!"));
-        }
-        if (k < n)
-        {
-            if (k == 0)
-            {
-                return 1;
-            }
-            if ((k == 1) || (k == n - 1))
-            {
-                return n;
-            }
+	int binomial_coefficient(int const n, int const k)
+	{
+		if ((k < 0) || (n < 0))
+		{
+			UMUQFAIL("Fatal error! k or n < 0!");
+		}
+		if (k < n)
+		{
+			if (k == 0)
+			{
+				return 1;
+			}
+			if ((k == 1) || (k == n - 1))
+			{
+				return n;
+			}
 
-            int mn = std::min(k, n - k);
-            int mx = std::max(k, n - k);
-            int value = mx + 1;
-            for (int i = 2; i <= mn; i++)
-            {
-                value = (value * (mx + i)) / i;
-            }
+			int mn = std::min(k, n - k);
+			int mx = std::max(k, n - k);
+			int value = mx + 1;
+			for (int i = 2; i <= mn; i++)
+			{
+				value = (value * (mx + i)) / i;
+			}
 
-            return value;
-        }
-        else if (k == n)
-        {
-            return 1;
-        }
+			return value;
+		}
+		else if (k == n)
+		{
+			return 1;
+		}
 
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " The binomial coefficient is undefined for k > n " << std::endl;
-        return 0;
-    }
+		UMUQWARNING("The binomial coefficient is undefined for k > n!");
+		return 0;
+	}
 
-    /*! 
+	/*! 
      * \brief Here, \f$\alpha=\f$ all the monomials in a d dimensional space, with total degree r.
      *   
      * For example:
@@ -160,54 +145,52 @@ class polynomial
      *
      * \returns A pointer to monomial sequence
      */
-    int *monomial_basis()
-    {
-        if (alpha)
-        {
-            return alpha.get();
-        }
-        else
-        {
-            int const N = nDim * monomialSize;
+	int *monomial_basis()
+	{
+		if (alpha)
+		{
+			return alpha.get();
+		}
+		else
+		{
+			int const N = nDim * monomialSize;
 
-            std::vector<int> x(nDim, 0);
+			std::vector<int> x(nDim, 0);
 
-            try
-            {
-                alpha.reset(new int[N]);
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return nullptr;
-            }
+			try
+			{
+				alpha.reset(new int[N]);
+			}
+			catch (std::bad_alloc &e)
+			{
+				UMUQFAILRETURNNULL("Failed to allocate memory!");
+			}
 
-            int n(0);
+			int n(0);
 
-            for (;;)
-            {
-                for (int j = nDim - 1; j >= 0; j--, n++)
-                {
-                    alpha[n] = x[j];
-                }
+			for (;;)
+			{
+				for (int j = nDim - 1; j >= 0; j--, n++)
+				{
+					alpha[n] = x[j];
+				}
 
-                if (x[0] == Order)
-                {
-                    return alpha.get();
-                }
+				if (x[0] == Order)
+				{
+					return alpha.get();
+				}
 
-                if (!graded_reverse_lexicographic_order(x.data()))
-                {
-                    return nullptr;
-                }
-            }
+				if (!graded_reverse_lexicographic_order(x.data()))
+				{
+					return nullptr;
+				}
+			}
 
-            return alpha.get();
-        }
-    }
+			return alpha.get();
+		}
+	}
 
-    /*! 
+	/*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x       The coordinates of the evaluation points
@@ -215,172 +198,166 @@ class polynomial
      * 
      * \returns the size of the monomial array
      */
-    int monomial_value(T const *x, T *&value)
-    {
-        if (!alpha)
-        {
-            //Have to create monomial sequence
-            int *tmp = monomial_basis();
+	int monomial_value(T const *x, T *&value)
+	{
+		if (!alpha)
+		{
+			//Have to create monomial sequence
+			int *tmp = monomial_basis();
 
-            if (tmp == nullptr)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Something went wrong in creating monomial sequence !" << std::endl;
-                return 0;
-            }
-        }
+			if (tmp == nullptr)
+			{
+				UMUQWARNING("Something went wrong in creating monomial sequence!");
+				return 0;
+			}
+		}
 
-        if (value == nullptr)
-        {
-            try
-            {
-                value = new T[monomialSize];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return 0;
-            }
-        }
+		if (value == nullptr)
+		{
+			try
+			{
+				value = new T[monomialSize];
+			}
+			catch (std::bad_alloc &e)
+			{
+				UMUQWARNING("Failed to allocate memory!");
+				return 0;
+			}
+		}
 
-        for (int i = 0, k = 0; i < monomialSize; i++)
-        {
-            T v = static_cast<T>(1);
-            for (int j = 0; j < nDim; j++, k++)
-            {
-                v *= std::pow(x[j], alpha[k]);
-            }
-            value[i] = v;
-        }
+		for (int i = 0, k = 0; i < monomialSize; i++)
+		{
+			T v = static_cast<T>(1);
+			for (int j = 0; j < nDim; j++, k++)
+			{
+				v *= std::pow(x[j], alpha[k]);
+			}
+			value[i] = v;
+		}
 
-        return monomialSize;
-    }
+		return monomialSize;
+	}
 
-    /*!
+	/*!
      * \brief Get the monomial size
      * 
      * \return monomial size
      */
-    inline int monomialsize() const
-    {
-        return monomialSize;
-    }
+	inline int monomialsize() const
+	{
+		return monomialSize;
+	}
 
-    /*!
+	/*!
      * \brief get the dimension
      * 
      * \return Dimension
      */
-    inline int dim() const
-    {
-        return nDim;
-    }
+	inline int dim() const
+	{
+		return nDim;
+	}
 
-    /*!
+	/*!
      * \brief Polynomial order 
      * 
      * \return Polynomial order
      */
-    inline int order() const
-    {
-        return Order;
-    }
+	inline int order() const
+	{
+		return Order;
+	}
 
   private:
-    /*! 
+	/*! 
      * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and r
      *  all monomials in a d dimensional space, with order of accuracy r.
      *
      * \param x   Current monomial on input and next monomial on the output (last value in the sequence is r).
      */
-    bool graded_reverse_lexicographic_order(int *x)
-    {
-        if (Order == 0)
-        {
-            return true;
-        }
+	bool graded_reverse_lexicographic_order(int *x)
+	{
+		if (Order == 0)
+		{
+			return true;
+		}
 
-        int asum = std::accumulate(x, x + nDim, 0);
+		int asum = std::accumulate(x, x + nDim, 0);
 
-        if (asum < 0)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! input sums < 0" << std::endl;
-            return false;
-        }
+		if (asum < 0)
+		{
+			UMUQFAILRETURN("Input sums < 0!");
+		}
 
-        if (Order < asum)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Fatal error! input sums > maximum degree r" << std::endl;
-            return false;
-        }
+		if (Order < asum)
+		{
+			UMUQFAILRETURN("Input sums > maximum degree r!");
+		}
 
-        if (x[0] == Order)
-        {
-            x[0] = 0;
-            x[nDim - 1] = 0;
-        }
-        else
-        {
-            int i;
-            int tmp;
+		if (x[0] == Order)
+		{
+			x[0] = 0;
+			x[nDim - 1] = 0;
+		}
+		else
+		{
+			int i;
+			int tmp;
 
-            //Seeking the first index in which x > 0.
-            int j = 0;
-            for (i = 1; i < nDim; i++)
-            {
-                if (x[i] > 0)
-                {
-                    j = i;
-                    break;
-                }
-            }
+			//Seeking the first index in which x > 0.
+			int j = 0;
+			for (i = 1; i < nDim; i++)
+			{
+				if (x[i] > 0)
+				{
+					j = i;
+					break;
+				}
+			}
 
-            if (j == 0)
-            {
-                tmp = x[0];
-                x[0] = 0;
-                x[nDim - 1] = tmp + 1;
-            }
-            else if (j < nDim - 1)
-            {
-                x[j] = x[j] - 1;
-                tmp = x[0] + 1;
-                x[0] = 0;
-                x[j - 1] = x[j - 1] + tmp;
-            }
-            else
-            {
-                tmp = x[0];
-                x[0] = 0;
-                x[j - 1] = tmp + 1;
-                x[j] = x[j] - 1;
-            }
-        }
-        return true;
-    }
+			if (j == 0)
+			{
+				tmp = x[0];
+				x[0] = 0;
+				x[nDim - 1] = tmp + 1;
+			}
+			else if (j < nDim - 1)
+			{
+				x[j] = x[j] - 1;
+				tmp = x[0] + 1;
+				x[0] = 0;
+				x[j - 1] = x[j - 1] + tmp;
+			}
+			else
+			{
+				tmp = x[0];
+				x[0] = 0;
+				x[j - 1] = tmp + 1;
+				x[j] = x[j] - 1;
+			}
+		}
+		return true;
+	}
 
   private:
-    // Make it noncopyable
-    polynomial(polynomial<T> const &) = delete;
+	// Make it noncopyable
+	polynomial(polynomial<T> const &) = delete;
 
-    // Make it not assignable
-    polynomial<T> &operator=(polynomial<T> const &) = delete;
+	// Make it not assignable
+	polynomial<T> &operator=(polynomial<T> const &) = delete;
 
   private:
-    //! Dimension
-    int nDim;
+	//! Dimension
+	int nDim;
 
-    //! Order of accuracy
-    int Order;
+	//! Order of accuracy
+	int Order;
 
-    //! The size of the monomial array
-    int monomialSize;
+	//! The size of the monomial array
+	int monomialSize;
 
-    //! Array of monomial sequence
-    std::unique_ptr<int[]> alpha;
+	//! Array of monomial sequence
+	std::unique_ptr<int[]> alpha;
 };
 
 #endif

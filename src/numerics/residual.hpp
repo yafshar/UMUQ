@@ -51,8 +51,7 @@ class residual
         }
         else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Error type is unknown : Change to default absolute Error" << std::endl;
+			UMUQWARNING("Error type is unknown : Change to default absolute Error!");
             errorType = AbsoluteError;
         }
     }
@@ -81,9 +80,7 @@ class residual
         }
         else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Error type is unknown : " << std::endl;
-            return false;
+			UMUQFAILRETURN("Error type is unknown!");
         }
         return true;
     }
@@ -104,9 +101,7 @@ class residual
         }
         else
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Error type is unknown : " << std::endl;
-            return false;
+			UMUQFAILRETURN("Error type is unknown!");
         }
         return true;
     }

@@ -48,9 +48,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 	{
 		if (n_ <= 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Invalid number of parameters specified : " << std::endl;
-			return false;
+			UMUQFAILRETURN("Invalid number of parameters specified!");
 		}
 
 		n = n_;
@@ -68,9 +66,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-			return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
 		}
 
 		count = 0;
@@ -128,9 +124,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 
 		if (!std::isfinite(val))
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "Non-finite function value encountered ! " << std::endl;
-			return false;
+			UMUQFAILRETURN("Non-finite function value encountered!");
 		}
 
 		//Copy the elements of the vector x into the 0-th row of the matrix x1
@@ -151,9 +145,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 
 			if (!std::isfinite(val))
 			{
-				std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-				std::cerr << "Non-finite function value encountered ! " << std::endl;
-				return false;
+				UMUQFAILRETURN("Non-finite function value encountered!");
 			}
 
 			//Copy the elements of the vector ws1 into the (i+1)-th row of the matrix x1
@@ -254,9 +246,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 				//Contract the whole simplex in respect to the best point
 				if (!contract_by_best(lo, xc, f))
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << "contract_by_best failed ! " << std::endl;
-					return false;
+					UMUQFAILRETURN("ontract_by_best failed!");
 				}
 			}
 		}
@@ -409,9 +399,7 @@ class nmsimplex2 : public multimin_fminimizer_type<T, nmsimplex2<T, TMF>, TMF>
 				//to handle the situation
 				if (!std::isfinite(newval))
 				{
-					std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-					std::cerr << " The iteration encountered a singular point where the function or its derivative evaluated to Inf or NaN.! " << std::endl;
-					return false;
+					UMUQFAILRETURN("The iteration encountered a singular point where the function or its derivative evaluated to Inf or NaN!");
 				}
 			}
 		}

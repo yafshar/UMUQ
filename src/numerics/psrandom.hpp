@@ -27,9 +27,7 @@ struct psrandom
 	{
 		if (iseed != 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should only be one instance of a psrandom object!" << std::endl;
-			throw(std::runtime_error("There should only be one instance of a psrandom object!"));
+			UMUQFAIL("There should only be one instance of a psrandom object!");
 		}
 
 		iseed = std::random_device{}();
@@ -44,9 +42,7 @@ struct psrandom
 	{
 		if (iseed != 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should only be one instance of a psrandom object!" << std::endl;
-			throw(std::runtime_error("There should only be one instance of a psrandom object!"));
+			UMUQFAIL("There should only be one instance of a psrandom object!");
 		}
 
 		iseed = iseed_;
@@ -61,8 +57,7 @@ struct psrandom
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+			UMUQFAIL("Failed to allocate memory");
 		};
 	}
 
@@ -120,9 +115,7 @@ struct psrandom
 	template <typename T>
 	inline T unirnd(T const a = 0, T const b = 1)
 	{
-		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-		std::cerr << " The Uniform random number of type " << typeid(T).name() << " is not implemented !" << std::endl;
-		throw(std::runtime_error("Wrong type!"));
+		UMUQFAIL("The Uniform random number of requested type is not implemented!");
 	}
 
 	/*!
@@ -250,9 +243,7 @@ bool psrandom::init()
 	MPI_Initialized(&initialized);
 	if (!initialized)
 	{
-		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-		std::cerr << " Failed to initilize MPI " << std::endl;
-		return false;
+		UMUQFAILRETURN("Failed to initilize MPI!");
 	}
 
 	torc_register_task((void *)psrandom::init_Task);
@@ -267,9 +258,7 @@ bool psrandom::init()
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-			return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
 		};
 	}
 	if (psrandom::saru == nullptr)
@@ -280,9 +269,7 @@ bool psrandom::init()
 		}
 		catch (std::bad_alloc &e)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-			return false;
+			UMUQFAILRETURN("Failed to allocate memory!");
 		};
 	}
 
@@ -358,9 +345,7 @@ bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
 {
 	if (psrandom::iseed == 0)
 	{
-		std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-		std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-		return false;
+		UMUQFAILRETURN("There should be an instance of a psrandom object before using this class!");
 	}
 
 	//Get the thread ID
@@ -530,9 +515,7 @@ class normrnd
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 	}
 
@@ -601,9 +584,7 @@ class lognormrnd
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 	}
 
@@ -678,9 +659,7 @@ class mvnormdist
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 
 		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -701,9 +680,7 @@ class mvnormdist
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 
 		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -730,9 +707,7 @@ class mvnormdist
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 
 		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -752,9 +727,7 @@ class mvnormdist
 	{
 		if (psrandom::iseed == 0)
 		{
-			std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cerr << "There should be an instance of a psrandom object before using this class!" << std::endl;
-			throw(std::runtime_error("There should be an instance of a psrandom object before using this class!"));
+			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
 		}
 	}
 
