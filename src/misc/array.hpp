@@ -32,14 +32,14 @@ class ArrayWrapper
          * 
          * \param Stride 
          */
-        iterator(std::size_t Stride) : iPosition(nullptr), iStride(Stride) {}
+        explicit iterator(std::size_t Stride) : iPosition(nullptr), iStride(Stride) {}
 
         /*!
          * \brief Construct a new iterator object
          * 
          * \param aPointer 
          */
-        iterator(T const *aPointer) : iPosition(aPointer), iStride(1) {}
+        explicit iterator(T const *aPointer) : iPosition(aPointer), iStride(1) {}
 
         /*!
          * \brief Construct a new iterator object
