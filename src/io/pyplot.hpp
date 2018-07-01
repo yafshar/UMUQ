@@ -157,18 +157,18 @@ static std::string backend;
  * 
  * 
  * Interactive backends, capable of displaying to the screen and of using appropriate 
- * renderers from the table above to write to a file include: 
- * ----------------------------------------------------------	
- * GTKAgg 	    Agg rendering to a GTK 2.x canvas (requires PyGTK and pycairo or cairocffi; Python2 only)
- * GTK3Agg 	    Agg rendering to a GTK 3.x canvas (requires PyGObject and pycairo or cairocffi)
- * GTK 	        GDK rendering to a GTK 2.x canvas (not recommended and d eprecated in 2.0) (requires PyGTK and pycairo or cairocffi; Python2 only)
+ * renderers from the table above to write to a file include:
+ * ----------------------------------------------------------
+ * GTKAgg       Agg rendering to a GTK 2.x canvas (requires PyGTK and pycairo or cairocffi; Python2 only)
+ * GTK3Agg      Agg rendering to a GTK 3.x canvas (requires PyGObject and pycairo or cairocffi)
+ * GTK          GDK rendering to a GTK 2.x canvas (not recommended and d eprecated in 2.0) (requires PyGTK and pycairo or cairocffi; Python2 only)
  * GTKCairo     Cairo rendering to a GTK 2.x canvas (requires PyGTK and pycairo or cairocffi; Python2 only)
  * GTK3Cairo    Cairo rendering to a GTK 3.x canvas (requires PyGObject and pycairo or cairocffi)
  * WXAgg        Agg rendering to to a wxWidgets canvas (requires wxPython)
- * WX 	        Native wxWidgets drawing to a wxWidgets Canvas (not recommended and deprecated in 2.0) (requires wxPython)
- * TkAgg 	    Agg rendering to a Tk canvas (requires TkInter)
- * macosx 	    Cocoa rendering in OSX windows (presently lacks blocking show() behavior when matplotlib is in non-interactive mode)
- * ----------------------------------------------------------	
+ * WX           Native wxWidgets drawing to a wxWidgets Canvas (not recommended and deprecated in 2.0) (requires wxPython)
+ * TkAgg        Agg rendering to a Tk canvas (requires TkInter)
+ * macosx       Cocoa rendering in OSX windows (presently lacks blocking show() behavior when matplotlib is in non-interactive mode)
+ * ----------------------------------------------------------
  * \endverbatim
  * 
  * Reference:
@@ -243,13 +243,13 @@ class pyplot
 
     /*!
      * \brief Annotate the point xy with text s
-     * 
+     *
      * \tparam Data type
-     * 
+     *
      * \param annotation  The text of the annotation
      * \param x           x point (x,y) to annotate
      * \param y           y point (x,y) to annotate
-     * 
+     *
      * \return true 
      * \return false 
      */
@@ -258,26 +258,26 @@ class pyplot
 
     /*!
      * \brief Convenience method to get or set axis properties
-     * 
+     *
      * \param axisArguments 
      */
     inline bool axis(std::string const &axisArguments);
 
     /*!
      * \brief Clear the current axes
-     * 
+     *
      */
     inline bool cla();
 
     /*!
      * \brief Clear the current figure
-     * 
+     *
      */
     inline bool clf();
 
     /*!
      * \brief Close a figure window
-     * 
+     *
      */
     inline bool close();
 
@@ -286,7 +286,7 @@ class pyplot
      * This is used to update a figure that has been altered, 
      * but not automatically re-drawn. If interactive mode is 
      * on (ion()), this should be only rarely needed
-     * 
+     *
      */
     inline bool draw();
 
@@ -873,8 +873,8 @@ class pyplot
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
      * \param StrideY   Stride element stride 
-     * \param fmt    Plot format string
-     * \param label  object (Set the label to s for auto legend)
+     * \param fmt       Plot format string
+     * \param label     Object (Set the label to s for auto legend)
      * 
      * \return true 
      * \return false 
@@ -895,7 +895,7 @@ class pyplot
      * \param y      Scalar or array-like, data positions
      * \param nSize  Size of arrays
      * \param fmt    Plot format string
-     * \param label  object (Set the label to s for auto legend)
+     * \param label  Object (Set the label to s for auto legend)
      * 
      * \return true 
      * \return false 
@@ -914,7 +914,7 @@ class pyplot
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param fmt    Plot format string
-     * \param label  object (Set the label to s for auto legend)
+     * \param label  Object (Set the label to s for auto legend)
      * 
      * \return true 
      * \return false 
@@ -928,7 +928,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
      * 
-     * \tparam T     Data type 
+     * \tparam T        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -936,8 +936,8 @@ class pyplot
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
      * \param StrideY   Stride element stride 
-     * \param fmt    Plot format string
-     * \param label  object (Set the label to s for auto legend)
+     * \param fmt       Plot format string
+     * \param label     Object (Set the label to s for auto legend)
      * 
      * \return true 
      * \return false 
@@ -3176,8 +3176,8 @@ bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::str
  * \param y         Scalar or array-like, data positions
  * \param nSizeY    Size of array y
  * \param StrideY   Stride element stride 
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
+ * \param fmt       Plot format string
+ * \param label     object (Set the label to s for auto legend)
  * 
  * \return true 
  * \return false 
@@ -3342,7 +3342,7 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
  * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
  * All of the concepts and parameters of plot can be used here as well.
  * 
- * \tparam T     Data type 
+ * \tparam T        Data type 
  * 
  * \param x         Scalar or array-like, data positions
  * \param nSizeX    Size of array x
@@ -3350,8 +3350,8 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
  * \param y         Scalar or array-like, data positions
  * \param nSizeY    Size of array y
  * \param StrideY   Stride element stride 
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
+ * \param fmt       Plot format string
+ * \param label     object (Set the label to s for auto legend)
  * 
  * \return true 
  * \return false 
