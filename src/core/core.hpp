@@ -132,6 +132,7 @@ inline static const char *SimdInstructionSetsInUse(void)
 #define M_LPI std::log(M_PI)
 #define M_L2PI std::log(M_2PI)
 
+#define LINESIZE 256
 } // namespace UMUQ
 
 /*! 
