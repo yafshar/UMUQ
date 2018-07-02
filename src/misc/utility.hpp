@@ -1,10 +1,16 @@
 #ifndef UMUQ_UTILITY_H
 #define UMUQ_UTILITY_H
 
+#ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 700
+#else
+#if _XOPEN_SOURCE < 500
+#define _XOPEN_SOURCE 700
+#endif
+#endif
+#ifndef _BSD_SOURCE
 #define _BSD_SOURCE 1
-
-#include <iostream>
+#endif
 
 #include <stdio.h>     //remove, perror, sprintf
 #include <sys/stat.h>  //stat, open, fstat
@@ -50,40 +56,82 @@ class utility
     //     return result;
     // }
 
-    int execute_cmd(int me, char **argv, const char *dir)
+    /*!
+     * \brief Executing command from a spanwer
+     * 
+     * \param me      Id of a spanwer
+     * \param argv    A pointer to an array of character strings. More precisely, its type is char **, 
+     *                which is identical to the argv array used in the main program
+     * \param dir     Directory PATH in which to execute commands
+     * 
+     * \return true 
+     * \return false 
+     */
+    bool execute_cmd(int const me, char **argv, const char *dir = nullptr)
     {
-        pid_t pid;
+        /*!
+         * After the system call to fork()
+         * Unix will make an exact copy of the parent's address space and give it to the child. 
+         * Therefore, the parent and child processes have separate address spaces. 
+         * 
+         * fork() returns a positive value, the process ID of the child process, to the parent. 
+         */
+        pid_t pid = fork();
 
-        // fork a child process
-        if ((pid = fork()) < 0)
+        // If fork() returns a negative value, the creation of a child process was unsuccessful
+        if (pid < 0)
         {
-            std::cout << "spanwer(" << me << "): forking child process failed!!!!" << std::endl;
-            return 1;
+            std::cerr << "spanwer(" << me << "):" << std::endl;
+            UMUQFAILRETURN("The creation of a child process was unsuccessful");
         }
-        else if (pid == 0) // child process
+        // fork() returns a zero to the newly created child process
+        else if (pid == 0)
         {
-            if (dir != NULL)
+            if (dir != nullptr)
             {
                 // move to the specified directory
                 if (chdir(dir) < 0)
                 {
-                    std::cout << "Failed to change PATH!!!!" << std::endl;
-                    std::cout << "Permission is denied for one of the components in the path to : " << dir << std::endl;
-                    return 1;
+                    std::cerr << "Permission is denied for one of the components in the path to : " << dir << std::endl;
+                    UMUQFAILRETURN("child process, failed to change PATH!");
                 }
             }
 
-            if (execvp(*argv, argv) < 0)
-            {
-                std::cout << "Error occured while attempting to execute the command!!!!" << std::endl;
-                return 1;
-            }
+            /*!
+             * The execvp() system call requires two arguments:
+             * - The first argument is a character string that contains the name of a file to be executed.
+             * - The second argument is a pointer to an array of character strings. More precisely, its type is char **, 
+             *   which is exactly identical to the argv array used in the main program
+             * 
+             * When execvp() is executed, the program file given by the first argument will be loaded into the caller's 
+             * address space and over-write the program there. Then, the second argument will be provided to the program 
+             * and starts the execution. As a result, once the specified program file starts its execution, the original 
+             * program in the caller's address space is gone and is replaced by the new program.
+             * 
+             * It returns a negative value if the execution fails (e.g., the request file does not exist). 
+             * 
+             * Reference:
+             * https://linux.die.net/man/3/execvp
+             */
+            //if (
+            execvp(*argv, argv);
+            // {
+            //     UMUQFAILRETURN("Error occured in child process while attempting to execute the command!");
+            // }
         }
 
-        // wait for process to change state
+        /*!
+         * The waitpid() system call suspends execution of the calling process until a child specified by pid argument 
+         * has changed state.
+         * 
+         * 0 means wait for any child process whose process group ID is equal to that of the calling process
+         * 
+         * Reference:
+         * https://linux.die.net/man/2/waitpid
+         */
         waitpid(pid, NULL, 0);
 
-        return 0;
+        return true;
     }
 
     static int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
