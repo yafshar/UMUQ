@@ -49,7 +49,7 @@ struct psrandom
 
 		try
 		{
-			//Number of local workers
+			// Number of local workers
 			int const nlocalworkers = torc_i_num_workers();
 
 			NumberGenerator = new std::mt19937[nlocalworkers];
@@ -162,7 +162,7 @@ struct psrandom
 	template <typename T = int>
 	inline void shuffle(T *idata, int const nSize)
 	{
-		//Get the thread ID
+		// Get the thread ID
 		int const me = torc_i_worker_id();
 
 		for (int i = nSize - 1; i > 0; --i)
@@ -203,10 +203,10 @@ void psrandom::init_Task()
 {
 	std::size_t *rseed = new std::size_t[std::mt19937::state_size];
 
-	//Get the local number of workers
+	// Get the local number of workers
 	std::size_t nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
 
-	//Node Id (MPI rank)
+	// Node Id (MPI rank)
 	std::size_t node_id = static_cast<std::size_t>(torc_node_id());
 
 	std::size_t n = nlocalworkers * (node_id + 1);
@@ -220,10 +220,10 @@ void psrandom::init_Task()
 			rseed[k] = k + j;
 		}
 
-		//Seed the engine with unsigned ints
+		// Seed the engine with unsigned ints
 		std::seed_seq sseq(rseed, rseed + std::mt19937::state_size);
 
-		//For each thread feed the RNG
+		// For each thread feed the RNG
 		psrandom::NumberGenerator[i].seed(sseq);
 
 		Saru s(psrandom::iseed, n, i);
@@ -238,7 +238,7 @@ void psrandom::init_Task()
  */
 bool psrandom::init()
 {
-	//Make sure MPI is initilized
+	// Make sure MPI is initilized
 	auto initialized = 0;
 	MPI_Initialized(&initialized);
 	if (!initialized)
@@ -293,7 +293,7 @@ bool psrandom::init()
 template <>
 inline double psrandom::unirnd<double>(double const a, double const b)
 {
-	//Get the thread ID
+	// Get the thread ID
 	int const me = torc_i_worker_id();
 	return psrandom::saru[me].d(a, b);
 }
@@ -306,7 +306,7 @@ inline double psrandom::unirnd<double>(double const a, double const b)
 template <>
 inline float psrandom::unirnd<float>(float a, float b)
 {
-	//Get the thread ID
+	// Get the thread ID
 	int const me = torc_i_worker_id();
 	return psrandom::saru[me].f(a, b);
 }
@@ -348,7 +348,7 @@ bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
 		UMUQFAILRETURN("There should be an instance of a psrandom object before using this class!");
 	}
 
-	//Get the thread ID
+	// Get the thread ID
 	int const me = torc_i_worker_id();
 
 	T const totpsum = std::accumulate(p, p + K, 0);
@@ -447,7 +447,7 @@ T multinomial_lnpdf(unsigned int const *mndist, T const *p, int const K)
 
 	T const totpsum = std::accumulate(p, p + K, 0);
 
-	//Currently we have the limitation of float or double type in factorial implementation
+	// Currently we have the limitation of float or double type in factorial implementation
 	T log_pdf = factorial<T>(N);
 
 	for (int i = 0; i < K; i++)
@@ -525,7 +525,7 @@ class normrnd
      */
 	T operator()()
 	{
-		//Get the thread ID
+		// Get the thread ID
 		int const me = torc_i_worker_id();
 		return d(psrandom::NumberGenerator[me]);
 	}
@@ -594,7 +594,7 @@ class lognormrnd
      */
 	T operator()()
 	{
-		//Get the thread ID
+		// Get the thread ID
 		int const me = torc_i_worker_id();
 		return d(psrandom::NumberGenerator[me]);
 	}
@@ -753,7 +753,7 @@ class mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
@@ -775,7 +775,7 @@ class mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
@@ -792,7 +792,7 @@ class mvnormdist
 	{
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
@@ -812,7 +812,7 @@ class mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
@@ -935,7 +935,7 @@ class Mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
@@ -957,7 +957,7 @@ class Mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
@@ -974,7 +974,7 @@ class Mvnormdist
 	{
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
@@ -994,7 +994,7 @@ class Mvnormdist
 
 		EVectorX<T> ax = X - mean;
 
-		//Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
 		T MDistSq = ax.transpose() * lu.inverse() * ax;
 
 		return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
