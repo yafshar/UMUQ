@@ -20,90 +20,47 @@
   */
 struct psrandom
 {
-	/*!
-     * \brief Default constructor
+    /*!
+     * \brief Construct a new psrandom object
+     * 
      */
-	psrandom()
-	{
-		if (iseed != 0)
-		{
-			UMUQFAIL("There should only be one instance of a psrandom object!");
-		}
+    psrandom();
 
-		iseed = std::random_device{}();
-	};
-
-	/*!
-     * \brief constructor
+    /*!
+     * \brief Construct a new psrandom object
      * 
      * \param iseed_ Input seed for random number initialization 
      */
-	psrandom(std::size_t const &iseed_)
-	{
-		if (iseed != 0)
-		{
-			UMUQFAIL("There should only be one instance of a psrandom object!");
-		}
+    psrandom(std::size_t const iseed_);
 
-		iseed = iseed_;
-
-		try
-		{
-			// Number of local workers
-			int const nlocalworkers = torc_i_num_workers();
-
-			NumberGenerator = new std::mt19937[nlocalworkers];
-			saru = new Saru[nlocalworkers];
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAIL("Failed to allocate memory");
-		};
-	}
-
-	/*!
-     *  \brief destructor 
-     *    
+    /*!
+     * \brief Destroy the psrandom object
+     * 
      */
-	~psrandom()
-	{
-		destroy();
-	};
+    ~psrandom()
+    {
+        destroy();
+    }
 
-	/*!
+    /*!
      * \brief destroy the created memory and set the static variable to NULL
      *
      */
-	void destroy()
-	{
-		iseed = 0;
+    void destroy();
 
-		if (NumberGenerator != nullptr)
-		{
-			delete[] NumberGenerator;
-			NumberGenerator = nullptr;
-		}
-
-		if (saru != nullptr)
-		{
-			delete[] saru;
-			saru = nullptr;
-		}
-	}
-
-	/*!
+    /*!
      * \brief Init task on each node to set the current state of the engine for all the threads on that node 
      */
-	static void init_Task();
+    static void init_Task();
 
-	/*!
+    /*!
      * \returns \a true when sets the current state of the engine successfully
      * 
      * \brief Sets the current state of the engine
      */
-	bool init();
+    bool init();
 
-	/*!
+    /*!
      * \returns Uniform random number between \f$ [a \cdots b) \f$
      * 
      * \brief Uniform random number between \f$ [a \cdots b) \f$
@@ -112,13 +69,10 @@ struct psrandom
      *
      * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0, b = 1 \f$)
      */
-	template <typename T>
-	inline T unirnd(T const a = 0, T const b = 1)
-	{
-		UMUQFAIL("The Uniform random number of requested type is not implemented!");
-	}
+    template <typename T>
+    inline T unirnd(T const a = 0, T const b = 1);
 
-	/*!
+    /*!
      * \returns a uniform random number of a double precision \f$ [0 \cdots 1) \f$ floating point 
      * 
      * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
@@ -126,9 +80,9 @@ struct psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-	inline double d() { return saru[0].d(); }
+    inline double d();
 
-	/*!
+    /*!
      * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
      * 
      * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
@@ -136,9 +90,9 @@ struct psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-	inline float f() { return saru[0].f(); }
+    inline float f();
 
-	/*!
+    /*!
      * \returns an unisgned 32 bit integer pseudo-random value
      * 
      * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
@@ -146,9 +100,9 @@ struct psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-	inline unsigned int u32() { return saru[0].u32(); }
+    inline unsigned int u32();
 
-	/*!
+    /*!
      * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
      *
      * \param idata array of input data of type int
@@ -159,78 +113,109 @@ struct psrandom
      * References : 
      * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
      */
-	template <typename T = int>
-	inline void shuffle(T *idata, int const nSize)
-	{
-		// Get the thread ID
-		int const me = torc_i_worker_id();
+    template <typename T>
+    inline void shuffle(T *idata, int const nSize);
 
-		for (int i = nSize - 1; i > 0; --i)
-		{
-			unsigned int const idx = saru[me].u32(i);
-			std::swap(idata[i], idata[idx]);
-		}
-	}
+    template <typename T>
+    inline void Shuffle(T *idata, int const nSize);
 
-	template <typename T = int>
-	inline void Shuffle(T *idata, int const nSize)
-	{
-		for (int i = nSize - 1; i > 0; --i)
-		{
-			unsigned int const idx = saru[0].u32(i);
-			std::swap(idata[i], idata[idx]);
-		}
-	}
+  public:
+    //! RNG seed
+    static std::size_t iseed;
 
-	//! RNG seed
-	static std::size_t iseed;
+    //! 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
+    static std::vector<std::mt19937> NumberGenerator;
 
-	//! 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
-	static std::mt19937 *NumberGenerator;
-
-	//! C++ Saru PRNG
-	static Saru *saru;
+    //! C++ Saru PRNG
+    static std::vector<Saru> saru;
 };
 
 std::size_t psrandom::iseed = 0;
-std::mt19937 *psrandom::NumberGenerator = nullptr;
-Saru *psrandom::saru = nullptr;
+std::vector<std::mt19937> psrandom::NumberGenerator;
+std::vector<Saru> psrandom::saru;
+
+/*!
+ * \brief Construct a new psrandom::psrandom object
+ * 
+ */
+psrandom::psrandom()
+{
+    if (psrandom::iseed != 0)
+    {
+        UMUQFAIL("There should only be one instance of a psrandom object!");
+    }
+    psrandom::iseed = std::random_device{}();
+};
+
+/*!
+ * \brief Construct a new psrandom::psrandom object
+ * 
+ * \param iseed_ Input seed for random number initialization 
+ */
+psrandom::psrandom(std::size_t const iseed_)
+{
+    if (psrandom::iseed != 0)
+    {
+        UMUQFAIL("There should only be one instance of a psrandom object!");
+    }
+    psrandom::iseed = iseed_;
+
+    try
+    {
+        // Number of local workers
+        int const nlocalworkers = torc_i_num_workers();
+        psrandom::NumberGenerator.resize(nlocalworkers);
+        psrandom::saru.resize(nlocalworkers);
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory");
+    };
+}
+
+/*!
+ * \brief Destroy the created memory and set the static variables to NULL
+ * 
+ */
+void psrandom::destroy()
+{
+    psrandom::iseed = 0;
+    psrandom::NumberGenerator.clear();
+    psrandom::NumberGenerator.shrink_to_fit();
+    psrandom::saru.clear();
+    psrandom::saru.shrink_to_fit();
+}
 
 /*!
  * \brief init Task on each node to set the current state of the engine
+ * 
  */
 void psrandom::init_Task()
 {
-	std::size_t *rseed = new std::size_t[std::mt19937::state_size];
+    std::vector<std::size_t> rseed(std::mt19937::state_size);
 
-	// Get the local number of workers
-	std::size_t nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
+    // Get the local number of workers
+    std::size_t nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
 
-	// Node Id (MPI rank)
-	std::size_t node_id = static_cast<std::size_t>(torc_node_id());
+    // Node Id (MPI rank)
+    std::size_t node_id = static_cast<std::size_t>(torc_node_id());
 
-	std::size_t n = nlocalworkers * (node_id + 1);
+    std::size_t n = nlocalworkers * (node_id + 1);
 
-	for (std::size_t i = 0; i < nlocalworkers; i++)
-	{
-		std::size_t const j = psrandom::iseed + n + i;
+    for (std::size_t i = 0; i < nlocalworkers; i++)
+    {
+        std::size_t const j = psrandom::iseed + n + i;
+        std::iota(rseed.begin(), rseed.end(), j);
 
-		for (std::size_t k = 0; k < std::mt19937::state_size; k++)
-		{
-			rseed[k] = k + j;
-		}
+        // Seed the engine with unsigned ints
+        std::seed_seq sseq(rseed.begin(), rseed.end());
 
-		// Seed the engine with unsigned ints
-		std::seed_seq sseq(rseed, rseed + std::mt19937::state_size);
+        // For each thread feed the RNG
+        psrandom::NumberGenerator[i].seed(sseq);
 
-		// For each thread feed the RNG
-		psrandom::NumberGenerator[i].seed(sseq);
-
-		Saru s(psrandom::iseed, n, i);
-		psrandom::saru[i] = std::move(s);
-	}
-
-	delete[] rseed;
+        Saru s(psrandom::iseed, n, i);
+        psrandom::saru[i] = std::move(s);
+    }
 }
 
 /*!
@@ -238,48 +223,62 @@ void psrandom::init_Task()
  */
 bool psrandom::init()
 {
-	// Make sure MPI is initilized
-	auto initialized = 0;
-	MPI_Initialized(&initialized);
-	if (!initialized)
-	{
-		UMUQFAILRETURN("Failed to initilize MPI!");
-	}
+    // Make sure MPI is initilized
+    auto initialized = 0;
+    MPI_Initialized(&initialized);
+    if (!initialized)
+    {
+        UMUQFAILRETURN("Failed to initilize MPI!");
+    }
 
-	torc_register_task((void *)psrandom::init_Task);
+    torc_register_task((void *)psrandom::init_Task);
 
-	int nlocalworkers = torc_i_num_workers();
+    int const nlocalworkers = torc_i_num_workers();
 
-	if (psrandom::NumberGenerator == nullptr)
-	{
-		try
-		{
-			psrandom::NumberGenerator = new std::mt19937[nlocalworkers];
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAILRETURN("Failed to allocate memory!");
-		};
-	}
-	if (psrandom::saru == nullptr)
-	{
-		try
-		{
-			psrandom::saru = new Saru[nlocalworkers];
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAILRETURN("Failed to allocate memory!");
-		};
-	}
+    if (psrandom::NumberGenerator.size() == 0)
+    {
+        try
+        {
+            psrandom::NumberGenerator.resize(nlocalworkers);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        };
+    }
+    if (psrandom::saru.size() == 0)
+    {
+        try
+        {
+            psrandom::saru.resize(nlocalworkers);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        };
+    }
 
-	for (int i = 0; i < torc_num_nodes(); i++)
-	{
-		torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom::init_Task, 0);
-	}
-	torc_waitall();
+    for (int i = 0; i < torc_num_nodes(); i++)
+    {
+        torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom::init_Task, 0);
+    }
+    torc_waitall();
 
-	return true;
+    return true;
+}
+
+/*!
+ * \brief Uniform random number between \f$ [a \cdots b) \f$
+ *
+ * \tparam T data type one of float, double
+ *
+ * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0 , b = 1 \f$)
+ * This is a partial specialization to make a special case for double precision uniform random number
+ */
+template <typename T>
+inline T psrandom::unirnd(T const a, T const b)
+{
+    UMUQFAIL("The Uniform random number of requested type is not implemented!");
 }
 
 /*!
@@ -293,9 +292,9 @@ bool psrandom::init()
 template <>
 inline double psrandom::unirnd<double>(double const a, double const b)
 {
-	// Get the thread ID
-	int const me = torc_i_worker_id();
-	return psrandom::saru[me].d(a, b);
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return psrandom::saru[me].d(a, b);
 }
 
 /*!
@@ -306,22 +305,87 @@ inline double psrandom::unirnd<double>(double const a, double const b)
 template <>
 inline float psrandom::unirnd<float>(float a, float b)
 {
-	// Get the thread ID
-	int const me = torc_i_worker_id();
-	return psrandom::saru[me].f(a, b);
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return psrandom::saru[me].f(a, b);
+}
+
+/*!
+ * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
+ * 
+ * \returns a uniform random number of a double precision \f$ [0 \cdots 1) \f$ floating point 
+ * 
+ * Reference:
+ * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+ */
+inline double psrandom::d() { return psrandom::saru[0].d(); }
+
+/*!
+ * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
+ * 
+ * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
+ * 
+ * Reference:
+ * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+ */
+inline float psrandom::f() { return psrandom::saru[0].f(); }
+
+/*!
+ * \returns an unisgned 32 bit integer pseudo-random value
+ * 
+ * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
+ * 
+ * Reference:
+ * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+ */
+inline unsigned int psrandom::u32() { return psrandom::saru[0].u32(); }
+
+/*!
+ * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
+ *
+ * \param idata array of input data of type int
+ * \param nSize Size of the array idata
+ *
+ * The permutations generated by this algorithm occur with the same probability.
+ *
+ * References : 
+ * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
+ */
+template <typename T>
+inline void psrandom::shuffle(T *idata, int const nSize)
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+
+    for (int i = nSize - 1; i > 0; --i)
+    {
+        unsigned int const idx = psrandom::saru[me].u32(i);
+        std::swap(idata[i], idata[idx]);
+    }
+}
+
+template <typename T>
+inline void psrandom::Shuffle(T *idata, int const nSize)
+{
+    for (int i = nSize - 1; i > 0; --i)
+    {
+        unsigned int const idx = psrandom::saru[0].u32(i);
+        std::swap(idata[i], idata[idx]);
+    }
 }
 
 /*! \fn multinomial
  * \brief The multinomial distribution
  * 
  * This is based on psrandom object seeded engine.  
- * So to use it there should be an instance of psrandom object.
+ * NOTE: To use this function there should be an instance of psrandom object.
  * 
- * \tparam   T       data type 
- * \param    p       vector of probabilities \f$ p_1, \cdots, p_k \f$
- * \param    K       size of vector which shows K possible mutually exclusive outcomes 
- * \param    N       N independent trials
- * \param    mndist  A random sample from the multinomial distribution
+ * \tparam   T        Data type 
+ * 
+ * \param    p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    K        Size of vector which shows K possible mutually exclusive outcomes 
+ * \param    N        N independent trials
+ * \param    mndist   A random sample from the multinomial distribution (with size of K)
  * 
  * 
  * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
@@ -343,45 +407,46 @@ inline float psrandom::unirnd<float>(float a, float b)
 template <typename T = double>
 bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
 {
-	if (psrandom::iseed == 0)
-	{
-		UMUQFAILRETURN("There should be an instance of a psrandom object before using this class!");
-	}
+    if (psrandom::iseed == 0)
+    {
+        UMUQFAILRETURN("There should be an instance of a psrandom object before using this class!");
+    }
 
-	// Get the thread ID
-	int const me = torc_i_worker_id();
+    // Get the thread ID
+    int const me = torc_i_worker_id();
 
-	T const totpsum = std::accumulate(p, p + K, 0);
+    T const totpsum = std::accumulate(p, p + K, 0);
 
-	T psum(0);
-	unsigned int nsum(0);
-	for (int i = 0; i < K; i++)
-	{
-		if (p[i] > 0.0)
-		{
-			std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
-			mndist[i] = d(psrandom::NumberGenerator[me]);
-		}
-		else
-		{
-			mndist[i] = 0;
-		}
-		psum += p[i];
-		nsum += mndist[i];
-	}
-	return true;
+    T psum(0);
+    unsigned int nsum(0);
+    for (int i = 0; i < K; i++)
+    {
+        if (p[i] > 0.0)
+        {
+            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            mndist[i] = d(psrandom::NumberGenerator[me]);
+        }
+        else
+        {
+            mndist[i] = 0;
+        }
+        psum += p[i];
+        nsum += mndist[i];
+    }
+    return true;
 }
 
 /*! \fn Multinomial
- * \brief The Multinomial distribution
+ * \brief The multinomial distribution
  * 
- * This is independent. 
+ * This is independent from psrandom object seeded engine.
  * 
- * \tparam   T       data type 
- * \param    p       vector of probabilities \f$ p_1, \cdots, p_k \f$
- * \param    K       size of vector which shows K possible mutually exclusive outcomes 
- * \param    N       N independent trials
- * \param    mndist  A random sample from the multinomial distribution
+ * \tparam   T        Data type 
+ * 
+ * \param    p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
+ * \param    K        Size of vector which shows K possible mutually exclusive outcomes 
+ * \param    N        N independent trials
+ * \param    mndist   A random sample from the multinomial distribution (with size of K)
  * 
  * 
  * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
@@ -403,27 +468,27 @@ bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
 template <typename T = double>
 bool Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
 {
-	std::mt19937 gen(std::random_device{}());
+    std::mt19937 gen(std::random_device{}());
 
-	T const totpsum = std::accumulate(p, p + K, 0);
+    T const totpsum = std::accumulate(p, p + K, 0);
 
-	T psum(0);
-	unsigned int nsum(0);
-	for (int i = 0; i < K; i++)
-	{
-		if (p[i] > 0.0)
-		{
-			std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
-			mndist[i] = d(gen);
-		}
-		else
-		{
-			mndist[i] = 0;
-		}
-		psum += p[i];
-		nsum += mndist[i];
-	}
-	return true;
+    T psum(0);
+    unsigned int nsum(0);
+    for (int i = 0; i < K; i++)
+    {
+        if (p[i] > 0.0)
+        {
+            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            mndist[i] = d(gen);
+        }
+        else
+        {
+            mndist[i] = 0;
+        }
+        psum += p[i];
+        nsum += mndist[i];
+    }
+    return true;
 }
 
 /*! \fn multinomial_lnpdf
@@ -432,33 +497,34 @@ bool Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigne
  * This function computes the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  * from a multinomial distribution with probabilities \f$p[K]\f$.
  * 
- * \tparam T      data type one of float or double
- * \param  mndist A random sample (with size of K) from the multinomial distribution
- * \param  p      vector of probabilities \f$ p_1, \cdots, p_k \f$
- * \param  K      size of vector
+ * \tparam T       Data type one of float or double
+ * 
+ * \param  mndist  A random sample (with size of K) from the multinomial distribution
+ * \param  p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+ * \param  K       Size of vector
  * 
  * \returns the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  */
 template <typename T = double>
 T multinomial_lnpdf(unsigned int const *mndist, T const *p, int const K)
 {
-	// compute the total number of independent trials
-	unsigned int N = std::accumulate(mndist, mndist + K, 0);
+    // compute the total number of independent trials
+    unsigned int N = std::accumulate(mndist, mndist + K, 0);
 
-	T const totpsum = std::accumulate(p, p + K, 0);
+    T const totpsum = std::accumulate(p, p + K, 0);
 
-	// Currently we have the limitation of float or double type in factorial implementation
-	T log_pdf = factorial<T>(N);
+    // Currently we have the limitation of float or double type in factorial implementation
+    T log_pdf = factorial<T>(N);
 
-	for (int i = 0; i < K; i++)
-	{
-		if (mndist[i] > 0)
-		{
-			log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
-		}
-	}
+    for (int i = 0; i < K; i++)
+    {
+        if (mndist[i] > 0)
+        {
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
+        }
+    }
 
-	return log_pdf;
+    return log_pdf;
 }
 
 /*! \fn multinomial_pdf
@@ -467,32 +533,33 @@ T multinomial_lnpdf(unsigned int const *mndist, T const *p, int const K)
  * This function computes the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  * from a multinomial distribution with probabilities \f$p[K]\f$.
  * 
- * \tparam T      data type one of float or double
- * \param  mndist A random sample (with size of K) from the multinomial distribution
- * \param  p      vector of probabilities \f$ p_1, \cdots, p_k \f$
- * \param  K      size of vector
+ * \tparam T       Data type one of float or double
+ * 
+ * \param  mndist  A random sample (with size of K) from the multinomial distribution
+ * \param  p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+ * \param  K       Size of vector
  * 
  * \returns the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
  */
 template <typename T = double>
 T multinomial_pdf(unsigned int const *mndist, T const *p, int const K)
 {
-	// compute the total number of independent trials
-	unsigned int N = std::accumulate(mndist, mndist + K, 0);
+    // compute the total number of independent trials
+    unsigned int N = std::accumulate(mndist, mndist + K, 0);
 
-	T const totpsum = std::accumulate(p, p + K, 0);
+    T const totpsum = std::accumulate(p, p + K, 0);
 
-	T log_pdf = factorial<T>(N);
+    T log_pdf = factorial<T>(N);
 
-	for (int i = 0; i < K; i++)
-	{
-		if (mndist[i] > 0)
-		{
-			log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
-		}
-	}
+    for (int i = 0; i < K; i++)
+    {
+        if (mndist[i] > 0)
+        {
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
+        }
+    }
 
-	return std::exp(log_pdf);
+    return std::exp(log_pdf);
 }
 
 /*! \class normrnd
@@ -501,107 +568,139 @@ T multinomial_pdf(unsigned int const *mndist, T const *p, int const K)
  * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
  * psrandom object.
  *
- * \tparam T data type one of float, double, or long double
+ * \tparam T Data type one of float, double, or long double
  *
  */
 template <typename T = double>
 class normrnd
 {
   public:
-	/*!
-     * \brief Default constructor (default mean = 0, stddev = 1)
+    /*!
+     * \brief Construct a new normrnd object (default mean = 0, stddev = 1)
+     * 
+     * \param mean    Mean
+     * \param stddev  Standard deviation
+     * 
      */
-	normrnd(T mean = 0, T stddev = 1) : d(mean, stddev)
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
-	}
+    normrnd(T mean = T{}, T stddev = T{1});
 
-	/*!
-     * \returns random numbers x according to Normal (or Gaussian) random number distribution
-     * The result type generated by the generator is undefined if @T is not one of float, double, or long double
+    /*!
+     * \brief Random numbers x according to Normal (or Gaussian) random number distribution
+     * The result type generated by the generator is undefined if @T is not one of float, 
+     * double, or long double
+     * 
+     * \return Random numbers x according to Normal (or Gaussian) random number distribution
+     * 
      */
-	T operator()()
-	{
-		// Get the thread ID
-		int const me = torc_i_worker_id();
-		return d(psrandom::NumberGenerator[me]);
-	}
+    T operator()();
 
   private:
-	//! Random numbers according to the Normal (or Gaussian) random number distribution
-	std::normal_distribution<T> d;
+    //! Random numbers according to the Normal (or Gaussian) random number distribution
+    std::normal_distribution<T> d;
 };
+
+/*!
+ * \brief Construct a new normrnd<T>::normrnd object (default mean = 0, stddev = 1)
+ * 
+ * \param mean    Mean
+ * \param stddev  Standard deviation
+ * 
+ */
+template <typename T>
+normrnd<T>::normrnd(T mean, T stddev) : d(mean, stddev)
+{
+    if (psrandom::iseed == 0)
+    {
+        UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+    }
+}
+
+/*!
+ * \brief Random numbers x according to Normal (or Gaussian) random number distribution
+ * The result type generated by the generator is undefined if @T is not one of float, 
+ * double, or long double
+ * 
+ * \return Random numbers x according to Normal (or Gaussian) random number distribution
+ * 
+ */
+template <typename T>
+T normrnd<T>::operator()()
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return normrnd<T>::d(psrandom::NumberGenerator[me]);
+}
 
 /*! \class Normrnd
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * This class is independent.
  *
- * \tparam T data type one of float, double, or long double
+ * \tparam T Data type one of float, double, or long double
  *
  */
 template <typename T = double>
 class Normrnd
 {
   public:
-	/*!
+    /*!
      * \brief Default constructor (default mean = 0, stddev = 1)
      */
-	Normrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
+    Normrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
 
-	/*!
+    /*!
      * \returns random numbers x according to Normal (or Gaussian) random number distribution
      * The result type generated by the generator is undefined if @T is not one of float, double, or long double
      */
-	T operator()() { return d(gen); }
+    T operator()();
 
   private:
-	//! Random number engine based on Mersenne Twister algorithm.
-	std::mt19937 gen;
+    //! Random number engine based on Mersenne Twister algorithm.
+    std::mt19937 gen;
 
-	//! Random numbers according to the Normal (or Gaussian) random number distribution
-	std::normal_distribution<T> d;
+    //! Random numbers according to the Normal (or Gaussian) random number distribution
+    std::normal_distribution<T> d;
 };
+
+template <typename T>
+T Normrnd<T>::operator()() { return Normrnd<T>::d(Normrnd<T>::gen); }
 
 /*! \class lognormrnd
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
  * This class is based on psrandom object seeded engine. So to use this object there should be an instance of 
  * psrandom object.
  * 
- * \tparam T data type one of float, double, or long double
+ * \tparam T Data type one of float, double, or long double
  *
  */
 template <typename T = double>
 class lognormrnd
 {
   public:
-	/*!
+    /*!
      * \brief Default constructor (default mean = 0, stddev = 1)
      */
-	lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev)
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
-	}
+    lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev)
+    {
+        if (psrandom::iseed == 0)
+        {
+            UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+        }
+    }
 
-	/*!
+    /*!
      * \returns random numbers x > 0 according to the lognormal_distribution
      * The result type generated by the generator is undefined if @T is not one of float, double, or long double
      */
-	T operator()()
-	{
-		// Get the thread ID
-		int const me = torc_i_worker_id();
-		return d(psrandom::NumberGenerator[me]);
-	}
+    T operator()()
+    {
+        // Get the thread ID
+        int const me = torc_i_worker_id();
+        return d(psrandom::NumberGenerator[me]);
+    }
 
   private:
-	//! Lognormal_distribution random number distribution
-	std::lognormal_distribution<T> d;
+    //! Lognormal_distribution random number distribution
+    std::lognormal_distribution<T> d;
 };
 
 /*! \class Lognormrnd
@@ -615,23 +714,23 @@ template <typename T = double>
 class Lognormrnd
 {
   public:
-	/*!
+    /*!
      * \brief Default constructor (default mean = 0, stddev = 1)
      */
-	Lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
+    Lognormrnd(T mean = 0, T stddev = 1) : d(mean, stddev), gen(std::random_device{}()) {}
 
-	/*!
+    /*!
      * \returns random numbers x > 0 according to the lognormal_distribution
      * The result type generated by the generator is undefined if @T is not one of float, double, or long double
      */
-	T operator()() { return d(gen); }
+    T operator()() { return d(gen); }
 
   private:
-	//! Random number engine based on Mersenne Twister algorithm.
-	std::mt19937 gen;
+    //! Random number engine based on Mersenne Twister algorithm.
+    std::mt19937 gen;
 
-	//! Lognormal_distribution random number distribution
-	std::lognormal_distribution<T> d;
+    //! Lognormal_distribution random number distribution
+    std::lognormal_distribution<T> d;
 };
 
 /*! \class mvnormdist
@@ -647,119 +746,119 @@ template <typename T>
 class mvnormdist
 {
   public:
-	/*!
+    /*!
      * \brief constructor
      *
-     * \param mean_       mean vector of size \f$n\f$
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
+     * \param imean        Mean vector of size \f$n\f$
+     * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      */
-	mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_),
-																		   covariance(covariance_),
-																		   lu(covariance_)
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
+    mvnormdist(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
+                                                                           covariance(icovariance),
+                                                                           lu(icovariance)
+    {
+        if (psrandom::iseed == 0)
+        {
+            UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+        }
 
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor
      * 
-     * \param mean_       mean vector of size \f$n\f$
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
-     * \param n           vector size
+     * \param imean        Input mean vector of size \f$n\f$
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+     * \param n            Vector size
      */
-	mvnormdist(T const *mean_, T const *covariance_, int const n) : mean(CTEMapX<T>(mean_, n, 1)),
-																	covariance(CTEMapX<T>(covariance_, n, n)),
-																	lu(CTEMapX<T>(covariance_, n, n))
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
+    mvnormdist(T const *imean, T const *icovariance, int const n) : mean(CTEMapX<T>(imean, n, 1)),
+                                                                    covariance(CTEMapX<T>(icovariance, n, n)),
+                                                                    lu(CTEMapX<T>(icovariance, n, n))
+    {
+        if (psrandom::iseed == 0)
+        {
+            UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+        }
 
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0)
      *
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      */
-	mvnormdist(EMatrixX<T> const &covariance_) : mvnormdist(EVectorX<T>::Zero(covariance_.rows()), covariance_) {}
+    mvnormdist(EMatrixX<T> const &icovariance) : mvnormdist(EVectorX<T>::Zero(icovariance.rows()), icovariance) {}
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0)
      * 
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
-     * \param n           vector size
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+     * \param n            Vector size
      */
-	mvnormdist(T const *covariance_, int const n) : mean(EVectorX<T>::Zero(n)),
-													covariance(CTEMapX<T>(covariance_, n, n)),
-													lu(CTEMapX<T>(covariance_, n, n))
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
+    mvnormdist(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                    covariance(CTEMapX<T>(icovariance, n, n)),
+                                                    lu(CTEMapX<T>(icovariance, n, n))
+    {
+        if (psrandom::iseed == 0)
+        {
+            UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+        }
 
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0, covariance=I)
      * 
      * \param n vector size
      */
-	mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
-							  covariance(EMatrixX<T>::Identity(n, n)),
-							  transform(EMatrixX<T>::Identity(n, n)),
-							  lu(EMatrixX<T>::Identity(n, n))
-	{
-		if (psrandom::iseed == 0)
-		{
-			UMUQFAIL("There should be an instance of a psrandom object before using this class!");
-		}
-	}
+    mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
+                              covariance(EMatrixX<T>::Identity(n, n)),
+                              transform(EMatrixX<T>::Identity(n, n)),
+                              lu(EMatrixX<T>::Identity(n, n))
+    {
+        if (psrandom::iseed == 0)
+        {
+            UMUQFAIL("There should be an instance of a psrandom object before using this class!");
+        }
+    }
 
-	/*!
+    /*!
      * \returns a vector with multivariate normal distribution
      */
-	EVectorX<T> operator()()
-	{
-		int const me = torc_i_worker_id();
-		return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(psrandom::NumberGenerator[me]); });
-	}
+    EVectorX<T> operator()()
+    {
+        int const me = torc_i_worker_id();
+        return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(psrandom::NumberGenerator[me]); });
+    }
 
-	/*!
+    /*!
      * \brief PDF
      * 
      * \param X vector of size \f$ n \f$
      * 
      * \returns pdf of X
      */
-	T pdf(EVectorX<T> const &X)
-	{
-		T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
+    T pdf(EVectorX<T> const &X)
+    {
+        T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-	}
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
 
-	/*!
+    /*!
      * \brief PDF
      * 
      * \param x vector of size \f$ n \f$
@@ -767,38 +866,38 @@ class mvnormdist
      * 
      * \returns pdf of x
      */
-	T pdf(T const *x, int const n)
-	{
-		CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+    T pdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
 
-		T denom = std::pow(M_2PI, n) * lu.determinant();
+        T denom = std::pow(M_2PI, n) * lu.determinant();
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-	}
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
 
-	/*!
+    /*!
      * \brief LOGPDF
      * 
      * \param X vector of size \f$ n \f$
      * 
      * \returns logpdf of X
      */
-	T lnpdf(EVectorX<T> const &X)
-	{
-		EVectorX<T> ax = X - mean;
+    T lnpdf(EVectorX<T> const &X)
+    {
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
-	}
+        return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
+    }
 
-	/*!
+    /*!
      * \brief LOGPDF
      * 
      * \param x vector of size \f$ n \f$
@@ -806,33 +905,33 @@ class mvnormdist
      * 
      * \returns logpdf of x
      */
-	T lnpdf(T const *x, int const n)
-	{
-		CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+    T lnpdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
-	}
+        return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
+    }
 
   private:
-	//! Vector of size \f$n\f$
-	EVectorX<T> mean;
+    //! Vector of size \f$n\f$
+    EVectorX<T> mean;
 
-	//! Variance-covariance matrix of size \f$ n \times n \f$
-	EMatrixX<T> covariance;
+    //! Variance-covariance matrix of size \f$ n \times n \f$
+    EMatrixX<T> covariance;
 
-	//! Matrix of size \f$n \times n\f$
-	EMatrixX<T> transform;
+    //! Matrix of size \f$n \times n\f$
+    EMatrixX<T> transform;
 
-	//! LU decomposition of a matrix with complete pivoting
-	Eigen::FullPivLU<EMatrixX<T>> lu;
+    //! LU decomposition of a matrix with complete pivoting
+    Eigen::FullPivLU<EMatrixX<T>> lu;
 
-	//! Generates random numbers according to the Normal (or Gaussian) random number distribution
-	std::normal_distribution<T> d;
+    //! Generates random numbers according to the Normal (or Gaussian) random number distribution
+    std::normal_distribution<T> d;
 };
 
 /*! \class Mvnormdist
@@ -847,101 +946,101 @@ template <typename T>
 class Mvnormdist
 {
   public:
-	/*!
+    /*!
      * \brief constructor
      *
-     * \param mean_       mean vector of size \f$n\f$
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
+     * \param imean        Input mean vector of size \f$n\f$
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      */
-	Mvnormdist(EVectorX<T> const &mean_, EMatrixX<T> const &covariance_) : mean(mean_),
-																		   covariance(covariance_),
-																		   gen(std::random_device{}()),
-																		   lu(covariance_)
-	{
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+    Mvnormdist(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
+                                                                           covariance(icovariance),
+                                                                           gen(std::random_device{}()),
+                                                                           lu(icovariance)
+    {
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor
      * 
-     * \param mean_       mean vector of size \f$n\f$
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
-     * \param n           vector size
+     * \param imean        Input mean vector of size \f$n\f$
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+     * \param n            Vector size
      */
-	Mvnormdist(T const *mean_, T const *covariance_, int const n) : mean(CTEMapX<T>(mean_, n, 1)),
-																	covariance(CTEMapX<T>(covariance_, n, n)),
-																	gen(std::random_device{}()),
-																	lu(CTEMapX<T>(covariance_, n, n))
-	{
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+    Mvnormdist(T const *imean, T const *icovariance, int const n) : mean(CTEMapX<T>(imean, n, 1)),
+                                                                    covariance(CTEMapX<T>(icovariance, n, n)),
+                                                                    gen(std::random_device{}()),
+                                                                    lu(CTEMapX<T>(icovariance, n, n))
+    {
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0)
      *
-     * \param covariance_ variance-covariance matrix of size \f$n \times n\f$
+     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      */
-	Mvnormdist(EMatrixX<T> const &covariance_) : Mvnormdist(EVectorX<T>::Zero(covariance_.rows()), covariance_) {}
+    Mvnormdist(EMatrixX<T> const &icovariance) : Mvnormdist(EVectorX<T>::Zero(icovariance.rows()), icovariance) {}
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0)
      * 
-     * \param covariance_ covariance matrix of size \f$n \times n\f$
-     * \param n           vector size
+     * \param icovariance  Input covariance matrix of size \f$n \times n\f$
+     * \param n            Vector size
      */
-	Mvnormdist(T const *covariance_, int const n) : mean(EVectorX<T>::Zero(n)),
-													covariance(CTEMapX<T>(covariance_, n, n)),
-													gen(std::random_device{}()),
-													lu(CTEMapX<T>(covariance_, n, n))
-	{
-		// Computes eigenvalues and eigenvectors of selfadjoint matrices.
-		Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
-		transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
-	}
+    Mvnormdist(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                    covariance(CTEMapX<T>(icovariance, n, n)),
+                                                    gen(std::random_device{}()),
+                                                    lu(CTEMapX<T>(icovariance, n, n))
+    {
+        // Computes eigenvalues and eigenvectors of selfadjoint matrices.
+        Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
+        transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
+    }
 
-	/*!
+    /*!
      * \brief constructor (default mean = 0, covariance=I)
      * 
-     * \param n vector size
+     * \param n  Vector size
      */
-	Mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
-							  covariance(EMatrixX<T>::Identity(n, n)),
-							  transform(EMatrixX<T>::Identity(n, n)),
-							  gen(std::random_device{}()),
-							  lu(EMatrixX<T>::Identity(n, n)) {}
+    Mvnormdist(int const n) : mean(EVectorX<T>::Zero(n)),
+                              covariance(EMatrixX<T>::Identity(n, n)),
+                              transform(EMatrixX<T>::Identity(n, n)),
+                              gen(std::random_device{}()),
+                              lu(EMatrixX<T>::Identity(n, n)) {}
 
-	/*!
+    /*!
      * \returns a vector with multivariate normal distribution
      */
-	EVectorX<T> operator()()
-	{
-		return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T x) { return d(gen); });
-	}
+    EVectorX<T> operator()()
+    {
+        return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T x) { return d(gen); });
+    }
 
-	/*!
+    /*!
      * \brief PDF
      * 
      * \param X vector of size \f$ n \f$
      * 
      * \returns pdf of X
      */
-	T pdf(EVectorX<T> const &X)
-	{
-		T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
+    T pdf(EVectorX<T> const &X)
+    {
+        T denom = std::pow(M_2PI, X.rows()) * lu.determinant();
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-	}
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
 
-	/*!
+    /*!
      * \brief PDF
      * 
      * \param x vector of size \f$ n \f$
@@ -949,38 +1048,38 @@ class Mvnormdist
      * 
      * \returns pdf of x
      */
-	T pdf(T const *x, int const n)
-	{
-		CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+    T pdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
 
-		T denom = std::pow(M_2PI, n) * lu.determinant();
+        T denom = std::pow(M_2PI, n) * lu.determinant();
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-	}
+        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+    }
 
-	/*!
+    /*!
      * \brief LOGPDF
      * 
      * \param X vector of size \f$ n \f$
      * 
      * \returns logpdf of X
      */
-	T lnpdf(EVectorX<T> const &X)
-	{
-		EVectorX<T> ax = X - mean;
+    T lnpdf(EVectorX<T> const &X)
+    {
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
-	}
+        return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(lu.determinant()));
+    }
 
-	/*!
+    /*!
      * \brief LOGPDF
      * 
      * \param x vector of size \f$ n \f$
@@ -988,36 +1087,36 @@ class Mvnormdist
      * 
      * \returns logpdf of x
      */
-	T lnpdf(T const *x, int const n)
-	{
-		CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
+    T lnpdf(T const *x, int const n)
+    {
+        CTEMapX<T, Eigen::ColMajor> X(x, n, 1);
 
-		EVectorX<T> ax = X - mean;
+        EVectorX<T> ax = X - mean;
 
-		// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-		T MDistSq = ax.transpose() * lu.inverse() * ax;
+        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+        T MDistSq = ax.transpose() * lu.inverse() * ax;
 
-		return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
-	}
+        return -0.5 * (MDistSq + n * M_L2PI + std::log(lu.determinant()));
+    }
 
   private:
-	//! Vector of size \f$n\f$
-	EVectorX<T> mean;
+    //! Vector of size \f$n\f$
+    EVectorX<T> mean;
 
-	//! Variance-covariance matrix of size \f$n \times n\f$
-	EMatrixX<T> covariance;
+    //! Variance-covariance matrix of size \f$n \times n\f$
+    EMatrixX<T> covariance;
 
-	//! Matrix of size \f$n \times n\f$
-	EMatrixX<T> transform;
+    //! Matrix of size \f$n \times n\f$
+    EMatrixX<T> transform;
 
-	//! A random number engine based on Mersenne Twister algorithm
-	std::mt19937 gen;
+    //! A random number engine based on Mersenne Twister algorithm
+    std::mt19937 gen;
 
-	//! LU decomposition of a matrix with complete pivoting
-	Eigen::FullPivLU<EMatrixX<T>> lu;
+    //! LU decomposition of a matrix with complete pivoting
+    Eigen::FullPivLU<EMatrixX<T>> lu;
 
-	//! Generates random numbers according to the Normal (or Gaussian) random number distribution
-	std::normal_distribution<T> d;
+    //! Generates random numbers according to the Normal (or Gaussian) random number distribution
+    std::normal_distribution<T> d;
 };
 
 #endif
