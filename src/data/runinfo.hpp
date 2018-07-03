@@ -104,7 +104,7 @@ class runinfo
     // Make it noncopyable
     runinfo(runinfo<T> const &) = delete;
 
-    // Make it not assignable
+    // Make it nonassignable
     runinfo<T> &operator=(runinfo<T> const &) = delete;
 
   public:
