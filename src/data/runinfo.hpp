@@ -118,6 +118,7 @@ class runinfo
     //! The coefficient of variation of the plausibility weights [maxGenerations]
     std::vector<T> CoefVar;
     //! p cluster-wide                                           [maxGenerations]
+    //! probabilty at each generation
     std::vector<T> p;
     //!                                                          [maxGenerations]
     std::vector<int> currentuniques;
@@ -126,6 +127,7 @@ class runinfo
     //!                                                          [maxGenerations]
     std::vector<T> acceptance;
     //! SS cluster-wide                                          [nDim][nDim]
+    //! 
     std::vector<T> SS;
     //!                                                          [maxGenerations][nDim]
     std::vector<T> meantheta;
