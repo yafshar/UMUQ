@@ -1,8 +1,6 @@
 #ifndef UMUQ_PARSER_H
 #define UMUQ_PARSER_H
 
-#define LINESIZE 256
-
 /*! \class parser
 * \brief This class prases string of data to seperate words
 *	
@@ -23,12 +21,18 @@ class parser
     ~parser() {}
 
     /*!
-     * \brief parse a line to seperate arguments
+     * \brief Parses the input line into tokens
      * 
+     * First, it traverses all white spaces, \f$ : \f$ and \f$ , \f$ characters until 
+     * it hits different character which indicates the beginning of an argument.  
+     * It saves the address to argv[], and increase the line argument number and skips
+     * all characters of this argument. 
+     * 
+     * \param iline Input line
      */
-    void parse(std::string const &line_)
+    void parse(std::string const &iline)
     {
-        char *line = const_cast<char *>(&line_[0]);
+        char *line = const_cast<char *>(&iline[0]);
 
         // At the start of parsing each line set the argument number to zero
         lineArgNum = 0;
@@ -56,12 +60,18 @@ class parser
     }
 
     /*!
-     * \brief parse a line to seperate arguments
+     * \brief Parses the input line into tokens
      * 
+     * First, it traverses all white spaces, \f$ : \f$ and \f$ , \f$ characters until 
+     * it hits different character which indicates the beginning of an argument.  
+     * It saves the address to argv[], and increase the line argument number and skips
+     * all characters of this argument. 
+     * 
+     * \param iline Input line
      */
-    void parse(const char *line_)
+    void parse(const char *iline)
     {
-        char *line = const_cast<char *>(line_);
+        char *line = const_cast<char *>(iline);
 
         // At the start of parsing each line set the argument number to zero
         lineArgNum = 0;
@@ -90,67 +100,82 @@ class parser
 
   private:
     /*!
-     * \brief Parse a line to seperate arguments while replacing white spaces with 0
+     * \brief Takes an input line and parse it into tokens
+     * 
+     * \param iline  Input line
+     * \param iargv  Input argv 
+     * 
+     * 
+     * It takes an input line and parse it into tokens.
+     * First, it replaces all white spaces with zeros until it hits a non-white space 
+     * character which indicates the beginning of an argument.  It saves the address 
+     * to argv[], and then skips all non-white spaces which constitute the argument. 
+     * 
+     * Reference:
+     * http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/shell.c
      * 
      */
-    void parse(char *line_, char **argv_)
+    void parse(char *iline, char **iargv)
     {
         // if not the end of line .......
-        while (*line_ != '\0')
+        while (*iline != '\0')
         {
-            while (*line_ == ' ' || *line_ == '\t' || *line_ == '\n' || *line_ == ':' || *line_ == ',')
+            while (*iline == ' ' || *iline == '\t' || *iline == '\n' || *iline == ':' || *iline == ',')
             {
-                *line_++ = '\0';
+                *iline++ = '\0';
             }
 
             // Save the argument position
-            *argv_++ = line_;
+            *iargv++ = iline;
 
             // Skip the argument until ...
-            while (*line_ != '\0' && *line_ != ' ' && *line_ != '\t' && *line_ != '\n' && *line_ != ':' && *line_ != ',')
+            while (*iline != '\0' && *iline != ' ' && *iline != '\t' && *iline != '\n' && *iline != ':' && *iline != ',')
             {
-                line_++;
+                iline++;
             }
         }
 
         // Mark the end of argument list
-        *argv_ = '\0';
+        *iargv = nullptr;
     }
 
   public:
     /*!
-     * \brief parse element 
+     * \brief Parses element 
      * 
-     * \param  lineArg_ input string which we want to parse
-     * \param  value    parsed value 
-     * \return value    value of type T
+     * \param  ilineArg  Input string which we want to parse
+     * \param  value     Parsed value
+     *  
+     * \returns Parsed value of type T
      */
     template <typename T>
-    inline T &parse(const char *lineArg_, T &value)
+    inline T &parse(const char *ilineArg, T &value)
     {
-        std::stringstream str(lineArg_);
+        std::stringstream str(ilineArg);
         str >> value;
         return value;
     }
 
     /*!
-     * \brief parse element
+     * \brief Parses element
      *  
-     * \param  lineArg_ input string which we want to parse
-     * \return value of type T
+     * \param  ilineArg  Input string which we want to parse
+     * 
+     * \returns Parsed value of type T
      */
     template <typename T>
-    inline T &parse(const char *lineArg_)
+    inline T &parse(const char *ilineArg)
     {
         T value;
-        return parse<T>(lineArg_, value);
+        return parse<T>(ilineArg, value);
     }
 
     /*!
-     * \brief access element at provided index @id with checking bounds
+     * \brief Access element at provided index @id with checking bounds
      * 
-     * \param  id requested index 
-     * \return element @(id)
+     * \param id  Requested index 
+     * 
+     * \returns Element @(id)
      */
     template <typename T>
     inline T &at(std::size_t const id)
@@ -165,10 +190,11 @@ class parser
     }
 
     /*!
-     * \brief access element at provided index @id with no check
+     * \brief Access element at provided index @id with no check
      * 
-     * param id requested id
-     * return element @(id)
+     * param id  Requested id
+     * 
+     * returns Element @(id)
      */
     template <typename T>
     inline T &operator()(std::size_t const id)
@@ -178,10 +204,11 @@ class parser
     }
 
     /*!
-     * \brief access element at provided index @id with no check
+     * \brief Access element at provided index @id with no check
      * 
-     * param id requested id
-     * return element @(id)
+     * param id  Requested id
+     * 
+     * returns Element @(id)
      */
     template <typename T>
     inline T &operator[](std::size_t const id)
@@ -222,10 +249,11 @@ class parser
     //! Word as an rvalue in parsing string
     std::string svalue;
 
+    //! Temporary string
     std::string lineTmp;
 };
 
-//Template specialization for string input
+// Template specialization for string input
 template <>
 std::string &parser::at<std::string>(std::size_t const id)
 {
