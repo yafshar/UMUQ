@@ -41,6 +41,7 @@ public:
         }
       }
 
+
       {
         // Creating a temporary database
         database<T> d(Data.nDim, Data.maxGenerations);
@@ -62,8 +63,12 @@ public:
       if (runData.reset(Data.nDim, Data.maxGenerations))
       {
 
+
+
         return true;
       }
+
+
 
       return false;
     }
