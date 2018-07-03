@@ -38,8 +38,8 @@ TEST(runinfo_test, HandlesIO)
 {
     std::remove("runinfo.txt");
 
-    //Create an instance of runinfo object, initialize it
-    //to some random value and save it to a file @"runinfo.txt"
+    // Create an instance of runinfo object, initialize it
+    // to some random value and save it to a file @"runinfo.txt"
     {
         runinfo<double> runinfoObj(2, 10);
 
@@ -66,8 +66,8 @@ TEST(runinfo_test, HandlesIO)
         EXPECT_TRUE(runinfoObj.save());
     }
     
-    //Create an instance of runinfo object, initialize it
-    //from a file @"runinfo.txt"
+    // Create an instance of runinfo object, initialize it
+    // from a file @"runinfo.txt"
     {
         runinfo<double> runinfoObj;
 
