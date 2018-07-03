@@ -19,8 +19,7 @@
 /*! \class utility
 * \brief utility is a class which includes some helper functionality.
 *	
-* Utility class contains functionality for exectuing command delete a name from a filesystem or 
-* unlink the files, copy file from a path to other path
+* Utility class contains functionality for exectuing commands
 * 
 */
 class utility
