@@ -1,9 +1,9 @@
 #ifndef UMUQ_DENSITYFUNCTION_H
 #define UMUQ_DENSITYFUNCTION_H
 
-#include "../../numerics/factorial.hpp"
-#include "./../numerics/eigenmatrix.hpp"
-#include "../../numerics/random/psrandom.hpp"
+#include "../factorial.hpp"
+#include "../eigenmatrix.hpp"
+#include "../random/psrandom.hpp"
 
 /*! \class densityFunction
  * \brief Density function class 
