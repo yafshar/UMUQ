@@ -49,6 +49,13 @@ class exponentialDistribution : public densityFunction<T, exponentialDistributio
      * \returns  Log of density function value 
      */
     inline T lf(T const x);
+
+  private:
+    /*!
+     * \brief Construct a new exponential Distribution object
+     * 
+     */
+    exponentialDistribution() = delete;
 };
 
 /*!
@@ -57,7 +64,7 @@ class exponentialDistribution : public densityFunction<T, exponentialDistributio
  * \param mu Mean, \f$ \mu \f$
  */
 template <typename T>
-explicit exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, exponentialDistribution<T>>(&mu, 1, "exponential") {}
+exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, exponentialDistribution<T>>(&mu, 1, "exponential") {}
 
 /*!
  * \brief Exponential distribution density function
