@@ -8,16 +8,12 @@
 #include <random>
 
 #include "inference/tmcmc/tmcmc.hpp"
-#include "inference/prior/densityfunction.hpp"
 
 int main(int argc, char **argv)
 {
 	torc_init(argc, argv, 0);
 
 	tmcmc<double> t;
-	uniformDistribution<double> u(1, 2);
-
-	std::cout << u.f(1.5) << " " << u.f(3) << std::endl;
 
 	torc_finalize();
 
