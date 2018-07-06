@@ -547,19 +547,22 @@ class psrandom
         // Make it not assignable
         multivariatenormalDistribution &operator=(multivariatenormalDistribution const &) = delete;
 
-      private:
+      public:
         //! Vector of size \f$n\f$
         EVectorX<T> mean;
 
         //! Variance-covariance matrix of size \f$ n \times n \f$
         EMatrixX<T> covariance;
 
+      private:
         //! Matrix of size \f$n \times n\f$
         EMatrixX<T> transform;
 
+      public:
         //! LU decomposition of a matrix with complete pivoting
         Eigen::FullPivLU<EMatrixX<T>> lu;
 
+      private:
         //! Generates random numbers according to the Normal (or Gaussian) random number distribution
         std::normal_distribution<T> d;
     };
@@ -644,19 +647,22 @@ class psrandom
         // Make it not assignable
         multivariateNormalDistribution &operator=(multivariateNormalDistribution const &) = delete;
 
-      private:
+      public:
         //! Vector of size \f$n\f$
         EVectorX<T> mean;
 
         //! Variance-covariance matrix of size \f$n \times n\f$
         EMatrixX<T> covariance;
 
+      private:
         //! Matrix of size \f$n \times n\f$
         EMatrixX<T> transform;
 
+      public:
         //! LU decomposition of a matrix with complete pivoting
         Eigen::FullPivLU<EMatrixX<T>> lu;
 
+      private:
         //! A random number engine based on Mersenne Twister algorithm
         std::mt19937 gen;
 
