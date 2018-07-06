@@ -32,7 +32,7 @@ class densityFunction
      * \param NumParams  Number of parameters
      * \param Name       Distribution name
      */
-    densityFunction(T *Params, int const NumParams, const char *Name = "");
+    densityFunction(T const *Params, int const NumParams, const char *Name = "");
 
     /*!
      * \brief Destroy the density Function object
@@ -48,7 +48,7 @@ class densityFunction
      * \return true 
      * \return false 
      */
-    bool reset(T *Params, int const NumParams, const char *Name = "");
+    bool reset(T const *Params, int const NumParams, const char *Name = "");
 
     /*!
      * \brief Density function
@@ -111,9 +111,9 @@ densityFunction<T, TD>::densityFunction() : name(""), numParams(0) {}
  * \param Name       Distribution name
  */
 template <typename T, class TD>
-densityFunction<T, TD>::densityFunction(T *Params, int const NumParams, const char *Name = "") : name(Name),
-                                                                                                 numParams(NumParams),
-                                                                                                 params(Params, Params + NumParams)
+densityFunction<T, TD>::densityFunction(T const *Params, int const NumParams, const char *Name) : name(Name),
+                                                                                                  numParams(NumParams),
+                                                                                                  params(Params, Params + NumParams)
 {
 }
 
@@ -126,7 +126,7 @@ densityFunction<T, TD>::densityFunction(T *Params, int const NumParams, const ch
  * \return false 
  */
 template <typename T, class TD>
-bool densityFunction<T, TD>::reset(T *Params, int const NumParams, const char *Name = "")
+bool densityFunction<T, TD>::reset(T const *Params, int const NumParams, const char *Name)
 {
     this->name = std::string(Name);
     this->numParams = NumParams;
