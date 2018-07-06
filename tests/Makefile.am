@@ -28,7 +28,7 @@ factorial_test_SOURCES = numerics/factorial_test.cpp
 
 TESTS += psrandom_test
 check_PROGRAMS += psrandom_test
-psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+psrandom_test_SOURCES = numerics/random/psrandom_test.cpp 
 
 TESTS += multimin_test
 check_PROGRAMS += multimin_test 

@@ -180,7 +180,7 @@ parser_test_LDADD = $(LDADD)
 am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
-am_psrandom_test_OBJECTS = numerics/psrandom_test.$(OBJEXT)
+am_psrandom_test_OBJECTS = numerics/random/psrandom_test.$(OBJEXT)
 psrandom_test_OBJECTS = $(am_psrandom_test_OBJECTS)
 psrandom_test_LDADD = $(LDADD)
 am_pyplot_test_OBJECTS = io/pyplot_test.$(OBJEXT)
@@ -638,7 +638,7 @@ polynomial_test_SOURCES = numerics/polynomial_test.cpp
 eigen_test_SOURCES = numerics/eigen_test.cpp 
 stats_test_SOURCES = numerics/stats_test.cpp 
 factorial_test_SOURCES = numerics/factorial_test.cpp 
-psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+psrandom_test_SOURCES = numerics/random/psrandom_test.cpp 
 multimin_test_SOURCES = numerics/multimin_test.cpp 
 knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
@@ -810,8 +810,15 @@ numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
-numerics/psrandom_test.$(OBJEXT): numerics/$(am__dirstamp) \
-	numerics/$(DEPDIR)/$(am__dirstamp)
+numerics/random/$(am__dirstamp):
+	@$(MKDIR_P) numerics/random
+	@: > numerics/random/$(am__dirstamp)
+numerics/random/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/random/$(DEPDIR)
+	@: > numerics/random/$(DEPDIR)/$(am__dirstamp)
+numerics/random/psrandom_test.$(OBJEXT):  \
+	numerics/random/$(am__dirstamp) \
+	numerics/random/$(DEPDIR)/$(am__dirstamp)
 
 psrandom_test$(EXEEXT): $(psrandom_test_OBJECTS) $(psrandom_test_DEPENDENCIES) $(EXTRA_psrandom_test_DEPENDENCIES) 
 	@rm -f psrandom_test$(EXEEXT)
@@ -853,6 +860,7 @@ mostlyclean-compile:
 	-rm -f io/*.$(OBJEXT)
 	-rm -f misc/*.$(OBJEXT)
 	-rm -f numerics/*.$(OBJEXT)
+	-rm -f numerics/random/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -876,8 +884,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/linearregression_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/psrandom_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1337,6 +1345,8 @@ distclean-generic:
 	-rm -f misc/$(am__dirstamp)
 	-rm -f numerics/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/$(am__dirstamp)
+	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/random/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1347,7 +1357,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1393,7 +1403,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
