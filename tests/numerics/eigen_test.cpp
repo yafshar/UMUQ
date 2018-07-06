@@ -10,9 +10,10 @@ TEST(eigen_test, HandlesMap)
     double *A = new double[12];
     std::iota(A, A + 12, double{});
 
-    //!Copy the buffer to the new Eigen object
+    //! Copy the buffer to the new Eigen object
     EMatrixXd ACopy = EMapXd(A, 3, 4);
 
+    //! Check to make sure the values are the same
     for (int i = 0, l = 0; i < 3; i++)
     {
         for (int j = 0; j < 4; j++, l++)
@@ -21,20 +22,24 @@ TEST(eigen_test, HandlesMap)
         }
     }
 
-    //!Map the buffer to an Eigen object format
+    //! Map the buffer to an Eigen object format no copy
     TEMapXd AMap(A, 3, 4);
+
+    //! Change some of the values in the original buffer
     A[0] = -100.;
     A[1] = 200.0;
     A[5] = 500.0;
     A[9] = 900.0;
     A[11] = -23.;
 
+    //! Compare the Copied buffer and original data
     EXPECT_NE(AMap(0, 0), ACopy(0, 0));
     EXPECT_NE(AMap(0, 1), ACopy(0, 1));
     EXPECT_NE(AMap(1, 1), ACopy(1, 1));
     EXPECT_NE(AMap(2, 1), ACopy(2, 1));
     EXPECT_NE(AMap(2, 3), ACopy(2, 3));
 
+    //! Make sure that the mapped data is the same as original buffer
     EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
     EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
     EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
@@ -48,6 +53,7 @@ TEST(eigen_test, HandlesMap)
     EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
     EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
 
+    //! Check the mutual exclusive
     AMap(0, 0) = 200.0;
     EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
 
@@ -116,7 +122,7 @@ TEST(eigen_test, HandlesMap)
         }
     }
 
-    //!Converts them to an array, which uses to multiply them coefficient-wise
+    //! Converts them to an array, which uses to multiply them coefficient-wise
     DCopy = DCopy.array() * DCopy.array();
 
     EMapXd(DCopy, D);
