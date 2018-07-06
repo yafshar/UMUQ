@@ -25,6 +25,7 @@ It should contain the following files:
     ├── gammadistribution.hpp
     ├── gaussiandistribution.hpp
     ├── multinomialdistribution.hpp
+    ├── multivariategaussiandistribution.hpp
     └── uniformdistribution.hpp
 -----------------------------------
 
