@@ -66,7 +66,7 @@ class gammaDistribution : public densityFunction<T, gammaDistribution<T>>
  * \param beta   Scale parameter \f$ beta\f$
  */
 template <typename T>
-gammaDistribution<T>::gammaDistribution(T const alpha, T const beta = T{1}) : densityFunction<T, gammaDistribution<T>>(std::vector<T>{alpha, beta}.data(), 2, "gamma") {}
+gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, gammaDistribution<T>>(std::vector<T>{alpha, beta}.data(), 2, "gamma") {}
 
 /*!
  * \brief Gamma distribution density function
