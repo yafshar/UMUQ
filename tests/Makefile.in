@@ -93,7 +93,8 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
@@ -103,7 +104,8 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
@@ -145,6 +147,10 @@ datatype_test_LDADD = $(LDADD)
 am_dcpse_test_OBJECTS = numerics/dcpse_test.$(OBJEXT)
 dcpse_test_OBJECTS = $(am_dcpse_test_OBJECTS)
 dcpse_test_LDADD = $(LDADD)
+am_densityfunction_test_OBJECTS =  \
+	numerics/densityfunction/densityfunction_test.$(OBJEXT)
+densityfunction_test_OBJECTS = $(am_densityfunction_test_OBJECTS)
+densityfunction_test_LDADD = $(LDADD)
 am_eigen_io_test_OBJECTS = io/eigen_io_test.$(OBJEXT)
 eigen_io_test_OBJECTS = $(am_eigen_io_test_OBJECTS)
 eigen_io_test_LDADD = $(LDADD)
@@ -234,10 +240,10 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
-	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
-	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
-	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
-	$(knearestneighbors_test_SOURCES) \
+	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
+	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
@@ -245,10 +251,10 @@ SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(stdata_test_SOURCES) $(utility_test_SOURCES)
 DIST_SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
-	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
-	$(factorial_test_SOURCES) $(fitness_test_SOURCES) \
-	$(funcallcounter_test_SOURCES) $(io_test_SOURCES) \
-	$(knearestneighbors_test_SOURCES) \
+	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
+	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
@@ -644,6 +650,7 @@ knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
 fitness_test_SOURCES = numerics/fitness_test.cpp 
 linearregression_test_SOURCES = numerics/linearregression_test.cpp 
+densityfunction_test_SOURCES = numerics/densityfunction/densityfunction_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
@@ -739,6 +746,19 @@ numerics/dcpse_test.$(OBJEXT): numerics/$(am__dirstamp) \
 dcpse_test$(EXEEXT): $(dcpse_test_OBJECTS) $(dcpse_test_DEPENDENCIES) $(EXTRA_dcpse_test_DEPENDENCIES) 
 	@rm -f dcpse_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(dcpse_test_OBJECTS) $(dcpse_test_LDADD) $(LIBS)
+numerics/densityfunction/$(am__dirstamp):
+	@$(MKDIR_P) numerics/densityfunction
+	@: > numerics/densityfunction/$(am__dirstamp)
+numerics/densityfunction/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/densityfunction/$(DEPDIR)
+	@: > numerics/densityfunction/$(DEPDIR)/$(am__dirstamp)
+numerics/densityfunction/densityfunction_test.$(OBJEXT):  \
+	numerics/densityfunction/$(am__dirstamp) \
+	numerics/densityfunction/$(DEPDIR)/$(am__dirstamp)
+
+densityfunction_test$(EXEEXT): $(densityfunction_test_OBJECTS) $(densityfunction_test_DEPENDENCIES) $(EXTRA_densityfunction_test_DEPENDENCIES) 
+	@rm -f densityfunction_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(densityfunction_test_OBJECTS) $(densityfunction_test_LDADD) $(LIBS)
 io/$(am__dirstamp):
 	@$(MKDIR_P) io
 	@: > io/$(am__dirstamp)
@@ -860,6 +880,7 @@ mostlyclean-compile:
 	-rm -f io/*.$(OBJEXT)
 	-rm -f misc/*.$(OBJEXT)
 	-rm -f numerics/*.$(OBJEXT)
+	-rm -f numerics/densityfunction/*.$(OBJEXT)
 	-rm -f numerics/random/*.$(OBJEXT)
 
 distclean-compile:
@@ -885,6 +906,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/densityfunction/$(DEPDIR)/densityfunction_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
 
 .cpp.o:
@@ -1180,6 +1202,13 @@ linearregression_test.log: linearregression_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+densityfunction_test.log: densityfunction_test$(EXEEXT)
+	@p='densityfunction_test$(EXEEXT)'; \
+	b='densityfunction_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 utility_test.log: utility_test$(EXEEXT)
 	@p='utility_test$(EXEEXT)'; \
 	b='utility_test'; \
@@ -1345,6 +1374,8 @@ distclean-generic:
 	-rm -f misc/$(am__dirstamp)
 	-rm -f numerics/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/$(am__dirstamp)
+	-rm -f numerics/densityfunction/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/densityfunction/$(am__dirstamp)
 	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/random/$(am__dirstamp)
 
@@ -1357,7 +1388,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/random/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/densityfunction/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1403,7 +1434,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/random/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/densityfunction/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
