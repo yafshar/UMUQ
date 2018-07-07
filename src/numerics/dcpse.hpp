@@ -55,20 +55,20 @@ class dcpse
      *
      * This function uses one set of points as input data to compute the generalized DC-PSE 
      * differential operators.
-     * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
-     * use the interpolator function not this one. 
+     * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
+     * should use the interpolator function not this one. 
      * 
-     * \param idata            A pointer to input data
-     * \param nPoints          Number of data points
-     * \param beta             In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
-     *                         Notation for partial derivatives:
-     *                         \f[ 
-     *                              \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
-     *                              \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
-     *                          \f]
-     * \param order            Order of accuracy (default is 2nd order accurate)
-     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
-     * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param idata    A pointer to input data
+     * \param nPoints  Number of data points
+     * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+     *                 Notation for partial derivatives:
+     *                 \f[ 
+     *                   \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
+     *                   \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
+     *                 \f]
+     * \param order    Order of accuracy (default is 2nd order accurate)
+     * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      * 
      */
     bool computeWeights(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
@@ -81,16 +81,16 @@ class dcpse
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
      * use the interpolator function not this one. 
      * 
-     * \param idata            A pointer to input data
-     * \param nPoints          Number of data points
-     * \param qdata            A pointer to query data
-     * \param nqPoints         Number of query data points
-     * \param beta             In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
-     *                         Notation for partial derivatives:
-     *                         \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
-     * \param order            Order of accuracy (default is 2nd order accurate)
-     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
-     * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param idata     A pointer to input data
+     * \param nPoints   Number of data points
+     * \param qdata     A pointer to query data
+     * \param nqPoints  Number of query data points
+     * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+     *                  Notation for partial derivatives:
+     *                  \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
+     * \param order     Order of accuracy (default is 2nd order accurate)
+     * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
@@ -100,11 +100,11 @@ class dcpse
      * This function uses one set of points as input data to compute the generalized DC-PSE 
      * interpolator operators on them.
      * 
-     * \param idata            A pointer to input data 
-     * \param nPoints          Number of data points
-     * \param order            Order of accuracy (default is 2nd order accurate)
-     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
-     * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param idata    A pointer to input data 
+     * \param nPoints  Number of data points
+     * \param order    Order of accuracy (default is 2nd order accurate)
+     * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeInterpolatorWeights(T *idata, int const nPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
@@ -134,10 +134,10 @@ class dcpse
      * At first it checks the computed kernel size to be equal to the number of query points times the 
      * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
      * 
-     * \param iFvalue          A pointer to input data function value
-     * \param nPoints          Number of data points
-     * \param qFvalue          A pointer to query data function value
-     * \param nqPoints         Number of query data points
+     * \param iFvalue   A pointer to input data function value
+     * \param nPoints   Number of data points
+     * \param qFvalue   A pointer to query data function value
+     * \param nqPoints  Number of query data points
      */
     bool compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints);
 
@@ -153,17 +153,17 @@ class dcpse
      * size of monomials which has been previously computed for the required degree of DC-PSE operator
      * or interpolator.
      * 
-     * \param iFvalue          A pointer to input data function value
-     * \param nPoints          Number of data points
-     * \param qFvalue          A pointer to query data function value
-     * \param nqPoints         Number of query data points
+     * \param iFvalue   A pointer to input data function value
+     * \param nPoints   Number of data points
+     * \param qFvalue   A pointer to query data function value
+     * \param nqPoints  Number of query data points
      */
     bool interpolate(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints);
 
     /*!
      * \brief A pointer to neighborhood kernel at index
      * 
-     * \param index Index of a point (from data points) to get its neighborhood kernel
+     * \param index Index of a point (from query data points) to get its neighborhood kernel
      * 
      * \returns A (pointer to a) row of the nearest neighbors kernel values.
      */
@@ -195,7 +195,7 @@ class dcpse
      * \brief print the DC-PSE information
      * 
      */
-    inline void print() const;
+    inline void printInfo() const;
 
     /*!
      * \brief Component-wise average neighbor spacing @index
@@ -311,20 +311,20 @@ dcpse<T> &dcpse<T>::operator=(dcpse<T> &&inputDC)
  *
  * This function uses one set of points as input data to compute the generalized DC-PSE 
  * differential operators.
- * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
- * use the interpolator function not this one. 
+ * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
+ * should use the interpolator function not this one. 
  * 
- * \param idata            A pointer to input data
- * \param nPoints          Number of data points
- * \param beta             In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
- *                         Notation for partial derivatives:
- *                         \f[ 
- *                              \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
- *                              \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
- *                          \f]
- * \param order            Order of accuracy (default is 2nd order accurate)
- * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+ * \param idata    A pointer to input data
+ * \param nPoints  Number of data points
+ * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+ *                 Notation for partial derivatives:
+ *                 \f[ 
+ *                      \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
+ *                      \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
+ *                  \f]
+ * \param order    Order of accuracy (default is 2nd order accurate)
+ * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+ * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
  * 
  */
 template <typename T>
@@ -379,7 +379,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
             this->h_average.resize(nPoints);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -402,7 +402,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                  */
                 this->KNN.reset(new L2NearestNeighbor<T>(nPoints, this->nDim, this->dcmonomialSize + nENN));
             }
-            catch (std::bad_alloc &e)
+            catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
@@ -419,7 +419,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
              */
             this->KNN.reset(new L2NearestNeighbor<T>(nPoints, this->nDim, this->dcmonomialSize + nENN));
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -843,16 +843,16 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
  * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
  * use the interpolator function not this one. 
  * 
- * \param idata            A pointer to input data
- * \param nPoints          Number of data points
- * \param qdata            A pointer to query data
- * \param nqPoints         Number of query data points
- * \param beta             In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
- *                         Notation for partial derivatives:
- *                         \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
- * \param order            Order of accuracy (default is 2nd order accurate)
- * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+ * \param idata     A pointer to input data
+ * \param nPoints   Number of data points
+ * \param qdata     A pointer to query data
+ * \param nqPoints  Number of query data points
+ * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+ *                  Notation for partial derivatives:
+ *                  \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
+ * \param order     Order of accuracy (default is 2nd order accurate)
+ * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+ * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
  */
 template <typename T>
 bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
@@ -911,7 +911,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
             this->h_average.resize(nqPoints);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -934,7 +934,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                  */
                 this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, this->nDim, this->dcmonomialSize + nENN));
             }
-            catch (std::bad_alloc &e)
+            catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
@@ -951,7 +951,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
              */
             this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, this->nDim, this->dcmonomialSize + nENN));
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -1362,11 +1362,11 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
  * This function uses one set of points as input data to compute the generalized DC-PSE 
  * interpolator operators on them.
  * 
- * \param idata            A pointer to input data 
- * \param nPoints          Number of data points
- * \param order            Order of accuracy (default is 2nd order accurate)
- * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+ * \param idata    A pointer to input data 
+ * \param nPoints  Number of data points
+ * \param order    Order of accuracy (default is 2nd order accurate)
+ * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+ * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
  */
 template <typename T>
 bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
@@ -1408,7 +1408,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
             this->h_average.resize(nPoints);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -1431,7 +1431,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                  */
                 this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, this->nDim, this->dcmonomialSize + nENN));
             }
-            catch (std::bad_alloc &e)
+            catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
@@ -1448,7 +1448,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
              */
             this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, this->nDim, this->dcmonomialSize + nENN));
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -1845,13 +1845,13 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
  * This function uses one set of points as input data to compute the generalized DC-PSE 
  * interpolator operators on the set of query points.
  * 
- * \param idata            A pointer to input data 
- * \param nPoints          Number of data points
- * \param qdata            A pointer to query data 
- * \param nqPoints         Number of query data points
- * \param order            Order of accuracy (default is 2nd order accurate)
- * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+ * \param idata     A pointer to input data 
+ * \param nPoints   Number of data points
+ * \param qdata     A pointer to query data 
+ * \param nqPoints  Number of query data points
+ * \param order     Order of accuracy (default is 2nd order accurate)
+ * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+ * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
  */
 template <typename T>
 bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
@@ -1897,7 +1897,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
             this->dckernel.reset(new T[this->dckernelSize]);
             this->h_average.resize(nqPoints);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -1920,7 +1920,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                  */
                 this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, this->nDim, this->dcmonomialSize + nENN));
             }
-            catch (std::bad_alloc &e)
+            catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
@@ -1937,7 +1937,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
              */
             this->KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, this->nDim, this->dcmonomialSize + nENN));
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -2450,10 +2450,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
  * At first it checks the computed kernel size to be equal to the number of query points times the 
  * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
  * 
- * \param iFvalue          A pointer to input data function value
- * \param nPoints          Number of data points
- * \param qFvalue          A pointer to query data function value
- * \param nqPoints         Number of query data points
+ * \param iFvalue   A pointer to input data function value
+ * \param nPoints   Number of data points
+ * \param qFvalue   A pointer to query data function value
+ * \param nqPoints  Number of query data points
  */
 template <typename T>
 bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
@@ -2477,7 +2477,7 @@ bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPo
         {
             qFvalue = new T[nqPoints];
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -2496,10 +2496,10 @@ bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPo
  * size of monomials which has been previously computed for the required degree of DC-PSE operator
  * or interpolator.
  * 
- * \param iFvalue          A pointer to input data function value
- * \param nPoints          Number of data points
- * \param qFvalue          A pointer to query data function value
- * \param nqPoints         Number of query data points
+ * \param iFvalue   A pointer to input data function value
+ * \param nPoints   Number of data points
+ * \param qFvalue   A pointer to query data function value
+ * \param nqPoints  Number of query data points
  */
 template <typename T>
 bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
@@ -2523,7 +2523,7 @@ bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *qFvalue, int const 
         {
             qFvalue = new T[nqPoints];
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -2580,7 +2580,7 @@ inline T *dcpse<T>::neighborhoodKernel() const
 }
 
 /*!
- * \brief   Size of the neighborhood kernel which equals to the monomial size 
+ * \brief Size of the neighborhood kernel which equals to the monomial size 
  * 
  * \returns Size of the neighborhood kernel
  */
@@ -2591,7 +2591,7 @@ inline int dcpse<T>::neighborhoodKernelSize() const
 }
 
 /*!
- * \brief order of accuracy of DC-PSE kernel at index
+ * \brief Order of accuracy of DC-PSE kernel at index
  * 
  * \param  index Index number in nTerms array
  * \return order of accuracy of DC-PSE kernel at index
@@ -2603,11 +2603,11 @@ inline int dcpse<T>::orderofAccuracy(int const index) const
 }
 
 /*!
- * \brief print the DC-PSE information
+ * \brief Print the DC-PSE information
  * 
  */
 template <typename T>
-inline void dcpse<T>::print() const
+inline void dcpse<T>::printInfo() const
 {
     for (int i = 0; i < this->nTerms; i++)
     {
