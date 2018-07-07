@@ -7,7 +7,7 @@
 
 #ifdef HAVE_TORC
 #include <torc.h>
-#ifdef HAVE_GOOGLETEST
+#if defined(HAVE_GOOGLETEST) && defined(UMUQ_UNITTEST)
 #include "gtest/gtest.h"
 
 /*!
