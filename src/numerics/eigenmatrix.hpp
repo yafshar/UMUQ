@@ -3,123 +3,154 @@
 
 #include <Eigen/Dense>
 
-// Standard typedef from eigen
-typedef typename Eigen::Matrix<double, 2, 2> EMatrix2d;
-typedef typename Eigen::Matrix<double, 2, Eigen::Dynamic> EMatrix2Xd;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 2> EMatrixX2d;
+/*!
+ * \brief A convenience matrix data type 
+ * An Eigen matrix type with dynamic sizes.
+ * 
+ * \tparam T  Data type 
+ */
+template <typename T>
+using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
-typedef typename Eigen::Matrix<double, 3, 3> EMatrix3d;
-typedef typename Eigen::Matrix<double, 3, Eigen::Dynamic> EMatrix3Xd;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 3> EMatrixX3d;
+/*!
+ * \brief An Eigen matrix of doubles data type
+ * 
+ */
+using EMatrixXd = EMatrixX<double>;
 
-typedef typename Eigen::Matrix<double, 4, 4> EMatrix4d;
-typedef typename Eigen::Matrix<double, 4, Eigen::Dynamic> EMatrix4Xd;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 4> EMatrixX4d;
-
-typedef typename Eigen::Matrix<double, 5, 5> EMatrix5d;
-typedef typename Eigen::Matrix<double, 5, Eigen::Dynamic> EMatrix5Xd;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 5> EMatrixX5d;
-
-typedef typename Eigen::Matrix<double, 6, 6> EMatrix6d;
-typedef typename Eigen::Matrix<double, 6, Eigen::Dynamic> EMatrix6Xd;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 6> EMatrixX6d;
-
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> EMatrixXd;
-
-typedef typename Eigen::Matrix<float, 2, 2> EMatrix2f;
-typedef typename Eigen::Matrix<float, 2, Eigen::Dynamic> EMatrix2Xf;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 2> EMatrixX2f;
-
-typedef typename Eigen::Matrix<float, 3, 3> EMatrix3f;
-typedef typename Eigen::Matrix<float, 3, Eigen::Dynamic> EMatrix3Xf;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 3> EMatrixX3f;
-
-typedef typename Eigen::Matrix<float, 4, 4> EMatrix4f;
-typedef typename Eigen::Matrix<float, 4, Eigen::Dynamic> EMatrix4Xf;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 4> EMatrixX4f;
-
-typedef typename Eigen::Matrix<float, 5, 5> EMatrix5f;
-typedef typename Eigen::Matrix<float, 5, Eigen::Dynamic> EMatrix5Xf;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 5> EMatrixX5f;
-
-typedef typename Eigen::Matrix<float, 6, 6> EMatrix6f;
-typedef typename Eigen::Matrix<float, 6, Eigen::Dynamic> EMatrix6Xf;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 6> EMatrixX6f;
-
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> EMatrixXf;
-
-typedef typename Eigen::Matrix<int, 2, 2> EMatrix2i;
-typedef typename Eigen::Matrix<int, 2, Eigen::Dynamic> EMatrix2Xi;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 2> EMatrixX2i;
-
-typedef typename Eigen::Matrix<int, 3, 3> EMatrix3i;
-typedef typename Eigen::Matrix<int, 3, Eigen::Dynamic> EMatrix3Xi;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 3> EMatrixX3i;
-
-typedef typename Eigen::Matrix<int, 4, 4> EMatrix4i;
-typedef typename Eigen::Matrix<int, 4, Eigen::Dynamic> EMatrix4Xi;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 4> EMatrixX4i;
-
-typedef typename Eigen::Matrix<int, 5, 5> EMatrix5i;
-typedef typename Eigen::Matrix<int, 5, Eigen::Dynamic> EMatrix5Xi;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 5> EMatrixX5i;
-
-typedef typename Eigen::Matrix<int, 6, 6> EMatrix6i;
-typedef typename Eigen::Matrix<int, 6, Eigen::Dynamic> EMatrix6Xi;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 6> EMatrixX6i;
-
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> EMatrixXi;
-
-typedef typename Eigen::Matrix<double, 1, 2> ERowVector2d;
-typedef typename Eigen::Matrix<double, 1, 3> ERowVector3d;
-typedef typename Eigen::Matrix<double, 1, 4> ERowVector4d;
-typedef typename Eigen::Matrix<double, 1, 5> ERowVector5d;
-typedef typename Eigen::Matrix<double, 1, 6> ERowVector6d;
-typedef typename Eigen::Matrix<double, 1, Eigen::Dynamic> ERowVectorXd;
-
-typedef typename Eigen::Matrix<float, 1, 2> ERowVector2f;
-typedef typename Eigen::Matrix<float, 1, 3> ERowVector3f;
-typedef typename Eigen::Matrix<float, 1, 4> ERowVector4f;
-typedef typename Eigen::Matrix<float, 1, 5> ERowVector5f;
-typedef typename Eigen::Matrix<float, 1, 6> ERowVector6f;
-typedef typename Eigen::Matrix<float, 1, Eigen::Dynamic> ERowVectorXf;
-
-typedef typename Eigen::Matrix<int, 1, 2> ERowVector2i;
-typedef typename Eigen::Matrix<int, 1, 3> ERowVector3i;
-typedef typename Eigen::Matrix<int, 1, 4> ERowVector4i;
-typedef typename Eigen::Matrix<int, 1, 5> ERowVector5i;
-typedef typename Eigen::Matrix<int, 1, 6> ERowVector6i;
-typedef typename Eigen::Matrix<int, 1, Eigen::Dynamic> ERowVectorXi;
-
-typedef typename Eigen::Matrix<double, 2, 1> EVector2d;
-typedef typename Eigen::Matrix<double, 3, 1> EVector3d;
-typedef typename Eigen::Matrix<double, 4, 1> EVector4d;
-typedef typename Eigen::Matrix<double, 5, 1> EVector5d;
-typedef typename Eigen::Matrix<double, 6, 1> EVector6d;
-typedef typename Eigen::Matrix<double, Eigen::Dynamic, 1> EVectorXd;
-
-typedef typename Eigen::Matrix<float, 2, 1> EVector2f;
-typedef typename Eigen::Matrix<float, 3, 1> EVector3f;
-typedef typename Eigen::Matrix<float, 4, 1> EVector4f;
-typedef typename Eigen::Matrix<float, 5, 1> EVector5f;
-typedef typename Eigen::Matrix<float, 6, 1> EVector6f;
-typedef typename Eigen::Matrix<float, Eigen::Dynamic, 1> EVectorXf;
-
-typedef typename Eigen::Matrix<int, 2, 1> EVector2i;
-typedef typename Eigen::Matrix<int, 3, 1> EVector3i;
-typedef typename Eigen::Matrix<int, 4, 1> EVector4i;
-typedef typename Eigen::Matrix<int, 5, 1> EVector5i;
-typedef typename Eigen::Matrix<int, 6, 1> EVector6i;
-typedef typename Eigen::Matrix<int, Eigen::Dynamic, 1> EVectorXi;
+/*!
+ * \brief A convenience matrix data type to cover the usual cases
+ * 
+ * \tparam T  Data type
+ * 
+ * \b EMatrixn : E + Matrix + n=(2, 3, 4, 5, or 6)
+ * E is the abbreviation for Eigen followed by Matrix and any number of (2, 3, 4, 5, or 6) 
+ * A rectangular matrix of T types of n*n=(2*2, 3*3, 4*4, 5*5, or 6*6) size.
+ * 
+ * For example:
+ * EMatrix2<double> is a Eigen::Matrix of doubles with size of 2*2.
+ * EMatrix5<int>    is a Eigen::Matrix of integers with size of 5*5.
+ * 
+ * \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X
+ * E followed by Matrix and any number of n=(2, 3, 4, 5, or 6) and X
+ * A rectangular matrix of type T with row size of n=(2, 3, 4, 5, or 6) and dynamic size columns
+ * 
+ * \b EMatrixXn : E + Matrix + X + n=(2, 3, 4, 5, or 6)
+ * E followed by Matrix and X and any number of (2, 3, 4, 5, or 6)
+ * A rectangular matrix of type T with dynamic size rows and column numbers of n=(2, 3, 4, 5, or 6)
+ * 
+ */
+template <typename T>
+using EMatrix2 = Eigen::Matrix<T, 2, 2>;
+template <typename T>
+using EMatrix2X = Eigen::Matrix<T, 2, Eigen::Dynamic>;
+template <typename T>
+using EMatrixX2 = Eigen::Matrix<T, Eigen::Dynamic, 2>;
 
 template <typename T>
-using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+using EMatrix3 = Eigen::Matrix<T, 3, 3>;
+template <typename T>
+using EMatrix3X = Eigen::Matrix<T, 3, Eigen::Dynamic>;
+template <typename T>
+using EMatrixX3 = Eigen::Matrix<T, Eigen::Dynamic, 3>;
 
+template <typename T>
+using EMatrix4 = Eigen::Matrix<T, 4, 4>;
+template <typename T>
+using EMatrix4X = Eigen::Matrix<T, 4, Eigen::Dynamic>;
+template <typename T>
+using EMatrixX4 = Eigen::Matrix<T, Eigen::Dynamic, 4>;
+
+template <typename T>
+using EMatrix5 = Eigen::Matrix<T, 5, 5>;
+template <typename T>
+using EMatrix5X = Eigen::Matrix<T, 5, Eigen::Dynamic>;
+template <typename T>
+using EMatrixX5 = Eigen::Matrix<T, Eigen::Dynamic, 5>;
+
+template <typename T>
+using EMatrix6 = Eigen::Matrix<T, 6, 6>;
+template <typename T>
+using EMatrix6X = Eigen::Matrix<T, 6, Eigen::Dynamic>;
+template <typename T>
+using EMatrixX6 = Eigen::Matrix<T, Eigen::Dynamic, 6>;
+
+/*!
+ * \brief A convenience row-vector data type
+ * An Eigen row-vector data type with dynamic size
+ * 
+ * \tparam T  Data type
+ */
 template <typename T>
 using ERowVectorX = Eigen::Matrix<T, 1, Eigen::Dynamic>;
 
+/*!
+ * \brief An Eigen row-vector of doubles data type
+ * 
+ */
+using ERowVectorXd = ERowVectorX<double>;
+
+/*!
+ * \brief A convenience row-vector data type to cover the usual cases
+ * 
+ * \tparam T  Data type
+ * 
+ * \b ERowVectorn : E + RowVector + n=(2, 3, 4, 5, or 6)
+ * E followed by RowVector is a row-vector 
+ * 
+ * For example:
+ * ERowVector6<float> is a row-vector of 6 floats.
+ * 
+ */
 template <typename T>
-using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+using ERowVector2 = Eigen::Matrix<T, 1, 2>;
+template <typename T>
+using ERowVector3 = Eigen::Matrix<T, 1, 3>;
+template <typename T>
+using ERowVector4 = Eigen::Matrix<T, 1, 4>;
+template <typename T>
+using ERowVector5 = Eigen::Matrix<T, 1, 5>;
+template <typename T>
+using ERowVector6 = Eigen::Matrix<T, 1, 6>;
+
+/*!
+ * \brief A convenience column-vector data type 
+ * An Eigen column-vector type with dynamic size.
+ * 
+ * \tparam T  Data type 
+ */
+template <typename T>
+using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+
+/*!
+ * \brief An Eigen column-vector of doubles data type
+ * 
+ */
+using EVectorXd = EVectorX<double>;
+
+/*!
+ * \brief A convenience column-vector data type to cover the usual cases
+ * 
+ * \tparam T Data type
+ * 
+ * 
+ * \b EVectorn : E + Vector + n=(2, 3, 4, 5, or 6)
+ * E followed by Vector is a column-vector
+ * 
+ * For example:
+ * EVector3<int> is a column-vector of 3 integers.
+ * 
+ */
+template <typename T>
+using EVector2 = Eigen::Matrix<T, 2, 1>;
+template <typename T>
+using EVector3 = Eigen::Matrix<T, 3, 1>;
+template <typename T>
+using EVector4 = Eigen::Matrix<T, 4, 1>;
+template <typename T>
+using EVector5 = Eigen::Matrix<T, 5, 1>;
+template <typename T>
+using EVector6 = Eigen::Matrix<T, 6, 1>;
 
 /*!
  * \brief Stores a set of parameters controlling the way matrices are printed
@@ -131,169 +162,203 @@ using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 Eigen::IOFormat fmt(Eigen::FullPrecision);
 
 /*!
- * \brief New type is used to map the existing C++ memory buffer to an Eigen Vector object
+ * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
+ * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
+ * \tparam T         Data type or Eigen::Matrix type
+ * \tparam _Options  A combination of either Eigen::RowMajor or Eigen::ColMajor, and of either 
+ *                   Eigen::AutoAlign or Eigen::DontAlign. The former controls storage order, 
+ *                   and defaults to column-major. The latter controls alignment, which is 
+ *                   required for vectorization. It defaults to aligning matrices except for 
+ *                   fixed sizes that aren't a multiple of the packet size. 
+ * 
+ * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
+ *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ *       pass only the Eigen::Matrix as template parameters
+ * 
+ * For example:
+ * 
+ * Simply mapping a contiguous C++ memory buffer as a column-major Eigen Matrix object:
+ * \code 
+ * double A[12];
+ * for(int i = 0; i < 12; ++i) A[i] = (double)i;
+ * EigenMapType<double, Eigen::ColMajor> B(A, 3, 4); 
+ * std::cout << B << std::endl;
+ * \endcode
+ * 
+ * Output: 
+ * 
+ * \f[
+ * \begin{matrix}
+ * 0 & 3 & 6 & ~9 \\ 
+ * 1 & 4 & 7 & 10 \\ 
+ * 2 & 5 & 8 & 11
+ * \end{matrix}
+ * \f]
+ * 
+ * \code 
+ * using EMd = Eigen::Matrix<double, 3, 4>;
+ * EigenMapType<EMd> C(A, 3, 4); 
+ * std::cout << C << std::endl;
+ * \endcode
+ * 
+ * Output: 
+ * 
+ * \f[
+ * \begin{matrix}
+ * 0 & 3 & 6 & ~9 \\ 
+ * 1 & 4 & 7 & 10 \\ 
+ * 2 & 5 & 8 & 11
+ * \end{matrix}
+ * \f]
+ *
+ */
+template <class T, int _Options = Eigen::RowMajor>
+using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;
+
+/*!
+ * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
+ * The Map operation maps the existing memory region into the Eigen’s data structures.
+ * 
+ * \tparam T         Data type or Eigen::Matrix type
+ * \tparam _Options  A combination of either Eigen::RowMajor or Eigen::ColMajor, and of either 
+ *                   Eigen::AutoAlign or Eigen::DontAlign. The former controls storage order, 
+ *                   and defaults to column-major. The latter controls alignment, which is 
+ *                   required for vectorization. It defaults to aligning matrices except for 
+ *                   fixed sizes that aren't a multiple of the packet size. 
+ * 
+ * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
+ *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ *       pass only the Eigen::Matrix as template parameters
+ * 
+ */
+template <typename T, int _Options = Eigen::RowMajor>
+using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type const>;
+
+/*!
+ * \brief Eigen row vector map type is a new type, used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer 
+ * \tparam T Data type
  */
-template <typename TdataPtr>
-using TEMapVectorX = Eigen::Map<EVectorX<TdataPtr>>;
+template <typename T>
+using ERowVectorMapType = Eigen::Map<ERowVectorX<T>>;
 
 /*!
- * \brief New type is used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
- * 
+ * \brief Eigen row vector constant map type is a new read-only map type to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer 
+ * \tparam T Data type
  */
-template <typename TdataPtr>
-using TEMapRowVectorX = Eigen::Map<ERowVectorX<TdataPtr>>;
+template <typename T>
+using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<T> const>;
 
 /*!
- * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
- * 
+ * \brief Eigen vector map type is a new type to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer
+ * \tparam T Data type
  */
-template <typename TdataPtr, int _Options = Eigen::RowMajor>
-using TEMapX = Eigen::Map<Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
+template <typename T>
+using EVectorMapType = Eigen::Map<EVectorX<T>>;
 
 /*!
- * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object in a RowMajor
- * 
+ * \brief New read-only map type is used to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam TdataPtr typedef of the data pointer
+ * \tparam T Data type
  */
-template <typename TdataPtr, int _Options = Eigen::RowMajor>
-using CTEMapX = Eigen::Map<const Eigen::Matrix<TdataPtr, Eigen::Dynamic, Eigen::Dynamic, _Options>>;
+template <typename T>
+using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
 
 /*!
- * \brief New type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
- * 
- * The Map operation maps the existing memory region into the Eigen’s data structures.  
- * 
- */
-using TEMapXd = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
-
-/*!
- * \brief New a read-only map type to map the existing C++ memory buffer to an Eigen Matrix object of type double in a RowMajor
- * 
- * The Map operation maps the existing memory region into the Eigen’s data structures.  
- * 
- */
-using CTEMapXd = Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
-
-/*!
- * \brief EMapX function copies the existing C++ memory buffer to an Eigen Matrix object of size(nRows, nCols) 
- * 
- * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ * \brief Eigen map returns the Eigen Matrix representation of the array 
  *  
- * \tparam TEMX     typedef for Eigen matrix 
- * \tparam TdataPtr typedef of the pointer to the array to map 
+ * \tparam T        Eigen matrix type (dynamic, fixed size or any Eigen matrix type variation.)
  * 
- * \param  dataPtr  pointer to the array to map of type TdataPtr
+ * \param  dataPtr  Pointer to the array of data
  * \param  nRows    Number of Rows in Matrix representation of Input array
  * \param  nCols    Number of Columns in Matrix representation of Input array
- * \param  EMapX    Eigen Matrix representation of the array    
+ * 
+ * \returns  Eigen Matrix representation of the array    
  * 
  */
-template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr *dataPtr, std::size_t nRows, std::size_t nCols)
+template <class T>
+inline typename std::enable_if<T::MaxRowsAtCompileTime == Eigen::Dynamic || T::MaxColsAtCompileTime == Eigen::Dynamic, T>::type
+EMap(typename T::Scalar *dataPtr, int const nRows, int const nCols)
 {
-    return Eigen::Map<const TEMX>(dataPtr, nRows, nCols);
+	return EMapTypeConst<T>(dataPtr, nRows, nCols);
 }
 
-template <typename TEMX, typename TdataPtr>
-TEMX EMapX(TdataPtr **dataPtr, std::size_t nRows, std::size_t nCols)
+template <class T>
+inline T EMap(typename T::Scalar *dataPtr)
 {
-    TEMX MTemp(nRows, nCols);
+	return EMapTypeConst<T>(dataPtr);
+}
 
-    for (std::size_t i = 0; i < nRows; i++)
-    {
-        MTemp.row(i) = Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], nCols);
-    }
+/*!
+ * \brief Eigen map function copies the existing C++ memory buffer to an Eigen Matrix object of size(nRows, nCols) 
+ * The Map operation maps the existing memory region into the Eigen’s data structures. 
+ *  
+ * \tparam T        Eigen matrix type (dynamic, fixed size or any Eigen matrix type variation.)
+ * 
+ * \param  dataPtr  Pointer to the array of data
+ * \param  nRows    Number of Rows in Matrix representation of Input array
+ * \param  nCols    Number of Columns in Matrix representation of Input array
+ * 
+ * \returns  Eigen Matrix representation of the array    
+ * 
+ */
+template <class T>
+inline typename std::enable_if<T::MaxRowsAtCompileTime == Eigen::Dynamic || T::MaxColsAtCompileTime == Eigen::Dynamic, T>::type
+EMap(typename T::Scalar **dataPtr, int const nRows, int const nCols)
+{
+	//! We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
+	T tmpMatrix(nRows, nCols);
+	for (int i = 0; i < nRows; i++)
+	{
+		tmpMatrix.row(i) = EVectorMapTypeConst<typename T::Scalar>(&dataPtr[i][0], nCols);
+	}
+	return tmpMatrix;
+}
 
-    return MTemp;
+template <class T>
+inline T EMap(typename T::Scalar **dataPtr)
+{
+	//! We have a fixed_size_storage matrix
+	T tmpMatrix;
+	auto nCols = tmpMatrix.cols();
+	for (auto i = 0; i < tmpMatrix.rows(); i++)
+	{
+		tmpMatrix.row(i) = EVectorMapTypeConst<typename T::Scalar>(&dataPtr[i][0], nCols);
+	}
+	return tmpMatrix;
 }
 
 /*!
  * \brief Pointer will now point to a beginning of a memory buffer of the Eigen’s data structures
- *  
+ * It copies the existing Eigen Matrix object of size(nRows, nCols) to the allocated C++ memory buffer of size(nRows*nCols)
  * The Map operation maps the existing Eigen’s data structure to the memory buffer
  * 
- * \tparam TEMX     typedef for Eigen matrix 
- * \tparam TdataPtr typedef of the pointer to the array
+ * \tparam T        Eigen matrix type
  * 
- * \param  EMX     Input Eigen’s matrix of type TEMX
- * \param  dataPtr pointer to the array of type TdataPtr
+ * \param  dataPtr  Pointer to the array of the same T element type with the size of (nRows*nCols)
+ * \param  eMatrix  Input Eigen matrix of type T
+ * 
  */
-template <typename TEMX, typename TdataPtr>
-void EMapX(const TEMX EMX, TdataPtr *dataPtr)
+template <class T>
+inline void EMap(typename T::Scalar *dataPtr, T const &eMatrix)
 {
-    Eigen::Map<TEMX>(dataPtr, EMX.rows(), EMX.cols()) = EMX;
+	EMapType<typename T::Scalar>(dataPtr, eMatrix.rows(), eMatrix.cols()) = eMatrix;
 }
 
-template <typename TEMX, typename TdataPtr>
-void EMapX(const TEMX EMX, TdataPtr **dataPtr)
+template <class T>
+inline void EMap(typename T::Scalar **dataPtr, T const &eMatrix)
 {
-    for (std::ptrdiff_t i = 0; i < EMX.rows(); i++)
-    {
-        Eigen::Matrix<TdataPtr, Eigen::Dynamic, 1>::Map(&dataPtr[i][0], EMX.cols()) = EMX.row(i);
-    }
-}
-
-/*!
- * \brief Copy the existing pointer to the C++ memory buffer of type double to an Eigen object
- * 
- * The Map operation maps the existing memory region into the Eigen’s data structures.  
- * 
- * \param  dataPtr  pointer to the array to map of type double
- * \param  nRows    Number of Rows
- * \param  nCols    Number of Columns
- * \param  EMapXd   Eigen Matrix representation of data
- */
-EMatrixXd EMapXd(double *dataPtr, std::size_t nRows, std::size_t nCols)
-{
-    return Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, nRows, nCols);
-}
-
-EMatrixXd EMapXd(double **dataPtr, std::size_t nRows, std::size_t nCols)
-{
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MTemp(nRows, nCols);
-
-    for (std::size_t i = 0; i < nRows; i++)
-    {
-        MTemp.row(i) = EVectorXd::Map(&dataPtr[i][0], nCols);
-    }
-
-    return MTemp;
-}
-
-/*!
- * \brief Pointer will now point to a beginning of a memory region of the Eigen’s data structures
- *  
- * The Map operation maps the existing Eigen’s data structure to the memory buffer
- * 
- * \param  EMXd    Input Eigen’s matrix of type double
- * \param  dataPtr Pointer to the memory buffer of type double
- */
-
-void EMapXd(EMatrixXd const EMXd, double *dataPtr);
-void EMapXd(EMatrixXd const EMXd, double *dataPtr)
-{
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(dataPtr, EMXd.rows(), EMXd.cols()) = EMXd;
-}
-
-void EMapXd(EMatrixXd const EMXd, double **dataPtr);
-void EMapXd(EMatrixXd const EMXd, double **dataPtr)
-{
-    for (std::ptrdiff_t i = 0; i < EMXd.rows(); i++)
-    {
-        EVectorXd::Map(&dataPtr[i][0], EMXd.cols()) = EMXd.row(i);
-    }
+	for (auto i = 0; i < eMatrix.rows(); i++)
+	{
+		EVectorMapType<typename T::Scalar>(&dataPtr[i][0], eMatrix.cols()) = eMatrix.row(i);
+	}
 }
 
 #endif
