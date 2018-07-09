@@ -8,11 +8,18 @@
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
  * \tparam T         Data type or Eigen::Matrix type
- * \tparam _Options  A combination of either Eigen::RowMajor or Eigen::ColMajor, and of either 
- *                   Eigen::AutoAlign or Eigen::DontAlign. The former controls storage order, 
- *                   and defaults to column-major. The latter controls alignment, which is 
- *                   required for vectorization. It defaults to aligning matrices except for 
- *                   fixed sizes that aren't a multiple of the packet size. 
+ * 
+ * The _Options template parameter is optional
+ * 
+ * \tparam _Options  A combination of either 
+ *                   \b #Eigen::RowMajor or 
+ *                   \b #Eigen::ColMajor, 
+ *                     and of either
+ *                   \b #Eigen::AutoAlign or 
+ *                   \b #Eigen::DontAlign.
+ *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
+ *
  * 
  * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
  *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
@@ -63,11 +70,17 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
  * \tparam T         Data type or Eigen::Matrix type
- * \tparam _Options  A combination of either Eigen::RowMajor or Eigen::ColMajor, and of either 
- *                   Eigen::AutoAlign or Eigen::DontAlign. The former controls storage order, 
- *                   and defaults to column-major. The latter controls alignment, which is 
- *                   required for vectorization. It defaults to aligning matrices except for 
- *                   fixed sizes that aren't a multiple of the packet size. 
+ * 
+ * The _Options template parameter is optional
+ * 
+ * \tparam _Options  A combination of either 
+ *                   \b #Eigen::RowMajor or 
+ *                   \b #Eigen::ColMajor, 
+ *                     and of either
+ *                   \b #Eigen::AutoAlign or 
+ *                   \b #Eigen::DontAlign.
+ *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
  * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
  *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
@@ -217,7 +230,7 @@ inline T EMap(typename T::Scalar **dataPtr)
 
 
 //! TODO:
-//! We should add the arraywrapper with stride to not copy the data when it is not required
+//! We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
 
 /*!
  * \brief Eigen map function copies the Eigen Matrix data to the array of data
