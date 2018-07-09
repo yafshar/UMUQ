@@ -2,6 +2,7 @@
 #include "core/environment.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
+#include "numerics/stats.hpp"
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 // Create a global instance of the Pyplot from Pyplot library
@@ -12,9 +13,6 @@ pyplot plt;
  */
 TEST(random_test, HandlesRandoms)
 {
-	typedef EMatrix2<double> EMatrix2d;
-	typedef EVector2<double> EVector2d;
-
     // Get an instance of a double random object and seed it
     psrandom<double> r(123);
 
@@ -44,6 +42,18 @@ TEST(random_test, HandlesRandoms)
 // #endif 
 
     //! TODO Add the test for checking mvnormdist
+}
+
+/*! 
+ * Test to check random functionality
+ */
+TEST(random_test, HandlesMultivariate)
+{
+//     EMatrixXd idata(3, 2);
+//     idata << 4.348817, 2.995049, -3.793431, 4.711934, 1.190864, -1.357363;
+
+// cov(samples) # 19.03539 11.91384 \n 11.91384  9.28796
+
 }
 
 int main(int argc, char **argv)

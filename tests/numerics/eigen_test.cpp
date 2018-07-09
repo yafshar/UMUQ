@@ -7,137 +7,137 @@
  */
 TEST(eigen_test, HandlesMap)
 {
-	//! Create an array of data
-	std::vector<double> A(12);
+    //! Create an array of data
+    std::vector<double> A(12);
 
-	//! Initialize the array
-	std::iota(A.begin(), A.end(), double{});
+    //! Initialize the array
+    std::iota(A.begin(), A.end(), double{});
 
-	//! Copy the buffer to the new Eigen object
-	EMatrixXd ACopy = EMapType<double>(A.data(), 3, 4);
+    //! Copy the buffer to the new Eigen object
+    EMatrixXd ACopy = EMapType<double>(A.data(), 3, 4);
 
-	//! Check to make sure the values are the same
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 4; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(A[l], ACopy(i, j));
-		}
-	}
+    //! Check to make sure the values are the same
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 4; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(A[l], ACopy(i, j));
+        }
+    }
 
-	//! Map the buffer to an Eigen object format no copy
-	EMapType<double> AMap(A.data(), 3, 4);
+    //! Map the buffer to an Eigen object format no copy
+    EMapType<double> AMap(A.data(), 3, 4);
 
-	//! Change some of the values in the original buffer
-	A[0] = -100.;
-	A[1] = 200.0;
-	A[5] = 500.0;
-	A[9] = 900.0;
-	A[11] = -23.;
+    //! Change some of the values in the original buffer
+    A[0] = -100.;
+    A[1] = 200.0;
+    A[5] = 500.0;
+    A[9] = 900.0;
+    A[11] = -23.;
 
-	//! Compare the Copied buffer and original data
-	EXPECT_NE(AMap(0, 0), ACopy(0, 0));
-	EXPECT_NE(AMap(0, 1), ACopy(0, 1));
-	EXPECT_NE(AMap(1, 1), ACopy(1, 1));
-	EXPECT_NE(AMap(2, 1), ACopy(2, 1));
-	EXPECT_NE(AMap(2, 3), ACopy(2, 3));
+    //! Compare the Copied buffer and original data
+    EXPECT_NE(AMap(0, 0), ACopy(0, 0));
+    EXPECT_NE(AMap(0, 1), ACopy(0, 1));
+    EXPECT_NE(AMap(1, 1), ACopy(1, 1));
+    EXPECT_NE(AMap(2, 1), ACopy(2, 1));
+    EXPECT_NE(AMap(2, 3), ACopy(2, 3));
 
-	//! Make sure that the mapped data is the same as original buffer
-	EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
-	EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
-	EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
-	EXPECT_DOUBLE_EQ(AMap(0, 3), 3.);
-	EXPECT_DOUBLE_EQ(AMap(1, 0), 4.);
-	EXPECT_DOUBLE_EQ(AMap(1, 1), 500.);
-	EXPECT_DOUBLE_EQ(AMap(1, 2), 6.);
-	EXPECT_DOUBLE_EQ(AMap(1, 3), 7.);
-	EXPECT_DOUBLE_EQ(AMap(2, 0), 8.);
-	EXPECT_DOUBLE_EQ(AMap(2, 1), 900.);
-	EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
-	EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
+    //! Make sure that the mapped data is the same as original buffer
+    EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
+    EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
+    EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
+    EXPECT_DOUBLE_EQ(AMap(0, 3), 3.);
+    EXPECT_DOUBLE_EQ(AMap(1, 0), 4.);
+    EXPECT_DOUBLE_EQ(AMap(1, 1), 500.);
+    EXPECT_DOUBLE_EQ(AMap(1, 2), 6.);
+    EXPECT_DOUBLE_EQ(AMap(1, 3), 7.);
+    EXPECT_DOUBLE_EQ(AMap(2, 0), 8.);
+    EXPECT_DOUBLE_EQ(AMap(2, 1), 900.);
+    EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
+    EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
 
-	//! Check the mutual exclusive
-	AMap(0, 0) = 200.0;
-	EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
+    //! Check the mutual exclusive
+    AMap(0, 0) = 200.0;
+    EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
 
-	//! Destroy the buffer
-	A.clear();
-	A.shrink_to_fit();
+    //! Destroy the buffer
+    A.clear();
+    A.shrink_to_fit();
 
-	EXPECT_EQ(nullptr, A.data());
+    EXPECT_EQ(nullptr, A.data());
 
-	//! Allocate memory and initialize to 0
-	A.resize(625, double{});
+    //! Allocate memory and initialize to 0
+    A.resize(625, double{});
 
-	//! Create a new 25*25 Eigen Matrix C and initialize to random values
-	EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
+    //! Create a new 25*25 Eigen Matrix C and initialize to random values
+    EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
 
-	//! Copy the matrix C into A
-	EMap<EMatrixXd>(A.data(), C);
+    //! Copy the matrix C into A
+    EMap<EMatrixXd>(A.data(), C);
 
-	//! Check to see if the copy process has been done correctly
-	for (int i = 0, l = 0; i < 25; i++)
-	{
-		for (int j = 0; j < 25; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(A[l], C(i, j));
-		}
-	}
+    //! Check to see if the copy process has been done correctly
+    for (int i = 0, l = 0; i < 25; i++)
+    {
+        for (int j = 0; j < 25; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(A[l], C(i, j));
+        }
+    }
 
-	//! Change one value in the array
-	A[624] = 100.0;
+    //! Change one value in the array
+    A[624] = 100.0;
 
-	//! Check to make sure that the matrix C is a copy of the array buffer
-	EXPECT_NE(A[624], C(24, 24));
+    //! Check to make sure that the matrix C is a copy of the array buffer
+    EXPECT_NE(A[624], C(24, 24));
 
-	//! Destroy the buffer
-	A.clear();
-	A.shrink_to_fit();
+    //! Destroy the buffer
+    A.clear();
+    A.shrink_to_fit();
 
-	auto *Apointer = C.data();
-	Apointer[0] = 10000.0;
-	EXPECT_DOUBLE_EQ(C(0, 0), 10000.0);
+    auto *Apointer = C.data();
+    Apointer[0] = 10000.0;
+    EXPECT_DOUBLE_EQ(C(0, 0), 10000.0);
 
-	double **D;
-	D = new double *[3];
-	for (int i = 0; i < 3; i++)
-	{
-		D[i] = new double[3];
-	}
+    double **D;
+    D = new double *[3];
+    for (int i = 0; i < 3; i++)
+    {
+        D[i] = new double[3];
+    }
 
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++, l++)
-		{
-			D[i][j] = (double)l;
-		}
-	}
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            D[i][j] = (double)l;
+        }
+    }
 
-	EMatrixXd DCopy = EMap<EMatrixXd>(D, 3, 3);
+    EMatrixXd DCopy = EMap<EMatrixXd>(D, 3, 3);
 
-	for (int j = 0; j < 3; j++)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			EXPECT_DOUBLE_EQ(DCopy(i, j), D[i][j]);
-		}
-	}
+    for (int j = 0; j < 3; j++)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            EXPECT_DOUBLE_EQ(DCopy(i, j), D[i][j]);
+        }
+    }
 
-	//! Converts them to an array, which uses to multiply them coefficient-wise
-	DCopy = DCopy.array() * DCopy.array();
+    //! Converts them to an array, which uses to multiply them coefficient-wise
+    DCopy = DCopy.array() * DCopy.array();
 
-	EMap<EMatrixXd>(D, DCopy);
+    EMap<EMatrixXd>(D, DCopy);
 
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(D[i][j], (double)l * l);
-		}
-	}
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(D[i][j], (double)l * l);
+        }
+    }
 
-	delete[] * D;
-	delete[] D;
+    delete[] * D;
+    delete[] D;
 }
 
 /*!
@@ -145,40 +145,37 @@ TEST(eigen_test, HandlesMap)
  */
 TEST(eigen_la_test, HandlesSolver)
 {
-	typedef EMatrix6<double> EMatrix6d;
-	typedef EVector6<double> EVector6d;
+    EMatrix6d A;
+    A << 1, 1, 0, 1, 0, 0,
+        1, 0, 1, 0, 0, 1,
+        1, -1, 0, 1, -0, 0,
+        1, 0, -1, 0, -0, 1,
+        1, 0.70710678118654752440, 0.70710678118654752440, 0.5, 0.5, 0.5,
+        1, -0.70710678118654752440, -0.70710678118654752440, 0.5, 0.5, 0.5;
 
-	EMatrix6d A;
-	A << 1, 1, 0, 1, 0, 0,
-		1, 0, 1, 0, 0, 1,
-		1, -1, 0, 1, -0, 0,
-		1, 0, -1, 0, -0, 1,
-		1, 0.70710678118654752440, 0.70710678118654752440, 0.5, 0.5, 0.5,
-		1, -0.70710678118654752440, -0.70710678118654752440, 0.5, 0.5, 0.5;
+    EVector6d B = EVector6d::Ones();
 
-	EVector6d B = EVector6d::Ones();
+    //! LU decomposition of a matrix with complete pivoting
+    //! Eigen::FullPivLU<EMatrix6d> lu(A);
 
-	//!LU decomposition of a matrix with complete pivoting
-	//!Eigen::FullPivLU<EMatrix6d> lu(A);
+    EVector6d X = A.fullPivLu().solve(B);
 
-	EVector6d X = A.fullPivLu().solve(B);
+    auto relative_error = (A * X - B).norm() / B.norm();
 
-	auto relative_error = (A * X - B).norm() / B.norm();
+    EXPECT_DOUBLE_EQ(relative_error, 0);
 
-	EXPECT_DOUBLE_EQ(relative_error, 0);
+    X = A.partialPivLu().solve(B);
 
-	X = A.partialPivLu().solve(B);
+    relative_error = (A * X - B).norm() / B.norm();
 
-	relative_error = (A * X - B).norm() / B.norm();
-
-	EXPECT_TRUE(std::isnan(relative_error));
+    EXPECT_TRUE(std::isnan(relative_error));
 }
 
 //! SVD test
 TEST(eigen_svd_test, HandlesSVD)
 {
-    //!This is the example from wikipedia
-    //!https://en.wikipedia.org/wiki/Singular-value_decomposition
+    //! This is the example from wikipedia
+    //! https://en.wikipedia.org/wiki/Singular-value_decomposition
     Eigen::Matrix<double, 4, 5> A;
     A << 1, 0, 0, 0, 2,
         0, 0, 3, 0, 0,
@@ -198,8 +195,8 @@ TEST(eigen_svd_test, HandlesSVD)
 //! LU test
 TEST(eigen_lu_test, HandlesLU)
 {
-	typedef EMatrix3<double> EMatrix3d;
-	typedef EVector3<double> EVector3d;
+    typedef EMatrix3<double> EMatrix3d;
+    typedef EVector3<double> EVector3d;
 
     //! A 3*3 matrix with rank 2 which is not invertible
     EMatrix3d m;
@@ -235,6 +232,6 @@ TEST(eigen_lu_test, HandlesLU)
 
 int main(int argc, char **argv)
 {
-	::testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
