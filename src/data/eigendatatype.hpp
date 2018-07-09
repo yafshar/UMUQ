@@ -1,16 +1,34 @@
 #ifndef UMUQ_EIGENDATATYPE_H
 #define UMUQ_EIGENDATATYPE_H
 
-#include <Eigen/Dense>
+#include <Eigen/Eigen>
+
+/*!
+ * \brief Eigen is a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
+ * 
+ * Reference:
+ * <a href="http://eigen.tuxfamily.org/"> Eigen C++ template library </a> 
+ */
 
 /*!
  * \brief A convenience matrix data type 
  * An Eigen matrix type with dynamic sizes.
  * 
- * \tparam T  Data type 
+ * \tparam T         Data type 
+ * 
+ * The _Options template parameter is optional
+ * 
+ * \tparam _Options  A combination of either 
+ *                   \b #Eigen::RowMajor or 
+ *                   \b #Eigen::ColMajor, 
+ *                     and of either
+ *                   \b #Eigen::AutoAlign or 
+ *                   \b #Eigen::DontAlign.
+ *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  */
-template <typename T>
-using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+template <typename T, int _Options = Eigen::ColMajor>
+using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>;
 
 /*!
  * \brief An Eigen matrix of doubles data type
@@ -41,39 +59,39 @@ using EMatrixXd = EMatrixX<double>;
  * 
  */
 template <typename T>
-using EMatrix2 = Eigen::Matrix<T, 2, 2>;                 // fixed_size_storage
-template <typename T>                                 
-using EMatrix2X = Eigen::Matrix<T, 2, Eigen::Dynamic>;   // dynamic_size_storage
+using EMatrix2 = Eigen::Matrix<T, 2, 2>; // fixed_size_storage
 template <typename T>
-using EMatrixX2 = Eigen::Matrix<T, Eigen::Dynamic, 2>;   // dynamic_size_storage
+using EMatrix2X = Eigen::Matrix<T, 2, Eigen::Dynamic>; // dynamic_size_storage
+template <typename T>
+using EMatrixX2 = Eigen::Matrix<T, Eigen::Dynamic, 2>; // dynamic_size_storage
 
 template <typename T>
-using EMatrix3 = Eigen::Matrix<T, 3, 3>;                 // fixed_size_storage
+using EMatrix3 = Eigen::Matrix<T, 3, 3>; // fixed_size_storage
 template <typename T>
-using EMatrix3X = Eigen::Matrix<T, 3, Eigen::Dynamic>;   // dynamic_size_storage
+using EMatrix3X = Eigen::Matrix<T, 3, Eigen::Dynamic>; // dynamic_size_storage
 template <typename T>
-using EMatrixX3 = Eigen::Matrix<T, Eigen::Dynamic, 3>;   // dynamic_size_storage
+using EMatrixX3 = Eigen::Matrix<T, Eigen::Dynamic, 3>; // dynamic_size_storage
 
 template <typename T>
-using EMatrix4 = Eigen::Matrix<T, 4, 4>;                 // fixed_size_storage
+using EMatrix4 = Eigen::Matrix<T, 4, 4>; // fixed_size_storage
 template <typename T>
-using EMatrix4X = Eigen::Matrix<T, 4, Eigen::Dynamic>;   // dynamic_size_storage
+using EMatrix4X = Eigen::Matrix<T, 4, Eigen::Dynamic>; // dynamic_size_storage
 template <typename T>
-using EMatrixX4 = Eigen::Matrix<T, Eigen::Dynamic, 4>;   // dynamic_size_storage
+using EMatrixX4 = Eigen::Matrix<T, Eigen::Dynamic, 4>; // dynamic_size_storage
 
 template <typename T>
-using EMatrix5 = Eigen::Matrix<T, 5, 5>;                 // fixed_size_storage
+using EMatrix5 = Eigen::Matrix<T, 5, 5>; // fixed_size_storage
 template <typename T>
-using EMatrix5X = Eigen::Matrix<T, 5, Eigen::Dynamic>;   // dynamic_size_storage
+using EMatrix5X = Eigen::Matrix<T, 5, Eigen::Dynamic>; // dynamic_size_storage
 template <typename T>
-using EMatrixX5 = Eigen::Matrix<T, Eigen::Dynamic, 5>;   // dynamic_size_storage
+using EMatrixX5 = Eigen::Matrix<T, Eigen::Dynamic, 5>; // dynamic_size_storage
 
 template <typename T>
-using EMatrix6 = Eigen::Matrix<T, 6, 6>;                 // fixed_size_storage
+using EMatrix6 = Eigen::Matrix<T, 6, 6>; // fixed_size_storage
 template <typename T>
-using EMatrix6X = Eigen::Matrix<T, 6, Eigen::Dynamic>;   // dynamic_size_storage
+using EMatrix6X = Eigen::Matrix<T, 6, Eigen::Dynamic>; // dynamic_size_storage
 template <typename T>
-using EMatrixX6 = Eigen::Matrix<T, Eigen::Dynamic, 6>;   // dynamic_size_storage
+using EMatrixX6 = Eigen::Matrix<T, Eigen::Dynamic, 6>; // dynamic_size_storage
 
 /*!
  * \brief Eigen matrix of doubles data type
@@ -134,6 +152,16 @@ template <typename T>
 using ERowVector6 = Eigen::Matrix<T, 1, 6>;
 
 /*!
+ * \brief Eigen row-vector of doubles data type
+ * 
+ */
+using ERowVector2d = ERowVector2<double>;
+using ERowVector3d = ERowVector3<double>;
+using ERowVector4d = ERowVector4<double>;
+using ERowVector5d = ERowVector5<double>;
+using ERowVector6d = ERowVector6<double>;
+
+/*!
  * \brief A convenience column-vector data type 
  * An Eigen column-vector type with dynamic size.
  * 
@@ -171,6 +199,16 @@ template <typename T>
 using EVector5 = Eigen::Matrix<T, 5, 1>;
 template <typename T>
 using EVector6 = Eigen::Matrix<T, 6, 1>;
+
+/*!
+ * \brief Eigen column-vector of doubles data type
+ * 
+ */
+using EVector2d = EVector2<double>;
+using EVector3d = EVector3<double>;
+using EVector4d = EVector4<double>;
+using EVector5d = EVector5<double>;
+using EVector6d = EVector6<double>;
 
 /*!
  * \brief Stores a set of parameters controlling the way matrices are printed
