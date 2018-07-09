@@ -2,7 +2,7 @@
 #define UMUQ_LINEARREGRESSION_H
 
 #include "polynomial.hpp"
-#include "eigenmatrix.hpp"
+#include "eigenlib.hpp"
 
 /*!
  * \brief class linearRegression

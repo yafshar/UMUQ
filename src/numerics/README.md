@@ -13,7 +13,7 @@ It should contain the following files:
 -----------------------------------
     numerics
     ├── dcpse.hpp
-    ├── eigenmatrix.hpp
+    ├── eigenlib.hpp
     ├── factorial.hpp
     ├── knearestneighbors.hpp
     ├── multimin.hpp
@@ -29,7 +29,9 @@ and the following directories:
 
 -----------------------------------
     numerics
+    ├── densityfunction
     ├── multimin
+    ├── random
     └── testfunctions
 -----------------------------------
 

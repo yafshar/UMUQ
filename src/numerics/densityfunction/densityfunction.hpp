@@ -2,7 +2,7 @@
 #define UMUQ_DENSITYFUNCTION_H
 
 #include "../factorial.hpp"
-#include "../eigenmatrix.hpp"
+#include "../eigenlib.hpp"
 #include "../random/psrandom.hpp"
 
 /*! \class densityFunction

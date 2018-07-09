@@ -1,7 +1,7 @@
 #include "core/core.hpp"
 #include "core/environment.hpp"
 #include "numerics/factorial.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 #include "numerics/densityfunction/uniformdistribution.hpp"
 #include "numerics/densityfunction/exponentialdistribution.hpp"

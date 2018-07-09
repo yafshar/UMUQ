@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "io/io.hpp"
 #include "gtest/gtest.h"
 
@@ -31,7 +31,7 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
 		//!Write the matrix in it
-		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, fmt);
+		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, eigenIOFormat);
 
 		//!Rewind the file
 		f.rewindFile();
@@ -57,7 +57,7 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
 		//! Write the matrix in it
-		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, fmt);
+		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
 
 		//! Rewind the file
 		f.rewindFile();
@@ -79,8 +79,8 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	if (f.openFile(fileName, f.in | f.out | f.app))
 	{
 		//! write down two matrices of different types in it
-		f.saveMatrix<EMatrixX<double>, Eigen::IOFormat>(A, fmt);
-		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, fmt);
+		f.saveMatrix<EMatrixX<double>, Eigen::IOFormat>(A, eigenIOFormat);
+		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
 
 		//! Initialize B and D to zero
 		B = EMatrix4<double>::Zero();

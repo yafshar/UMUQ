@@ -3,7 +3,7 @@
 
 #include "polynomial.hpp"
 #include "factorial.hpp"
-#include "eigenmatrix.hpp"
+#include "eigenlib.hpp"
 #include "knearestneighbors.hpp"
 #include "primitive.hpp"
 

@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "gtest/gtest.h"
 
 /*! 

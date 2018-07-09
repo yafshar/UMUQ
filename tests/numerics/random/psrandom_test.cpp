@@ -1,6 +1,6 @@
 #include "core/core.hpp"
 #include "core/environment.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"

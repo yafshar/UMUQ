@@ -1,7 +1,7 @@
 #include "core/core.hpp"
 #include "core/environment.hpp"
 #include "numerics/polynomial.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "numerics/knearestneighbors.hpp"
 #include "misc/timer.hpp"
 #include "misc/utility.hpp"
