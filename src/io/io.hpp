@@ -451,7 +451,7 @@ class io
      */
     template <typename TD>
     void printMatrix(const char *title,
-                     TD **idata,
+                     TD const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -467,7 +467,7 @@ class io
      * \param  printPrefix Prefix and suffix of the print  
      */
     template <typename TD>
-    void printMatrix(TD **idata,
+    void printMatrix(TD const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -483,7 +483,7 @@ class io
      * \param   form   Print format
      */
     template <typename TD>
-    void printMatrix(TD **idata,
+    void printMatrix(TD const **idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form);
@@ -502,7 +502,7 @@ class io
      */
     template <typename TD>
     void printMatrix(const char *title,
-                     TD **idata,
+                     TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -519,7 +519,7 @@ class io
      * \param  printPrefix Prefix and suffix of the print  
      */
     template <typename TD>
-    void printMatrix(TD **idata,
+    void printMatrix(TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -538,7 +538,7 @@ class io
      * \param  form    Print format for each row 
      */
     template <typename TD>
-    void printMatrix(TD **idata,
+    void printMatrix(TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -557,7 +557,7 @@ class io
      */
     template <typename TD>
     void printMatrix(const char *title,
-                     TD *idata,
+                     TD const *idata,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -580,7 +580,7 @@ class io
      * \param  form   Print format
      */
     template <typename TD>
-    void printMatrix(TD *idata,
+    void printMatrix(TD const *idata,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
@@ -600,7 +600,7 @@ class io
      * \param  form   Print format
      */
     template <typename TD>
-    void printMatrix(TD *idata, ioFormat const &form);
+    void printMatrix(TD const *idata, ioFormat const &form);
 
     /*!
      * \brief Helper function to print two vectors of data
@@ -617,9 +617,9 @@ class io
      */
     template <typename TD>
     void printMatrix(const char *title,
-                     TD *idata,
+                     TD const *idata,
                      int const idataCols,
-                     TD *ifvalue,
+                     TD const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -634,7 +634,7 @@ class io
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
     template <typename TD>
-    void printMatrix(TD *idata,
+    void printMatrix(TD const *idata,
                      int const idataCols, TD *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
@@ -663,8 +663,9 @@ class io
      * \param  formF          Print format for input function value 
      */
     template <typename TD>
-    void printMatrix(TD *idata, int const idataCols,
-                     TD *ifvalue,
+    void printMatrix(TD const *idata,
+                     int const idataCols,
+                     TD const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
@@ -1608,15 +1609,13 @@ bool io::saveMatrix(TD *idata,
             {
                 this->fs << this->fmt.rowPrefix;
                 this->fs.width(this->Width);
-                this->fs << idata[l];
+                this->fs << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    l++;
                     this->fs << this->fmt.coeffSeparator;
                     this->fs.width(this->Width);
-                    this->fs << idata[l];
+                    this->fs << idata[l++];
                 }
-                l++;
                 this->fs << this->fmt.rowSuffix;
                 this->fs << this->fmt.rowSeparator;
             }
@@ -1641,14 +1640,12 @@ bool io::saveMatrix(TD *idata,
             for (int i = 0, l = 0; i < nRows; i++)
             {
                 this->fs << this->fmt.rowPrefix;
-                this->fs << idata[l];
+                this->fs << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    l++;
                     this->fs << this->fmt.coeffSeparator;
-                    this->fs << idata[l];
+                    this->fs << idata[l++];
                 }
-                l++;
                 this->fs << this->fmt.rowSuffix;
                 this->fs << this->fmt.rowSeparator;
             }
@@ -2037,9 +2034,9 @@ bool io::loadMatrix(TD *idata, int const nRows, int const nCols)
             {
                 std::stringstream inLine(Line);
 
-                for (int j = 0; j < nCols; j++, l++)
+                for (int j = 0; j < nCols; j++)
                 {
-                    inLine >> idata[l];
+                    inLine >> idata[l++];
                 }
             }
             else
@@ -2082,14 +2079,14 @@ bool io::loadMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifval
         {
             std::stringstream inLine(Line);
 
-            for (int j = 0; j < idataCols; j++, k++)
+            for (int j = 0; j < idataCols; j++)
             {
-                inLine >> idata[k];
+                inLine >> idata[k++];
             }
 
-            for (int j = 0; j < ifvalueCols; j++, l++)
+            for (int j = 0; j < ifvalueCols; j++)
             {
-                inLine >> ifvalue[k];
+                inLine >> ifvalue[l++];
             }
         }
         else
@@ -2123,7 +2120,7 @@ bool io::loadMatrix(std::unique_ptr<TD[]> &idata,
  */
 template <typename TD>
 void io::printMatrix(const char *title,
-                     TD **idata,
+                     TD const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2200,7 +2197,7 @@ void io::printMatrix(const char *title,
  * \param  printPrefix Prefix and suffix of the print  
  */
 template <typename TD>
-void io::printMatrix(TD **idata,
+void io::printMatrix(TD const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2219,7 +2216,7 @@ void io::printMatrix(TD **idata,
  * \param   form   Print format
  */
 template <typename TD>
-void io::printMatrix(TD **idata,
+void io::printMatrix(TD const **idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
@@ -2288,7 +2285,7 @@ void io::printMatrix(TD **idata,
  */
 template <typename TD>
 void io::printMatrix(const char *title,
-                     TD **idata,
+                     TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2435,7 +2432,7 @@ void io::printMatrix(const char *title,
  * \param  printPrefix Prefix and suffix of the print  
  */
 template <typename TD>
-void io::printMatrix(TD **idata,
+void io::printMatrix(TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2457,7 +2454,7 @@ void io::printMatrix(TD **idata,
  * \param  form    Print format for each row 
  */
 template <typename TD>
-void io::printMatrix(TD **idata,
+void io::printMatrix(TD const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2602,7 +2599,7 @@ void io::printMatrix(TD **idata,
  */
 template <typename TD>
 void io::printMatrix(const char *title,
-                     TD *idata,
+                     TD const *idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2665,12 +2662,12 @@ void io::printMatrix(const char *title,
             {
                 std::cout << this->fmt.rowPrefix;
                 std::cout.width(this->Width);
-                std::cout << idata[l];
-                for (int j = 1; j < nCols; j++, l++)
+                std::cout << idata[l++];
+                for (int j = 1; j < nCols; j++)
                 {
                     std::cout << this->fmt.coeffSeparator;
                     std::cout.width(this->Width);
-                    std::cout << idata[l];
+                    std::cout << idata[l++];
                 }
                 std::cout << this->fmt.rowSuffix;
                 std::cout << this->fmt.rowSeparator;
@@ -2681,11 +2678,11 @@ void io::printMatrix(const char *title,
             for (int i = 0, l = 0; i < nRows; i++)
             {
                 std::cout << this->fmt.rowPrefix;
-                std::cout << idata[l];
-                for (int j = 1; j < nCols; j++, l++)
+                std::cout << idata[l++];
+                for (int j = 1; j < nCols; j++)
                 {
                     std::cout << this->fmt.coeffSeparator;
-                    std::cout << idata[l];
+                    std::cout << idata[l++];
                 }
                 std::cout << this->fmt.rowSuffix;
                 std::cout << this->fmt.rowSeparator;
@@ -2698,7 +2695,8 @@ void io::printMatrix(const char *title,
 template <typename TD>
 void io::printMatrix(const char *title,
                      std::unique_ptr<TD[]> const &idata,
-                     int const nRows, int const nCols,
+                     int const nRows,
+                     int const nCols,
                      std::string const &printPrefix)
 {
     io::printMatrix<TD>(title, idata.get(), nRows, nCols, printPrefix);
@@ -2715,7 +2713,7 @@ void io::printMatrix(const char *title,
  * \param  form   Print format
  */
 template <typename TD>
-void io::printMatrix(TD *idata,
+void io::printMatrix(TD const *idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
@@ -2773,12 +2771,12 @@ void io::printMatrix(TD *idata,
                 {
                     std::cout << form.rowPrefix;
                     std::cout.width(this->Width);
-                    std::cout << idata[l];
-                    for (int j = 1; j < nCols; j++, l++)
+                    std::cout << idata[l++];
+                    for (int j = 1; j < nCols; j++)
                     {
                         std::cout << form.coeffSeparator;
                         std::cout.width(this->Width);
-                        std::cout << idata[l];
+                        std::cout << idata[l++];
                     }
                     std::cout << form.rowSuffix;
                     std::cout << form.rowSeparator;
@@ -2789,11 +2787,11 @@ void io::printMatrix(TD *idata,
                 for (int i = 0, l = 0; i < nRows; i++)
                 {
                     std::cout << form.rowPrefix;
-                    std::cout << idata[l];
-                    for (int j = 1; j < nCols; j++, l++)
+                    std::cout << idata[l++];
+                    for (int j = 1; j < nCols; j++)
                     {
                         std::cout << form.coeffSeparator;
-                        std::cout << idata[l];
+                        std::cout << idata[l++];
                     }
                     std::cout << form.rowSuffix;
                     std::cout << form.rowSeparator;
@@ -2821,7 +2819,7 @@ void io::printMatrix(std::unique_ptr<TD[]> const &idata,
  * \param  form   Print format
  */
 template <typename TD>
-void io::printMatrix(TD *idata, ioFormat const &form)
+void io::printMatrix(TD const *idata, ioFormat const &form)
 {
     setPrecision<TD>(std::cout);
 
@@ -2858,9 +2856,9 @@ void io::printMatrix(TD *idata, ioFormat const &form)
  */
 template <typename TD>
 void io::printMatrix(const char *title,
-                     TD *idata,
+                     TD const *idata,
                      int const idataCols,
-                     TD *ifvalue,
+                     TD const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
@@ -2956,7 +2954,7 @@ void io::printMatrix(const char *title,
 }
 
 template <typename TD>
-void io::printMatrix(TD *idata,
+void io::printMatrix(TD const *idata,
                      int const idataCols, TD *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
@@ -2991,9 +2989,9 @@ void io::printMatrix(std::unique_ptr<TD[]> const &idata,
  * \param  formF          Print format for input function value 
  */
 template <typename TD>
-void io::printMatrix(TD *idata,
+void io::printMatrix(TD const *idata,
                      int const idataCols,
-                     TD *ifvalue,
+                     TD const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
