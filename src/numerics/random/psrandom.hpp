@@ -689,10 +689,10 @@ class psrandom
 	//! lognormal_distribution random number distribution (NOTE: This can be used without setting the State of psrandom object)
 	std::unique_ptr<logNormalDistribution> lNormal;
 
-	//! lognormal_distribution random number distribution (NOTE: This should be used after setting the State of psrandom object)
+	//! Multivariate random number distribution (NOTE: This should be used after setting the State of psrandom object)
 	std::unique_ptr<multivariatenormalDistribution> mvnormal;
 
-	//! lognormal_distribution random number distribution (NOTE: This can be used without setting the State of psrandom object)
+	//! Multivariate random number distribution (NOTE: This can be used without setting the State of psrandom object)
 	std::unique_ptr<multivariateNormalDistribution> mvNormal;
 
   public:
