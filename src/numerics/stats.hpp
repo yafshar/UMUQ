@@ -723,18 +723,16 @@ struct stats
      * \returns Covariance (array of N by N) from N-dimensional idata
      */
     template <typename T, typename TOut = double>
-    void covariance(T const *idata, int const nSize, int const nDim, int const Stride, TOut *&Covariance)
+    TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride = 1)
     {
-        if (Covariance == nullptr)
+        TOut *Covariance = nullptr;
+        try
         {
-            try
-            {
-                Covariance = new TOut[nDim * nDim]();
-            }
-            catch (std::bad_alloc &e)
-            {
-                UMUQFAIL("Failed to allocate memory!");
-            }
+            Covariance = new TOut[nDim * nDim]();
+        }
+        catch (std::bad_alloc &e)
+        {
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
         }
 
         std::vector<T> imean(nDim);
@@ -767,6 +765,8 @@ struct stats
                 Covariance[i * nDim + j] = Covariance[j * nDim + i];
             }
         }
+
+        return Covariance;
     }
 };
 
