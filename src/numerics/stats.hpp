@@ -48,20 +48,20 @@ struct stats
      * \returns The smallest element in the array of data
      */
     template <typename T>
-    inline T minelement(T const *idata, int const nSize, std::size_t const Stride = 1) const
+    inline T minelement(T const *idata, int const nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return *std::min_element(iArray.begin(), iArray.end());
+            return iArray.size() > 0 ? *std::min_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
         }
-        return *std::min_element(idata, idata + nSize);
+        return nSize > 0 ? *std::min_element(idata, idata + nSize) : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T>
     inline T minelement(ArrayWrapper<T> const &iArray) const
     {
-        return *std::min_element(iArray.begin(), iArray.end());
+        return iArray.size() > 0 ? *std::min_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -76,20 +76,20 @@ struct stats
      * \returns The greatest element in the array of data
      */
     template <typename T>
-    inline T maxelement(T const *idata, int const nSize, std::size_t const Stride = 1) const
+    inline T maxelement(T const *idata, int const nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return *std::max_element(iArray.begin(), iArray.end());
+            return iArray.size() > 0 ? *std::max_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
         }
-        return *std::max_element(idata, idata + nSize);
+        return nSize > 0 ? *std::max_element(idata, idata + nSize) : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T>
     inline T maxelement(ArrayWrapper<T> const &iArray) const
     {
-        return *std::max_element(iArray.begin(), iArray.end());
+        return iArray.size() > 0 ? *std::max_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -104,20 +104,21 @@ struct stats
      * \returns The the position of the smallest element
      */
     template <typename T>
-    inline int minelement_index(T const *idata, int const nSize, std::size_t const Stride = 1) const
+    inline int minelement_index(T const *idata, int const nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * Stride);
+            return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * Stride) : throw(std::runtime_error("Wrong input size!"));
         }
-        return static_cast<int>(std::distance(idata, std::min_element(idata, idata + nSize)));
+
+        return nSize > 0 ? static_cast<int>(std::distance(idata, std::min_element(idata, idata + nSize))) : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T>
     inline int minelement_index(ArrayWrapper<T> const &iArray) const
     {
-        return static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * iArray.stride());
+        return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * iArray.stride()) : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -132,20 +133,20 @@ struct stats
      * \returns The the position of the greatest element
      */
     template <typename T>
-    inline int maxelement_index(T const *idata, int const nSize, std::size_t const Stride = 1) const
+    inline int maxelement_index(T const *idata, int const nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * Stride);
+            return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * Stride) : throw(std::runtime_error("Wrong input size!"));
         }
-        return static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize)));
+        return nSize > 0 ? static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize))) : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T>
     inline int maxelement_index(ArrayWrapper<T> const &iArray) const
     {
-        return static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * iArray.stride());
+        return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * iArray.stride()) : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -161,20 +162,20 @@ struct stats
      * \returns The sum of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut sum(T const *idata, int const nSize, std::size_t const Stride = 1) const
+    inline TOut sum(T const *idata, int const nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{}));
+            return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) : TOut{};
         }
-        return static_cast<TOut>(std::accumulate(idata, idata + nSize, T{}));
+        return nSize > 0 ? static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) : TOut{};
     }
 
     template <typename T, typename TOut = double>
     inline TOut sum(ArrayWrapper<T> const &iArray) const
     {
-        return static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{}));
+        return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) : TOut{};
     }
 
     /*!
@@ -190,20 +191,20 @@ struct stats
      * \returns The mean of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut mean(T const *idata, const int nSize, std::size_t const Stride = 1) const
+    inline TOut mean(T const *idata, const int nSize, int const Stride = 1) const
     {
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
-            return static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size();
+            return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size() : throw(std::runtime_error("Wrong input size!"));
         }
-        return static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) / nSize;
+        return nSize > 0 ? static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) / nSize : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T, typename TOut = double>
     inline TOut mean(ArrayWrapper<T> const &iArray) const
     {
-        return static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size();
+        return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size() : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -219,43 +220,32 @@ struct stats
      * \returns The median of the elements in the array of data with Stride
      */
     template <typename T, typename TOut = double>
-    inline TOut median(T const *idata, const int nSize, std::size_t const Stride = 1)
+    inline TOut median(T const *idata, const int nSize, int const Stride = 1)
     {
-        if (nSize < 1)
-        {
-            return TOut{};
-        }
-
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
 
-            //!We do partial sorting algorithm that rearranges elements
+            //! We do partial sorting algorithm that rearranges elements
             std::vector<TOut> data(iArray.begin(), iArray.end());
             std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-            return data[data.size() / 2];
+            return iArray.size() > 0 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
         }
 
-        //!We do partial sorting algorithm that rearranges elements
+        //! We do partial sorting algorithm that rearranges elements
         std::vector<TOut> data(idata, idata + nSize);
-
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-        return data[data.size() / 2];
+        return nSize > 1 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T, typename TOut = double>
     inline TOut median(ArrayWrapper<T> const &iArray)
     {
-        if (iArray.size() < 1)
-        {
-            return TOut{};
-        }
-
-        //!We do partial sorting algorithm that rearranges elements
+        //! We do partial sorting algorithm that rearranges elements
         std::vector<TOut> data(iArray.begin(), iArray.end());
 
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-        return data[data.size() / 2];
+        return iArray.size() > 0 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -272,37 +262,27 @@ struct stats
      * \returns The median absolute deviation of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut medianAbs(T const *idata, const int nSize, std::size_t const Stride = 1, TOut &median_ = TOut{})
+    inline TOut medianAbs(T const *idata, const int nSize, int const Stride = 1, TOut &median_ = TOut{})
     {
-        if (nSize < 1)
-        {
-            return TOut{};
-        }
-
         ArrayWrapper<T> iArray(idata, nSize, Stride);
 
-        //!We do partial sorting algorithm that rearranges elements
+        //! We do partial sorting algorithm that rearranges elements
         std::vector<TOut> data(iArray.begin(), iArray.end());
 
-        //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+        //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
         median_ = data[data.size() / 2];
         std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
 
-        //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+        //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-        return data[data.size() / 2];
+        return nSize > 1 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
     template <typename T, typename TOut = double>
     inline TOut medianAbs(ArrayWrapper<T> const &iArray, TOut &median_ = TOut{})
     {
-        if (iArray.size() < 1)
-        {
-            return TOut{};
-        }
-
-        //!We do partial sorting algorithm that rearranges elements
+        //! We do partial sorting algorithm that rearranges elements
         std::vector<TOut> data(iArray.begin(), iArray.end());
 
         //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
@@ -312,7 +292,7 @@ struct stats
 
         //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-        return data[data.size() / 2];
+        return iArray.size() > 0 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
     /*!
@@ -329,7 +309,7 @@ struct stats
      * \returns The standard deviation of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut stddev(T const *idata, int const nSize, std::size_t const Stride = 1, TOut const idatamean = std::numeric_limits<TOut>::max()) const
+    inline TOut stddev(T const *idata, int const nSize, int const Stride = 1, TOut const idatamean = std::numeric_limits<TOut>::max()) const
     {
         TOut m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata, nSize, Stride);
         TOut s(0);
@@ -416,7 +396,7 @@ struct stats
      * \returns the square of the coefficient of variation (COV)
      */
     template <typename T, typename TOut = double>
-    TOut CoefVar(T const *fValue, int const fSize, std::size_t const Stride, T const x, T const p, T const tol)
+    TOut CoefVar(T const *fValue, int const fSize, int const Stride, T const x, T const p, T const tol)
     {
         ArrayWrapper<T> iArray(fValue, fSize, Stride);
         auto start = iArray.begin();
@@ -471,7 +451,7 @@ struct stats
      * \param Stride element stride (default is 1)
      */
     template <typename T>
-    void minmaxNormal(T *idata, int const nSize, std::size_t const Stride = 1)
+    void minmaxNormal(T *idata, int const nSize, int const Stride = 1)
     {
         T MinValue = minelement<T>(idata, nSize, Stride);
         T MaxValue = maxelement<T>(idata, nSize, Stride);
@@ -479,11 +459,11 @@ struct stats
         T denom = MaxValue - MinValue;
         if (denom < std::numeric_limits<T>::epsilon())
         {
-			UMUQWARNING("Maximum and Minimum Value are identical!");
+            UMUQWARNING("Maximum and Minimum Value are identical!");
             denom = std::numeric_limits<T>::epsilon();
         }
 
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> iArray(idata, nSize, Stride);
             std::for_each(iArray.begin(), iArray.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
@@ -501,7 +481,7 @@ struct stats
         T denom = MaxValue - MinValue;
         if (denom < std::numeric_limits<T>::epsilon())
         {
-			UMUQWARNING("Maximum and Minimum Value are identical!");
+            UMUQWARNING("Maximum and Minimum Value are identical!");
             denom = std::numeric_limits<T>::epsilon();
         }
 
@@ -523,11 +503,11 @@ struct stats
      * \param Stride element stride (default is 1)
      */
     template <typename T>
-    inline void zscoreNormal(T *idata, int const nSize, std::size_t const Stride = 1)
+    inline void zscoreNormal(T *idata, int const nSize, int const Stride = 1)
     {
         T MeanValue = mean<T, T>(idata, nSize, Stride);
         T StddevValue = stddev<T, T>(idata, nSize, Stride, MeanValue);
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> a(idata, nSize, Stride);
             std::for_each(a.begin(), a.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
@@ -561,11 +541,11 @@ struct stats
      * \param Stride element stride (default is 1)
      */
     template <typename T>
-    inline void robustzscoreNormal(T *idata, int const nSize, std::size_t const Stride = 1)
+    inline void robustzscoreNormal(T *idata, int const nSize, int const Stride = 1)
     {
         T median_;
         T mad = medianAbs<T, T>(idata, nSize, Stride, median_);
-        if (Stride != 1)
+        if (Stride > 1)
         {
             ArrayWrapper<T> a(idata, nSize, Stride);
             std::for_each(a.begin(), a.end(), [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
@@ -658,7 +638,7 @@ struct stats
      * \returns Covariance (scaler value) between idata and jdata vectors     
      */
     template <typename T, typename TOut = double>
-    TOut covariance(T const *idata, T const *jdata, int const nSize, std::size_t const Stride = 1)
+    TOut covariance(T const *idata, T const *jdata, int const nSize, int const Stride = 1)
     {
         T imean = mean<T, T>(idata, nSize, Stride);
         T jmean = mean<T, T>(jdata, nSize, Stride);
@@ -743,24 +723,26 @@ struct stats
      * \returns Covariance (array of N by N) from N-dimensional idata
      */
     template <typename T, typename TOut = double>
-    TOut *covariance(T const *idata, int const nSize, int const nDim, std::size_t const Stride = 1)
+    TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride = 1, TOut *&Covariance = nullptr)
     {
-        TOut *Covariance;
-		try
-		{
-			Covariance = new TOut[nDim * nDim]();
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAILRETURNNULL("Failed to allocate memory!");
-		}
+        if (Covariance = nullptr)
+        {
+            try
+            {
+                Covariance = new TOut[nDim * nDim]();
+            }
+            catch (std::bad_alloc &e)
+            {
+                UMUQFAILRETURNNULL("Failed to allocate memory!");
+            }
+        }
 
         std::vector<T> imean(nDim);
 
-        //We should make sure of the correct stride
-        std::size_t const stride = Stride > static_cast<std::size_t>(nDim) ? Stride : static_cast<std::size_t>(nDim);
+        //! We should make sure of the correct stride
+        int const stride = Stride > nDim ? Stride : nDim;
 
-        //Compute the mean for each dimension
+        //! Compute the mean for each dimension
         for (int i = 0; i < nDim; i++)
         {
             imean[i] = mean<T, T>(idata + i, nSize, stride);
