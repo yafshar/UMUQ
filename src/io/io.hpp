@@ -80,6 +80,11 @@ struct ioFormat
     }
 };
 
+
+//! TODO
+//! All the functions should use the ioFormat for printing and saving and loading and 
+//! we should remove all options from them
+
 /*! \class io
  * \ingroup io
  * 
