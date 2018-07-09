@@ -312,7 +312,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -376,7 +376,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -482,7 +482,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -546,7 +546,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -664,7 +664,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -728,7 +728,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -874,7 +874,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -938,7 +938,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1056,7 +1056,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1120,7 +1120,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1238,7 +1238,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1302,7 +1302,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1420,7 +1420,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");
@@ -1484,7 +1484,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
         //Prining the information
-        dc.print();
+        dc.printInfo();
 
         {
             fitness<double> f("root_mean_squared");

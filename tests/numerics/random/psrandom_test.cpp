@@ -12,6 +12,9 @@ pyplot plt;
  */
 TEST(random_test, HandlesRandoms)
 {
+	typedef EMatrix2<double> EMatrix2d;
+	typedef EVector2<double> EVector2d;
+
     // Get an instance of a double random object and seed it
     psrandom<double> r(123);
 
@@ -19,11 +22,11 @@ TEST(random_test, HandlesRandoms)
     EXPECT_TRUE(r.setState());
 
     // Create a matrix
-    EMatrix2d M2d;
+	EMatrix2d M2d;
     M2d << 1, 3. / 5., 3. / 5., 2.;
 
     // Create a zero vector
-    EVector2d V2d = EVector2d::Zero();
+	EVector2d V2d = EVector2d::Zero();
 
     // Create an object of type Multivariate normal distribution
     EXPECT_TRUE(r.set_mvnormal(M2d));
