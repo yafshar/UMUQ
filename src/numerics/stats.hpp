@@ -723,9 +723,9 @@ struct stats
      * \returns Covariance (array of N by N) from N-dimensional idata
      */
     template <typename T, typename TOut = double>
-    TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride = 1, TOut *&Covariance = nullptr)
+    TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride, TOut *&Covariance)
     {
-        if (Covariance = nullptr)
+        if (Covariance == nullptr)
         {
             try
             {
