@@ -1,4 +1,5 @@
 #include "core/core.hpp"
+#include "io/io.hpp"
 #include "numerics/stats.hpp"
 #include "gtest/gtest.h"
 
@@ -118,32 +119,54 @@ TEST(stats_test, HandlesCovariance)
     }
 
     // Create a 3-by-4 matrix and compute its covariance.
+    double idata1[] = {5, 0, 3, 7,
+                       1, -5, 7, 3,
+                       4, 9, 8, 10};
+
+    // Compute the covariance
+    double *Covariance = nullptr;
+    Covariance = s.covariance<double, double>(idata1, 12, 4, 4);
+    if (Covariance)
     {
-        double idata[] = {5, 0, 3, 7,
-                          1, -5, 7, 3,
-                          4, 9, 8, 10};
-
-        // Compute the covariance
-        double *Covariance = s.covariance<double, double>(idata, 12, 4, 4);
-
         // Covariance computed with MATLAB
-        double c[] = {4.333333333333334, 8.833333333333332, -3.0, 5.666666666666667,
-                      8.833333333333332, 50.333333333333336, 6.50, 24.166666666666668,
-                      -3.0, 6.50, 7.0, 1.0,
-                      5.666666666666667, 24.166666666666668, 1.0, 12.333333333333334};
+        double c1[] = {4.333333333333334, 8.833333333333332, -3.0, 5.666666666666667,
+                       8.833333333333332, 50.333333333333336, 6.50, 24.166666666666668,
+                       -3.0, 6.50, 7.0, 1.0,
+                       5.666666666666667, 24.166666666666668, 1.0, 12.333333333333334};
 
         for (int i = 0; i < 12; i++)
         {
-            EXPECT_DOUBLE_EQ(Covariance[i], c[i]);
+            EXPECT_DOUBLE_EQ(Covariance[i], c1[i]);
         }
-    }
-    {
-        double idata[] = {4.348817, 2.995049, -3.793431, 4.711934, 1.190864, -1.357363};
 
-        // Compute the covariance
-        double *Covariance = s.covariance<double, double>(idata, 6, 3, 2);        
+        delete[] Covariance;
+        Covariance = nullptr;
+    }
+
+    double idata2[] = {4.348817, 4.711934,
+                       2.995049, 1.190864,
+                       -3.793431, -1.357363};
+
+    // Compute the covariance
+    Covariance = s.covariance<double, double>(idata2, 6, 2, 2);
+    if (Covariance)
+    {
+        // Covariance computed with MATLAB
+        double c2[] = {19.035391833621333,
+                       11.913836879396001,
+                       11.913836879396001,
+                       9.287960143773001};
+
+        for (int i = 0; i < 4; i++)
+        {
+            EXPECT_DOUBLE_EQ(Covariance[i], c2[i]);
+        }
+
+        delete[] Covariance;
+        Covariance = nullptr;
     }
 }
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
