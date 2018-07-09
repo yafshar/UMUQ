@@ -212,7 +212,7 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(int const 
 template <typename T>
 inline T multivariategaussianDistribution<T>::f(T const *x)
 {
-    CTEMapX<T, Eigen::ColMajor> X(x, this->numParams, 1);
+    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
 
     T denom = std::pow(M_2PI, this->numParams) * this->prng.mvnormal->lu.determinant();
 
@@ -256,7 +256,7 @@ inline T multivariategaussianDistribution<T>::f(EVectorX<T> const &X)
 template <typename T>
 inline T multivariategaussianDistribution<T>::lf(T const *x)
 {
-    CTEMapX<T, Eigen::ColMajor> X(x, this->numParams, 1);
+    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
 
     EVectorX<T> ax = X - this->prng.mvnormal->mean;
 
@@ -494,7 +494,7 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(int const 
 template <typename T>
 inline T multivariateGaussianDistribution<T>::f(T const *x)
 {
-    CTEMapX<T, Eigen::ColMajor> X(x, this->numParams, 1);
+    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
 
     T denom = std::pow(M_2PI, this->numParams) * this->prng.mvNormal->lu.determinant();
 
@@ -538,7 +538,7 @@ inline T multivariateGaussianDistribution<T>::f(EVectorX<T> const &X)
 template <typename T>
 inline T multivariateGaussianDistribution<T>::lf(T const *x)
 {
-    CTEMapX<T, Eigen::ColMajor> X(x, this->numParams, 1);
+    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
 
     EVectorX<T> ax = X - this->prng.mvNormal->mean;
 

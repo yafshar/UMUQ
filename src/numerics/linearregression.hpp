@@ -104,14 +104,14 @@ class linearRegression
         }
 
         // Right hand side vector
-        TEMapVectorX<T> BV(iFvalue, nPoints);
+        EVectorMapType<T> BV(iFvalue, nPoints);
 
         // Matrix A
         EMatrixX<T> AM(nPoints, linearRegressionMonomialSize);
 
         // Solution vector
         T *sv = linearRegressionkernel.get();
-        TEMapVectorX<T> SV(sv, linearRegressionMonomialSize);
+        EVectorMapType<T> SV(sv, linearRegressionMonomialSize);
 
         // dummy array of data
         std::unique_ptr<T[]> rowData(new T[linearRegressionMonomialSize]);

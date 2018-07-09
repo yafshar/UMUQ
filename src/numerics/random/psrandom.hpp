@@ -1531,9 +1531,9 @@ psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(EVec
  * \param n            Vector size
  */
 template <typename T>
-psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(T const *imean, T const *icovariance, int const n) : mean(CTEMapX<T>(imean, n, 1)),
-																																 covariance(CTEMapX<T>(icovariance, n, n)),
-																																 lu(CTEMapX<T>(icovariance, n, n))
+psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T, Eigen::RowMajor>(imean, n, 1)),
+																																 covariance(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
+																																 lu(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n))
 {
 	if (!PRNG_initialized)
 	{
@@ -1567,8 +1567,8 @@ psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(EMat
  */
 template <typename T>
 psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
-																												 covariance(CTEMapX<T>(icovariance, n, n)),
-																												 lu(CTEMapX<T>(icovariance, n, n))
+																												 covariance(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
+																												 lu(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n))
 {
 	if (!PRNG_initialized)
 	{
@@ -1674,9 +1674,9 @@ psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(EVec
  * \param n            Vector size
  */
 template <typename T>
-psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(T const *imean, T const *icovariance, int const n) : mean(CTEMapX<T>(imean, n, 1)),
-																																 covariance(CTEMapX<T>(icovariance, n, n)),
-																																 lu(CTEMapX<T>(icovariance, n, n)),
+psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T, Eigen::RowMajor>(imean, n, 1)),
+																																 covariance(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
+																																 lu(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
 																																 gen(std::random_device{}())
 {
 	// Computes eigenvalues and eigenvectors of selfadjoint matrices.
@@ -1700,8 +1700,8 @@ psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(EMat
  */
 template <typename T>
 psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
-																												 covariance(CTEMapX<T>(icovariance, n, n)),
-																												 lu(CTEMapX<T>(icovariance, n, n)),
+																												 covariance(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
+																												 lu(EMapTypeConst<T, Eigen::RowMajor>(icovariance, n, n)),
 																												 gen(std::random_device{}())
 {
 	// Computes eigenvalues and eigenvectors of selfadjoint matrices.
