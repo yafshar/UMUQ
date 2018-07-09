@@ -179,6 +179,6 @@ using EVector6 = Eigen::Matrix<T, 6, 1>;
  * - coeffSeparator string printed between two coefficients of the same row
  * - rowSeparator string printed between two rows
  */
-Eigen::IOFormat fmt(Eigen::FullPrecision);
+Eigen::IOFormat eigenIOFormat(Eigen::FullPrecision);
 
 #endif // UMUQ_EIGENDATATYPE_H
