@@ -8,7 +8,7 @@
  */
 TEST(stats_test, HandlesStats)
 {
-    // Create an instane of stats object
+    //! Create an instane of stats object
     stats s;
 
     int iArray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
@@ -33,11 +33,11 @@ TEST(stats_test, HandlesStats)
  */
 TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 {
-    // Create an instane of stats object
+    //! Create an instane of stats object
     stats s;
 
-    // iArray is a two column array of size 10 * 2 = 20
-    // we are interested to the first column so the Stride is 2
+    //! iArray is a two column array of size 10 * 2 = 20
+    //! we are interested to the first column so the Stride is 2
     int iArray[] = {2, 0,
                     3, 0,
                     5, 0,
@@ -54,22 +54,22 @@ TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
     EXPECT_EQ(s.maxelement<int>(iArray, 20, 2), 10);
     EXPECT_EQ(s.maxelement_index<int>(iArray, 20, 2), 14);
 
-    // dArray is an array of size 4 * 3 = 12
-    // We need to compute the sum of different columns
+    //! dArray is an array of size 4 * 3 = 12
+    //! We need to compute the sum of different columns
     double dArray[] = {1, 2, 3,
                        1, 2, 3,
                        1, 2, 3,
                        1, 2, 3};
 
-    // Compute sum of column 0
+    //! Compute sum of column 0
     double sum = s.sum<double>(dArray, 12, 3);
     EXPECT_DOUBLE_EQ(sum, 4.0);
 
-    // Compute sum of column 1
+    //! Compute sum of column 1
     sum = s.sum<double>(dArray + 1, 11, 3);
     EXPECT_DOUBLE_EQ(sum, 8.0);
 
-    // Compute sum of column 2
+    //! Compute sum of column 2
     sum = s.sum<double>(dArray + 2, 10, 3);
     EXPECT_DOUBLE_EQ(sum, 12.0);
 }
@@ -80,14 +80,14 @@ TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
  */
 TEST(stats_test, HandlesMedianandMad)
 {
-    // Create an instane of stats object
+    //! Create an instane of stats object
     stats s;
 
     int iArray[] = {1, 1, 2, 2, 4, 6, 9};
     int med;
     int mad = s.medianAbs<int, int>(iArray, 7, 1, med);
 
-    // the dataset has a median value of 2.
+    //! The dataset has a median value of 2.
     EXPECT_EQ(med, 2);
 
     /*!
@@ -105,30 +105,32 @@ TEST(stats_test, HandlesMedianandMad)
  */
 TEST(stats_test, HandlesCovariance)
 {
-    // Create an instane of stats object
+    //! Create an instane of stats object
     stats s;
 
-    // Create two vectors and compute their covariance.
+    //! Create two vectors and compute their covariance.
     {
-        double idata[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
-        double jdata[] = {8, 10, 12, 14};      // (mean = 11)
+        double idata[] = {2.1, 2.5, 3.6, 4.0}; //! (mean = 3.1)
+        double jdata[] = {8, 10, 12, 14};      //! (mean = 11)
 
         double Covariance = s.covariance<double, double>(idata, jdata, 4);
 
         EXPECT_DOUBLE_EQ(Covariance, 6.8 / 3);
     }
 
-    // Create a 3-by-4 matrix and compute its covariance.
-    double idata1[] = {5, 0, 3, 7,
-                       1, -5, 7, 3,
-                       4, 9, 8, 10};
-
-    // Compute the covariance
-    double *Covariance = nullptr;
-    Covariance = s.covariance<double, double>(idata1, 12, 4, 4);
-    if (Covariance)
+    //! Create a 3-by-4 matrix and compute its covariance.
     {
-        // Covariance computed with MATLAB
+        double idata1[] = {5, 0, 3, 7,
+                           1, -5, 7, 3,
+                           4, 9, 8, 10};
+
+        //! Covariance using pointers
+        double *Covariance;
+
+        //! Compute the covariance
+        Covariance = s.covariance<double, double>(idata1, 12, 4, 4);
+
+        //! Covariance computed with MATLAB
         double c1[] = {4.333333333333334, 8.833333333333332, -3.0, 5.666666666666667,
                        8.833333333333332, 50.333333333333336, 6.50, 24.166666666666668,
                        -3.0, 6.50, 7.0, 1.0,
@@ -139,31 +141,31 @@ TEST(stats_test, HandlesCovariance)
             EXPECT_DOUBLE_EQ(Covariance[i], c1[i]);
         }
 
+        //! Free memory
         delete[] Covariance;
         Covariance = nullptr;
     }
 
-    double idata2[] = {4.348817, 4.711934,
-                       2.995049, 1.190864,
-                       -3.793431, -1.357363};
-
-    // Compute the covariance
-    Covariance = s.covariance<double, double>(idata2, 6, 2, 2);
-    if (Covariance)
+    //! Create a 3-by-2 matrix and compute its covariance.
     {
-        // Covariance computed with MATLAB
-        double c2[] = {19.035391833621333,
-                       11.913836879396001,
-                       11.913836879396001,
-                       9.287960143773001};
+        double idata2[] = {4.348817, 4.711934,
+                           2.995049, 1.190864,
+                           -3.793431, -1.357363};
+
+        //! Covariance using smart pointers
+        std::unique_ptr<double[]> Covariance;
+
+        //! Compute the covariance
+        Covariance.reset(std::move(s.covariance<double, double>(idata2, 6, 2, 2)));
+
+        //! Covariance computed with MATLAB
+        double c2[] = {19.035391833621333, 11.913836879396001,
+                       11.913836879396001, 9.287960143773001};
 
         for (int i = 0; i < 4; i++)
         {
             EXPECT_DOUBLE_EQ(Covariance[i], c2[i]);
         }
-
-        delete[] Covariance;
-        Covariance = nullptr;
     }
 }
 
