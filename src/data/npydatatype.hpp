@@ -15,6 +15,8 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
  * \brief Explicit instantiation for
  * 
  * \b bool
+ * \b char
+ * \b std::string
  * \b int8_t
  * \b uint8_t
  * \b int16_t
@@ -33,6 +35,12 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
  */
 template <>
 constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
+
+template <>
+constexpr NPY_TYPES NPIDatatype<char> = NPY_CHAR;
+
+template <>
+constexpr NPY_TYPES NPIDatatype<std::string> = NPY_STRING;
 
 template <>
 constexpr NPY_TYPES NPIDatatype<int8_t> = NPY_INT8;
