@@ -112,10 +112,10 @@ PyObject *PyArray(std::vector<TIn> const &idata);
  * \return PyObject* Python array
  */
 template <typename T>
-PyObject *PyArray(T *idata, int const nSize, std::size_t const Stride = 1);
+PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride = 1);
 
 template <typename TIn, typename TOut>
-PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride = 1);
+PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
 
 /*!
  * \verbatim
@@ -179,6 +179,13 @@ inline void setbackend(std::string const &WXbackends)
 {
     backend = WXbackends;
 }
+
+/*!
+ * \brief 
+ * 
+ */
+char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
+int const DefaultColorsSize = 8;
 
 /*! \class pyplot
  * \brief This module contains several common approaches to plotting with Matplotlib python 2D library
@@ -2679,6 +2686,13 @@ bool pyplot::savefig(std::string const &filename)
  * \param c         Scalar or array-like, data color
  * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
  * 
+ * NOTE:
+ * Currently in case of scalar color number we map it to DefaultColors which is
+ * one of {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
+ * 
+ * TODO:
+ * We should add a flexible coloring scheme 
+ * 
  * \return true 
  * \return false 
  */
@@ -2698,12 +2712,22 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
             UMUQFAILRETURN("Two input vectors do not have the same size!");
         }
     }
+
+    //! Temporary color
+    std::vector<char> tmpC;
+
     if (c.size() > 1)
     {
         if (x.size() != c.size())
         {
             UMUQFAILRETURN("Two input vectors do not have the same size!");
         }
+    }
+    else
+    {
+        tmpC.resize(x.size());
+        char const tmpColor = c.size() < 1 ? 'k' : DefaultColors[static_cast<int>(std::round(c[0])) % DefaultColorsSize];
+        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
     }
 
     // Construct positional args
@@ -2713,7 +2737,7 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
         PyObject *PyArrayS = s.size() > 1 ? PyArray<T>(s) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = c.size() > 1 ? PyArray<T>(c) : PyFloat_FromDouble(static_cast<double>(c[0]));
+        PyObject *PyArrayC = c.size() > 1 ? PyArray<T>(c) : PyArray<char>(tmpC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -2772,6 +2796,13 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         UMUQFAILRETURN("Two input vectors do not have the same size!");
     }
 
+    //! Temporary color
+    std::vector<char> tmpC(x.size());
+    {
+        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
+        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
+    }
+
     // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
@@ -2779,7 +2810,7 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
         PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+        PyObject *PyArrayC = PyArray<char>(tmpC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -2860,12 +2891,22 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
             UMUQFAILRETURN("Two input vectors do not have the same size!");
         }
     }
+
+    //! Temporary color
+    std::vector<char> tmpC;
+
     if (nsizeC > 1)
     {
         if (nsizeX != nsizeC)
         {
             UMUQFAILRETURN("Two input vectors do not have the same size!");
         }
+    }
+    else
+    {
+        tmpC.resize(nsizeX);
+        char const tmpColor = nsizeC < 1 ? 'k' : DefaultColors[static_cast<int>(std::round(c[0])) % DefaultColorsSize];
+        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
     }
 
     // Construct positional args
@@ -2875,7 +2916,7 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
         PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
         PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
         PyObject *PyArrayS = nsizeS > 1 ? PyArray<T>(s, nSizeS, StrideS) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = nsizeC > 1 ? PyArray<T>(c, nSizeC, StrideC) : PyFloat_FromDouble(static_cast<double>(c[0]));
+        PyObject *PyArrayC = nsizeC > 1 ? PyArray<T>(c, nsizeC, StrideC) : PyArray<char>(tmpC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -2942,6 +2983,13 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
         UMUQFAILRETURN("Two input vectors do not have the same size!");
     }
 
+    //! Temporary color
+    std::vector<char> tmpC(nsizeX);
+    {
+        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
+        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
+    }
+
     // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
@@ -2949,7 +2997,7 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
         PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
         PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
         PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+        PyObject *PyArrayC = PyArray<char>(tmpC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -3066,6 +3114,13 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
                      T const s, T const c,
                      std::map<std::string, std::string> const &keywords)
 {
+    //! Temporary color
+    std::vector<char> tmpC(nSize);
+    {
+        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
+        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
+    }
+
     // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
@@ -3073,7 +3128,7 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
         PyObject *PyArrayX = PyArray<T>(x, nSize);
         PyObject *PyArrayY = PyArray<T>(y, nSize);
         PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyFloat_FromDouble(static_cast<double>(c));
+        PyObject *PyArrayC = PyArray<char>(tmpC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -4577,7 +4632,7 @@ PyObject *PyArray(std::vector<TIn> const &idata)
  * \return PyObject* Python array 
  */
 template <typename T>
-PyObject *PyArray(T *idata, int const nSize, std::size_t const Stride)
+PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 {
     PyObject *pArray;
     {
@@ -4617,56 +4672,56 @@ PyObject *PyArray(T *idata, int const nSize, std::size_t const Stride)
     return pArray;
 }
 
-template <typename TIn, typename TOut>
-PyObject *PyArray(TIn *idata, int const nSize, std::size_t const Stride)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize;
+// template <typename TIn, typename TOut>
+// PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride)
+// {
+//     PyObject *pArray;
+//     {
+//         npy_intp nsize;
 
-        if (Stride != 1)
-        {
-            ArrayWrapper<TIn> iArray(idata, nSize, Stride);
-            nsize = static_cast<npy_intp>(iArray.size());
-            if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-            {
-                if (NPIDatatype<TOut> == NPY_NOTYPE)
-                {
-                    std::vector<double> vd(nsize);
-                    std::copy(iArray.begin(), iArray.end(), vd.begin());
-                    pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-                    return pArray;
-                }
-            }
-            std::vector<TOut> vd(nsize);
-            std::copy(iArray.begin(), iArray.end(), vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            return pArray;
-        }
+//         if (Stride != 1)
+//         {
+//             ArrayWrapper<TIn> iArray(idata, nSize, Stride);
+//             nsize = static_cast<npy_intp>(iArray.size());
+//             if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+//             {
+//                 if (NPIDatatype<TOut> == NPY_NOTYPE)
+//                 {
+//                     std::vector<double> vd(nsize);
+//                     std::copy(iArray.begin(), iArray.end(), vd.begin());
+//                     pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+//                     return pArray;
+//                 }
+//             }
+//             std::vector<TOut> vd(nsize);
+//             std::copy(iArray.begin(), iArray.end(), vd.begin());
+//             pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+//             return pArray;
+//         }
 
-        nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(idata, idata + nSize, vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(nsize);
-                std::copy(idata, idata + nSize, vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata));
-        }
-    }
-    return pArray;
-}
+//         nsize = static_cast<npy_intp>(nSize);
+//         if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+//         {
+//             if (NPIDatatype<TOut> == NPY_NOTYPE)
+//             {
+//                 std::vector<double> vd(nsize);
+//                 std::copy(idata, idata + nSize, vd.begin());
+//                 pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+//             }
+//             else
+//             {
+//                 std::vector<TOut> vd(nsize);
+//                 std::copy(idata, idata + nSize, vd.begin());
+//                 pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+//             }
+//         }
+//         else
+//         {
+//             pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata));
+//         }
+//     }
+//     return pArray;
+// }
 
 #else
 
