@@ -37,12 +37,41 @@ TEST(random_test, HandlesRandoms)
 
     X = prng.mvnormal->dist();
 
-    // #ifdef HAVE_PYTHON
-    //     // Plot line from given x and y data. Color is selected automatically.
-    //     EXPECT_TRUE(plt.plot<double>(x, y, "b:", "cos(x)"));
-    // #endif
+#ifdef HAVE_PYTHON
+    std::string fileName = "./multivariatescatterpoints.svg";
+    std::remove(fileName.c_str());
 
-    //! TODO Add the test for checking mvnormdist
+    //! Prepare data.
+    int n = 100;
+
+    //! X coordinates
+    std::vector<double> x(n);
+    //! Y coordinates
+    std::vector<double> y(n);
+
+    //! Create sample points from Multivariate normal distribution
+    for (int i = 0; i < n; ++i)
+    {
+        X = prng.mvnormal->dist();
+        x[i] = X[0];
+        y[i] = X[1];
+    }
+    //! Prepare keywords to pass to PolyCollection. See
+    std::map<std::string, std::string> keywords;
+    keywords["marker"] = "D";
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.scatter<double>(x, y, 20, 2, keywords));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("Sample points from a multivariate normal distribution"));
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+#endif
 }
 
 /*! 
