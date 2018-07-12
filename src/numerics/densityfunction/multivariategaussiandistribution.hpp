@@ -212,11 +212,9 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(int const 
 template <typename T>
 inline T multivariategaussianDistribution<T>::f(T const *x)
 {
-    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
-
     T denom = std::pow(M_2PI, this->numParams) * this->prng.mvnormal->lu.determinant();
 
-    EVectorX<T> ax = X - this->prng.mvnormal->mean;
+    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
 
     // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
     T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
@@ -256,9 +254,7 @@ inline T multivariategaussianDistribution<T>::f(EVectorX<T> const &X)
 template <typename T>
 inline T multivariategaussianDistribution<T>::lf(T const *x)
 {
-    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
-
-    EVectorX<T> ax = X - this->prng.mvnormal->mean;
+    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
 
     // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
     T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
@@ -494,11 +490,9 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(int const 
 template <typename T>
 inline T multivariateGaussianDistribution<T>::f(T const *x)
 {
-    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
-
     T denom = std::pow(M_2PI, this->numParams) * this->prng.mvNormal->lu.determinant();
 
-    EVectorX<T> ax = X - this->prng.mvNormal->mean;
+    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
 
     // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
     T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
@@ -538,9 +532,7 @@ inline T multivariateGaussianDistribution<T>::f(EVectorX<T> const &X)
 template <typename T>
 inline T multivariateGaussianDistribution<T>::lf(T const *x)
 {
-    EMapTypeConst<T, Eigen::ColMajor> X(x, this->numParams, 1);
-
-    EVectorX<T> ax = X - this->prng.mvNormal->mean;
+    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
 
     // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
     T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
@@ -567,6 +559,4 @@ inline T multivariateGaussianDistribution<T>::lf(EVectorX<T> const &X)
     return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(this->prng.mvNormal->lu.determinant()));
 }
 
-
 #endif // UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
-
