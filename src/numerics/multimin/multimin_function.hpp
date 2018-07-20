@@ -8,27 +8,68 @@
 /*! \class multimin_function
   * \brief Defines a general function of n variables
   * 
-  * \tparam T   data type
-  * \tparam TMF multimin function type
+  * \tparam T    Data type
+  * \tparam TMF  Multimin function type
   */
 template <typename T, class TMF>
 class multimin_function
 {
   public:
-	multimin_function() {}
-	multimin_function(std::size_t n_) : n(n_) {}
+	/*!
+	 * \brief Construct a new multimin function object
+	 * 
+	 */
+	multimin_function();
 
-	T f(T const *x)
-	{
-		return static_cast<TMF *>(this)->f(x);
-	}
+	/*!
+	 * \brief Construct a new multimin function object
+	 * 
+	 * \param nIn The dimension of the system, number of components of the vectors x
+	 */
+	explicit multimin_function(int const nIn);
 
-	//The dimension of the system, i.e. the number of components of the vectors x.
+	/*!
+	 * \brief Function f
+	 * 
+	 * \param x  Input data
+	 * 
+	 * \return  f Function value at x 
+	 */
+	T f(T const *x);
+
+	// The dimension of the system, i.e. the number of components of the vectors x.
 	std::size_t n;
 
   private:
 	friend TMF;
 };
+
+/*!
+ * \brief Construct a new multimin function object
+ * 
+ */
+template <typename T, class TMF>
+multimin_function<T, TMF>::multimin_function() {}
+
+/*!
+ * \brief Construct a new multimin function object
+ * 
+ * \param nIn The dimension of the system, number of components of the vectors x
+ */
+template <typename T, class TMF>
+multimin_function<T, TMF>::multimin_function(int const nIn) : n(nIn) {}
+
+/*!
+ * \brief Function f
+ * 
+ * \param x   Input data
+ * \return  f Function value at x 
+ */
+template <typename T, class TMF>
+T multimin_function<T, TMF>::f(T const *x)
+{
+	return static_cast<TMF *>(this)->f(x);
+}
 
 /*! \class multimin_fminimizer_type
   * \brief This class specifies minimization algorithms which do not use gradients
