@@ -1,253 +1,313 @@
 #ifndef UMUQ_MULTIMIN_LINEAR_WRAPPER_H
 #define UMUQ_MULTIMIN_LINEAR_WRAPPER_H
 
-/*! \class wrapper_t
- *  \ingroup multimin_Module
+/*! \class linearFunctionWrapper
+ * \ingroup multimin_Module
  * 
  * \brief 
  *  
- * \tparam T      data type
- * \tparam TMFD   multimin differentiable function type
+ * \tparam T      Data type
+ * \tparam TMFD   Multimin differentiable function type
  */
 template <typename T, class TMFD>
-class wrapper_t
+class linearFunctionWrapper
 {
   public:
-    wrapper_t() : fdf_linear(*this) {}
+    linearFunctionWrapper();
 
     /*!
      * \brief 
      * 
      */
-    void prepare(TMFD *fdf, T const *x_, T const f_, T const *g_, T const *p_, T *x_alpha_, T *g_alpha_)
-    {
-        wfdf = fdf;
-        n = wfdf->n;
-        fdf_linear.n = n;
-
-        x = x_;
-        f_alpha = f_;
-        g = g_;
-        p = p_;
-        x_alpha = x_alpha_;
-        g_alpha = g_alpha_;
-        x_cache_key = T{};
-        f_cache_key = T{};
-        g_cache_key = T{};
-        df_cache_key = T{};
-
-        std::copy(x, x + n, x_alpha);
-        std::copy(g, g + n, g_alpha);
-
-        df_alpha = slope();
-    }
+    void prepare(TMFD *fdf, T const *xIn, T const f, T const *gIn, T const *p_, T *x_alpha_, T *g_alpha_);
 
     /*!
      * \brief 
      * 
      */
-    void update_position(T alpha, T *x_, T *f, T *g_)
-    {
-        //Ensure that everything is fully cached
-        {
-            T f_alpha_;
-            T df_alpha_;
-
-            fdf_linear.fdf(alpha, &f_alpha_, &df_alpha_);
-        };
-
-        *f = f_alpha;
-
-        std::copy(x_alpha, x_alpha + n, x_);
-        std::copy(g_alpha, g_alpha + n, g_);
-    }
+    void updatePosition(T const alpha, T *xOut, T *f, T *gOut);
 
     /*!
      * \brief 
      * 
      */
-    void change_direction()
-    {
-        //Convert the cache values from the end of the current minimization
-        //to those needed for the start of the next minimization, alpha=0
-
-        //The new x_alpha for alpha=0 is the current position
-        std::copy(x, x + n, x_alpha);
-
-        x_cache_key = T{};
-
-        //The function value does not change
-        f_cache_key = T{};
-
-        //The new g_alpha for alpha=0 is the current gradient at the endpoint
-        std::copy(g, g + n, g_alpha);
-
-        g_cache_key = T{};
-
-        //Calculate the slope along the new direction vector, p
-        df_alpha = slope();
-
-        df_cache_key = T{};
-    }
+    void changeDirection();
 
     /*!
      * \brief 
      * 
      */
-    void moveto(T const alpha)
-    {
-        //using previously cached position
-        if (alpha == x_cache_key)
-        {
-            return;
-        }
-
-        //Set \f$ x_alpha = x + alpha * p \f$
-        std::copy(x, x + n, x_alpha);
-
-        for (std::size_t i = 0; i < n; i++)
-        {
-            x_alpha[i] += alpha * p[i];
-        }
-
-        x_cache_key = alpha;
-    }
+    void moveTo(T const alpha);
 
     /*!
-     * \brief compute gradient . direction
+     * \brief Compute gradient direction
      */
-    inline T slope()
-    {
-        T df(0);
-        for (std::size_t i = 0; i < n; i++)
-        {
-            df += g_alpha[i] * p[i];
-        }
+    inline T slope();
 
-        return df;
-    }
-
-    class wrap : public function_fdf<T, wrap>
+  public:
+    /*! \class functionfdfWrapper
+     * \brief Wrapper for function_fdf
+     * 
+     */
+    class functionfdfWrapper : public function_fdf<T, functionfdfWrapper>
     {
       public:
         /*!
+         * \brief Construct a new functionfdf Wrapper object
+         * 
+         * \param linearFunctionWrapperRef 
+         */
+        explicit functionfdfWrapper(linearFunctionWrapper<T, TMFD> &linearFunctionWrapperRef);
+
+        /*!
          * \brief 
          * 
+         * \param alpha 
+         * \return T 
          */
-        wrap(wrapper_t<T, TMFD> &wrapper_t_ref) : w(wrapper_t_ref) {}
+        T f(T const alpha);
 
         /*!
          * \brief 
          * 
+         * \param alpha 
+         * \return T 
          */
-        T f(T const alpha)
-        {
-            //using previously cached f(alpha)
-            if (alpha == w.f_cache_key)
-            {
-                return w.f_alpha;
-            }
-
-            w.moveto(alpha);
-
-            w.f_alpha = w.wfdf->f(w.x_alpha);
-
-            w.f_cache_key = alpha;
-
-            return w.f_alpha;
-        }
+        T df(T const alpha);
 
         /*!
-         * \brief
-         *
+         * \brief 
+         * 
+         * \param alpha 
+         * \param f 
+         * \param df 
          */
-        T df(T const alpha)
-        {
-            //using previously cached df(alpha)
-            if (alpha == w.df_cache_key)
-            {
-                return w.df_alpha;
-            }
-
-            w.moveto(alpha);
-
-            if (alpha != w.g_cache_key)
-            {
-                w.wfdf->df(w.x_alpha, w.g_alpha);
-
-                w.g_cache_key = alpha;
-            }
-
-            w.df_alpha = w.slope();
-
-            w.df_cache_key = alpha;
-
-            return w.df_alpha;
-        }
-
-        /*!
-         * \brief
-         *
-         */
-        void fdf(T const alpha, T *f, T *df)
-        {
-            //Check for previously cached values
-            if (alpha == w.f_cache_key && alpha == w.df_cache_key)
-            {
-                *f = w.f_alpha;
-                *df = w.df_alpha;
-                return;
-            }
-
-            if (alpha == w.f_cache_key || alpha == w.df_cache_key)
-            {
-                *f = w.fdf_linear.f(alpha);
-                *df = w.fdf_linear.df(alpha);
-                return;
-            }
-
-            w.moveto(alpha);
-
-            w.wfdf->fdf(w.x_alpha, &w.f_alpha, w.g_alpha);
-
-            w.f_cache_key = alpha;
-            w.g_cache_key = alpha;
-
-            w.df_alpha = w.slope();
-            w.df_cache_key = alpha;
-
-            *f = w.f_alpha;
-            *df = w.df_alpha;
-        }
+        void fdf(T const alpha, T *f, T *df);
 
       private:
-        wrapper_t<T, TMFD> &w;
+        //!
+        linearFunctionWrapper<T, TMFD> &lfw;
     };
 
   private:
+    //!
     TMFD *wfdf;
-
-    //Fixed values
+    //! Read only x
     T const *x;
+    //! Read only g
     T const *g;
+    //! Read only p
     T const *p;
 
-    //Cached values, for x(alpha) = x + alpha * p
+    //! Cached values, for x(alpha) = x + alpha * p
     T f_alpha;
+    //!
     T df_alpha;
+    //!
     T *x_alpha;
+    //!
     T *g_alpha;
-
-    //Cache "keys"
+    //! Cache "keys"
     T f_cache_key;
+    //!
     T df_cache_key;
+    //!
     T x_cache_key;
+    //!
     T g_cache_key;
-
-    std::size_t n;
+    //!
+    std::size_t nsize;
 
   public:
-    wrap fdf_linear;
+    //!
+    functionfdfWrapper fdf_linear;
 };
+
+template <typename T, class TMFD>
+linearFunctionWrapper<T, TMFD>::functionfdfWrapper::functionfdfWrapper(linearFunctionWrapper<T, TMFD> &linearFunctionWrapperRef) : lfw(linearFunctionWrapperRef)
+{
+}
+
+template <typename T, class TMFD>
+T linearFunctionWrapper<T, TMFD>::functionfdfWrapper::f(T const alpha)
+{
+    //using previously cached f(alpha)
+    if (alpha == this->lfw.f_cache_key)
+    {
+        return this->lfw.f_alpha;
+    }
+
+    this->lfw.moveTo(alpha);
+    this->lfw.f_alpha = this->lfw.wfdf->f(this->lfw.x_alpha);
+    this->lfw.f_cache_key = alpha;
+
+    return this->lfw.f_alpha;
+}
+
+template <typename T, class TMFD>
+T linearFunctionWrapper<T, TMFD>::functionfdfWrapper::df(T const alpha)
+{
+    //using previously cached df(alpha)
+    if (alpha == this->lfw.df_cache_key)
+    {
+        return this->lfw.df_alpha;
+    }
+
+    this->lfw.moveTo(alpha);
+
+    if (alpha != this->lfw.g_cache_key)
+    {
+        this->lfw.wfdf->df(this->lfw.x_alpha, this->lfw.g_alpha);
+        this->lfw.g_cache_key = alpha;
+    }
+
+    this->lfw.df_alpha = this->lfw.slope();
+    this->lfw.df_cache_key = alpha;
+
+    return this->lfw.df_alpha;
+}
+
+template <typename T, class TMFD>
+void linearFunctionWrapper<T, TMFD>::functionfdfWrapper::fdf(T const alpha, T *f, T *df)
+{
+    //Check for previously cached values
+    if (alpha == this->lfw.f_cache_key && alpha == this->lfw.df_cache_key)
+    {
+        *f = this->lfw.f_alpha;
+        *df = this->lfw.df_alpha;
+        return;
+    }
+    if (alpha == this->lfw.f_cache_key || alpha == this->lfw.df_cache_key)
+    {
+        *f = this->lfw.fdf_linear.f(alpha);
+        *df = this->lfw.fdf_linear.df(alpha);
+        return;
+    }
+
+    this->lfw.moveTo(alpha);
+    this->lfw.wfdf->fdf(this->lfw.x_alpha, &this->lfw.f_alpha, this->lfw.g_alpha);
+    this->lfw.f_cache_key = alpha;
+    this->lfw.g_cache_key = alpha;
+    this->lfw.df_alpha = this->lfw.slope();
+    this->lfw.df_cache_key = alpha;
+
+    *f = this->lfw.f_alpha;
+    *df = this->lfw.df_alpha;
+}
+
+template <typename T, class TMFD>
+linearFunctionWrapper<T, TMFD>::linearFunctionWrapper() : fdf_linear(*this) {}
+
+template <typename T, class TMFD>
+void linearFunctionWrapper<T, TMFD>::prepare(TMFD *fdf, T const *xIn, T const f, T const *gIn, T const *p_, T *x_alpha_, T *g_alpha_)
+{
+    this->wfdf = fdf;
+    this->nsize = this->wfdf->n;
+    this->fdf_linear.n = this->nsize;
+
+    this->x = xIn;
+    this->f_alpha = f;
+    this->g = gIn;
+    this->p = p_;
+    this->x_alpha = x_alpha_;
+    this->g_alpha = g_alpha_;
+
+    this->x_cache_key = T{};
+    this->f_cache_key = T{};
+    this->g_cache_key = T{};
+    this->df_cache_key = T{};
+
+    std::copy(this->x, this->x + this->nsize, this->x_alpha);
+    std::copy(this->g, this->g + this->nsize, this->g_alpha);
+
+    this->df_alpha = this->slope();
+}
+
+/*!
+     * \brief 
+     * 
+     */
+template <typename T, class TMFD>
+void linearFunctionWrapper<T, TMFD>::updatePosition(T const alpha, T *xOut, T *f, T *gOut)
+{
+    //Ensure that everything is fully cached
+    {
+        T f_alpha_;
+        T df_alpha_;
+
+        this->fdf_linear.fdf(alpha, &f_alpha_, &df_alpha_);
+    }
+
+    *f = this->f_alpha;
+
+    std::copy(this->x_alpha, this->x_alpha + this->nsize, xOut);
+    std::copy(this->g_alpha, this->g_alpha + this->nsize, gOut);
+}
+
+/*!
+     * \brief 
+     * 
+     */
+template <typename T, class TMFD>
+void linearFunctionWrapper<T, TMFD>::changeDirection()
+{
+    //Convert the cache values from the end of the current minimization
+    //to those needed for the start of the next minimization, alpha=0
+
+    //The new x_alpha for alpha=0 is the current position
+    std::copy(this->x, this->x + this->nsize, this->x_alpha);
+
+    this->x_cache_key = T{};
+
+    //The function value does not change
+    this->f_cache_key = T{};
+
+    //The new g_alpha for alpha=0 is the current gradient at the endpoint
+    std::copy(this->g, this->g + this->nsize, this->g_alpha);
+
+    this->g_cache_key = T{};
+
+    //Calculate the slope along the new direction vector, p
+    this->df_alpha = this->slope();
+
+    this->df_cache_key = T{};
+}
+
+/*!
+     * \brief 
+     * 
+     */
+template <typename T, class TMFD>
+void linearFunctionWrapper<T, TMFD>::moveTo(T const alpha)
+{
+    //using previously cached position
+    if (alpha == this->x_cache_key)
+    {
+        return;
+    }
+    this->x_cache_key = alpha;
+
+    //Set \f$ x_alpha = x + alpha * p \f$
+    std::copy(this->x, this->x + this->nsize, this->x_alpha);
+
+    for (std::size_t i = 0; i < this->nsize; i++)
+    {
+        this->x_alpha[i] += alpha * this->p[i];
+    }
+}
+
+/*!
+     * \brief Compute gradient direction
+     */
+template <typename T, class TMFD>
+inline T linearFunctionWrapper<T, TMFD>::slope()
+{
+    T tmp(0);
+    for (std::size_t i = 0; i < this->nsize; i++)
+    {
+        tmp += this->g_alpha[i] * this->p[i];
+    }
+    return tmp;
+}
 
 #endif
