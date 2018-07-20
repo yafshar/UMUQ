@@ -58,7 +58,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         }
         catch (std::bad_alloc &e)
         {
-			UMUQFAILRETURN("Failed to allocate memory!");
+            UMUQFAILRETURN("Failed to allocate memory!");
         }
         return true;
     }
@@ -174,13 +174,12 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
 
     bool iterate(TMFD *fdf, T *x, T *f, T *gradient, T *dx)
     {
-
         if (pnorm == T{} || g0norm == T{} || fp0 == T{})
         {
             //set dx to zero
             std::fill(dx, dx + n, T{});
 
-			UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
+            UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
         }
 
         T alpha(0);
@@ -203,15 +202,15 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
         }
 
         //Line minimization, with cubic interpolation (order = 3)
-        bool status = minimize<T, function_fdf<T, class wrapper_t<T, TMFD>::wrap>>(&w.fdf_linear, rho, sigma,
-                                                                                   tau1, tau2, tau3, order,
-                                                                                   alpha1, &alpha);
+        bool status = minimize<T, function_fdf<T, class linearFunctionWrapper<T, TMFD>::functionfdfWrapper>>(&w.fdf_linear, rho, sigma,
+                                                                                                             tau1, tau2, tau3, order,
+                                                                                                             alpha1, &alpha);
         if (status != true)
         {
             return false;
         }
 
-        w.update_position(alpha, x, f, gradient);
+        w.updatePosition(alpha, x, f, gradient);
 
         delta_f = *f - f0;
 
@@ -338,7 +337,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
             fp0 += g0[i] * p[i];
         }
 
-        w.change_direction();
+        w.changeDirection();
 
         return true;
     }
@@ -366,7 +365,7 @@ class vector_bfgs2 : public multimin_fdfminimizer_type<T, vector_bfgs2<T, TMFD>,
     T *g_alpha;
 
     //wrapper function
-    wrapper_t<T, TMFD> w;
+    linearFunctionWrapper<T, TMFD> w;
 
     //minimization parameters
     T rho;
