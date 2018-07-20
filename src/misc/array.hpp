@@ -93,6 +93,7 @@ class ArrayWrapper
          * \return Actual value at the current index 
          */
         inline T operator*();
+        inline T const operator*() const;
 
         /*! 
          * \brief Get a pointer to the managed object or nullptr if no object is owned
@@ -504,6 +505,12 @@ inline typename ArrayWrapper<T>::iterator ArrayWrapper<T>::iterator::operator++(
  */
 template <class T>
 inline T ArrayWrapper<T>::iterator::operator*()
+{
+    return *this->iPosition;
+}
+
+template <class T>
+inline T const ArrayWrapper<T>::iterator::operator*() const
 {
     return *this->iPosition;
 }
