@@ -44,12 +44,10 @@ TEST(densityFunction_test, HandlesConstruction)
     std::cout << "multivariateGaussianDistribution = " << std::cout.width(20) << m.f(std::vector<double>{1.5, 2}.data()) << "  " << std::cout.width(20) << m.f(std::vector<double>{3, 2}.data()) << std::endl;
 
     //! Create a covariance matrix
-    EMatrix2d M2d;
-    M2d << 1, 3. / 5.,
-        3. / 5., 2.;
+    double M2d[4] ={1, 3. / 5., 3. / 5., 2.};
 
     //! A multivariate Gaussian distribution with mean zero and covariance matrix of M2d
-    multivariateGaussianDistribution<double> mvn(M2d);
+    multivariateGaussianDistribution<double> mvn(M2d, 2);
 
     //! Prepare data.
     int n = 11;
@@ -80,11 +78,9 @@ TEST(densityFunction_test, HandlesConstruction)
 
     //! Compute PDF at (x,y)
     {
-        EVector2d X;
-
         for (int i = 0; i < n * n; ++i)
         {
-            X << x[i], y[i];
+            double X[2] = {x[i], y[i]};
             pdf[i] = mvn.f(X);
             lpdf[i] = mvn.lf(X);
         }
