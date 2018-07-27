@@ -1,358 +1,162 @@
 #ifndef UMUQ_FUNCTION_H
 #define UMUQ_FUNCTION_H
 
-#include "eigenlib.hpp"
-
-/*! \class umuqfunction
+/*!\class umuqfunction
  * \brief umuqfunction is a general-purpose polymorphic function wrapper of n variables
- * 
- * The Curiously Recurring Template Pattern (CRTP) for general-purpose polymorphic function wrapper of n variables
- * This class does not satisfy the requirements of CopyConstructible and CopyAssignable
- * 
- * \sa class densityFunction
- * \sa class multimin_function
- * 
- * \tparam T   Data type
- * \tparam TF  Function type (umuqfunction is inheriting from a template class)
- *             use the derived class itself as a template parameter of the base class
+ *
+ * \tparam T  Data type
+ * \tparam F  Function type 
  */
-template <typename T, class TF>
+template <typename T, class F>
 class umuqfunction
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new umuqfunction object
      * 
      * \param Name  Function name
      */
-    umuqfunction(char const Name = "");
+	umuqfunction(char const *Name = "");
 
-    /*!
+	/*!
      * \brief Construct a new umuqfunction object
      * 
      * \param nDim  Number of dimensions (Number of parameters) 
      * \param Name  Function name
      */
-    umuqfunction(int const nDim, char const *Name = "");
+	umuqfunction(int const nDim, char const *Name = "");
 
-    /*!
+	/*!
      * \brief Construct a new umuqfunction object
      * 
      * \param Params    Input parameters of the Function object
      * \param NumParams Number of dimensions (Number of parameters) 
      * \param Name      Function name
      */
-    umuqfunction(T const *Params, int const NumParams, char const *Name = "");
+	umuqfunction(T const *Params, int const NumParams, char const *Name = "");
 
-    /*!
-     * \brief Rset the name, and number of dimension of the managed object
-     * 
-     * \param nDim   
-     * \param Name 
-     * \return true 
-     * \return false 
-     */
-    inline bool reset(int const nDim, char const *Name = "");
-    inline bool reset(T const *Params, int const NumParams, char const *Name = "");
+	/*!
+	 * \brief Construct a new umuqfunction object
+	 *  
+	 * \param Params  Input parameters of the Function object
+	 * \param Name    Function name
+	 */
+	umuqfunction(std::vector<T> const &Params, char const *Name = "");
 
-    inline std::string name();
+	/*!
+	 * \brief Move constructor, Construct a new umuqfunction object
+	 * 
+	 * \param other umuqfunction object
+	 */
+	umuqfunction(umuqfunction<T, F> &&other);
 
-    inline int size();
-
-    inline T *data();
-
-    inline T *get();
-
-    inline T f(T const x);
-    inline T f(T const *x);
-    template <typename X>
-    inline T f(X const &x);
-    template <typename Y>
-    inline T f(T const x, Y const y);
-    template <typename Y>
-    inline T f(T const *x, Y const *y);
-    template <typename X, typename Y>
-    inline T f(X const &x, Y const &y);
-
-    inline T df(T const x);
-    inline T df(T const *x);
-    template <typename X>
-    inline T df(X const &x);
-    template <typename Y>
-    inline T df(T const x, Y const y);
-    template <typename Y>
-    inline T df(T const *x, Y const *y);
-    template <typename X, typename Y>
-    inline T df(X const &x, Y const &y);
-
-    inline T lf(T const x);
-    inline T lf(T const *x);
-    template <typename X>
-    inline T lf(X const &x);
-    template <typename Y>
-    inline T lf(T const x, Y const y);
-    template <typename Y>
-    inline T lf(T const *x, Y const *y);
-    template <typename X, typename Y>
-    inline T lf(X const &x, Y const &y);
-
-    inline void fdf(T const x, T &func, T &dfunc);
-    inline void fdf(T const *x, T &func, T &dfunc);
-    template <typename Y>
-    inline void fdf(Y const &y, T &func, T &dfunc);
-    template <typename Y>
-    inline void fdf(T const x, Y const y, T &func, T &dfunc);
-    template <typename Y>
-    inline void fdf(T const *x, Y const *y, T &func, T &dfunc);
-    template <typename X, typename Y>
-    inline void fdf(X const &x, Y const &y, T &func, T &dfunc);
+	/*!
+	 * \brief Move assignment operator
+	 * 
+	 */
+	umuqfunction<T, F> &operator=(umuqfunction<T, F> &&other);
 
   private:
-    // Make it noncopyable
-    umuqfunction(umuqfunction<T, TF> const &) = delete;
+	// Make it noncopyable
+	umuqfunction(umuqfunction<T, F> const &) = delete;
 
-    // Make it not assignable
-    umuqfunction<T, TF> &operator=(umuqfunction<T, TF> const &) = delete;
+	// Make it not assignable
+	umuqfunction<T, F> &operator=(umuqfunction<T, F> const &) = delete;
 
-  private:
-    // Name of the function
-    std::string functionName;
+  public:
+	//! Name of the function
+	std::string name;
 
-    // Number of dimensions
-    std::size_t numberofDimensions;
+	//! Number of dimensions
+	std::size_t numParams;
 
-    // Function parameters
-    std::vector<T> functionParameters;
+	//! Function parameters
+	std::vector<T> params;
 
-  private:
-    friend TF;
+  public:
+	//! A general-purpose polymorphic function wrapper
+	F f;
 };
 
-template <typename T, class TF>
-umuqfunction<T, TF>::umuqfunction(char const Name) : functionName(Name),
-                                                     numberofDimensions(0)
-{
-}
-template <typename T, class TF>
-umuqfunction<T, TF>::umuqfunction(int const nDim, char const *Name = "") : functionName(Name),
-                                                                           numberofDimensions(nDim > 0 ? nDim : 0)
-{
-}
-template <typename T, class TF>
-umuqfunction<T, TF>::umuqfunction(T const *Params, int const NumParams, char const *Name = "") : functionName(Name),
-                                                                                                 numberofDimensions(NumParams > 0 ? NumParams : 0),
-                                                                                                 functionParameters(Params, Params + NumParams)
+template <typename T, class F>
+umuqfunction<T, F>::umuqfunction(char const *Name) : name(Name),
+													 numParams(0)
 {
 }
 
-template <typename T, class TF>
-void umuqfunction<T, TF>::reset(int const nDim, char const *Name = "")
+template <typename T, class F>
+umuqfunction<T, F>::umuqfunction(int const nDim, char const *Name) : name(Name),
+																	 numParams(nDim > 0 ? nDim : 0)
 {
-    this->functionName = std::string(Name);
-    this->numberofDimensions = nDim > 0 ? nDim : 0;
-    return true;
 }
 
-template <typename T, class TF>
-void umuqfunction<T, TF>::reset(T const *Params, int const NumParams, char const *Name = "")
+template <typename T, class F>
+umuqfunction<T, F>::umuqfunction(T const *Params, int const NumParams, char const *Name) : name(Name),
+																						   numParams(NumParams > 0 ? NumParams : 0),
+																						   params(Params, Params + NumParams)
 {
-
-    this->functionName = std::string(Name);
-    this->numberofDimensions = NumParams > 0 ? NumParams : 0;
-    try
-    {
-        this->functionParameters.resize(this->numberofDimensions);
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to resize memory!")
-    }
-    std::copy(Params, Params + NumParams, this->functionParameters.data());
-    return true;
 }
 
-template <typename T, class TF>
-inline std::string umuqfunction<T, TF>::name()
+template <typename T, class F>
+umuqfunction<T, F>::umuqfunction(umuqfunction<T, F> &&other) : name(other.name),
+															   numParams(other.numParams),
+															   params(std::move(other.params)),
+															   f(std::move(other.f))
 {
-    return this->functionName;
 }
 
-template <typename T, class TF>
-inline int umuqfunction<T, TF>::size()
+template <typename T, class F>
+umuqfunction<T, F> &umuqfunction<T, F>::operator=(umuqfunction<T, F> &&other)
 {
-    return static_cast<int>(this->numberofDimensions);
+	this->name = other.name;
+	this->numParams = other.numParams;
+	this->params = std::move(other.params);
+	this->f = std::move(other.f);
+
+	return *this;
 }
 
-template <typename T, class TF>
-inline T *umuqfunction<T, TF>::data()
-{
-    return this->functionParameters.data();
-}
+/*!
+ * \brief Instances of std::function as f(x) 
+ * 
+ * \tparam T  IN/OUT data type
+ */
+template <typename T>
+using FUN_x = std::function<T(T const)>;
 
-template <typename T, class TF>
-inline T *umuqfunction<T, TF>::get()
-{
-    return this->functionParameters.data();
-}
+/*!
+ * \brief Instances of std::function as f(*x) 
+ * 
+ * \tparam T  IN/OUT data type
+ */
+template <typename T>
+using FUN_x_p = std::function<T(T *)>;
 
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::f(T const x)
-{
-    return static_cast<T *>(this)->f(x);
-}
+/*!
+ * \brief Instances of std::function as f(&x) 
+ * 
+ * \tparam T  OUT data type
+ * \tparam V  IN data type
+ */
+template <typename T, class V>
+using FUN_x_v = std::function<T(V const &)>;
 
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::f(T const *x)
-{
-    return static_cast<T *>(this)->f(x);
-}
+/*!
+ * \brief Instances of std::function as f(x,y) 
+ * 
+ * \tparam T IN/OUT data type
+ * \tparam Y IN data type of the second variable 
+ */
+template <typename T, typename Y = T>
+using FUN_xy = std::function<T(T const, Y const)>;
 
-template <typename T, class TF>
-template <typename X>
-inline T umuqfunction<T, TF>::f(X const &x)
-{
-    return static_cast<T *>(this)->f(y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::f(T const x, Y const y)
-{
-    return static_cast<T *>(this)->f(x, y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::f(T const *x, Y const *y)
-{
-    return static_cast<T *>(this)->f(x, y);
-}
-
-template <typename T, class TF>
-template <typename X, typename Y>
-inline T umuqfunction<T, TF>::f(X const &x, Y const &y)
-{
-    return static_cast<T *>(this)->f(x, y);
-}
-
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::df(T const x)
-{
-    return static_cast<T *>(this)->df(x);
-}
-
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::df(T const *x)
-{
-    return static_cast<T *>(this)->df(x);
-}
-
-template <typename T, class TF>
-template <typename X>
-inline T umuqfunction<T, TF>::df(X const &x)
-{
-    return static_cast<T *>(this)->df(y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::df(T const x, Y const y)
-{
-    return static_cast<T *>(this)->df(x, y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::df(T const *x, Y const *y)
-{
-    return static_cast<T *>(this)->df(x, y);
-}
-
-template <typename T, class TF>
-template <typename X, typename Y>
-inline T umuqfunction<T, TF>::df(X const &x, Y const &y)
-{
-    return static_cast<T *>(this)->df(x, y);
-}
-
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::lf(T const x)
-{
-    return static_cast<T *>(this)->lf(x);
-}
-
-template <typename T, class TF>
-inline T umuqfunction<T, TF>::lf(T const *x)
-{
-    return static_cast<T *>(this)->lf(x);
-}
-
-template <typename T, class TF>
-template <typename X>
-inline T umuqfunction<T, TF>::lf(X const &x)
-{
-    return static_cast<T *>(this)->lf(y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::lf(T const x, Y const y)
-{
-    return static_cast<T *>(this)->lf(x, y);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline T umuqfunction<T, TF>::lf(T const *x, Y const *y)
-{
-    return static_cast<T *>(this)->lf(x, y);
-}
-
-template <typename T, class TF>
-template <typename X, typename Y>
-inline T umuqfunction<T, TF>::lf(X const &x, Y const &y)
-{
-    return static_cast<T *>(this)->lf(x, y);
-}
-
-template <typename T, class TF>
-inline void umuqfunction<T, TF>::fdf(T const x, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, func, dfunc);
-}
-
-template <typename T, class TF>
-inline void umuqfunction<T, TF>::fdf(T const *x, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, func, dfunc);
-}
-
-template <typename T, class TF>
-template <typename X>
-inline void umuqfunction<T, TF>::fdf(X const &x, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, func, dfunc);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline void umuqfunction<T, TF>::fdf(T const x, Y const y, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, y, func, dfunc);
-}
-
-template <typename T, class TF>
-template <typename Y>
-inline void umuqfunction<T, TF>::fdf(T const *x, Y const *y, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, y, func, dfunc);
-}
-
-template <typename T, class TF>
-template <typename X, typename Y>
-inline void umuqfunction<T, TF>::fdf(X const &x, Y const &y, T &func, T &dfunc)
-{
-    static_cast<T *>(this)->fdf(x, y, func, dfunc);
-}
+/*!
+ * \brief Instances of std::function as f(*x,*y) 
+ * 
+ * \tparam T IN/OUT data type
+ * \tparam T IN data type of the second variable
+ */
+template <typename T, typename Y = T>
+using FUN_xy_p = std::function<T(T *, Y *)>;
 
 #endif // UMUQ_FUNCTION_H
