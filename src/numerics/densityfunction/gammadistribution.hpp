@@ -23,40 +23,40 @@
  * \tparam T Data type
  */
 template <typename T>
-class gammaDistribution : public densityFunction<T, gammaDistribution<T>>
+class gammaDistribution : public densityFunction<T, FUN_x<T>>
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new Gamma distribution object
      * 
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      */
-    gammaDistribution(T const alpha, T const beta = T{1});
+	gammaDistribution(T const alpha, T const beta = T{1});
 
-    /*!
+	/*!
 	 * \brief Destroy the Gamma distribution object
 	 * 
 	 */
-    ~gammaDistribution() {}
+	~gammaDistribution() {}
 
-    /*!
+	/*!
      * \brief Gamma distribution density function
      * 
      * \param x Input value
      * 
      * \returns Density function value 
      */
-    inline T f(T const x);
+	inline T gammaDistribution_f(T const x);
 
-    /*!
+	/*!
      * \brief Log of Gamma distribution density function
      * 
      * \param x Input value
      * 
      * \returns  Log of density function value 
      */
-    inline T lf(T const x);
+	inline T gammaDistribution_lf(T const x);
 };
 
 /*!
@@ -66,7 +66,11 @@ class gammaDistribution : public densityFunction<T, gammaDistribution<T>>
  * \param beta   Scale parameter \f$ beta\f$
  */
 template <typename T>
-gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, gammaDistribution<T>>(std::vector<T>{alpha, beta}.data(), 2, "gamma") {}
+gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, FUN_x<T>>(std::vector<T>{alpha, beta}.data(), 2, "gamma")
+{
+	this->f = std::bind(&gammaDistribution<T>::gammaDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&gammaDistribution<T>::gammaDistribution_lf, this, std::placeholders::_1);
+}
 
 /*!
  * \brief Gamma distribution density function
@@ -76,34 +80,34 @@ gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFu
  * \returns Density function value 
  */
 template <typename T>
-inline T gammaDistribution<T>::f(T const x)
+inline T gammaDistribution<T>::gammaDistribution_f(T const x)
 {
-    if (x < T{})
-    {
-        return T{};
-    }
-    else if (x == T{})
-    {
-        if (this->params[0] == static_cast<T>(1))
-        {
-            return static_cast<T>(1) / this->params[1];
-        }
-        else
-        {
-            return T{};
-        }
-    }
-    else if (this->params[0] == static_cast<T>(1))
-    {
-        return std::exp(-x / this->params[1]) / this->params[1];
-    }
-    else
-    {
-        return std::exp((this->params[0] - static_cast<T>(1)) *
-                            std::log(x / this->params[1]) -
-                        x / this->params[1] - std::lgamma(this->params[0])) /
-               this->params[1];
-    }
+	if (x < T{})
+	{
+		return T{};
+	}
+	else if (x == T{})
+	{
+		if (this->params[0] == static_cast<T>(1))
+		{
+			return static_cast<T>(1) / this->params[1];
+		}
+		else
+		{
+			return T{};
+		}
+	}
+	else if (this->params[0] == static_cast<T>(1))
+	{
+		return std::exp(-x / this->params[1]) / this->params[1];
+	}
+	else
+	{
+		return std::exp((this->params[0] - static_cast<T>(1)) *
+							std::log(x / this->params[1]) -
+						x / this->params[1] - std::lgamma(this->params[0])) /
+			   this->params[1];
+	}
 }
 
 /*!
@@ -114,9 +118,9 @@ inline T gammaDistribution<T>::f(T const x)
  * \returns  Log of density function value 
  */
 template <typename T>
-inline T gammaDistribution<T>::lf(T const x)
+inline T gammaDistribution<T>::gammaDistribution_lf(T const x)
 {
-    return x < T{} ? -std::numeric_limits<T>::infinity() : -std::lgamma(this->params[0]) - this->params[0] * std::log(this->params[1]) + (this->params[0] - static_cast<T>(1)) * std::log(x) - x / this->params[1];
+	return x < T{} ? -std::numeric_limits<T>::infinity() : -std::lgamma(this->params[0]) - this->params[0] * std::log(this->params[1]) + (this->params[0] - static_cast<T>(1)) * std::log(x) - x / this->params[1];
 }
 
 #endif // UMUQ_GAMMADISTRIBUTION_H

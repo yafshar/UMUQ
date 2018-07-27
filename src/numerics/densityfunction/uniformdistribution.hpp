@@ -19,40 +19,40 @@
  * \tparam T Data type
  */
 template <typename T>
-class uniformDistribution : public densityFunction<T, uniformDistribution<T>>
+class uniformDistribution : public densityFunction<T, FUN_x<T>>
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new uniform Distribution object
      * 
      * \param a Lower bound
      * \param b Upper bound
      */
-    uniformDistribution(T const a, T const b);
+	uniformDistribution(T const a, T const b);
 
-    /*!
+	/*!
      * \brief Destroy the uniform Distribution object
      * 
      */
-    ~uniformDistribution(){}
+	~uniformDistribution() {}
 
-    /*!
+	/*!
      * \brief Uniform distribution density function
      * 
      * \param x Input value
      * 
      * \returns Density function value 
      */
-    inline T f(T const x);
+	inline T uniformDistribution_f(T const x);
 
-    /*!
+	/*!
      * \brief Log of Uniform distribution density function
      * 
      * \param x Input value
      * 
      * \returns  Log of density function value 
      */
-    inline T lf(T const x);
+	inline T uniformDistribution_lf(T const x);
 };
 
 /*!
@@ -62,7 +62,11 @@ class uniformDistribution : public densityFunction<T, uniformDistribution<T>>
  * \param b Upper bound
  */
 template <typename T>
-uniformDistribution<T>::uniformDistribution(T const a, T const b) : densityFunction<T, uniformDistribution<T>>(std::vector<T>{a, b}.data(), 2, "uniform") {}
+uniformDistribution<T>::uniformDistribution(T const a, T const b) : densityFunction<T, FUN_x<T>>(std::vector<T>{a, b}.data(), 2, "uniform")
+{
+	this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+}
 
 /*!
  * \brief Uniform distribution density function
@@ -72,9 +76,9 @@ uniformDistribution<T>::uniformDistribution(T const a, T const b) : densityFunct
  * \returns Density function value 
  */
 template <typename T>
-inline T uniformDistribution<T>::f(T const x)
+inline T uniformDistribution<T>::uniformDistribution_f(T const x)
 {
-    return (x < this->params[1] && x >= this->params[0]) ? static_cast<T>(1) / (this->params[1] - this->params[0]) : T{};
+	return (x < this->params[1] && x >= this->params[0]) ? static_cast<T>(1) / (this->params[1] - this->params[0]) : T{};
 }
 
 /*!
@@ -85,9 +89,9 @@ inline T uniformDistribution<T>::f(T const x)
  * \returns  Log of density function value 
  */
 template <typename T>
-inline T uniformDistribution<T>::lf(T const x)
+inline T uniformDistribution<T>::uniformDistribution_lf(T const x)
 {
-    return (x < this->params[1] && x >= this->params[0]) ? -std::log(this->params[1] - this->params[0]) : std::numeric_limits<T>::infinity();
+	return (x < this->params[1] && x >= this->params[0]) ? -std::log(this->params[1] - this->params[0]) : std::numeric_limits<T>::infinity();
 }
 
 #endif // UMUQ_DENSITYFUNCTION_H

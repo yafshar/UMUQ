@@ -23,56 +23,56 @@
  * p(x_1,\cdots,x_k) = \frac{1}{\sqrt{(2 \pi)^k |\Sigma|}} \exp \left(-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)\right).
  * \f]
  */
-template <typename T>
-class multivariategaussianDistribution : public densityFunction<T, multivariategaussianDistribution<T>>
+template <typename T, class V = T const *>
+class multivariategaussianDistribution : public densityFunction<T, std::function<T(V)>>
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object
      *
      * \param imean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      */
-    multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+	multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object
      * 
      * \param imean        Input mean vector of size \f$n\f$
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      */
-    multivariategaussianDistribution(T const *imean, T const *icovariance, int const n);
+	multivariategaussianDistribution(T const *imean, T const *icovariance, int const n);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      */
-    explicit multivariategaussianDistribution(EMatrixX<T> const &icovariance);
+	explicit multivariategaussianDistribution(EMatrixX<T> const &icovariance);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
      * 
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      */
-    multivariategaussianDistribution(T const *icovariance, int const n);
+	multivariategaussianDistribution(T const *icovariance, int const n);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0, covariance=I)
      * 
      * \param n vector size
      */
-    explicit multivariategaussianDistribution(int const n);
+	explicit multivariategaussianDistribution(int const n);
 
-    /*!
+	/*!
 	 * \brief Destroy the multinomial distribution object
 	 * 
 	 */
-    ~multivariategaussianDistribution() {}
+	~multivariategaussianDistribution() {}
 
-    /*!
+	/*!
      * \brief Multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
      * 
@@ -80,19 +80,9 @@ class multivariategaussianDistribution : public densityFunction<T, multivariateg
      * 
      * \returns Density function value 
      */
-    inline T f(T const *x);
+	inline T multivariategaussianDistribution_f(T const *x);
 
-    /*!
-     * \brief Multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param X  Input vector of size \f$ n \f$
-     * 
-     * \returns Density function value 
-     */
-    inline T f(EVectorX<T> const &X);
-
-    /*!
+	/*!
      * \brief Log of multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
      * 
@@ -100,21 +90,11 @@ class multivariategaussianDistribution : public densityFunction<T, multivariateg
      * 
      * \returns  Log of density function value 
      */
-    inline T lf(T const *x);
-
-    /*!
-     * \brief Log of multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param X  Input vector of size \f$ n \f$
-     * 
-     * \returns  Log of density function value 
-     */
-    inline T lf(EVectorX<T> const &X);
+	inline T multivariategaussianDistribution_lf(T const *x);
 
   private:
-    //! Psuedo Random number
-    psrandom<T> prng;
+	//! Psuedo Random number
+	psrandom<T> prng;
 };
 
 /*!
@@ -123,15 +103,17 @@ class multivariategaussianDistribution : public densityFunction<T, multivariateg
  * \param imean        Mean vector of size \f$n\f$
  * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
  */
-template <typename T>
-multivariategaussianDistribution<T>::multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
+template <typename T, class V>
+multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
 {
-    if (!this->prng.set_mvnormal(imean, icovariance))
-    {
-        UMUQFAIL("Failed to set mvnormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = imean.size();
+	if (!this->prng.set_mvnormal(imean, icovariance))
+	{
+		UMUQFAIL("Failed to set mvnormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = imean.size();
+	this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -141,15 +123,17 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(EVectorX<T
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  * \param n            Vector size
  */
-template <typename T>
-multivariategaussianDistribution<T>::multivariategaussianDistribution(T const *imean, T const *icovariance, int const n)
+template <typename T, class V>
+multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const *imean, T const *icovariance, int const n)
 {
-    if (!this->prng.set_mvnormal(imean, icovariance, n))
-    {
-        UMUQFAIL("Failed to set mvnormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvnormal(imean, icovariance, n))
+	{
+		UMUQFAIL("Failed to set mvnormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -157,15 +141,17 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(T const *i
  *
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  */
-template <typename T>
-multivariategaussianDistribution<T>::multivariategaussianDistribution(EMatrixX<T> const &icovariance)
+template <typename T, class V>
+multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EMatrixX<T> const &icovariance)
 {
-    if (!this->prng.set_mvnormal(icovariance))
-    {
-        UMUQFAIL("Failed to set mvnormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = icovariance.rows();
+	if (!this->prng.set_mvnormal(icovariance))
+	{
+		UMUQFAIL("Failed to set mvnormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = icovariance.rows();
+	this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -174,15 +160,17 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(EMatrixX<T
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  * \param n            Vector size
  */
-template <typename T>
-multivariategaussianDistribution<T>::multivariategaussianDistribution(T const *icovariance, int const n)
+template <typename T, class V>
+multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const *icovariance, int const n)
 {
-    if (!this->prng.set_mvnormal(icovariance, n))
-    {
-        UMUQFAIL("Failed to set mvnormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvnormal(icovariance, n))
+	{
+		UMUQFAIL("Failed to set mvnormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -190,15 +178,17 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(T const *i
  * 
  * \param n vector size
  */
-template <typename T>
-multivariategaussianDistribution<T>::multivariategaussianDistribution(int const n)
+template <typename T, class V>
+multivariategaussianDistribution<T, V>::multivariategaussianDistribution(int const n)
 {
-    if (!this->prng.set_mvnormal(n))
-    {
-        UMUQFAIL("Failed to set mvnormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvnormal(n))
+	{
+		UMUQFAIL("Failed to set mvnormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -209,38 +199,17 @@ multivariategaussianDistribution<T>::multivariategaussianDistribution(int const 
  * 
  * \returns Density function value 
  */
-template <typename T>
-inline T multivariategaussianDistribution<T>::f(T const *x)
+template <typename T, class V>
+inline T multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f(T const *x)
 {
-    T denom = std::pow(M_2PI, this->numParams) * this->prng.mvnormal->lu.determinant();
+	T denom = std::pow(M_2PI, this->numParams) * this->prng.mvnormal->lu.determinant();
 
-    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
+	EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
 
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
+	// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+	T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
 
-    return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-}
-
-/*!
- * \brief Multivariate Gaussian distribution density function
- * Computes the probability from the Multivariate Gaussian distribution
- * 
- * \param X  Input vector of size \f$ n \f$
- * 
- * \returns Density function value 
- */
-template <typename T>
-inline T multivariategaussianDistribution<T>::f(EVectorX<T> const &X)
-{
-    T denom = std::pow(M_2PI, this->numParams) * this->prng.mvnormal->lu.determinant();
-
-    EVectorX<T> ax = X - this->prng.mvnormal->mean;
-
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
-
-    return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+	return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
 }
 
 /*!
@@ -251,34 +220,15 @@ inline T multivariategaussianDistribution<T>::f(EVectorX<T> const &X)
  * 
  * \returns  Log of density function value 
  */
-template <typename T>
-inline T multivariategaussianDistribution<T>::lf(T const *x)
+template <typename T, class V>
+inline T multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf(T const *x)
 {
-    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
+	EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvnormal->mean;
 
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
+	// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+	T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
 
-    return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng.mvnormal->lu.determinant()));
-}
-
-/*!
- * \brief Log of multivariate Gaussian distribution density function
- * Computes the probability from the Multivariate Gaussian distribution
- * 
- * \param X  Input vector of size \f$ n \f$
- * 
- * \returns  Log of density function value 
- */
-template <typename T>
-inline T multivariategaussianDistribution<T>::lf(EVectorX<T> const &X)
-{
-    EVectorX<T> ax = X - this->prng.mvnormal->mean;
-
-    // Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvnormal->lu.inverse() * ax;
-
-    return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(this->prng.mvnormal->lu.determinant()));
+	return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng.mvnormal->lu.determinant()));
 }
 
 /*! \class multivariateGaussianDistribution
@@ -301,56 +251,56 @@ inline T multivariategaussianDistribution<T>::lf(EVectorX<T> const &X)
  * 
  * \tparam T Data type
  */
-template <typename T>
-class multivariateGaussianDistribution : public densityFunction<T, multivariateGaussianDistribution<T>>
+template <typename T, class V = T const *>
+class multivariateGaussianDistribution : public densityFunction<T, std::function<T(V)>>
 {
   public:
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object
      *
      * \param imean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      */
-    multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+	multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object
      * 
      * \param imean        Input mean vector of size \f$n\f$
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      */
-    multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n);
+	multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      */
-    explicit multivariateGaussianDistribution(EMatrixX<T> const &icovariance);
+	explicit multivariateGaussianDistribution(EMatrixX<T> const &icovariance);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
      * 
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      */
-    multivariateGaussianDistribution(T const *icovariance, int const n);
+	multivariateGaussianDistribution(T const *icovariance, int const n);
 
-    /*!
+	/*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0, covariance=I)
      * 
      * \param n vector size
      */
-    explicit multivariateGaussianDistribution(int const n);
+	explicit multivariateGaussianDistribution(int const n);
 
-    /*!
+	/*!
 	 * \brief Destroy the multinomial distribution object
 	 * 
 	 */
-    ~multivariateGaussianDistribution() {}
+	~multivariateGaussianDistribution() {}
 
-    /*!
+	/*!
      * \brief Multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
      * 
@@ -358,19 +308,9 @@ class multivariateGaussianDistribution : public densityFunction<T, multivariateG
      * 
      * \returns Density function value 
      */
-    inline T f(T const *x);
+	inline T multivariateGaussianDistribution_f(T const *x);
 
-    /*!
-     * \brief Multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param X  Input vector of size \f$ n \f$
-     * 
-     * \returns Density function value 
-     */
-    inline T f(EVectorX<T> const &X);
-
-    /*!
+	/*!
      * \brief Log of multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
      * 
@@ -378,21 +318,11 @@ class multivariateGaussianDistribution : public densityFunction<T, multivariateG
      * 
      * \returns  Log of density function value 
      */
-    inline T lf(T const *x);
-
-    /*!
-     * \brief Log of multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param X  Input vector of size \f$ n \f$
-     * 
-     * \returns  Log of density function value 
-     */
-    inline T lf(EVectorX<T> const &X);
+	inline T multivariateGaussianDistribution_lf(T const *x);
 
   private:
-    //! Psuedo Random number
-    psrandom<T> prng;
+	//! Psuedo Random number
+	psrandom<T> prng;
 };
 
 /*!
@@ -401,15 +331,17 @@ class multivariateGaussianDistribution : public densityFunction<T, multivariateG
  * \param imean        Mean vector of size \f$n\f$
  * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
  */
-template <typename T>
-multivariateGaussianDistribution<T>::multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
+template <typename T, class V>
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
 {
-    if (!this->prng.set_mvNormal(imean, icovariance))
-    {
-        UMUQFAIL("Failed to set mvNormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = imean.size();
+	if (!this->prng.set_mvNormal(imean, icovariance))
+	{
+		UMUQFAIL("Failed to set mvNormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = imean.size();
+	this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -419,15 +351,17 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(EVectorX<T
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  * \param n            Vector size
  */
-template <typename T>
-multivariateGaussianDistribution<T>::multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n)
+template <typename T, class V>
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n)
 {
-    if (!this->prng.set_mvNormal(imean, icovariance, n))
-    {
-        UMUQFAIL("Failed to set mvNormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvNormal(imean, icovariance, n))
+	{
+		UMUQFAIL("Failed to set mvNormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -435,15 +369,17 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(T const *i
  *
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  */
-template <typename T>
-multivariateGaussianDistribution<T>::multivariateGaussianDistribution(EMatrixX<T> const &icovariance)
+template <typename T, class V>
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EMatrixX<T> const &icovariance)
 {
-    if (!this->prng.set_mvNormal(icovariance))
-    {
-        UMUQFAIL("Failed to set mvNormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = icovariance.rows();
+	if (!this->prng.set_mvNormal(icovariance))
+	{
+		UMUQFAIL("Failed to set mvNormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = icovariance.rows();
+	this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -452,15 +388,17 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(EMatrixX<T
  * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
  * \param n            Vector size
  */
-template <typename T>
-multivariateGaussianDistribution<T>::multivariateGaussianDistribution(T const *icovariance, int const n)
+template <typename T, class V>
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *icovariance, int const n)
 {
-    if (!this->prng.set_mvNormal(icovariance, n))
-    {
-        UMUQFAIL("Failed to set mvNormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvNormal(icovariance, n))
+	{
+		UMUQFAIL("Failed to set mvNormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -468,15 +406,17 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(T const *i
  * 
  * \param n vector size
  */
-template <typename T>
-multivariateGaussianDistribution<T>::multivariateGaussianDistribution(int const n)
+template <typename T, class V>
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(int const n)
 {
-    if (!this->prng.set_mvNormal(n))
-    {
-        UMUQFAIL("Failed to set mvNormal object!");
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
+	if (!this->prng.set_mvNormal(n))
+	{
+		UMUQFAIL("Failed to set mvNormal object!");
+	}
+	this->name = std::string("multivariategaussian");
+	this->numParams = n;
+	this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -487,38 +427,17 @@ multivariateGaussianDistribution<T>::multivariateGaussianDistribution(int const 
  * 
  * \returns Density function value 
  */
-template <typename T>
-inline T multivariateGaussianDistribution<T>::f(T const *x)
+template <typename T, class V>
+inline T multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f(T const *x)
 {
-    T denom = std::pow(M_2PI, this->numParams) * this->prng.mvNormal->lu.determinant();
+	T denom = std::pow(M_2PI, this->numParams) * this->prng.mvNormal->lu.determinant();
 
-    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
+	EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
 
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
+	// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+	T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
 
-    return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-}
-
-/*!
- * \brief Multivariate Gaussian distribution density function
- * Computes the probability from the Multivariate Gaussian distribution
- * 
- * \param X  Input vector of size \f$ n \f$
- * 
- * \returns Density function value 
- */
-template <typename T>
-inline T multivariateGaussianDistribution<T>::f(EVectorX<T> const &X)
-{
-    T denom = std::pow(M_2PI, X.rows()) * this->prng.mvNormal->lu.determinant();
-
-    EVectorX<T> ax = X - this->prng.mvNormal->mean;
-
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
-
-    return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
+	return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
 }
 
 /*!
@@ -529,34 +448,15 @@ inline T multivariateGaussianDistribution<T>::f(EVectorX<T> const &X)
  * 
  * \returns  Log of density function value 
  */
-template <typename T>
-inline T multivariateGaussianDistribution<T>::lf(T const *x)
+template <typename T, class V>
+inline T multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf(T const *x)
 {
-    EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
+	EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng.mvNormal->mean;
 
-    // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
+	// Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
+	T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
 
-    return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng.mvNormal->lu.determinant()));
-}
-
-/*!
- * \brief Log of multivariate Gaussian distribution density function
- * Computes the probability from the Multivariate Gaussian distribution
- * 
- * \param X  Input vector of size \f$ n \f$
- * 
- * \returns  Log of density function value 
- */
-template <typename T>
-inline T multivariateGaussianDistribution<T>::lf(EVectorX<T> const &X)
-{
-    EVectorX<T> ax = X - this->prng.mvNormal->mean;
-
-    // Mahalanobis distance between \f$ X \f$ and \f$\ mu \f$
-    T MDistSq = ax.transpose() * this->prng.mvNormal->lu.inverse() * ax;
-
-    return -0.5 * (MDistSq + X.rows() * M_L2PI + std::log(this->prng.mvNormal->lu.determinant()));
+	return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng.mvNormal->lu.determinant()));
 }
 
 #endif // UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H

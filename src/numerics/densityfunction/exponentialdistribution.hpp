@@ -16,7 +16,7 @@
  * \tparam T Data type
  */
 template <typename T>
-class exponentialDistribution : public densityFunction<T, exponentialDistribution<T>>
+class exponentialDistribution : public densityFunction<T, FUN_x<T>>
 {
   public:
     /*!
@@ -39,7 +39,7 @@ class exponentialDistribution : public densityFunction<T, exponentialDistributio
      * 
      * \returns Density function value 
      */
-    inline T f(T const x);
+    inline T exponentialDistribution_f(T const x);
 
     /*!
      * \brief Log of exponential distribution density function
@@ -48,7 +48,7 @@ class exponentialDistribution : public densityFunction<T, exponentialDistributio
      * 
      * \returns  Log of density function value 
      */
-    inline T lf(T const x);
+    inline T exponentialDistribution_lf(T const x);
 
   private:
     /*!
@@ -64,7 +64,11 @@ class exponentialDistribution : public densityFunction<T, exponentialDistributio
  * \param mu Mean, \f$ \mu \f$
  */
 template <typename T>
-exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, exponentialDistribution<T>>(&mu, 1, "exponential") {}
+exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, FUN_x<T>>(&mu, 1, "exponential") 
+{
+	this->f = std::bind(&exponentialDistribution<T>::exponentialDistribution_f, this, std::placeholders::_1);
+	this->lf = std::bind(&exponentialDistribution<T>::exponentialDistribution_lf, this, std::placeholders::_1);
+}
 
 /*!
  * \brief Exponential distribution density function
@@ -74,7 +78,7 @@ exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunctio
  * \returns Density function value 
  */
 template <typename T>
-inline T exponentialDistribution<T>::f(T const x)
+inline T exponentialDistribution<T>::exponentialDistribution_f(T const x)
 {
     return x < T{} ? T{} : std::exp(-x / this->params[0]) / this->params[0];
 }
@@ -87,7 +91,7 @@ inline T exponentialDistribution<T>::f(T const x)
  * \returns  Log of density function value 
  */
 template <typename T>
-inline T exponentialDistribution<T>::lf(T const x)
+inline T exponentialDistribution<T>::exponentialDistribution_lf(T const x)
 {
     return x < this->params[0] ? std::numeric_limits<T>::infinity() : -std::log(this->params[0] - x / this->params[0]);
 }
