@@ -69,219 +69,34 @@ class stdata
      * \brief Default constructor
      *    
      */
-	stdata() : nDim(0),
-			   maxGenerations(0),
-			   populationSize(0),
-			   lastPopulationSize(0),
-			   auxilSize(0),
-			   minChainLength(1),
-			   maxChainLength(1),
-			   seed(280675),
-			   samplingType(0),
-			   priorType(0),
-			   iPlot(0),
-			   saveData(1),
-			   useCmaProposal(0),
-			   useLocalCovariance(0),
-			   lb(-static_cast<T>(6)),
-			   ub(static_cast<T>(6)),
-			   TolCOV(static_cast<T>(1)),
-			   bbeta(static_cast<T>(0.2)),
-			   localScale(0),
-			   options(){};
+	stdata();
 
 	/*!
      * \brief constructor for the default input variables
      *    
      */
-	stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(probdim),
-																  maxGenerations(MaxGenerations),
-																  populationSize(PopulationSize),
-																  lastPopulationSize(PopulationSize),
-																  auxilSize(0),
-																  minChainLength(1),
-																  maxChainLength(1),
-																  seed(280675),
-																  samplingType(0),
-																  priorType(0),
-																  iPlot(0),
-																  saveData(1),
-																  useCmaProposal(0),
-																  useLocalCovariance(0),
-																  lb(-static_cast<T>(6)),
-																  ub(static_cast<T>(6)),
-																  TolCOV(static_cast<T>(1)),
-																  bbeta(static_cast<T>(0.2)),
-																  localScale(0),
-																  options()
-	{
-		try
-		{
-			eachPopulationSize.reset(new int[maxGenerations]);
-			lowerBound.reset(new T[nDim]());
-			upperBound.reset(new T[nDim]());
-			priorMu.reset(new T[nDim]());
-			priorSigma.reset(new T[nDim * nDim]());
-			localCovariance.reset(new T[populationSize * nDim * nDim]());
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAIL("Failed to allocate memory!");
-		}
-
-		for (int i = 0, k = 0; i < nDim; i++)
-		{
-			for (int j = 0; j < nDim; j++, k++)
-			{
-				if (i == j)
-				{
-					priorSigma[k] = static_cast<T>(1);
-				}
-			}
-		}
-
-		std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
-
-		for (int i = 0, l = 0; i < populationSize; i++)
-		{
-			for (int j = 0; j < nDim; j++)
-			{
-				for (int k = 0; k < nDim; k++, l++)
-				{
-					if (j == k)
-					{
-						localCovariance[l] = static_cast<T>(1);
-					}
-				}
-			}
-		}
-	}
+	stdata(int probdim, int MaxGenerations, int PopulationSize);
 
 	/*!
 	 * \brief Move constructor, construct a new stdata object from an input object
      * 
-     * \param inputSD  Input stdata object
+     * \param other  Input stdata object
 	 */
-	stdata(stdata<T> &&inputSD)
-	{
-		nDim = inputSD.nDim;
-		maxGenerations = inputSD.maxGenerations;
-		populationSize = inputSD.populationSize;
-		lastPopulationSize = inputSD.lastPopulationSize;
-		auxilSize = inputSD.auxilData;
-		minChainLength = inputSD.minChainLength;
-		maxChainLength = inputSD.maxChainLength;
-		seed = inputSD.seed;
-		samplingType = inputSD.samplingType;
-		priorType = inputSD.priorType;
-		iPlot = inputSD.iPlot;
-		saveData = inputSD.saveData;
-		useCmaProposal = inputSD.useCmaProposal;
-		useLocalCovariance = inputSD.useLocalCovariance;
-		lb = inputSD.lb;
-		ub = inputSD.ub;
-		TolCOV = inputSD.TolCOV;
-		bbeta = inputSD.bbeta;
-		localScale = inputSD.localScale;
-		options.Display = inputSD.options.Display;
-		options.MaxIter = inputSD.options.MaxIter;
-		options.Step = inputSD.options.Step;
-		options.Tolerance = inputSD.options.Tolerance;
-		eachPopulationSize = std::move(inputSD.eachPopulationSize);
-		lowerBound = std::move(inputSD.lowerBound);
-		upperBound = std::move(inputSD.upperBound);
-		compositePriorDistribution = std::move(inputSD.compositePriorDistribution);
-		priorMu = std::move(inputSD.priorMu);
-		priorSigma = std::move(inputSD.priorSigma);
-		auxilData = std::move(inputSD.auxilData);
-		initMean = std::move(inputSD.initMean);
-		localCovariance = std::move(inputSD.localCovariance);
-	}
+	stdata(stdata<T> &&other);
+
+	/*!
+     * \brief Default destructor 
+     *    
+     */
+	~stdata() {}
 
 	/*!
 	 * \brief Move assignment operator
 	 * 
-	 * \param inputSD 
+	 * \param other 
 	 * \return stdata<T>& 
 	 */
-	stdata<T> &operator=(stdata<T> &&inputSD)
-	{
-		nDim = inputSD.nDim;
-		maxGenerations = inputSD.maxGenerations;
-		populationSize = inputSD.populationSize;
-		lastPopulationSize = inputSD.lastPopulationSize;
-		auxilSize = inputSD.auxilData;
-		minChainLength = inputSD.minChainLength;
-		maxChainLength = inputSD.maxChainLength;
-		seed = inputSD.seed;
-		samplingType = inputSD.samplingType;
-		priorType = inputSD.priorType;
-		iPlot = inputSD.iPlot;
-		saveData = inputSD.saveData;
-		useCmaProposal = inputSD.useCmaProposal;
-		useLocalCovariance = inputSD.useLocalCovariance;
-		lb = inputSD.lb;
-		ub = inputSD.ub;
-		TolCOV = inputSD.TolCOV;
-		bbeta = inputSD.bbeta;
-		localScale = inputSD.localScale;
-		options.Display = inputSD.options.Display;
-		options.MaxIter = inputSD.options.MaxIter;
-		options.Step = inputSD.options.Step;
-		options.Tolerance = inputSD.options.Tolerance;
-		eachPopulationSize = std::move(inputSD.eachPopulationSize);
-		lowerBound = std::move(inputSD.lowerBound);
-		upperBound = std::move(inputSD.upperBound);
-		compositePriorDistribution = std::move(inputSD.compositePriorDistribution);
-		priorMu = std::move(inputSD.priorMu);
-		priorSigma = std::move(inputSD.priorSigma);
-		auxilData = std::move(inputSD.auxilData);
-		initMean = std::move(inputSD.initMean);
-		localCovariance = std::move(inputSD.localCovariance);
-
-		return *this;
-	}
-
-	/*!
-	 * \brief Swap the stdata objects
-	 * 
-	 * \param inputSD 
-	 */
-	void swap(stdata<T> &inputSD)
-	{
-		std::swap(nDim, inputSD.nDim);
-		std::swap(maxGenerations, inputSD.maxGenerations);
-		std::swap(populationSize, inputSD.populationSize);
-		std::swap(lastPopulationSize, inputSD.lastPopulationSize);
-		std::swap(auxilSize, inputSD.auxilData);
-		std::swap(minChainLength, inputSD.minChainLength);
-		std::swap(maxChainLength, inputSD.maxChainLength);
-		std::swap(seed, inputSD.seed);
-		std::swap(samplingType, inputSD.samplingType);
-		std::swap(priorType, inputSD.priorType);
-		std::swap(iPlot, inputSD.iPlot);
-		std::swap(saveData, inputSD.saveData);
-		std::swap(useCmaProposal, inputSD.useCmaProposal);
-		std::swap(useLocalCovariance, inputSD.useLocalCovariance);
-		std::swap(lb, inputSD.lb);
-		std::swap(ub, inputSD.ub);
-		std::swap(TolCOV, inputSD.TolCOV);
-		std::swap(bbeta, inputSD.bbeta);
-		std::swap(localScale, inputSD.localScale);
-		std::swap(options.Display, inputSD.options.Display);
-		std::swap(options.MaxIter, inputSD.options.MaxIter);
-		std::swap(options.Step, inputSD.options.Step);
-		std::swap(options.Tolerance, inputSD.options.Tolerance);
-		eachPopulationSize.swap(inputSD.eachPopulationSize);
-		lowerBound.swap(inputSD.lowerBound);
-		upperBound.swap(inputSD.upperBound);
-		compositePriorDistribution.swap(inputSD.compositePriorDistribution);
-		priorMu.swap(inputSD.priorMu);
-		priorSigma.swap(inputSD.priorSigma);
-		auxilData.swap(inputSD.auxilData);
-		initMean.swap(inputSD.initMean);
-		localCovariance.swap(inputSD.localCovariance);
-	}
+	stdata<T> &operator=(stdata<T> &&other);
 
 	/*!
 	 * \brief reset the stream data values to the input values
@@ -293,96 +108,7 @@ class stdata
 	 * \return true 
 	 * \return false If there is not enough memory available for allocating the data
 	 */
-	bool reset(int probdim, int MaxGenerations, int PopulationSize)
-	{
-		auxilSize = 0;
-		minChainLength = 1;
-		maxChainLength = 1;
-		seed = 280675;
-		samplingType = 0;
-		priorType = 0;
-		iPlot = 0;
-		saveData = 1;
-		useCmaProposal = 0;
-		useLocalCovariance = 0;
-		lb = -static_cast<T>(6);
-		ub = static_cast<T>(6);
-		TolCOV = static_cast<T>(1);
-		bbeta = static_cast<T>(0.2);
-		localScale = 0;
-		options.MaxIter = 100;
-		options.Display = 0;
-		options.Tolerance = static_cast<T>(1e-6);
-		options.Step = static_cast<T>(1e-5);
-
-		if (probdim == 0 || MaxGenerations == 0 || PopulationSize == 0)
-		{
-			nDim = 0;
-			maxGenerations = 0;
-			populationSize = 0;
-			lastPopulationSize = 0;
-
-			eachPopulationSize.reset();
-			lowerBound.reset();
-			upperBound.reset();
-			priorMu.reset();
-			priorSigma.reset();
-			localCovariance.reset();
-
-			std::cout << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-			std::cout << " Reseting to size zero! " << std::endl;
-
-			return true;
-		}
-
-		nDim = probdim;
-		maxGenerations = MaxGenerations;
-		populationSize = PopulationSize;
-		lastPopulationSize = PopulationSize;
-
-		try
-		{
-			eachPopulationSize.reset(new int[maxGenerations]);
-			lowerBound.reset(new T[nDim]());
-			upperBound.reset(new T[nDim]());
-			priorMu.reset(new T[nDim]());
-			priorSigma.reset(new T[nDim * nDim]());
-			localCovariance.reset(new T[populationSize * nDim * nDim]());
-		}
-		catch (std::bad_alloc &e)
-		{
-			UMUQFAILRETURN("Failed to allocate memory!");
-		}
-
-		for (int i = 0, k = 0; i < nDim; i++)
-		{
-			for (int j = 0; j < nDim; j++, k++)
-			{
-				if (i == j)
-				{
-					priorSigma[k] = static_cast<T>(1);
-				}
-			}
-		}
-
-		std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
-
-		for (int i = 0, l = 0; i < populationSize; i++)
-		{
-			for (int j = 0; j < nDim; j++)
-			{
-				for (int k = 0; k < nDim; k++, l++)
-				{
-					if (j == k)
-					{
-						localCovariance[l] = static_cast<T>(1);
-					}
-				}
-			}
-		}
-
-		return true;
-	}
+	bool reset(int probdim, int MaxGenerations, int PopulationSize);
 
 	/*!
      * \brief load the input file fname
@@ -391,17 +117,14 @@ class stdata
      * \return true on success
      */
 	bool load(const char *fname = "tmcmc.par");
-
-	bool load(std::string const &fname = "tmcmc.par")
-	{
-		return load(&fname[0]);
-	}
+	bool load(std::string const &fname = "tmcmc.par");
 
 	/*!
-     * \brief Default destructor 
-     *    
-     */
-	~stdata() {}
+	 * \brief Swap the stdata objects
+	 * 
+	 * \param other 
+	 */
+	void swap(stdata<T> &other);
 
   private:
 	// Make it noncopyable
@@ -501,6 +224,297 @@ class stdata
 	//! Local covariance with the size of [populationSize*nDim*nDim]
 	std::unique_ptr<T[]> localCovariance;
 };
+
+template <typename T>
+stdata<T>::stdata() : nDim(0),
+					  maxGenerations(0),
+					  populationSize(0),
+					  lastPopulationSize(0),
+					  auxilSize(0),
+					  minChainLength(1),
+					  maxChainLength(1),
+					  seed(280675),
+					  samplingType(0),
+					  priorType(0),
+					  iPlot(0),
+					  saveData(1),
+					  useCmaProposal(0),
+					  useLocalCovariance(0),
+					  lb(-static_cast<T>(6)),
+					  ub(static_cast<T>(6)),
+					  TolCOV(static_cast<T>(1)),
+					  bbeta(static_cast<T>(0.2)),
+					  localScale(0),
+					  options(){};
+
+template <typename T>
+stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(probdim),
+																		 maxGenerations(MaxGenerations),
+																		 populationSize(PopulationSize),
+																		 lastPopulationSize(PopulationSize),
+																		 auxilSize(0),
+																		 minChainLength(1),
+																		 maxChainLength(1),
+																		 seed(280675),
+																		 samplingType(0),
+																		 priorType(0),
+																		 iPlot(0),
+																		 saveData(1),
+																		 useCmaProposal(0),
+																		 useLocalCovariance(0),
+																		 lb(-static_cast<T>(6)),
+																		 ub(static_cast<T>(6)),
+																		 TolCOV(static_cast<T>(1)),
+																		 bbeta(static_cast<T>(0.2)),
+																		 localScale(0),
+																		 options()
+{
+	try
+	{
+		eachPopulationSize.reset(new int[maxGenerations]);
+		lowerBound.reset(new T[nDim]());
+		upperBound.reset(new T[nDim]());
+		priorMu.reset(new T[nDim]());
+		priorSigma.reset(new T[nDim * nDim]());
+		localCovariance.reset(new T[populationSize * nDim * nDim]());
+	}
+	catch (std::bad_alloc &e)
+	{
+		UMUQFAIL("Failed to allocate memory!");
+	}
+
+	for (int i = 0, k = 0; i < nDim; i++)
+	{
+		for (int j = 0; j < nDim; j++, k++)
+		{
+			if (i == j)
+			{
+				priorSigma[k] = static_cast<T>(1);
+			}
+		}
+	}
+
+	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
+
+	for (int i = 0, l = 0; i < populationSize; i++)
+	{
+		for (int j = 0; j < nDim; j++)
+		{
+			for (int k = 0; k < nDim; k++, l++)
+			{
+				if (j == k)
+				{
+					localCovariance[l] = static_cast<T>(1);
+				}
+			}
+		}
+	}
+}
+
+template <typename T>
+stdata<T>::stdata(stdata<T> &&other)
+{
+	nDim = other.nDim;
+	maxGenerations = other.maxGenerations;
+	populationSize = other.populationSize;
+	lastPopulationSize = other.lastPopulationSize;
+	auxilSize = other.auxilData;
+	minChainLength = other.minChainLength;
+	maxChainLength = other.maxChainLength;
+	seed = other.seed;
+	samplingType = other.samplingType;
+	priorType = other.priorType;
+	iPlot = other.iPlot;
+	saveData = other.saveData;
+	useCmaProposal = other.useCmaProposal;
+	useLocalCovariance = other.useLocalCovariance;
+	lb = other.lb;
+	ub = other.ub;
+	TolCOV = other.TolCOV;
+	bbeta = other.bbeta;
+	localScale = other.localScale;
+	options.Display = other.options.Display;
+	options.MaxIter = other.options.MaxIter;
+	options.Step = other.options.Step;
+	options.Tolerance = other.options.Tolerance;
+	eachPopulationSize = std::move(other.eachPopulationSize);
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	compositePriorDistribution = std::move(other.compositePriorDistribution);
+	priorMu = std::move(other.priorMu);
+	priorSigma = std::move(other.priorSigma);
+	auxilData = std::move(other.auxilData);
+	initMean = std::move(other.initMean);
+	localCovariance = std::move(other.localCovariance);
+}
+
+template <typename T>
+stdata<T> &stdata<T>::operator=(stdata<T> &&other)
+{
+	nDim = other.nDim;
+	maxGenerations = other.maxGenerations;
+	populationSize = other.populationSize;
+	lastPopulationSize = other.lastPopulationSize;
+	auxilSize = other.auxilData;
+	minChainLength = other.minChainLength;
+	maxChainLength = other.maxChainLength;
+	seed = other.seed;
+	samplingType = other.samplingType;
+	priorType = other.priorType;
+	iPlot = other.iPlot;
+	saveData = other.saveData;
+	useCmaProposal = other.useCmaProposal;
+	useLocalCovariance = other.useLocalCovariance;
+	lb = other.lb;
+	ub = other.ub;
+	TolCOV = other.TolCOV;
+	bbeta = other.bbeta;
+	localScale = other.localScale;
+	options.Display = other.options.Display;
+	options.MaxIter = other.options.MaxIter;
+	options.Step = other.options.Step;
+	options.Tolerance = other.options.Tolerance;
+	eachPopulationSize = std::move(other.eachPopulationSize);
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	compositePriorDistribution = std::move(other.compositePriorDistribution);
+	priorMu = std::move(other.priorMu);
+	priorSigma = std::move(other.priorSigma);
+	auxilData = std::move(other.auxilData);
+	initMean = std::move(other.initMean);
+	localCovariance = std::move(other.localCovariance);
+
+	return *this;
+}
+
+template <typename T>
+void stdata<T>::swap(stdata<T> &other)
+{
+	std::swap(nDim, other.nDim);
+	std::swap(maxGenerations, other.maxGenerations);
+	std::swap(populationSize, other.populationSize);
+	std::swap(lastPopulationSize, other.lastPopulationSize);
+	std::swap(auxilSize, other.auxilData);
+	std::swap(minChainLength, other.minChainLength);
+	std::swap(maxChainLength, other.maxChainLength);
+	std::swap(seed, other.seed);
+	std::swap(samplingType, other.samplingType);
+	std::swap(priorType, other.priorType);
+	std::swap(iPlot, other.iPlot);
+	std::swap(saveData, other.saveData);
+	std::swap(useCmaProposal, other.useCmaProposal);
+	std::swap(useLocalCovariance, other.useLocalCovariance);
+	std::swap(lb, other.lb);
+	std::swap(ub, other.ub);
+	std::swap(TolCOV, other.TolCOV);
+	std::swap(bbeta, other.bbeta);
+	std::swap(localScale, other.localScale);
+	std::swap(options.Display, other.options.Display);
+	std::swap(options.MaxIter, other.options.MaxIter);
+	std::swap(options.Step, other.options.Step);
+	std::swap(options.Tolerance, other.options.Tolerance);
+	eachPopulationSize.swap(other.eachPopulationSize);
+	lowerBound.swap(other.lowerBound);
+	upperBound.swap(other.upperBound);
+	compositePriorDistribution.swap(other.compositePriorDistribution);
+	priorMu.swap(other.priorMu);
+	priorSigma.swap(other.priorSigma);
+	auxilData.swap(other.auxilData);
+	initMean.swap(other.initMean);
+	localCovariance.swap(other.localCovariance);
+}
+
+template <typename T>
+bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
+{
+	auxilSize = 0;
+	minChainLength = 1;
+	maxChainLength = 1;
+	seed = 280675;
+	samplingType = 0;
+	priorType = 0;
+	iPlot = 0;
+	saveData = 1;
+	useCmaProposal = 0;
+	useLocalCovariance = 0;
+	lb = -static_cast<T>(6);
+	ub = static_cast<T>(6);
+	TolCOV = static_cast<T>(1);
+	bbeta = static_cast<T>(0.2);
+	localScale = 0;
+	options.MaxIter = 100;
+	options.Display = 0;
+	options.Tolerance = static_cast<T>(1e-6);
+	options.Step = static_cast<T>(1e-5);
+
+	if (probdim == 0 || MaxGenerations == 0 || PopulationSize == 0)
+	{
+		nDim = 0;
+		maxGenerations = 0;
+		populationSize = 0;
+		lastPopulationSize = 0;
+
+		eachPopulationSize.reset();
+		lowerBound.reset();
+		upperBound.reset();
+		priorMu.reset();
+		priorSigma.reset();
+		localCovariance.reset();
+
+		std::cout << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+		std::cout << " Reseting to size zero! " << std::endl;
+
+		return true;
+	}
+
+	nDim = probdim;
+	maxGenerations = MaxGenerations;
+	populationSize = PopulationSize;
+	lastPopulationSize = PopulationSize;
+
+	try
+	{
+		eachPopulationSize.reset(new int[maxGenerations]);
+		lowerBound.reset(new T[nDim]());
+		upperBound.reset(new T[nDim]());
+		priorMu.reset(new T[nDim]());
+		priorSigma.reset(new T[nDim * nDim]());
+		localCovariance.reset(new T[populationSize * nDim * nDim]());
+	}
+	catch (std::bad_alloc &e)
+	{
+		UMUQFAILRETURN("Failed to allocate memory!");
+	}
+
+	for (int i = 0, k = 0; i < nDim; i++)
+	{
+		for (int j = 0; j < nDim; j++, k++)
+		{
+			if (i == j)
+			{
+				priorSigma[k] = static_cast<T>(1);
+			}
+		}
+	}
+
+	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
+
+	for (int i = 0, l = 0; i < populationSize; i++)
+	{
+		for (int j = 0; j < nDim; j++)
+		{
+			for (int k = 0; k < nDim; k++, l++)
+			{
+				if (j == k)
+				{
+					localCovariance[l] = static_cast<T>(1);
+				}
+			}
+		}
+	}
+
+	return true;
+}
 
 /*!
  * \brief load the input file fname for setting the input variables
@@ -782,6 +796,12 @@ bool stdata<T>::load(const char *fname)
 		return false;
 	}
 	UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
+}
+
+template <typename T>
+bool stdata<T>::load(std::string const &fname)
+{
+	return load(&fname[0]);
 }
 
 #endif
