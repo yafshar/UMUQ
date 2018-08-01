@@ -32,18 +32,18 @@ class runinfo
     /*!
      * \brief Move constructor, construct a new runinfo object from an input runinfo object
      * 
-     * \param inputRI Input runinfo object
+     * \param other Input runinfo object
      * 
      */
-    runinfo(runinfo<T> &&inputRI);
+    runinfo(runinfo<T> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
-     * \param inputRI      Input runinfo object
+     * \param other      Input runinfo object
      * \return runinfo<T>& 
      */
-    runinfo<T> &operator=(runinfo<T> &&inputRI);
+    runinfo<T> &operator=(runinfo<T> &&other);
 
     /*!
      * \brief destructor
@@ -72,9 +72,9 @@ class runinfo
     /*!
      * \brief Exchanges the given runinfo object
      * 
-     * \param inputRI Input runinfo object
+     * \param other Input runinfo object
      */
-    void swap(runinfo<T> &inputRI);
+    void swap(runinfo<T> &other);
 
     /*!
      * \brief Save the inofmration in a file @fileName
@@ -166,43 +166,43 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 /*!
  * \brief Move constructor, construct a new runinfo object from an input runinfo object
  * 
- * \param inputRI Input runinfo object
+ * \param other Input runinfo object
  * 
  */
 template <typename T>
-runinfo<T>::runinfo(runinfo<T> &&inputRI)
+runinfo<T>::runinfo(runinfo<T> &&other)
 {
-    runinfo<T>::nDim = inputRI.nDim;
-    runinfo<T>::maxGenerations = inputRI.maxGenerations;
-    runinfo<T>::Generation = inputRI.Generation;
-    runinfo<T>::CoefVar = std::move(inputRI.CoefVar);
-    runinfo<T>::p = std::move(inputRI.p);
-    runinfo<T>::currentuniques = std::move(inputRI.currentuniques);
-    runinfo<T>::logselection = std::move(inputRI.logselection);
-    runinfo<T>::acceptance = std::move(inputRI.acceptance);
-    runinfo<T>::SS = std::move(inputRI.SS);
-    runinfo<T>::meantheta = std::move(inputRI.meantheta);
+    runinfo<T>::nDim = other.nDim;
+    runinfo<T>::maxGenerations = other.maxGenerations;
+    runinfo<T>::Generation = other.Generation;
+    runinfo<T>::CoefVar = std::move(other.CoefVar);
+    runinfo<T>::p = std::move(other.p);
+    runinfo<T>::currentuniques = std::move(other.currentuniques);
+    runinfo<T>::logselection = std::move(other.logselection);
+    runinfo<T>::acceptance = std::move(other.acceptance);
+    runinfo<T>::SS = std::move(other.SS);
+    runinfo<T>::meantheta = std::move(other.meantheta);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputRI      Input runinfo object
+ * \param other      Input runinfo object
  * \return runinfo<T>& 
  */
 template <typename T>
-runinfo<T> &runinfo<T>::operator=(runinfo<T> &&inputRI)
+runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 {
-    runinfo<T>::nDim = inputRI.nDim;
-    runinfo<T>::maxGenerations = inputRI.maxGenerations;
-    runinfo<T>::Generation = inputRI.Generation;
-    runinfo<T>::CoefVar = std::move(inputRI.CoefVar);
-    runinfo<T>::p = std::move(inputRI.p);
-    runinfo<T>::currentuniques = std::move(inputRI.currentuniques);
-    runinfo<T>::logselection = std::move(inputRI.logselection);
-    runinfo<T>::acceptance = std::move(inputRI.acceptance);
-    runinfo<T>::SS = std::move(inputRI.SS);
-    runinfo<T>::meantheta = std::move(inputRI.meantheta);
+    runinfo<T>::nDim = other.nDim;
+    runinfo<T>::maxGenerations = other.maxGenerations;
+    runinfo<T>::Generation = other.Generation;
+    runinfo<T>::CoefVar = std::move(other.CoefVar);
+    runinfo<T>::p = std::move(other.p);
+    runinfo<T>::currentuniques = std::move(other.currentuniques);
+    runinfo<T>::logselection = std::move(other.logselection);
+    runinfo<T>::acceptance = std::move(other.acceptance);
+    runinfo<T>::SS = std::move(other.SS);
+    runinfo<T>::meantheta = std::move(other.meantheta);
 
     return *this;
 }
@@ -257,22 +257,22 @@ bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
 /*!
  * \brief Exchanges the given runinfo object
  * 
- * \param inputRI Input runinfo object
+ * \param other Input runinfo object
  * 
  */
 template <typename T>
-void runinfo<T>::swap(runinfo<T> &inputRI)
+void runinfo<T>::swap(runinfo<T> &other)
 {
-    std::swap(runinfo<T>::nDim, inputRI.nDim);
-    std::swap(runinfo<T>::maxGenerations, inputRI.maxGenerations);
-    std::swap(runinfo<T>::Generation, inputRI.Generation);
-    runinfo<T>::CoefVar.swap(inputRI.CoefVar);
-    runinfo<T>::p.swap(inputRI.p);
-    runinfo<T>::currentuniques.swap(inputRI.currentuniques);
-    runinfo<T>::logselection.swap(inputRI.logselection);
-    runinfo<T>::acceptance.swap(inputRI.acceptance);
-    runinfo<T>::SS.swap(inputRI.SS);
-    runinfo<T>::meantheta.swap(inputRI.meantheta);
+    std::swap(runinfo<T>::nDim, other.nDim);
+    std::swap(runinfo<T>::maxGenerations, other.maxGenerations);
+    std::swap(runinfo<T>::Generation, other.Generation);
+    runinfo<T>::CoefVar.swap(other.CoefVar);
+    runinfo<T>::p.swap(other.p);
+    runinfo<T>::currentuniques.swap(other.currentuniques);
+    runinfo<T>::logselection.swap(other.logselection);
+    runinfo<T>::acceptance.swap(other.acceptance);
+    runinfo<T>::SS.swap(other.SS);
+    runinfo<T>::meantheta.swap(other.meantheta);
 }
 
 /*!
