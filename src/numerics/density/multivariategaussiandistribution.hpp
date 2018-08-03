@@ -1,7 +1,7 @@
 #ifndef UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 #define UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class multivariategaussianDistribution
  * \brief The Multivariate Gaussian Distribution

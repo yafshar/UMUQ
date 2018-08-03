@@ -1,7 +1,7 @@
 #ifndef UMUQ_MULTINOMIALDISTRIBUTION_H
 #define UMUQ_MULTINOMIALDISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class multinomialDistribution
  * \brief The multinomial distribution

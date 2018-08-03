@@ -20,7 +20,6 @@ It should contain the following files:
 
 -----------------------------------
     densityfunction
-    ├── densityfunction.hpp
     ├── exponentialdistribution.hpp
     ├── gammadistribution.hpp
     ├── gaussiandistribution.hpp

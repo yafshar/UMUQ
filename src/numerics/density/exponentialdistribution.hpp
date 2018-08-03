@@ -1,7 +1,7 @@
 #ifndef UMUQ_EXPONENTIALDISTRIBUTION_H
 #define UMUQ_EXPONENTIALDISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class exponentialDistribution
  * \brief The exponential distribution

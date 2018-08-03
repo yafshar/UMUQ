@@ -1,9 +1,6 @@
 #ifndef UMUQ_MULTIMIN_NSIMPLEX2RAND_H
 #define UMUQ_MULTIMIN_NSIMPLEX2RAND_H
 
-#include "../../core/core.hpp"
-#include "multimin_function.hpp"
-
 /*! \class nmsimplex2rand
  *  \ingroup multimin_Module
  * 

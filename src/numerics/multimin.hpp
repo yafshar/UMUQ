@@ -37,7 +37,7 @@
  */
 namespace multimin
 {
-#include "multimin/multimin_function.hpp"
+#include "function/multimin_function.hpp"
 
 #include "multimin/multimin_linear_minimize.hpp"
 #include "multimin/multimin_directional_minimize.hpp"

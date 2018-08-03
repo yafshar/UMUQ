@@ -1,7 +1,7 @@
 #ifndef UMUQ_UNIFORMDISTRIBUTION_H
 #define UMUQ_UNIFORMDISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class uniformDistribution
  * \brief Flat (Uniform) distribution function

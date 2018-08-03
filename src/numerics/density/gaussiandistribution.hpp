@@ -1,7 +1,7 @@
 #ifndef UMUQ_GAUSSIANDISTRIBUTION_H
 #define UMUQ_GAUSSIANDISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class gaussianDistribution
  * \brief The Gaussian distribution

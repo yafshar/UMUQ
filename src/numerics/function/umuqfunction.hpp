@@ -1,67 +1,67 @@
 #ifndef UMUQ_FUNCTION_H
 #define UMUQ_FUNCTION_H
 
-/*!\class umuqfunction
- * \brief umuqfunction is a general-purpose polymorphic function wrapper of n variables
+/*!\class umuqFunction
+ * \brief umuqFunction is a general-purpose polymorphic function wrapper of n variables
  *
  * \tparam T  Data type
  * \tparam F  Function type 
  */
 template <typename T, class F>
-class umuqfunction
+class umuqFunction
 {
   public:
 	/*!
-     * \brief Construct a new umuqfunction object
+     * \brief Construct a new umuqFunction object
      * 
      * \param Name  Function name
      */
-	umuqfunction(char const *Name = "");
+	umuqFunction(char const *Name = "");
 
 	/*!
-     * \brief Construct a new umuqfunction object
+     * \brief Construct a new umuqFunction object
      * 
      * \param nDim  Number of dimensions (Number of parameters) 
      * \param Name  Function name
      */
-	umuqfunction(int const nDim, char const *Name = "");
+	umuqFunction(int const nDim, char const *Name = "");
 
 	/*!
-     * \brief Construct a new umuqfunction object
+     * \brief Construct a new umuqFunction object
      * 
      * \param Params    Input parameters of the Function object
      * \param NumParams Number of dimensions (Number of parameters) 
      * \param Name      Function name
      */
-	umuqfunction(T const *Params, int const NumParams, char const *Name = "");
+	umuqFunction(T const *Params, int const NumParams, char const *Name = "");
 
 	/*!
-	 * \brief Construct a new umuqfunction object
+	 * \brief Construct a new umuqFunction object
 	 *  
 	 * \param Params  Input parameters of the Function object
 	 * \param Name    Function name
 	 */
-	umuqfunction(std::vector<T> const &Params, char const *Name = "");
+	umuqFunction(std::vector<T> const &Params, char const *Name = "");
 
 	/*!
-	 * \brief Move constructor, Construct a new umuqfunction object
+	 * \brief Move constructor, Construct a new umuqFunction object
 	 * 
-	 * \param other umuqfunction object
+	 * \param other umuqFunction object
 	 */
-	umuqfunction(umuqfunction<T, F> &&other);
+	umuqFunction(umuqFunction<T, F> &&other);
 
 	/*!
 	 * \brief Move assignment operator
 	 * 
 	 */
-	umuqfunction<T, F> &operator=(umuqfunction<T, F> &&other);
+	umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
 
   private:
 	// Make it noncopyable
-	umuqfunction(umuqfunction<T, F> const &) = delete;
+	umuqFunction(umuqFunction<T, F> const &) = delete;
 
 	// Make it not assignable
-	umuqfunction<T, F> &operator=(umuqfunction<T, F> const &) = delete;
+	umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
 
   public:
 	//! Name of the function
@@ -79,26 +79,26 @@ class umuqfunction
 };
 
 template <typename T, class F>
-umuqfunction<T, F>::umuqfunction(char const *Name) : name(Name),
+umuqFunction<T, F>::umuqFunction(char const *Name) : name(Name),
 													 numParams(0)
 {
 }
 
 template <typename T, class F>
-umuqfunction<T, F>::umuqfunction(int const nDim, char const *Name) : name(Name),
+umuqFunction<T, F>::umuqFunction(int const nDim, char const *Name) : name(Name),
 																	 numParams(nDim > 0 ? nDim : 0)
 {
 }
 
 template <typename T, class F>
-umuqfunction<T, F>::umuqfunction(T const *Params, int const NumParams, char const *Name) : name(Name),
+umuqFunction<T, F>::umuqFunction(T const *Params, int const NumParams, char const *Name) : name(Name),
 																						   numParams(NumParams > 0 ? NumParams : 0),
 																						   params(Params, Params + NumParams)
 {
 }
 
 template <typename T, class F>
-umuqfunction<T, F>::umuqfunction(umuqfunction<T, F> &&other) : name(other.name),
+umuqFunction<T, F>::umuqFunction(umuqFunction<T, F> &&other) : name(other.name),
 															   numParams(other.numParams),
 															   params(std::move(other.params)),
 															   f(std::move(other.f))
@@ -106,7 +106,7 @@ umuqfunction<T, F>::umuqfunction(umuqfunction<T, F> &&other) : name(other.name),
 }
 
 template <typename T, class F>
-umuqfunction<T, F> &umuqfunction<T, F>::operator=(umuqfunction<T, F> &&other)
+umuqFunction<T, F> &umuqFunction<T, F>::operator=(umuqFunction<T, F> &&other)
 {
 	this->name = other.name;
 	this->numParams = other.numParams;

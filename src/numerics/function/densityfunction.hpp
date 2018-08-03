@@ -3,7 +3,7 @@
 
 #include "../factorial.hpp"
 #include "../eigenlib.hpp"
-#include "../function.hpp"
+#include "umuqfunction.hpp"
 #include "../random/psrandom.hpp"
 
 /*! \class densityFunction
@@ -16,7 +16,7 @@
  * \tparam F   Function type
  */
 template <typename T, class F>
-class densityFunction : public umuqfunction<T, F>
+class densityFunction : public umuqFunction<T, F>
 {
   public:
 	/*!
@@ -70,7 +70,7 @@ template <typename T, class F>
 densityFunction<T, F>::densityFunction() {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqfunction<T, F>::umuqfunction(std::move(other)),
+densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)),
 																		lf(std::move(other.lf))
 {
 }
@@ -78,7 +78,7 @@ densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqfunc
 template <typename T, class F>
 densityFunction<T, F> &densityFunction<T, F>::operator=(densityFunction<T, F> &&other)
 {
-	umuqfunction<T, F>::operator=(std::move(other));
+	umuqFunction<T, F>::operator=(std::move(other));
 	this->lf = std::move(other.lf);
 
 	return *this;
@@ -92,6 +92,6 @@ densityFunction<T, F> &densityFunction<T, F>::operator=(densityFunction<T, F> &&
  * \param Name       Distribution name
  */
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqfunction<T, F>(Params, NumParams, Name) {}
+densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name) {}
 
 #endif // UMUQ_DENSITYFUNCTION_H

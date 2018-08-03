@@ -1,7 +1,7 @@
 #ifndef UMUQ_GAMMADISTRIBUTION_H
 #define UMUQ_GAMMADISTRIBUTION_H
 
-#include "densityfunction.hpp"
+#include "../function/densityfunction.hpp"
 
 /*! \class gammaDistribution
  * \brief The Gamma distribution
