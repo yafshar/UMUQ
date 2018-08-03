@@ -3,7 +3,7 @@
 Multidimensional Minimization
 ------------
 
-The multimin Module contains the c++ re-implamentation and modification to the original 
+The multimin Module contains the c++ re-implamentation and modifications to the original 
 GSL Multidimensional Minimization source codes made available under the following license:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +35,6 @@ It should contain the following files:
     ├── multimin_conjugate_fr.hpp
     ├── multimin_conjugate_pr.hpp
     ├── multimin_directional_minimize.hpp
-    ├── multimin_function.hpp
     ├── multimin_linear_minimize.hpp
     ├── multimin_linear_wrapper.hpp
     ├── multimin_nmsimplex2.hpp
