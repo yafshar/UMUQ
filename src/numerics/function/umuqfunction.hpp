@@ -11,113 +11,113 @@ template <typename T, class F>
 class umuqFunction
 {
   public:
-	/*!
+    /*!
      * \brief Construct a new umuqFunction object
      * 
      * \param Name  Function name
      */
-	explicit umuqFunction(char const *Name = "");
+    explicit umuqFunction(char const *Name = "");
 
-	/*!
+    /*!
      * \brief Construct a new umuqFunction object
      * 
      * \param nDim  Number of dimensions (Number of parameters) 
      * \param Name  Function name
      */
-	umuqFunction(int const nDim, char const *Name = "");
+    umuqFunction(int const nDim, char const *Name = "");
 
-	/*!
+    /*!
      * \brief Construct a new umuqFunction object
      * 
      * \param Params    Input parameters of the Function object
      * \param NumParams Number of dimensions (Number of parameters) 
      * \param Name      Function name
      */
-	umuqFunction(T const *Params, int const NumParams, char const *Name = "");
+    umuqFunction(T const *Params, int const NumParams, char const *Name = "");
 
-	/*!
-	 * \brief Construct a new umuqFunction object
-	 *  
-	 * \param Params  Input parameters of the Function object
-	 * \param Name    Function name
-	 */
-	umuqFunction(std::vector<T> const &Params, char const *Name = "");
+    /*!
+     * \brief Construct a new umuqFunction object
+     *  
+     * \param Params  Input parameters of the Function object
+     * \param Name    Function name
+     */
+    umuqFunction(std::vector<T> const &Params, char const *Name = "");
 
-	/*!
-	 * \brief Move constructor, Construct a new umuqFunction object
-	 * 
-	 * \param other umuqFunction object
-	 */
-	umuqFunction(umuqFunction<T, F> &&other);
+    /*!
+     * \brief Move constructor, Construct a new umuqFunction object
+     * 
+     * \param other umuqFunction object
+     */
+    umuqFunction(umuqFunction<T, F> &&other);
 
-	/*!
-	 * \brief Move assignment operator
-	 * 
-	 */
-	umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
+    /*!
+     * \brief Move assignment operator
+     * 
+     */
+    umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
 
   private:
-	// Make it noncopyable
-	umuqFunction(umuqFunction<T, F> const &) = delete;
+    // Make it noncopyable
+    umuqFunction(umuqFunction<T, F> const &) = delete;
 
-	// Make it not assignable
-	umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
-
-  public:
-	//! Name of the function
-	std::string name;
-
-	//! Number of dimensions
-	std::size_t numParams;
-
-	//! Function parameters
-	std::vector<T> params;
+    // Make it not assignable
+    umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
 
   public:
-	/*!
-	 * \brief A general-purpose polymorphic function wrapper
-	 * 
-	 * \returns the function value
-	 */
-	F f;
+    //! Name of the function
+    std::string name;
+
+    //! Number of dimensions
+    std::size_t numParams;
+
+    //! Function parameters
+    std::vector<T> params;
+
+  public:
+    /*!
+     * \brief A general-purpose polymorphic function wrapper
+     * 
+     * \returns the function value
+     */
+    F f;
 };
 
 template <typename T, class F>
 umuqFunction<T, F>::umuqFunction(char const *Name) : name(Name),
-													 numParams(0)
+                                                     numParams(0)
 {
 }
 
 template <typename T, class F>
 umuqFunction<T, F>::umuqFunction(int const nDim, char const *Name) : name(Name),
-																	 numParams(nDim > 0 ? nDim : 0)
+                                                                     numParams(nDim > 0 ? nDim : 0)
 {
 }
 
 template <typename T, class F>
 umuqFunction<T, F>::umuqFunction(T const *Params, int const NumParams, char const *Name) : name(Name),
-																						   numParams(NumParams > 0 ? NumParams : 0),
-																						   params(Params, Params + NumParams)
+                                                                                           numParams(NumParams > 0 ? NumParams : 0),
+                                                                                           params(Params, Params + NumParams)
 {
 }
 
 template <typename T, class F>
 umuqFunction<T, F>::umuqFunction(umuqFunction<T, F> &&other) : name(other.name),
-															   numParams(other.numParams),
-															   params(std::move(other.params)),
-															   f(std::move(other.f))
+                                                               numParams(other.numParams),
+                                                               params(std::move(other.params)),
+                                                               f(std::move(other.f))
 {
 }
 
 template <typename T, class F>
 umuqFunction<T, F> &umuqFunction<T, F>::operator=(umuqFunction<T, F> &&other)
 {
-	this->name = other.name;
-	this->numParams = other.numParams;
-	this->params = std::move(other.params);
-	this->f = std::move(other.f);
+    this->name = other.name;
+    this->numParams = other.numParams;
+    this->params = std::move(other.params);
+    this->f = std::move(other.f);
 
-	return *this;
+    return *this;
 }
 
 /*!
