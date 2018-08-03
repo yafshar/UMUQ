@@ -154,7 +154,7 @@ class database
     bool print();
 
     /*!
-     * /brief helper function for writing the data into a file
+     * \brief helper function for writing the data into a file
      *
      * Written data includes Parray, Fvalue, Garray (if it exists)
      */
@@ -163,7 +163,7 @@ class database
     bool save(std::string const &fname, int const IdNumber = 0);
 
     /*!
-     * /brief Helper function for loading the data from file
+     * \brief Helper function for loading the data from file
      *
      */
     bool load(const char *fname = "", int const IdNumber = 0);
