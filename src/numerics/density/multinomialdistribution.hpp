@@ -30,20 +30,20 @@ template <typename T>
 class multinomialDistribution : public densityFunction<T, std::function<T(T const *, unsigned int const *)>>
 {
   public:
-	/*!
+    /*!
      * \brief Construct a new multinomial distribution object
      * 
      * \param  k  Vector size
      */
-	multinomialDistribution(int const k);
+    multinomialDistribution(int const k);
 
-	/*!
+    /*!
      * \brief Destroy the multinomial distribution object
      *
      */
-	~multinomialDistribution() {}
+    ~multinomialDistribution() {}
 
-	/*!
+    /*!
      * \brief multinomial distribution density function
      * Computes the probability from the multinomial distribution
      * 
@@ -55,9 +55,9 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
      */
-	inline T multinomialDistribution_f(T const *p, unsigned int const *mndist);
+    inline T multinomialDistribution_f(T const *p, unsigned int const *mndist);
 
-	/*!
+    /*!
      * \brief Log of multinomial distribution density function
      * Computes the logarithm of the probability from the multinomial distribution
      * 
@@ -69,7 +69,7 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
      */
-	inline T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
+    inline T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
 };
 
 /*!
@@ -80,10 +80,10 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
 template <typename T>
 multinomialDistribution<T>::multinomialDistribution(int const k)
 {
-	this->name = std::string("multinomial");
-	this->numParams = k;
-	this->f = std::bind(&multinomialDistribution<T>::multinomialDistribution_f, this, std::placeholders::_1, std::placeholders::_2);
-	this->lf = std::bind(&multinomialDistribution<T>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
+    this->name = std::string("multinomial");
+    this->numParams = k;
+    this->f = std::bind(&multinomialDistribution<T>::multinomialDistribution_f, this, std::placeholders::_1, std::placeholders::_2);
+    this->lf = std::bind(&multinomialDistribution<T>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 /*!
@@ -101,22 +101,22 @@ multinomialDistribution<T>::multinomialDistribution(int const k)
 template <typename T>
 inline T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
 {
-	// compute the total number of independent trials
-	unsigned int const N = std::accumulate(mndist, mndist + this->numParams, 0);
+    // compute the total number of independent trials
+    unsigned int const N = std::accumulate(mndist, mndist + this->numParams, 0);
 
-	T const totpsum = std::accumulate(p, p + this->numParams, 0);
+    T const totpsum = std::accumulate(p, p + this->numParams, 0);
 
-	T log_pdf = factorial<T>(N);
+    T log_pdf = factorial<T>(N);
 
-	for (int i = 0; i < this->numParams; i++)
-	{
-		if (mndist[i] > 0)
-		{
-			log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
-		}
-	}
+    for (int i = 0; i < this->numParams; i++)
+    {
+        if (mndist[i] > 0)
+        {
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
+        }
+    }
 
-	return std::exp(log_pdf);
+    return std::exp(log_pdf);
 }
 
 /*!
@@ -134,23 +134,23 @@ inline T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsig
 template <typename T>
 inline T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
 {
-	// compute the total number of independent trials
-	unsigned int N = std::accumulate(mndist, mndist + this->numParams, 0);
+    // compute the total number of independent trials
+    unsigned int N = std::accumulate(mndist, mndist + this->numParams, 0);
 
-	T const totpsum = std::accumulate(p, p + this->numParams, 0);
+    T const totpsum = std::accumulate(p, p + this->numParams, 0);
 
-	// Currently we have the limitation of float or double type in factorial implementation
-	T log_pdf = factorial<T>(N);
+    // Currently we have the limitation of float or double type in factorial implementation
+    T log_pdf = factorial<T>(N);
 
-	for (int i = 0; i < this->numParams; i++)
-	{
-		if (mndist[i] > 0)
-		{
-			log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
-		}
-	}
+    for (int i = 0; i < this->numParams; i++)
+    {
+        if (mndist[i] > 0)
+        {
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
+        }
+    }
 
-	return log_pdf;
+    return log_pdf;
 }
 
 #endif // UMUQ_MULTINOMIALDISTRIBUTION_H

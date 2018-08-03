@@ -27,9 +27,9 @@ class exponentialDistribution : public densityFunction<T, FUN_x<T>>
     explicit exponentialDistribution(T const mu);
 
     /*!
-	 * \brief Destroy the exponential distribution object
-	 * 
-	 */
+     * \brief Destroy the exponential distribution object
+     * 
+     */
     ~exponentialDistribution() {}
 
     /*!
@@ -64,10 +64,10 @@ class exponentialDistribution : public densityFunction<T, FUN_x<T>>
  * \param mu Mean, \f$ \mu \f$
  */
 template <typename T>
-exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, FUN_x<T>>(&mu, 1, "exponential") 
+exponentialDistribution<T>::exponentialDistribution(T const mu) : densityFunction<T, FUN_x<T>>(&mu, 1, "exponential")
 {
-	this->f = std::bind(&exponentialDistribution<T>::exponentialDistribution_f, this, std::placeholders::_1);
-	this->lf = std::bind(&exponentialDistribution<T>::exponentialDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&exponentialDistribution<T>::exponentialDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&exponentialDistribution<T>::exponentialDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
