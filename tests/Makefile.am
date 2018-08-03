@@ -50,9 +50,10 @@ TESTS += linearregression_test
 check_PROGRAMS += linearregression_test
 linearregression_test_SOURCES = numerics/linearregression_test.cpp 
 
+#numerics/density
 TESTS += densityfunction_test
 check_PROGRAMS += densityfunction_test
-densityfunction_test_SOURCES = numerics/densityfunction/densityfunction_test.cpp 
+densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
 
 #misc
 TESTS += utility_test
