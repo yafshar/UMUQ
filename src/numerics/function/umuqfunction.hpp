@@ -1,5 +1,5 @@
-#ifndef UMUQ_FUNCTION_H
-#define UMUQ_FUNCTION_H
+#ifndef UMUQ_UMUQFUNCTION_H
+#define UMUQ_UMUQFUNCTION_H
 
 /*!\class umuqFunction
  * \brief umuqFunction is a general-purpose polymorphic function wrapper of n variables
@@ -16,7 +16,7 @@ class umuqFunction
      * 
      * \param Name  Function name
      */
-	umuqFunction(char const *Name = "");
+	explicit umuqFunction(char const *Name = "");
 
 	/*!
      * \brief Construct a new umuqFunction object
@@ -74,7 +74,11 @@ class umuqFunction
 	std::vector<T> params;
 
   public:
-	//! A general-purpose polymorphic function wrapper
+	/*!
+	 * \brief A general-purpose polymorphic function wrapper
+	 * 
+	 * \returns the function value
+	 */
 	F f;
 };
 
