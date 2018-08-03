@@ -50,6 +50,11 @@ TESTS += linearregression_test
 check_PROGRAMS += linearregression_test
 linearregression_test_SOURCES = numerics/linearregression_test.cpp 
 
+#numerics/function
+TESTS += function_test
+check_PROGRAMS += function_test
+function_test_SOURCES = numerics/function/function_test.cpp 
+
 #numerics/density
 TESTS += densityfunction_test
 check_PROGRAMS += densityfunction_test
