@@ -14,54 +14,54 @@ template <typename T, class F, class D = F>
 class umuqDifferentiableFunction : public umuqFunction<T, F>
 {
   public:
-	/*!
+    /*!
      * \brief Construct a new umuqDifferentiableFunction object
      * 
      * \param Name  Function name
      */
-	explicit umuqDifferentiableFunction(char const *Name = "");
+    explicit umuqDifferentiableFunction(char const *Name = "");
 
-	/*!
+    /*!
      * \brief Construct a new umuqDifferentiableFunction object
      * 
      * \param nDim  Number of dimensions (Number of parameters) 
      * \param Name  Function name
      */
-	umuqDifferentiableFunction(int const nDim, char const *Name = "");
+    umuqDifferentiableFunction(int const nDim, char const *Name = "");
 
-	/*!
+    /*!
      * \brief Destroy the umuq Differentiable Function object
      * 
      */
-	~umuqDifferentiableFunction();
+    ~umuqDifferentiableFunction();
 
-	/*!
-	 * \brief Move constructor, Construct a new umuqDifferentiableFunction object
-	 * 
-	 * \param other umuqDifferentiableFunction object
-	 */
-	umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D> &&other);
+    /*!
+     * \brief Move constructor, Construct a new umuqDifferentiableFunction object
+     * 
+     * \param other umuqDifferentiableFunction object
+     */
+    umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D> &&other);
 
-	/*!
-	 * \brief Move assignment operator
-	 * 
-	 */
-	umuqDifferentiableFunction<T, F, D> &operator=(umuqDifferentiableFunction<T, F, D> &&other);
+    /*!
+     * \brief Move assignment operator
+     * 
+     */
+    umuqDifferentiableFunction<T, F, D> &operator=(umuqDifferentiableFunction<T, F, D> &&other);
 
   private:
-	//! Make it noncopyable
-	umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D> const &) = delete;
+    //! Make it noncopyable
+    umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D> const &) = delete;
 
-	//! Make it not assignable
-	umuqDifferentiableFunction<T, F, D> &operator=(umuqDifferentiableFunction<T, F, D> const &) = delete;
+    //! Make it not assignable
+    umuqDifferentiableFunction<T, F, D> &operator=(umuqDifferentiableFunction<T, F, D> const &) = delete;
 
   public:
-	/*!
-	 * \brief A general-purpose polymorphic function wrapper (for a derivative function)
-	 * 
-	 * \returns the value of the function 
-	 */
-	D df;
+    /*!
+     * \brief A general-purpose polymorphic function wrapper (for a derivative function)
+     * 
+     * \returns the value of the function 
+     */
+    D df;
 };
 
 template <typename T, class F, class D>
@@ -75,17 +75,17 @@ umuqDifferentiableFunction<T, F, D>::~umuqDifferentiableFunction() {}
 
 template <typename T, class F, class D>
 umuqDifferentiableFunction<T, F, D>::umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D> &&other) : umuqDifferentiableFunction<T, F>(std::move(other)),
-																											   df(std::move(other.df))
+                                                                                                               df(std::move(other.df))
 {
 }
 
 template <typename T, class F, class D>
 umuqDifferentiableFunction<T, F, D> &umuqDifferentiableFunction<T, F, D>::operator=(umuqDifferentiableFunction<T, F, D> &&other)
 {
-	umuqFunction<T, F>::operator=(std::move(other));
-	df = std::move(other.df);
+    umuqFunction<T, F>::operator=(std::move(other));
+    df = std::move(other.df);
 
-	return *this;
+    return *this;
 }
 
 #endif // UMUQ_FUNCTION_H
