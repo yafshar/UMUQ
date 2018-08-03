@@ -40,7 +40,7 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns Density function value 
      */
-    inline T exponentialDistribution_f(T const x);
+    inline T gaussianDistribution_f(T const x);
 
     /*!
      * \brief Log of Gaussian Distribution density function
@@ -49,7 +49,7 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns  Log of density function value 
      */
-    inline T exponentialDistribution_lf(T const x);
+    inline T gaussianDistribution_lf(T const x);
 };
 
 /*!
