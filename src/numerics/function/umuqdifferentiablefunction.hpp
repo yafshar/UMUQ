@@ -62,6 +62,12 @@ class umuqDifferentiableFunction : public umuqFunction<T, F>
      * \returns the value of the function 
      */
     D df;
+
+    /*!
+     * \brief 
+     * 
+     */
+    std::function<void(T const *, T *, T *)> fdf;
 };
 
 template <typename T, class F, class D>
