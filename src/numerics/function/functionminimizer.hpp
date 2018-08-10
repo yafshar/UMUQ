@@ -6,38 +6,37 @@
 template <typename T, class F>
 class functionMinimizer
 {
-  public:
+public:
 	explicit functionMinimizer(char const *Name = "");
 
-  private:
-  public:
+private:
+public:
 	//! Name of the functionMinimizer
 	std::string name;
 
 	//! Function to be used in this minimizer
-	umuqFunction<T, F> *fun;
+	umuqFunction<T, F> fun;
 
-    //! Initial point
-	std::vector<T> x; 
+	//! Initial point
+	std::vector<T> x;
 
 	//! Function value
 	T fval;
 };
 
-template <typename T, class F>
+template <typename T, class F, class D = F>
 class differentiableFunctionMinimizer
 {
-  public:
+public:
 	explicit differentiableFunctionMinimizer(char const *Name = "");
 
-  private:
-  public:
+private:
+public:
 	//! Name of the differentiableFunctionMinimizer
 	std::string name;
 
 	// multi dimensional part
-	TMFDMT *type;
-	TMFD *fdf;
+	umuqDifferentiableFunction<T, F, D> fun;
 
 	T f;
 
