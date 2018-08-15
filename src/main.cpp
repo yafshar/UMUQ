@@ -8,6 +8,7 @@
 #include <random>
 
 #include "inference/tmcmc/tmcmc.hpp"
+#include "numerics/function/functionminimizer.hpp"
 
 int main(int argc, char **argv)
 {
