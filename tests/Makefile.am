@@ -55,6 +55,10 @@ TESTS += function_test
 check_PROGRAMS += function_test
 function_test_SOURCES = numerics/function/function_test.cpp 
 
+TESTS += functionminimizer_test
+check_PROGRAMS += functionminimizer_test
+functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
+
 #numerics/density
 TESTS += densityfunction_test
 check_PROGRAMS += densityfunction_test

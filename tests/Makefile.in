@@ -93,8 +93,9 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	function_test$(EXEEXT) densityfunction_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
@@ -104,8 +105,9 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	function_test$(EXEEXT) densityfunction_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
+	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) array_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
 	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
@@ -169,6 +171,10 @@ funcallcounter_test_LDADD = $(LDADD)
 am_function_test_OBJECTS = numerics/function/function_test.$(OBJEXT)
 function_test_OBJECTS = $(am_function_test_OBJECTS)
 function_test_LDADD = $(LDADD)
+am_functionminimizer_test_OBJECTS =  \
+	numerics/function/functionminimizer_test.$(OBJEXT)
+functionminimizer_test_OBJECTS = $(am_functionminimizer_test_OBJECTS)
+functionminimizer_test_LDADD = $(LDADD)
 am_io_test_OBJECTS = io/io_test.$(OBJEXT)
 io_test_OBJECTS = $(am_io_test_OBJECTS)
 io_test_LDADD = $(LDADD)
@@ -246,8 +252,8 @@ SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
 	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(function_test_SOURCES) $(io_test_SOURCES) \
-	$(knearestneighbors_test_SOURCES) \
+	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
+	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
@@ -258,8 +264,8 @@ DIST_SOURCES = $(array_test_SOURCES) $(database_test_SOURCES) \
 	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
 	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(function_test_SOURCES) $(io_test_SOURCES) \
-	$(knearestneighbors_test_SOURCES) \
+	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
+	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
@@ -656,6 +662,7 @@ dcpse_test_SOURCES = numerics/dcpse_test.cpp
 fitness_test_SOURCES = numerics/fitness_test.cpp 
 linearregression_test_SOURCES = numerics/linearregression_test.cpp 
 function_test_SOURCES = numerics/function/function_test.cpp 
+functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
 densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
@@ -814,6 +821,13 @@ numerics/function/function_test.$(OBJEXT):  \
 function_test$(EXEEXT): $(function_test_OBJECTS) $(function_test_DEPENDENCIES) $(EXTRA_function_test_DEPENDENCIES) 
 	@rm -f function_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(function_test_OBJECTS) $(function_test_LDADD) $(LIBS)
+numerics/function/functionminimizer_test.$(OBJEXT):  \
+	numerics/function/$(am__dirstamp) \
+	numerics/function/$(DEPDIR)/$(am__dirstamp)
+
+functionminimizer_test$(EXEEXT): $(functionminimizer_test_OBJECTS) $(functionminimizer_test_DEPENDENCIES) $(EXTRA_functionminimizer_test_DEPENDENCIES) 
+	@rm -f functionminimizer_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(functionminimizer_test_OBJECTS) $(functionminimizer_test_LDADD) $(LIBS)
 io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
@@ -928,6 +942,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/density/$(DEPDIR)/densityfunction_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/function_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/functionminimizer_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
 
 .cpp.o:
@@ -1226,6 +1241,13 @@ linearregression_test.log: linearregression_test$(EXEEXT)
 function_test.log: function_test$(EXEEXT)
 	@p='function_test$(EXEEXT)'; \
 	b='function_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+functionminimizer_test.log: functionminimizer_test$(EXEEXT)
+	@p='functionminimizer_test$(EXEEXT)'; \
+	b='functionminimizer_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
