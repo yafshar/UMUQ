@@ -145,4 +145,4 @@ umuqDifferentiableFunction<T, F, D, FD>::operator bool() const noexcept
     return (this->f != nullptr && df != nullptr && fdf != nullptr); 
 }
 
-#endif // UMUQ_FUNCTION_H
+#endif // UMUQ_UMUQDIFFERENTIABLEFUNCTION
