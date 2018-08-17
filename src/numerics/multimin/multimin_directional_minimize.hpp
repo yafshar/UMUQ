@@ -23,18 +23,18 @@
  * \param dx      Array of data of size n which contains part of out put results (\f$ dx = \alpha p \f$)
  */
 template <typename T>
-inline void take_step(std::size_t const n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
+inline void take_step(int const n, T const *x, T const *p, T const step, T const lambda, T *x1, T *dx)
 {
     //Compute the sum \f$y = \alpha x + y\f$ for the vectors x and y (set dx to zero).
     T const alpha = -step * lambda;
-    for (std::size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         dx[i] = alpha * p[i];
     }
 
     std::copy(x, x + n, x1);
 
-    for (std::size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         x1[i] += dx[i];
     }
