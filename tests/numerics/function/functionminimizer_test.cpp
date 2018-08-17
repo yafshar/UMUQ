@@ -1,92 +1,105 @@
 #include "core/core.hpp"
 #include "numerics/function/umuqdifferentiablefunction.hpp"
 #include "numerics/function/functionminimizer.hpp"
+#include "numerics/function/differentiablefunctionminimizer.hpp"
 #include "gtest/gtest.h"
 
 /*!
- * \brief Computes \f$ x^2 \times y^3 \f$
+ * \brief Computes \f$ x_0^2 \times x_1^3 \f$
  * 
  * \param x  Input data
- * \param y  Input data
  * 
- * \returns  \f$ x^2 \times y^3 \f$
+ * \returns  \f$ x_0^2 \times x_1^3 \f$
  */
-double f1(double const x, double const y)
+double f1(double const *x)
 {
-    return std::pow(x, 2) * std::pow(y, 3);
+    return std::pow(x[0], 2) * std::pow(x[1], 3);
 }
 
 /*!
  * \brief Computes df = (df/dx, df/dy)
  * 
- * \param x  Input data
- * \param y  Input data
+ * \param x   Input data
+ * \param df  Output gradient
  * 
- * \returns df
+ * \return true 
+ * \return false 
  */
-double *f2(double const x, double const y)
+bool f2(double const *x, double *df)
 {
-    double *df = new double[2];
-    df[0] = 2 * x * std::pow(y, 3);
-    df[1] = std::pow(x, 2) * 3 * std::pow(y, 2);
-    return df;
+    if (df)
+    {
+        df[0] = 2 * x[0] * std::pow(x[1], 3);
+        df[1] = std::pow(x[0], 2) * 3 * std::pow(x[1], 2);
+        return true;
+    }
+    UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
 /*!
- * \brief Computes \f$ f=x \times y, \text{ and } df = (df/dx, df/dy) \f$
+ * \brief Computes \f$ f=x_0 \times x_1, \text{ and } df = (df/dx_0, df/dx_1) \f$
  * 
  * \param x  Input data
- * \param y  Input data
  * \param f  Output function value 
  * \param df Output function value 
  * 
- * \returns  f & df
+ * \return true 
+ * \return false 
  */
-void f3(double const *x, double const *y, double *f, double *df)
+bool f3(double const *x, double *f, double *df)
 {
-    double X = *x;
-    double Y = *y;
-
     if (f)
     {
-        *f = std::pow(X, 2) * std::pow(Y, 3);
+        *f = std::pow(x[0], 2) * std::pow(x[1], 3);
+    }
+    else
+    {
+        UMUQFAILRETURN("The function pointer is not assigned!");
     }
 
     if (df)
     {
-        df[0] = 2 * X * std::pow(Y, 3);
-        df[1] = std::pow(X, 2) * 3 * std::pow(Y, 2);
+        df[0] = 2 * x[0] * std::pow(x[1], 3);
+        df[1] = std::pow(x[0], 2) * 3 * std::pow(x[1], 2);
+        return true;
     }
+    UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
-double f4(double const x, double const y)
+double f4(double const *x)
 {
-    return std::pow(x, 4) * std::pow(y, 3);
+    return std::pow(x[0], 4) * std::pow(x[1], 3);
 }
 
-double *f5(double const x, double const y)
+bool f5(double const *x, double *df)
 {
-    double *df = new double[2];
-    df[0] = 4 * std::pow(x, 3) * std::pow(y, 3);
-    df[1] = std::pow(x, 4) * 3 * std::pow(y, 2);
-    return df;
+    if (df)
+    {
+        df[0] = 4 * std::pow(x[0], 3) * std::pow(x[1], 3);
+        df[1] = std::pow(x[0], 4) * 3 * std::pow(x[1], 2);
+        return true;
+    }
+    UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
-void f6(double const *x, double const *y, double *f, double *df)
+bool f6(double const *x, double *f, double *df)
 {
-    double X = *x;
-    double Y = *y;
-
     if (f)
     {
-        *f = std::pow(X, 4) * std::pow(Y, 3);
+        *f = std::pow(x[0], 2) * std::pow(x[1], 3);
+    }
+    else
+    {
+        UMUQFAILRETURN("The function pointer is not assigned!");
     }
 
     if (df)
     {
-        df[0] = 4 * std::pow(X, 3) * std::pow(Y, 3);
-        df[1] = std::pow(X, 4) * 3 * std::pow(Y, 2);
+        df[0] = 4 * std::pow(x[0], 3) * std::pow(x[1], 3);
+        df[1] = std::pow(x[0], 4) * 3 * std::pow(x[1], 2);
+        return true;
     }
+    UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
 /*! 
@@ -94,43 +107,57 @@ void f6(double const *x, double const *y, double *f, double *df)
  */
 TEST(function_test, HandlesFunctionMinimizerConstruction)
 {
-    umuqFunction<double, std::function<double(double const, double const)>> fn("product");
+    umuqFunction<double, F_MTYPE<double>> fn("product");
     fn.f = f1;
 
+    std::vector<double> xi(2);
+
+    //! Creating the starting point and step size vector
     std::vector<double> x(2, 10.);
     std::vector<double> s(2, 0.1);
 
-    functionMinimizer<double, std::function<double(double const, double const)>> fnm("fmin");
+    functionMinimizer<double> fnm("fmin");
+
+    //! First we have to set the dimension
     fnm.reset(2);
+
+    //! Second we need to assign the function for this minimizer
     EXPECT_TRUE(fnm.set(fn, x, s));
 
-    EXPECT_DOUBLE_EQ(fnm.fun.f(2., 3), 108.);
+    xi = {2.0, 3.0};
+
+    //! Check if the assigned function works correctly
+    EXPECT_DOUBLE_EQ(fnm.fun.f(xi.data()), 108.);
 
     //! Set the target function to a new function
     EXPECT_TRUE(fnm.set(f4, x, s));
 
-    EXPECT_DOUBLE_EQ(fnm.fun.f(2., 3), 432.);
+    //! Check if the new assigned function works correctly
+    EXPECT_DOUBLE_EQ(fnm.fun.f(xi.data()), 432.);
 }
-
-using FT = std::function<double(double const, double const)>;
-using DFT = std::function<double *(double const, double const)>;
-using FDFT = std::function<void(double const *, double const *, double *, double *)>;
 
 /*! 
  * Test to check differentiablefunctionminimizer construction
  */
 TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruction)
 {
-    umuqDifferentiableFunction<double, FT, DFT, FDFT> fn("product2");
+    umuqDifferentiableFunction<double, F_MTYPE<double>, DF_MTYPE<double>, FDF_MTYPE<double>> fn("product2");
     fn.f = f1;
     fn.df = f2;
     fn.fdf = f3;
 
+    std::vector<double> xi(2);
+
+    //! Creating the starting point and step size vector
     std::vector<double> x(2, 10.);
-    std::vector<double> s(2, 0.1);
+
+    double s = 0.1;
+    
+    //! For differentiable minimizer, we need to also set the tolerance
     double tol = 0.1;
 
-    differentiableFunctionMinimizer<double, FT, DFT, FDFT> fnm("fmin");
+    //! Create an instance of the minimizer
+    differentiableFunctionMinimizer<double> fnm("fmin");
 
     //! First we have to set the dimension, otherwise we can not set the function
     EXPECT_FALSE(fnm.set(fn, x, s, tol));
@@ -141,16 +168,18 @@ TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruc
     //! After setting the dimesnion, now we can set the function
     EXPECT_TRUE(fnm.set(fn, x, s, tol));
 
-    EXPECT_DOUBLE_EQ(fnm.fun.f(2., 3), 108.);
+    //! Check if the assigned function works correctly
+    xi = {2.0, 3.0};
+    EXPECT_DOUBLE_EQ(fnm.fun.f(xi.data()), 108.);
 
-    //! Set the target function to new functions
+    //! Set the target function to a new functions
     EXPECT_TRUE(fnm.set(f4, f5, f6, x, s, tol));
 
     //! Check to make sure it is set to the correct function
-    EXPECT_DOUBLE_EQ(fnm.fun.f(2., 3), 432.);
+    EXPECT_DOUBLE_EQ(fnm.fun.f(xi.data()), 432.);
 
     //! Create a new minimizer
-    differentiableFunctionMinimizer<double, FT, DFT, FDFT> fnm2("fmin2");
+    differentiableFunctionMinimizer<double> fnm2("fmin2");
     fnm2.reset(2);
 
     //! Set the minimizer functions
@@ -158,7 +187,7 @@ TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruc
     fnm2.fun.df = f2;
     fnm2.fun.fdf = f3;
 
-    //! set the input vector 
+    //! set the input vector
     EXPECT_TRUE(fnm2.set(x, s, tol));
 }
 
