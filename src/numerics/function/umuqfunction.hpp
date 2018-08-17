@@ -167,47 +167,4 @@ umuqFunction<T, F>::operator bool() const noexcept
   return f != nullptr;
 }
 
-/*!
- * \brief Instances of std::function as f(x) 
- * 
- * \tparam T  IN/OUT data type
- */
-template <typename T>
-using FUN_x = std::function<T(T const)>;
-
-/*!
- * \brief Instances of std::function as f(*x) 
- * 
- * \tparam T  IN/OUT data type
- */
-template <typename T>
-using FUN_x_p = std::function<T(T *)>;
-
-/*!
- * \brief Instances of std::function as f(&x) 
- * 
- * \tparam T  OUT data type
- * \tparam V  IN data type
- */
-template <typename T, class V>
-using FUN_x_v = std::function<T(V const &)>;
-
-/*!
- * \brief Instances of std::function as f(x,y) 
- * 
- * \tparam T IN/OUT data type
- * \tparam Y IN data type of the second variable 
- */
-template <typename T, typename Y = T>
-using FUN_xy = std::function<T(T const, Y const)>;
-
-/*!
- * \brief Instances of std::function as f(*x,*y) 
- * 
- * \tparam T IN/OUT data type
- * \tparam T IN data type of the second variable
- */
-template <typename T, typename Y = T>
-using FUN_xy_p = std::function<T(T *, Y *)>;
-
-#endif // UMUQ_FUNCTION_H
+#endif //UMUQ_FUNCTION
