@@ -3,6 +3,7 @@
 
 #include "../factorial.hpp"
 #include "../eigenlib.hpp"
+#include "functiontype.hpp"
 #include "umuqfunction.hpp"
 #include "../random/psrandom.hpp"
 
