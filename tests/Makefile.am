@@ -64,6 +64,39 @@ TESTS += densityfunction_test
 check_PROGRAMS += densityfunction_test
 densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
 
+#numerics/multimin
+TESTS += conjugatefr_test
+check_PROGRAMS += conjugatefr_test
+conjugatefr_test_SOURCES = numerics/multimin/conjugatefr_test.cpp 
+
+TESTS += conjugatepr_test
+check_PROGRAMS += conjugatepr_test
+conjugatepr_test_SOURCES = numerics/multimin/conjugatepr_test.cpp 
+
+TESTS += simplexnm_test
+check_PROGRAMS += simplexnm_test
+simplexnm_test_SOURCES = numerics/multimin/simplexnm_test.cpp 
+
+TESTS += simplexnm2_test
+check_PROGRAMS += simplexnm2_test
+simplexnm2_test_SOURCES = numerics/multimin/simplexnm2_test.cpp 
+
+TESTS += simplexnm2rnd_test
+check_PROGRAMS += simplexnm2rnd_test
+simplexnm2rnd_test_SOURCES = numerics/multimin/simplexnm2rnd_test.cpp 
+
+TESTS += steepestdescent_test
+check_PROGRAMS += steepestdescent_test
+steepestdescent_test_SOURCES = numerics/multimin/steepestdescent_test.cpp 
+
+TESTS += bfgs_test
+check_PROGRAMS += bfgs_test
+bfgs_test_SOURCES = numerics/multimin/bfgs_test.cpp 
+
+TESTS += bfgs2_test
+check_PROGRAMS += bfgs2_test
+bfgs2_test_SOURCES = numerics/multimin/bfgs2_test.cpp 
+
 #misc
 TESTS += utility_test
 check_PROGRAMS += utility_test
