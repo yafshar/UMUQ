@@ -112,6 +112,14 @@ public:
   virtual bool set(T const *X, T const *stepSize);
 
   /*!
+   * \brief Initilize the minimizer
+   * 
+   * \return true 
+   * \return false 
+   */
+  virtual bool init();
+
+  /*!
    * \brief Drives the iteration of each algorithm
    * 
    * It performs one iteration to update the state of the minimizer.
@@ -182,6 +190,12 @@ public:
   //! N-dimensional x vector
   std::vector<T> x;
 
+  // Workspace 1 for algorithm
+  std::vector<T> ws1;
+
+  // Workspace 2 for algorithm
+  std::vector<T> ws2;
+
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)
   T size;
 
@@ -195,7 +209,15 @@ functionMinimizer<T>::functionMinimizer(char const *Name) : name(Name) {}
 template <typename T>
 bool functionMinimizer<T>::reset(int const nDim) noexcept
 {
+  if (nDim <= 0)
+  {
+    UMUQFAILRETURN("Invalid number of parameters specified!");
+  }
+
   x.resize(nDim);
+  ws1.resize(nDim);
+  ws2.resize(nDim);
+
   return true;
 }
 
@@ -222,6 +244,7 @@ bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, std::vector<T
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -232,6 +255,7 @@ bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, T const *X, T
   if (x.size() > 0)
   {
     std::copy(X, X + x.size(), x.begin());
+    std::copy(stepSize, stepSize + x.size(), ws2.begin());
   }
   else
   {
@@ -273,6 +297,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &X, std::ve
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -300,6 +325,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &X, s
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -310,6 +336,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *X, T const *stepSize)
   if (x.size() > 0)
   {
     std::copy(X, X + x.size(), x.begin());
+    std::copy(stepSize, stepSize + x.size(), ws2.begin());
   }
   else
   {
@@ -334,6 +361,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *X, T const *stepS
   if (x.size() > 0)
   {
     std::copy(X, X + x.size(), x.begin());
+    std::copy(stepSize, stepSize + x.size(), ws2.begin());
   }
   else
   {
@@ -376,6 +404,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &Params, st
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -404,6 +433,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &Para
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -414,6 +444,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *Params, int const NumPa
   if (x.size() > 0)
   {
     std::copy(X, X + x.size(), x.begin());
+    std::copy(stepSize, stepSize + x.size(), ws2.begin());
   }
   else
   {
@@ -439,6 +470,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *Params, int const
   if (x.size() > 0)
   {
     std::copy(X, X + x.size(), x.begin());
+    std::copy(stepSize, stepSize + x.size(), ws2.begin());
   }
   else
   {
@@ -477,6 +509,7 @@ bool functionMinimizer<T>::set(std::vector<T> const &X, std::vector<T> const &st
   }
 
   std::copy(X.begin(), X.end(), x.begin());
+  std::copy(stepSize.begin(), stepSize.end(), ws2.begin());
 
   return true;
 }
@@ -490,6 +523,14 @@ bool functionMinimizer<T>::set(T const *X, T const *stepSize)
   }
 
   std::copy(X, X + x.size(), x.begin());
+  std::copy(stepSize, stepSize + x.size(), ws2.begin());
+
+  return true;
+}
+
+template <typename T>
+bool functionMinimizer<T>::init()
+{
   return true;
 }
 
