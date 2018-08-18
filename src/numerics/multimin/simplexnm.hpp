@@ -7,10 +7,9 @@
 /*! \class simplexNM
  *  \ingroup multimin_Module
  * 
- * \brief 
- * 
- * The Simplex method of Nelder and Mead,
- * also known as the polytope search alogorithm. 
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm. 
+ * It uses fixed coordinate axes around the starting point x to initilize the simplex.
+ * The size of simplex is calculated as the mean distance of each vertex from the center.
  * 
  * Ref:
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
@@ -100,9 +99,11 @@ class simplexNM : public functionMinimizer<T>
 	bool computeCenter(std::vector<T> &X);
 
 	/*!
-	 * \brief 
+	 * \brief Compute the specific characteristic size
+	 *  
+	 * The size of simplex is calculated as the mean distance of each vertex from the center. 
 	 * 
-	 * \return T 
+	 * \return Computed characteristic size
 	 */
 	T computeSize();
 
@@ -159,9 +160,10 @@ bool simplexNM<T>::init()
 	// Following points are initialized to x0 + step_size
 	for (int i = 0; i < n; i++)
 	{
-		// Copy the elements of the x to xtemp
+		// Copy the elements of the x to ws1
 		std::copy(this->x.begin(), this->x.end(), this->ws1.begin());
 
+		// Currently ws2 contains stepSize
 		this->ws1[i] += this->ws2[i];
 
 		this->fval = this->fun.f(this->ws1.data());
@@ -171,7 +173,7 @@ bool simplexNM<T>::init()
 			UMUQFAILRETURN("Non-finite function value encountered!");
 		}
 
-		// Copy the elements of the vector xtemp into the (i+1)-th row of the matrix x1
+		// Copy the elements of the vector ws1 into the (i+1)-th row of the matrix x1
 		std::ptrdiff_t const Id = (i + 1) * n;
 
 		std::copy(this->ws1.begin(), this->ws1.end(), x1.data() + Id);
@@ -191,9 +193,9 @@ bool simplexNM<T>::iterate()
 	// Simplex iteration tries to minimize function f value
 	// ws1 and ws2 vectors store tried corner point coordinates
 
-	int hi;
+	int hi(0);
 	int s_hi;
-	int lo;
+	int lo(0);
 
 	T dhi;
 	T dlo;
@@ -204,16 +206,12 @@ bool simplexNM<T>::iterate()
 
 	// Get index of highest, second highest and lowest point
 	dhi = dlo = y1[0];
-
-	hi = 0;
-	lo = 0;
-
 	ds_hi = y1[1];
 	s_hi = 1;
 
 	int const n = this->getDimension();
 
-	for (int i = 1; i < n; i++)
+	for (int i = 1; i < n + 1; i++)
 	{
 		val = y1[i];
 		if (val < dlo)
@@ -411,10 +409,9 @@ bool simplexNM<T>::computeCenter(std::vector<T> &X)
 	int const n = this->getDimension();
 
 	// Calculates the center of the simplex to X
-	T s;
 	for (int j = 0; j < n; j++)
 	{
-		s = T{};
+		T s(0);
 		for (int i = 0; i < n + 1; i++)
 		{
 			std::ptrdiff_t const Id = i * n + j;

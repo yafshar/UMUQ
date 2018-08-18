@@ -70,6 +70,12 @@ class umuqFunction
     std::string const getName() const;
 
     /*!
+     * \brief Set the Name object
+     * 
+     */
+    void setName(char const *Name);
+
+    /*!
      * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
      * 
      * \return true   If it stores a callable function target at f
@@ -159,6 +165,12 @@ template <typename T, class F>
 std::string const umuqFunction<T, F>::getName() const
 {
   return name;
+}
+
+template <typename T, class F>
+void umuqFunction<T, F>::setName(char const *Name)
+{
+  name = std::string(Name);
 }
 
 template <typename T, class F>

@@ -7,10 +7,10 @@
 /*! \class simplexNM2
  *  \ingroup multimin_Module
  * 
- * \brief 
- * 
- * The Simplex method of Nelder and Mead, also known as the polytope
- * search alogorithm.  
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
+ * It uses fixed coordinate axes around the starting point x to initilize the simplex.
+ * The size of simplex is calculated as the RMS distance of each vertex from the center
+ *   
  * Ref: 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
@@ -98,7 +98,7 @@ class simplexNM2 : public functionMinimizer<T>
 	 * 
 	 * \return true 
 	 * \return false 
-	 */	
+	 */
 	bool contractByBest(int const best, std::vector<T> &X);
 
 	/*!
@@ -110,9 +110,12 @@ class simplexNM2 : public functionMinimizer<T>
 	bool computeCenter();
 
 	/*!
-	 * \brief 
+	 * \brief Compute the specific characteristic size
+	 *  
+	 * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
+	 * the mean distance, allowing a linear update of this quantity on each step. 
 	 * 
-	 * \return T 
+	 * \return Computed characteristic size
 	 */
 	T computeSize();
 
@@ -254,7 +257,7 @@ bool simplexNM2<T>::iterate()
 
 	int const n = this->getDimension();
 
-	for (int i = 1; i < n; i++)
+	for (int i = 1; i < n + 1; i++)
 	{
 		val = y1[i];
 		if (val < dlo)

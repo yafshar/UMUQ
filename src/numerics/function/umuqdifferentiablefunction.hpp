@@ -83,15 +83,16 @@ class umuqDifferentiableFunction : public umuqFunction<T, F>
 
   public:
     /*!
-     * \brief A general-purpose polymorphic function wrapper (for a derivative function) which calculates the gradient of the function \sa f
+     * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function \sa f
      * 
-     * \returns the value of the gradient of the function (in case it returns the n-dimensional gradient \f$ \frac{\partial f(x)}{\partial x_i} \f$)
+     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nable f = \frac{\partial f(x)}{\partial x_i} \f$)
      */
     D df;
 
     /*!
-     * \brief A helper function which calculates both the function value and the gradient together. 
-     * It uses a provided parametric function of n variables for the minimizers to operate on and also 
+     * \brief A general-purpose polymorphic function wrapper which calculates both the function value and it's derivative together.
+     *  
+     * It uses a provided parametric function of n variables to operate on and also 
      * a function which calculates the gradient of the function. 
      * It is faster to compute the function and its derivative at the same time.
      */

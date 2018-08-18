@@ -7,10 +7,10 @@
 /*! \class simplexNM2Rnd
  *  \ingroup multimin_Module
  * 
- * \brief 
- * 
- * The Simplex method of Nelder and Mead, also known as the polytope
- * search alogorithm.  
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
+ * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
+ * around the starting point x to initilize the simplex.
+ *  
  * Ref: 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
@@ -48,6 +48,17 @@ class simplexNM2Rnd : public functionMinimizer<T>
 	/*!
      * \brief Initilize the minimizer
      * 
+	 * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
+	 * around the starting point x to initilize the simplex.
+	 * The final dimensions of the simplex are scaled along the coordinate axes by the 
+	 * vector step_size. 
+	 * The randomization uses a simple deterministic generator so that repeated calls to 
+	 * functionMinimizer set for a given solver object will vary the orientation in a 
+	 * well-defined way.
+	 * 
+	 * Reference:
+	 * https://www.gnu.org/software/gsl/doc/html/multimin.html
+	 * 
      * \return true 
      * \return false 
      */
@@ -110,9 +121,12 @@ class simplexNM2Rnd : public functionMinimizer<T>
 	bool computeCenter();
 
 	/*!
-	 * \brief 
+	 * \brief Compute the specific characteristic size
+	 *  
+	 * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
+	 * the mean distance, allowing a linear update of this quantity on each step. 
 	 * 
-	 * \return T 
+	 * \return Computed characteristic size
 	 */
 	T computeSize();
 
@@ -158,7 +172,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
 	};
 
   private:
-    /*!
+	/*!
      * \brief Uniform RNG
      * 
      * \param seed Seed to initilize the PRNG 
@@ -380,7 +394,7 @@ bool simplexNM2Rnd<T>::iterate()
 
 	int const n = this->getDimension();
 
-	for (int i = 1; i < n; i++)
+	for (int i = 1; i < n + 1; i++)
 	{
 		val = y1[i];
 		if (val < dlo)
