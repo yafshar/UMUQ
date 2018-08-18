@@ -2,7 +2,7 @@
 #define UMUQ_CONJUGATEFR_H
 
 #include "core/core.hpp"
-#include "../function/functionminimizer.hpp"
+#include "../function/differentiablefunctionminimizer.hpp"
 
 /*! \class conjugateFr
  *  \ingroup multimin Module
@@ -25,7 +25,7 @@ class conjugateFr : public differentiableFunctionMinimizer<T>
     /*!
      * \brief Construct a new conjugate Fr object
      * 
-     * \param Name name of the differentiable function minimizer type (default "conjugateFr")
+     * \param Name Minimizer name
      */
     conjugateFr(char const *Name = "conjugateFr");
 
@@ -68,7 +68,7 @@ class conjugateFr : public differentiableFunctionMinimizer<T>
      * \return true 
      * \return false 
      */
-    bool restart();
+    inline bool restart();
 
   private:
     //! Iteration
@@ -100,6 +100,11 @@ conjugateFr<T>::~conjugateFr() {}
 template <typename T>
 bool conjugateFr<T>::reset(int const nDim) noexcept
 {
+    if (nDim <= 0)
+    {
+        UMUQFAILRETURN("Invalid number of parameters specified!");
+    }
+
     this->x.resize(nDim);
     this->dx.resize(nDim);
     this->gradient.resize(nDim);
@@ -140,7 +145,7 @@ bool conjugateFr<T>::iterate()
 {
     int const n = this->getDimension();
 
-    T fa = fval;
+    T fa = this->fval;
     T fb;
     T dir;
     T stepa(0);
@@ -164,7 +169,7 @@ bool conjugateFr<T>::iterate()
         pg += p[i] * this->gradient[i];
     }
 
-    dir = (pg >= T{}) ? +1 : -1;
+    dir = (pg >= T{}) ? static_cast<T>(1) : -static_cast<T>(1);
 
     // Compute new trial point at x_c= x - step * p, where p is the current direction
     this->takeStep(this->x, p, stepc, dir / pnorm, x1, this->dx);
@@ -181,9 +186,7 @@ bool conjugateFr<T>::iterate()
 
         std::copy(x1.begin(), x1.end(), this->x.begin());
 
-        this->fun.df(x1.data(), this->gradient.data());
-
-        return true;
+        return this->fun.df(x1.data(), this->gradient.data());
     }
 
 #ifdef DEBUG
@@ -193,7 +196,7 @@ bool conjugateFr<T>::iterate()
     // Do a line minimisation in the region (xa,fa) (xc,fc) to find an
     // intermediate (xb,fb) satisifying fa > fb < fc.  Choose an initial
     // xb based on parabolic interpolation
-    this->intermediatePoint(this->x, p, dir / pnorm, pg, stepa, stepc, fa, fc, x1, dx1, this->gradient, stepb, fb);
+    this->intermediatePoint(this->x, p, dir / pnorm, pg, stepc, fa, fc, x1, dx1, this->gradient, stepb, fb);
 
     if (stepb == T{})
     {
@@ -243,7 +246,7 @@ bool conjugateFr<T>::iterate()
 }
 
 template <typename T>
-bool conjugateFr<T>::restart()
+inline bool conjugateFr<T>::restart()
 {
     iter = 0;
     return true;

@@ -151,6 +151,19 @@ inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T con
     }
 }
 
+/*!
+ * \brief (Hermite) interpolating cubic
+ * 
+ * \tparam T
+ *  
+ * \param f0 
+ * \param fp0 
+ * \param f1 
+ * \param fp1 
+ * \param zl 
+ * \param zh 
+ * \return T 
+ */
 template <typename T>
 T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T const zh)
 {
@@ -223,8 +236,28 @@ T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const
 }
 
 /*!
- * recommended values from Fletcher are 
- * rho = 0.01, sigma = 0.1, tau1 = 9, tau2 = 0.05, tau3 = 0.5 
+ * \brief Line search algorithm for general unconstrained minimization
+ * An assumption for this algorithm is that the line search can be restricted to the 
+ * interval \f$ (0, \mu] \f$ where \f$ \mu = \frac{\bar{f}-f(0)}{\rho \acute{f}(0)} \f$
+ * is the point at which the \f$\rho-\text{line}\f$ intersects the line \f$ f = \bar{f} \f$.
+ * 
+ * After the bracketing phase has achieved its aim of bracketing an interval of acceptable 
+ * points, sectioning phase generates a sequence of brackets whose lengths tend to zero.
+ * 
+ * In this algorithm \f$ \tau_1 > 1 \f$ is a preset factor by which the size of the jumps is
+ * increased, typically \f$ \tau_1 = 9 \f$. 
+ * \f$ \tau_2 \f$ and \f$ \tau_3 \f$ are preset factors \f$  0 < \tau_2  < \tau_3 \le \frac{1}{2} \f$.
+ * 
+ * Typical values are \f$ \tau_2 = \frac{1}{10} \f$ ( \f$ (\tau_2 \le \sigma \text{is advisable}) \f$  
+ * and \f$ \tau_3 = \frac{1}{2} \f$, although the algorithm is insensitive to the precise values that 
+ * are used. 
+ * 
+ * Recommended values from Fletcher: 
+ * \f$ \rho = 0.01, \sigma = 0.1, \tau_1 = 9, \tau_2 = 0.05, \tau_3 = 0.5 \f$ 
+ *
+ * Ref:
+ * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
+ * 
  */
 template <typename T, class TFD>
 bool minimize(TFD *fn, T rho, T sigma, T tau1, T tau2, T tau3, int order, T alpha1, T *alpha_new)
