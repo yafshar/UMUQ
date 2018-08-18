@@ -259,14 +259,14 @@ public:
    */
   bool intermediatePoint(T const *X, T const *P,
                          T const lambda, T const pg,
-                         T const stepa, T const stepc,
+                         T const stepc,
                          T const fa, T const fc,
                          T *X1, T *DX,
                          T *Gradient, T *Step, T *Fval);
 
   bool intermediatePoint(std::vector<T> const &X, std::vector<T> const &P,
                          T const lambda, T const pg,
-                         T const stepa, T const stepc,
+                         T const stepc,
                          T const fa, T const fc,
                          std::vector<T> &X1, std::vector<T> &DX,
                          std::vector<T> &Gradient, T &Step, T &Fval);
@@ -315,11 +315,6 @@ public:
                 std::vector<T> &Gradient, T &Step,
                 T &Fval, T &Gnorm);
 
-  bool minimize(T const rho, T const sigma,
-                T const tau1, T const tau2,
-                T const tau3, int const order,
-                T const alpha1, T *alpha_new);
-
 private:
   // Make it noncopyable
   differentiableFunctionMinimizer(differentiableFunctionMinimizer<T> const &) = delete;
@@ -362,6 +357,11 @@ differentiableFunctionMinimizer<T>::differentiableFunctionMinimizer(char const *
 template <typename T>
 bool differentiableFunctionMinimizer<T>::reset(int const nDim) noexcept
 {
+	if (nDim <= 0)
+	{
+		UMUQFAILRETURN("Invalid number of parameters specified!");
+	}
+
   x.resize(nDim);
   dx.resize(nDim);
   gradient.resize(nDim);
@@ -1339,7 +1339,9 @@ bool differentiableFunctionMinimizer<T>::df(T const *X, T *G)
 
     X1[i] = XI + DX;
     high = fun.f(X1.data());
+
     X1[i] = XI - DX;
+
     low = fun.f(X1.data());
     X1[i] = XI;
 
@@ -1394,21 +1396,22 @@ void differentiableFunctionMinimizer<T>::takeStep(std::vector<T> const &X, std::
 template <typename T>
 bool differentiableFunctionMinimizer<T>::intermediatePoint(T const *X, T const *P,
                                                            T const lambda, T const pg,
-                                                           T const stepa, T const stepc,
+                                                           T const stepc,
                                                            T const fa, T const fc,
                                                            T *X1, T *DX,
                                                            T *Gradient, T *Step, T *Fval)
 {
   T stepb(1);
-  T fb(fa);
+  T stepd(stepc);
 
-  int const n = getDimension();
+  T fb(fa);
+  T fd(fc);
 
   while (fb >= fa && stepb > T{})
   {
-    T u = std::abs(pg * lambda * stepc);
+    T u = std::abs(pg * lambda * stepd);
 
-    stepb = 0.5 * stepc * u / ((fc - fa) + u);
+    stepb = 0.5 * stepd * u / ((fd - fa) + u);
 
     takeStep(X, P, stepb, lambda, X1, DX);
 
@@ -1416,9 +1419,9 @@ bool differentiableFunctionMinimizer<T>::intermediatePoint(T const *X, T const *
 
     if (fb >= fa && stepb > T{})
     {
-      //Downhill step failed, reduce step-size and try again
-      fc = fb;
-      stepc = stepb;
+      // Downhill step failed, reduce step-size and try again
+      fd = fb;
+      stepd = stepb;
     }
   }
 
@@ -1432,21 +1435,22 @@ bool differentiableFunctionMinimizer<T>::intermediatePoint(T const *X, T const *
 template <typename T>
 bool differentiableFunctionMinimizer<T>::intermediatePoint(std::vector<T> const &X, std::vector<T> const &P,
                                                            T const lambda, T const pg,
-                                                           T const stepa, T const stepc,
+                                                           T const stepc,
                                                            T const fa, T const fc,
                                                            std::vector<T> &X1, std::vector<T> &DX,
                                                            std::vector<T> &Gradient, T &Step, T &Fval)
 {
-  int const n = getDimension();
-
   T stepb(1);
+  T stepd(stepc);
+
   T fb(fa);
+  T fd(fc);
 
   while (fb >= fa && stepb > T{})
   {
-    T u = std::abs(pg * lambda * stepc);
+    T u = std::abs(pg * lambda * stepd);
 
-    stepb = 0.5 * stepc * u / ((fc - fa) + u);
+    stepb = 0.5 * stepd * u / ((fd - fa) + u);
 
     takeStep(X, P, stepb, lambda, X1, DX);
 
@@ -1454,9 +1458,9 @@ bool differentiableFunctionMinimizer<T>::intermediatePoint(std::vector<T> const 
 
     if (fb >= fa && stepb > T{})
     {
-      //Downhill step failed, reduce step-size and try again
-      fc = fb;
-      stepc = stepb;
+      // Downhill step failed, reduce step-size and try again
+      fd = fb;
+      stepd = stepb;
     }
   }
 
@@ -1484,12 +1488,19 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
 
   int const n = getDimension();
 
-  T u = stepb;
-  T v = stepa;
-  T w = stepc;
-  T fu = fb;
-  T fv = fa;
-  T fw = fc;
+  T stpb(stepb);
+  T stpa(stepa);
+  T stpc(stepc);
+
+  T fstpb(fb);
+
+  T u(stepb);
+  T v(stepa);
+  T w(stepc);
+
+  T fu(fb);
+  T fv(fa);
+  T fw(fc);
 
   T old2 = std::abs(w - v);
   T old1 = std::abs(v - u);
@@ -1502,8 +1513,8 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
   std::copy(X1, X1 + n, X2);
   std::copy(DX1, DX1 + n, DX2);
 
-  *Fval = fb;
-  *Step = stepb;
+  *Fval = fstpb;
+  *Step = stpb;
 
   T s(0);
   std::for_each(Gradient, Gradient + n, [&](T const g_i) { s += g_i * g_i; });
@@ -1535,21 +1546,21 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
         du = e1 / e2;
       }
 
-      if (du > T{} && du < (stepc - stepb) && std::abs(du) < 0.5 * old2)
+      if (du > T{} && du < (stpc - stpb) && std::abs(du) < 0.5 * old2)
       {
         stepm = u + du;
       }
-      else if (du < T{} && du > (stepa - stepb) && std::abs(du) < 0.5 * old2)
+      else if (du < T{} && du > (stpa - stpb) && std::abs(du) < 0.5 * old2)
       {
         stepm = u + du;
       }
-      else if ((stepc - stepb) > (stepb - stepa))
+      else if ((stpc - stpb) > (stpb - stpa))
       {
-        stepm = 0.38 * (stepc - stepb) + stepb;
+        stepm = 0.38 * (stpc - stpb) + stpb;
       }
       else
       {
-        stepm = stepb - 0.38 * (stepb - stepa);
+        stepm = stpb - 0.38 * (stpb - stpa);
       }
     }
 
@@ -1561,7 +1572,7 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
     std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
 #endif
 
-    if (fm > fb)
+    if (fm > fstpb)
     {
       if (fm < fv)
       {
@@ -1576,21 +1587,19 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
         fw = fm;
       }
 
-      if (stepm < stepb)
+      if (stepm < stpb)
       {
-        stepa = stepm;
-        fa = fm;
+        stpa = stepm;
       }
       else
       {
-        stepc = stepm;
-        fc = fm;
+        stpc = stepm;
       }
 
       // goto mid_trial;
       continue;
     }
-    else if (fm <= fb)
+    else if (fm <= fstpb)
     {
       old2 = old1;
       old1 = std::abs(u - stepm);
@@ -1632,19 +1641,17 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
         return true;
       }
 
-      if (stepm < stepb)
+      if (stepm < stpb)
       {
-        stepc = stepb;
-        fc = fb;
-        stepb = stepm;
-        fb = fm;
+        stpc = stpb;
+        stpb = stepm;
+        fstpb = fm;
       }
       else
       {
-        stepa = stepb;
-        fa = fb;
-        stepb = stepm;
-        fb = fm;
+        stpa = stpb;
+        stpb = stepm;
+        fstpb = fm;
       }
 
       // Goto mid_trial;
@@ -1670,12 +1677,19 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
 
   int const n = getDimension();
 
-  T u = stepb;
-  T v = stepa;
-  T w = stepc;
-  T fu = fb;
-  T fv = fa;
-  T fw = fc;
+  T stpb(stepb);
+  T stpa(stepa);
+  T stpc(stepc);
+
+  T fstpb(fb);
+
+  T u(stepb);
+  T v(stepa);
+  T w(stepc);
+
+  T fu(fb);
+  T fv(fa);
+  T fw(fc);
 
   T old2 = std::abs(w - v);
   T old1 = std::abs(v - u);
@@ -1688,11 +1702,11 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
   std::copy(X1.begin(), X1.end(), X2.begin());
   std::copy(DX1.begin(), DX1.end(), DX2.begin());
 
-  Fval = fb;
-  Step = stepb;
+  Fval = fstpb;
+  Step = stpb;
 
   T s(0);
-  std::for_each(Gradient, Gradient + n, [&](T const g_i) { s += g_i * g_i; });
+  std::for_each(Gradient.begin(), Gradient.end(), [&](T const g_i) { s += g_i * g_i; });
   Gnorm = std::sqrt(s);
 
   int iter(0);
@@ -1721,33 +1735,33 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
         du = e1 / e2;
       }
 
-      if (du > T{} && du < (stepc - stepb) && std::abs(du) < 0.5 * old2)
+      if (du > T{} && du < (stpc - stpb) && std::abs(du) < 0.5 * old2)
       {
         stepm = u + du;
       }
-      else if (du < T{} && du > (stepa - stepb) && std::abs(du) < 0.5 * old2)
+      else if (du < T{} && du > (stpa - stpb) && std::abs(du) < 0.5 * old2)
       {
         stepm = u + du;
       }
-      else if ((stepc - stepb) > (stepb - stepa))
+      else if ((stpc - stpb) > (stpb - stpa))
       {
-        stepm = 0.38 * (stepc - stepb) + stepb;
+        stepm = 0.38 * (stpc - stpb) + stpb;
       }
       else
       {
-        stepm = stepb - 0.38 * (stepb - stepa);
+        stepm = stpb - 0.38 * (stpb - stpa);
       }
     }
 
     takeStep(X, P, stepm, lambda, X1, DX1);
 
-    fm = fun.f(X1);
+    fm = fun.f(X1.data());
 
 #ifdef DEBUG
     std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
 #endif
 
-    if (fm > fb)
+    if (fm > fstpb)
     {
       if (fm < fv)
       {
@@ -1762,21 +1776,19 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
         fw = fm;
       }
 
-      if (stepm < stepb)
+      if (stepm < stpb)
       {
-        stepa = stepm;
-        fa = fm;
+        stpa = stepm;
       }
       else
       {
-        stepc = stepm;
-        fc = fm;
+        stpc = stepm;
       }
 
       // goto mid_trial;
       continue;
     }
-    else if (fm <= fb)
+    else if (fm <= fstpb)
     {
       old2 = old1;
       old1 = std::abs(u - stepm);
@@ -1790,7 +1802,7 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
       std::copy(X1.begin(), X1.end(), X2.begin());
       std::copy(DX1.begin(), DX1.end(), DX2.begin());
 
-      fun.df(X1, Gradient);
+      fun.df(X1.data(), Gradient.data());
 
       pg = T{};
       for (int i = 0; i < n; i++)
@@ -1818,19 +1830,17 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
         return true;
       }
 
-      if (stepm < stepb)
+      if (stepm < stpb)
       {
-        stepc = stepb;
-        fc = fb;
-        stepb = stepm;
-        fb = fm;
+        stpc = stpb;
+        stpb = stepm;
+        fstpb = fm;
       }
       else
       {
-        stepa = stepb;
-        fa = fb;
-        stepb = stepm;
-        fb = fm;
+        stpa = stpb;
+        stpb = stepm;
+        fstpb = fm;
       }
 
       // Goto mid_trial;
@@ -1838,161 +1848,5 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
     }
   }
 }
-
-// /*!
-//  * recommended values from Fletcher are 
-//  * rho = 0.01, sigma = 0.1, tau1 = 9, tau2 = 0.05, tau3 = 0.5 
-//  */
-// template <typename T>
-// bool differentiableFunctionMinimizer<T>::minimize(T const rho, T const sigma,
-//                                                   T const tau1, T const tau2,
-//                                                   T const tau3, int const order,
-//                                                   T const alpha1, T *alpha_new)
-// {
-//   T f0;
-//   T fp0;
-//   T falpha;
-//   T falpha_prev;
-//   T fpalpha;
-//   T fpalpha_prev;
-//   T delta;
-//   T alpha_next;
-//   T alpha(alpha1);
-//   T alpha_prev(0);
-//   T a(0);
-//   T b(alpha);
-//   T fa;
-//   T fb(0);
-//   T fpa;
-//   T fpb(0);
-
-//   fun.fdf(0, &f0, &fp0);
-
-//   falpha_prev = f0;
-//   fpalpha_prev = fp0;
-
-//   // Avoid uninitialized variables morning
-//   b = alpha;
-//   fa = f0;
-//   fpa = fp0;
-
-//   int i = 0;
-//   int const bracket_iters = 100;
-  
-//   // Begin bracketing
-//   while (i++ < bracket_iters)
-//   {
-//     // TO CHECK
-//     falpha = fun.f(alpha);
-
-//     // Fletcher's rho test
-
-//     if (falpha > f0 + alpha * rho * fp0 || falpha >= falpha_prev)
-//     {
-//       a = alpha_prev;
-//       fa = falpha_prev;
-//       fpa = fpalpha_prev;
-//       b = alpha;
-//       fb = falpha;
-//       fpb = std::numeric_limits<T>::quiet_NaN();
-//       //goto sectioning
-//       break;
-//     }
-
-//     fpalpha = fn->df(alpha);
-
-//     // Fletcher's sigma test
-//     if (std::abs(fpalpha) <= -sigma * fp0)
-//     {
-//       *alpha_new = alpha;
-//       return true;
-//     }
-
-//     if (fpalpha >= T{})
-//     {
-//       a = alpha;
-//       fa = falpha;
-//       fpa = fpalpha;
-//       b = alpha_prev;
-//       fb = falpha_prev;
-//       fpb = fpalpha_prev;
-//       //goto sectioning
-//       break;
-//     }
-
-//     delta = alpha - alpha_prev;
-
-//     {
-//       T lower = alpha + delta;
-//       T upper = alpha + tau1 * delta;
-
-//       alpha_next = interpolate<T>(alpha_prev, falpha_prev, fpalpha_prev, alpha, falpha, fpalpha, lower, upper, order);
-//     }
-
-//     alpha_prev = alpha;
-//     falpha_prev = falpha;
-//     fpalpha_prev = fpalpha;
-//     alpha = alpha_next;
-//   }
-
-//   //Sectioning of bracket [a,b]
-//   std::size_t const section_iters = 100;
-//   while (i++ < section_iters)
-//   {
-//     delta = b - a;
-
-//     {
-//       T lower = a + tau2 * delta;
-//       T upper = b - tau3 * delta;
-
-//       alpha = interpolate<T>(a, fa, fpa, b, fb, fpb, lower, upper, order);
-//     }
-
-//     falpha = fn->f(alpha);
-
-//     if ((a - alpha) * fpa <= std::numeric_limits<T>::epsilon())
-//     {
-//       //Roundoff prevents progress
-//       UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
-//     };
-
-//     if (falpha > f0 + rho * alpha * fp0 || falpha >= fa)
-//     {
-//       //\f$ a_next = a \f$
-//       b = alpha;
-//       fb = falpha;
-//       fpb = std::numeric_limits<T>::quiet_NaN();
-//     }
-//     else
-//     {
-//       fpalpha = fn->df(alpha);
-
-//       if (std::abs(fpalpha) <= -sigma * fp0)
-//       {
-//         *alpha_new = alpha;
-//         //terminate
-//         return true;
-//       }
-
-//       if (((b - a) >= T{} && fpalpha >= T{}) || ((b - a) <= T{} && fpalpha <= T{}))
-//       {
-//         b = a;
-//         fb = fa;
-//         fpb = fpa;
-//         a = alpha;
-//         fa = falpha;
-//         fpa = fpalpha;
-//       }
-//       else
-//       {
-//         a = alpha;
-//         fa = falpha;
-//         fpa = fpalpha;
-//       }
-//     }
-//   }
-
-//   return true;
-// }
 
 #endif //UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER
