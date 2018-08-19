@@ -4,7 +4,7 @@
 /*! \class conjugatePr
  *  \ingroup multimin_Module
  * 
- * \brief Polak-Ribiere conjugate gradient algorithm
+ * \brief Conjugate Polak-Ribiere gradient algorithm
  * It differs from the Fletcher-Reeves method, only in the choice of the coefficient \f$ \beta \f$.
  * It works well when the evaluation point is close enough to the minimum of the objective function 
  * that it is well approximated by a quadratic hypersurface. 
