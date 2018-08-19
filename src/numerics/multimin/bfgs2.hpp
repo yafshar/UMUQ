@@ -1,8 +1,6 @@
 #ifndef UMUQ_BFGS2_H
 #define UMUQ_BFGS2_H
 
-#include "core/core.hpp"
-#include "../function/differentiablefunctionminimizer.hpp"
 #include "../function/utilityfunction.hpp"
 
 /*! \class bfgs2
@@ -39,7 +37,7 @@ class bfgs2 : public differentiableFunctionMinimizer<T>
      * 
      * \param Name Minimizer name
      */
-    bfgs2(char const *Name = "bfgs2");
+    explicit bfgs2(char const *Name = "bfgs2");
 
     /*!
      * \brief Destroy the bfgs2 object

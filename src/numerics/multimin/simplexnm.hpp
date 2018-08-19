@@ -1,9 +1,6 @@
 #ifndef UMUQ_SIMPLEXNM_H
 #define UMUQ_SIMPLEXNM_H
 
-#include "core/core.hpp"
-#include "../function/functionminimizer.hpp"
-
 /*! \class simplexNM
  *  \ingroup multimin_Module
  * 
@@ -27,7 +24,7 @@ class simplexNM : public functionMinimizer<T>
      * 
      * \param Name Minimizer name
      */
-	simplexNM(const char *Name = "simplexNM");
+	explicit simplexNM(const char *Name = "simplexNM");
 
 	/*!
 	 * \brief Destroy the simplexNM object

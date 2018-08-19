@@ -1,9 +1,6 @@
 #ifndef UMUQ_SIMPLEXNM2RND_H
 #define UMUQ_SIMPLEXNM2RND_H
 
-#include "core/core.hpp"
-#include "../function/functionminimizer.hpp"
-
 /*! \class simplexNM2Rnd
  *  \ingroup multimin_Module
  * 
@@ -28,7 +25,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
 	 * 
 	 * \param Name Minimizer name
 	 */
-	simplexNM2Rnd(const char *Name = "simplexNM2Rnd");
+	explicit simplexNM2Rnd(const char *Name = "simplexNM2Rnd");
 
 	/*!
 	 * \brief Destroy the simplex N M2 Rnd object

@@ -1,9 +1,6 @@
 #ifndef UMUQ_STEEPESTDESCENT_H
 #define UMUQ_STEEPESTDESCENT_H
 
-#include "core/core.hpp"
-#include "../function/differentiablefunctionminimizer.hpp"
-
 /*! \class steepestDescent
  *  \ingroup multimin_Module
  * 
@@ -28,7 +25,7 @@ class steepestDescent : public differentiableFunctionMinimizer<T>
      * 
      * \param Name Minimizer name
      */
-    steepestDescent(char const *Name = "steepestDescent");
+    explicit steepestDescent(char const *Name = "steepestDescent");
 
     /*!
      * \brief Destroy the steepest Descent object

@@ -1,9 +1,6 @@
 #ifndef UMUQ_BFGS_H
 #define UMUQ_BFGS_H
 
-#include "core/core.hpp"
-#include "../function/differentiablefunctionminimizer.hpp"
-
 /*! \class bfgs
  *  \ingroup multimin_Module
  * 
@@ -25,7 +22,7 @@ class bfgs : public differentiableFunctionMinimizer<T>
      * 
      * \param Name Minimizer name
      */
-    bfgs(char const *Name = "bfgs");
+    explicit bfgs(char const *Name = "bfgs");
 
     /*!
      * \brief Destroy the bfgs object

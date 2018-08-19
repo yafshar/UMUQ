@@ -1,9 +1,6 @@
 #ifndef UMUQ_CONJUGATEPR_H
 #define UMUQ_CONJUGATEPR_H
 
-#include "core/core.hpp"
-#include "../function/differentiablefunctionminimizer.hpp"
-
 /*! \class conjugatePr
  *  \ingroup multimin_Module
  * 
@@ -23,7 +20,7 @@ class conjugatePr : public differentiableFunctionMinimizer<T>
      * 
      * \param Name Minimizer name
      */
-    conjugatePr(const char *Name = "conjugatePr");
+    explicit conjugatePr(const char *Name = "conjugatePr");
 
     /*!
      * \brief Destroy the conjugate Pr object
