@@ -81,7 +81,7 @@ bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &F
             {
                 std::cout << x[i] << " ";
             }
-            std::cout << std::endl;
+            // std::cout << std::endl;
 
             std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.getSize() << std::endl;
         }
@@ -675,8 +675,8 @@ TEST(multimin_simplexNM2Rnd_test, Handles_TestFunctions)
     //! Starting point for Spring function
     X = {1.0, 0.0, 7 * M_PI};
 
-    // //! Check the function minimizer can handle a Spring function using f
-    // EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, spring_f, X.data(), 3, "Spring"));
+    //! Check the function minimizer can handle a Spring function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, spring_f, X.data(), 3, "Spring"));
 }
 
 int main(int argc, char **argv)
