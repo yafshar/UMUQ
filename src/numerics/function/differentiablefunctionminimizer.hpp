@@ -23,6 +23,12 @@
  * It is important to note that the minimization algorithms find local minima; there is
  * no way to determine whether a minimum is a global minimum of the function in question.
  *
+ * To use the Minimizer:
+ * - First, set the minimizer dimension \sa reset
+ * - Second, set the function, input vector and stepsize \sa set
+ * - Third, initilize the minimizer \sa init
+ * - Forth, iterate until reaching the absolute tolerance \sa iterate
+ * 
  * \tparam T Data type
  */
 template <typename T>
@@ -1806,142 +1812,6 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
       continue;
     }
   }
-}
-
-/*!
- * \brief A helper function for testing the function minimizer 
- * 
- * \tparam T          Data type
- * 
- * \param fMinimizer  Function Minimizer object
- * \param Fun         Function to be used in this minimizer \f$ f(x) \f$
- * \param DFun        Function gradient $\nabla f$ to be used in this minimizer
- * \param FDFun       Function & its gradient to be used in this minimizer
- * \param X           N-Dimensional input data
- * \param nDim        Dimension of the data
- * \param FunName     Function name or description
- * 
- * \return true 
- * \return false 
- */
-template <typename T>
-bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMinimizer,
-                                         F_MTYPE<T> &Fun, DF_MTYPE<T> &DFun, FDF_MTYPE<T> &FDFun,
-                                         T const *X, int const nDim, char const *FunName)
-{
-  //! By default we consider stepSize as \f$ 0.1 ||x||_2 = 0.1 \sqrt {\sum x_i^2} \f$
-  T stepSize;
-  {
-    T s(0);
-    std::for_each(X, X + nDim, [&](T const x_i) { s += x_i * x_i; });
-    stepSize = 0.1 * std::sqrt(s);
-  }
-
-  //! First we have to set the minimizer dimension
-  if (!fMinimizer.reset(nDim))
-  {
-    UMUQFAILRETURN("Failed to set the minimizer dimension!");
-  }
-
-  //! Second, we have to set the functions (f, df, fdf), input vector, stepsize and tolerance
-  if (!fMinimizer.set(Fun, DFun, FDFun, X, stepSize, 0.1))
-  {
-    UMUQFAILRETURN("Failed to set the minimizer!");
-  }
-
-  //! Third, initilize the minimizer
-  if (!fMinimizer.init())
-  {
-    UMUQFAILRETURN("Failed to initialize the minimizer!");
-  }
-
-#ifdef DEBUG
-  {
-    T *x = fMinimizer.getX();
-
-    std::cout << "x =";
-    for (int i = 0; i < nDim; i++)
-    {
-      std::cout << x[i] << " ";
-    }
-    std::cout << std::endl;
-
-    T *g = fMinimizer.getGradient();
-
-    std::cout << "g =";
-    for (int i = 0; i < nDim; i++)
-    {
-      std::cout << g[i] << " ";
-    }
-    std::cout << std::endl;
-  }
-#endif
-
-  // Forth, iterate until we reach the absolute tolerance of 1e-3
-
-  // Fail:-1, Success:0, Continue:1
-  int status = 1;
-  int iter = 0;
-
-  while (iter < 5000 && status == 1)
-  {
-    iter++;
-
-    if (!fMinimizer.iterate())
-    {
-      UMUQFAILRETURN("Failed to iterate the minimizer!");
-    }
-
-    T *gradient = fMinimizer.getGradient();
-
-#ifdef DEBUG
-    {
-      std::cout << iter << ": ";
-
-      T *x = fMinimizer.getX();
-
-      std::cout << "x = ";
-      for (int i = 0; i < nDim; i++)
-      {
-        std::cout << x[i] << " ";
-      }
-      std::cout << std::endl;
-
-      std::cout << "g =";
-      for (int i = 0; i < nDim; i++)
-      {
-        std::cout << gradient[i] << " ";
-      }
-      std::cout << std::endl;
-
-      std::cout << "f(x) =" << fMinimizer.getMin() << std::endl;
-
-      T *dx = fMinimizer.getdX();
-
-      T s(0);
-      std::for_each(dx, dx + nDim, [&](T const d_i) { s += d_i * d_i; });
-      std::cout << "dx =" << std::sqrt(s) << std::endl;
-    }
-#endif
-
-    status = fMinimizer.testGradient(gradient, 1e-3);
-  }
-
-  if (status == 0 || status == 1)
-  {
-    std::cout << fMinimizer.getName() << ", on " << FunName << ": " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
-    std::cout << (status == 0) ? "Converged to minimum at x = " : "Stopped at x = ";
-
-    T *x = fMinimizer.getX();
-    for (int i = 0; i < nDim; i++)
-    {
-      std::cout << x[i] << " ";
-    }
-    std::cout << std::endl;
-
-    return status ? (std::abs(fMinimizer.getMin()) > 1e-5) : true;
-  }
-  return false;
 }
 
 #endif //UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER
