@@ -37,21 +37,18 @@
  */
 namespace multimin
 {
-#include "function/multimin_function.hpp"
+#include "function/functionminimizer.hpp"
+#include "function/differentiablefunctionminimizer.hpp"
+    
+#include "multimin/steepestdescent.hpp"
+#include "multimin/conjugatefr.hpp"
+#include "multimin/conjugatepr.hpp"
+#include "multimin/bfgs.hpp"
+#include "multimin/bfgs2.hpp"
 
-#include "multimin/multimin_linear_minimize.hpp"
-#include "multimin/multimin_directional_minimize.hpp"
-#include "multimin/multimin_linear_wrapper.hpp"
-
-#include "multimin/multimin_steepest_descent.hpp"
-#include "multimin/multimin_conjugate_fr.hpp"
-#include "multimin/multimin_conjugate_pr.hpp"
-#include "multimin/multimin_vector_bfgs.hpp"
-#include "multimin/multimin_vector_bfgs2.hpp"
-
-#include "multimin/multimin_nmsimplex.hpp"
-#include "multimin/multimin_nmsimplex2.hpp"
-#include "multimin/multimin_nmsimplex2rand.hpp"
+#include "multimin/simplexnm.hpp"
+#include "multimin/simplexnm2.hpp"
+#include "multimin/simplexnm2rnd.hpp"
 }
 
 #endif
