@@ -32,19 +32,38 @@ It should contain the following files:
 -----------------------------------
     multimin
     ├── COPYING
-    ├── multimin_conjugate_fr.hpp
-    ├── multimin_conjugate_pr.hpp
-    ├── multimin_directional_minimize.hpp
-    ├── multimin_linear_minimize.hpp
-    ├── multimin_linear_wrapper.hpp
-    ├── multimin_nmsimplex2.hpp
-    ├── multimin_nmsimplex2rand.hpp
-    ├── multimin_nmsimplex.hpp
-    ├── multimin_steepest_descent.hpp
-    ├── multimin_vector_bfgs2.hpp
-    ├── multimin_vector_bfgs.hpp
+    ├── bfgs.hpp
+    ├── bfgs2.hpp
+    ├── conjugatefr.hpp
+    ├── conjugatepr.hpp
+    ├── simplexnm.hpp
+    ├── simplexnm2.hpp
+    ├── simplexnm2rnd.hpp
+    ├── steepestdescent.hpp
     └── README.md
 -----------------------------------
+
+
+The available solvers can be categorized as follows:
+
+**Algorithms with Derivatives**    
+
+Solver | Description
+--- | --- 
+bfgs | Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm
+bfgs2 | Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm (the most efficient version)
+conjugateFr | Conjugate gradient Fletcher-Reeve algorithm
+conjugatePr | Conjugate gradient Polak-Ribiere algorithm
+steepestDescent | The steepest descent algorithm
+
+**Algorithms without Derivatives**    
+
+Solver | Description 
+--- | ---|
+simplexNM | The Simplex method of Nelder and Mead
+simplexNM2 | The Simplex method of Nelder and Mead$ (order N operations)
+simplexNM2Rnd | The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors)
+
 
 Contributors
 ------------
