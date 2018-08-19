@@ -19,6 +19,13 @@
  * It is important to note that the minimization algorithms find local minima; there is 
  * no way to determine whether a minimum is a global minimum of the function in question.
  * 
+ * 
+ * To use the Minimizer:
+ * - First, set the minimizer dimension \sa reset
+ * - Second, set the function, input vector and stepsize \sa set
+ * - Third, initilize the minimizer \sa init
+ * - Forth, iterate until reaching the absolute tolerance \sa iterate
+ * 
  * \tparam T Data type
  */
 template <typename T>
@@ -39,7 +46,7 @@ public:
    * 
    * \returns true  
    */
-  bool reset(int const nDim) noexcept;
+  virtual bool reset(int const nDim) noexcept;
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
@@ -574,108 +581,6 @@ template <typename T>
 inline int functionMinimizer<T>::getDimension()
 {
   return x.size();
-}
-
-/*!
- * \brief A helper function for testing the function minimizer 
- * 
- * \tparam T          Data type
- * \param fMinimizer  Function Minimizer object
- * \param Fun         Function to be minimized 
- * \param X           N-Dimensional input data
- * \param nDim        Dimension of the data
- * \param FunName     Function name or description
- * 
- * \return true 
- * \return false 
- */
-template <typename T>
-bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &Fun, T const *X, int const nDim, char const *FunName)
-{
-  //! By default we consider stepSize 1
-  std::vector<T> stepSize(nDim, 1);
-
-  //! First we have to set the minimizer dimension
-  if (!fMinimizer.reset(nDim))
-  {
-    UMUQFAILRETURN("Failed to set the minimizer dimension!");
-  }
-
-  //! Second, we have to set the function, input vector and stepsize
-  if (!fMinimizer.set(Fun, X, stepSize.data()))
-  {
-    UMUQFAILRETURN("Failed to set the minimizer!");
-  }
-
-  //! Third, initilize the minimizer
-  if (!fMinimizer.init())
-  {
-    UMUQFAILRETURN("Failed to initialize the minimizer!");
-  }
-
-#ifdef DEBUG
-  {
-    T *x = fMinimizer.getX();
-
-    std::cout << "x =";
-    for (int i = 0; i < nDim; i++)
-    {
-      std::cout << x[i] << " ";
-    }
-    std::cout << std::endl;
-  }
-#endif
-
-  // Forth, iterate until we reach the absolute tolerance of 1e-3
-
-  // Fail:-1, Success:0, Continue:1
-  int status = 1;
-  int iter = 0;
-
-  while (iter < 5000 && status == 1)
-  {
-    iter++;
-
-    if (!fMinimizer.iterate())
-    {
-      UMUQFAILRETURN("Failed to iterate the minimizer!");
-    }
-
-#ifdef DEBUG
-    {
-      std::cout << iter << ": ";
-
-      T *x = fMinimizer.getX();
-
-      std::cout << "x = ";
-      for (int i = 0; i < nDim; i++)
-      {
-        std::cout << x[i] << " ";
-      }
-      std::cout << std::endl;
-
-      std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.getSize() << std::endl;
-    }
-#endif
-
-    status = fMinimizer.testSize(1e-3);
-  }
-
-  if (status == 0 || status == 1)
-  {
-    std::cout << fMinimizer.getName() << ", on " << FunName << ": " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
-    std::cout << (status == 0) ? "Converged to minimum at x = " : "Stopped at x = ";
-
-    T *x = fMinimizer.getX();
-    for (int i = 0; i < nDim; i++)
-    {
-      std::cout << x[i] << " ";
-    }
-    std::cout << std::endl;
-
-    return status ? (std::abs(fMinimizer.getMin()) > 1e-5) : true;
-  }
-  return false;
 }
 
 #endif //UMUQ_FUNCTIONMINIMIZER
