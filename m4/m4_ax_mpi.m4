@@ -316,14 +316,16 @@ AC_DEFUN([AX_MPI], [
 			ax_mpi_ok="yes"
 			#substitute the default compiler and preprocessor
 			AX_PROG_SUBSTITUTE
-			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 			:
 		fi
 	])
 
-	AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])],
-		[
-			AC_MSG_RESULT()
+	AS_IF([test x"$ax_mpi_ok" != xyes], [ AC_MSG_ERROR([ Unable to find the MPI library !])])
+	AM_CONDITIONAL([HAVE_MPI], [test x"$ax_mpi_ok" = xyes])
+	AM_COND_IF([HAVE_MPI], [
+			AC_DEFINE(HAVE_MPI, 1, [Define if you have the MPI library.])
 		]
 	)
+
+	AC_MSG_RESULT()
 ]) # AX_MPI

@@ -20,11 +20,11 @@
  * \b MANHATTAN      Manhattan distance functor, optimized version
  * \b L1             Manhattan distance functor, optimized version
  * \b L2_SIMPLE      Squared Euclidean distance functor
- * \b MINKOWSKI
+ * \b MINKOWSKI      The Minkowsky (L_p) distance between two vectors.
  * \b MAX
  * \b HIST_INTERSECT
- * \b HELLINGER
- * \b CHI_SQUARE
+ * \b HELLINGER      The Hellinger distance, quantify the similarity between two probability distributions.
+ * \b CHI_SQUARE     The distance between two histograms
  * \b KULLBACK_LEIBLER
  * \b HAMMING
  * \b HAMMING_LUT    Hamming distance functor - counts the bit differences between two strings - 
@@ -53,6 +53,10 @@ class kNearestNeighbor
                                                                             dists(dists_ptr.get(), ndataPoints, (nN + 1)),
                                                                             the_same(true)
     {
+        if (drows < static_cast<std::size_t>(nn))
+        {
+            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
+        }
     }
 
     /*!
@@ -73,6 +77,10 @@ class kNearestNeighbor
                                                                                                     dists(dists_ptr.get(), nqueryPoints, nN),
                                                                                                     the_same(false)
     {
+        if (drows < static_cast<std::size_t>(nn))
+        {
+            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
+        }
     }
 
     /*!
@@ -150,14 +158,14 @@ class kNearestNeighbor
     {
         flann::Matrix<T> dataset(idata, drows, cols);
 
-        //Construct an randomized kd-tree index using 4 kd-trees
-        //For the number of parallel kd-trees to use (Good values are in the range [1..16])
+        // Construct an randomized kd-tree index using 4 kd-trees
+        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
         flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
         index.buildIndex();
 
-        //Do a knn search, using 128 checks
-        //Number of checks means: How many leafs to visit when searching
-        //for neighbours (-1 for unlimited)
+        // Do a knn search, using 128 checks
+        // Number of checks means: How many leafs to visit when searching
+        // for neighbours (-1 for unlimited)
         index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
     }
 
@@ -171,22 +179,21 @@ class kNearestNeighbor
     {
         flann::Matrix<T> dataset(idata, drows, cols);
 
-        //Construct an randomized kd-tree index using 4 kd-trees
-        //For the number of parallel kd-trees to use (Good values are in the range [1..16])
+        // Construct an randomized kd-tree index using 4 kd-trees
+        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
         flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
         index.buildIndex();
 
         flann::Matrix<T> query(qdata, qrows, cols);
 
-        //Do a knn search, using 128 checks
-        //Number of checks means: How many leafs to visit when searching
-        //for neighbours (-1 for unlimited)
+        // Do a knn search, using 128 checks
+        // Number of checks means: How many leafs to visit when searching
+        // for neighbours (-1 for unlimited)
         index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
 
         if (!checkNearestNeighbors())
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << "Input data & query data are the same!" << std::endl;
+            UMUQWARNING("Input data & query data are the same!");
         }
     }
 
@@ -199,7 +206,7 @@ class kNearestNeighbor
      */
     inline int *NearestNeighbors(int const &index) const
     {
-        //+1 is that we do not want the index of the point itself
+        // +1 is that we do not want the index of the point itself
         return indices_ptr.get() + index * nn + the_same;
     }
 
@@ -236,7 +243,7 @@ class kNearestNeighbor
      */
     inline T *NearestNeighborsDistances(int const &index) const
     {
-        //+1 is that we do not want the index of the point itself
+        // +1 is that we do not want the index of the point itself
         return dists_ptr.get() + index * nn + the_same;
     }
 
@@ -267,9 +274,7 @@ class kNearestNeighbor
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return nullptr;
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
         }
 
         for (std::size_t i = 0; i < qrows; ++i)
@@ -320,7 +325,7 @@ class kNearestNeighbor
     /*!
      * \brief swap two indexes values
      */
-    void IndexSwap(int Indx1, int Indx2)
+    inline void IndexSwap(int Indx1, int Indx2)
     {
         std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
         std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
@@ -346,7 +351,7 @@ class kNearestNeighbor
     //! Number of data rows
     std::size_t drows;
 
-    //! Number of qury rows
+    //! Number of query rows
     std::size_t qrows;
 
     //! Number of columns
@@ -357,7 +362,7 @@ class kNearestNeighbor
 
     std::unique_ptr<int[]> indices_ptr;
     std::unique_ptr<T[]> dists_ptr;
-    
+
     flann::Matrix<int> indices;
     flann::Matrix<T> dists;
 
@@ -365,8 +370,8 @@ class kNearestNeighbor
     bool the_same;
 };
 
-//TODO : Somehow the specialized template did not work.
-//FIXME: to the correct templated version
+// TODO : Somehow the specialized template did not work.
+// FIXME: to the correct templated version
 
 /*! \class L2NearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces using L2 distance functor
@@ -398,4 +403,81 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
     }
 };
 
-#endif //UMUQ_FLANNLIB_H
+// namespace flann
+// {
+// /*!
+//  * \brief covariance variable to be used inside flann
+//  *
+//  * \tparam T Data type
+//  */
+// template <class T>
+// std::unique_ptr<T[]> covariance;
+
+// std::size_t covarianceIdx;
+
+// /*! \class Mahalanobis
+//  * \brief Mahalanobis distance functor
+//  *
+//  */
+// template <class T>
+// struct Mahalanobis
+// {
+//     typedef bool is_kdtree_distance;
+//     typedef T ElementType;
+//     typedef typename Accumulator<T>::Type ResultType;
+
+//     /*!
+//      * \brief Compute the Mahalanobis distance between two vectors.
+//      *
+//      *
+//      */
+//     template <typename Iterator1, typename Iterator2>
+//     ResultType operator()(Iterator1 a, Iterator2 b, size_t size, ResultType worst_dist = -1) const
+//     {
+//         ResultType result = ResultType();
+//         ResultType diff0, diff1, diff2, diff3;
+//         Iterator1 last = a + size;
+//         Iterator1 lastgroup = last - 3;
+
+//         ArrayWrapper<T> cArray(covariance.get() + covarianceIdx, size * size, size);
+
+//         /* Process 4 items with each loop for efficiency. */
+//         while (a < lastgroup)
+//         {
+//             diff0 = (ResultType)(a[0] - b[0]);
+//             diff1 = (ResultType)(a[1] - b[1]);
+//             diff2 = (ResultType)(a[2] - b[2]);
+//             diff3 = (ResultType)(a[3] - b[3]);
+//             result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
+//             a += 4;
+//             b += 4;
+
+//             if ((worst_dist > 0) && (result > worst_dist))
+//             {
+//                 return result;
+//             }
+//         }
+//         /* Process last 0-3 pixels.  Not needed for standard vector lengths. */
+//         while (a < last)
+//         {
+//             diff0 = (ResultType)(*a++ - *b++);
+//             result += diff0 * diff0;
+//         }
+//         return result;
+//     }
+
+//     /**
+//      *	Partial euclidean distance, using just one dimension. This is used by the
+//      *	kd-tree when computing partial distances while traversing the tree.
+//      *
+//      *	Squared root is omitted for efficiency.
+//      */
+//     template <typename U, typename V>
+//     inline ResultType accum_dist(const U &a, const V &b, int) const
+//     {
+//         return (a - b) * (a - b);
+//     }
+// };
+// }
+
+#endif // UMUQ_FLANNLIB_H

@@ -39,7 +39,7 @@ AC_CANONICAL_TARGET
 # Check for architectures
 AX_ARCH
 
-AC_CONFIG_HEADERS(src/UMUQ_config.h)
+AC_CONFIG_HEADERS(include/UMUQ_config.h)
 
 #
 # Init automake
@@ -94,8 +94,8 @@ AC_CHECK_HEADERS([stdlib.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
 
-# Ensure we are using c11 C++ standard.
-AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+# Ensure we are using c14 C++ standard.
+AX_CXX_COMPILE_STDCXX([14], [noext], [mandatory])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow])

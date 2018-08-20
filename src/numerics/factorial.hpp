@@ -50,9 +50,7 @@ struct max_factorial<int>
 template <class T>
 inline T unchecked_factorial(unsigned int n)
 {
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The unchecked_factorial of " << n << " with type " << typeid(T).name() << " is not implemented !" << std::endl;
-    throw(std::runtime_error("Wrong type!"));
+	UMUQFAIL("The unchecked_factorial is not implemented for this type!");
 }
 
 template <>
@@ -332,9 +330,7 @@ inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int con
 template <class T>
 inline T factorial(unsigned int const n)
 {
-    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-    std::cerr << " The Factorial of " << n << " with type " << typeid(T).name() << " is not implemented !" << std::endl;
-    throw(std::runtime_error("Wrong type!"));
+	UMUQFAIL("Factorial is not implemented for this type!");
 }
 
 template <>
@@ -349,9 +345,8 @@ inline float factorial(unsigned int const i)
 
     if (result > std::numeric_limits<float>::max())
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Overflowed value !" << std::endl;
-        return static_cast<float>(result);
+        UMUQWARNING("Overflowed value!");
+		return static_cast<float>(result);
     }
 
     return static_cast<float>(std::floor(result + 0.5f));
@@ -369,8 +364,7 @@ inline double factorial(unsigned int const i)
 
     if (result > std::numeric_limits<double>::max())
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Overflowed value !" << std::endl;
+        UMUQWARNING("Overflowed value!");
         return static_cast<double>(result);
     }
 
@@ -395,8 +389,7 @@ inline int factorial(unsigned int const i)
 
     if (result > std::numeric_limits<int>::max())
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Overflowed value !" << std::endl;
+        UMUQWARNING("Overflowed value!");
     }
     return static_cast<int>(result);
 }
@@ -413,8 +406,7 @@ inline unsigned int factorial(unsigned int const i)
 
     if (result > std::numeric_limits<unsigned int>::max())
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Overflowed value !" << std::endl;
+        UMUQWARNING("Overflowed value!");
     }
     return static_cast<unsigned int>(result);
 }
@@ -431,8 +423,7 @@ inline long int factorial(unsigned int const i)
 
     if (result > std::numeric_limits<long int>::max())
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Overflowed value !" << std::endl;
+        UMUQWARNING("Overflowed value!");
     }
     return static_cast<long int>(result);
 }

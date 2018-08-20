@@ -69,7 +69,7 @@ AC_DEFUN([AX_TORC], [
 			for ac_torc_path_tmp in $ac_torc_path $ac_torc_path/include $ac_torc_path/torc $ac_torc_path/torc/include ; do 
 				if test -d "$ac_torc_path_tmp" && test -r "$ac_torc_path_tmp" ; then
 					if test -f "$ac_torc_path_tmp/torc.h" && test -r "$ac_torc_path_tmp/torc.h" ; then
-						torc_CFLAGS="-I$ac_torc_path_tmp"" $PTHREAD_CFLAGS "
+						torc_CFLAGS="-I$ac_torc_path_tmp"
 						break;
 					fi
 				fi
@@ -84,7 +84,7 @@ AC_DEFUN([AX_TORC], [
 					torc_PATH=`pwd`
 					torc_PATH+='/'"$ac_torc_path_tmp"'/torc'
 					if test -f "$torc_PATH/include/torc.h" && test -r "$torc_PATH/include/torc.h"; then 
-						torc_CFLAGS="-I$torc_PATH/include"" $PTHREAD_CFLAGS "
+						torc_CFLAGS="-I$torc_PATH/include"
 						break;
 					fi
 				fi	
@@ -100,11 +100,13 @@ AC_DEFUN([AX_TORC], [
 			for ac_torc_path_tmp in $ac_torc_path $ac_torc_path/lib $ac_torc_path/torc $ac_torc_path/torc/lib ; do
 				if test -d "$ac_torc_path_tmp" && test -r "$ac_torc_path_tmp" ; then
 					if test -f "$ac_torc_path_tmp/libtorc.a" && test -r "$ac_torc_path_tmp/libtorc.a"; then
-						torc_LDFLAGS="-L$ac_torc_path_tmp" 
+						torc_LDFLAGS="-L$ac_torc_path_tmp"
+						TORC_LD_LIBRARY_PATH="$ac_torc_path_tmp"
 						break;
 					fi
 					if test -f "$ac_torc_path_tmp/libtorc.dylib" && test -r "$ac_torc_path_tmp/libtorc.dylib"; then
 						torc_LDFLAGS="-L$ac_torc_path_tmp" 
+						TORC_LD_LIBRARY_PATH="$ac_torc_path_tmp"
 						break;
 					fi
 				fi
@@ -112,24 +114,28 @@ AC_DEFUN([AX_TORC], [
 		else
 			if test x"$torc_PATH" != x ; then
 				if test -f "$torc_PATH/src/libtorc.so" && test -r "$torc_PATH/src/libtorc.so"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src' 
+					torc_LDFLAGS="-L$torc_PATH"'/src'
+					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test -f "$torc_PATH/src/libtorc.a" && test -r "$torc_PATH/src/libtorc.a"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
+					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test -f "$torc_PATH/src/libtorc.dylib" && test -r "$torc_PATH/src/libtorc.dylib"; then
-					torc_LDFLAGS=" -L$torc_PATH"'/src' 
+					torc_LDFLAGS="-L$torc_PATH"'/src'
+					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 				fi
 				if test x"$torc_LDFLAGS" = x ; then
 					AC_LANG_PUSH([C])
 					(cd "$torc_PATH" && autoreconf -i && ./configure && make)
-					torc_LDFLAGS=" -L$torc_PATH"'/src'
+					torc_LDFLAGS="-L$torc_PATH"'/src'
+					TORC_LD_LIBRARY_PATH="$torc_PATH"'/src'
 					AC_LANG_POP([C])
 				fi
 			fi
 		fi
 
-		LDFLAGS+=" $torc_LDFLAGS"' -ltorc '" $PTHREAD_LIBS "
+		LDFLAGS+=" $torc_LDFLAGS"' -ltorc'" $PTHREAD_LIBS"
 
 		AC_LANG_PUSH([C])
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -149,7 +155,9 @@ AC_DEFUN([AX_TORC], [
 		)
 
 		AC_CHECK_LIB(torc, torc_init, 
-			[], [
+			[
+				LDFLAGS+=' -Wl,-rpath,'"$TORC_LD_LIBRARY_PATH"
+			], [
 				succeeded=no
 				AC_MSG_ERROR([ Unable to continue without the TORC library !])
 			]
@@ -159,6 +167,7 @@ AC_DEFUN([AX_TORC], [
 		if test x"$succeeded" = xyes ; then
 			AC_SUBST(CPPFLAGS)
 			AC_SUBST(LDFLAGS)
+			AC_SUBST(TORC_LD_LIBRARY_PATH)
 			ax_torc_ok=yes
 		else
 			CPPFLAGS="$CPPFLAGS_SAVED"
@@ -168,5 +177,12 @@ AC_DEFUN([AX_TORC], [
 	])
 
 	AS_IF([test x"$ax_torc_ok" = xno], [ AC_MSG_ERROR([ Unable to find the TORC library !])])
+	AM_CONDITIONAL([HAVE_TORC], [test x"$ax_torc_ok" = xyes])
+	AM_COND_IF([HAVE_TORC],
+		[
+			AC_DEFINE(HAVE_TORC, 1, [Define if you have TORC Library.])
+		]
+	)
+
 	AC_MSG_RESULT()
 ])

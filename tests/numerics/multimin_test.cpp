@@ -5,542 +5,678 @@
 
 using namespace multimin;
 
-template <typename T, class TMFDMT, class TMFD>
-bool test_fdf(const char *desc, TMFDMT *ftype, TMFD *f)
+/*!
+ * \brief A helper function for testing the function minimizer 
+ * 
+ * \tparam T          Data type
+ * \param fMinimizer  Function Minimizer object
+ * \param Fun         Function to be minimized 
+ * \param X           N-Dimensional input data
+ * \param nDim        Dimension of the data
+ * \param FunName     Function name or description
+ * 
+ * \return true 
+ * \return false 
+ */
+template <typename T>
+bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &Fun, T const *X, int const nDim, char const *FunName)
 {
-    std::size_t n = f->n;
+    //! By default we consider stepSize 1
+    std::vector<T> stepSize(nDim, 1);
 
-    T *x = new T[n];
-
-    f->initpt(x);
-
-    T step_size;
+    //! First we have to set the minimizer dimension
+    if (!fMinimizer.reset(nDim))
     {
-        T sum(0);
-        std::for_each(x, x + n, [&](T const x_i) { sum += x_i * x_i; });
-        step_size = 0.1 * std::sqrt(sum);
+        UMUQFAILRETURN("Failed to set the minimizer dimension!");
     }
 
-    //create an instance of object for minimizing functions using derivatives
-    multimin_fdfminimizer<T, TMFDMT, TMFD> mfdf_obj;
+    //! Second, we have to set the function, input vector and stepsize
+    if (!fMinimizer.set(Fun, X, stepSize.data()))
+    {
+        UMUQFAILRETURN("Failed to set the minimizer!");
+    }
 
-    mfdf_obj.alloc(ftype, n);
-
-    mfdf_obj.set(f, x, step_size, 0.1);
+    //! Third, initilize the minimizer
+    if (!fMinimizer.init())
+    {
+        UMUQFAILRETURN("Failed to initialize the minimizer!");
+    }
 
 #ifdef DEBUG
     {
-        T const *x_t = mfdf_obj.get_x();
+        T *x = fMinimizer.getX();
 
         std::cout << "x =";
-        for (std::size_t i = 0; i < n; i++)
+        for (int i = 0; i < nDim; i++)
         {
-            std::cout << x_t[i] << " ";
-        }
-        std::cout << std::endl;
-
-        T const *g_t = mfdf_obj.get_gradient();
-        std::cout << "g =";
-        for (std::size_t i = 0; i < n; i++)
-        {
-            std::cout << g_t[i] << " ";
+            std::cout << x[i] << " ";
         }
         std::cout << std::endl;
     }
 #endif
 
-    //fail    -1
-    //success  0
-    //continue 1
-    int status = 1;
+    //! Forth, iterate until we reach the absolute tolerance of 1e-3
 
-    std::size_t iter = 0;
+    //! Fail:-1, Success:0, Continue:1
+    int status = 1;
+    int iter = 0;
 
     while (iter < 5000 && status == 1)
     {
         iter++;
-        mfdf_obj.iterate();
+
+        if (!fMinimizer.iterate())
+        {
+            UMUQFAILRETURN("Failed to iterate the minimizer!");
+        }
 
 #ifdef DEBUG
         {
-            std::cout << iter << ": " << std::endl;
+            std::cout << iter << ": ";
 
-            T const *x_t = mfdf_obj.get_x();
+            T *x = fMinimizer.getX();
 
-            std::cout << "x ";
-            for (std::size_t i = 0; i < n; i++)
+            std::cout << "x = ";
+            for (int i = 0; i < nDim; i++)
             {
-                std::cout << x_t[i] << " ";
+                std::cout << x[i] << " ";
             }
-            std::cout << std::endl;
+            // std::cout << std::endl;
 
-            T const *g_t = mfdf_obj.get_gradient();
-
-            std::cout << "g =";
-            for (std::size_t i = 0; i < n; i++)
-            {
-                std::cout << g_t[i] << " ";
-            }
-            std::cout << std::endl;
-
-            std::cout << "f(x) =" << mfdf_obj.minimum() << std::endl;
-
-            T const *dx = mfdf_obj.get_dx();
-            T sum(0);
-            std::for_each(dx, dx + n, [&](T const d_i) { sum += d_i * d_i; });
-            std::cout << "dx =" << std::sqrt(sum) << std::endl;
-
-            std::cout << std::endl;
+            std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.getSize() << std::endl;
         }
 #endif
 
-        T const *gradient = mfdf_obj.get_gradient();
-
-        status = multimin_test_gradient<T>(gradient, n, 1e-3);
+        status = fMinimizer.testSize(1e-3);
     }
 
-    std::cout << mfdf_obj.name() << ", on " << desc << ": " << iter << " iters, f(x)=" << mfdf_obj.minimum() << std::endl;
-
-    mfdf_obj.free();
-    delete[] x;
-
-    return ((status == 0) ? true : (status == 1) ? (std::abs(mfdf_obj.minimum()) > 1e-5) : false);
-}
-
-template <typename T, class TMFMT, class TMF>
-bool test_f(const char *desc, TMFMT *ftype, TMF *f)
-{
-    std::size_t n = f->n;
-
-    T *x = new T[n];
-
-    f->initpt(x);
-
-    T *step_size = new T[n];
-
-    multimin_fminimizer<T, TMFMT, TMF> mff_obj;
-
-    mff_obj.alloc(ftype, n);
-
-    for (std::size_t i = 0; i < n; i++)
+    if (status == 0 || status == 1)
     {
-        step_size[i] = 1;
-    }
+        std::cout << fMinimizer.getName() << ", on " << FunName << ": " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
+        std::cout << ((status == 0) ? "Converged to minimum at x = " : "Stopped at x = ");
 
-    mff_obj.set(f, x, step_size);
-
-#ifdef DEBUG
-    T const *x_t = mff_obj.get_x();
-
-    std::cout << "x =";
-    for (std::size_t i = 0; i < n; i++)
-    {
-        std::cout << x_t[i] << " ";
-    }
-    std::cout << std::endl;
-#endif
-
-    //fail    -1
-    //success  0
-    //continue 1
-    int status = 1;
-
-    std::size_t iter = 0;
-
-    while (iter < 5000 && status == 1)
-    {
-        iter++;
-        mff_obj.iterate();
-
-#ifdef DEBUG
+        T *x = fMinimizer.getX();
+        for (int i = 0; i < nDim; i++)
         {
-            std::cout << iter << ": " << std::endl;
-
-            T const *x_t = mff_obj.get_x();
-
-            std::cout << "x ";
-            for (std::size_t i = 0; i < n; i++)
-            {
-                std::cout << x_t[i] << " ";
-            }
-            std::cout << std::endl;
-
-            std::cout << "f(x) =" << mff_obj.minimum() << std::endl;
-            std::cout << "size: " << mff_obj.get_size() << std::endl;
-            std::cout << std::endl;
+            std::cout << x[i] << " ";
         }
-#endif
+        std::cout << std::endl;
 
-        status = multimin_test_size<T>(mff_obj.get_size(), 1e-3);
+        return (status ? (std::abs(fMinimizer.getMin()) > 1e-5) : true);
     }
-
-    std::cout << mff_obj.name() << ", on " << desc << ": " << iter << " iters, f(x)=" << mff_obj.minimum() << std::endl;
-
-    mff_obj.free();
-    delete[] x;
-    delete[] step_size;
-
-    return ((status == 0) ? true : (status == 1) ? (std::abs(mff_obj.minimum()) > 1e-5) : false);
+    return false;
 }
-
-typedef rosenbrock<double> Rosenbrock;
-typedef Nrosenbrock<double> NRosenbrock;
-typedef roth<double> Roth;
-typedef Nroth<double> NRoth;
-typedef wood<double> Wood;
-typedef Nwood<double> NWood;
 
 /*!
- * Test to check multimin functionality
+ * \brief A helper function for testing the function minimizer 
+ * 
+ * \tparam T          Data type
+ * 
+ * \param fMinimizer  Function Minimizer object
+ * \param Fun         Function to be used in this minimizer \f$ f(x) \f$
+ * \param DFun        Function gradient $\nabla f$ to be used in this minimizer
+ * \param FDFun       Function & its gradient to be used in this minimizer
+ * \param X           N-Dimensional input data
+ * \param nDim        Dimension of the data
+ * \param FunName     Function name or description
+ * 
+ * \return true 
+ * \return false 
  */
-TEST(multimin_test_steepest_descent, Handles_Rosenbrock_Function)
+template <typename T>
+bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMinimizer,
+                                         F_MTYPE<T> const &Fun, DF_MTYPE<T> const &DFun, FDF_MTYPE<T> const &FDFun,
+                                         T const *X, int const nDim, char const *FunName)
 {
-    typedef steepest_descent<double, Rosenbrock> TRosenbrock;
-    typedef steepest_descent<double, NRosenbrock> TNRosenbrock;
+    //! By default we consider stepSize as \f$ 0.1 ||x||_2 = 0.1 \sqrt {\sum x_i^2} \f$
+    T stepSize;
+    {
+        T s(0);
+        std::for_each(X, X + nDim, [&](T const x_i) { s += x_i * x_i; });
+        stepSize = 0.1 * std::sqrt(s);
+    }
 
-    TRosenbrock t;
-    Rosenbrock r;
+    //! First we have to set the minimizer dimension
+    if (!fMinimizer.reset(nDim))
+    {
+        UMUQFAILRETURN("Failed to set the minimizer dimension!");
+    }
 
-    TNRosenbrock tn;
-    NRosenbrock rn;
+    //! Second, we have to set the functions (f, df, fdf), input vector, stepsize and tolerance
+    if (!fMinimizer.set(Fun, DFun, FDFun, X, stepSize, 0.1))
+    {
+        UMUQFAILRETURN("Failed to set the minimizer!");
+    }
 
-    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
+    //! Third, initilize the minimizer
+    if (!fMinimizer.init())
+    {
+        UMUQFAILRETURN("Failed to initialize the minimizer!");
+    }
+
+#ifdef DEBUG
+    {
+        T *x = fMinimizer.getX();
+
+        std::cout << "x =";
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << x[i] << " ";
+        }
+        std::cout << std::endl;
+
+        T *g = fMinimizer.getGradient();
+
+        std::cout << "g =";
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << g[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+#endif
+
+    // Forth, iterate until we reach the absolute tolerance of 1e-3
+
+    // Fail:-1, Success:0, Continue:1
+    int status = 1;
+    int iter = 0;
+
+    while (iter < 5000 && status == 1)
+    {
+        iter++;
+
+        if (!fMinimizer.iterate())
+        {
+            UMUQFAILRETURN("Failed to iterate the minimizer!");
+        }
+
+        T *gradient = fMinimizer.getGradient();
+
+#ifdef DEBUG
+        {
+            std::cout << iter << ": ";
+
+            T *x = fMinimizer.getX();
+
+            std::cout << "x = ";
+            for (int i = 0; i < nDim; i++)
+            {
+                std::cout << x[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "g =";
+            for (int i = 0; i < nDim; i++)
+            {
+                std::cout << gradient[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "f(x) =" << fMinimizer.getMin() << std::endl;
+
+            T *dx = fMinimizer.getdX();
+
+            T s(0);
+            std::for_each(dx, dx + nDim, [&](T const d_i) { s += d_i * d_i; });
+            std::cout << "dx =" << std::sqrt(s) << std::endl;
+        }
+#endif
+
+        status = fMinimizer.testGradient(gradient, 1e-3);
+    }
+
+    if (status == 0 || status == 1)
+    {
+        std::cout << fMinimizer.getName() << ", on " << FunName << ": " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
+        std::cout << ((status == 0) ? "Converged to minimum at x = " : "Stopped at x = ");
+
+        T *x = fMinimizer.getX();
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << x[i] << " ";
+        }
+        std::cout << std::endl;
+
+        return (status ? (std::abs(fMinimizer.getMin()) > 1e-5) : true);
+    }
+    return false;
 }
 
-TEST(multimin_test_steepest_descent, Handles_Roth_Function)
+/*!
+ * \brief A helper function for testing the function minimizer 
+ * This is only using the function f as input and df is computed internally
+ * 
+ * \tparam T          Data type
+ * 
+ * \param fMinimizer  Function Minimizer object
+ * \param Fun         Function to be used in this minimizer \f$ f(x) \f$
+ * \param X           N-Dimensional input data
+ * \param nDim        Dimension of the data
+ * \param FunName     Function name or description
+ * 
+ * \return true 
+ * \return false 
+ */
+template <typename T>
+bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMinimizer,
+                                         F_MTYPE<T> const &Fun,
+                                         T const *X, int const nDim, char const *FunName)
 {
-    typedef steepest_descent<double, Roth> TRoth;
-    typedef steepest_descent<double, NRoth> TNRoth;
+    //! By default we consider stepSize as \f$ 0.1 ||x||_2 = 0.1 \sqrt {\sum x_i^2} \f$
+    T stepSize;
+    {
+        T s(0);
+        std::for_each(X, X + nDim, [&](T const x_i) { s += x_i * x_i; });
+        stepSize = 0.1 * std::sqrt(s);
+    }
 
-    TRoth t;
-    Roth r;
+    //! First we have to set the minimizer dimension
+    if (!fMinimizer.reset(nDim))
+    {
+        UMUQFAILRETURN("Failed to set the minimizer dimension!");
+    }
 
-    TNRoth tn;
-    NRoth rn;
+    //! Second, we have to set the functions (f, df, fdf), input vector, stepsize and tolerance
+    if (!fMinimizer.set(Fun, X, stepSize, 0.1))
+    {
+        UMUQFAILRETURN("Failed to set the minimizer!");
+    }
 
-    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
+    //! Third, initilize the minimizer
+    if (!fMinimizer.init())
+    {
+        UMUQFAILRETURN("Failed to initialize the minimizer!");
+    }
+
+#ifdef DEBUG
+    {
+        T *x = fMinimizer.getX();
+
+        std::cout << "x =";
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << x[i] << " ";
+        }
+        std::cout << std::endl;
+
+        T *g = fMinimizer.getGradient();
+
+        std::cout << "g =";
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << g[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+#endif
+
+    // Forth, iterate until we reach the absolute tolerance of 1e-3
+
+    // Fail:-1, Success:0, Continue:1
+    int status = 1;
+    int iter = 0;
+
+    while (iter < 5000 && status == 1)
+    {
+        iter++;
+
+        if (!fMinimizer.iterate())
+        {
+            UMUQFAILRETURN("Failed to iterate the minimizer!");
+        }
+
+        T *gradient = fMinimizer.getGradient();
+
+#ifdef DEBUG
+        {
+            std::cout << iter << ": ";
+
+            T *x = fMinimizer.getX();
+
+            std::cout << "x = ";
+            for (int i = 0; i < nDim; i++)
+            {
+                std::cout << x[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "g =";
+            for (int i = 0; i < nDim; i++)
+            {
+                std::cout << gradient[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "f(x) =" << fMinimizer.getMin() << std::endl;
+
+            T *dx = fMinimizer.getdX();
+
+            T s(0);
+            std::for_each(dx, dx + nDim, [&](T const d_i) { s += d_i * d_i; });
+            std::cout << "dx =" << std::sqrt(s) << std::endl;
+        }
+#endif
+
+        status = fMinimizer.testGradient(gradient, 1e-3);
+    }
+
+    if (status == 0 || status == 1)
+    {
+        std::cout << fMinimizer.getName() << ", on " << FunName << ": " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
+        std::cout << ((status == 0) ? "Converged to minimum at x = " : "Stopped at x = ");
+
+        T *x = fMinimizer.getX();
+        for (int i = 0; i < nDim; i++)
+        {
+            std::cout << x[i] << " ";
+        }
+        std::cout << std::endl;
+
+        return (status ? (std::abs(fMinimizer.getMin()) > 1e-5) : true);
+    }
+    return false;
 }
 
-TEST(multimin_test_steepest_descent, Handles_Wood_Function)
+/*!
+ * Test to check multimin functionality if steepestDescent can handle different test functions
+ */
+TEST(multimin_steepestDescent_test, Handles_TestFunctions)
 {
-    typedef steepest_descent<double, Wood> TWood;
-    typedef steepest_descent<double, NWood> TNWood;
+    //! Create an instance of the minimizer
+    steepestDescent<double> fMinimizer;
 
-    TWood t;
-    Wood r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNWood tn;
-    NWood rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, rosenbrock_df, rosenbrock_fdf, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock_F"));
+
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, roth_df, roth_fdf, X.data(), 2, "Roth"));
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth_F"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, wood_df, wood_fdf, X.data(), 4, "Wood"));
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood_F"));
 }
 
-TEST(multimin_test_conjugate_pr, Handles_Rosenbrock_Function)
+/*!
+ * Test to check multimin functionality if conjugatePr can handle different test functions
+ */
+TEST(multimin_conjugatePr_test, Handles_TestFunctions)
 {
-    typedef conjugate_pr<double, Rosenbrock> TRosenbrock;
-    typedef conjugate_pr<double, NRosenbrock> TNRosenbrock;
+    //! Create an instance of the minimizer
+    conjugatePr<double> fMinimizer;
 
-    TRosenbrock t;
-    Rosenbrock r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNRosenbrock tn;
-    NRosenbrock rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, rosenbrock_df, rosenbrock_fdf, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock_F"));
+
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, roth_df, roth_fdf, X.data(), 2, "Roth"));
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth_F"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, wood_df, wood_fdf, X.data(), 4, "Wood"));
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood_F"));
 }
 
-TEST(multimin_test_conjugate_pr, Handles_Roth_Function)
+/*!
+ * Test to check multimin functionality if conjugateFr can handle different test functions
+ */
+TEST(multimin_conjugateFr_test, Handles_TestFunctions)
 {
-    typedef conjugate_pr<double, Roth> TRoth;
-    typedef conjugate_pr<double, NRoth> TNRoth;
+    //! Create an instance of the minimizer
+    conjugateFr<double> fMinimizer;
 
-    TRoth t;
-    Roth r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNRoth tn;
-    NRoth rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, rosenbrock_df, rosenbrock_fdf, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock_F"));
+
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, roth_df, roth_fdf, X.data(), 2, "Roth"));
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth_F"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, wood_df, wood_fdf, X.data(), 4, "Wood"));
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood_F"));
 }
 
-TEST(multimin_test_conjugate_pr, Handles_Wood_Function)
+/*!
+ * Test to check multimin functionality if bfgs can handle different test functions
+ */
+TEST(multimin_bfgs_test, Handles_TestFunctions)
 {
-    typedef conjugate_pr<double, Wood> TWood;
-    typedef conjugate_pr<double, NWood> TNWood;
+    //! Create an instance of the minimizer
+    bfgs<double> fMinimizer;
 
-    TWood t;
-    Wood r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNWood tn;
-    NWood rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, rosenbrock_df, rosenbrock_fdf, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock_F"));
+
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, roth_df, roth_fdf, X.data(), 2, "Roth"));
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth_F"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, wood_df, wood_fdf, X.data(), 4, "Wood"));
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood_F"));
 }
 
-TEST(multimin_test_conjugate_fr, Handles_Rosenbrock_Function)
+/*!
+ * Test to check multimin functionality if bfgs2 can handle different test functions
+ */
+TEST(multimin_bfgs2_test, Handles_TestFunctions)
 {
-    typedef conjugate_fr<double, Rosenbrock> TRosenbrock;
-    typedef conjugate_fr<double, NRosenbrock> TNRosenbrock;
+    //! Create an instance of the minimizer
+    bfgs2<double> fMinimizer;
 
-    TRosenbrock t;
-    Rosenbrock r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNRosenbrock tn;
-    NRosenbrock rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, rosenbrock_df, rosenbrock_fdf, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock_F"));
+
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, roth_df, roth_fdf, X.data(), 2, "Roth"));
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth_F"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f, df, and fdf
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, wood_df, wood_fdf, X.data(), 4, "Wood"));
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(differentiableFunctionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood_F"));
 }
 
-TEST(multimin_test_conjugate_fr, Handles_Roth_Function)
+/*!
+ * Test to check multimin functionality if simplexNM can handle different test functions
+ */
+TEST(multimin_simplexNM_test, Handles_TestFunctions)
 {
-    typedef conjugate_fr<double, Roth> TRoth;
-    typedef conjugate_fr<double, NRoth> TNRoth;
+    //! Create an instance of the minimizer
+    simplexNM<double> fMinimizer;
 
-    TRoth t;
-    Roth r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNRoth tn;
-    NRoth rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood"));
+
+    X.resize(3);
+
+    //! Starting point for Spring function
+    X = {1.0, 0.0, 7 * M_PI};
+
+    //! Check the function minimizer can handle a Spring function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, spring_f, X.data(), 3, "Spring"));
 }
 
-TEST(multimin_test_conjugate_fr, Handles_Wood_Function)
+/*!
+ * Test to check multimin functionality if simplexNM2 can handle different test functions
+ */
+TEST(multimin_simplexNM2_test, Handles_TestFunctions)
 {
-    typedef conjugate_fr<double, Wood> TWood;
-    typedef conjugate_fr<double, NWood> TNWood;
+    //! Create an instance of the minimizer
+    simplexNM2<double> fMinimizer;
 
-    TWood t;
-    Wood r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNWood tn;
-    NWood rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
+
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth"));
+
+    X.resize(4);
+
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
+
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood"));
+
+    X.resize(3);
+
+    //! Starting point for Spring function
+    X = {1.0, 0.0, 7 * M_PI};
+
+    //! Check the function minimizer can handle a Spring function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, spring_f, X.data(), 3, "Spring"));
 }
 
-TEST(multimin_test_vector_bfgs, Handles_Rosenbrock_Function)
+/*!
+ * Test to check multimin functionality if simplexNM2Rnd can handle different test functions
+ */
+TEST(multimin_simplexNM2Rnd_test, Handles_TestFunctions)
 {
-    typedef vector_bfgs<double, Rosenbrock> TRosenbrock;
-    typedef vector_bfgs<double, NRosenbrock> TNRosenbrock;
+    //! Create an instance of the minimizer
+    simplexNM2Rnd<double> fMinimizer;
 
-    TRosenbrock t;
-    Rosenbrock r;
+    //! Starting point for Rosenbrock function
+    std::vector<double> X = {-1.2, 1.0};
 
-    TNRosenbrock tn;
-    NRosenbrock rn;
+    //! Check the function minimizer can handle a Rosenbrock function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, rosenbrock_f, X.data(), 2, "Rosenbrock"));
 
-    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
-}
+    //! Starting point for Roth function
+    X = {4.5, 3.5};
 
-TEST(multimin_test_vector_bfgs, Handles_Roth_Function)
-{
-    typedef vector_bfgs<double, Roth> TRoth;
-    typedef vector_bfgs<double, NRoth> TNRoth;
+    //! Check the function minimizer can handle a Roth function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, roth_f, X.data(), 2, "Roth"));
 
-    TRoth t;
-    Roth r;
+    X.resize(4);
 
-    TNRoth tn;
-    NRoth rn;
+    //! Starting point for Wood function
+    X = {-3.0, -1, 2.0, 3.0};
 
-    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
-}
+    //! Check the function minimizer can handle a Wood function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, wood_f, X.data(), 4, "Wood"));
 
-TEST(multimin_test_vector_bfgs, Handles_Wood_Function)
-{
-    typedef vector_bfgs<double, Wood> TWood;
-    typedef vector_bfgs<double, NWood> TNWood;
+    X.resize(3);
 
-    TWood t;
-    Wood r;
+    //! Starting point for Spring function
+    X = {1.0, 0.0, 7 * M_PI};
 
-    TNWood tn;
-    NWood rn;
-
-    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
-}
-
-TEST(multimin_test_vector_bfgs2, Handles_Rosenbrock_Function)
-{
-    typedef vector_bfgs2<double, Rosenbrock> TRosenbrock;
-    typedef vector_bfgs2<double, NRosenbrock> TNRosenbrock;
-
-    TRosenbrock t;
-    Rosenbrock r;
-
-    TNRosenbrock tn;
-    NRosenbrock rn;
-
-    EXPECT_TRUE((test_fdf<double, TRosenbrock, Rosenbrock>("Rosenbrock", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRosenbrock, NRosenbrock>("NRosenbrock", &tn, &rn)));
-}
-
-TEST(multimin_test_vector_bfgs2, Handles_Roth_Function)
-{
-    typedef vector_bfgs2<double, Roth> TRoth;
-    typedef vector_bfgs2<double, NRoth> TNRoth;
-
-    TRoth t;
-    Roth r;
-
-    TNRoth tn;
-    NRoth rn;
-
-    EXPECT_TRUE((test_fdf<double, TRoth, Roth>("Roth", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNRoth, NRoth>("NRoth", &tn, &rn)));
-}
-
-TEST(multimin_test_vector_bfgs2, Handles_Wood_Function)
-{
-    typedef vector_bfgs2<double, Wood> TWood;
-    typedef vector_bfgs2<double, NWood> TNWood;
-
-    TWood t;
-    Wood r;
-
-    TNWood tn;
-    NWood rn;
-
-    EXPECT_TRUE((test_fdf<double, TWood, Wood>("Wood", &t, &r)));
-    EXPECT_TRUE((test_fdf<double, TNWood, NWood>("NWood", &tn, &rn)));
-}
-
-typedef rosenbrock_fmin<double> Rosenbrock_f;
-typedef roth_fmin<double> Roth_f;
-typedef wood_fmin<double> Wood_f;
-typedef spring_fmin<double> Spring_f;
-
-TEST(multimin_test_nmsimplex, Handles_Rosenbrock_Function)
-{
-    typedef nmsimplex<double, Rosenbrock_f> TRosenbrock_f;
-
-    TRosenbrock_f t;
-    Rosenbrock_f r;
-
-    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex, Handles_Roth_Function)
-{
-    typedef nmsimplex<double, Roth_f> TRoth_f;
-
-    TRoth_f t;
-    Roth_f r;
-
-    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex, Handles_Wood_Function)
-{
-    typedef nmsimplex<double, Wood_f> TWood_f;
-
-    TWood_f t;
-    Wood_f r;
-
-    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex, Handles_Spring_Function)
-{
-    typedef nmsimplex<double, Spring_f> TSpring_f;
-
-    TSpring_f t;
-    Spring_f r;
-
-    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2, Handles_Rosenbrock_Function)
-{
-    typedef nmsimplex2<double, Rosenbrock_f> TRosenbrock_f;
-
-    TRosenbrock_f t;
-    Rosenbrock_f r;
-
-    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2, Handles_Roth_Function)
-{
-    typedef nmsimplex2<double, Roth_f> TRoth_f;
-
-    TRoth_f t;
-    Roth_f r;
-
-    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2, Handles_Wood_Function)
-{
-    typedef nmsimplex2<double, Wood_f> TWood_f;
-
-    TWood_f t;
-    Wood_f r;
-
-    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2, Handles_Spring_Function)
-{
-    typedef nmsimplex2<double, Spring_f> TSpring_f;
-
-    TSpring_f t;
-    Spring_f r;
-
-    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2rand, Handles_Rosenbrock_Function)
-{
-    typedef nmsimplex2rand<double, Rosenbrock_f> TRosenbrock_f;
-
-    TRosenbrock_f t;
-    Rosenbrock_f r;
-
-    EXPECT_TRUE((test_f<double, TRosenbrock_f, Rosenbrock_f>("Rosenbrock", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2rand, Handles_Roth_Function)
-{
-    typedef nmsimplex2rand<double, Roth_f> TRoth_f;
-
-    TRoth_f t;
-    Roth_f r;
-
-    EXPECT_TRUE((test_f<double, TRoth_f, Roth_f>("Roth", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2rand, Handles_Wood_Function)
-{
-    typedef nmsimplex2rand<double, Wood_f> TWood_f;
-
-    TWood_f t;
-    Wood_f r;
-
-    EXPECT_TRUE((test_f<double, TWood_f, Wood_f>("Wood", &t, &r)));
-}
-
-TEST(multimin_test_nmsimplex2rand, Handles_Spring_Function)
-{
-    typedef nmsimplex2rand<double, Spring_f> TSpring_f;
-
-    TSpring_f t;
-    Spring_f r;
-
-    EXPECT_TRUE((test_f<double, TSpring_f, Spring_f>("Spring", &t, &r)));
+    //! Check the function minimizer can handle a Spring function using f
+    EXPECT_TRUE(functionMinimizerTest<double>(fMinimizer, spring_f, X.data(), 3, "Spring"));
 }
 
 int main(int argc, char **argv)

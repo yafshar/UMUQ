@@ -104,43 +104,53 @@ AC_DEFUN([AX_GOOGLETEST], [
 					fi
 
 					CPPFLAGS+="$googletest_CPPFLAGS"
+					GTEST_CPPFLAGS="$googletest_CPPFLAGS"
 
 					if test x"$ac_googletest_path" != x; then
 						if test -d "$ac_googletest_path/lib" && test -r "$ac_googletest_path/lib" ; then
-							googletest_LDFLAGS=" -L$ac_googletest_path/lib"   
+							googletest_LDFLAGS=" -L$ac_googletest_path/lib"
+							GTEST_LD_LIBRARY_PATH="$ac_googletest_path/lib"
 						fi
 					else
 						if test x"$googletest_PATH" != x ; then
 							if test -f "$googletest_PATH/googlemock/gtest/libgtest.a" && test -r "$googletest_PATH/googlemock/gtest/libgtest.a"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/googlemock/gtest'
 							fi
 							if test -f "$googletest_PATH/googlemock/gtest/libgtest.so" && test -r "$googletest_PATH/googlemock/gtest/libgtest.so"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/googlemock/gtest'
 							fi
 							if test -f "$googletest_PATH/googlemock/gtest/libgtest.dyld" && test -r "$googletest_PATH/googlemock/gtest/libgtest.dyld"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/googlemock/gtest'
 							fi
 
 							if test -f "$googletest_PATH/build/googlemock/gtest/libgtest.a" && test -r "$googletest_PATH/build/googlemock/gtest/libgtest.a"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/build/googlemock/gtest'
 							fi
 							if test -f "$googletest_PATH/build/googlemock/gtest/libgtest.so" && test -r "$googletest_PATH/build/googlemock/gtest/libgtest.so"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/build/googlemock/gtest'
 							fi
 							if test -f "$googletest_PATH/build/googlemock/gtest/libgtest.dyld" && test -r "$googletest_PATH/build/googlemock/gtest/libgtest.dyld"; then
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/build/googlemock/gtest'
 							fi
 
 							if test x"$googletest_LDFLAGS" = x ; then
 								AC_LANG_PUSH([C++])
 								(cd "$googletest_PATH" && mkdir -p build && cd build && export CC=$CC && export CXX=$CXX && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$googletest_PATH" ../ && make -j 2)
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
+								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/build/googlemock/gtest'
 								AC_LANG_POP([C++])
 							fi
 						fi
 					fi
 
 					LDFLAGS+="$googletest_LDFLAGS"' -lgtest'
+					GTEST_LDFLAGS="$googletest_LDFLAGS"' -lgtest'
 
 					AC_LANG_PUSH([C++])
 					AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -160,7 +170,10 @@ AC_DEFUN([AX_GOOGLETEST], [
 					)
 
 					AC_CHECK_LIB([gtest], [main], 
-						[], [
+						[
+							GTEST_LIBS=' -lgtest'
+							GTEST_LDFLAGS+=' -Wl,-rpath,'"$GTEST_LD_LIBRARY_PATH"
+						], [
 							succeeded=no
 							AC_MSG_ERROR([ Unable to continue! located googletest library does not work!])
 						]
@@ -171,15 +184,10 @@ AC_DEFUN([AX_GOOGLETEST], [
 		]
 
 		if test x"$succeeded" == xyes ; then
-			GTEST_CPPFLAGS="$CPPFLAGS"
-			GTEST_CXXFLAGS="$CXXFLAGS"
-			GTEST_LDFLAGS="$LDFLAGS"
-			GTEST_LIBS="$LIBS"
-
 			AC_SUBST(GTEST_CPPFLAGS)
-			AC_SUBST(GTEST_CXXFLAGS)
 			AC_SUBST(GTEST_LDFLAGS)
 			AC_SUBST(GTEST_LIBS)
+			AC_SUBST(GTEST_LD_LIBRARY_PATH)
 
 			ax_googletest_ok=yes
 		fi
@@ -191,10 +199,11 @@ AC_DEFUN([AX_GOOGLETEST], [
 		AC_SUBST(LIBS)
 	)
 
-
 	AM_CONDITIONAL([HAVE_GOOGLETEST], [test x"$ax_googletest_ok" = xyes])
 	AM_COND_IF([HAVE_GOOGLETEST],
-		[], [
+		[
+			AC_DEFINE(HAVE_GOOGLETEST, 1, [Define if you have GOOGLETEST Library.])
+		], [
 			AC_MSG_RESULT(Unable to locate GOOGLETEST !)
 			AC_MSG_RESULT(You can not test the library without GOOGLETEST framework !!!)
 		]

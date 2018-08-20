@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "numerics/eigenmatrix.hpp"
+#include "numerics/eigenlib.hpp"
 #include "io/io.hpp"
 #include "gtest/gtest.h"
 
@@ -25,19 +25,19 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	EMatrixXd A = Eigen::Matrix<double, 4, 4>::Random();
 
 	//!Create a new matrix B of the same size and type as A
-	EMatrix4d B;
+	EMatrix4<double> B;
 
 	//!Open a file for reading and writing
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
 		//!Write the matrix in it
-		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, fmt);
+		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, eigenIOFormat);
 
 		//!Rewind the file
 		f.rewindFile();
 
 		//!Read the matrix from it
-		f.loadMatrix<EMatrix4d>(B);
+		f.loadMatrix<EMatrix4<double>>(B);
 
 		//!Compare that the matrix A and B are approximately the same within machine precision
 		EXPECT_TRUE(A.isApprox(B));
@@ -47,26 +47,26 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 
 	//! - 2
 
-	//!Create a new matrix of type int and fill it with random number
-	EMatrixXi C = Eigen::Matrix<int, 10, 10>::Random();
+	//! Create a new matrix of type int and fill it with random number
+	EMatrixX<int> C = Eigen::Matrix<int, 10, 10>::Random();
 
-	//!Create a new matrix of of the same size and type as C
-	EMatrixXi D(10, 10);
+	//! Create a new matrix of of the same size and type as C
+	EMatrixX<int> D(10, 10);
 
-	//!Open a file for reading and writing
+	//! Open a file for reading and writing
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
-		//!Write the matrix in it
-		f.saveMatrix<EMatrixXi, Eigen::IOFormat>(C, fmt);
+		//! Write the matrix in it
+		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
 
-		//!Rewind the file
+		//! Rewind the file
 		f.rewindFile();
 
-		//!Read the matrix from it
-		f.loadMatrix<EMatrixXi>(D);
+		//! Read the matrix from it
+		f.loadMatrix<EMatrixX<int>>(D);
 
-		//!Compare the matrices
-		EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+		//! Compare the matrices
+		EXPECT_PRED2(EM_equal<EMatrixX<int>>, C, D);
 
 		f.closeFile();
 	}
@@ -75,31 +75,31 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	std::remove(fileName);
 
 	//! - 3
-	//!Open a file for reading and writing
+	//! Open a file for reading and writing
 	if (f.openFile(fileName, f.in | f.out | f.app))
 	{
-		//!write down two matrices of different types in it
-		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, fmt);
-		f.saveMatrix<EMatrixXi, Eigen::IOFormat>(C, fmt);
+		//! write down two matrices of different types in it
+		f.saveMatrix<EMatrixX<double>, Eigen::IOFormat>(A, eigenIOFormat);
+		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
 
-		//!Initialize B and D to zero
-		B = EMatrix4d::Zero();
+		//! Initialize B and D to zero
+		B = EMatrix4<double>::Zero();
 		D = Eigen::Matrix<int, 10, 10>::Zero();
 
-		//!Rewind the file
+		//! Rewind the file
 		f.rewindFile();
 
-		f.loadMatrix<EMatrix4d>(B);
-		f.loadMatrix<EMatrixXi>(D);
+		f.loadMatrix<EMatrix4<double>>(B);
+		f.loadMatrix<EMatrixX<int>>(D);
 
-		//!Compare the matrices
+		//! Compare the matrices
 		EXPECT_TRUE(A.isApprox(B));
-		EXPECT_PRED2(EM_equal<EMatrixXi>, C, D);
+		EXPECT_PRED2(EM_equal<EMatrixX<int>>, C, D);
 
 		f.closeFile();
 	}
 
-	//!delete the file
+	//! Delete the file
 	std::remove(fileName);
 }
 

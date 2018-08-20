@@ -53,14 +53,16 @@ AC_DEFUN([AX_DOXYGEN], [
 			AC_MSG_WARN([Doxygen not found !!! - continuing without Doxygen support.])
 			ax_doxygen_ok=no
 		fi
-
-		AS_IF([test x"$ax_doxygen_ok" = xyes], [
-			AC_DEFINE(HAVE_DOXYGEN, 1, [Define if you have DOXYGEN.])
-		])
 	])
 
 	AM_CONDITIONAL([HAVE_DOXYGEN], [test x"$ax_doxygen_ok" = xyes])
-	AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])], [AC_MSG_WARN([You can not generate software reference documentation without DOXYGEN !!!])])
+	AM_COND_IF([HAVE_DOXYGEN], [
+			AC_CONFIG_FILES([docs/Doxyfile])
+
+			AC_DEFINE(HAVE_DOXYGEN, 1, [Define if you have DOXYGEN.])
+		], [
+			AC_MSG_WARN([You can not generate software reference documentation without DOXYGEN !!!])
+	])
 
 	AC_MSG_RESULT()
 ])

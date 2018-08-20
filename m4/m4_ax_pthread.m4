@@ -252,18 +252,23 @@ AC_DEFUN([AX_PTHREAD], [
 	# Finally, execute ACTION-IF-FOUND/ACTION-IF-NOT-FOUND:
 	if test x"$ax_pthread_ok" = xyes; then
 		LIBS="$PTHREAD_LIBS $LIBS"
-        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-        CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
-        AC_SUBST(LIBS)
-        AC_SUBST(CFLAGS)
-        AC_SUBST(CXXFLAGS)
-        
-        AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
+		CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+		CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+		AC_SUBST(LIBS)
+		AC_SUBST(CFLAGS)
+		AC_SUBST(CXXFLAGS)
 		:
 	fi
 
 	AC_LANG_POP([C])
 
 	AS_IF([test x"$ax_pthread_ok" = xno], [ AC_MSG_ERROR([ Unable to find the POSIX threads library !])])
+	AM_CONDITIONAL([HAVE_PTHREAD], [test x"$ax_pthread_ok" = xyes])
+	AM_COND_IF([HAVE_PTHREAD],
+		[
+			AC_DEFINE(HAVE_PTHREAD, 1, [Define if you have POSIX threads libraries and header files.])
+		]
+	)
+
 	AC_MSG_RESULT()
 ]) # AX_PTHREAD

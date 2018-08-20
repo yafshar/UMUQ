@@ -3,7 +3,7 @@
 Multidimensional Minimization
 ------------
 
-The multimin Module contains the c++ re-implamentation and modification to the original 
+The multimin Module contains the c++ re-implamentation and modifications to the original 
 GSL Multidimensional Minimization source codes made available under the following license:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,20 +32,54 @@ It should contain the following files:
 -----------------------------------
     multimin
     ├── COPYING
-    ├── multimin_conjugate_fr.hpp
-    ├── multimin_conjugate_pr.hpp
-    ├── multimin_directional_minimize.hpp
-    ├── multimin_function.hpp
-    ├── multimin_linear_minimize.hpp
-    ├── multimin_linear_wrapper.hpp
-    ├── multimin_nmsimplex2.hpp
-    ├── multimin_nmsimplex2rand.hpp
-    ├── multimin_nmsimplex.hpp
-    ├── multimin_steepest_descent.hpp
-    ├── multimin_vector_bfgs2.hpp
-    ├── multimin_vector_bfgs.hpp
+    ├── bfgs.hpp
+    ├── bfgs2.hpp
+    ├── conjugatefr.hpp
+    ├── conjugatepr.hpp
+    ├── simplexnm.hpp
+    ├── simplexnm2.hpp
+    ├── simplexnm2rnd.hpp
+    ├── steepestdescent.hpp
     └── README.md
 -----------------------------------
+
+For local optimization, the most efficient algorithms typically require the user to supply 
+the gradient in addition to the value f(x) for any given point x. This exploits the fact 
+that, in principle, the gradient can almost always be computed at the same time as the value 
+of f using very little additional computational effort (at worst, about the same as that of 
+evaluating f a second time). If a quick way to compute the derivative of f is not obvious, 
+one typically finds gradient using an adjoint method, or possibly using automatic differentiation 
+tools. 
+Gradient-based methods are critical for the efficient optimization of very high-dimensional 
+parameter spaces (e.g. n in the thousands or more).
+On the other hand, computing the gradient is sometimes cumbersome and inconvenient if the 
+objective function is supplied as a complicated program. It may even be impossible, if f 
+is not differentiable (or worse, is discontinuous). In such cases, it is often easier to 
+use a derivative-free algorithm for optimization, which only requires that the user supply 
+the function values f(x) for any given point x. Such methods typically must evaluate f for 
+at least several-times-n points, however, so they are best used when n is small to moderate 
+(up to hundreds).
+
+The available solvers can be categorized as follows:
+
+**Algorithms with Derivatives**    
+
+Solver | Description
+--- | --- 
+bfgs | Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm
+bfgs2 | Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm (the most efficient version)
+conjugateFr | Conjugate gradient Fletcher-Reeve algorithm
+conjugatePr | Conjugate gradient Polak-Ribiere algorithm
+steepestDescent | The steepest descent algorithm
+
+**Algorithms without Derivatives**    
+
+Solver | Description 
+--- | ---|
+simplexNM | The Simplex method of Nelder and Mead
+simplexNM2 | The Simplex method of Nelder and Mead$ (order N operations)
+simplexNM2Rnd | The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors)
+
 
 Contributors
 ------------

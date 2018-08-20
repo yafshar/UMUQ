@@ -1,249 +1,411 @@
 #ifndef UMUQ_RUNINFO_H
 #define UMUQ_RUNINFO_H
+
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
 
-/*!
-*  \brief run info structure
-*    
-* \param Gen    
-* \param CoefVar        The coefficient of variation of the plausibility weights 
-* \param p              cluster-wide
-* \param currentuniques   
-* \param logselection   
-* \param acceptance  
-* \param SS             cluster-wide
-* \param meantheta  
-*/
-struct runinfo_t
+/*! \class runinfo
+ * \ingroup data
+ * 
+ * \brief This class contains the run information of the TMCMC
+ * 
+ */
+template <typename T>
+class runinfo
 {
-    int Gen;
-    double *CoefVar;      /*[MAXGENS];*/
-    double *p;            /*[MAXGENS];*/
-    int *currentuniques;  /*[MAXGENS];*/
-    double *logselection; /*[MAXGENS];*/
-    double *acceptance;   /*[MAXGENS];*/
-    double **SS;          /*[PROBDIM][PROBDIM];*/
-    double **meantheta;   /*[MAXGENS][PROBDIM];*/
-
-    int probdim;
-    int maxgens;
-
+  public:
     /*!
      * \brief constructor for the default variables
      *    
      */
-    runinfo_t() { init(); }
-    runinfo_t(int probdim_, int maxgens_) { init(probdim_, maxgens_); }
+    runinfo();
+
+    /*!
+     * \brief Construct a new runinfo object
+     * 
+     * \param ProbDim          Dimension
+     * \param MaxGenerations   Max generations
+     * 
+     */
+    runinfo(int ProbDim, int MaxGenerations);
+
+    /*!
+     * \brief Move constructor, construct a new runinfo object from an input runinfo object
+     * 
+     * \param other Input runinfo object
+     * 
+     */
+    runinfo(runinfo<T> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param other      Input runinfo object
+     * \return runinfo<T>& 
+     */
+    runinfo<T> &operator=(runinfo<T> &&other);
 
     /*!
      * \brief destructor
      *    
      */
-    ~runinfo_t() { destroy(); }
+    ~runinfo() {}
 
     /*!
-     * \brief  
-     *
+     * \brief Initialize the database class register task
+     *  
+     * \returns false if there is not enough memory
      */
-    bool init(int probdim_ = 0, int maxgens_ = 0)
-    {
-        if (probdim_ == 0 || maxgens_ == 0)
-        {
-            probdim = 0;
-            maxgens = 0;
-            Gen = 0;
-            CoefVar = nullptr;
-            p = nullptr;
-            currentuniques = nullptr;
-            logselection = nullptr;
-            acceptance = nullptr;
-            SS = nullptr;
-            meantheta = nullptr;
-
-            return true;
-        }
-
-        probdim = probdim_;
-        maxgens = maxgens_;
-        Gen = 0;
-
-        try
-        {
-            CoefVar = new double[maxgens]();
-            p = new double[maxgens]();
-            currentuniques = new int[maxgens]();
-            logselection = new double[maxgens]();
-            acceptance = new double[maxgens]();
-            SS = new double *[probdim];
-            meantheta = new double *[maxgens];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
-
-        try
-        {
-            for (int i = 0; i < probdim; i++)
-            {
-                SS[i] = new double[probdim]();
-            }
-            for (int i = 0; i < maxgens; i++)
-            {
-                meantheta[i] = new double[probdim]();
-            }
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
-        }
-
-        //set the first value to a high number
-        CoefVar[0] = 10.;
-
-        return true;
-    }
+    bool init();
 
     /*!
-     * \brief save the inofmration in a file @fileName
+     * \brief Reset the runinfo object with the new dimension and maximum generations
      * 
+     * \param ProbDim         Dimension
+     * \param MaxGenerations  Maximum generations
+     * 
+     * \return true 
+     * \return false          if there is not enough memory
+     */
+    bool reset(int ProbDim, int MaxGenerations);
+
+    /*!
+     * \brief Exchanges the given runinfo object
+     * 
+     * \param other Input runinfo object
+     */
+    void swap(runinfo<T> &other);
+
+    /*!
+     * \brief Save the inofmration in a file @fileName
      * Write the runinfo data information to a file @fileName
      * 
-     * \param fileName Name of the file (default name is runinfo.txt) for writing information 
+     * \param fileName Name of the file (default name is runinfo.txt) for writing information
+     *  
      */
-    bool save(const char *fileName = "runinfo.txt")
-    {
-        io f;
-        if (f.openFile(fileName, f.out))
-        {
-            std::fstream &fs = f.getFstream();
-            bool tmp = true;
+    bool save(const char *fileName = "runinfo.txt");
 
-            fs << std::fixed;
-            fs << "Gen= " << Gen << "\n";
-
-            fs << "CoefVar[" << maxgens << "]=\n";
-            tmp |= f.saveMatrix<double>(CoefVar, maxgens);
-
-            fs << "p[" << maxgens << "]=\n";
-            tmp |= f.saveMatrix<double>(p, maxgens);
-
-            fs << "currentuniques[" << maxgens << "]=\n";
-            tmp |= f.saveMatrix<int>(currentuniques, maxgens);
-
-            fs << "logselection[" << maxgens << "]=\n";
-            tmp |= f.saveMatrix<double>(logselection, maxgens);
-
-            fs << "acceptance[" << maxgens << "]=\n";
-            tmp |= f.saveMatrix<double>(acceptance, maxgens);
-
-            fs << "SS[" << probdim << "][" << probdim << "]=\n";
-            tmp |= f.saveMatrix<double>(SS, probdim, probdim, 1);
-
-            fs << "meantheta[" << maxgens << "][" << probdim << "]=\n";
-            tmp |= f.saveMatrix<double>(meantheta, maxgens, probdim, 1);
-
-            f.closeFile();
-            return tmp;
-        }
-        return false;
-    }
+    bool save(std::string const &fileName);
 
     /*!
-     * \brief load inofmration from a file @fileName
-     * 
+     * \brief Load inofmration from a file @fileName
      * Load the runinfo data information from a file @fileName
      * 
-     * \param fileName Name of the file (default name is runinfo.txt) for reading information 
+     * \param fileName  Name of the file (default name is runinfo.txt) for reading information
+     * 
+     * \return true 
+     * \return false 
      */
-    bool load(const char *fileName = "runinfo.txt")
-    {
-        io f;
-        if (f.openFile(fileName, f.in))
-        {
-            parser prs;
-            bool tmp = true;
+    bool load(const char *fileName = "runinfo.txt");
 
-            tmp |= f.readLine();
-            tmp |= f.readLine();
-            Gen = prs.at<int>(0);
+    bool load(std::string const &fileName);
 
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(CoefVar, maxgens);
+  private:
+    // Make it noncopyable
+    runinfo(runinfo<T> const &) = delete;
 
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(p, maxgens);
+    // Make it nonassignable
+    runinfo<T> &operator=(runinfo<T> const &) = delete;
 
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<int>(currentuniques, maxgens);
+  public:
+    //! Dimension
+    int nDim;
+    //! Max generations
+    int maxGenerations;
+    //! Current generation
+    int Generation;
 
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(logselection, maxgens);
-
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(acceptance, maxgens);
-
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(SS, probdim, probdim, 1);
-
-            tmp |= f.readLine();
-            tmp |= f.loadMatrix<double>(meantheta, maxgens, probdim, 1);
-
-            f.closeFile();
-            return tmp;
-        }
-        return false;
-    }
-
-    /*!
-     * \brief destroy created memory 
-     *
-     */
-    void destroy()
-    {
-        if (CoefVar != nullptr)
-        {
-            delete[] CoefVar;
-            CoefVar = nullptr;
-        }
-        if (p != nullptr)
-        {
-            delete[] p;
-            p = nullptr;
-        }
-        if (currentuniques != nullptr)
-        {
-            delete[] currentuniques;
-            currentuniques = nullptr;
-        }
-        if (logselection != nullptr)
-        {
-            delete[] logselection;
-            logselection = nullptr;
-        }
-        if (acceptance != nullptr)
-        {
-            delete[] acceptance;
-            acceptance = nullptr;
-        }
-        if (SS != nullptr)
-        {
-            delete[] * SS;
-            delete[] SS;
-            SS = nullptr;
-        }
-        if (meantheta != nullptr)
-        {
-            delete[] * meantheta;
-            delete[] meantheta;
-            meantheta = nullptr;
-        }
-    }
+    //! The coefficient of variation of the plausibility weights [maxGenerations]
+    std::vector<T> CoefVar;
+    //! p cluster-wide                                           [maxGenerations]
+    //! probabilty at each generation
+    std::vector<T> p;
+    //!                                                          [maxGenerations]
+    std::vector<int> currentuniques;
+    //!                                                          [maxGenerations]
+    std::vector<T> logselection;
+    //!                                                          [maxGenerations]
+    std::vector<T> acceptance;
+    //! SS cluster-wide                                          [nDim][nDim]
+    //! 
+    std::vector<T> SS;
+    //!                                                          [maxGenerations][nDim]
+    std::vector<T> meantheta;
 };
 
-#endif
+/*!
+ * \brief Construct a new runinfo object
+ * 
+ * \tparam T 
+ */
+template <typename T>
+runinfo<T>::runinfo() : nDim(0),
+                        maxGenerations(0),
+                        Generation(0)
+{
+}
+
+/*!
+ * \brief Construct a new runinfo object
+ * 
+ * 
+ * \param ProbDim         Dimension
+ * \param MaxGenerations  Max generations
+ */
+template <typename T>
+runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
+                                                       maxGenerations(MaxGenerations),
+                                                       Generation(0)
+{
+    if (!runinfo<T>::init())
+    {
+        UMUQFAIL("Failed to initialiaze!")
+    }
+}
+
+/*!
+ * \brief Move constructor, construct a new runinfo object from an input runinfo object
+ * 
+ * \param other Input runinfo object
+ * 
+ */
+template <typename T>
+runinfo<T>::runinfo(runinfo<T> &&other)
+{
+    runinfo<T>::nDim = other.nDim;
+    runinfo<T>::maxGenerations = other.maxGenerations;
+    runinfo<T>::Generation = other.Generation;
+    runinfo<T>::CoefVar = std::move(other.CoefVar);
+    runinfo<T>::p = std::move(other.p);
+    runinfo<T>::currentuniques = std::move(other.currentuniques);
+    runinfo<T>::logselection = std::move(other.logselection);
+    runinfo<T>::acceptance = std::move(other.acceptance);
+    runinfo<T>::SS = std::move(other.SS);
+    runinfo<T>::meantheta = std::move(other.meantheta);
+}
+
+/*!
+ * \brief Move assignment operator
+ * 
+ * \param other      Input runinfo object
+ * \return runinfo<T>& 
+ */
+template <typename T>
+runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
+{
+    runinfo<T>::nDim = other.nDim;
+    runinfo<T>::maxGenerations = other.maxGenerations;
+    runinfo<T>::Generation = other.Generation;
+    runinfo<T>::CoefVar = std::move(other.CoefVar);
+    runinfo<T>::p = std::move(other.p);
+    runinfo<T>::currentuniques = std::move(other.currentuniques);
+    runinfo<T>::logselection = std::move(other.logselection);
+    runinfo<T>::acceptance = std::move(other.acceptance);
+    runinfo<T>::SS = std::move(other.SS);
+    runinfo<T>::meantheta = std::move(other.meantheta);
+
+    return *this;
+}
+
+/*!
+ * \brief Initialize the database class register task
+ *  
+ * \returns false if there is not enough memory
+ */
+template <typename T>
+bool runinfo<T>::init()
+{
+    try
+    {
+        runinfo<T>::CoefVar.resize(runinfo<T>::maxGenerations, T{});
+        runinfo<T>::p.resize(runinfo<T>::maxGenerations, T{});
+        runinfo<T>::currentuniques.resize(runinfo<T>::maxGenerations, 0);
+        runinfo<T>::logselection.resize(runinfo<T>::maxGenerations, T{});
+        runinfo<T>::acceptance.resize(runinfo<T>::maxGenerations, T{});
+
+        runinfo<T>::SS.resize(runinfo<T>::nDim * runinfo<T>::nDim);
+        runinfo<T>::meantheta.resize(runinfo<T>::maxGenerations * runinfo<T>::nDim);
+    }
+    catch (...)
+    {
+        UMUQFAILRETURN("Failed to allocate memory!");
+    }
+
+    // set the first value to a high number
+    runinfo<T>::CoefVar[0] = std::numeric_limits<T>::max();
+
+    return true;
+}
+
+/*!
+ * \brief Reset the runinfo object with the new dimension and maximum generations
+ * 
+ * \param ProbDim         Dimension
+ * \param MaxGenerations  Maximum generations
+ * 
+ * \return true 
+ * \return false  If there is not enough memory
+ */
+template <typename T>
+bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
+{
+    runinfo<T>::nDim = ProbDim;
+    runinfo<T>::maxGenerations = MaxGenerations;
+    return runinfo<T>::init();
+}
+
+/*!
+ * \brief Exchanges the given runinfo object
+ * 
+ * \param other Input runinfo object
+ * 
+ */
+template <typename T>
+void runinfo<T>::swap(runinfo<T> &other)
+{
+    std::swap(runinfo<T>::nDim, other.nDim);
+    std::swap(runinfo<T>::maxGenerations, other.maxGenerations);
+    std::swap(runinfo<T>::Generation, other.Generation);
+    runinfo<T>::CoefVar.swap(other.CoefVar);
+    runinfo<T>::p.swap(other.p);
+    runinfo<T>::currentuniques.swap(other.currentuniques);
+    runinfo<T>::logselection.swap(other.logselection);
+    runinfo<T>::acceptance.swap(other.acceptance);
+    runinfo<T>::SS.swap(other.SS);
+    runinfo<T>::meantheta.swap(other.meantheta);
+}
+
+/*!
+ * \brief Save the inofmration in a file @fileName
+ * Write the runinfo data information to a file @fileName
+ * 
+ * \param fileName Name of the file (default name is runinfo.txt) for writing information 
+ * 
+ * \return true 
+ * \return false 
+ */
+template <typename T>
+bool runinfo<T>::save(const char *fileName)
+{
+    // Create an instance of the IO object
+    io f;
+    if (f.openFile(fileName, f.out | f.trunc))
+    {
+        // Get the IO stream
+        std::fstream &fs = f.getFstream();
+        bool tmp = true;
+
+        fs << std::fixed;
+
+        fs << "ProblemDimension= " << runinfo<T>::nDim << "\n";
+        fs << "maxGenerations= " << runinfo<T>::maxGenerations << "\n";
+        fs << "Generation= " << runinfo<T>::Generation << "\n";
+
+        fs << "CoefVar[" << runinfo<T>::maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::CoefVar.data(), runinfo<T>::maxGenerations);
+
+        fs << "p[" << runinfo<T>::maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::p.data(), runinfo<T>::maxGenerations);
+
+        fs << "currentuniques[" << runinfo<T>::maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<int>(runinfo<T>::currentuniques.data(), runinfo<T>::maxGenerations);
+
+        fs << "logselection[" << runinfo<T>::maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::logselection.data(), runinfo<T>::maxGenerations);
+
+        fs << "acceptance[" << runinfo<T>::maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::acceptance.data(), runinfo<T>::maxGenerations);
+
+        fs << "SS[" << runinfo<T>::nDim << "][" << runinfo<T>::nDim << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::SS.data(), runinfo<T>::nDim, runinfo<T>::nDim);
+
+        fs << "meantheta[" << runinfo<T>::maxGenerations << "][" << nDim << "]=\n";
+        tmp &= f.saveMatrix<T>(runinfo<T>::meantheta.data(), runinfo<T>::maxGenerations, runinfo<T>::nDim);
+
+        f.closeFile();
+        return tmp;
+    }
+    return false;
+}
+
+template <typename T>
+bool runinfo<T>::save(std::string const &fileName)
+{
+    return runinfo<T>::save(&fileName[0]);
+}
+
+/*!
+ * \brief Load inofmration from a file @fileName
+ * Load the runinfo data information from a file @fileName
+ * 
+ * \param fileName  Name of the file (default name is runinfo.txt) for reading information
+ * 
+ * \return true 
+ * \return false 
+ */
+template <typename T>
+bool runinfo<T>::load(const char *fileName)
+{
+    // Create an instance of the IO object
+    io f;
+    if (f.openFile(fileName, f.in))
+    {
+        // Create an instance of the parser object
+        parser prs;
+        bool tmp;
+
+        tmp = f.readLine();
+
+        prs.parse(f.getLine().substr(18));
+        int ProbDim = prs.at<int>(0);
+
+        tmp &= f.readLine();
+        prs.parse(f.getLine().substr(16));
+        int MaxGenerations = prs.at<int>(0);
+
+        if (ProbDim != runinfo<T>::nDim || MaxGenerations != runinfo<T>::maxGenerations)
+        {
+            if (!runinfo<T>::reset(ProbDim, MaxGenerations))
+            {
+                return false;
+            }
+        }
+
+        tmp &= f.readLine();
+        prs.parse(f.getLine().substr(12));
+        runinfo<T>::Generation = prs.at<int>(0);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::CoefVar.data(), runinfo<T>::maxGenerations);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::p.data(), runinfo<T>::maxGenerations);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<int>(runinfo<T>::currentuniques.data(), runinfo<T>::maxGenerations);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::logselection.data(), runinfo<T>::maxGenerations);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::acceptance.data(), runinfo<T>::maxGenerations);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::SS.data(), runinfo<T>::nDim, runinfo<T>::nDim);
+
+        tmp &= f.readLine();
+        tmp &= f.loadMatrix<T>(runinfo<T>::meantheta.data(), runinfo<T>::maxGenerations, runinfo<T>::nDim);
+
+        f.closeFile();
+        return tmp;
+    }
+    return false;
+}
+
+template <typename T>
+bool runinfo<T>::load(std::string const &fileName)
+{
+    return runinfo<T>::load(&fileName[0]);
+}
+
+#endif //UMUQ_RUNINFO_H

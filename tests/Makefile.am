@@ -4,8 +4,8 @@ export DYLD_LIBRARY_PATH=${FLANN_LD_LIBRARY_PATH}:$DYLD_LIBRARY_PATH
 TESTS=
 check_PROGRAMS=
 
-AM_CPPFLAGS = $(GTEST_CPPFLAGS)
-AM_CXXFLAGS = $(GTEST_CXXFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/src $(GTEST_CPPFLAGS)
+AM_CXXFLAGS = -DUMUQ_UNITTEST $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
 LIBS = $(GTEST_LIBS)
 
@@ -28,7 +28,7 @@ factorial_test_SOURCES = numerics/factorial_test.cpp
 
 TESTS += psrandom_test
 check_PROGRAMS += psrandom_test
-psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+psrandom_test_SOURCES = numerics/random/psrandom_test.cpp 
 
 TESTS += multimin_test
 check_PROGRAMS += multimin_test 
@@ -41,6 +41,61 @@ knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp
 TESTS += dcpse_test
 check_PROGRAMS += dcpse_test
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
+
+TESTS += fitness_test
+check_PROGRAMS += fitness_test
+fitness_test_SOURCES = numerics/fitness_test.cpp 
+
+TESTS += linearregression_test
+check_PROGRAMS += linearregression_test
+linearregression_test_SOURCES = numerics/linearregression_test.cpp 
+
+#numerics/function
+TESTS += function_test
+check_PROGRAMS += function_test
+function_test_SOURCES = numerics/function/function_test.cpp 
+
+TESTS += functionminimizer_test
+check_PROGRAMS += functionminimizer_test
+functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
+
+#numerics/density
+TESTS += densityfunction_test
+check_PROGRAMS += densityfunction_test
+densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
+
+#numerics/multimin
+TESTS += conjugatefr_test
+check_PROGRAMS += conjugatefr_test
+conjugatefr_test_SOURCES = numerics/multimin/conjugatefr_test.cpp 
+
+TESTS += conjugatepr_test
+check_PROGRAMS += conjugatepr_test
+conjugatepr_test_SOURCES = numerics/multimin/conjugatepr_test.cpp 
+
+TESTS += simplexnm_test
+check_PROGRAMS += simplexnm_test
+simplexnm_test_SOURCES = numerics/multimin/simplexnm_test.cpp 
+
+TESTS += simplexnm2_test
+check_PROGRAMS += simplexnm2_test
+simplexnm2_test_SOURCES = numerics/multimin/simplexnm2_test.cpp 
+
+TESTS += simplexnm2rnd_test
+check_PROGRAMS += simplexnm2rnd_test
+simplexnm2rnd_test_SOURCES = numerics/multimin/simplexnm2rnd_test.cpp 
+
+TESTS += steepestdescent_test
+check_PROGRAMS += steepestdescent_test
+steepestdescent_test_SOURCES = numerics/multimin/steepestdescent_test.cpp 
+
+TESTS += bfgs_test
+check_PROGRAMS += bfgs_test
+bfgs_test_SOURCES = numerics/multimin/bfgs_test.cpp 
+
+TESTS += bfgs2_test
+check_PROGRAMS += bfgs2_test
+bfgs2_test_SOURCES = numerics/multimin/bfgs2_test.cpp 
 
 #misc
 TESTS += utility_test
@@ -68,6 +123,9 @@ TESTS += eigen_io_test
 check_PROGRAMS += eigen_io_test
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
 
+TESTS += pyplot_test
+check_PROGRAMS += pyplot_test
+pyplot_test_SOURCES = io/pyplot_test.cpp
 
 #data
 TESTS += stdata_test
@@ -77,3 +135,11 @@ stdata_test_SOURCES = data/stdata_test.cpp
 TESTS += runinfo_test
 check_PROGRAMS += runinfo_test
 runinfo_test_SOURCES = data/runinfo_test.cpp
+
+TESTS += database_test
+check_PROGRAMS += database_test
+database_test_SOURCES = data/database_test.cpp
+
+TESTS += datatype_test
+check_PROGRAMS += datatype_test
+datatype_test_SOURCES = data/datatype_test.cpp

@@ -1,8 +1,10 @@
 #ifndef UMUQ_CORE_H
 #define UMUQ_CORE_H
 
+#ifdef HAVE_CONFIG_H
 //Include this file where all configuration variables are defined.
 #include <UMUQ_config.h>
+#endif /* HAVE_CONFIG_H */
 
 //Include this file where all our macros are defined.
 #include "macros.hpp"
@@ -51,6 +53,10 @@ extern "C" {
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1
 
+#ifdef HAVE_TORC
+#include <torc.h>
+#endif
+
 #include <sys/stat.h> //stat
 
 #include <cassert>
@@ -77,12 +83,26 @@ extern "C" {
 #include <system_error>
 #include <memory>
 #include <random>
+#include <map>
+#include <mutex>
+#include <functional>
+
+// #define HAVE_PYTHON 0
+#ifdef HAVE_PYTHON
+#include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+#if PY_MAJOR_VERSION >= 3
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
 
 /*!
  * \brief Namespace containing all symbols from the %UMUQ library. 
  */
 namespace UMUQ
 {
+
 inline static const char *SimdInstructionSetsInUse(void)
 {
 #if defined(UMUQ_VECTORIZE_SSE4_2)
@@ -99,31 +119,33 @@ inline static const char *SimdInstructionSetsInUse(void)
     return "None";
 #endif
 }
-}
 
 #ifdef M_PI
 #undef M_PI
 #endif
-// source: http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html
-#define M_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406l
-#define M_2PI 6.283185307179586476925286766559005768394338798750211641949889184615632812l
-#define M_LPI std::log(M_PI)
-#define M_L2PI std::log(M_2PI)
+#ifdef M_2PI
+#undef M_2PI
+#endif
+
+/*!
+ * \brief Constant values of \f$ \pi, 2\pi, \sqrt{\pi}, \sqrt{2\pi}, ln(\pi), and ln(2\pi) \f$
+ *
+ * Reference:
+ * http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html 
+ */
+#define M_PI   3.14159265358979323846264338327950288419716939937510582097494459230781640l
+#define M_2PI  6.28318530717958647692528676655900576839433879875021164194988918461563281l
+#define M_SPI  1.77245385090551602729816748334114518279754945612238712821380778985291128l
+#define M_S2PI 2.50662827463100050241576528481104525300698674060993831662992357634229365l
+#define M_LPI  1.14472988584940017414342735135305871164729481291531157151362307147213774l
+#define M_L2PI 1.83787706640934548356065947281123527972279494727556682563430308096553139l
+
+#define LINESIZE 256
+} // namespace UMUQ
 
 /*! 
  * This is the main module of UMUQ
  */
 #include "meta.hpp"
-
-/*! 
- * Handles runtime error
- */
-class UMUQexception : public std::runtime_error
-{
-  public:
-    UMUQexception(const char *message) : std::runtime_error(message) {}
-
-    UMUQexception(const std::string &message) : std::runtime_error(message) {}
-};
 
 #endif // UMUQ_CORE_H

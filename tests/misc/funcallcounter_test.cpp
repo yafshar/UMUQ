@@ -1,49 +1,26 @@
-#include "torc.h"
 #include "core/core.hpp"
+#include "core/environment.hpp"
 #include "misc/funcallcounter.hpp"
 #include "gtest/gtest.h"
 
-class TORCEnvironment : public ::testing::Environment
-{
-  public:
-    virtual void SetUp()
-    {
-        char **argv;
-        int argc = 0;
+//! Create an instance of funcallcounter object
+funcallcounter fc;
 
-        torc_init(argc, argv, 0);
-
-        // ::testing::TestEventListeners &listeners = ::testing::UnitTest::GetInstance()->listeners();
-        // if (torc_node_id() != 0)
-        // {
-        //     delete listeners.Release(listeners.default_result_printer());
-        // }
-    }
-
-    virtual void TearDown()
-    {
-        torc_finalize();
-    }
-
-    virtual ~TORCEnvironment() {}
-};
-
-funcallcounter f;
-
+//! Global task
 void taskf()
 {
-    f.increment();
+    fc.increment();
 }
 
 /*! 
- * Test to check random functionality
+ * Test to check Function call counters functionality
  */
 TEST(funcallcounter_test, HandlesFunctioncounter)
 {
-    EXPECT_TRUE(f.init());
+    EXPECT_TRUE(fc.init());
     torc_register_task((void *)taskf);
 
-    //Number of nodes
+    // Number of nodes
     int nnodes = torc_num_nodes();
     int ntasks = 100;
 
@@ -53,11 +30,13 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     }
     torc_waitall();
 
-    f.count();
-    f.reset();
+    fc.count();
+    
+    //! Reset the local counter to zero
+    fc.reset();
 
-    EXPECT_EQ(f.get_nglobalfc(), nnodes * ntasks);
-    EXPECT_EQ(f.get_ntotalfc(), nnodes * ntasks);
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks);
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks);
 
     for (int i = 0; i < ntasks * 2; i++)
     {
@@ -65,17 +44,17 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     }
     torc_waitall();
 
-    f.count();
-    f.reset();
+    fc.count();
+    fc.reset();
 
-    EXPECT_EQ(f.get_nglobalfc(), nnodes * ntasks * 2);
-    EXPECT_EQ(f.get_ntotalfc(), nnodes * ntasks * 3);
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks * 2);
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks * 3);
 }
 
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new TORCEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
 
     return RUN_ALL_TESTS();
 }

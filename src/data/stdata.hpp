@@ -5,865 +5,803 @@
 #include "../io/io.hpp"
 #include "../misc/parser.hpp"
 
-/*! \file stdata.hpp
-*  \brief stream Data type
-*
-* \param Nth
-* \param MaxStages
-* \param PopSize
-* \param lowerbound
-* \param upperbound
-* \param compositeprior_distr
-* \param prior_mu
-* \param prior_sigma
-* \param auxil_size
-* \param auxil_data
-* \param MinChainLength
-* \param MaxChainLength
-* \param lb                  generic lower bound
-* \param ub                  generic upper bound
-* \param TolCOV
-* \param bbeta
-* \param seed
-* \param options
-* \param sampling_type       sampling type which can be 0: uniform, 1: gaussian, 2: file 
-* \param prior_type          prior type which can be  0: lognormal, 1: gaussian
-* \param prior_count
-* \param iplot
-* \param icdump              dump current dataset of accepted points
-* \param ifdump              dump complete dataset of points
-* \param Num
-* \param LastNum
-* \param use_proposal_cma
-* \param init_mean
-* \param local_cov
-* \param use_local_cov
-* \param local_scale
-*/
+/*! \class optimizationParameters
+ * \brief This is a class to set the optimization parameters 
+ * 
+ * \tparam T Data type
+ */
+template <typename T>
+struct optimizationParameters
+{
+	int MaxIter;
+	int Display;
+	T Tolerance;
+	T Step;
+
+	/*!
+     *  \brief Default constructor for the default variables
+     *    
+     */
+	optimizationParameters() : MaxIter(100),
+							   Display(0),
+							   Tolerance(1e-6),
+							   Step(1e-5){};
+};
+
+/*! \class stdata
+ *  \brief stream data type class
+ *
+ * \param nDim                       Problem Dimension
+ * \param maxGenerations             Maximum number of generations
+ * \param populationSize             Sampling population size
+ * \param lastPopulationSize         Sampling population size in the final generation
+ * \param auxilSize                  Auxillary data size
+ * \param minChainLength             Minimum size of the chain in the TMCMC algorithm (default 1)
+ * \param maxChainLength             Maximum size of the chain in the TMCMC algorithm (default 1)
+ * \param seed                       Random number initial seed
+ * \param samplingType               Sampling type which is : 0: uniform, 1: gaussian, 2: file
+ * \param priorType                  Prior type which is :   0: lognormal, 1: gaussian
+ * \param iPlot                      1 for printing the data and 0 for not
+ * \param saveData                   1 for saving the data and 0 for not
+ * \param useCmaProposal             Indicator if we use the CMA proposal or not
+ * \param useLocalCovariance         Indicator if we use the local covariance or not
+ * \param lb                         Generic lower bound (It is -6 per default)
+ * \param ub                         Generic upper bound (It is 6 per default)
+ * \param TolCOV                     A prescribed tolerance
+ * \param bbeta                      \f$ \beta \f$ parameter in the TMCMC algorithm
+ * \param localScale                 Local scale
+ * \param options                    Optimization parameter
+ * \param eachPopulationSize         Sampling population size for each generation
+ * \param lowerBound                 Sampling domain lower bounds for each dimension
+ * \param upperBound                 Sampling domain upper bounds for each dimension
+ * \param compositePriorDistribution Composite distribution as a prior
+ * \param priorMu                    Prior mean
+ * \param priorSigma                 Prior standard deviation
+ * \param auxilData                  Auxillary data
+ * \param initMean                   Initial Mean with the size of [populationSize*nDim]
+ * \param localCovariance            Local covariance with the size of [populationSize*nDim*nDim]
+ */
+template <typename T>
 class stdata
 {
   public:
-    int Nth;
-    int MaxStages; /* = MAXGENS*/
-    int PopSize;   /* = DATANUM*/
+	/*!
+     * \brief Default constructor
+     *    
+     */
+	stdata();
 
-    double *lowerbound; /*[PROBDIM];*/
-    double *upperbound; /*[PROBDIM];*/
+	/*!
+     * \brief constructor for the default input variables
+     *    
+     */
+	stdata(int probdim, int MaxGenerations, int PopulationSize);
 
-    double *compositeprior_distr; /*[PROBDIM]*/
+	/*!
+	 * \brief Move constructor, construct a new stdata object from an input object
+     * 
+     * \param other  Input stdata object
+	 */
+	stdata(stdata<T> &&other);
 
-    double *prior_mu;
-    double *prior_sigma;
+	/*!
+     * \brief Default destructor 
+     *    
+     */
+	~stdata() {}
 
-    int auxil_size;
-    double *auxil_data;
+	/*!
+	 * \brief Move assignment operator
+	 * 
+	 * \param other 
+	 * \return stdata<T>& 
+	 */
+	stdata<T> &operator=(stdata<T> &&other);
 
-    int MinChainLength;
-    int MaxChainLength;
+	/*!
+	 * \brief reset the stream data values to the input values
+	 * 
+	 * \param probdim          Problem Dimension
+	 * \param MaxGenerations   Maximum number of generations
+	 * \param PopulationSize   Sampling population size
+	 * 
+	 * \return true 
+	 * \return false If there is not enough memory available for allocating the data
+	 */
+	bool reset(int probdim, int MaxGenerations, int PopulationSize);
 
-    double lb; /*generic lower bound*/
-    double ub; /*generic upper bound*/
+	/*!
+     * \brief load the input file fname
+     *
+     * \param fname              name of the input file
+     * \return true on success
+     */
+	bool load(const char *fname = "tmcmc.par");
+	bool load(std::string const &fname = "tmcmc.par");
 
-    double TolCOV; /*a prescribed tolerance*/
-    double bbeta;
-    long seed;
+	/*!
+	 * \brief Swap the stdata objects
+	 * 
+	 * \param other 
+	 */
+	void swap(stdata<T> &other);
 
-    struct optim_options
-    {
-        int MaxIter;
-        double Tol;
-        int Display;
-        double Step;
+  private:
+	// Make it noncopyable
+	stdata(stdata<T> const &) = delete;
 
-        //! constructor
-        /*!
-        *  \brief constructor for the default variables
-        *    
-        */
-        optim_options() : MaxIter(100),
-                          Tol(1e-6),
-                          Display(0),
-                          Step(1e-5){};
-    } options;
+	// Make it not assignable
+	stdata<T> &operator=(stdata<T> const &) = delete;
 
-    int sampling_type; /* 0: uniform, 1: gaussian, 2: file */
-    int prior_type;    /* 0: lognormal, 1: gaussian */
+  public:
+	//! Problem Dimension
+	int nDim;
 
-    /* prior information needed for hiegherarchical analysis */
-    /* this number = prior + number of datasets = 1 + N_IND */
-    /* if it is 0, we only do the TMCMC */
-    int prior_count;
+	//! Maximum number of generations
+	int maxGenerations;
 
-    int iplot;
-    int icdump;
-    int ifdump;
+	//! Sampling population size
+	int populationSize;
 
-    int *Num; /*[MAXGENS];*/
-    int LastNum;
+	//! Sampling population size in the final generation
+	int lastPopulationSize;
 
-    int use_proposal_cma;
-    double **init_mean; /* [DATANUM][PROBDIM] */
+	//! Auxillary data size
+	int auxilSize;
 
-    double **local_cov; /* [DATANUM][PROBDIM*PROBDIM] */
-    int use_local_cov;
-    double local_scale;
+	//! Minimum size of the chain in the TMCMC algorithm (default 1)
+	int minChainLength;
 
-    //! constructor
-    /*!
-    * \brief constructor for the default variables
-    *    
-    */
-    stdata() : Nth(0),
-               MaxStages(0),
-               PopSize(0),
-               lowerbound(nullptr),
-               upperbound(nullptr),
-               compositeprior_distr(nullptr),
-               prior_mu(nullptr),
-               prior_sigma(nullptr),
-               auxil_size(0),
-               auxil_data(nullptr),
-               MinChainLength(0),
-               MaxChainLength(1e6),
-               lb(0), /* Default LB, same for all */
-               ub(0),
-               TolCOV(1.0),
-               bbeta(0.2),
-               seed(280675),
-               options(),
-               prior_type(0),
-               prior_count(0),
-               iplot(0),
-               icdump(1),
-               ifdump(0),
-               Num(nullptr),
-               LastNum(0),
-               use_proposal_cma(0),
-               init_mean(nullptr),
-               local_cov(nullptr),
-               use_local_cov(0),
-               local_scale(0){};
+	//! Maximum size of the chain in the TMCMC algorithm (default 1)
+	int maxChainLength;
 
-    //! constructor
-    /*!
-    *  \brief constructor for the default input variables
-    *    
-    */
-    stdata(int probdim, int maxgens, int datanum) : Nth(probdim),
-                                                    MaxStages(maxgens),
-                                                    PopSize(datanum),
-                                                    lowerbound(nullptr),
-                                                    upperbound(nullptr),
-                                                    compositeprior_distr(nullptr),
-                                                    prior_mu(nullptr),
-                                                    prior_sigma(nullptr),
-                                                    auxil_size(0),
-                                                    auxil_data(nullptr),
-                                                    MinChainLength(0),
-                                                    MaxChainLength(1e6),
-                                                    lb(-6), /* Default LB, same for all */
-                                                    ub(6),
-                                                    TolCOV(1.0),
-                                                    bbeta(0.2),
-                                                    seed(280675),
-                                                    options(),
-                                                    prior_type(0),
-                                                    prior_count(0),
-                                                    iplot(0),
-                                                    icdump(1),
-                                                    ifdump(0),
-                                                    Num(nullptr),
-                                                    LastNum(datanum),
-                                                    use_proposal_cma(0),
-                                                    init_mean(nullptr),
-                                                    local_cov(nullptr),
-                                                    use_local_cov(0),
-                                                    local_scale(0)
-    {
-        try
-        {
-            lowerbound = new double[Nth];
-            upperbound = new double[Nth];
-            prior_mu = new double[Nth];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        }
+	//! Random number initial seed
+	long seed;
 
-        {
-            int e = Nth;
-            while (e--)
-            {
-                lowerbound[e] = 0;
-                upperbound[e] = 0;
-                prior_mu[e] = 0;
-            }
-        }
+	//! Sampling type which is : 0: uniform, 1: gaussian, 2: file
+	int samplingType;
 
-        try
-        {
-            prior_sigma = new double[Nth * Nth];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        }
+	//! Prior type which is :   0: lognormal, 1: gaussian
+	int priorType;
 
-        for (int i = 0, k = 0; i < Nth; i++)
-        {
-            for (int j = 0; j < Nth; j++, k++)
-            {
-                if (i == j)
-                {
-                    prior_sigma[k] = 1.0;
-                }
-                else
-                {
-                    prior_sigma[k] = 0.0;
-                }
-            }
-        }
+	//! 1 for printing the data and 0 for not
+	int iPlot;
 
-        try
-        {
-            Num = new int[MaxStages];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        }
+	//! 1 for saving the data and 0 for not
+	int saveData;
 
-        {
-            int e = MaxStages;
-            while (e--)
-            {
-                Num[e] = PopSize;
-            }
-        }
-        try
-        {
-            local_cov = new double *[PopSize];
-        }
-        catch (std::bad_alloc &e)
-        {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        }
+	//! Indicator if we use the CMA proposal or not
+	int useCmaProposal;
 
-        for (int i = 0; i < PopSize; i++)
-        {
-            try
-            {
-                local_cov[i] = new double[Nth * Nth];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            }
+	//! Indicator if we use the local covariance or not
+	int useLocalCovariance;
 
-            for (int j = 0, l = 0; j < Nth; j++)
-            {
-                for (int k = 0; k < Nth; k++, l++)
-                {
-                    if (j == k)
-                    {
-                        local_cov[i][l] = 1.0;
-                    }
-                    else
-                    {
-                        local_cov[i][l] = 0.0;
-                    }
-                }
-            }
-        }
-    }
+  private:
+	//! Generic lower bound (It is -6 per default)
+	T lb;
 
-    /*!
-    *  \brief read the input file fname
-    *
-    * \param fname              name of the input file
-    * \return true on success
-    */
-    bool read(const char *fname = "tmcmc.par");
+	//! Generic upper bound (It is 6 per default)
+	T ub;
 
-    //! destructor
-    /*!
-    *  \brief destructor 
-    *    
-    */
-    ~stdata()
-    {
-        destroy();
-    }
+  public:
+	//! A prescribed tolerance
+	T TolCOV;
 
-    /*!
-    *  \brief destroy created memory 
-    *
-    */
-    void destroy();
+	//! \f$ \beta \f$ parameter in the TMCMC algorithm
+	T bbeta;
+
+	//! Local scale
+	T localScale;
+
+	//! Optimization parameter
+	optimizationParameters<T> options;
+
+  public:
+	//! Sampling population size for each generation
+	std::unique_ptr<int[]> eachPopulationSize;
+
+	//! Sampling domain lower bounds for each dimension
+	std::unique_ptr<T[]> lowerBound;
+
+	//! Sampling domain upper bounds for each dimension
+	std::unique_ptr<T[]> upperBound;
+
+	//! Composite distribution as a prior
+	std::unique_ptr<T[]> compositePriorDistribution;
+
+	//! Prior mean
+	std::unique_ptr<T[]> priorMu;
+
+	//! Prior standard deviation
+	std::unique_ptr<T[]> priorSigma;
+
+	//! Auxillary data
+	std::unique_ptr<T[]> auxilData;
+
+	//! Initial Mean with the size of [populationSize*nDim]
+	std::unique_ptr<T[]> initMean;
+
+	//! Local covariance with the size of [populationSize*nDim*nDim]
+	std::unique_ptr<T[]> localCovariance;
 };
 
-// read the input file fname for setting the input variables
-bool stdata::read(const char *fname)
+template <typename T>
+stdata<T>::stdata() : nDim(0),
+					  maxGenerations(0),
+					  populationSize(0),
+					  lastPopulationSize(0),
+					  auxilSize(0),
+					  minChainLength(1),
+					  maxChainLength(1),
+					  seed(280675),
+					  samplingType(0),
+					  priorType(0),
+					  iPlot(0),
+					  saveData(1),
+					  useCmaProposal(0),
+					  useLocalCovariance(0),
+					  lb(-static_cast<T>(6)),
+					  ub(static_cast<T>(6)),
+					  TolCOV(static_cast<T>(1)),
+					  bbeta(static_cast<T>(0.2)),
+					  localScale(0),
+					  options(){};
+
+template <typename T>
+stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(probdim),
+																		 maxGenerations(MaxGenerations),
+																		 populationSize(PopulationSize),
+																		 lastPopulationSize(PopulationSize),
+																		 auxilSize(0),
+																		 minChainLength(1),
+																		 maxChainLength(1),
+																		 seed(280675),
+																		 samplingType(0),
+																		 priorType(0),
+																		 iPlot(0),
+																		 saveData(1),
+																		 useCmaProposal(0),
+																		 useLocalCovariance(0),
+																		 lb(-static_cast<T>(6)),
+																		 ub(static_cast<T>(6)),
+																		 TolCOV(static_cast<T>(1)),
+																		 bbeta(static_cast<T>(0.2)),
+																		 localScale(0),
+																		 options()
 {
-    // We use an IO object to open and read a file
-    io f;
+	try
+	{
+		eachPopulationSize.reset(new int[maxGenerations]);
+		lowerBound.reset(new T[nDim]());
+		upperBound.reset(new T[nDim]());
+		priorMu.reset(new T[nDim]());
+		priorSigma.reset(new T[nDim * nDim]());
+		localCovariance.reset(new T[populationSize * nDim * nDim]());
+	}
+	catch (std::bad_alloc &e)
+	{
+		UMUQFAIL("Failed to allocate memory!");
+	}
 
-    if (f.openFile(fname, f.in))
-    {
-        // We need a parser object to parse
-        parser p;
+	for (int i = 0, k = 0; i < nDim; i++)
+	{
+		for (int j = 0; j < nDim; j++, k++)
+		{
+			if (i == j)
+			{
+				priorSigma[k] = static_cast<T>(1);
+			}
+		}
+	}
 
-        int probdim = Nth;
-        int maxgens = MaxStages;
-        int datanum = PopSize;
-        bool linit;
+	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
 
-        //read each line in the file and skip all the commented and empty line with the defaukt comment "#"
-        while (f.readLine())
-        {
-            // Parse the line into line arguments
-            p.parse(f.getLine());
+	for (int i = 0, l = 0; i < populationSize; i++)
+	{
+		for (int j = 0; j < nDim; j++)
+		{
+			for (int k = 0; k < nDim; k++, l++)
+			{
+				if (j == k)
+				{
+					localCovariance[l] = static_cast<T>(1);
+				}
+			}
+		}
+	}
+}
 
-            if (p.at<std::string>(0) == "Nth")
-            {
-                Nth = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "MaxStages")
-            {
-                MaxStages = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "PopSize")
-            {
-                PopSize = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "TolCOV")
-            {
-                TolCOV = p.at<double>(1);
-            }
-            else if (p.at<std::string>(0) == "bbeta")
-            {
-                bbeta = p.at<double>(1);
-            }
-            else if (p.at<std::string>(0) == "seed")
-            {
-                seed = p.at<long>(1);
-            }
-            else if (p.at<std::string>(0) == "opt.MaxIter")
-            {
-                options.MaxIter = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "opt.Tol")
-            {
-                options.Tol = p.at<double>(1);
-            }
-            else if (p.at<std::string>(0) == "opt.Display")
-            {
-                options.Display = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "opt.Step")
-            {
-                options.Step = p.at<double>(1);
-            }
-            else if (p.at<std::string>(0) == "prior_type")
-            {
-                prior_type = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "prior_count")
-            {
-                prior_count = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "iplot")
-            {
-                iplot = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "icdump")
-            {
-                icdump = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "ifdump")
-            {
-                ifdump = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "Bdef")
-            {
-                lb = p.at<double>(1);
-                ub = p.at<double>(2);
-            }
-            else if (p.at<std::string>(0) == "MinChainLength")
-            {
-                MinChainLength = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "MaxChainLength")
-            {
-                MaxChainLength = p.at<int>(1);
-            }
-            else if (p.at<std::string>(0) == "use_local_cov")
-            {
-                use_local_cov = p.at<int>(1);
-            }
-        }
+template <typename T>
+stdata<T>::stdata(stdata<T> &&other)
+{
+	nDim = other.nDim;
+	maxGenerations = other.maxGenerations;
+	populationSize = other.populationSize;
+	lastPopulationSize = other.lastPopulationSize;
+	auxilSize = other.auxilData;
+	minChainLength = other.minChainLength;
+	maxChainLength = other.maxChainLength;
+	seed = other.seed;
+	samplingType = other.samplingType;
+	priorType = other.priorType;
+	iPlot = other.iPlot;
+	saveData = other.saveData;
+	useCmaProposal = other.useCmaProposal;
+	useLocalCovariance = other.useLocalCovariance;
+	lb = other.lb;
+	ub = other.ub;
+	TolCOV = other.TolCOV;
+	bbeta = other.bbeta;
+	localScale = other.localScale;
+	options.Display = other.options.Display;
+	options.MaxIter = other.options.MaxIter;
+	options.Step = other.options.Step;
+	options.Tolerance = other.options.Tolerance;
+	eachPopulationSize = std::move(other.eachPopulationSize);
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	compositePriorDistribution = std::move(other.compositePriorDistribution);
+	priorMu = std::move(other.priorMu);
+	priorSigma = std::move(other.priorSigma);
+	auxilData = std::move(other.auxilData);
+	initMean = std::move(other.initMean);
+	localCovariance = std::move(other.localCovariance);
+}
 
-        linit = !(probdim == Nth && maxgens == MaxStages && datanum == PopSize && lowerbound != nullptr);
-        if (linit)
-        {
-            if (lowerbound != nullptr)
-            {
-                delete[] lowerbound;
-            }
+template <typename T>
+stdata<T> &stdata<T>::operator=(stdata<T> &&other)
+{
+	nDim = other.nDim;
+	maxGenerations = other.maxGenerations;
+	populationSize = other.populationSize;
+	lastPopulationSize = other.lastPopulationSize;
+	auxilSize = other.auxilData;
+	minChainLength = other.minChainLength;
+	maxChainLength = other.maxChainLength;
+	seed = other.seed;
+	samplingType = other.samplingType;
+	priorType = other.priorType;
+	iPlot = other.iPlot;
+	saveData = other.saveData;
+	useCmaProposal = other.useCmaProposal;
+	useLocalCovariance = other.useLocalCovariance;
+	lb = other.lb;
+	ub = other.ub;
+	TolCOV = other.TolCOV;
+	bbeta = other.bbeta;
+	localScale = other.localScale;
+	options.Display = other.options.Display;
+	options.MaxIter = other.options.MaxIter;
+	options.Step = other.options.Step;
+	options.Tolerance = other.options.Tolerance;
+	eachPopulationSize = std::move(other.eachPopulationSize);
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	compositePriorDistribution = std::move(other.compositePriorDistribution);
+	priorMu = std::move(other.priorMu);
+	priorSigma = std::move(other.priorSigma);
+	auxilData = std::move(other.auxilData);
+	initMean = std::move(other.initMean);
+	localCovariance = std::move(other.localCovariance);
 
-            try
-            {
-                lowerbound = new double[Nth];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
+	return *this;
+}
 
-            if (upperbound != nullptr)
-            {
-                delete[] upperbound;
-            }
+template <typename T>
+void stdata<T>::swap(stdata<T> &other)
+{
+	std::swap(nDim, other.nDim);
+	std::swap(maxGenerations, other.maxGenerations);
+	std::swap(populationSize, other.populationSize);
+	std::swap(lastPopulationSize, other.lastPopulationSize);
+	std::swap(auxilSize, other.auxilData);
+	std::swap(minChainLength, other.minChainLength);
+	std::swap(maxChainLength, other.maxChainLength);
+	std::swap(seed, other.seed);
+	std::swap(samplingType, other.samplingType);
+	std::swap(priorType, other.priorType);
+	std::swap(iPlot, other.iPlot);
+	std::swap(saveData, other.saveData);
+	std::swap(useCmaProposal, other.useCmaProposal);
+	std::swap(useLocalCovariance, other.useLocalCovariance);
+	std::swap(lb, other.lb);
+	std::swap(ub, other.ub);
+	std::swap(TolCOV, other.TolCOV);
+	std::swap(bbeta, other.bbeta);
+	std::swap(localScale, other.localScale);
+	std::swap(options.Display, other.options.Display);
+	std::swap(options.MaxIter, other.options.MaxIter);
+	std::swap(options.Step, other.options.Step);
+	std::swap(options.Tolerance, other.options.Tolerance);
+	eachPopulationSize.swap(other.eachPopulationSize);
+	lowerBound.swap(other.lowerBound);
+	upperBound.swap(other.upperBound);
+	compositePriorDistribution.swap(other.compositePriorDistribution);
+	priorMu.swap(other.priorMu);
+	priorSigma.swap(other.priorSigma);
+	auxilData.swap(other.auxilData);
+	initMean.swap(other.initMean);
+	localCovariance.swap(other.localCovariance);
+}
 
-            try
-            {
-                upperbound = new double[Nth];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-        }
+template <typename T>
+bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
+{
+	auxilSize = 0;
+	minChainLength = 1;
+	maxChainLength = 1;
+	seed = 280675;
+	samplingType = 0;
+	priorType = 0;
+	iPlot = 0;
+	saveData = 1;
+	useCmaProposal = 0;
+	useLocalCovariance = 0;
+	lb = -static_cast<T>(6);
+	ub = static_cast<T>(6);
+	TolCOV = static_cast<T>(1);
+	bbeta = static_cast<T>(0.2);
+	localScale = 0;
+	options.MaxIter = 100;
+	options.Display = 0;
+	options.Tolerance = static_cast<T>(1e-6);
+	options.Step = static_cast<T>(1e-5);
 
-        int n = Nth;
-        int found;
-        while (n--)
-        {
-            f.rewindFile();
+	if (probdim == 0 || MaxGenerations == 0 || PopulationSize == 0)
+	{
+		nDim = 0;
+		maxGenerations = 0;
+		populationSize = 0;
+		lastPopulationSize = 0;
 
-            found = 0;
-            std::string strt("B" + std::to_string(n));
+		eachPopulationSize.reset();
+		lowerBound.reset();
+		upperBound.reset();
+		priorMu.reset();
+		priorSigma.reset();
+		localCovariance.reset();
 
-            while (f.readLine())
-            {
-                p.parse(f.getLine());
+		std::cout << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
+		std::cout << " Reseting to size zero! " << std::endl;
 
-                if (p.at<std::string>(0) == strt)
-                {
-                    lowerbound[n] = p.at<double>(1);
-                    upperbound[n] = p.at<double>(2);
-                    found = 1;
-                    break;
-                }
-            }
+		return true;
+	}
 
-            if (!found)
-            {
-                lowerbound[n] = lb; /* Bdef value or Default LB */
-                upperbound[n] = ub; /* Bdef value of Default UB */
-            }
-        }
+	nDim = probdim;
+	maxGenerations = MaxGenerations;
+	populationSize = PopulationSize;
+	lastPopulationSize = PopulationSize;
 
-        if (prior_type == 1) /* gaussian */
-        {
-            if (linit)
-            {
-                /* new, parse prior_mu */
-                if (prior_mu != nullptr)
-                {
-                    delete[] prior_mu;
-                }
+	try
+	{
+		eachPopulationSize.reset(new int[maxGenerations]);
+		lowerBound.reset(new T[nDim]());
+		upperBound.reset(new T[nDim]());
+		priorMu.reset(new T[nDim]());
+		priorSigma.reset(new T[nDim * nDim]());
+		localCovariance.reset(new T[populationSize * nDim * nDim]());
+	}
+	catch (std::bad_alloc &e)
+	{
+		UMUQFAILRETURN("Failed to allocate memory!");
+	}
 
-                try
-                {
-                    prior_mu = new double[Nth];
-                }
-                catch (std::bad_alloc &e)
-                {
-                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                    return false;
-                }
-            }
+	for (int i = 0, k = 0; i < nDim; i++)
+	{
+		for (int j = 0; j < nDim; j++, k++)
+		{
+			if (i == j)
+			{
+				priorSigma[k] = static_cast<T>(1);
+			}
+		}
+	}
 
-            f.rewindFile();
-            found = 0;
+	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
 
-            while (f.readLine())
-            {
-                p.parse(f.getLine());
+	for (int i = 0, l = 0; i < populationSize; i++)
+	{
+		for (int j = 0; j < nDim; j++)
+		{
+			for (int k = 0; k < nDim; k++, l++)
+			{
+				if (j == k)
+				{
+					localCovariance[l] = static_cast<T>(1);
+				}
+			}
+		}
+	}
 
-                if (p.at<std::string>(0) == "prior_mu")
-                {
-                    for (n = 0; n < Nth; n++)
-                    {
-                        prior_mu[n] = p.at<double>(n + 1);
-                    }
-                    found = 1;
-                    break;
-                }
-            }
-
-            if (!found)
-            {
-                n = Nth;
-                while (n--)
-                {
-                    prior_mu[n] = 0.0;
-                }
-            }
-
-            if (linit)
-            {
-                /* new, parse prior_sigma */
-                if (prior_sigma != nullptr)
-                {
-                    delete[] prior_sigma;
-                }
-
-                try
-                {
-                    prior_sigma = new double[Nth * Nth];
-                }
-                catch (std::bad_alloc &e)
-                {
-                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                    return false;
-                }
-            }
-
-            f.rewindFile();
-            found = 0;
-
-            while (f.readLine())
-            {
-                p.parse(f.getLine());
-
-                if (p.at<std::string>(0) == "prior_sigma")
-                {
-                    for (n = 0; n < Nth * Nth; n++)
-                    {
-                        prior_sigma[n] = p.at<double>(n + 1);
-                    }
-                    found = 1;
-                    break;
-                }
-            }
-
-            if (!found)
-            {
-                int i, j, k;
-                for (i = 0, k = 0; i < Nth; i++)
-                {
-                    for (j = 0; j < Nth; j++, k++)
-                    {
-                        if (i == j)
-                        {
-                            prior_sigma[k] = 1.0;
-                        }
-                        else
-                        {
-                            prior_sigma[k] = 0.0;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (prior_type == 3) /* composite */
-        {
-            if (compositeprior_distr != nullptr)
-            {
-                delete[] compositeprior_distr;
-            }
-            try
-            {
-                compositeprior_distr = new double[Nth];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            if (linit)
-            {
-                if (prior_mu != nullptr)
-                {
-                    delete[] prior_mu;
-                }
-
-                try
-                {
-                    prior_mu = new double[Nth];
-                }
-                catch (std::bad_alloc &e)
-                {
-                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                    return false;
-                }
-
-                if (prior_sigma != nullptr)
-                {
-                    delete[] prior_sigma;
-                }
-
-                try
-                {
-                    prior_sigma = new double[Nth * Nth];
-                }
-                catch (std::bad_alloc &e)
-                {
-                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                    return false;
-                }
-            }
-
-            n = Nth;
-            while (n--)
-            {
-                f.rewindFile();
-
-                found = 0;
-                std::string strt("C" + std::to_string(n));
-
-                while (f.readLine())
-                {
-                    p.parse(f.getLine());
-
-                    if (p.at<std::string>(0) == strt)
-                    {
-                        compositeprior_distr[n] = p.at<double>(1);
-                        lowerbound[n] = p.at<double>(2);
-                        upperbound[n] = p.at<double>(3);
-                        found = 1;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    compositeprior_distr[n] = 0;
-                    lowerbound[n] = lb; /* Bdef value or Default LB */
-                    upperbound[n] = ub; /* Bdef value of Default UB */
-                }
-            }
-        }
-
-        /* new, parse auxil_size and auxil_data */
-        f.rewindFile();
-        found = 0;
-
-        while (f.readLine())
-        {
-            p.parse(f.getLine());
-
-            if (p.at<std::string>(0) == "auxil_size")
-            {
-                auxil_size = p.at<int>(1);
-                found = 1;
-                break;
-            }
-        }
-
-        if (auxil_size > 0)
-        {
-            if (auxil_data != nullptr)
-            {
-                delete[] auxil_data;
-            }
-
-            try
-            {
-                auxil_data = new double[auxil_size];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            f.rewindFile();
-
-            found = 0;
-
-            while (f.readLine())
-            {
-                p.parse(f.getLine());
-
-                if (p.at<std::string>(0) == "auxil_data")
-                {
-                    for (n = 0; n < auxil_size; n++)
-                    {
-                        auxil_data[n] = p.at<double>(n + 1);
-                    }
-                    found = 1;
-                    break;
-                }
-            }
-
-            if (!found)
-            {
-                int i;
-                for (i = 0; i < auxil_size; i++)
-                {
-                    auxil_data[i] = 0;
-                }
-            }
-        }
-
-        f.closeFile();
-
-        if (linit)
-        {
-            if (Num != nullptr)
-            {
-                delete[] Num;
-            }
-
-            try
-            {
-                Num = new int[MaxStages];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-
-            n = MaxStages;
-            while (n--)
-            {
-                Num[n] = PopSize;
-            }
-            LastNum = PopSize;
-
-            if (local_cov != nullptr)
-            {
-                n = PopSize;
-                while (n--)
-                {
-                    if (local_cov[n] != nullptr)
-                    {
-                        delete[] local_cov[n];
-                    }
-                }
-
-                delete[] local_cov;
-            }
-
-            try
-            {
-                local_cov = new double *[PopSize];
-            }
-            catch (std::bad_alloc &e)
-            {
-                std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                return false;
-            }
-            for (n = 0; n < PopSize; n++)
-            {
-                try
-                {
-                    local_cov[n] = new double[Nth * Nth];
-                }
-                catch (std::bad_alloc &e)
-                {
-                    std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-                    std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-                    return false;
-                }
-                for (int i = 0, l = 0; i < Nth; i++)
-                {
-                    for (int j = 0; j < Nth; j++, l++)
-                    {
-                        if (i == j)
-                        {
-                            local_cov[n][l] = 1;
-                        }
-                        else
-                        {
-                            local_cov[n][l] = 0;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    return false;
+	return true;
 }
 
 /*!
-*  \brief destroy the allocated memory 
-*    
-*/
-void stdata::destroy()
+ * \brief load the input file fname for setting the input variables
+ * 
+ * \tparam T      Data type
+ * 
+ * \param fname   Input file name
+ *  
+ * \return true 
+ * \return false 
+ */
+template <typename T>
+bool stdata<T>::load(const char *fname)
 {
-    if (lowerbound != nullptr)
-    {
-        delete[] lowerbound;
-        lowerbound = nullptr;
-    }
-    if (upperbound != nullptr)
-    {
-        delete[] upperbound;
-        upperbound = nullptr;
-    }
-    if (compositeprior_distr != nullptr)
-    {
-        delete[] compositeprior_distr;
-        compositeprior_distr = nullptr;
-    }
-    if (prior_mu != nullptr)
-    {
-        delete[] prior_mu;
-        prior_mu = nullptr;
-    }
-    if (prior_sigma != nullptr)
-    {
-        delete[] prior_sigma;
-        prior_sigma = nullptr;
-    }
-    if (auxil_data != nullptr)
-    {
-        delete[] auxil_data;
-        auxil_data = nullptr;
-    }
-    if (Num != nullptr)
-    {
-        delete[] Num;
-        Num = nullptr;
-    }
-    if (init_mean != nullptr)
-    {
-        delete[] * init_mean;
-        delete[] init_mean;
-        init_mean = nullptr;
-    }
-    if (local_cov != nullptr)
-    {
-        delete[] * local_cov;
-        delete[] local_cov;
-        local_cov = nullptr;
-    }
+	// We use an IO object to open and read a file
+	io f;
+	if (f.isFileExist(fname))
+	{
+		if (f.openFile(fname, f.in))
+		{
+			// We need a parser object to parse
+			parser p;
+
+			//! These are temporary variables
+			int probdim = nDim;
+			int maxgens = maxGenerations;
+			int datanum = populationSize;
+
+			// read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+			while (f.readLine())
+			{
+				// Parse the line into line arguments
+				p.parse(f.getLine());
+
+				if (p.at<std::string>(0) == "nDim")
+				{
+					nDim = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "maxGenerations")
+				{
+					maxGenerations = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "populationSize")
+				{
+					populationSize = p.at<int>(1);
+				}
+			}
+
+			bool linit = !(probdim == nDim && maxgens == maxGenerations && datanum == populationSize);
+			if (linit)
+			{
+				if (!reset(nDim, maxGenerations, populationSize))
+				{
+					return false;
+				}
+			}
+
+			f.rewindFile();
+
+			// read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+			while (f.readLine())
+			{
+				// Parse the line into line arguments
+				p.parse(f.getLine());
+
+				if (p.at<std::string>(0) == "TolCOV")
+				{
+					TolCOV = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "bbeta")
+				{
+					bbeta = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "seed")
+				{
+					seed = p.at<long>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.MaxIter")
+				{
+					options.MaxIter = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Tol")
+				{
+					options.Tolerance = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Display")
+				{
+					options.Display = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.Step")
+				{
+					options.Step = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "priorType")
+				{
+					priorType = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "iPlot")
+				{
+					iPlot = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "saveData")
+				{
+					saveData = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "Bdef")
+				{
+					lb = p.at<T>(1);
+					ub = p.at<T>(2);
+				}
+				else if (p.at<std::string>(0) == "minChainLength")
+				{
+					minChainLength = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "maxChainLength")
+				{
+					maxChainLength = p.at<int>(1);
+				}
+				else if (p.at<std::string>(0) == "useLocalCovariance")
+				{
+					useLocalCovariance = p.at<int>(1);
+				}
+			}
+
+			int n = nDim;
+			int found;
+			while (n--)
+			{
+				f.rewindFile();
+
+				found = 0;
+				std::string strt("B" + std::to_string(n));
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == strt)
+					{
+						lowerBound[n] = p.at<T>(1);
+						upperBound[n] = p.at<T>(2);
+						found = 1;
+						break;
+					}
+				}
+
+				// In case we do not find the value, we use the default lower bound and upper bound
+				if (!found)
+				{
+					lowerBound[n] = lb;
+					upperBound[n] = ub;
+				}
+			}
+
+			if (priorType == 1) /* gaussian */
+			{
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "priorMu")
+					{
+						for (n = 0; n < nDim; n++)
+						{
+							priorMu[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "priorSigma")
+					{
+						for (n = 0; n < nDim * nDim; n++)
+						{
+							priorSigma[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+			}
+
+			// Composite prior at input
+			if (priorType == 3)
+			{
+				try
+				{
+					compositePriorDistribution.reset(new T[nDim]());
+				}
+				catch (std::bad_alloc &e)
+				{
+					UMUQFAILRETURN("Failed to allocate memory!");
+				}
+
+				n = nDim;
+				while (n--)
+				{
+					f.rewindFile();
+
+					found = 0;
+					std::string strt("C" + std::to_string(n));
+
+					while (f.readLine())
+					{
+						p.parse(f.getLine());
+
+						if (p.at<std::string>(0) == strt)
+						{
+							compositePriorDistribution[n] = p.at<T>(1);
+							lowerBound[n] = p.at<T>(2);
+							upperBound[n] = p.at<T>(3);
+							found = 1;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						compositePriorDistribution[n] = 0;
+						lowerBound[n] = lb; /* Bdef value or Default LB */
+						upperBound[n] = ub; /* Bdef value of Default UB */
+					}
+				}
+			}
+
+			/* new, parse auxilSize and auxilData */
+			f.rewindFile();
+
+			while (f.readLine())
+			{
+				p.parse(f.getLine());
+
+				if (p.at<std::string>(0) == "auxilSize")
+				{
+					auxilSize = p.at<int>(1);
+					break;
+				}
+			}
+
+			if (auxilSize > 0)
+			{
+				try
+				{
+					auxilData.reset(new T[auxilSize]());
+				}
+				catch (std::bad_alloc &e)
+				{
+					UMUQFAILRETURN("Failed to allocate memory!");
+				}
+
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "auxilData")
+					{
+						for (n = 0; n < auxilSize; n++)
+						{
+							auxilData[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+			}
+
+			f.closeFile();
+
+			return true;
+		}
+		return false;
+	}
+	UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
+}
+
+template <typename T>
+bool stdata<T>::load(std::string const &fname)
+{
+	return load(&fname[0]);
 }
 
 #endif

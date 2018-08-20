@@ -1,10 +1,50 @@
 #ifndef UMUQ_PREDICTIONTESTFUNCTIONS_H
 #define UMUQ_PREDICTIONTESTFUNCTIONS_H
 
+/*! \class qian
+ * \brief Qian's 1-Dimensional Function class
+ * 
+ * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ */
+template <typename T>
+struct qian
+{
+  /*!
+   * \brief Construct a new qian object
+   * 
+   */
+  qian() {}
+
+  /*! \fn f
+   * \brief Qian's function
+   * 
+   * Qian's function
+   * \f[
+   * f(x) = e^{(3x)} \cos \left(\frac{7\pi x}{2}\right),~~ x \in [0 \cdots 1]  
+   * \f]
+   * 
+   * \param  x  input data point
+   * 
+   * \return f  function value at input data point
+   */
+  inline T f(T const *x)
+  {
+    return std::exp(3 * (*x)) * std::cos(3.5 * M_PI * (*x));
+  }
+};
+
 /*! \class franke2d
  * \brief Franke's 2-Dimensional Function class
  * 
  * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 struct franke2d
@@ -46,6 +86,11 @@ struct franke2d
  * \brief Rastrigin's N-Dimensional Function class 
  * 
  * \tparam T data type
+ * 
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 class rastrigin
@@ -85,6 +130,10 @@ private:
  * \brief Ackley's N-Dimensional Function class 
  * 
  * \tparam T data type
+ * 
+ * Reference:
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
 template <typename T>
 class ackley
@@ -143,6 +192,47 @@ private:
   T b;
   //! A constant (optional), with default value \f$ 2*\pi \f$
   T c;
+};
+
+/*! \class peaks
+ * \brief Matlab peaks 2-Dimensional Function class
+ * 
+ * Matlab peaks is a function of two variables, obtained by translating and scaling Gaussian distributions
+ * 
+ * \tparam T data type
+ * 
+ * Reference:
+ * https://www.mathworks.com/help/matlab/ref/peaks.html 
+ */
+template <typename T>
+struct peaks
+{
+  /*!
+   * \brief Construct a new qian object
+   * 
+   */
+  peaks() {}
+
+  /*! \fn f
+   * \brief Matlab peaks's function
+   * 
+   * Matlab peaks's function
+   * \f[
+   * f(x) = 3(1-x_1)^2e^{\left(-x_1^2-(x_2+1)^2\right)}-10\left(\frac{x_1}{5}-x_1^3-x_2^5\right)e^{\left(-x_1^2-x_2^2 \right)}-\frac{1}{3}e^{\left(-x_2^2-(x_1+1)^2\right)}
+   * \f]
+   * 
+   * \param  x  input data point
+   * 
+   * \return f  function value at input data point
+   */
+  inline T f(T const *x)
+  {
+    return 3 * std::pow(1 - x[0], 2) *
+               std::exp(-std::pow(x[0], 2) - std::pow(x[1] + 1, 2)) -
+           10 * (x[0] / 5. - std::pow(x[0], 3) - std::pow(x[1], 5)) *
+               std::exp(-std::pow(x[0], 2) - std::pow(x[1], 2)) -
+           1. / 3 * std::exp(-std::pow(x[0] + 1, 2) - std::pow(x[1], 2));
+  }
 };
 
 #endif
