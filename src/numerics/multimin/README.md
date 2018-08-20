@@ -43,6 +43,22 @@ It should contain the following files:
     └── README.md
 -----------------------------------
 
+For local optimization, the most efficient algorithms typically require the user to supply 
+the gradient in addition to the value f(x) for any given point x. This exploits the fact 
+that, in principle, the gradient can almost always be computed at the same time as the value 
+of f using very little additional computational effort (at worst, about the same as that of 
+evaluating f a second time). If a quick way to compute the derivative of f is not obvious, 
+one typically finds gradient using an adjoint method, or possibly using automatic differentiation 
+tools. 
+Gradient-based methods are critical for the efficient optimization of very high-dimensional 
+parameter spaces (e.g. n in the thousands or more).
+On the other hand, computing the gradient is sometimes cumbersome and inconvenient if the 
+objective function is supplied as a complicated program. It may even be impossible, if f 
+is not differentiable (or worse, is discontinuous). In such cases, it is often easier to 
+use a derivative-free algorithm for optimization, which only requires that the user supply 
+the function values f(x) for any given point x. Such methods typically must evaluate f for 
+at least several-times-n points, however, so they are best used when n is small to moderate 
+(up to hundreds).
 
 The available solvers can be categorized as follows:
 
