@@ -98,7 +98,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
             j += 2;
         }
 
-        EXPECT_EQ(iArray.size(), 5);
+        EXPECT_EQ(iArray.size(), std::size_t{5});
     }
 
     //! check for array of double with stride 9
