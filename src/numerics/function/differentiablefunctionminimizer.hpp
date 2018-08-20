@@ -225,6 +225,15 @@ public:
   /*!
    * \brief Helper function to compute the gradient of the function f at X (\f$ \frac{\partial f}{\partial x} \f$)
    * 
+   * Note: 
+   * Helper function to compute the gradient by a finite-difference approximation in one-dimension.
+   * Using this routine is not advised, you should probably use a derivative-free algorithm instead.
+   * Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff 
+   * errors. On the other hand, finite-difference approximations are very useful to check that your analytical 
+   * gradient computation is correct—this is always a good idea, because in my experience it is very easy to have 
+   * bugs in your gradient code, and an incorrect gradient will cause weird problems with a gradient-based 
+   * optimization algorithm.
+   * 
    * \param X  Input point
    * \param G  Gradient of the function f at X (\f$ \frac{\partial f}{\partial x} \f$)
    * 
