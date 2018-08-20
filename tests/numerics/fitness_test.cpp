@@ -31,11 +31,11 @@ TEST(fitness_test, HandlesLinearRegression)
 
     d = idata.get();
     double *o = observations.get();
-    std::for_each(o, o + nPoints, [&](double &i) { i = *d++ * 2. + 1.; });
+    std::for_each(o, o + nPoints, [&](double &i) { i = (*d) * 2. + 1.; d++; });
 
     o = observations.get();
     double *p = predictions.get();
-    std::for_each(p, p + nPoints, [&](double &i) { i = *o++ + (dis(gen) - 0.5) * 0.01; });
+    std::for_each(p, p + nPoints, [&](double &i) { i = (*o) + (dis(gen) - 0.5) * 0.01; o++; });
 
     o = observations.get();
     p = predictions.get();
@@ -57,11 +57,11 @@ TEST(fitness_test, HandlesLinearRegression)
 
     d = idata.get();
     o = observations.get();
-    std::for_each(o, o + nPoints, [&](double &i) { i = (*d) * (*d++); });
+    std::for_each(o, o + nPoints, [&](double &i) { i = (*d) * (*d); d++; });
 
     d = idata.get();
     p = predictions.get();
-    std::for_each(p, p + nPoints, [&](double &i) { i = *d * *d + 0.1; d++;});
+    std::for_each(p, p + nPoints, [&](double &i) { i = (*d) * (*d) + 0.1; d++; });
 
     o = observations.get();
     p = predictions.get();

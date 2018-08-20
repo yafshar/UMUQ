@@ -12,8 +12,8 @@ TEST(database_test, HandlesConstruction)
 
         EXPECT_EQ(0, d.ndimParray);
         EXPECT_EQ(0, d.ndimGarray);
-        EXPECT_EQ(0, d.idxPos);
-        EXPECT_EQ(0, d.entries);
+        EXPECT_EQ(std::size_t{}, d.idxPos);
+        EXPECT_EQ(std::size_t{}, d.entries);
     }
 
     std::remove("database_100.txt");
@@ -24,8 +24,8 @@ TEST(database_test, HandlesConstruction)
 
         EXPECT_EQ(2, d.ndimParray);
         EXPECT_EQ(2, d.ndimGarray);
-        EXPECT_EQ(0, d.idxPos);
-        EXPECT_EQ(3, d.entries);
+        EXPECT_EQ(std::size_t{}, d.idxPos);
+        EXPECT_EQ(std::size_t{3}, d.entries);
 
         {
             double p[] = {1., -1.};
