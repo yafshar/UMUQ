@@ -1194,7 +1194,7 @@ bool io::saveMatrix(TD **idata,
     //Default case, only one set of data
     if (entries == 1)
     {
-        if (form.size() != nRows)
+        if (form.size() != static_cast<decltype(form.size())>(nRows))
         {
             std::string rowSeparator;
             if (options > 0)
@@ -1326,7 +1326,7 @@ bool io::saveMatrix(TD **idata,
     }
     else
     {
-        if (form.size() != nRows)
+        if (form.size() != static_cast<decltype(form.size())>(nRows))
         {
             std::string rowSeparator;
             if (options > 0)
@@ -2460,7 +2460,7 @@ void io::printMatrix(TD const **idata,
                      int const entries,
                      std::vector<ioFormat> const &form)
 {
-    if (form.size() != nRows)
+    if (form.size() != static_cast<decltype(form.size())>(nRows))
     {
         io::printMatrix<TD>(idata, nRows, nCols, entries);
     }
