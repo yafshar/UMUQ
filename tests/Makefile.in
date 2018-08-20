@@ -92,18 +92,32 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
+	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) conjugatefr_test$(EXEEXT) \
+	conjugatepr_test$(EXEEXT) simplexnm_test$(EXEEXT) \
+	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
+	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
+	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
+	array_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
+	database_test$(EXEEXT) datatype_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
-	utility_test$(EXEEXT) parser_test$(EXEEXT) array_test$(EXEEXT) \
-	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) stdata_test$(EXEEXT) \
-	runinfo_test$(EXEEXT)
+	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
+	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) conjugatefr_test$(EXEEXT) \
+	conjugatepr_test$(EXEEXT) simplexnm_test$(EXEEXT) \
+	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
+	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
+	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
+	array_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
+	database_test$(EXEEXT) datatype_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -121,7 +135,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/src/UMUQ_config.h
+CONFIG_HEADER = $(top_builddir)/include/UMUQ_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__dirstamp = $(am__leading_dot)dirstamp
@@ -132,9 +146,33 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_bfgs2_test_OBJECTS = numerics/multimin/bfgs2_test.$(OBJEXT)
+bfgs2_test_OBJECTS = $(am_bfgs2_test_OBJECTS)
+bfgs2_test_LDADD = $(LDADD)
+am_bfgs_test_OBJECTS = numerics/multimin/bfgs_test.$(OBJEXT)
+bfgs_test_OBJECTS = $(am_bfgs_test_OBJECTS)
+bfgs_test_LDADD = $(LDADD)
+am_conjugatefr_test_OBJECTS =  \
+	numerics/multimin/conjugatefr_test.$(OBJEXT)
+conjugatefr_test_OBJECTS = $(am_conjugatefr_test_OBJECTS)
+conjugatefr_test_LDADD = $(LDADD)
+am_conjugatepr_test_OBJECTS =  \
+	numerics/multimin/conjugatepr_test.$(OBJEXT)
+conjugatepr_test_OBJECTS = $(am_conjugatepr_test_OBJECTS)
+conjugatepr_test_LDADD = $(LDADD)
+am_database_test_OBJECTS = data/database_test.$(OBJEXT)
+database_test_OBJECTS = $(am_database_test_OBJECTS)
+database_test_LDADD = $(LDADD)
+am_datatype_test_OBJECTS = data/datatype_test.$(OBJEXT)
+datatype_test_OBJECTS = $(am_datatype_test_OBJECTS)
+datatype_test_LDADD = $(LDADD)
 am_dcpse_test_OBJECTS = numerics/dcpse_test.$(OBJEXT)
 dcpse_test_OBJECTS = $(am_dcpse_test_OBJECTS)
 dcpse_test_LDADD = $(LDADD)
+am_densityfunction_test_OBJECTS =  \
+	numerics/density/densityfunction_test.$(OBJEXT)
+densityfunction_test_OBJECTS = $(am_densityfunction_test_OBJECTS)
+densityfunction_test_LDADD = $(LDADD)
 am_eigen_io_test_OBJECTS = io/eigen_io_test.$(OBJEXT)
 eigen_io_test_OBJECTS = $(am_eigen_io_test_OBJECTS)
 eigen_io_test_LDADD = $(LDADD)
@@ -144,9 +182,19 @@ eigen_test_LDADD = $(LDADD)
 am_factorial_test_OBJECTS = numerics/factorial_test.$(OBJEXT)
 factorial_test_OBJECTS = $(am_factorial_test_OBJECTS)
 factorial_test_LDADD = $(LDADD)
+am_fitness_test_OBJECTS = numerics/fitness_test.$(OBJEXT)
+fitness_test_OBJECTS = $(am_fitness_test_OBJECTS)
+fitness_test_LDADD = $(LDADD)
 am_funcallcounter_test_OBJECTS = misc/funcallcounter_test.$(OBJEXT)
 funcallcounter_test_OBJECTS = $(am_funcallcounter_test_OBJECTS)
 funcallcounter_test_LDADD = $(LDADD)
+am_function_test_OBJECTS = numerics/function/function_test.$(OBJEXT)
+function_test_OBJECTS = $(am_function_test_OBJECTS)
+function_test_LDADD = $(LDADD)
+am_functionminimizer_test_OBJECTS =  \
+	numerics/function/functionminimizer_test.$(OBJEXT)
+functionminimizer_test_OBJECTS = $(am_functionminimizer_test_OBJECTS)
+functionminimizer_test_LDADD = $(LDADD)
 am_io_test_OBJECTS = io/io_test.$(OBJEXT)
 io_test_OBJECTS = $(am_io_test_OBJECTS)
 io_test_LDADD = $(LDADD)
@@ -154,6 +202,10 @@ am_knearestneighbors_test_OBJECTS =  \
 	numerics/knearestneighbors_test.$(OBJEXT)
 knearestneighbors_test_OBJECTS = $(am_knearestneighbors_test_OBJECTS)
 knearestneighbors_test_LDADD = $(LDADD)
+am_linearregression_test_OBJECTS =  \
+	numerics/linearregression_test.$(OBJEXT)
+linearregression_test_OBJECTS = $(am_linearregression_test_OBJECTS)
+linearregression_test_LDADD = $(LDADD)
 am_multimin_test_OBJECTS = numerics/multimin_test.$(OBJEXT)
 multimin_test_OBJECTS = $(am_multimin_test_OBJECTS)
 multimin_test_LDADD = $(LDADD)
@@ -163,18 +215,37 @@ parser_test_LDADD = $(LDADD)
 am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
-am_psrandom_test_OBJECTS = numerics/psrandom_test.$(OBJEXT)
+am_psrandom_test_OBJECTS = numerics/random/psrandom_test.$(OBJEXT)
 psrandom_test_OBJECTS = $(am_psrandom_test_OBJECTS)
 psrandom_test_LDADD = $(LDADD)
+am_pyplot_test_OBJECTS = io/pyplot_test.$(OBJEXT)
+pyplot_test_OBJECTS = $(am_pyplot_test_OBJECTS)
+pyplot_test_LDADD = $(LDADD)
 am_runinfo_test_OBJECTS = data/runinfo_test.$(OBJEXT)
 runinfo_test_OBJECTS = $(am_runinfo_test_OBJECTS)
 runinfo_test_LDADD = $(LDADD)
+am_simplexnm2_test_OBJECTS =  \
+	numerics/multimin/simplexnm2_test.$(OBJEXT)
+simplexnm2_test_OBJECTS = $(am_simplexnm2_test_OBJECTS)
+simplexnm2_test_LDADD = $(LDADD)
+am_simplexnm2rnd_test_OBJECTS =  \
+	numerics/multimin/simplexnm2rnd_test.$(OBJEXT)
+simplexnm2rnd_test_OBJECTS = $(am_simplexnm2rnd_test_OBJECTS)
+simplexnm2rnd_test_LDADD = $(LDADD)
+am_simplexnm_test_OBJECTS =  \
+	numerics/multimin/simplexnm_test.$(OBJEXT)
+simplexnm_test_OBJECTS = $(am_simplexnm_test_OBJECTS)
+simplexnm_test_LDADD = $(LDADD)
 am_stats_test_OBJECTS = numerics/stats_test.$(OBJEXT)
 stats_test_OBJECTS = $(am_stats_test_OBJECTS)
 stats_test_LDADD = $(LDADD)
 am_stdata_test_OBJECTS = data/stdata_test.$(OBJEXT)
 stdata_test_OBJECTS = $(am_stdata_test_OBJECTS)
 stdata_test_LDADD = $(LDADD)
+am_steepestdescent_test_OBJECTS =  \
+	numerics/multimin/steepestdescent_test.$(OBJEXT)
+steepestdescent_test_OBJECTS = $(am_steepestdescent_test_OBJECTS)
+steepestdescent_test_LDADD = $(LDADD)
 am_utility_test_OBJECTS = misc/utility_test.$(OBJEXT)
 utility_test_OBJECTS = $(am_utility_test_OBJECTS)
 utility_test_LDADD = $(LDADD)
@@ -190,7 +261,7 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/auxdir/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -212,22 +283,38 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(array_test_SOURCES) $(dcpse_test_SOURCES) \
-	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
-	$(factorial_test_SOURCES) $(funcallcounter_test_SOURCES) \
+SOURCES = $(array_test_SOURCES) $(bfgs2_test_SOURCES) \
+	$(bfgs_test_SOURCES) $(conjugatefr_test_SOURCES) \
+	$(conjugatepr_test_SOURCES) $(database_test_SOURCES) \
+	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
+	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
+	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
 	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
-	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(utility_test_SOURCES)
-DIST_SOURCES = $(array_test_SOURCES) $(dcpse_test_SOURCES) \
-	$(eigen_io_test_SOURCES) $(eigen_test_SOURCES) \
-	$(factorial_test_SOURCES) $(funcallcounter_test_SOURCES) \
+	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
+	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(steepestdescent_test_SOURCES) $(utility_test_SOURCES)
+DIST_SOURCES = $(array_test_SOURCES) $(bfgs2_test_SOURCES) \
+	$(bfgs_test_SOURCES) $(conjugatefr_test_SOURCES) \
+	$(conjugatepr_test_SOURCES) $(database_test_SOURCES) \
+	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
+	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
+	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
+	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
+	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
 	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
-	$(multimin_test_SOURCES) $(parser_test_SOURCES) \
-	$(polynomial_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(utility_test_SOURCES)
+	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
+	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
+	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(steepestdescent_test_SOURCES) $(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -496,10 +583,10 @@ FGREP = @FGREP@
 FLANN_LD_LIBRARY_PATH = @FLANN_LD_LIBRARY_PATH@
 GREP = @GREP@
 GTEST_CPPFLAGS = @GTEST_CPPFLAGS@
-GTEST_CXXFLAGS = @GTEST_CXXFLAGS@
 GTEST_LDFLAGS = @GTEST_LDFLAGS@
+GTEST_LD_LIBRARY_PATH = @GTEST_LD_LIBRARY_PATH@
 GTEST_LIBS = @GTEST_LIBS@
-HAVE_CXX11 = @HAVE_CXX11@
+HAVE_CXX14 = @HAVE_CXX14@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -544,6 +631,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TORC_LD_LIBRARY_PATH = @TORC_LD_LIBRARY_PATH@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -604,25 +692,41 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = $(GTEST_CPPFLAGS)
-AM_CXXFLAGS = $(GTEST_CXXFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/src $(GTEST_CPPFLAGS)
+AM_CXXFLAGS = -DUMUQ_UNITTEST $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
 polynomial_test_SOURCES = numerics/polynomial_test.cpp 
 eigen_test_SOURCES = numerics/eigen_test.cpp 
 stats_test_SOURCES = numerics/stats_test.cpp 
 factorial_test_SOURCES = numerics/factorial_test.cpp 
-psrandom_test_SOURCES = numerics/psrandom_test.cpp 
+psrandom_test_SOURCES = numerics/random/psrandom_test.cpp 
 multimin_test_SOURCES = numerics/multimin_test.cpp 
 knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
+fitness_test_SOURCES = numerics/fitness_test.cpp 
+linearregression_test_SOURCES = numerics/linearregression_test.cpp 
+function_test_SOURCES = numerics/function/function_test.cpp 
+functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
+densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
+conjugatefr_test_SOURCES = numerics/multimin/conjugatefr_test.cpp 
+conjugatepr_test_SOURCES = numerics/multimin/conjugatepr_test.cpp 
+simplexnm_test_SOURCES = numerics/multimin/simplexnm_test.cpp 
+simplexnm2_test_SOURCES = numerics/multimin/simplexnm2_test.cpp 
+simplexnm2rnd_test_SOURCES = numerics/multimin/simplexnm2rnd_test.cpp 
+steepestdescent_test_SOURCES = numerics/multimin/steepestdescent_test.cpp 
+bfgs_test_SOURCES = numerics/multimin/bfgs_test.cpp 
+bfgs2_test_SOURCES = numerics/multimin/bfgs2_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
 array_test_SOURCES = misc/array_test.cpp
 funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
+pyplot_test_SOURCES = io/pyplot_test.cpp
 stdata_test_SOURCES = data/stdata_test.cpp
 runinfo_test_SOURCES = data/runinfo_test.cpp
+database_test_SOURCES = data/database_test.cpp
+datatype_test_SOURCES = data/datatype_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -677,6 +781,58 @@ misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
 array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
 	@rm -f array_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+numerics/multimin/$(am__dirstamp):
+	@$(MKDIR_P) numerics/multimin
+	@: > numerics/multimin/$(am__dirstamp)
+numerics/multimin/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/multimin/$(DEPDIR)
+	@: > numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+numerics/multimin/bfgs2_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+bfgs2_test$(EXEEXT): $(bfgs2_test_OBJECTS) $(bfgs2_test_DEPENDENCIES) $(EXTRA_bfgs2_test_DEPENDENCIES) 
+	@rm -f bfgs2_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(bfgs2_test_OBJECTS) $(bfgs2_test_LDADD) $(LIBS)
+numerics/multimin/bfgs_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+bfgs_test$(EXEEXT): $(bfgs_test_OBJECTS) $(bfgs_test_DEPENDENCIES) $(EXTRA_bfgs_test_DEPENDENCIES) 
+	@rm -f bfgs_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(bfgs_test_OBJECTS) $(bfgs_test_LDADD) $(LIBS)
+numerics/multimin/conjugatefr_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+conjugatefr_test$(EXEEXT): $(conjugatefr_test_OBJECTS) $(conjugatefr_test_DEPENDENCIES) $(EXTRA_conjugatefr_test_DEPENDENCIES) 
+	@rm -f conjugatefr_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(conjugatefr_test_OBJECTS) $(conjugatefr_test_LDADD) $(LIBS)
+numerics/multimin/conjugatepr_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+conjugatepr_test$(EXEEXT): $(conjugatepr_test_OBJECTS) $(conjugatepr_test_DEPENDENCIES) $(EXTRA_conjugatepr_test_DEPENDENCIES) 
+	@rm -f conjugatepr_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(conjugatepr_test_OBJECTS) $(conjugatepr_test_LDADD) $(LIBS)
+data/$(am__dirstamp):
+	@$(MKDIR_P) data
+	@: > data/$(am__dirstamp)
+data/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) data/$(DEPDIR)
+	@: > data/$(DEPDIR)/$(am__dirstamp)
+data/database_test.$(OBJEXT): data/$(am__dirstamp) \
+	data/$(DEPDIR)/$(am__dirstamp)
+
+database_test$(EXEEXT): $(database_test_OBJECTS) $(database_test_DEPENDENCIES) $(EXTRA_database_test_DEPENDENCIES) 
+	@rm -f database_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(database_test_OBJECTS) $(database_test_LDADD) $(LIBS)
+data/datatype_test.$(OBJEXT): data/$(am__dirstamp) \
+	data/$(DEPDIR)/$(am__dirstamp)
+
+datatype_test$(EXEEXT): $(datatype_test_OBJECTS) $(datatype_test_DEPENDENCIES) $(EXTRA_datatype_test_DEPENDENCIES) 
+	@rm -f datatype_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(datatype_test_OBJECTS) $(datatype_test_LDADD) $(LIBS)
 numerics/$(am__dirstamp):
 	@$(MKDIR_P) numerics
 	@: > numerics/$(am__dirstamp)
@@ -689,6 +845,19 @@ numerics/dcpse_test.$(OBJEXT): numerics/$(am__dirstamp) \
 dcpse_test$(EXEEXT): $(dcpse_test_OBJECTS) $(dcpse_test_DEPENDENCIES) $(EXTRA_dcpse_test_DEPENDENCIES) 
 	@rm -f dcpse_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(dcpse_test_OBJECTS) $(dcpse_test_LDADD) $(LIBS)
+numerics/density/$(am__dirstamp):
+	@$(MKDIR_P) numerics/density
+	@: > numerics/density/$(am__dirstamp)
+numerics/density/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/density/$(DEPDIR)
+	@: > numerics/density/$(DEPDIR)/$(am__dirstamp)
+numerics/density/densityfunction_test.$(OBJEXT):  \
+	numerics/density/$(am__dirstamp) \
+	numerics/density/$(DEPDIR)/$(am__dirstamp)
+
+densityfunction_test$(EXEEXT): $(densityfunction_test_OBJECTS) $(densityfunction_test_DEPENDENCIES) $(EXTRA_densityfunction_test_DEPENDENCIES) 
+	@rm -f densityfunction_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(densityfunction_test_OBJECTS) $(densityfunction_test_LDADD) $(LIBS)
 io/$(am__dirstamp):
 	@$(MKDIR_P) io
 	@: > io/$(am__dirstamp)
@@ -713,12 +882,38 @@ numerics/factorial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 factorial_test$(EXEEXT): $(factorial_test_OBJECTS) $(factorial_test_DEPENDENCIES) $(EXTRA_factorial_test_DEPENDENCIES) 
 	@rm -f factorial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(factorial_test_OBJECTS) $(factorial_test_LDADD) $(LIBS)
+numerics/fitness_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+fitness_test$(EXEEXT): $(fitness_test_OBJECTS) $(fitness_test_DEPENDENCIES) $(EXTRA_fitness_test_DEPENDENCIES) 
+	@rm -f fitness_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(fitness_test_OBJECTS) $(fitness_test_LDADD) $(LIBS)
 misc/funcallcounter_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
 funcallcounter_test$(EXEEXT): $(funcallcounter_test_OBJECTS) $(funcallcounter_test_DEPENDENCIES) $(EXTRA_funcallcounter_test_DEPENDENCIES) 
 	@rm -f funcallcounter_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(funcallcounter_test_OBJECTS) $(funcallcounter_test_LDADD) $(LIBS)
+numerics/function/$(am__dirstamp):
+	@$(MKDIR_P) numerics/function
+	@: > numerics/function/$(am__dirstamp)
+numerics/function/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/function/$(DEPDIR)
+	@: > numerics/function/$(DEPDIR)/$(am__dirstamp)
+numerics/function/function_test.$(OBJEXT):  \
+	numerics/function/$(am__dirstamp) \
+	numerics/function/$(DEPDIR)/$(am__dirstamp)
+
+function_test$(EXEEXT): $(function_test_OBJECTS) $(function_test_DEPENDENCIES) $(EXTRA_function_test_DEPENDENCIES) 
+	@rm -f function_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(function_test_OBJECTS) $(function_test_LDADD) $(LIBS)
+numerics/function/functionminimizer_test.$(OBJEXT):  \
+	numerics/function/$(am__dirstamp) \
+	numerics/function/$(DEPDIR)/$(am__dirstamp)
+
+functionminimizer_test$(EXEEXT): $(functionminimizer_test_OBJECTS) $(functionminimizer_test_DEPENDENCIES) $(EXTRA_functionminimizer_test_DEPENDENCIES) 
+	@rm -f functionminimizer_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(functionminimizer_test_OBJECTS) $(functionminimizer_test_LDADD) $(LIBS)
 io/io_test.$(OBJEXT): io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 
 io_test$(EXEEXT): $(io_test_OBJECTS) $(io_test_DEPENDENCIES) $(EXTRA_io_test_DEPENDENCIES) 
@@ -730,6 +925,12 @@ numerics/knearestneighbors_test.$(OBJEXT): numerics/$(am__dirstamp) \
 knearestneighbors_test$(EXEEXT): $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_DEPENDENCIES) $(EXTRA_knearestneighbors_test_DEPENDENCIES) 
 	@rm -f knearestneighbors_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_LDADD) $(LIBS)
+numerics/linearregression_test.$(OBJEXT): numerics/$(am__dirstamp) \
+	numerics/$(DEPDIR)/$(am__dirstamp)
+
+linearregression_test$(EXEEXT): $(linearregression_test_OBJECTS) $(linearregression_test_DEPENDENCIES) $(EXTRA_linearregression_test_DEPENDENCIES) 
+	@rm -f linearregression_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(linearregression_test_OBJECTS) $(linearregression_test_LDADD) $(LIBS)
 numerics/multimin_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -748,24 +949,52 @@ numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
-numerics/psrandom_test.$(OBJEXT): numerics/$(am__dirstamp) \
-	numerics/$(DEPDIR)/$(am__dirstamp)
+numerics/random/$(am__dirstamp):
+	@$(MKDIR_P) numerics/random
+	@: > numerics/random/$(am__dirstamp)
+numerics/random/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/random/$(DEPDIR)
+	@: > numerics/random/$(DEPDIR)/$(am__dirstamp)
+numerics/random/psrandom_test.$(OBJEXT):  \
+	numerics/random/$(am__dirstamp) \
+	numerics/random/$(DEPDIR)/$(am__dirstamp)
 
 psrandom_test$(EXEEXT): $(psrandom_test_OBJECTS) $(psrandom_test_DEPENDENCIES) $(EXTRA_psrandom_test_DEPENDENCIES) 
 	@rm -f psrandom_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(psrandom_test_OBJECTS) $(psrandom_test_LDADD) $(LIBS)
-data/$(am__dirstamp):
-	@$(MKDIR_P) data
-	@: > data/$(am__dirstamp)
-data/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) data/$(DEPDIR)
-	@: > data/$(DEPDIR)/$(am__dirstamp)
+io/pyplot_test.$(OBJEXT): io/$(am__dirstamp) \
+	io/$(DEPDIR)/$(am__dirstamp)
+
+pyplot_test$(EXEEXT): $(pyplot_test_OBJECTS) $(pyplot_test_DEPENDENCIES) $(EXTRA_pyplot_test_DEPENDENCIES) 
+	@rm -f pyplot_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(pyplot_test_OBJECTS) $(pyplot_test_LDADD) $(LIBS)
 data/runinfo_test.$(OBJEXT): data/$(am__dirstamp) \
 	data/$(DEPDIR)/$(am__dirstamp)
 
 runinfo_test$(EXEEXT): $(runinfo_test_OBJECTS) $(runinfo_test_DEPENDENCIES) $(EXTRA_runinfo_test_DEPENDENCIES) 
 	@rm -f runinfo_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(runinfo_test_OBJECTS) $(runinfo_test_LDADD) $(LIBS)
+numerics/multimin/simplexnm2_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+simplexnm2_test$(EXEEXT): $(simplexnm2_test_OBJECTS) $(simplexnm2_test_DEPENDENCIES) $(EXTRA_simplexnm2_test_DEPENDENCIES) 
+	@rm -f simplexnm2_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(simplexnm2_test_OBJECTS) $(simplexnm2_test_LDADD) $(LIBS)
+numerics/multimin/simplexnm2rnd_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+simplexnm2rnd_test$(EXEEXT): $(simplexnm2rnd_test_OBJECTS) $(simplexnm2rnd_test_DEPENDENCIES) $(EXTRA_simplexnm2rnd_test_DEPENDENCIES) 
+	@rm -f simplexnm2rnd_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(simplexnm2rnd_test_OBJECTS) $(simplexnm2rnd_test_LDADD) $(LIBS)
+numerics/multimin/simplexnm_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+simplexnm_test$(EXEEXT): $(simplexnm_test_OBJECTS) $(simplexnm_test_DEPENDENCIES) $(EXTRA_simplexnm_test_DEPENDENCIES) 
+	@rm -f simplexnm_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(simplexnm_test_OBJECTS) $(simplexnm_test_LDADD) $(LIBS)
 numerics/stats_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -778,6 +1007,13 @@ data/stdata_test.$(OBJEXT): data/$(am__dirstamp) \
 stdata_test$(EXEEXT): $(stdata_test_OBJECTS) $(stdata_test_DEPENDENCIES) $(EXTRA_stdata_test_DEPENDENCIES) 
 	@rm -f stdata_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(stdata_test_OBJECTS) $(stdata_test_LDADD) $(LIBS)
+numerics/multimin/steepestdescent_test.$(OBJEXT):  \
+	numerics/multimin/$(am__dirstamp) \
+	numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+
+steepestdescent_test$(EXEEXT): $(steepestdescent_test_OBJECTS) $(steepestdescent_test_DEPENDENCIES) $(EXTRA_steepestdescent_test_DEPENDENCIES) 
+	@rm -f steepestdescent_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(steepestdescent_test_OBJECTS) $(steepestdescent_test_LDADD) $(LIBS)
 misc/utility_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -791,14 +1027,21 @@ mostlyclean-compile:
 	-rm -f io/*.$(OBJEXT)
 	-rm -f misc/*.$(OBJEXT)
 	-rm -f numerics/*.$(OBJEXT)
+	-rm -f numerics/density/*.$(OBJEXT)
+	-rm -f numerics/function/*.$(OBJEXT)
+	-rm -f numerics/multimin/*.$(OBJEXT)
+	-rm -f numerics/random/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/database_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/datatype_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/runinfo_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/pyplot_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/funcallcounter_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
@@ -806,11 +1049,24 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/dcpse_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/factorial_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/fitness_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/knearestneighbors_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/linearregression_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/psrandom_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/density/$(DEPDIR)/densityfunction_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/function_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/functionminimizer_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/bfgs2_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/bfgs_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/conjugatefr_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/conjugatepr_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm2_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm2rnd_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/steepestdescent_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1091,6 +1347,97 @@ dcpse_test.log: dcpse_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+fitness_test.log: fitness_test$(EXEEXT)
+	@p='fitness_test$(EXEEXT)'; \
+	b='fitness_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+linearregression_test.log: linearregression_test$(EXEEXT)
+	@p='linearregression_test$(EXEEXT)'; \
+	b='linearregression_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+function_test.log: function_test$(EXEEXT)
+	@p='function_test$(EXEEXT)'; \
+	b='function_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+functionminimizer_test.log: functionminimizer_test$(EXEEXT)
+	@p='functionminimizer_test$(EXEEXT)'; \
+	b='functionminimizer_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+densityfunction_test.log: densityfunction_test$(EXEEXT)
+	@p='densityfunction_test$(EXEEXT)'; \
+	b='densityfunction_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+conjugatefr_test.log: conjugatefr_test$(EXEEXT)
+	@p='conjugatefr_test$(EXEEXT)'; \
+	b='conjugatefr_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+conjugatepr_test.log: conjugatepr_test$(EXEEXT)
+	@p='conjugatepr_test$(EXEEXT)'; \
+	b='conjugatepr_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+simplexnm_test.log: simplexnm_test$(EXEEXT)
+	@p='simplexnm_test$(EXEEXT)'; \
+	b='simplexnm_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+simplexnm2_test.log: simplexnm2_test$(EXEEXT)
+	@p='simplexnm2_test$(EXEEXT)'; \
+	b='simplexnm2_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+simplexnm2rnd_test.log: simplexnm2rnd_test$(EXEEXT)
+	@p='simplexnm2rnd_test$(EXEEXT)'; \
+	b='simplexnm2rnd_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+steepestdescent_test.log: steepestdescent_test$(EXEEXT)
+	@p='steepestdescent_test$(EXEEXT)'; \
+	b='steepestdescent_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+bfgs_test.log: bfgs_test$(EXEEXT)
+	@p='bfgs_test$(EXEEXT)'; \
+	b='bfgs_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+bfgs2_test.log: bfgs2_test$(EXEEXT)
+	@p='bfgs2_test$(EXEEXT)'; \
+	b='bfgs2_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 utility_test.log: utility_test$(EXEEXT)
 	@p='utility_test$(EXEEXT)'; \
 	b='utility_test'; \
@@ -1133,6 +1480,13 @@ eigen_io_test.log: eigen_io_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pyplot_test.log: pyplot_test$(EXEEXT)
+	@p='pyplot_test$(EXEEXT)'; \
+	b='pyplot_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 stdata_test.log: stdata_test$(EXEEXT)
 	@p='stdata_test$(EXEEXT)'; \
 	b='stdata_test'; \
@@ -1143,6 +1497,20 @@ stdata_test.log: stdata_test$(EXEEXT)
 runinfo_test.log: runinfo_test$(EXEEXT)
 	@p='runinfo_test$(EXEEXT)'; \
 	b='runinfo_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+database_test.log: database_test$(EXEEXT)
+	@p='database_test$(EXEEXT)'; \
+	b='database_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+datatype_test.log: datatype_test$(EXEEXT)
+	@p='datatype_test$(EXEEXT)'; \
+	b='datatype_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1235,6 +1603,14 @@ distclean-generic:
 	-rm -f misc/$(am__dirstamp)
 	-rm -f numerics/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/$(am__dirstamp)
+	-rm -f numerics/density/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/density/$(am__dirstamp)
+	-rm -f numerics/function/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/function/$(am__dirstamp)
+	-rm -f numerics/multimin/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/multimin/$(am__dirstamp)
+	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/random/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1245,7 +1621,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1291,7 +1667,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
