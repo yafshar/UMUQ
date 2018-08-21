@@ -2,7 +2,7 @@
 #define UMUQ_DATABASE_H
 
 #include "../core/core.hpp"
-#include "../misc/array.hpp"
+#include "../misc/arraywrapper.hpp"
 #include "../io/io.hpp"
 #include "mpidatatype.hpp"
 
@@ -541,9 +541,9 @@ bool database<T>::print()
         int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
 
         // Array wrapper on the data
-        ArrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
-        ArrayWrapper<T> FvalueWrapper(Fvalue, entries);
-        ArrayWrapper<int> SurrogateWrapper(Surrogate, entries);
+        arrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
+        arrayWrapper<T> FvalueWrapper(Fvalue, entries);
+        arrayWrapper<int> SurrogateWrapper(Surrogate, entries);
 
         auto fIt = FvalueWrapper.begin();
         auto sIt = SurrogateWrapper.begin();
@@ -554,7 +554,7 @@ bool database<T>::print()
 
             int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
 
-            ArrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
+            arrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
 
             auto gIt = GarrayWrapper.begin();
 
