@@ -6,10 +6,14 @@
 #
 AC_PREREQ([2.69])
 
-AC_INIT([UMUQ], [1.0], [ya.afshar@gmail.com])
+# Given a version number MAJOR.MINOR.PATCH, increment the:
+# MAJOR version when you make incompatible API changes,
+# MINOR version when you add functionality in a backwards-compatible manner, and
+# PATCH version when you make backwards-compatible bug fixes.
+AC_INIT([UMUQ], [1.0.0], [ya.afshar@gmail.com])
 
 AC_COPYRIGHT(Copyright 2018 University of Michigan)
-AC_REVISION([$Revision: 1.00 $])
+AC_REVISION([$Revision: 1.0.0 $])
 
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
