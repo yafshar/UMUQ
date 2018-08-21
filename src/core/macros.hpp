@@ -1,10 +1,20 @@
 #ifndef UMUQ_MACROS_H
 #define UMUQ_MACROS_H
 
+/*!
+ * \brief Given a version number MAJOR.MINOR.PATCH, increment the:
+ * \b MAJOR version when you make incompatible changes,
+ * \b MINOR version when you add functionality in a backwards-compatible manner, and
+ * \b PATCH version when you make backwards-compatible bug fixes. 
+ * 
+ * Ref:
+ * https://semver.org
+ */
+
 #define UMUQ_MAJOR_VERSION 1
 #define UMUQ_MINOR_VERSION 0
-#define UMUQ_REVISION_VERSION 0
-#define UMUQ_VERSION_AT_LEAST(x, y, z) (UMUQ_MAJOR_VERSION > x || (UMUQ_MAJOR_VERSION >= x && (UMUQ_MINOR_VERSION > y || (UMUQ_MINOR_VERSION >= y && UMUQ_REVISION_VERSION >= z))))
+#define UMUQ_PATCH_VERSION 0
+#define UMUQ_VERSION_AT_LEAST(x, y, z) (UMUQ_MAJOR_VERSION > x || (UMUQ_MAJOR_VERSION >= x && (UMUQ_MINOR_VERSION > y || (UMUQ_MINOR_VERSION >= y && UMUQ_PATCH_VERSION >= z))))
 
 //! Operating system identification, UMUQ_OS_*
 
