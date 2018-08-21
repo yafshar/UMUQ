@@ -106,9 +106,9 @@ TESTS += parser_test
 check_PROGRAMS += parser_test
 parser_test_SOURCES = misc/parser_test.cpp
 
-TESTS += array_test
-check_PROGRAMS += array_test
-array_test_SOURCES = misc/array_test.cpp
+TESTS += arraywrapper_test
+check_PROGRAMS += arraywrapper_test
+arraywrapper_test_SOURCES = misc/arraywrapper_test.cpp
 
 TESTS += funcallcounter_test
 check_PROGRAMS += funcallcounter_test

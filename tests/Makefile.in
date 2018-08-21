@@ -99,7 +99,7 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
 	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
 	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
-	array_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
+	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
 	database_test$(EXEEXT) datatype_test$(EXEEXT)
@@ -114,7 +114,7 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
 	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
 	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
-	array_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
+	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
 	database_test$(EXEEXT) datatype_test$(EXEEXT)
@@ -139,9 +139,9 @@ CONFIG_HEADER = $(top_builddir)/include/UMUQ_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_array_test_OBJECTS = misc/array_test.$(OBJEXT)
-array_test_OBJECTS = $(am_array_test_OBJECTS)
-array_test_LDADD = $(LDADD)
+am_arraywrapper_test_OBJECTS = misc/arraywrapper_test.$(OBJEXT)
+arraywrapper_test_OBJECTS = $(am_arraywrapper_test_OBJECTS)
+arraywrapper_test_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -283,7 +283,7 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(array_test_SOURCES) $(bfgs2_test_SOURCES) \
+SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(bfgs_test_SOURCES) $(conjugatefr_test_SOURCES) \
 	$(conjugatepr_test_SOURCES) $(database_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
@@ -299,7 +299,7 @@ SOURCES = $(array_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
 	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
 	$(steepestdescent_test_SOURCES) $(utility_test_SOURCES)
-DIST_SOURCES = $(array_test_SOURCES) $(bfgs2_test_SOURCES) \
+DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(bfgs_test_SOURCES) $(conjugatefr_test_SOURCES) \
 	$(conjugatepr_test_SOURCES) $(database_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
@@ -718,7 +718,7 @@ bfgs_test_SOURCES = numerics/multimin/bfgs_test.cpp
 bfgs2_test_SOURCES = numerics/multimin/bfgs2_test.cpp 
 utility_test_SOURCES = misc/utility_test.cpp
 parser_test_SOURCES = misc/parser_test.cpp
-array_test_SOURCES = misc/array_test.cpp
+arraywrapper_test_SOURCES = misc/arraywrapper_test.cpp
 funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
@@ -775,12 +775,12 @@ misc/$(am__dirstamp):
 misc/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) misc/$(DEPDIR)
 	@: > misc/$(DEPDIR)/$(am__dirstamp)
-misc/array_test.$(OBJEXT): misc/$(am__dirstamp) \
+misc/arraywrapper_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
-array_test$(EXEEXT): $(array_test_OBJECTS) $(array_test_DEPENDENCIES) $(EXTRA_array_test_DEPENDENCIES) 
-	@rm -f array_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(array_test_OBJECTS) $(array_test_LDADD) $(LIBS)
+arraywrapper_test$(EXEEXT): $(arraywrapper_test_OBJECTS) $(arraywrapper_test_DEPENDENCIES) $(EXTRA_arraywrapper_test_DEPENDENCIES) 
+	@rm -f arraywrapper_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(arraywrapper_test_OBJECTS) $(arraywrapper_test_LDADD) $(LIBS)
 numerics/multimin/$(am__dirstamp):
 	@$(MKDIR_P) numerics/multimin
 	@: > numerics/multimin/$(am__dirstamp)
@@ -1042,7 +1042,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/pyplot_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/array_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/arraywrapper_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/funcallcounter_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@
@@ -1452,9 +1452,9 @@ parser_test.log: parser_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-array_test.log: array_test$(EXEEXT)
-	@p='array_test$(EXEEXT)'; \
-	b='array_test'; \
+arraywrapper_test.log: arraywrapper_test$(EXEEXT)
+	@p='arraywrapper_test$(EXEEXT)'; \
+	b='arraywrapper_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
