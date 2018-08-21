@@ -439,7 +439,7 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 //         Iterator1 last = a + size;
 //         Iterator1 lastgroup = last - 3;
 
-//         ArrayWrapper<T> cArray(covariance.get() + covarianceIdx, size * size, size);
+//         arrayWrapper<T> cArray(covariance.get() + covarianceIdx, size * size, size);
 
 //         /* Process 4 items with each loop for efficiency. */
 //         while (a < lastgroup)

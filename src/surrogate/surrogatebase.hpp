@@ -4,7 +4,7 @@
 /*!
  * \brief Base class for different surrogate models
  * 
- * Basic interface for using surrogates. Surrofate maps an \f$ N-\text{dimensionals} \f$ 
+ * Basic interface for using surrogates. Surrogate maps an \f$ N-\text{dimensionals} \f$ 
  * parameter space to the real space. That is \f$ f: \mathcal{R}^N \rightarrow \mathcal{R} \f$.
  * The idea is that we have some surrogate of the parameter-to-data map so that
  * it can be used in the likelihood classes. Subclasses will define the 
