@@ -27025,7 +27025,7 @@ fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
-UMich UQ framework $VERSION is now configured
+UMUQ framework $VERSION is now configured
 
 Configure Information:
   C preprocessor    : $CPP
@@ -27050,7 +27050,7 @@ Configure Information:
     GTEST_LIBS      : $GTEST_LIBS
 " >&5
 $as_echo "
-UMich UQ framework $VERSION is now configured
+UMUQ framework $VERSION is now configured
 
 Configure Information:
   C preprocessor    : $CPP

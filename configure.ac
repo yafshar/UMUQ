@@ -113,7 +113,7 @@ AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Makefile])])
 AC_OUTPUT
 
 AC_MSG_RESULT([
-UMich UQ framework $VERSION is now configured
+UMUQ framework $VERSION is now configured
 
 Configure Information:
   C preprocessor    : $CPP
