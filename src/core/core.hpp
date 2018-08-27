@@ -6,6 +6,10 @@
 #include <UMUQ_config.h>
 #endif /* HAVE_CONFIG_H */
 
+#if HAVE_MPI == 1
+#include <mpi.h>
+#endif //MPI
+
 //Include this file where all our macros are defined.
 #include "macros.hpp"
 
