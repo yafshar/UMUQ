@@ -178,7 +178,7 @@ bool linearFunctionWrapper<T>::df(T const alpha, T *DF)
     if (alpha == df_cache_key)
     {
         *DF = df_alpha;
-        
+
         return true;
     }
 
@@ -188,7 +188,7 @@ bool linearFunctionWrapper<T>::df(T const alpha, T *DF)
     {
         if (!fun.df(x_alpha, g_alpha))
         {
-            return false;
+            UMUQFAILRETURN("Failed to compute the gradient of f!");
         }
 
         g_cache_key = alpha;
@@ -238,7 +238,7 @@ bool linearFunctionWrapper<T>::fdf(T const alpha, T *F, T *DF)
         return true;
     }
 
-    return false;
+    UMUQFAILRETURN("Failed to compute the function f and its gradient!");
 }
 
 template <typename T>
@@ -252,7 +252,7 @@ bool linearFunctionWrapper<T>::set(umuqDifferentiableFunction<T, F_MTYPE<T>, DF_
 
         return true;
     }
-    
+
     UMUQFAILRETURN("Function is not assigned!");
 }
 
