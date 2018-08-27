@@ -15,9 +15,9 @@ public:
 
   bool init();
 
-  inline void setInputFileName(std::string const &fileName = "tmcmc.par")
+  inline void setInputFileName(char const *fileName = "tmcmc.par")
   {
-    inputFilename = fileName;
+    inputFilename = std::string(fileName);
   }
 
 public:
@@ -87,6 +87,7 @@ bool tmcmc<T>::init()
         return false;
       }
     }
+
 
     if (runData.reset(Data.nDim, Data.maxGenerations))
     {
