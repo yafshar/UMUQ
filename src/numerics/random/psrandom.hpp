@@ -107,7 +107,7 @@ class psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-    inline double d();
+    inline double drnd();
 
     /*!
      * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
@@ -117,7 +117,7 @@ class psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-    inline float f();
+    inline float frnd();
 
     /*!
      * \returns an unisgned 32 bit integer pseudo-random value
@@ -127,7 +127,7 @@ class psrandom
      * Reference:
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
-    inline unsigned int u32();
+    inline unsigned int u32rnd();
 
     /*! \fn multinomial
      * \brief The multinomial random distribution
@@ -228,17 +228,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new normalDistribution object from input normalDistribution object
          * 
-         * \param inputN  Input normalDistribution object
+         * \param other  Input normalDistribution object
          */
-        normalDistribution(normalDistribution &&inputN);
+        normalDistribution(normalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input normalDistribution object
+         * \param other  Input normalDistribution object
          * \return normalDistribution& 
          */
-        normalDistribution &operator=(normalDistribution &&inputN);
+        normalDistribution &operator=(normalDistribution &&other);
 
         /*!
          * \brief Random numbers x according to Normal (or Gaussian) random number distribution
@@ -293,17 +293,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new NormalDistribution object from input NormalDistribution object
          * 
-         * \param inputN  Input NormalDistribution object
+         * \param other  Input NormalDistribution object
          */
-        NormalDistribution(NormalDistribution &&inputN);
+        NormalDistribution(NormalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input NormalDistribution object
+         * \param other  Input NormalDistribution object
          * \return NormalDistribution& 
          */
-        NormalDistribution &operator=(NormalDistribution &&inputN);
+        NormalDistribution &operator=(NormalDistribution &&other);
 
         /*!
          * \brief Random numbers x according to Normal (or Gaussian) random number distribution
@@ -361,17 +361,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new lognormalDistribution object from input lognormalDistribution object
          * 
-         * \param inputN  Input lognormalDistribution object
+         * \param other  Input lognormalDistribution object
          */
-        lognormalDistribution(lognormalDistribution &&inputN);
+        lognormalDistribution(lognormalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input lognormalDistribution object
+         * \param other  Input lognormalDistribution object
          * \return lognormalDistribution& 
          */
-        lognormalDistribution &operator=(lognormalDistribution &&inputN);
+        lognormalDistribution &operator=(lognormalDistribution &&other);
 
         /*!
          * \brief Random numbers x according to Normal (or Gaussian) random number distribution
@@ -426,17 +426,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new logNormalDistribution object from input logNormalDistribution object
          * 
-         * \param inputN  Input logNormalDistribution object
+         * \param other  Input logNormalDistribution object
          */
-        logNormalDistribution(logNormalDistribution &&inputN);
+        logNormalDistribution(logNormalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input logNormalDistribution object
+         * \param other  Input logNormalDistribution object
          * \return logNormalDistribution& 
          */
-        logNormalDistribution &operator=(logNormalDistribution &&inputN);
+        logNormalDistribution &operator=(logNormalDistribution &&other);
 
         /*!
          * \brief Random numbers x according to Normal (or Gaussian) random number distribution
@@ -524,17 +524,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new multivariatenormalDistribution object from input multivariatenormalDistribution object
          * 
-         * \param inputN  Input multivariatenormalDistribution object
+         * \param other  Input multivariatenormalDistribution object
          */
-        multivariatenormalDistribution(multivariatenormalDistribution &&inputN);
+        multivariatenormalDistribution(multivariatenormalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input multivariatenormalDistribution object
+         * \param other  Input multivariatenormalDistribution object
          * \return multivariatenormalDistribution& 
          */
-        multivariatenormalDistribution &operator=(multivariatenormalDistribution &&inputN);
+        multivariatenormalDistribution &operator=(multivariatenormalDistribution &&other);
 
         /*!
          * \returns a vector with multivariate normal distribution
@@ -624,17 +624,17 @@ class psrandom
         /*!
          * \brief Move constructor, construct a new multivariateNormalDistribution object from input multivariateNormalDistribution object
          * 
-         * \param inputN  Input multivariateNormalDistribution object
+         * \param other  Input multivariateNormalDistribution object
          */
-        multivariateNormalDistribution(multivariateNormalDistribution &&inputN);
+        multivariateNormalDistribution(multivariateNormalDistribution &&other);
 
         /*!
          * \brief Move assignment operator
          * 
-         * \param inputN  Input multivariateNormalDistribution object
+         * \param other  Input multivariateNormalDistribution object
          * \return multivariateNormalDistribution& 
          */
-        multivariateNormalDistribution &operator=(multivariateNormalDistribution &&inputN);
+        multivariateNormalDistribution &operator=(multivariateNormalDistribution &&other);
 
         /*!
          * \returns a vector with multivariate normal distribution
@@ -1068,7 +1068,7 @@ inline float psrandom<float>::unirnd(float a, float b)
  * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
  */
 template <typename T>
-inline double psrandom<T>::d() { return saru[0].d(); }
+inline double psrandom<T>::drnd() { return saru[0].d(); }
 
 /*!
  * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
@@ -1079,7 +1079,7 @@ inline double psrandom<T>::d() { return saru[0].d(); }
  * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
  */
 template <typename T>
-inline float psrandom<T>::f() { return saru[0].f(); }
+inline float psrandom<T>::frnd() { return saru[0].f(); }
 
 /*!
  * \returns an unisgned 32 bit integer pseudo-random value
@@ -1090,7 +1090,7 @@ inline float psrandom<T>::f() { return saru[0].f(); }
  * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
  */
 template <typename T>
-inline unsigned int psrandom<T>::u32() { return saru[0].u32(); }
+inline unsigned int psrandom<T>::u32rnd() { return saru[0].u32(); }
 
 /*!
  * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
@@ -1255,24 +1255,24 @@ psrandom<T>::normalDistribution::normalDistribution(T mean, T stddev) : d(mean, 
 /*!
  * \brief Move constructor, construct a new normalDistribution object from input normalDistribution object
  * 
- * \param inputN  Input normalDistribution object
+ * \param other  Input normalDistribution object
  */
 template <typename T>
-psrandom<T>::normalDistribution::normalDistribution(psrandom<T>::normalDistribution &&inputN)
+psrandom<T>::normalDistribution::normalDistribution(psrandom<T>::normalDistribution &&other)
 {
-    this->d = std::move(inputN.d);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input normalDistribution object
+ * \param other  Input normalDistribution object
  * \return normalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::normalDistribution &psrandom<T>::normalDistribution::operator=(psrandom<T>::normalDistribution &&inputN)
+typename psrandom<T>::normalDistribution &psrandom<T>::normalDistribution::operator=(psrandom<T>::normalDistribution &&other)
 {
-    this->d = std::move(inputN.d);
+    this->d = std::move(other.d);
     return *this;
 }
 
@@ -1321,26 +1321,26 @@ psrandom<T>::NormalDistribution::NormalDistribution(T mean, T stddev) : gen(std:
 /*!
  * \brief Move constructor, construct a new NormalDistribution object from input NormalDistribution object
  * 
- * \param inputN  Input NormalDistribution object
+ * \param other  Input NormalDistribution object
  */
 template <typename T>
-psrandom<T>::NormalDistribution::NormalDistribution(psrandom<T>::NormalDistribution &&inputN)
+psrandom<T>::NormalDistribution::NormalDistribution(psrandom<T>::NormalDistribution &&other)
 {
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input NormalDistribution object
+ * \param other  Input NormalDistribution object
  * \return NormalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::NormalDistribution &psrandom<T>::NormalDistribution::operator=(psrandom<T>::NormalDistribution &&inputN)
+typename psrandom<T>::NormalDistribution &psrandom<T>::NormalDistribution::operator=(psrandom<T>::NormalDistribution &&other)
 {
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
     return *this;
 }
 
@@ -1385,24 +1385,24 @@ psrandom<T>::lognormalDistribution::lognormalDistribution(T mean, T stddev) : d(
 /*!
  * \brief Move constructor, construct a new lognormalDistribution object from input lognormalDistribution object
  * 
- * \param inputN  Input lognormalDistribution object
+ * \param other  Input lognormalDistribution object
  */
 template <typename T>
-psrandom<T>::lognormalDistribution::lognormalDistribution(psrandom<T>::lognormalDistribution &&inputN)
+psrandom<T>::lognormalDistribution::lognormalDistribution(psrandom<T>::lognormalDistribution &&other)
 {
-    this->d = std::move(inputN.d);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input lognormalDistribution object
+ * \param other  Input lognormalDistribution object
  * \return lognormalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::lognormalDistribution &psrandom<T>::lognormalDistribution::operator=(psrandom<T>::lognormalDistribution &&inputN)
+typename psrandom<T>::lognormalDistribution &psrandom<T>::lognormalDistribution::operator=(psrandom<T>::lognormalDistribution &&other)
 {
-    this->d = std::move(inputN.d);
+    this->d = std::move(other.d);
     return *this;
 }
 
@@ -1451,26 +1451,26 @@ psrandom<T>::logNormalDistribution::logNormalDistribution(T mean, T stddev) : ge
 /*!
  * \brief Move constructor, construct a new logNormalDistribution object from input logNormalDistribution object
  * 
- * \param inputN  Input logNormalDistribution object
+ * \param other  Input logNormalDistribution object
  */
 template <typename T>
-psrandom<T>::logNormalDistribution::logNormalDistribution(psrandom<T>::logNormalDistribution &&inputN)
+psrandom<T>::logNormalDistribution::logNormalDistribution(psrandom<T>::logNormalDistribution &&other)
 {
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input logNormalDistribution object
+ * \param other  Input logNormalDistribution object
  * \return logNormalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::logNormalDistribution &psrandom<T>::logNormalDistribution::operator=(psrandom<T>::logNormalDistribution &&inputN)
+typename psrandom<T>::logNormalDistribution &psrandom<T>::logNormalDistribution::operator=(psrandom<T>::logNormalDistribution &&other)
 {
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
     return *this;
 }
 
@@ -1600,32 +1600,32 @@ psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(int 
 /*!
  * \brief Move constructor, construct a new multivariatenormalDistribution object from input multivariatenormalDistribution object
  * 
- * \param inputN  Input multivariatenormalDistribution object
+ * \param other  Input multivariatenormalDistribution object
  */
 template <typename T>
-psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(psrandom<T>::multivariatenormalDistribution &&inputN)
+psrandom<T>::multivariatenormalDistribution::multivariatenormalDistribution(psrandom<T>::multivariatenormalDistribution &&other)
 {
-    this->mean = std::move(inputN.mean);
-    this->covariance = std::move(inputN.covariance);
-    this->transform = std::move(inputN.transform);
-    this->lu = std::move(inputN.lu);
-    this->d = std::move(inputN.d);
+    this->mean = std::move(other.mean);
+    this->covariance = std::move(other.covariance);
+    this->transform = std::move(other.transform);
+    this->lu = std::move(other.lu);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input multivariatenormalDistribution object
+ * \param other  Input multivariatenormalDistribution object
  * \return multivariatenormalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::multivariatenormalDistribution &psrandom<T>::multivariatenormalDistribution::operator=(psrandom<T>::multivariatenormalDistribution &&inputN)
+typename psrandom<T>::multivariatenormalDistribution &psrandom<T>::multivariatenormalDistribution::operator=(psrandom<T>::multivariatenormalDistribution &&other)
 {
-    this->mean = std::move(inputN.mean);
-    this->covariance = std::move(inputN.covariance);
-    this->transform = std::move(inputN.transform);
-    this->lu = std::move(inputN.lu);
-    this->d = std::move(inputN.d);
+    this->mean = std::move(other.mean);
+    this->covariance = std::move(other.covariance);
+    this->transform = std::move(other.transform);
+    this->lu = std::move(other.lu);
+    this->d = std::move(other.d);
     return *this;
 }
 
@@ -1724,34 +1724,34 @@ psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(int 
 /*!
  * \brief Move constructor, construct a new multivariateNormalDistribution object from input multivariateNormalDistribution object
  * 
- * \param inputN  Input multivariateNormalDistribution object
+ * \param other  Input multivariateNormalDistribution object
  */
 template <typename T>
-psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(psrandom<T>::multivariateNormalDistribution &&inputN)
+psrandom<T>::multivariateNormalDistribution::multivariateNormalDistribution(psrandom<T>::multivariateNormalDistribution &&other)
 {
-    this->mean = std::move(inputN.mean);
-    this->covariance = std::move(inputN.covariance);
-    this->transform = std::move(inputN.transform);
-    this->lu = std::move(inputN.lu);
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->mean = std::move(other.mean);
+    this->covariance = std::move(other.covariance);
+    this->transform = std::move(other.transform);
+    this->lu = std::move(other.lu);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
 }
 
 /*!
  * \brief Move assignment operator
  * 
- * \param inputN  Input multivariateNormalDistribution object
+ * \param other  Input multivariateNormalDistribution object
  * \return multivariateNormalDistribution& 
  */
 template <typename T>
-typename psrandom<T>::multivariateNormalDistribution &psrandom<T>::multivariateNormalDistribution::operator=(psrandom<T>::multivariateNormalDistribution &&inputN)
+typename psrandom<T>::multivariateNormalDistribution &psrandom<T>::multivariateNormalDistribution::operator=(psrandom<T>::multivariateNormalDistribution &&other)
 {
-    this->mean = std::move(inputN.mean);
-    this->covariance = std::move(inputN.covariance);
-    this->transform = std::move(inputN.transform);
-    this->lu = std::move(inputN.lu);
-    this->gen = std::move(inputN.gen);
-    this->d = std::move(inputN.d);
+    this->mean = std::move(other.mean);
+    this->covariance = std::move(other.covariance);
+    this->transform = std::move(other.transform);
+    this->lu = std::move(other.lu);
+    this->gen = std::move(other.gen);
+    this->d = std::move(other.d);
     return *this;
 }
 

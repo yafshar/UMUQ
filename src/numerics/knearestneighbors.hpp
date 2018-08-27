@@ -43,21 +43,7 @@ class kNearestNeighbor
      * \param nDim        Dimension of each point
      * \param nN          Number of nearest neighbors to find
      */
-    kNearestNeighbor(int const ndataPoints, int const nDim, int const nN) : drows(ndataPoints),
-                                                                            qrows(ndataPoints),
-                                                                            cols(nDim),
-                                                                            nn(nN + 1),
-                                                                            indices_ptr(new int[ndataPoints * (nN + 1)]),
-                                                                            dists_ptr(new T[ndataPoints * (nN + 1)]),
-                                                                            indices(indices_ptr.get(), ndataPoints, (nN + 1)),
-                                                                            dists(dists_ptr.get(), ndataPoints, (nN + 1)),
-                                                                            the_same(true)
-    {
-        if (drows < static_cast<std::size_t>(nn))
-        {
-            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
-        }
-    }
+    kNearestNeighbor(int const ndataPoints, int const nDim, int const nN);
 
     /*!
      * \brief constructor
@@ -67,107 +53,38 @@ class kNearestNeighbor
      * \param nDim         Dimension of each point
      * \param nN           Number of nearest neighbors to find
      */
-    kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : drows(ndataPoints),
-                                                                                                    qrows(nqueryPoints),
-                                                                                                    cols(nDim),
-                                                                                                    nn(nN),
-                                                                                                    indices_ptr(new int[nqueryPoints * nN]),
-                                                                                                    dists_ptr(new T[nqueryPoints * nN]),
-                                                                                                    indices(indices_ptr.get(), nqueryPoints, nN),
-                                                                                                    dists(dists_ptr.get(), nqueryPoints, nN),
-                                                                                                    the_same(false)
-    {
-        if (drows < static_cast<std::size_t>(nn))
-        {
-            UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
-        }
-    }
+    kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN);
 
     /*!
      * \brief Move constructor
      * \param inputObj kNearestNeighbor to be moved
      */
-    kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj) : drows(inputObj.drows),
-                                                                 qrows(inputObj.qrows),
-                                                                 cols(inputObj.cols),
-                                                                 nn(inputObj.nn),
-                                                                 indices_ptr(std::move(inputObj.indices_ptr)),
-                                                                 dists_ptr(std::move(inputObj.dists_ptr)),
-                                                                 indices(std::move(inputObj.indices)),
-                                                                 dists(std::move(inputObj.dists)),
-                                                                 the_same(inputObj.the_same)
-    {
-    }
+    kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj);
 
     /*!
      * \brief Copy constructor
      * \param inputObj kNearestNeighbor to be copied
      */
-    kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj) : drows(inputObj.drows),
-                                                                      qrows(inputObj.qrows),
-                                                                      cols(inputObj.cols),
-                                                                      nn(inputObj.nn),
-                                                                      indices_ptr(new int[inputObj.qrows * inputObj.nn]),
-                                                                      dists_ptr(new T[inputObj.qrows * inputObj.nn]),
-                                                                      indices(indices_ptr.get(), inputObj.qrows, inputObj.nn),
-                                                                      dists(dists_ptr.get(), inputObj.qrows, inputObj.nn),
-                                                                      the_same(inputObj.the_same)
-    {
-        {
-            int *From = inputObj.indices_ptr.get();
-            int *To = indices_ptr.get();
-            std::copy(From, From + qrows * nn, To);
-        }
-        {
-            T *From = inputObj.dists_ptr.get();
-            T *To = dists_ptr.get();
-            std::copy(From, From + qrows * nn, To);
-        }
-    }
+    kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj);
 
     /*!
      * \brief Move assignment operator
      * \param inputObj kNearestNeighbor to be assigned
      */
-    kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&inputObj)
-    {
-        drows = std::move(inputObj.drows);
-        qrows = std::move(inputObj.qrows);
-        cols = std::move(inputObj.cols);
-        nn = std::move(inputObj.nn);
-        the_same = std::move(inputObj.the_same);
-        indices_ptr = std::move(inputObj.indices_ptr);
-        dists_ptr = std::move(inputObj.dists_ptr);
-        indices = std::move(inputObj.indices);
-        dists = std::move(inputObj.dists);
-        return *this;
-    }
+    kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&inputObj);
 
     /*!
      * \brief Default destructor
      *
      */
-    ~kNearestNeighbor() {}
+    ~kNearestNeighbor();
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
      * 
      * \param idata A pointer to input data 
      */
-    void buildIndex(T *idata)
-    {
-        flann::Matrix<T> dataset(idata, drows, cols);
-
-        // Construct an randomized kd-tree index using 4 kd-trees
-        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
-        flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
-        index.buildIndex();
-
-        // Do a knn search, using 128 checks
-        // Number of checks means: How many leafs to visit when searching
-        // for neighbours (-1 for unlimited)
-        index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
-    }
+    void buildIndex(T *idata);
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
@@ -175,27 +92,7 @@ class kNearestNeighbor
      * \param idata A pointer to input data 
      * \param qdata A pointer to query data 
      */
-    void buildIndex(T *idata, T *qdata)
-    {
-        flann::Matrix<T> dataset(idata, drows, cols);
-
-        // Construct an randomized kd-tree index using 4 kd-trees
-        // For the number of parallel kd-trees to use (Good values are in the range [1..16])
-        flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
-        index.buildIndex();
-
-        flann::Matrix<T> query(qdata, qrows, cols);
-
-        // Do a knn search, using 128 checks
-        // Number of checks means: How many leafs to visit when searching
-        // for neighbours (-1 for unlimited)
-        index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
-
-        if (!checkNearestNeighbors())
-        {
-            UMUQWARNING("Input data & query data are the same!");
-        }
-    }
+    void buildIndex(T *idata, T *qdata);
 
     /*!
      * \brief A pointer to nearest neighbors indices
@@ -204,11 +101,7 @@ class kNearestNeighbor
      * 
      * \returns A (pointer to a) row of the nearest neighbors indices.
      */
-    inline int *NearestNeighbors(int const &index) const
-    {
-        // +1 is that we do not want the index of the point itself
-        return indices_ptr.get() + index * nn + the_same;
-    }
+    inline int *NearestNeighbors(int const &index) const;
 
     /*!
      * \brief A pointer to all points nearest neighbors indices
@@ -229,10 +122,7 @@ class kNearestNeighbor
      * 
      * \returns All points nearest neighbors indices (in row order).
      */
-    inline int *NearestNeighbors() const
-    {
-        return indices_ptr.get();
-    }
+    inline int *NearestNeighbors() const;
 
     /*!
      * \brief A pointer to nearest neighbors distances from the point index
@@ -241,11 +131,7 @@ class kNearestNeighbor
      * 
      * \returns A pointer to nearest neighbors distances from the point index
      */
-    inline T *NearestNeighborsDistances(int const &index) const
-    {
-        // +1 is that we do not want the index of the point itself
-        return dists_ptr.get() + index * nn + the_same;
-    }
+    inline T *NearestNeighborsDistances(int const &index) const;
 
     /*!
      * \brief Distance of a nearest neighbor of index
@@ -254,98 +140,43 @@ class kNearestNeighbor
      * 
      * \returns Distance of a nearest neighbor point of the index
      */
-    inline T minDist(int const &index) const
-    {
-        std::ptrdiff_t const Id = index * nn + the_same;
-        return dists_ptr[Id];
-    }
+    inline T minDist(int const &index) const;
 
     /*!
      * \brief Vector of all points' distance of their nearest neighbor 
      * 
      * \returns Vector of all points' distance of their nearest neighbor 
      */
-    inline T *minDist()
-    {
-        T *mindists = nullptr;
-        try
-        {
-            mindists = new T[qrows];
-        }
-        catch (std::bad_alloc &e)
-        {
-            UMUQFAILRETURNNULL("Failed to allocate memory!");
-        }
-
-        for (std::size_t i = 0; i < qrows; ++i)
-        {
-            std::ptrdiff_t const Id = i * nn + the_same;
-            mindists[i] = dists_ptr[Id];
-        }
-
-        return mindists;
-    }
+    inline T *minDist();
 
     /*!
      * \brief  Nmber of each point nearest neighbors
      * 
      * \returns number of nearest neighbors
      */
-    inline int numNearestNeighbors() const
-    {
-        return nn - the_same;
-    }
+    inline int numNearestNeighbors() const;
 
     /*!
      * \brief   Function to make sure that we do not compute the nearest neighbors of a point from itself
      * 
      * \returns true for if input points and query points are used correctly
      */
-    bool checkNearestNeighbors()
-    {
-        if (the_same)
-        {
-            return true;
-        }
-
-        T const eps = std::numeric_limits<T>::epsilon();
-        std::size_t s(0);
-        for (std::size_t i = 0; i < qrows; ++i)
-        {
-            std::ptrdiff_t const Id = i * nn;
-            s += (dists_ptr[Id] < eps);
-        }
-        if (s == qrows)
-        {
-            return false;
-        }
-        return true;
-    }
+    bool checkNearestNeighbors();
 
     /*!
      * \brief swap two indexes values
      */
-    inline void IndexSwap(int Indx1, int Indx2)
-    {
-        std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
-        std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
-    }
+    inline void IndexSwap(int Indx1, int Indx2);
 
     /*!
      * \returns number of input data points
      */
-    inline int numInputdata() const
-    {
-        return drows;
-    }
+    inline int numInputdata() const;
 
     /*!
      * \returns number of query data points
      */
-    inline int numQuerydata() const
-    {
-        return qrows;
-    }
+    inline int numQuerydata() const;
 
   private:
     //! Number of data rows
@@ -370,6 +201,229 @@ class kNearestNeighbor
     bool the_same;
 };
 
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const nDim, int const nN) : drows(ndataPoints),
+                                                                                                       qrows(ndataPoints),
+                                                                                                       cols(nDim),
+                                                                                                       nn(nN + 1),
+                                                                                                       indices_ptr(new int[ndataPoints * (nN + 1)]),
+                                                                                                       dists_ptr(new T[ndataPoints * (nN + 1)]),
+                                                                                                       indices(indices_ptr.get(), ndataPoints, (nN + 1)),
+                                                                                                       dists(dists_ptr.get(), ndataPoints, (nN + 1)),
+                                                                                                       the_same(true)
+{
+    if (drows < static_cast<std::size_t>(nn))
+    {
+        UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
+    }
+}
+
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : drows(ndataPoints),
+                                                                                                                               qrows(nqueryPoints),
+                                                                                                                               cols(nDim),
+                                                                                                                               nn(nN),
+                                                                                                                               indices_ptr(new int[nqueryPoints * nN]),
+                                                                                                                               dists_ptr(new T[nqueryPoints * nN]),
+                                                                                                                               indices(indices_ptr.get(), nqueryPoints, nN),
+                                                                                                                               dists(dists_ptr.get(), nqueryPoints, nN),
+                                                                                                                               the_same(false)
+{
+    if (drows < static_cast<std::size_t>(nn))
+    {
+        UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
+    }
+}
+
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj) : drows(inputObj.drows),
+                                                                                            qrows(inputObj.qrows),
+                                                                                            cols(inputObj.cols),
+                                                                                            nn(inputObj.nn),
+                                                                                            indices_ptr(std::move(inputObj.indices_ptr)),
+                                                                                            dists_ptr(std::move(inputObj.dists_ptr)),
+                                                                                            indices(std::move(inputObj.indices)),
+                                                                                            dists(std::move(inputObj.dists)),
+                                                                                            the_same(inputObj.the_same)
+{
+}
+
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj) : drows(inputObj.drows),
+                                                                                                 qrows(inputObj.qrows),
+                                                                                                 cols(inputObj.cols),
+                                                                                                 nn(inputObj.nn),
+                                                                                                 indices_ptr(new int[inputObj.qrows * inputObj.nn]),
+                                                                                                 dists_ptr(new T[inputObj.qrows * inputObj.nn]),
+                                                                                                 indices(indices_ptr.get(), inputObj.qrows, inputObj.nn),
+                                                                                                 dists(dists_ptr.get(), inputObj.qrows, inputObj.nn),
+                                                                                                 the_same(inputObj.the_same)
+{
+    {
+        int *From = inputObj.indices_ptr.get();
+        int *To = indices_ptr.get();
+        std::copy(From, From + qrows * nn, To);
+    }
+    {
+        T *From = inputObj.dists_ptr.get();
+        T *To = dists_ptr.get();
+        std::copy(From, From + qrows * nn, To);
+    }
+}
+
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance> &kNearestNeighbor<T, Distance>::operator=(kNearestNeighbor<T, Distance> &&inputObj)
+{
+    drows = std::move(inputObj.drows);
+    qrows = std::move(inputObj.qrows);
+    cols = std::move(inputObj.cols);
+    nn = std::move(inputObj.nn);
+    the_same = std::move(inputObj.the_same);
+    indices_ptr = std::move(inputObj.indices_ptr);
+    dists_ptr = std::move(inputObj.dists_ptr);
+    indices = std::move(inputObj.indices);
+    dists = std::move(inputObj.dists);
+    return *this;
+}
+
+template <typename T, class Distance>
+kNearestNeighbor<T, Distance>::~kNearestNeighbor() {}
+
+template <typename T, class Distance>
+void kNearestNeighbor<T, Distance>::buildIndex(T *idata)
+{
+    flann::Matrix<T> dataset(idata, drows, cols);
+
+    // Construct an randomized kd-tree index using 4 kd-trees
+    // For the number of parallel kd-trees to use (Good values are in the range [1..16])
+    flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
+    index.buildIndex();
+
+    // Do a knn search, using 128 checks
+    // Number of checks means: How many leafs to visit when searching
+    // for neighbours (-1 for unlimited)
+    index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
+}
+
+template <typename T, class Distance>
+void kNearestNeighbor<T, Distance>::buildIndex(T *idata, T *qdata)
+{
+    flann::Matrix<T> dataset(idata, drows, cols);
+
+    // Construct an randomized kd-tree index using 4 kd-trees
+    // For the number of parallel kd-trees to use (Good values are in the range [1..16])
+    flann::Index<Distance> index(dataset, flann::KDTreeIndexParams(4));
+    index.buildIndex();
+
+    flann::Matrix<T> query(qdata, qrows, cols);
+
+    // Do a knn search, using 128 checks
+    // Number of checks means: How many leafs to visit when searching
+    // for neighbours (-1 for unlimited)
+    index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
+
+    if (!checkNearestNeighbors())
+    {
+        UMUQWARNING("Input data & query data are the same!");
+    }
+}
+
+template <typename T, class Distance>
+inline int *kNearestNeighbor<T, Distance>::NearestNeighbors(int const &index) const
+{
+    // +1 is that we do not want the index of the point itself
+    return indices_ptr.get() + index * nn + the_same;
+}
+
+template <typename T, class Distance>
+inline int *kNearestNeighbor<T, Distance>::NearestNeighbors() const
+{
+    return indices_ptr.get();
+}
+
+template <typename T, class Distance>
+inline T *kNearestNeighbor<T, Distance>::NearestNeighborsDistances(int const &index) const
+{
+    // +1 is that we do not want the index of the point itself
+    return dists_ptr.get() + index * nn + the_same;
+}
+
+template <typename T, class Distance>
+inline T kNearestNeighbor<T, Distance>::minDist(int const &index) const
+{
+    std::ptrdiff_t const Id = index * nn + the_same;
+    return dists_ptr[Id];
+}
+
+template <typename T, class Distance>
+inline T *kNearestNeighbor<T, Distance>::minDist()
+{
+    T *mindists = nullptr;
+    try
+    {
+        mindists = new T[qrows];
+    }
+    catch (std::bad_alloc &e)
+    {
+        UMUQFAILRETURNNULL("Failed to allocate memory!");
+    }
+
+    for (std::size_t i = 0; i < qrows; ++i)
+    {
+        std::ptrdiff_t const Id = i * nn + the_same;
+        mindists[i] = dists_ptr[Id];
+    }
+
+    return mindists;
+}
+
+template <typename T, class Distance>
+inline int kNearestNeighbor<T, Distance>::numNearestNeighbors() const
+{
+    return nn - the_same;
+}
+
+template <typename T, class Distance>
+bool kNearestNeighbor<T, Distance>::checkNearestNeighbors()
+{
+    if (the_same)
+    {
+        return true;
+    }
+
+    T const eps = std::numeric_limits<T>::epsilon();
+    std::size_t s(0);
+    for (std::size_t i = 0; i < qrows; ++i)
+    {
+        std::ptrdiff_t const Id = i * nn;
+        s += (dists_ptr[Id] < eps);
+    }
+    if (s == qrows)
+    {
+        return false;
+    }
+    return true;
+}
+
+template <typename T, class Distance>
+inline void kNearestNeighbor<T, Distance>::IndexSwap(int Indx1, int Indx2)
+{
+    std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
+    std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
+}
+
+template <typename T, class Distance>
+inline int kNearestNeighbor<T, Distance>::numInputdata() const
+{
+    return drows;
+}
+
+template <typename T, class Distance>
+inline int kNearestNeighbor<T, Distance>::numQuerydata() const
+{
+    return qrows;
+}
+
 // TODO : Somehow the specialized template did not work.
 // FIXME: to the correct templated version
 
@@ -382,26 +436,41 @@ template <typename T>
 class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
 {
   public:
-    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN)
-    {
-    }
-    L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
-    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, flann::L2<T>>(std::move(inputObj)) {}
-    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, flann::L2<T>>(inputObj) {}
-    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj)
-    {
-        kNearestNeighbor<T, flann::L2<T>>::drows = std::move(inputObj.drows);
-        kNearestNeighbor<T, flann::L2<T>>::qrows = std::move(inputObj.qrows);
-        kNearestNeighbor<T, flann::L2<T>>::cols = std::move(inputObj.cols);
-        kNearestNeighbor<T, flann::L2<T>>::nn = std::move(inputObj.nn);
-        kNearestNeighbor<T, flann::L2<T>>::the_same = std::move(inputObj.the_same);
-        kNearestNeighbor<T, flann::L2<T>>::indices_ptr = std::move(inputObj.indices_ptr);
-        kNearestNeighbor<T, flann::L2<T>>::dists_ptr = std::move(inputObj.dists_ptr);
-        kNearestNeighbor<T, flann::L2<T>>::indices = std::move(inputObj.indices);
-        kNearestNeighbor<T, flann::L2<T>>::dists = std::move(inputObj.dists);
-        return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(inputObj)));
-    }
+    L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN);
+    L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN);
+    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj);
+    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj);
+    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj);
 };
+
+template <typename T>
+L2NearestNeighbor<T>::L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nDim, nN)
+{
+}
+template <typename T>
+L2NearestNeighbor<T>::L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
+
+template <typename T>
+L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, flann::L2<T>>(std::move(inputObj)) {}
+
+template <typename T>
+L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, flann::L2<T>>(inputObj) {}
+
+template <typename T>
+L2NearestNeighbor<T> &L2NearestNeighbor<T>::operator=(L2NearestNeighbor<T> &&inputObj)
+{
+    this->drows = std::move(inputObj.drows);
+    this->qrows = std::move(inputObj.qrows);
+    this->cols = std::move(inputObj.cols);
+    this->nn = std::move(inputObj.nn);
+    this->the_same = std::move(inputObj.the_same);
+    this->indices_ptr = std::move(inputObj.indices_ptr);
+    this->dists_ptr = std::move(inputObj.dists_ptr);
+    this->indices = std::move(inputObj.indices);
+    this->dists = std::move(inputObj.dists);
+
+    return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(inputObj)));
+}
 
 // namespace flann
 // {
