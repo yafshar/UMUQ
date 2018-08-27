@@ -3,6 +3,7 @@
 
 /*!
  * \brief Given a version number MAJOR.MINOR.PATCH, increment the:
+ * 
  * \b MAJOR version when you make incompatible changes,
  * \b MINOR version when you add functionality in a backwards-compatible manner, and
  * \b PATCH version when you make backwards-compatible bug fixes. 
@@ -10,7 +11,6 @@
  * Ref:
  * https://semver.org
  */
-
 #define UMUQ_MAJOR_VERSION 1
 #define UMUQ_MINOR_VERSION 0
 #define UMUQ_PATCH_VERSION 0
@@ -151,15 +151,54 @@ std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
     ss << message2 << "\n\n";
     return ss.str();
 }
+
+#if HAVE_MPI == 1
+std::string MPIErrorMessage(MPI_Comm const &comm, int const errorCode)
+{
+    int nrank;
+    int nsize;
+    int stringLength;
+    int errorClass;
+    char errorStringClass[MPI_MAX_ERROR_STRING];
+    char errorStringCode[MPI_MAX_ERROR_STRING];
+    char commName[MPI_MAX_OBJECT_NAME];
+
+    MPI_Comm_get_name(comm, commName, &stringLength);
+    MPI_Error_string(errorCode, errorStringCode, &stringLength);
+    MPI_Error_class(errorCode, &errorClass);
+    MPI_Error_string(errorClass, errorStringClass, &stringLength);
+
+    MPI_Comm_rank(comm, &nrank);
+    MPI_Comm_size(comm, &nsize);
+
+    std::ostringstream ss;
+    ss << "\n";
+    ss << "[" << nrank << ":" << nsize << "]: [" << commName << "] :" << errorStringClass << "\n";
+    ss << "[" << nrank << ":" << nsize << "]: [" << commName << "] :" << errorStringCode << "\n";
+    return ss.str();
+}
+
+std::string MPIErrorMessage(int const errorCode)
+{
+    return MPIErrorMessage(MPI_COMM_WORLD, errorCode);
+}
+#endif // MPI
+
 } // namespace internal
 } // namespace UMUQ
+
+#if HAVE_MPI == 1
+#define UMUQABORT MPI_Abort(MPI_COMM_WORLD, -1);
+#else
+#define UMUQABORT throw(std::runtime_error(ss.str()));
+#endif // MPI
 
 #define UMUQFAIL(msg)                                                                                                                 \
     std::ostringstream ss;                                                                                                            \
     ss << msg;                                                                                                                        \
     std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
     std::cerr << _Message_;                                                                                                           \
-    throw(std::runtime_error(ss.str()));
+    UMUQABORT
 
 #define UMUQFAILRETURN(msg)                                                                                                           \
     std::ostringstream ss;                                                                                                            \
@@ -187,7 +226,7 @@ std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
     ss << msg;                                                                                                                               \
     std::string _Message_##index(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
     std::cerr << _Message_##index;                                                                                                           \
-    throw(std::runtime_error(ss.str()));
+    UMUQABORT
 
 #define UMUQWARNING(msg)                                                                                                                \
     std::ostringstream ss;                                                                                                              \
@@ -207,6 +246,17 @@ std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
 
 #define UMUQASSERTS(condition, msg, index) \
     if (!(condition))                      \
-    UMUQFAIL(msg, index)
+    UMUQFAILS(msg, index)
 
+#if HAVE_MPI == 1
+#define UMUQMPI(MPIcall)                                                            \
+    {                                                                               \
+        int err = MPIcall;                                                          \
+        if (err != MPI_SUCCESS)                                                     \
+        {                                                                           \
+            std::string msg = UMUQ::internal::MPIErrorMessage(MPI_COMM_WORLD, err); \
+            UMUQFAIL(msg);                                                          \
+        }                                                                           \
+    }
+#endif // MPI
 #endif // UMUQ_MACROS_H
