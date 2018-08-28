@@ -2,7 +2,7 @@
 #define UMUQ_TMCMC_H
 
 #include "data/stdata.hpp"
-#include "data/datatype.hpp"
+#include "data/database.hpp"
 #include "data/runinfo.hpp"
 
 #include "io/io.hpp"
@@ -25,13 +25,13 @@ public:
   std::string inputFilename;
 
   //! Current data
-  database<T> *currentData;
+  database<T> currentData;
 
   //! Full data pointer
-  database<T> *fullData;
+  database<T> fullData;
 
   //! Experimental data pointer
-  database<T> *expData;
+  database<T> expData;
 
   //! Running data
   runinfo<T> runData;
@@ -41,10 +41,7 @@ public:
 };
 
 template <typename T>
-tmcmc<T>::tmcmc() : inputFilename("tmcmc.par"),
-                    currentData(nullptr),
-                    fullData(nullptr),
-                    expData(nullptr)
+tmcmc<T>::tmcmc() : inputFilename("tmcmc.par")
 {
 }
 
@@ -54,44 +51,15 @@ bool tmcmc<T>::init()
   // Read the input problem size and variables from an input file
   if (Data.load(inputFilename))
   {
-    {
-      // Creating a database based on the read information
-      Data1<T> = std::move(database<T>(Data.nDim, Data.maxGenerations));
 
-      // Set the pointer to the created databse object
-      currentData = &Data1<T>;
+    // Creating a database based on the read information
+    currentData = std::move(database<T>(Data.nDim, Data.maxGenerations));
 
-      // Set the update Task function to be used for updating on multi threads or processors
-      currentData->setTask(updateTask1<T>);
-
-      // Initilize the update Task
-      if (!currentData->registerTask())
-      {
-        return false;
-      }
-    }
-
-    {
-      // Creating a database based on the read information
-      Data2<T> = std::move(database<T>(Data.nDim, Data.maxGenerations));
-
-      // Set the pointer to the created databse object
-      fullData = &Data2<T>;
-
-      // Set the update Task function to be used for updating on multi threads or processors
-      fullData->setTask(updateTask2<T>);
-
-      // Initilize the update Task
-      if (!fullData->registerTask())
-      {
-        return false;
-      }
-    }
-
+    // Creating a database based on the read information
+    fullData = std::move(database<T>(Data.nDim, Data.maxGenerations));
 
     if (runData.reset(Data.nDim, Data.maxGenerations))
     {
-
       return true;
     }
 
