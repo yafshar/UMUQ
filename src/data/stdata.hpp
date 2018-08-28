@@ -40,7 +40,7 @@ struct optimizationParameters
  * \param maxChainLength             Maximum size of the chain in the TMCMC algorithm (default 1)
  * \param seed                       Random number initial seed
  * \param samplingType               Sampling type which is : 0: uniform, 1: gaussian, 2: file
- * \param priorType                  Prior type which is :   0: lognormal, 1: gaussian
+ * \param priorType                  Prior type which is :   0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4: composit
  * \param iPlot                      1 for printing the data and 0 for not
  * \param saveData                   1 for saving the data and 0 for not
  * \param useCmaProposal             Indicator if we use the CMA proposal or not
@@ -55,8 +55,8 @@ struct optimizationParameters
  * \param lowerBound                 Sampling domain lower bounds for each dimension
  * \param upperBound                 Sampling domain upper bounds for each dimension
  * \param compositePriorDistribution Composite distribution as a prior
- * \param priorMu                    Prior mean
- * \param priorSigma                 Prior standard deviation
+ * \param priorMu                    Prior mean, in case of gamma distribution it is alpha
+ * \param priorSigma                 Prior standard deviation 
  * \param auxilData                  Auxillary data
  * \param initMean                   Initial Mean with the size of [populationSize*nDim]
  * \param localCovariance            Local covariance with the size of [populationSize*nDim*nDim]
@@ -161,7 +161,7 @@ class stdata
 	//! Sampling type which is : 0: uniform, 1: gaussian, 2: file
 	int samplingType;
 
-	//! Prior type which is :   0: lognormal, 1: gaussian
+	//! Prior type which is :   0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
 	int priorType;
 
 	//! 1 for printing the data and 0 for not
@@ -207,13 +207,13 @@ class stdata
 	std::unique_ptr<T[]> upperBound;
 
 	//! Composite distribution as a prior
-	std::unique_ptr<T[]> compositePriorDistribution;
+	std::unique_ptr<int[]> compositePriorDistribution;
 
-	//! Prior mean
-	std::unique_ptr<T[]> priorMu;
+	//! Prior parameter 1
+	std::unique_ptr<T[]> priorParam1;
 
-	//! Prior standard deviation
-	std::unique_ptr<T[]> priorSigma;
+	//! Prior parameter 2
+	std::unique_ptr<T[]> priorParam2;
 
 	//! Auxillary data
 	std::unique_ptr<T[]> auxilData;
@@ -274,11 +274,11 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
 		eachPopulationSize.reset(new int[maxGenerations]);
 		lowerBound.reset(new T[nDim]());
 		upperBound.reset(new T[nDim]());
-		priorMu.reset(new T[nDim]());
-		priorSigma.reset(new T[nDim * nDim]());
+		priorParam1.reset(new T[nDim]());
+		priorParam2.reset(new T[nDim * nDim]());
 		localCovariance.reset(new T[populationSize * nDim * nDim]());
 	}
-	catch (std::bad_alloc &e)
+	catch (...)
 	{
 		UMUQFAIL("Failed to allocate memory!");
 	}
@@ -289,7 +289,7 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
 		{
 			if (i == j)
 			{
-				priorSigma[k] = static_cast<T>(1);
+				priorParam2[k] = static_cast<T>(1);
 			}
 		}
 	}
@@ -341,8 +341,8 @@ stdata<T>::stdata(stdata<T> &&other)
 	lowerBound = std::move(other.lowerBound);
 	upperBound = std::move(other.upperBound);
 	compositePriorDistribution = std::move(other.compositePriorDistribution);
-	priorMu = std::move(other.priorMu);
-	priorSigma = std::move(other.priorSigma);
+	priorParam1 = std::move(other.priorParam1);
+	priorParam2 = std::move(other.priorParam2);
 	auxilData = std::move(other.auxilData);
 	initMean = std::move(other.initMean);
 	localCovariance = std::move(other.localCovariance);
@@ -378,8 +378,8 @@ stdata<T> &stdata<T>::operator=(stdata<T> &&other)
 	lowerBound = std::move(other.lowerBound);
 	upperBound = std::move(other.upperBound);
 	compositePriorDistribution = std::move(other.compositePriorDistribution);
-	priorMu = std::move(other.priorMu);
-	priorSigma = std::move(other.priorSigma);
+	priorParam1 = std::move(other.priorParam1);
+	priorParam2 = std::move(other.priorParam2);
 	auxilData = std::move(other.auxilData);
 	initMean = std::move(other.initMean);
 	localCovariance = std::move(other.localCovariance);
@@ -417,8 +417,8 @@ void stdata<T>::swap(stdata<T> &other)
 	lowerBound.swap(other.lowerBound);
 	upperBound.swap(other.upperBound);
 	compositePriorDistribution.swap(other.compositePriorDistribution);
-	priorMu.swap(other.priorMu);
-	priorSigma.swap(other.priorSigma);
+	priorParam1.swap(other.priorParam1);
+	priorParam2.swap(other.priorParam2);
 	auxilData.swap(other.auxilData);
 	initMean.swap(other.initMean);
 	localCovariance.swap(other.localCovariance);
@@ -457,8 +457,8 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 		eachPopulationSize.reset();
 		lowerBound.reset();
 		upperBound.reset();
-		priorMu.reset();
-		priorSigma.reset();
+		priorParam1.reset();
+		priorParam2.reset();
 		localCovariance.reset();
 
 		std::cout << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
@@ -477,11 +477,11 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 		eachPopulationSize.reset(new int[maxGenerations]);
 		lowerBound.reset(new T[nDim]());
 		upperBound.reset(new T[nDim]());
-		priorMu.reset(new T[nDim]());
-		priorSigma.reset(new T[nDim * nDim]());
+		priorParam1.reset(new T[nDim]());
+		priorParam2.reset(new T[nDim * nDim]());
 		localCovariance.reset(new T[populationSize * nDim * nDim]());
 	}
-	catch (std::bad_alloc &e)
+	catch (...)
 	{
 		UMUQFAILRETURN("Failed to allocate memory!");
 	}
@@ -492,7 +492,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 		{
 			if (i == j)
 			{
-				priorSigma[k] = static_cast<T>(1);
+				priorParam2[k] = static_cast<T>(1);
 			}
 		}
 	}
@@ -669,7 +669,18 @@ bool stdata<T>::load(const char *fname)
 				}
 			}
 
-			if (priorType == 1) /* gaussian */
+			//! 0: uniform
+			if (priorType == 0)
+			{
+				for (n = 0; n < nDim; n++)
+				{
+					priorParam1[n] = lowerBound[n];
+					priorParam2[n] = upperBound[n];
+				}
+			}
+
+			//! 1: gaussian
+			if (priorType == 1)
 			{
 				f.rewindFile();
 
@@ -681,7 +692,7 @@ bool stdata<T>::load(const char *fname)
 					{
 						for (n = 0; n < nDim; n++)
 						{
-							priorMu[n] = p.at<T>(n + 1);
+							priorParam1[n] = p.at<T>(n + 1);
 						}
 						break;
 					}
@@ -697,21 +708,79 @@ bool stdata<T>::load(const char *fname)
 					{
 						for (n = 0; n < nDim * nDim; n++)
 						{
-							priorSigma[n] = p.at<T>(n + 1);
+							priorParam2[n] = p.at<T>(n + 1);
 						}
 						break;
 					}
 				}
 			}
 
-			// Composite prior at input
+			//! 2: exponential
+			if (priorType == 2)
+			{
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					if (p.at<std::string>(0) == "priorMu")
+					{
+						for (n = 0; n < nDim; n++)
+						{
+							priorParam1[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+			}
+
+			//! 3: gamma
 			if (priorType == 3)
+			{
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					//! \f$ \alpha \f$ parameter in Gamma distribution
+					if (p.at<std::string>(0) == "priorGammaAlpha")
+					{
+						for (n = 0; n < nDim; n++)
+						{
+							priorParam1[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+
+				f.rewindFile();
+
+				while (f.readLine())
+				{
+					p.parse(f.getLine());
+
+					//! \f$ \beta \f$ parameter in Gamma distribution
+					if (p.at<std::string>(0) == "priorGammaBeta")
+					{
+						for (n = 0; n < nDim; n++)
+						{
+							priorParam2[n] = p.at<T>(n + 1);
+						}
+						break;
+					}
+				}
+			}
+
+			//! 4:composite
+			if (priorType == 4)
 			{
 				try
 				{
-					compositePriorDistribution.reset(new T[nDim]());
+					compositePriorDistribution.reset(new int[nDim]());
 				}
-				catch (std::bad_alloc &e)
+				catch (...)
 				{
 					UMUQFAILRETURN("Failed to allocate memory!");
 				}
@@ -730,19 +799,11 @@ bool stdata<T>::load(const char *fname)
 
 						if (p.at<std::string>(0) == strt)
 						{
-							compositePriorDistribution[n] = p.at<T>(1);
-							lowerBound[n] = p.at<T>(2);
-							upperBound[n] = p.at<T>(3);
-							found = 1;
+							compositePriorDistribution[n] = p.at<int>(1);
+							priorParam1[n] = p.at<T>(2);
+							priorParam2[n] = p.at<T>(3);
 							break;
 						}
-					}
-
-					if (!found)
-					{
-						compositePriorDistribution[n] = 0;
-						lowerBound[n] = lb; /* Bdef value or Default LB */
-						upperBound[n] = ub; /* Bdef value of Default UB */
 					}
 				}
 			}
@@ -767,7 +828,7 @@ bool stdata<T>::load(const char *fname)
 				{
 					auxilData.reset(new T[auxilSize]());
 				}
-				catch (std::bad_alloc &e)
+				catch (...)
 				{
 					UMUQFAILRETURN("Failed to allocate memory!");
 				}
