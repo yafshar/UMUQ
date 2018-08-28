@@ -14,8 +14,6 @@ int main(int argc, char **argv)
 {
 	torc_init(argc, argv, 0);
 
-	tmcmc<double> t;
-
 	torc_finalize();
 
 	// int d = 2;
