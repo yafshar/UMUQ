@@ -143,3 +143,19 @@ database_test_SOURCES = data/database_test.cpp
 TESTS += datatype_test
 check_PROGRAMS += datatype_test
 datatype_test_SOURCES = data/datatype_test.cpp
+
+#inference
+#prior
+TESTS += priordistribution_test
+check_PROGRAMS += priordistribution_test
+priordistribution_test_SOURCES = inference/prior/priordistribution_test.cpp
+
+#tmcmc
+TESTS += tmcmc_test
+check_PROGRAMS += tmcmc_test
+tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
+
+#torc
+TESTS += torc_test
+check_PROGRAMS += torc_test
+torc_test_SOURCES = torc/torc_test.cpp

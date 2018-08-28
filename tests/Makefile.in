@@ -102,7 +102,9 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
-	database_test$(EXEEXT) datatype_test$(EXEEXT)
+	database_test$(EXEEXT) datatype_test$(EXEEXT) \
+	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
+	torc_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
@@ -117,7 +119,9 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
-	database_test$(EXEEXT) datatype_test$(EXEEXT)
+	database_test$(EXEEXT) datatype_test$(EXEEXT) \
+	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
+	torc_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -215,6 +219,10 @@ parser_test_LDADD = $(LDADD)
 am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
+am_priordistribution_test_OBJECTS =  \
+	inference/prior/priordistribution_test.$(OBJEXT)
+priordistribution_test_OBJECTS = $(am_priordistribution_test_OBJECTS)
+priordistribution_test_LDADD = $(LDADD)
 am_psrandom_test_OBJECTS = numerics/random/psrandom_test.$(OBJEXT)
 psrandom_test_OBJECTS = $(am_psrandom_test_OBJECTS)
 psrandom_test_LDADD = $(LDADD)
@@ -246,6 +254,12 @@ am_steepestdescent_test_OBJECTS =  \
 	numerics/multimin/steepestdescent_test.$(OBJEXT)
 steepestdescent_test_OBJECTS = $(am_steepestdescent_test_OBJECTS)
 steepestdescent_test_LDADD = $(LDADD)
+am_tmcmc_test_OBJECTS = inference/tmcmc/tmcmc_test.$(OBJEXT)
+tmcmc_test_OBJECTS = $(am_tmcmc_test_OBJECTS)
+tmcmc_test_LDADD = $(LDADD)
+am_torc_test_OBJECTS = torc/torc_test.$(OBJEXT)
+torc_test_OBJECTS = $(am_torc_test_OBJECTS)
+torc_test_LDADD = $(LDADD)
 am_utility_test_OBJECTS = misc/utility_test.$(OBJEXT)
 utility_test_OBJECTS = $(am_utility_test_OBJECTS)
 utility_test_LDADD = $(LDADD)
@@ -294,11 +308,13 @@ SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
-	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(steepestdescent_test_SOURCES) $(utility_test_SOURCES)
+	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(pyplot_test_SOURCES) $(runinfo_test_SOURCES) \
+	$(simplexnm2_test_SOURCES) $(simplexnm2rnd_test_SOURCES) \
+	$(simplexnm_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(steepestdescent_test_SOURCES) \
+	$(tmcmc_test_SOURCES) $(torc_test_SOURCES) \
+	$(utility_test_SOURCES)
 DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(bfgs_test_SOURCES) $(conjugatefr_test_SOURCES) \
 	$(conjugatepr_test_SOURCES) $(database_test_SOURCES) \
@@ -310,11 +326,13 @@ DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
-	$(psrandom_test_SOURCES) $(pyplot_test_SOURCES) \
-	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
-	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
-	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
-	$(steepestdescent_test_SOURCES) $(utility_test_SOURCES)
+	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
+	$(pyplot_test_SOURCES) $(runinfo_test_SOURCES) \
+	$(simplexnm2_test_SOURCES) $(simplexnm2rnd_test_SOURCES) \
+	$(simplexnm_test_SOURCES) $(stats_test_SOURCES) \
+	$(stdata_test_SOURCES) $(steepestdescent_test_SOURCES) \
+	$(tmcmc_test_SOURCES) $(torc_test_SOURCES) \
+	$(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -727,6 +745,9 @@ stdata_test_SOURCES = data/stdata_test.cpp
 runinfo_test_SOURCES = data/runinfo_test.cpp
 database_test_SOURCES = data/database_test.cpp
 datatype_test_SOURCES = data/datatype_test.cpp
+priordistribution_test_SOURCES = inference/prior/priordistribution_test.cpp
+tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
+torc_test_SOURCES = torc/torc_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -949,6 +970,19 @@ numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
+inference/prior/$(am__dirstamp):
+	@$(MKDIR_P) inference/prior
+	@: > inference/prior/$(am__dirstamp)
+inference/prior/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) inference/prior/$(DEPDIR)
+	@: > inference/prior/$(DEPDIR)/$(am__dirstamp)
+inference/prior/priordistribution_test.$(OBJEXT):  \
+	inference/prior/$(am__dirstamp) \
+	inference/prior/$(DEPDIR)/$(am__dirstamp)
+
+priordistribution_test$(EXEEXT): $(priordistribution_test_OBJECTS) $(priordistribution_test_DEPENDENCIES) $(EXTRA_priordistribution_test_DEPENDENCIES) 
+	@rm -f priordistribution_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(priordistribution_test_OBJECTS) $(priordistribution_test_LDADD) $(LIBS)
 numerics/random/$(am__dirstamp):
 	@$(MKDIR_P) numerics/random
 	@: > numerics/random/$(am__dirstamp)
@@ -1014,6 +1048,30 @@ numerics/multimin/steepestdescent_test.$(OBJEXT):  \
 steepestdescent_test$(EXEEXT): $(steepestdescent_test_OBJECTS) $(steepestdescent_test_DEPENDENCIES) $(EXTRA_steepestdescent_test_DEPENDENCIES) 
 	@rm -f steepestdescent_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(steepestdescent_test_OBJECTS) $(steepestdescent_test_LDADD) $(LIBS)
+inference/tmcmc/$(am__dirstamp):
+	@$(MKDIR_P) inference/tmcmc
+	@: > inference/tmcmc/$(am__dirstamp)
+inference/tmcmc/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) inference/tmcmc/$(DEPDIR)
+	@: > inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/tmcmc_test.$(OBJEXT): inference/tmcmc/$(am__dirstamp) \
+	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
+
+tmcmc_test$(EXEEXT): $(tmcmc_test_OBJECTS) $(tmcmc_test_DEPENDENCIES) $(EXTRA_tmcmc_test_DEPENDENCIES) 
+	@rm -f tmcmc_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tmcmc_test_OBJECTS) $(tmcmc_test_LDADD) $(LIBS)
+torc/$(am__dirstamp):
+	@$(MKDIR_P) torc
+	@: > torc/$(am__dirstamp)
+torc/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) torc/$(DEPDIR)
+	@: > torc/$(DEPDIR)/$(am__dirstamp)
+torc/torc_test.$(OBJEXT): torc/$(am__dirstamp) \
+	torc/$(DEPDIR)/$(am__dirstamp)
+
+torc_test$(EXEEXT): $(torc_test_OBJECTS) $(torc_test_DEPENDENCIES) $(EXTRA_torc_test_DEPENDENCIES) 
+	@rm -f torc_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(torc_test_OBJECTS) $(torc_test_LDADD) $(LIBS)
 misc/utility_test.$(OBJEXT): misc/$(am__dirstamp) \
 	misc/$(DEPDIR)/$(am__dirstamp)
 
@@ -1024,6 +1082,8 @@ utility_test$(EXEEXT): $(utility_test_OBJECTS) $(utility_test_DEPENDENCIES) $(EX
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f data/*.$(OBJEXT)
+	-rm -f inference/prior/*.$(OBJEXT)
+	-rm -f inference/tmcmc/*.$(OBJEXT)
 	-rm -f io/*.$(OBJEXT)
 	-rm -f misc/*.$(OBJEXT)
 	-rm -f numerics/*.$(OBJEXT)
@@ -1031,6 +1091,7 @@ mostlyclean-compile:
 	-rm -f numerics/function/*.$(OBJEXT)
 	-rm -f numerics/multimin/*.$(OBJEXT)
 	-rm -f numerics/random/*.$(OBJEXT)
+	-rm -f torc/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -1039,6 +1100,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/datatype_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/runinfo_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/prior/$(DEPDIR)/priordistribution_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/tmcmc_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/pyplot_test.Po@am__quote@
@@ -1067,6 +1130,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/steepestdescent_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@torc/$(DEPDIR)/torc_test.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1515,6 +1579,27 @@ datatype_test.log: datatype_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+priordistribution_test.log: priordistribution_test$(EXEEXT)
+	@p='priordistribution_test$(EXEEXT)'; \
+	b='priordistribution_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tmcmc_test.log: tmcmc_test$(EXEEXT)
+	@p='tmcmc_test$(EXEEXT)'; \
+	b='tmcmc_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+torc_test.log: torc_test$(EXEEXT)
+	@p='torc_test$(EXEEXT)'; \
+	b='torc_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1597,6 +1682,10 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f data/$(DEPDIR)/$(am__dirstamp)
 	-rm -f data/$(am__dirstamp)
+	-rm -f inference/prior/$(DEPDIR)/$(am__dirstamp)
+	-rm -f inference/prior/$(am__dirstamp)
+	-rm -f inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
+	-rm -f inference/tmcmc/$(am__dirstamp)
 	-rm -f io/$(DEPDIR)/$(am__dirstamp)
 	-rm -f io/$(am__dirstamp)
 	-rm -f misc/$(DEPDIR)/$(am__dirstamp)
@@ -1611,6 +1700,8 @@ distclean-generic:
 	-rm -f numerics/multimin/$(am__dirstamp)
 	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/random/$(am__dirstamp)
+	-rm -f torc/$(DEPDIR)/$(am__dirstamp)
+	-rm -f torc/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1621,7 +1712,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1667,7 +1758,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
