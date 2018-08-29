@@ -29,6 +29,14 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * \param b  Upper bound
      */
     uniformDistribution(T const a, T const b);
+
+    /*!
+     * \brief Construct a new uniform Distribution object
+     * 
+     * \param a  Lower bound
+     * \param b  Upper bound
+     * \param n  Total number of Lower bound + Upper bound inputs
+     */
     uniformDistribution(T const *a, T const *b, int const n);
 
     /*!
@@ -54,6 +62,17 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * \returns  Log of density function value
      */
     inline T uniformDistribution_lf(T const *x);
+
+  private:
+    //! Const value for uniform distribution function
+    T uniformDistribution_fValue;
+    //! Const value for logarithm of the uniform distribution function
+    T uniformDistribution_lfValue;
+
+    //! Helper function
+    inline T uniformDistribution_f_();
+    //! Helper log function
+    inline T uniformDistribution_lf_();
 };
 
 template <typename T, class V>
@@ -61,13 +80,21 @@ uniformDistribution<T, V>::uniformDistribution(T const a, T const b) : densityFu
 {
     this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    uniformDistribution_fValue = uniformDistribution_f_();
+    uniformDistribution_lfValue = uniformDistribution_lf_();
 }
 
 template <typename T, class V>
 uniformDistribution<T, V>::uniformDistribution(T const *a, T const *b, int const n) : densityFunction<T, std::function<T(V)>>(a, b, n, "uniform")
 {
+    if (n % 2 != 0)
+    {
+        UMUQFAIL("Wrong number of inputs!");
+    }
     this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    uniformDistribution_fValue = uniformDistribution_f_();
+    uniformDistribution_lfValue = uniformDistribution_lf_();
 }
 
 template <typename T, class V>
@@ -76,39 +103,47 @@ uniformDistribution<T, V>::~uniformDistribution() {}
 template <typename T, class V>
 inline T uniformDistribution<T, V>::uniformDistribution_f(T const *x)
 {
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
             return T{};
         }
-        k += 2;
     }
-    T sum(1);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
-    {
-        sum *= static_cast<T>(1) / (this->params[k + 1] - this->params[k]);
-        k += 2;
-    }
-    return sum;
+    return uniformDistribution_fValue;
 }
 
 template <typename T, class V>
 inline T uniformDistribution<T, V>::uniformDistribution_lf(T const *x)
 {
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
             return std::numeric_limits<T>::infinity();
         }
-        k += 2;
     }
+    return uniformDistribution_lfValue;
+}
+
+template <typename T, class V>
+inline T uniformDistribution<T, V>::uniformDistribution_f_()
+{
+    T sum(1);
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    {
+        sum *= static_cast<T>(1) / (this->params[k + 1] - this->params[k]);
+    }
+    return sum;
+}
+
+template <typename T, class V>
+inline T uniformDistribution<T, V>::uniformDistribution_lf_()
+{
     T sum(0);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         sum -= std::log(this->params[k + 1] - this->params[k]);
-        k += 2;
     }
     return sum;
 }

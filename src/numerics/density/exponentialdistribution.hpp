@@ -25,6 +25,13 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * \param mu Mean, \f$ \mu \f$
      */
     explicit exponentialDistribution(T const mu);
+
+    /*!
+     * \brief Construct a new exponential Distribution object
+     * 
+     * \param mu Mean, \f$ \mu \f$
+     * \param n  Number of input
+     */
     explicit exponentialDistribution(T const *mu, int const n);
 
     /*!
@@ -121,7 +128,7 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
         }
     }
     T sum(0);
-    for (std::size_t i = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0; i < this->numParams; i++)
     {
         sum -= std::log(this->params[i] - x[i] / this->params[i]);
     }

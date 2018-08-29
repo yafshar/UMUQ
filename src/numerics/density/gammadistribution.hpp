@@ -34,6 +34,14 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \param beta   Scale parameter \f$ beta\f$
      */
     gammaDistribution(T const alpha, T const beta = T{1});
+
+    /*!
+     * \brief Construct a new gamma Distribution object
+     * 
+     * \param alpha  Shape parameter \f$\alpha\f$
+     * \param beta   Scale parameter \f$ beta\f$
+     * \param n      Total number of alpha + beta inputs
+     */
     gammaDistribution(T const *alpha, T const *beta, int const n);
 
     /*!
@@ -77,6 +85,10 @@ gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densit
 template <typename T, class V>
 gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int const n) : densityFunction<T, std::function<T(V)>>(alpha, beta, n, "gamma")
 {
+    if (n % 2 != 0)
+    {
+        UMUQFAIL("Wrong number of inputs!")
+    }
     this->f = std::bind(&gammaDistribution<T, V>::gammaDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
 }
@@ -92,7 +104,7 @@ template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
 {
     T sum(1);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         if (x[i] < T{})
         {
@@ -103,7 +115,6 @@ inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
             if (this->params[k] == static_cast<T>(1))
             {
                 sum *= static_cast<T>(1) / this->params[k + 1];
-                k += 2;
                 continue;
             }
             else
@@ -117,11 +128,8 @@ inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
         }
         else
         {
-            sum *= std::exp((this->params[k] - static_cast<T>(1)) * std::log(x[i] / this->params[k + 1]) -
-                            x[i] / this->params[k + 1] - std::lgamma(this->params[k])) /
-                   this->params[k + 1];
+            sum *= std::exp((this->params[k] - static_cast<T>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
         }
-        k += 2;
     }
     return sum;
 }
@@ -144,10 +152,9 @@ inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
         }
     }
     T sum(0);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<T>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
-        k += 2;
     }
     return sum;
 }

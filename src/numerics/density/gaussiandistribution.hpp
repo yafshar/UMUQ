@@ -26,6 +26,14 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * \param sigma  Standard deviation \f$ \sigma \f$
      */
     gaussianDistribution(T const mu, T const sigma);
+
+    /*!
+     * \brief Construct a new gaussian Distribution object
+     * 
+     * \param mu     Mean, \f$ \mu \f$
+     * \param sigma  Standard deviation \f$ \sigma \f$
+     * \param n      Total number of Mean + Standard deviation inputs
+     */
     gaussianDistribution(T const *mu, T const *sigma, int const n);
 
     /*!
@@ -69,6 +77,10 @@ gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : de
 template <typename T, class V>
 gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, int const n) : densityFunction<T, std::function<T(V)>>(mu, sigma, n, "gaussian")
 {
+    if (n % 2 != 0)
+    {
+        UMUQFAIL("Wrong number of inputs!");
+    }
     this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
 }
@@ -84,11 +96,10 @@ template <typename T, class V>
 inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
 {
     T sum(1);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
         sum *= static_cast<T>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
-        k += 2;
     }
     return sum;
 }
@@ -104,11 +115,10 @@ template <typename T, class V>
 inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
 {
     T sum(0);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++)
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
         T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
         sum += -0.5 * M_L2PI - std::log(this->params[k + 1]) - 0.5 * xSigma * xSigma;
-        k += 2;
     }
     return sum;
 }
