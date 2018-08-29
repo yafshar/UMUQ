@@ -328,7 +328,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::UNIFORM:
         try
         {
-            unfm.reset(new uniformDistribution<T>(Param1, Param2, nDim));
+            unfm.reset(new uniformDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -338,7 +338,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::GAUSSIAN:
         try
         {
-            mvnp.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim));
+            mvnp.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -348,7 +348,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::EXPONENTIAL:
         try
         {
-            expo.reset(new exponentialDistribution<T>(Param1, nDim));
+            expo.reset(new exponentialDistribution<T>(Param1, nDim * 2));
         }
         catch (...)
         {
@@ -358,7 +358,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::GAMMA:
         try
         {
-            gamm.reset(new gammaDistribution<T>(Param1, Param2, nDim));
+            gamm.reset(new gammaDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -486,7 +486,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                expo.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL * 2));
+                expo.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL));
             }
             catch (...)
             {
@@ -605,6 +605,7 @@ T priorDistribution<T>::pdf(T const *x)
         return sum;
         break;
     }
+    UMUQFAIL("Unknown Prior type!");
 }
 
 template <typename T>
@@ -665,6 +666,7 @@ T priorDistribution<T>::logpdf(T const *x)
         return sum;
         break;
     }
+    UMUQFAIL("Unknown Prior type!");
 }
 
 #endif // UMUQ_PRIORDISTRIBUTION
