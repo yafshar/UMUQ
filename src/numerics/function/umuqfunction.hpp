@@ -12,94 +12,94 @@ class umuqFunction
 {
 public:
   /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param Name  Function name
-     */
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Name  Function name
+   */
   explicit umuqFunction(char const *Name = "");
 
   /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param nDim  Number of dimensions (Number of parameters) 
-     * \param Name  Function name
-     */
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param nDim  Number of dimensions (Number of parameters) 
+   * \param Name  Function name
+   */
   umuqFunction(int const nDim, char const *Name = "");
 
   /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param Params    Input parameters of the Function object
-     * \param NumParams Number of dimensions (Number of parameters) 
-     * \param Name      Function name
-     */
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Params    Input parameters of the Function object
+   * \param NumParams Number of dimensions (Number of parameters) 
+   * \param Name      Function name
+   */
   umuqFunction(T const *Params, int const NumParams, char const *Name = "");
 
   /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param Params1    Input parameters of the Function object
-     * \param Params2    Input parameters of the Function object
-     * \param NumParams  Number of dimensions (Number of parameters) 
-     * \param Name       Function name
-     */
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Params1    Input parameters of the Function object
+   * \param Params2    Input parameters of the Function object
+   * \param NumParams  Number of dimensions (Number of parameters) 
+   * \param Name       Function name
+   */
   umuqFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
 
   /*!
-     * \brief Construct a new umuqFunction object
-     *  
-     * \param Params  Input parameters of the Function object
-     * \param Name    Function name
-     */
+   * \brief Construct a new umuqFunction object
+   *  
+   * \param Params  Input parameters of the Function object
+   * \param Name    Function name
+   */
   umuqFunction(std::vector<T> const &Params, char const *Name = "");
 
   /*!
-     * \brief Construct a new umuqFunction object
-     *  
-     * \param Params1  Input parameters of the Function object
-     * \param Params2  Input parameters of the Function object
-     * \param Name    Function name
-     */
+   * \brief Construct a new umuqFunction object
+   *  
+   * \param Params1  Input parameters of the Function object
+   * \param Params2  Input parameters of the Function object
+   * \param Name    Function name
+   */
   umuqFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
   /*!
-     * \brief Destroy the umuq Function object
-     * 
-     */
+   * \brief Destroy the umuq Function object
+   * 
+   */
   ~umuqFunction();
 
   /*!
-     * \brief Move constructor, Construct a new umuqFunction object
-     * 
-     * \param other umuqFunction object
-     */
+   * \brief Move constructor, Construct a new umuqFunction object
+   * 
+   * \param other umuqFunction object
+   */
   umuqFunction(umuqFunction<T, F> &&other);
 
   /*!
-     * \brief Move assignment operator
-     * 
-     */
+   * \brief Move assignment operator
+   * 
+   */
   umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
 
   /*!
-     * \brief Get the Name object
-     * 
-     * \return std::string const 
-     */
+   * \brief Get the Name object
+   * 
+   * \return std::string const 
+   */
   std::string const getName() const;
 
   /*!
-     * \brief Set the Name object
-     * 
-     */
+   * \brief Set the Name object
+   * 
+   */
   void setName(char const *Name);
 
   /*!
-     * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
-     * 
-     * \return true   If it stores a callable function target at f
-     * \return false 
-     */
+   * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
+   * 
+   * \return true   If it stores a callable function target at f
+   * \return false 
+   */
   explicit operator bool() const noexcept;
 
 private:
@@ -121,10 +121,10 @@ public:
 
 public:
   /*!
-     * \brief A general-purpose polymorphic function wrapper
-     * 
-     * \returns the function value
-     */
+   * \brief A general-purpose polymorphic function wrapper
+   * 
+   * \returns the function value
+   */
   F f;
 };
 
@@ -155,6 +155,10 @@ umuqFunction<T, F>::umuqFunction(T const *Params1, T const *Params2, int const N
                                                                                                               numParams(NumParams > 0 ? NumParams : 0),
                                                                                                               f(nullptr)
 {
+  if (numParams % 2 != 0)
+  {
+    UMUQFAIL("Wrong input size!");
+  }
   params.resize(numParams);
   for (std::size_t i = 0, k = 0; i < numParams / 2; i++)
   {
