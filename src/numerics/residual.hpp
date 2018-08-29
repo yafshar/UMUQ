@@ -1,7 +1,7 @@
 #ifndef UMUQ_RESIDUAL_H
 #define UMUQ_RESIDUAL_H
 
-enum
+enum ErrorTypes
 {
     AbsoluteError = -1,
     ScaledError = -2,
@@ -28,7 +28,7 @@ class residual
      * 
      * \param ierrorType Input error type is a residual type (default AbsoluteError) 
      */
-    residual(int const ierrorType = AbsoluteError);
+    residual(int const ierrorType = ErrorTypes::AbsoluteError);
 
     /*!
      * \brief Construct a new residual object
@@ -65,7 +65,7 @@ class residual
      * 
      * \return Residual based on error type
      */
-    T operator()(T const &observed, T const &predicted);
+    inline T operator()(T const &observed, T const &predicted);
 
   private:
     //! Error type in computing residuals
@@ -91,20 +91,20 @@ residual<T>::residual(std::string const &ierrorType)
 {
     if (ierrorType == "absolute" || ierrorType == "Absolute" || ierrorType == "AbsoluteError")
     {
-        this->errorType = AbsoluteError;
+        this->errorType = ErrorTypes::AbsoluteError;
     }
     else if (ierrorType == "scaled" || ierrorType == "Scaled" || ierrorType == "ScaledError")
     {
-        this->errorType = ScaledError;
+        this->errorType = ErrorTypes::ScaledError;
     }
     else if (ierrorType == "squared" || ierrorType == "Squared" || ierrorType == "SquredError")
     {
-        this->errorType = SquredError;
+        this->errorType = ErrorTypes::SquredError;
     }
     else
     {
         UMUQWARNING("Error type is unknown : Change to the default absolute Error!");
-        this->errorType = AbsoluteError;
+        this->errorType = ErrorTypes::AbsoluteError;
     }
 }
 
@@ -122,15 +122,15 @@ bool residual<T>::set(std::string const &ierrorType)
 {
     if (ierrorType == "absolute" || ierrorType == "Absolute" || ierrorType == "AbsoluteError")
     {
-        this->errorType = AbsoluteError;
+        this->errorType = ErrorTypes::AbsoluteError;
     }
     else if (ierrorType == "scaled" || ierrorType == "Scaled" || ierrorType == "ScaledError")
     {
-        this->errorType = ScaledError;
+        this->errorType = ErrorTypes::ScaledError;
     }
     else if (ierrorType == "squared" || ierrorType == "Squared" || ierrorType == "SquredError")
     {
-        this->errorType = SquredError;
+        this->errorType = ErrorTypes::SquredError;
     }
     else
     {
@@ -151,7 +151,7 @@ bool residual<T>::set(std::string const &ierrorType)
 template <typename T>
 bool residual<T>::set(int ierrorType)
 {
-    if (ierrorType == AbsoluteError || ierrorType == ScaledError || ierrorType == SquredError)
+    if (ierrorType == ErrorTypes::AbsoluteError || ierrorType == ErrorTypes::ScaledError || ierrorType == ErrorTypes::SquredError)
     {
         this->errorType = ierrorType;
     }
@@ -171,19 +171,19 @@ bool residual<T>::set(int ierrorType)
  * \return Residual based on error type
  */
 template <typename T>
-T residual<T>::operator()(T const &observed, T const &predicted)
+inline T residual<T>::operator()(T const &observed, T const &predicted)
 {
     switch (this->errorType)
     {
-    case AbsoluteError:
+    case ErrorTypes::AbsoluteError:
         return std::abs(observed - predicted);
-    case ScaledError:
+    case ErrorTypes::ScaledError:
         return std::abs(observed - predicted) / std::abs(observed);
-    case SquredError:
+    case ErrorTypes::SquredError:
         return (observed - predicted) * (observed - predicted);
     default:
         return std::abs(observed - predicted);
     }
 }
 
-#endif //UMUQ_RESIDUAL_H
+#endif //UMUQ_RESIDUAL
