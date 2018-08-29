@@ -5,9 +5,13 @@
 #include <UMUQ_config.h>
 #endif /* HAVE_CONFIG_H */
 
-#ifdef HAVE_TORC
+// #define HAVE_TORC 1
+// #define HAVE_GOOGLETEST 1
+// #define UMUQ_UNITTEST
+
+#if HAVE_TORC == 1
 #include <torc.h>
-#if defined(HAVE_GOOGLETEST) && defined(UMUQ_UNITTEST)
+#if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
 #include "gtest/gtest.h"
 
 /*!
@@ -15,11 +19,20 @@
  * 
  */
 class torcEnvironment : public ::testing::Environment
-#else
-class torcEnvironment
-#endif //HAVE_GOOGLETEST
 {
   public:
+    /*!
+     * \brief Construct a new torc Environment object
+     *
+     */
+    torcEnvironment() : ::testing::Environment() {}
+#else
+class torcEnvironment
+{
+  public:
+    torcEnvironment(){};
+#endif //HAVE_GOOGLETEST
+
     /*!
      * \brief Set up the torc object
      * 
@@ -57,7 +70,59 @@ class torcEnvironment
      * 
      */
     virtual ~torcEnvironment() {}
+
+  private:
+    // Make it noncopyable
+    torcEnvironment(torcEnvironment const &) = delete;
+
+    // Make it not assignable
+    torcEnvironment &operator=(torcEnvironment const &) = delete;
 };
+
+#if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
+/*!
+ * \brief New event listener to make sure of Abort in case of failure
+ * 
+ */
+class UMUQEventListener : public ::testing::EmptyTestEventListener
+{
+  public:
+    UMUQEventListener() : ::testing::EmptyTestEventListener(),
+                          result_vector() {}
+
+    ~UMUQEventListener() {}
+
+    // Called before a test starts.
+    virtual void OnTestStart(::testing::TestInfo const &test_info)
+    {
+    }
+
+    // Called after an assertion failure or an explicit SUCCESS() macro.
+    virtual void OnTestPartResult(::testing::TestPartResult const &test_part_result)
+    {
+        result_vector.push_back(test_part_result);
+    }
+
+    // Called after a test ends.
+    virtual void OnTestEnd(::testing::TestInfo const &test_info)
+    {
+        for (std::size_t i = 0; i < result_vector.size(); i++)
+        {
+            ::testing::TestPartResult const test_part_result = result_vector.at(i);
+            if (test_part_result.failed())
+            {
+                std::string UMUQ_message = "Error: " + std::string(test_part_result.file_name()) + ":" + std::to_string(test_part_result.line_number());
+                UMUQFAIL(UMUQ_message);
+            }
+        }
+        result_vector.clear();
+    }
+
+  private:
+    std::vector<::testing::TestPartResult> result_vector;
+};
+
+#endif
 #else
 #define CALL_BY_COP (int)(0x0001)
 #define CALL_BY_REF (int)(0x0002)
@@ -111,34 +176,34 @@ int torc_fetch_work();
 
 /*!
  * \brief torcEnvironment class
- * 
+ *
  */
 class torcEnvironment
 {
   public:
     /*!
      * \brief Set up the torc object
-     * 
+     *
      */
     virtual void SetUp() {}
 
     /*!
      * \brief Set up the torc object
-     * 
-     * \param argc 
-     * \param argv 
+     *
+     * \param argc
+     * \param argv
      */
     virtual void SetUp(int argc, char **argv) {}
 
     /*!
      * \brief Finish the torc
-     * 
+     *
      */
     virtual void TearDown() {}
 
     /*!
      * \brief Destroy the torc Environment object
-     * 
+     *
      */
     virtual ~torcEnvironment() {}
 };
