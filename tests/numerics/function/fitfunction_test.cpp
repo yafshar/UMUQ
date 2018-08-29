@@ -42,7 +42,7 @@ class fitTest : public fitFunction<double>
         io f;
         {
             EXPECT_TRUE(f.openFile(filename));
-            ndata = 0;
+            int ndata = 0;
             while (f.readLine())
             {
                 ndata++;
@@ -51,17 +51,14 @@ class fitTest : public fitFunction<double>
             //!Rewind the file
             f.rewindFile();
 
-            idata.resize(ndata * 2);
+            this->x.resize(ndata * 2);
 
-            EXPECT_TRUE(f.loadMatrix<double>(idata.data(), ndata, 2));
+            EXPECT_TRUE(f.loadMatrix<double>(this->x.data(), ndata, 2));
 
             f.closeFile();
         }
         return true;
     }
-
-    int ndata;
-    std::vector<double> idata;
 };
 
 /*!
@@ -84,21 +81,23 @@ void f2(std::vector<double> const &x, std::vector<double> &y, double const *c)
 double fitfun(long long const other, double const *c, int const n, double *out, int const *info)
 {
     // To use the information from other class
-    auto obj = reinterpret_cast<fitTest *>(other);
+    auto obj = reinterpret_cast<fitFunction<double> *>(other);
 
     double sigma2 = std::pow(c[n - 1], 2);
 
-    std::vector<double> y(obj->ndata);
+    int const N = obj->x.size();
 
-    f2(obj->idata, y, c);
+    std::vector<double> y(N);
+
+    f2(obj->x, y, c);
 
     double sum{};
-    for (int i = 0, j = 1; i < obj->ndata; i++, j += 2)
+    for (int i = 0, j = 1; i < N; i++, j += 2)
     {
-        sum += std::pow(obj->idata[j] - y[i], 2);
+        sum += std::pow(obj->x[j] - y[i], 2);
     }
 
-    double res = obj->ndata * M_L2PI + obj->ndata * std::log(sigma2) + sum / sigma2;
+    double res = N * M_L2PI + N * std::log(sigma2) + sum / sigma2;
     return -res * 0.5;
 }
 
@@ -110,6 +109,10 @@ TEST(fitFunction_test, HandlesexternalfitFunctionConstruction)
     fitTest fitExternal;
     EXPECT_TRUE(fitExternal.init());
     EXPECT_TRUE(fitExternal.set(fitfun));
+
+    std::vector<double> c = {2., 3.0, 1.0, 0.5};
+    double out[4];
+    std::cout << fitExternal.fun.f(reinterpret_cast<long long>(&fitExternal), c.data(), 4, out, nullptr) << std::endl;
 }
 
 int main(int argc, char **argv)
