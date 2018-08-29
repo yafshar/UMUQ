@@ -26,7 +26,7 @@ It should contain the following files:
 
 **densityFunction** a density function or a probability density (PDF) function class    
 **differentiableFunctionMinimizer** a base class which is for finding minima of arbitrary multidimensional functions with derivative    
-**fitFunction**    
+**fitFunction**  a base class which is for fitting function in the inference process     
 **functionMinimizer** a base class which is for finding minima of arbitrary multidimensional functions    
 **functiontype** a collection of Function types for convenience use    
 **linearFunctionWrapper** wrapper for an external Multidimensional function    
