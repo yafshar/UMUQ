@@ -153,13 +153,13 @@ inline void funcallcounter::count_Task(int *x) { *x = funcallcounter::num_of_loc
  */
 inline void funcallcounter::count()
 {
-    int maxNumNodes = torc_num_nodes();
+    int const maxNumNodes = torc_num_nodes();
     std::vector<int> c(maxNumNodes, 0);
     for (int i = 0; i < maxNumNodes; i++)
     {
         int *cp = c.data() + i;
         torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())funcallcounter::count_Task, 1,
-                       1, MPI_INT, CALL_BY_VAL,
+                       1, MPI_INT, CALL_BY_REF,
                        cp);
     }
     torc_waitall();
