@@ -55,6 +55,10 @@ TESTS += function_test
 check_PROGRAMS += function_test
 function_test_SOURCES = numerics/function/function_test.cpp 
 
+TESTS += fitfunction_test
+check_PROGRAMS += fitfunction_test
+fitfunction_test_SOURCES = numerics/function/fitfunction_test.cpp 
+
 TESTS += functionminimizer_test
 check_PROGRAMS += functionminimizer_test
 functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp

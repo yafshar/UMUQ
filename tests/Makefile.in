@@ -93,14 +93,15 @@ TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
-	densityfunction_test$(EXEEXT) conjugatefr_test$(EXEEXT) \
-	conjugatepr_test$(EXEEXT) simplexnm_test$(EXEEXT) \
-	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
-	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
-	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
-	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
-	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	function_test$(EXEEXT) fitfunction_test$(EXEEXT) \
+	functionminimizer_test$(EXEEXT) densityfunction_test$(EXEEXT) \
+	conjugatefr_test$(EXEEXT) conjugatepr_test$(EXEEXT) \
+	simplexnm_test$(EXEEXT) simplexnm2_test$(EXEEXT) \
+	simplexnm2rnd_test$(EXEEXT) steepestdescent_test$(EXEEXT) \
+	bfgs_test$(EXEEXT) bfgs2_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
+	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
+	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
 	database_test$(EXEEXT) datatype_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
@@ -110,14 +111,15 @@ check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
 	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	function_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
-	densityfunction_test$(EXEEXT) conjugatefr_test$(EXEEXT) \
-	conjugatepr_test$(EXEEXT) simplexnm_test$(EXEEXT) \
-	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
-	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
-	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
-	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
-	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	function_test$(EXEEXT) fitfunction_test$(EXEEXT) \
+	functionminimizer_test$(EXEEXT) densityfunction_test$(EXEEXT) \
+	conjugatefr_test$(EXEEXT) conjugatepr_test$(EXEEXT) \
+	simplexnm_test$(EXEEXT) simplexnm2_test$(EXEEXT) \
+	simplexnm2rnd_test$(EXEEXT) steepestdescent_test$(EXEEXT) \
+	bfgs_test$(EXEEXT) bfgs2_test$(EXEEXT) utility_test$(EXEEXT) \
+	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
+	funcallcounter_test$(EXEEXT) io_test$(EXEEXT) \
+	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
 	database_test$(EXEEXT) datatype_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
@@ -186,6 +188,10 @@ eigen_test_LDADD = $(LDADD)
 am_factorial_test_OBJECTS = numerics/factorial_test.$(OBJEXT)
 factorial_test_OBJECTS = $(am_factorial_test_OBJECTS)
 factorial_test_LDADD = $(LDADD)
+am_fitfunction_test_OBJECTS =  \
+	numerics/function/fitfunction_test.$(OBJEXT)
+fitfunction_test_OBJECTS = $(am_fitfunction_test_OBJECTS)
+fitfunction_test_LDADD = $(LDADD)
 am_fitness_test_OBJECTS = numerics/fitness_test.$(OBJEXT)
 fitness_test_OBJECTS = $(am_fitness_test_OBJECTS)
 fitness_test_LDADD = $(LDADD)
@@ -303,9 +309,10 @@ SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
-	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
-	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
+	$(fitfunction_test_SOURCES) $(fitness_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(function_test_SOURCES) \
+	$(functionminimizer_test_SOURCES) $(io_test_SOURCES) \
+	$(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
@@ -321,9 +328,10 @@ DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(datatype_test_SOURCES) $(dcpse_test_SOURCES) \
 	$(densityfunction_test_SOURCES) $(eigen_io_test_SOURCES) \
 	$(eigen_test_SOURCES) $(factorial_test_SOURCES) \
-	$(fitness_test_SOURCES) $(funcallcounter_test_SOURCES) \
-	$(function_test_SOURCES) $(functionminimizer_test_SOURCES) \
-	$(io_test_SOURCES) $(knearestneighbors_test_SOURCES) \
+	$(fitfunction_test_SOURCES) $(fitness_test_SOURCES) \
+	$(funcallcounter_test_SOURCES) $(function_test_SOURCES) \
+	$(functionminimizer_test_SOURCES) $(io_test_SOURCES) \
+	$(knearestneighbors_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
@@ -724,6 +732,7 @@ dcpse_test_SOURCES = numerics/dcpse_test.cpp
 fitness_test_SOURCES = numerics/fitness_test.cpp 
 linearregression_test_SOURCES = numerics/linearregression_test.cpp 
 function_test_SOURCES = numerics/function/function_test.cpp 
+fitfunction_test_SOURCES = numerics/function/fitfunction_test.cpp 
 functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
 densityfunction_test_SOURCES = numerics/density/densityfunction_test.cpp 
 conjugatefr_test_SOURCES = numerics/multimin/conjugatefr_test.cpp 
@@ -903,6 +912,19 @@ numerics/factorial_test.$(OBJEXT): numerics/$(am__dirstamp) \
 factorial_test$(EXEEXT): $(factorial_test_OBJECTS) $(factorial_test_DEPENDENCIES) $(EXTRA_factorial_test_DEPENDENCIES) 
 	@rm -f factorial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(factorial_test_OBJECTS) $(factorial_test_LDADD) $(LIBS)
+numerics/function/$(am__dirstamp):
+	@$(MKDIR_P) numerics/function
+	@: > numerics/function/$(am__dirstamp)
+numerics/function/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/function/$(DEPDIR)
+	@: > numerics/function/$(DEPDIR)/$(am__dirstamp)
+numerics/function/fitfunction_test.$(OBJEXT):  \
+	numerics/function/$(am__dirstamp) \
+	numerics/function/$(DEPDIR)/$(am__dirstamp)
+
+fitfunction_test$(EXEEXT): $(fitfunction_test_OBJECTS) $(fitfunction_test_DEPENDENCIES) $(EXTRA_fitfunction_test_DEPENDENCIES) 
+	@rm -f fitfunction_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(fitfunction_test_OBJECTS) $(fitfunction_test_LDADD) $(LIBS)
 numerics/fitness_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -915,12 +937,6 @@ misc/funcallcounter_test.$(OBJEXT): misc/$(am__dirstamp) \
 funcallcounter_test$(EXEEXT): $(funcallcounter_test_OBJECTS) $(funcallcounter_test_DEPENDENCIES) $(EXTRA_funcallcounter_test_DEPENDENCIES) 
 	@rm -f funcallcounter_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(funcallcounter_test_OBJECTS) $(funcallcounter_test_LDADD) $(LIBS)
-numerics/function/$(am__dirstamp):
-	@$(MKDIR_P) numerics/function
-	@: > numerics/function/$(am__dirstamp)
-numerics/function/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) numerics/function/$(DEPDIR)
-	@: > numerics/function/$(DEPDIR)/$(am__dirstamp)
 numerics/function/function_test.$(OBJEXT):  \
 	numerics/function/$(am__dirstamp) \
 	numerics/function/$(DEPDIR)/$(am__dirstamp)
@@ -1119,6 +1135,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/density/$(DEPDIR)/densityfunction_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/fitfunction_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/function_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/functionminimizer_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/bfgs2_test.Po@am__quote@
@@ -1428,6 +1445,13 @@ linearregression_test.log: linearregression_test$(EXEEXT)
 function_test.log: function_test$(EXEEXT)
 	@p='function_test$(EXEEXT)'; \
 	b='function_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+fitfunction_test.log: fitfunction_test$(EXEEXT)
+	@p='fitfunction_test$(EXEEXT)'; \
+	b='fitfunction_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
