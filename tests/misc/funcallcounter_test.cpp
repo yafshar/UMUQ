@@ -21,8 +21,8 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     torc_register_task((void *)taskf);
 
     // Number of nodes
-    int nnodes = torc_num_nodes();
-    int ntasks = 100;
+    int const nnodes = torc_num_nodes();
+    int const ntasks = 100;
 
     for (int i = 0; i < ntasks; i++)
     {
@@ -31,10 +31,13 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     torc_waitall();
 
     fc.count();
+
+    EXPECT_EQ(fc.getLocalFunctionCallsNumber(), nnodes * ntasks);
     
     //! Reset the local counter to zero
     fc.reset();
 
+    EXPECT_EQ(fc.getLocalFunctionCallsNumber(), 0);
     EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks);
     EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks);
 
@@ -55,6 +58,13 @@ int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+
+    // Get the event listener list.
+    ::testing::TestEventListeners &listeners =
+        ::testing::UnitTest::GetInstance()->listeners();
+
+    // Adds UMUQ listener; Google Test owns this pointer
+    listeners.Append(new UMUQEventListener);
 
     return RUN_ALL_TESTS();
 }
