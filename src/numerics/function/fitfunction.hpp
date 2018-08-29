@@ -70,6 +70,9 @@ class fitFunction
 
     //! Function to be used in this fitFunction
     umuqFunction<T, F> fun;
+
+    //! Helper n-dimensional x vector
+    std::vector<T> x;
 };
 
 template <typename T, class F>
