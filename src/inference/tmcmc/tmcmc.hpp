@@ -4,9 +4,7 @@
 #include "data/stdata.hpp"
 #include "data/database.hpp"
 #include "data/runinfo.hpp"
-
 #include "numerics/function/fitfunction.hpp"
-
 #include "io/io.hpp"
 
 template <typename T, class F = F_FTYPE<T>>
@@ -41,7 +39,7 @@ public:
   runinfo<T> runData;
 
   //! fit function object
-  fitFunction<T, F> fitfun;
+  fitFunction<T, F> fit;
 
 private:
   //! stream data for getting the problem size and variables from the input file
