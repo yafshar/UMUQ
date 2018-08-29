@@ -68,6 +68,13 @@ class residual
     inline T operator()(T const &observed, T const &predicted);
 
   private:
+    // Make it noncopyable
+    residual(residual<T> const &) = delete;
+
+    // Make it not assignable
+    residual<T> &operator=(residual<T> const &) = delete;
+
+  private:
     //! Error type in computing residuals
     int errorType;
 };

@@ -93,6 +93,13 @@ class fitness
     inline std::string getMetricName();
 
   private:
+    // Make it noncopyable
+    fitness(fitness<T> const &) = delete;
+
+    // Make it not assignable
+    fitness<T> &operator=(fitness<T> const &) = delete;
+
+  private:
     //! Fitness metric name
     std::string fitnessMetricName;
 
