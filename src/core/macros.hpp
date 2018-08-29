@@ -188,7 +188,8 @@ std::string MPIErrorMessage(int const errorCode)
 } // namespace UMUQ
 
 #if HAVE_MPI == 1
-#define UMUQABORT MPI_Abort(MPI_COMM_WORLD, -1);
+#define UMUQABORT MPI_Abort(MPI_COMM_WORLD, -1); \
+                  throw(std::runtime_error(ss.str()));
 #else
 #define UMUQABORT throw(std::runtime_error(ss.str()));
 #endif // MPI
