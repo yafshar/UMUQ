@@ -5,9 +5,11 @@
 #include "data/database.hpp"
 #include "data/runinfo.hpp"
 
+#include "numerics/function/fitfunction.hpp"
+
 #include "io/io.hpp"
 
-template <typename T>
+template <typename T, class F = F_FTYPE<T>>
 class tmcmc
 {
 public:
@@ -15,9 +17,11 @@ public:
 
   bool init();
 
-  inline void setInputFileName(char const *fileName = "tmcmc.par")
+  inline bool setInputFileName(char const *fileName = "tmcmc.par")
   {
     inputFilename = std::string(fileName);
+    io f;
+    return f.isFileExist(inputFilename);
   }
 
 public:
@@ -36,34 +40,35 @@ public:
   //! Running data
   runinfo<T> runData;
 
+  //! fit function object
+  fitFunction<T, F> fitfun;
+
+private:
   //! stream data for getting the problem size and variables from the input file
   stdata<T> Data;
 };
 
-template <typename T>
-tmcmc<T>::tmcmc() : inputFilename("tmcmc.par")
+template <typename T, class F>
+tmcmc<T, F>::tmcmc() : inputFilename("tmcmc.par")
 {
 }
 
-template <typename T>
-bool tmcmc<T>::init()
+template <typename T, class F>
+bool tmcmc<T, F>::init()
 {
   // Read the input problem size and variables from an input file
   if (Data.load(inputFilename))
   {
-
     // Creating a database based on the read information
     currentData = std::move(database<T>(Data.nDim, Data.maxGenerations));
 
     // Creating a database based on the read information
     fullData = std::move(database<T>(Data.nDim, Data.maxGenerations));
 
-    if (runData.reset(Data.nDim, Data.maxGenerations))
-    {
-      return true;
-    }
+    //! Creating the run inofrmation data
+    runData = std::move(runinfo<T>(Data.nDim, Data.maxGenerations));
 
-    return false;
+    return true;
   }
   return false;
 }
