@@ -78,7 +78,7 @@ class torcEnvironment
         char **argv = NULL;
         int argc = 0;
 
-        torc_init(argc, argv, 0);
+        torc_init(argc, argv);
     }
 
     /*!
@@ -110,7 +110,7 @@ class torcEnvironment
             database_update_Task_registered<T> = true;
         }
 
-        torc_init(argc, argv, 0);
+        torc_init(argc, argv);
     }
 
     /*!

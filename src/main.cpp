@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-	torc_init(argc, argv, 0);
+	torc_init(argc, argv);
 
 	torc_finalize();
 
