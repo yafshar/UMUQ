@@ -17,6 +17,10 @@ static std::vector<Saru> saru(1);
 //! True if PRNG state has been initialized, and false otherwise (logical).
 static bool PRNG_initialized = false;
 
+//! True if Tasks have been registered, and false otherwise (logical).
+template<typename T>
+static bool PRNG_Task_registered = false;
+
 //! Muex object
 static std::mutex PRNG_m;
 
@@ -872,6 +876,12 @@ psrandom<T>::psrandom()
         {
             PRNG_seed = std::random_device{}();
         }
+
+        if (!PRNG_Task_registered<T>)
+        {
+            torc_register_task((void *)psrandom<T>::init_Task);
+            PRNG_Task_registered<T> = true;
+        }
     }
 };
 
@@ -894,6 +904,12 @@ psrandom<T>::psrandom(int const iseed)
         if (PRNG_seed == 0)
         {
             PRNG_seed = static_cast<std::size_t>(iseed);
+        }
+
+        if (!PRNG_Task_registered<T>)
+        {
+            torc_register_task((void *)psrandom<T>::init_Task);
+            PRNG_Task_registered<T> = true;
         }
     }
 }
@@ -962,8 +978,6 @@ bool psrandom<T>::init()
 
         PRNG_initialized = true;
     }
-
-    torc_register_task((void *)psrandom<T>::init_Task);
 
     int const nlocalworkers = torc_i_num_workers();
 
