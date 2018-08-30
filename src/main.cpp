@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "numerics/polynomial.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/knearestneighbors.hpp"
