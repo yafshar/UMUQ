@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "data/database.hpp"
 #include "gtest/gtest.h"
 
@@ -159,7 +159,7 @@ TEST(database_test, HandlesTask)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

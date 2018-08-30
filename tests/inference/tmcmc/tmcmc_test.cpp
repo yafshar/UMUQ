@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "inference/tmcmc/tmcmc.hpp"
 #include "gtest/gtest.h"
 
@@ -19,7 +19,7 @@ TEST(tmcmc_test, HandlesConstruction)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

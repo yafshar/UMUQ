@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "data/datatype.hpp"
 #include "gtest/gtest.h"
 
@@ -11,7 +11,7 @@ TEST(datatype_test, HandlesGlobalData)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

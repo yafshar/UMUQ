@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "data/mpidatatype.hpp"
 #include "gtest/gtest.h"
 
@@ -82,7 +82,7 @@ TEST(torc_test, HandlesClass)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

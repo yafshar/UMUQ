@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "misc/utility.hpp"
 #include "misc/parser.hpp"
 #include "gtest/gtest.h"
@@ -43,7 +43,7 @@ TEST(utility_test, HandlesExecuteCommand)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

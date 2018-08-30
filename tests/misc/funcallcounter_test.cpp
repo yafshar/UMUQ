@@ -1,7 +1,12 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "misc/funcallcounter.hpp"
 #include "gtest/gtest.h"
+
+/*!
+ * \brief In this test, it is important to register the task before calling the torcEnvironment
+ * 
+ */
 
 //! Create an instance of funcallcounter object
 funcallcounter fc;
@@ -18,10 +23,8 @@ void taskf()
 TEST(funcallcounter_test, HandlesFunctioncounter)
 {
     EXPECT_TRUE(fc.init());
-    torc_register_task((void *)taskf);
 
-    // Number of nodes
-    int const nnodes = torc_num_nodes();
+    // Number of tasks
     int const ntasks = 100;
 
     for (int i = 0; i < ntasks; i++)
@@ -32,14 +35,15 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
 
     fc.count();
 
-    EXPECT_EQ(fc.getLocalFunctionCallsNumber(), nnodes * ntasks);
-    
+    EXPECT_LE(fc.getLocalFunctionCallsNumber(), ntasks);
+
     //! Reset the local counter to zero
     fc.reset();
 
     EXPECT_EQ(fc.getLocalFunctionCallsNumber(), 0);
-    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks);
-    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks);
+
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), ntasks);
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), ntasks);
 
     for (int i = 0; i < ntasks * 2; i++)
     {
@@ -48,16 +52,21 @@ TEST(funcallcounter_test, HandlesFunctioncounter)
     torc_waitall();
 
     fc.count();
+
     fc.reset();
 
-    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), nnodes * ntasks * 2);
-    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), nnodes * ntasks * 3);
+    EXPECT_EQ(fc.getGlobalFunctionCallsNumber(), ntasks * 2);
+
+    EXPECT_EQ(fc.getTotalFunctionCallsNumber(), ntasks * 3);
 }
 
 int main(int argc, char **argv)
 {
+    //! First, we register the task
+    torc_register_task((void *)taskf);
+
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment);
+    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
