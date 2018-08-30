@@ -5,3 +5,4 @@ SUBDIRS = src tests
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 
 EXTRA_DIST = autogen.sh
+
