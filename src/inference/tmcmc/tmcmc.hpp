@@ -5,9 +5,11 @@
 #include "data/database.hpp"
 #include "data/runinfo.hpp"
 #include "numerics/function/fitfunction.hpp"
+#include "numerics/eigenlib.hpp"
+#include "numerics/random/psrandom.hpp"
 #include "io/io.hpp"
 
-template <typename T, class F = F_FTYPE<T>>
+template <typename T, class F = fitFunction<T>>
 class tmcmc
 {
 public:
@@ -39,11 +41,13 @@ public:
   runinfo<T> runData;
 
   //! fit function object
-  fitFunction<T, F> fit;
+  F fit;
 
 private:
   //! stream data for getting the problem size and variables from the input file
   stdata<T> Data;
+
+  // psrandom<> rand;
 };
 
 template <typename T, class F>
@@ -65,6 +69,11 @@ bool tmcmc<T, F>::init()
 
     //! Creating the run inofrmation data
     runData = std::move(runinfo<T>(Data.nDim, Data.maxGenerations));
+
+    if (!fit.init())
+    {
+      return false;
+    }
 
     return true;
   }
