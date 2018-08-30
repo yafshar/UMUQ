@@ -31,7 +31,7 @@ using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *
 
 //! True if update_Task has been registered, and false otherwise (logical).
 template <typename T>
-static bool update_Task_registered = false;
+static bool database_update_Task_registered = false;
 
 //! Muex object
 static std::mutex update_Task_m;
@@ -452,19 +452,10 @@ template <typename T>
 bool database<T>::registerTask()
 {
     {
-        // Make sure MPI is initilized
-        auto initialized = 0;
-        MPI_Initialized(&initialized);
-        if (!initialized)
-        {
-            UMUQFAILRETURN("MPI is not initialized! \n You should Initialize torc first!");
-        }
-    }
-    {
         std::lock_guard<std::mutex> lock(update_Task_m);
 
         // Check if psrandom is already initilized
-        if (update_Task_registered<T>)
+        if (database_update_Task_registered<T>)
         {
             return true;
         }
@@ -473,7 +464,7 @@ bool database<T>::registerTask()
         {
             UMUQFAILRETURN("Task Pointer is not assigend to the external function!");
         }
-        update_Task_registered<T> = true;
+        database_update_Task_registered<T> = true;
     }
 
     torc_register_task((void *)this->update_TaskP);
