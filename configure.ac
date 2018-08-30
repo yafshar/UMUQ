@@ -70,6 +70,10 @@ AX_MPI
 AC_MSG_CHECKING([for - POSIX threads - ])
 AX_PTHREAD
 
+### Chech if DEBUG preprocessor flag is enabled
+AC_MSG_CHECKING([for - DEBUG - ])
+AX_DEBUG
+
 ### Checking for TORC
 AC_MSG_CHECKING([for - TORC Library - ])
 AX_TORC
@@ -86,8 +90,12 @@ AX_FLANN
 AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
 AX_GOOGLETEST
 
-# Chech for Doxygen
-AC_MSG_CHECKING([ for - DOXYGEN - ])
+### Checking for python
+AC_MSG_CHECKING([for - PYTHON - ])
+AX_PYTHON
+
+### Chech for Doxygen
+AC_MSG_CHECKING([for - DOXYGEN - ])
 AX_DOXYGEN
 
 AC_LANG_PUSH([C++])
