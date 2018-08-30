@@ -29,7 +29,7 @@ class torcEnvironment
         char **argv = NULL;
         int argc = 0;
 
-        torc_init(argc, argv, 0);
+        torc_init(argc, argv);
     }
 
     /*!
@@ -40,7 +40,7 @@ class torcEnvironment
      */
     virtual void SetUp(int argc, char **argv)
     {
-        torc_init(argc, argv, 0);
+        torc_init(argc, argv);
     }
 
     /*!
@@ -67,7 +67,7 @@ class torcEnvironment
 #define CALL_BY_COP2 (int)(0x0005)
 #define CALL_BY_VAD (int)(0x0006)
 
-void torc_init(int argc, char *argv[], int ms);
+void torc_init(int argc, char *argv[]);
 void torc_reset_statistics();
 
 int torc_i_worker_id(void);
