@@ -91,8 +91,7 @@ extern "C" {
 #include <mutex>
 #include <functional>
 
-// #define HAVE_PYTHON 0
-#ifdef HAVE_PYTHON
+#if HAVE_PYTHON == 1
 #include <Python.h>
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
