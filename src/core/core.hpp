@@ -84,6 +84,15 @@ extern "C" {
 #include <mutex>
 #include <functional>
 
+#if HAVE_PYTHON == 1
+#include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+#if PY_MAJOR_VERSION >= 3
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+
 #ifdef _XOPEN_SOURCE
 #undef _XOPEN_SOURCE
 #endif
@@ -94,15 +103,6 @@ extern "C" {
 #define _BSD_SOURCE 1
 #ifdef HAVE_TORC
 #include <torc.h>
-#endif
-
-#if HAVE_PYTHON == 1
-#include <Python.h>
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <numpy/arrayobject.h>
-#if PY_MAJOR_VERSION >= 3
-#define PyString_FromString PyUnicode_FromString
-#endif
 #endif
 
 #ifdef M_PI
