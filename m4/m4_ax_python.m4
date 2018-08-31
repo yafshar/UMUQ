@@ -126,9 +126,6 @@ AC_DEFUN([AX_PYTHON], [
 		AC_MSG_RESULT([Library:     $ax_python_lib])
 		AC_MSG_RESULT([Include Dir: $ax_python_header])
 
-		CPPFLAGS_SAVED="$CPPFLAGS"
-		LDFLAGS_SAVED="$LDFLAGS"
-
 		if test x$ax_python_bin != xno; then
 			PYTHON_BIN=$ax_python_bin
 			AC_SUBST(PYTHON_BIN)
@@ -136,24 +133,22 @@ AC_DEFUN([AX_PYTHON], [
 		if test x$ax_python_lib != xno; then
 			PYTHON_LIB=$ax_python_lib
 			AC_SUBST(PYTHON_LIB)
-			LDFLAGS+=" -l$ax_python_lib"
 		fi
 		if test x$ax_python_header != xno; then
 			PYTHON_INCLUDE_DIR=$ax_python_header
 			AC_SUBST(PYTHON_INCLUDE_DIR)
-			CPPFLAGS+=" -I$ax_python_header"
 		fi
 	])
 
 	AM_CONDITIONAL([HAVE_PYTHON], [test x"$ax_python_ok" = xyes])
 	AM_COND_IF([HAVE_PYTHON], [
 			AC_DEFINE(HAVE_PYTHON, 1, [Define if you want to use PYTHON.])
+			CPPFLAGS+=" -I$ax_python_header"
+			LDFLAGS+=" -l$ax_python_lib"
 			AC_SUBST(CPPFLAGS)
 			AC_SUBST(LDFLAGS)
 		], [
 			AC_MSG_WARN([You can not use pyplot class without PYTHON !!!])
-			CPPFLAGS=CPPFLAGS_SAVED
-			LDFLAGS=LDFLAGS_SAVED
 	])
 
 	AC_MSG_RESULT()

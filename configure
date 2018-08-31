@@ -23024,9 +23024,6 @@ $as_echo "Library:     $ax_python_lib" >&6; }
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Include Dir: $ax_python_header" >&5
 $as_echo "Include Dir: $ax_python_header" >&6; }
 
-		CPPFLAGS_SAVED="$CPPFLAGS"
-		LDFLAGS_SAVED="$LDFLAGS"
-
 		if test x$ax_python_bin != xno; then
 			PYTHON_BIN=$ax_python_bin
 
@@ -23034,12 +23031,10 @@ $as_echo "Include Dir: $ax_python_header" >&6; }
 		if test x$ax_python_lib != xno; then
 			PYTHON_LIB=$ax_python_lib
 
-			LDFLAGS+=" -l$ax_python_lib"
 		fi
 		if test x$ax_python_header != xno; then
 			PYTHON_INCLUDE_DIR=$ax_python_header
 
-			CPPFLAGS+=" -I$ax_python_header"
 		fi
 
 fi
@@ -23057,6 +23052,8 @@ fi
 
 $as_echo "#define HAVE_PYTHON 1" >>confdefs.h
 
+			CPPFLAGS+=" -I$ax_python_header"
+			LDFLAGS+=" -l$ax_python_lib"
 
 
 
@@ -23064,8 +23061,6 @@ else
 
 			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: You can not use pyplot class without PYTHON !!!" >&5
 $as_echo "$as_me: WARNING: You can not use pyplot class without PYTHON !!!" >&2;}
-			CPPFLAGS=CPPFLAGS_SAVED
-			LDFLAGS=LDFLAGS_SAVED
 
 fi
 
