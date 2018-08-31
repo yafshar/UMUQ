@@ -131,7 +131,7 @@ Configure Information:
     DEFS            :   $DEFS
     CFLAGS          :   $CFLAGS
 
-  C++ Compiler      : $CXX
+  C++ Compiler      : $CX
     DEFS            :   $DEFS
     CXXFLAGS        :   $CXXFLAGS
 
@@ -145,3 +145,15 @@ Configure Information:
     GTEST_LDFLAGS   : $GTEST_LDFLAGS
     GTEST_LIBS      : $GTEST_LIBS
 ])
+
+AM_COND_IF([HAVE_PYTHON], [
+  AC_MSG_RESULT([
+  Results for Python:
+  Python binary     : $PYTHON_BIN
+    Library         :   $PYTHON_LIB
+    Include dir     :   $PYTHON_INCLUDE_DIR
+  ])
+])
+
+
+
