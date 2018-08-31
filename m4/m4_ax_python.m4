@@ -81,26 +81,44 @@ AC_DEFUN([AX_PYTHON], [
 			AC_CHECK_PROGS(PYTHON_BIN, [$python])
 			ax_python_bin=$PYTHON_BIN
 			if test x$ax_python_bin != x; then
-				AC_CHECK_LIB($ax_python_bin, main, ax_python_lib=$ax_python_bin, ax_python_lib=no)
+				AC_CHECK_LIB($ax_python_bin, main, 
+				[
+					ax_python_lib=$ax_python_bin
+				], [
+					ax_python_lib=no
+				])
+
 				if test x$ax_python_lib == xno; then
-					AC_CHECK_LIB(${ax_python_bin}m, main, ax_python_lib=${ax_python_bin}m, ax_python_lib=no)
+					AC_CHECK_LIB(${ax_python_bin}m, main, 
+					[
+						ax_python_lib=${ax_python_bin}m
+					], [
+						ax_python_lib=no
+					])
 				fi
+
 				if test x$ax_python_lib != xno; then
 					ax_python_header=`$ax_python_bin -c "from distutils.sysconfig import *; print(get_config_var('CONFINCLUDEPY'))"`
+					
 					if test x$ax_python_header != x; then
 						break;
 					fi
 				fi
 			fi
 		done
+
+		ax_python_ok=yes
 		if test x$ax_python_bin = x; then
 			ax_python_bin=no
+			ax_python_ok=no
 		fi
 		if test x$ax_python_header = x; then
 			ax_python_header=no
+			ax_python_ok=no
 		fi
 		if test x$ax_python_lib = x; then
 			ax_python_lib=no
+			ax_python_ok=no
 		fi
 
 		AC_MSG_RESULT([Results of the Python check:])
@@ -108,15 +126,22 @@ AC_DEFUN([AX_PYTHON], [
 		AC_MSG_RESULT([Library:     $ax_python_lib])
 		AC_MSG_RESULT([Include Dir: $ax_python_header])
 
-		if test x$ax_python_header != xno; then
-			PYTHON_INCLUDE_DIR=$ax_python_header
-			AC_SUBST(PYTHON_INCLUDE_DIR)
-			CPPFLAGS+=" -I$ax_python_header"
-			ax_python_ok=yes
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		LDFLAGS_SAVED="$LDFLAGS"
+
+		if test x$ax_python_bin != xno; then
+			PYTHON_BIN=$ax_python_bin
+			AC_SUBST(PYTHON_BIN)
 		fi
 		if test x$ax_python_lib != xno; then
 			PYTHON_LIB=$ax_python_lib
 			AC_SUBST(PYTHON_LIB)
+			LDFLAGS+=" -l$ax_python_lib"
+		fi
+		if test x$ax_python_header != xno; then
+			PYTHON_INCLUDE_DIR=$ax_python_header
+			AC_SUBST(PYTHON_INCLUDE_DIR)
+			CPPFLAGS+=" -I$ax_python_header"
 		fi
 	])
 
@@ -124,8 +149,11 @@ AC_DEFUN([AX_PYTHON], [
 	AM_COND_IF([HAVE_PYTHON], [
 			AC_DEFINE(HAVE_PYTHON, 1, [Define if you want to use PYTHON.])
 			AC_SUBST(CPPFLAGS)
+			AC_SUBST(LDFLAGS)
 		], [
 			AC_MSG_WARN([You can not use pyplot class without PYTHON !!!])
+			CPPFLAGS=CPPFLAGS_SAVED
+			LDFLAGS=LDFLAGS_SAVED
 	])
 
 	AC_MSG_RESULT()
