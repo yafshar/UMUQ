@@ -1810,8 +1810,6 @@ uninstall-am:
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am
 
-export LD_LIBRARY_PATH=${FLANN_LD_LIBRARY_PATH}:$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=${FLANN_LD_LIBRARY_PATH}:$DYLD_LIBRARY_PATH
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
