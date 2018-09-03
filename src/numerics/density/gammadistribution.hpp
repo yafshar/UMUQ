@@ -22,8 +22,9 @@
  * 
  * \tparam T Data type
  */
-template <typename T>
-class gammaDistribution : public densityFunction<T, FUN_x<T>>
+
+template <typename T, class V = T const *>
+class gammaDistribution : public densityFunction<T, std::function<T(V)>>
 {
   public:
     /*!
@@ -33,6 +34,15 @@ class gammaDistribution : public densityFunction<T, FUN_x<T>>
      * \param beta   Scale parameter \f$ beta\f$
      */
     gammaDistribution(T const alpha, T const beta = T{1});
+
+    /*!
+     * \brief Construct a new gamma Distribution object
+     * 
+     * \param alpha  Shape parameter \f$\alpha\f$
+     * \param beta   Scale parameter \f$ beta\f$
+     * \param n      Total number of alpha + beta inputs
+     */
+    gammaDistribution(T const *alpha, T const *beta, int const n);
 
     /*!
      * \brief Destroy the Gamma distribution object
@@ -47,7 +57,7 @@ class gammaDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns Density function value 
      */
-    inline T gammaDistribution_f(T const x);
+    inline T gammaDistribution_f(T const *x);
 
     /*!
      * \brief Log of Gamma distribution density function
@@ -56,7 +66,7 @@ class gammaDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns  Log of density function value 
      */
-    inline T gammaDistribution_lf(T const x);
+    inline T gammaDistribution_lf(T const *x);
 };
 
 /*!
@@ -65,11 +75,22 @@ class gammaDistribution : public densityFunction<T, FUN_x<T>>
  * \param alpha  Shape parameter \f$\alpha\f$
  * \param beta   Scale parameter \f$ beta\f$
  */
-template <typename T>
-gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, FUN_x<T>>(std::vector<T>{alpha, beta}.data(), 2, "gamma")
+template <typename T, class V>
+gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, std::function<T(V)>>(&alpha, &beta, 2, "gamma")
 {
-    this->f = std::bind(&gammaDistribution<T>::gammaDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gammaDistribution<T>::gammaDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gammaDistribution<T, V>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
+}
+
+template <typename T, class V>
+gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int const n) : densityFunction<T, std::function<T(V)>>(alpha, beta, n, "gamma")
+{
+    if (n % 2 != 0)
+    {
+        UMUQFAIL("Wrong number of inputs!")
+    }
+    this->f = std::bind(&gammaDistribution<T, V>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -79,34 +100,38 @@ gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : densityFu
  * 
  * \returns Density function value 
  */
-template <typename T>
-inline T gammaDistribution<T>::gammaDistribution_f(T const x)
+template <typename T, class V>
+inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
 {
-    if (x < T{})
+    T sum(1);
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
-        return T{};
-    }
-    else if (x == T{})
-    {
-        if (this->params[0] == static_cast<T>(1))
-        {
-            return static_cast<T>(1) / this->params[1];
-        }
-        else
+        if (x[i] < T{})
         {
             return T{};
         }
+        else if (x[i] == T{})
+        {
+            if (this->params[k] == static_cast<T>(1))
+            {
+                sum *= static_cast<T>(1) / this->params[k + 1];
+                continue;
+            }
+            else
+            {
+                return T{};
+            }
+        }
+        else if (this->params[k] == static_cast<T>(1))
+        {
+            sum *= std::exp(-x[i] / this->params[k + 1]) / this->params[k + 1];
+        }
+        else
+        {
+            sum *= std::exp((this->params[k] - static_cast<T>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
+        }
     }
-    else if (this->params[0] == static_cast<T>(1))
-    {
-        return std::exp(-x / this->params[1]) / this->params[1];
-    }
-    else
-    {
-        return std::exp((this->params[0] - static_cast<T>(1)) * std::log(x / this->params[1]) -
-                        x / this->params[1] - std::lgamma(this->params[0])) /
-               this->params[1];
-    }
+    return sum;
 }
 
 /*!
@@ -116,10 +141,22 @@ inline T gammaDistribution<T>::gammaDistribution_f(T const x)
  * 
  * \returns  Log of density function value 
  */
-template <typename T>
-inline T gammaDistribution<T>::gammaDistribution_lf(T const x)
+template <typename T, class V>
+inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
 {
-    return x < T{} ? -std::numeric_limits<T>::infinity() : -std::lgamma(this->params[0]) - this->params[0] * std::log(this->params[1]) + (this->params[0] - static_cast<T>(1)) * std::log(x) - x / this->params[1];
+    for (std::size_t i = 0; i < this->numParams / 2; i++)
+    {
+        if (x[i] < T{})
+        {
+            return -std::numeric_limits<T>::infinity();
+        }
+    }
+    T sum(0);
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    {
+        sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<T>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
+    }
+    return sum;
 }
 
-#endif // UMUQ_GAMMADISTRIBUTION_H
+#endif // UMUQ_GAMMADISTRIBUTION

@@ -35,6 +35,18 @@ class densityFunction : public umuqFunction<T, F>
      * \param Name       Distribution name
      */
     densityFunction(T const *Params, int const NumParams, char const *Name = "");
+    densityFunction(std::vector<T> const &Params, char const *Name = "");
+
+    /*!
+     * \brief Construct a new density Function object
+     * 
+     * \param Params1     Parameters of density Function object
+     * \param Params2     Parameters of density Function object
+     * \param NumParams   Number of parameters
+     * \param Name        Distribution name
+     */
+    densityFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
+    densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
     /*!
      * \brief Destroy the density Function object
@@ -70,6 +82,15 @@ densityFunction<T, F>::densityFunction(char const *Name) : umuqFunction<T, F>(Na
 
 template <typename T, class F>
 densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name) {}
+
+template <typename T, class F>
+densityFunction<T, F>::densityFunction(std::vector<T> const &Params, const char *Name) : umuqFunction<T, F>(Params, Name) {}
+
+template <typename T, class F>
+densityFunction<T, F>::densityFunction(T const *Params1, T const *Params2, int const NumParams, const char *Name) : umuqFunction<T, F>(Params1, Params2, NumParams, Name) {}
+
+template <typename T, class F>
+densityFunction<T, F>::densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, const char *Name) : umuqFunction<T, F>(Params1, Params2, Name) {}
 
 template <typename T, class F>
 densityFunction<T, F>::~densityFunction(){}

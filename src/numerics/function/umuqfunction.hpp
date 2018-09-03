@@ -10,103 +10,122 @@
 template <typename T, class F>
 class umuqFunction
 {
-  public:
-    /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param Name  Function name
-     */
-    explicit umuqFunction(char const *Name = "");
+public:
+  /*!
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Name  Function name
+   */
+  explicit umuqFunction(char const *Name = "");
 
-    /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param nDim  Number of dimensions (Number of parameters) 
-     * \param Name  Function name
-     */
-    umuqFunction(int const nDim, char const *Name = "");
+  /*!
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param nDim  Number of dimensions (Number of parameters) 
+   * \param Name  Function name
+   */
+  umuqFunction(int const nDim, char const *Name = "");
 
-    /*!
-     * \brief Construct a new umuqFunction object
-     * 
-     * \param Params    Input parameters of the Function object
-     * \param NumParams Number of dimensions (Number of parameters) 
-     * \param Name      Function name
-     */
-    umuqFunction(T const *Params, int const NumParams, char const *Name = "");
+  /*!
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Params    Input parameters of the Function object
+   * \param NumParams Number of dimensions (Number of parameters) 
+   * \param Name      Function name
+   */
+  umuqFunction(T const *Params, int const NumParams, char const *Name = "");
 
-    /*!
-     * \brief Construct a new umuqFunction object
-     *  
-     * \param Params  Input parameters of the Function object
-     * \param Name    Function name
-     */
-    umuqFunction(std::vector<T> const &Params, char const *Name = "");
+  /*!
+   * \brief Construct a new umuqFunction object
+   * 
+   * \param Params1    Input parameters of the Function object
+   * \param Params2    Input parameters of the Function object
+   * \param NumParams  Number of dimensions (Number of parameters) 
+   * \param Name       Function name
+   */
+  umuqFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
 
-    /*!
-     * \brief Destroy the umuq Function object
-     * 
-     */
-    ~umuqFunction();
+  /*!
+   * \brief Construct a new umuqFunction object
+   *  
+   * \param Params  Input parameters of the Function object
+   * \param Name    Function name
+   */
+  umuqFunction(std::vector<T> const &Params, char const *Name = "");
 
-    /*!
-     * \brief Move constructor, Construct a new umuqFunction object
-     * 
-     * \param other umuqFunction object
-     */
-    umuqFunction(umuqFunction<T, F> &&other);
+  /*!
+   * \brief Construct a new umuqFunction object
+   *  
+   * \param Params1  Input parameters of the Function object
+   * \param Params2  Input parameters of the Function object
+   * \param Name    Function name
+   */
+  umuqFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
-    /*!
-     * \brief Move assignment operator
-     * 
-     */
-    umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
+  /*!
+   * \brief Destroy the umuq Function object
+   * 
+   */
+  ~umuqFunction();
 
-    /*!
-     * \brief Get the Name object
-     * 
-     * \return std::string const 
-     */
-    std::string const getName() const;
+  /*!
+   * \brief Move constructor, Construct a new umuqFunction object
+   * 
+   * \param other umuqFunction object
+   */
+  umuqFunction(umuqFunction<T, F> &&other);
 
-    /*!
-     * \brief Set the Name object
-     * 
-     */
-    void setName(char const *Name);
+  /*!
+   * \brief Move assignment operator
+   * 
+   */
+  umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
 
-    /*!
-     * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
-     * 
-     * \return true   If it stores a callable function target at f
-     * \return false 
-     */
-    explicit operator bool() const noexcept;
+  /*!
+   * \brief Get the Name object
+   * 
+   * \return std::string const 
+   */
+  std::string const getName() const;
 
-  private:
-    // Make it noncopyable
-    umuqFunction(umuqFunction<T, F> const &) = delete;
+  /*!
+   * \brief Set the Name object
+   * 
+   */
+  void setName(char const *Name);
 
-    // Make it not assignable
-    umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
+  /*!
+   * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
+   * 
+   * \return true   If it stores a callable function target at f
+   * \return false 
+   */
+  explicit operator bool() const noexcept;
 
-  public:
-    //! Name of the function
-    std::string name;
+private:
+  // Make it noncopyable
+  umuqFunction(umuqFunction<T, F> const &) = delete;
 
-    //! Number of dimensions
-    std::size_t numParams;
+  // Make it not assignable
+  umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
 
-    //! Function parameters
-    std::vector<T> params;
+public:
+  //! Name of the function
+  std::string name;
 
-  public:
-    /*!
-     * \brief A general-purpose polymorphic function wrapper
-     * 
-     * \returns the function value
-     */
-    F f;
+  //! Number of dimensions
+  std::size_t numParams;
+
+  //! Function parameters
+  std::vector<T> params;
+
+public:
+  /*!
+   * \brief A general-purpose polymorphic function wrapper
+   * 
+   * \returns the function value
+   */
+  F f;
 };
 
 template <typename T, class F>
@@ -132,11 +151,45 @@ umuqFunction<T, F>::umuqFunction(T const *Params, int const NumParams, char cons
 }
 
 template <typename T, class F>
+umuqFunction<T, F>::umuqFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name) : name(Name),
+                                                                                                              numParams(NumParams > 0 ? NumParams : 0),
+                                                                                                              f(nullptr)
+{
+  if (numParams % 2 != 0)
+  {
+    UMUQFAIL("Wrong input size!");
+  }
+  params.resize(numParams);
+  for (std::size_t i = 0, k = 0; i < numParams / 2; i++)
+  {
+    params[k++] = Params1[i];
+    params[k++] = Params2[i];
+  }
+}
+
+template <typename T, class F>
 umuqFunction<T, F>::umuqFunction(std::vector<T> const &Params, char const *Name) : name(Name),
                                                                                    numParams(Params.size()),
                                                                                    params(Params),
                                                                                    f(nullptr)
 {
+}
+
+template <typename T, class F>
+umuqFunction<T, F>::umuqFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name) : name(Name),
+                                                                                                                   numParams(Params1.size() + Params2.size()),
+                                                                                                                   f(nullptr)
+{
+  if (Params1.size() != Params2.size())
+  {
+    UMUQFAIL("Wrong input size!");
+  }
+  params.resize(numParams);
+  for (std::size_t i = 0, k = 0; i < numParams / 2; i++)
+  {
+    params[k++] = Params1[i];
+    params[k++] = Params2[i];
+  }
 }
 
 template <typename T, class F>
@@ -153,12 +206,12 @@ umuqFunction<T, F>::umuqFunction(umuqFunction<T, F> &&other) : name(other.name),
 template <typename T, class F>
 umuqFunction<T, F> &umuqFunction<T, F>::operator=(umuqFunction<T, F> &&other)
 {
-    name = other.name;
-    numParams = other.numParams;
-    params = std::move(other.params);
-    f = std::move(other.f);
+  name = other.name;
+  numParams = other.numParams;
+  params = std::move(other.params);
+  f = std::move(other.f);
 
-    return *this;
+  return *this;
 }
 
 template <typename T, class F>

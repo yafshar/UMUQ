@@ -726,18 +726,18 @@ ioFormat::ioFormat(std::string const &_coeffSeparator,
  */
 inline bool ioFormat::operator==(ioFormat const &rhs)
 {
-    return this->coeffSeparator == rhs.coeffSeparator &&
-           this->rowSeparator == rhs.rowSeparator &&
-           this->rowPrefix == rhs.rowPrefix &&
-           this->rowSuffix == rhs.rowSuffix;
+    return coeffSeparator == rhs.coeffSeparator &&
+           rowSeparator == rhs.rowSeparator &&
+           rowPrefix == rhs.rowPrefix &&
+           rowSuffix == rhs.rowSuffix;
 }
 
 inline bool ioFormat::operator==(ioFormat const &rhs) const
 {
-    return this->coeffSeparator == rhs.coeffSeparator &&
-           this->rowSeparator == rhs.rowSeparator &&
-           this->rowPrefix == rhs.rowPrefix &&
-           this->rowSuffix == rhs.rowSuffix;
+    return coeffSeparator == rhs.coeffSeparator &&
+           rowSeparator == rhs.rowSeparator &&
+           rowPrefix == rhs.rowPrefix &&
+           rowSuffix == rhs.rowSuffix;
 }
 
 /*!
@@ -749,18 +749,18 @@ inline bool ioFormat::operator==(ioFormat const &rhs) const
  */
 inline bool ioFormat::operator!=(ioFormat const &rhs)
 {
-    return this->coeffSeparator != rhs.coeffSeparator ||
-           this->rowSeparator != rhs.rowSeparator ||
-           this->rowPrefix != rhs.rowPrefix ||
-           this->rowSuffix != rhs.rowSuffix;
+    return coeffSeparator != rhs.coeffSeparator ||
+           rowSeparator != rhs.rowSeparator ||
+           rowPrefix != rhs.rowPrefix ||
+           rowSuffix != rhs.rowSuffix;
 }
 
 inline bool ioFormat::operator!=(ioFormat const &rhs) const
 {
-    return this->coeffSeparator != rhs.coeffSeparator ||
-           this->rowSeparator != rhs.rowSeparator ||
-           this->rowPrefix != rhs.rowPrefix ||
-           this->rowSuffix != rhs.rowSuffix;
+    return coeffSeparator != rhs.coeffSeparator ||
+           rowSeparator != rhs.rowSeparator ||
+           rowPrefix != rhs.rowPrefix ||
+           rowSuffix != rhs.rowSuffix;
 }
 
 /*!
@@ -783,7 +783,7 @@ io::~io()
  * 
  * \returns true if the file is already opened 
  */
-inline bool io::isFileOpened() const { return this->fs.is_open(); }
+inline bool io::isFileOpened() const { return fs.is_open(); }
 
 /*!
  * \brief Check to see whether the file fileName exists and accessible to read or write!
@@ -820,19 +820,19 @@ inline bool io::isFileExist(std::string const &fileName)
  */
 bool io::openFile(const char *fileName, const std::ios_base::openmode mode)
 {
-    if (this->fs.is_open())
+    if (fs.is_open())
     {
         UMUQFAILRETURN("The requested File is already open by another stream!");
     }
 
-    this->fs.open(fileName, mode);
-    if (!this->fs.is_open())
+    fs.open(fileName, mode);
+    if (!fs.is_open())
     {
         UMUQFAILRETURN("The requested File to open does not exists!");
     }
 
     //! Returns false if an error has occurred on the associated stream.
-    if (this->fs.fail())
+    if (fs.fail())
     {
         UMUQFAILRETURN("An error has occurred on the associated stream from opening the file!");
     }
@@ -842,7 +842,7 @@ bool io::openFile(const char *fileName, const std::ios_base::openmode mode)
 
 bool io::openFile(std::string const &fileName, const std::ios_base::openmode mode)
 {
-    return io::openFile(&fileName[0], mode);
+    return openFile(&fileName[0], mode);
 }
 
 /*!
@@ -858,8 +858,8 @@ bool io::readLine(const char comment)
     std::string linetmp;
     for (;;)
     {
-        std::getline(this->fs, linetmp);
-        if (this->fs.good())
+        std::getline(fs, linetmp);
+        if (fs.good())
         {
             const std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
 
@@ -867,7 +867,7 @@ bool io::readLine(const char comment)
             if (linetmp.length() > 0 && linetmp[linePos] != comment)
             {
                 //Trim the empty space at the start of the line
-                this->line = linetmp.substr(linePos);
+                line = linetmp.substr(linePos);
                 return true;
             }
         }
@@ -886,10 +886,10 @@ bool io::readLine(const char comment)
 inline void io::rewindFile()
 {
     //clearing all error state flags if there is any
-    this->fs.clear();
+    fs.clear();
 
     //!Rewind the file
-    this->fs.seekg(0);
+    fs.seekg(0);
     return;
 }
 
@@ -899,7 +899,7 @@ inline void io::rewindFile()
  */
 inline void io::closeFile()
 {
-    this->fs.close();
+    fs.close();
     return;
 }
 
@@ -907,14 +907,14 @@ inline void io::closeFile()
  * \brief Get the stream
  * 
  */
-inline std::fstream &io::getFstream() { return this->fs; }
+inline std::fstream &io::getFstream() { return fs; }
 
 /*!
  * \brief Get the Line object
  * 
  * \return std::string& 
  */
-inline std::string &io::getLine() { return this->line; }
+inline std::string &io::getLine() { return line; }
 
 /*!
  * \brief Set the stream Precision 
@@ -948,8 +948,8 @@ inline void io::setPrecision(std::ostream &os)
  */
 inline void io::setWidth(int Width_)
 {
-    this->Width = Width_ < 0 ? std::ptrdiff_t{} : static_cast<std::ptrdiff_t>(Width_);
-    this->FixedWidth = Width_ >= 0;
+    Width = Width_ < 0 ? std::ptrdiff_t{} : static_cast<std::ptrdiff_t>(Width_);
+    FixedWidth = Width_ >= 0;
 }
 
 /*!
@@ -1050,11 +1050,11 @@ int io::getWidth(TD **idata, int const nRows, int const nCols, std::ostream &os)
 template <typename TM, typename TF>
 bool io::saveMatrix(TM &MX, TF const &IOfmt)
 {
-    if (this->fs.is_open())
+    if (fs.is_open())
     {
-        this->fs << std::fixed;
-        this->fs << MX.format(IOfmt);
-        this->fs << this->fmt.rowSeparator;
+        fs << std::fixed;
+        fs << MX.format(IOfmt);
+        fs << fmt.rowSeparator;
 
         return true;
     }
@@ -1078,7 +1078,7 @@ bool io::saveMatrix(TM &MX, TF const &IOfmt)
 template <typename TD>
 bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const options)
 {
-    if (!this->fs.is_open())
+    if (!fs.is_open())
     {
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
@@ -1086,58 +1086,58 @@ bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const opti
     std::string rowSeparator;
     if (options > 0)
     {
-        rowSeparator = this->fmt.rowSeparator;
-        this->fmt.rowSeparator = this->fmt.coeffSeparator;
+        rowSeparator = fmt.rowSeparator;
+        fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<TD>(this->fs);
+    setPrecision<TD>(fs);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
-        this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+        Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
         for (int i = 0; i < nRows; i++)
         {
             for (int j = 0; j < nCols; j++)
             {
                 std::stringstream sstr;
-                sstr.copyfmt(this->fs);
+                sstr.copyfmt(fs);
                 sstr << idata[i][j];
-                this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
             }
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0; i < nRows; ++i)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs.width(this->Width);
-            this->fs << idata[i][0];
+            fs << fmt.rowPrefix;
+            fs.width(Width);
+            fs << idata[i][0];
             for (int j = 1; j < nCols; ++j)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs.width(this->Width);
-                this->fs << idata[i][j];
+                fs << fmt.coeffSeparator;
+                fs.width(Width);
+                fs << idata[i][j];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
     }
     else
     {
         for (int i = 0; i < nRows; ++i)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs << idata[i][0];
+            fs << fmt.rowPrefix;
+            fs << idata[i][0];
             for (int j = 1; j < nCols; ++j)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs << idata[i][j];
+                fs << fmt.coeffSeparator;
+                fs << idata[i][j];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
     }
 
@@ -1147,14 +1147,14 @@ bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const opti
     }
     else if (options == 1)
     {
-        this->fmt.rowSeparator = rowSeparator;
-        this->fs << this->fmt.rowSeparator;
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.rowSeparator;
         return true;
     }
     else if (options == 2)
     {
-        this->fmt.rowSeparator = rowSeparator;
-        this->fs << this->fmt.coeffSeparator;
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.coeffSeparator;
         return true;
     }
     return false;
@@ -1184,12 +1184,12 @@ bool io::saveMatrix(TD **idata,
                     int const entries,
                     std::vector<ioFormat> const &form)
 {
-    if (!this->fs.is_open())
+    if (!fs.is_open())
     {
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<TD>(this->fs);
+    setPrecision<TD>(fs);
 
     //Default case, only one set of data
     if (entries == 1)
@@ -1199,56 +1199,56 @@ bool io::saveMatrix(TD **idata,
             std::string rowSeparator;
             if (options > 0)
             {
-                rowSeparator = this->fmt.rowSeparator;
-                this->fmt.rowSeparator = this->fmt.coeffSeparator;
+                rowSeparator = fmt.rowSeparator;
+                fmt.rowSeparator = fmt.coeffSeparator;
             }
 
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
-                this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
                 for (int i = 0; i < nRows; i++)
                 {
                     for (int j = 0; j < nCols[i]; j++)
                     {
                         std::stringstream sstr;
-                        sstr.copyfmt(this->fs);
+                        sstr.copyfmt(fs);
                         sstr << idata[i][j];
-                        this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                        Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    this->fs << this->fmt.rowPrefix;
-                    this->fs.width(this->Width);
-                    this->fs << idata[i][0];
+                    fs << fmt.rowPrefix;
+                    fs.width(Width);
+                    fs << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        this->fs << this->fmt.coeffSeparator;
-                        this->fs.width(this->Width);
-                        this->fs << idata[i][j];
+                        fs << fmt.coeffSeparator;
+                        fs.width(Width);
+                        fs << idata[i][j];
                     }
-                    this->fs << this->fmt.rowSuffix;
-                    this->fs << this->fmt.rowSeparator;
+                    fs << fmt.rowSuffix;
+                    fs << fmt.rowSeparator;
                 }
             }
             else
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    this->fs << this->fmt.rowPrefix;
-                    this->fs << idata[i][0];
+                    fs << fmt.rowPrefix;
+                    fs << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        this->fs << this->fmt.coeffSeparator;
-                        this->fs << idata[i][j];
+                        fs << fmt.coeffSeparator;
+                        fs << idata[i][j];
                     }
-                    this->fs << this->fmt.rowSuffix;
-                    this->fs << this->fmt.rowSeparator;
+                    fs << fmt.rowSuffix;
+                    fs << fmt.rowSeparator;
                 }
             }
 
@@ -1258,66 +1258,66 @@ bool io::saveMatrix(TD **idata,
             }
             else if (options == 1)
             {
-                this->fmt.rowSeparator = rowSeparator;
-                this->fs << this->fmt.rowSeparator;
+                fmt.rowSeparator = rowSeparator;
+                fs << fmt.rowSeparator;
                 return true;
             }
             else if (options == 2)
             {
-                this->fmt.rowSeparator = rowSeparator;
-                this->fs << this->fmt.coeffSeparator;
+                fmt.rowSeparator = rowSeparator;
+                fs << fmt.coeffSeparator;
                 return true;
             }
             return false;
         }
         else
         {
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
-                this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
                 for (int i = 0; i < nRows; i++)
                 {
                     for (int j = 0; j < nCols[i]; j++)
                     {
                         std::stringstream sstr;
-                        sstr.copyfmt(this->fs);
+                        sstr.copyfmt(fs);
                         sstr << idata[i][j];
-                        this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                        Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    this->fs << form[i].rowPrefix;
-                    this->fs.width(this->Width);
-                    this->fs << idata[i][0];
+                    fs << form[i].rowPrefix;
+                    fs.width(Width);
+                    fs << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        this->fs << form[i].coeffSeparator;
-                        this->fs.width(this->Width);
-                        this->fs << idata[i][j];
+                        fs << form[i].coeffSeparator;
+                        fs.width(Width);
+                        fs << idata[i][j];
                     }
-                    this->fs << form[i].rowSuffix;
-                    this->fs << form[i].rowSeparator;
+                    fs << form[i].rowSuffix;
+                    fs << form[i].rowSeparator;
                 }
             }
             else
             {
                 for (int i = 0; i < nRows; ++i)
                 {
-                    this->fs << form[i].rowPrefix;
-                    this->fs << idata[i][0];
+                    fs << form[i].rowPrefix;
+                    fs << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        this->fs << form[i].coeffSeparator;
-                        this->fs << idata[i][j];
+                        fs << form[i].coeffSeparator;
+                        fs << idata[i][j];
                     }
-                    this->fs << form[i].rowSuffix;
-                    this->fs << form[i].rowSeparator;
+                    fs << form[i].rowSuffix;
+                    fs << form[i].rowSeparator;
                 }
             }
 
@@ -1331,13 +1331,13 @@ bool io::saveMatrix(TD **idata,
             std::string rowSeparator;
             if (options > 0)
             {
-                rowSeparator = this->fmt.rowSeparator;
-                this->fmt.rowSeparator = this->fmt.coeffSeparator;
+                rowSeparator = fmt.rowSeparator;
+                fmt.rowSeparator = fmt.coeffSeparator;
             }
 
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
-                this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
                 for (int i = 0; i < nRows; i++)
                 {
@@ -1347,15 +1347,15 @@ bool io::saveMatrix(TD **idata,
                         for (int j = 0; j < nCols[i]; j++)
                         {
                             std::stringstream sstr;
-                            sstr.copyfmt(this->fs);
+                            sstr.copyfmt(fs);
                             sstr << *ePointer++;
-                            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                         }
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 if (options == 1)
                 {
@@ -1366,19 +1366,19 @@ bool io::saveMatrix(TD **idata,
                         {
                             ePointer = idata[i] + e * nCols[i];
 
-                            this->fs << this->fmt.rowPrefix;
-                            this->fs.width(this->Width);
-                            this->fs << *ePointer++;
+                            fs << fmt.rowPrefix;
+                            fs.width(Width);
+                            fs << *ePointer++;
                             for (int j = 1; j < nCols[i]; ++j)
                             {
-                                this->fs << this->fmt.coeffSeparator;
-                                this->fs.width(this->Width);
-                                this->fs << *ePointer++;
+                                fs << fmt.coeffSeparator;
+                                fs.width(Width);
+                                fs << *ePointer++;
                             }
-                            this->fs << this->fmt.rowSuffix;
-                            this->fs << this->fmt.rowSeparator;
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
                         }
-                        this->fs << rowSeparator;
+                        fs << rowSeparator;
                     }
                 }
                 else
@@ -1390,17 +1390,17 @@ bool io::saveMatrix(TD **idata,
                         {
                             ePointer = idata[i] + e * nCols[i];
 
-                            this->fs << this->fmt.rowPrefix;
-                            this->fs.width(this->Width);
-                            this->fs << *ePointer++;
+                            fs << fmt.rowPrefix;
+                            fs.width(Width);
+                            fs << *ePointer++;
                             for (int j = 1; j < nCols[i]; ++j)
                             {
-                                this->fs << this->fmt.coeffSeparator;
-                                this->fs.width(this->Width);
-                                this->fs << *ePointer++;
+                                fs << fmt.coeffSeparator;
+                                fs.width(Width);
+                                fs << *ePointer++;
                             }
-                            this->fs << this->fmt.rowSuffix;
-                            this->fs << this->fmt.rowSeparator;
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
                         }
                     }
                 }
@@ -1416,17 +1416,17 @@ bool io::saveMatrix(TD **idata,
                         {
                             ePointer = idata[i] + e * nCols[i];
 
-                            this->fs << this->fmt.rowPrefix;
-                            this->fs << *ePointer++;
+                            fs << fmt.rowPrefix;
+                            fs << *ePointer++;
                             for (int j = 1; j < nCols[i]; ++j)
                             {
-                                this->fs << this->fmt.coeffSeparator;
-                                this->fs << *ePointer++;
+                                fs << fmt.coeffSeparator;
+                                fs << *ePointer++;
                             }
-                            this->fs << this->fmt.rowSuffix;
-                            this->fs << this->fmt.rowSeparator;
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
                         }
-                        this->fs << rowSeparator;
+                        fs << rowSeparator;
                     }
                 }
                 else
@@ -1438,15 +1438,15 @@ bool io::saveMatrix(TD **idata,
                         {
                             ePointer = idata[i] + e * nCols[i];
 
-                            this->fs << this->fmt.rowPrefix;
-                            this->fs << *ePointer++;
+                            fs << fmt.rowPrefix;
+                            fs << *ePointer++;
                             for (int j = 1; j < nCols[i]; ++j)
                             {
-                                this->fs << this->fmt.coeffSeparator;
-                                this->fs << *ePointer++;
+                                fs << fmt.coeffSeparator;
+                                fs << *ePointer++;
                             }
-                            this->fs << this->fmt.rowSuffix;
-                            this->fs << this->fmt.rowSeparator;
+                            fs << fmt.rowSuffix;
+                            fs << fmt.rowSeparator;
                         }
                     }
                 }
@@ -1458,23 +1458,23 @@ bool io::saveMatrix(TD **idata,
             }
             else if (options == 1)
             {
-                this->fmt.rowSeparator = rowSeparator;
-                this->fs << this->fmt.rowSeparator;
+                fmt.rowSeparator = rowSeparator;
+                fs << fmt.rowSeparator;
                 return true;
             }
             else if (options == 2)
             {
-                this->fmt.rowSeparator = rowSeparator;
-                this->fs << this->fmt.coeffSeparator;
+                fmt.rowSeparator = rowSeparator;
+                fs << fmt.coeffSeparator;
                 return true;
             }
             return false;
         }
         else
         {
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
-                this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+                Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
                 for (int i = 0; i < nRows; i++)
                 {
@@ -1484,15 +1484,15 @@ bool io::saveMatrix(TD **idata,
                         for (int j = 0; j < nCols[i]; j++)
                         {
                             std::stringstream sstr;
-                            sstr.copyfmt(this->fs);
+                            sstr.copyfmt(fs);
                             sstr << *ePointer++;
-                            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                         }
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 TD *ePointer;
                 for (int e = 0; e < entries; e++)
@@ -1501,17 +1501,17 @@ bool io::saveMatrix(TD **idata,
                     {
                         ePointer = idata[i] + e * nCols[i];
 
-                        this->fs << form[i].rowPrefix;
-                        this->fs.width(this->Width);
-                        this->fs << *ePointer++;
+                        fs << form[i].rowPrefix;
+                        fs.width(Width);
+                        fs << *ePointer++;
                         for (int j = 1; j < nCols[i]; ++j)
                         {
-                            this->fs << form[i].coeffSeparator;
-                            this->fs.width(this->Width);
-                            this->fs << *ePointer++;
+                            fs << form[i].coeffSeparator;
+                            fs.width(Width);
+                            fs << *ePointer++;
                         }
-                        this->fs << form[i].rowSuffix;
-                        this->fs << form[i].rowSeparator;
+                        fs << form[i].rowSuffix;
+                        fs << form[i].rowSeparator;
                     }
                 }
             }
@@ -1524,15 +1524,15 @@ bool io::saveMatrix(TD **idata,
                     {
                         ePointer = idata[i] + e * nCols[i];
 
-                        this->fs << form[i].rowPrefix;
-                        this->fs << *ePointer++;
+                        fs << form[i].rowPrefix;
+                        fs << *ePointer++;
                         for (int j = 1; j < nCols[i]; ++j)
                         {
-                            this->fs << form[i].coeffSeparator;
-                            this->fs << *ePointer++;
+                            fs << form[i].coeffSeparator;
+                            fs << *ePointer++;
                         }
-                        this->fs << form[i].rowSuffix;
-                        this->fs << form[i].rowSeparator;
+                        fs << form[i].rowSuffix;
+                        fs << form[i].rowSeparator;
                     }
                 }
             }
@@ -1560,7 +1560,7 @@ bool io::saveMatrix(TD *idata,
                     int const nCols,
                     int const options)
 {
-    if (!this->fs.is_open())
+    if (!fs.is_open())
     {
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
@@ -1568,56 +1568,56 @@ bool io::saveMatrix(TD *idata,
     std::string rowSeparator;
     if (options > 0)
     {
-        rowSeparator = this->fmt.rowSeparator;
-        this->fmt.rowSeparator = this->fmt.coeffSeparator;
+        rowSeparator = fmt.rowSeparator;
+        fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<TD>(this->fs);
+    setPrecision<TD>(fs);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
-        this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+        Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
         for (int i = 0; i < nRows * nCols; i++)
         {
             std::stringstream sstr;
-            sstr.copyfmt(this->fs);
+            sstr.copyfmt(fs);
             sstr << idata[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         if (nCols == 1)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs.width(this->Width);
-            this->fs << idata[0];
+            fs << fmt.rowPrefix;
+            fs.width(Width);
+            fs << idata[0];
             for (int i = 1; i < nRows; i++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs.width(this->Width);
-                this->fs << idata[i];
+                fs << fmt.coeffSeparator;
+                fs.width(Width);
+                fs << idata[i];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
         else
         {
             for (int i = 0, l = 0; i < nRows; i++)
             {
-                this->fs << this->fmt.rowPrefix;
-                this->fs.width(this->Width);
-                this->fs << idata[l++];
+                fs << fmt.rowPrefix;
+                fs.width(Width);
+                fs << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    this->fs << this->fmt.coeffSeparator;
-                    this->fs.width(this->Width);
-                    this->fs << idata[l++];
+                    fs << fmt.coeffSeparator;
+                    fs.width(Width);
+                    fs << idata[l++];
                 }
-                this->fs << this->fmt.rowSuffix;
-                this->fs << this->fmt.rowSeparator;
+                fs << fmt.rowSuffix;
+                fs << fmt.rowSeparator;
             }
         }
     }
@@ -1625,29 +1625,29 @@ bool io::saveMatrix(TD *idata,
     {
         if (nCols == 1)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs << idata[0];
+            fs << fmt.rowPrefix;
+            fs << idata[0];
             for (int i = 1; i < nRows; i++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs << idata[i];
+                fs << fmt.coeffSeparator;
+                fs << idata[i];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
         else
         {
             for (int i = 0, l = 0; i < nRows; i++)
             {
-                this->fs << this->fmt.rowPrefix;
-                this->fs << idata[l++];
+                fs << fmt.rowPrefix;
+                fs << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    this->fs << this->fmt.coeffSeparator;
-                    this->fs << idata[l++];
+                    fs << fmt.coeffSeparator;
+                    fs << idata[l++];
                 }
-                this->fs << this->fmt.rowSuffix;
-                this->fs << this->fmt.rowSeparator;
+                fs << fmt.rowSuffix;
+                fs << fmt.rowSeparator;
             }
         }
     }
@@ -1658,13 +1658,13 @@ bool io::saveMatrix(TD *idata,
     }
     else if (options == 1)
     {
-        this->fmt.rowSeparator = rowSeparator;
-        this->fs << this->fmt.rowSeparator;
+        fmt.rowSeparator = rowSeparator;
+        fs << fmt.rowSeparator;
         return true;
     }
     else if (options == 2)
     {
-        this->fmt.rowSeparator = rowSeparator;
+        fmt.rowSeparator = rowSeparator;
         return true;
     }
     return false;
@@ -1697,75 +1697,75 @@ bool io::saveMatrix(TD *idata,
                     int const ifvalueCols,
                     int const nRows)
 {
-    if (!this->fs.is_open())
+    if (!fs.is_open())
     {
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<TD>(this->fs);
+    setPrecision<TD>(fs);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
-        this->Width = this->fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, this->Width);
+        Width = fs.tellp() == 0 ? 0 : std::max<std::ptrdiff_t>(0, Width);
 
         for (int i = 0; i < nRows * idataCols; i++)
         {
             std::stringstream sstr;
-            sstr.copyfmt(this->fs);
+            sstr.copyfmt(fs);
             sstr << idata[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
 
         for (int i = 0; i < nRows * ifvalueCols; i++)
         {
             std::stringstream sstr;
-            sstr.copyfmt(this->fs);
+            sstr.copyfmt(fs);
             sstr << ifvalue[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0, l = 0, k = 0; i < nRows; i++)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs.width(this->Width);
-            this->fs << idata[l++];
+            fs << fmt.rowPrefix;
+            fs.width(Width);
+            fs << idata[l++];
             for (int j = 1; j < idataCols; j++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs.width(this->Width);
-                this->fs << idata[l++];
+                fs << fmt.coeffSeparator;
+                fs.width(Width);
+                fs << idata[l++];
             }
             for (int j = 0; j < ifvalueCols; j++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs.width(this->Width);
-                this->fs << ifvalue[k++];
+                fs << fmt.coeffSeparator;
+                fs.width(Width);
+                fs << ifvalue[k++];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
     }
     else
     {
         for (int i = 0, l = 0, k = 0; i < nRows; i++)
         {
-            this->fs << this->fmt.rowPrefix;
-            this->fs << idata[l++];
+            fs << fmt.rowPrefix;
+            fs << idata[l++];
             for (int j = 1; j < idataCols; j++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs << idata[l++];
+                fs << fmt.coeffSeparator;
+                fs << idata[l++];
             }
             for (int j = 0; j < ifvalueCols; j++)
             {
-                this->fs << this->fmt.coeffSeparator;
-                this->fs << ifvalue[k++];
+                fs << fmt.coeffSeparator;
+                fs << ifvalue[k++];
             }
-            this->fs << this->fmt.rowSuffix;
-            this->fs << this->fmt.rowSeparator;
+            fs << fmt.rowSuffix;
+            fs << fmt.rowSeparator;
         }
     }
 
@@ -1798,7 +1798,7 @@ bool io::loadMatrix(TM &MX)
 
     for (int i = 0; i < MX.rows(); i++)
     {
-        if (std::getline(this->fs, Line))
+        if (std::getline(fs, Line))
         {
             std::stringstream inLine(Line);
 
@@ -1836,7 +1836,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const nCols, int const opti
     {
         for (int i = 0; i < nRows; i++)
         {
-            if (std::getline(this->fs, Line))
+            if (std::getline(fs, Line))
             {
                 std::stringstream inLine(Line);
 
@@ -1854,7 +1854,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const nCols, int const opti
     }
     else if (options == 1)
     {
-        if (std::getline(this->fs, Line))
+        if (std::getline(fs, Line))
         {
             std::stringstream inLine(Line);
             for (int i = 0; i < nRows; i++)
@@ -1899,7 +1899,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
         {
             for (int i = 0; i < nRows; i++)
             {
-                if (std::getline(this->fs, Line))
+                if (std::getline(fs, Line))
                 {
                     std::stringstream inLine(Line);
 
@@ -1917,7 +1917,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
         }
         else if (options == 1)
         {
-            if (std::getline(this->fs, Line))
+            if (std::getline(fs, Line))
             {
                 std::stringstream inLine(Line);
                 for (int i = 0; i < nRows; i++)
@@ -1945,7 +1945,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
             {
                 for (int i = 0; i < nRows; i++)
                 {
-                    if (std::getline(this->fs, Line))
+                    if (std::getline(fs, Line))
                     {
                         std::stringstream inLine(Line);
 
@@ -1969,7 +1969,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
             TD *ePointer;
             for (int e = 0; e < entries; e++)
             {
-                if (std::getline(this->fs, Line))
+                if (std::getline(fs, Line))
                 {
                     std::stringstream inLine(Line);
 
@@ -2012,7 +2012,7 @@ bool io::loadMatrix(TD *idata, int const nRows, int const nCols)
 
     if (nCols == 1)
     {
-        if (std::getline(this->fs, Line))
+        if (std::getline(fs, Line))
         {
             std::stringstream inLine(Line);
             for (int i = 0; i < nRows; i++)
@@ -2030,7 +2030,7 @@ bool io::loadMatrix(TD *idata, int const nRows, int const nCols)
     {
         for (int i = 0, l = 0; i < nRows; i++)
         {
-            if (std::getline(this->fs, Line))
+            if (std::getline(fs, Line))
             {
                 std::stringstream inLine(Line);
 
@@ -2075,7 +2075,7 @@ bool io::loadMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifval
 
     for (int i = 0, k = 0, l = 0; i < nRows; i++)
     {
-        if (std::getline(this->fs, Line))
+        if (std::getline(fs, Line))
         {
             std::stringstream inLine(Line);
 
@@ -2129,15 +2129,15 @@ void io::printMatrix(const char *title,
     if (std::strlen(title) > 0)
     {
         std::cout << title << "\n\n";
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
-            this->Width = 0;
+            Width = 0;
         }
     }
 
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         for (int i = 0; i < nRows; i++)
         {
@@ -2146,41 +2146,41 @@ void io::printMatrix(const char *title,
                 std::stringstream sstr;
                 sstr.copyfmt(std::cout);
                 sstr << idata[i][j];
-                this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
             }
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0; i < nRows; ++i)
         {
-            std::cout << this->fmt.rowPrefix;
-            std::cout.width(this->Width);
+            std::cout << fmt.rowPrefix;
+            std::cout.width(Width);
             std::cout << idata[i][0];
             for (int j = 1; j < nCols; ++j)
             {
-                std::cout << this->fmt.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout << fmt.coeffSeparator;
+                std::cout.width(Width);
                 std::cout << idata[i][j];
             }
-            std::cout << this->fmt.rowSuffix;
-            std::cout << this->fmt.rowSeparator;
+            std::cout << fmt.rowSuffix;
+            std::cout << fmt.rowSeparator;
         }
     }
     else
     {
         for (int i = 0; i < nRows; ++i)
         {
-            std::cout << this->fmt.rowPrefix;
+            std::cout << fmt.rowPrefix;
             std::cout << idata[i][0];
             for (int j = 1; j < nCols; ++j)
             {
-                std::cout << this->fmt.coeffSeparator;
+                std::cout << fmt.coeffSeparator;
                 std::cout << idata[i][j];
             }
-            std::cout << this->fmt.rowSuffix;
-            std::cout << this->fmt.rowSeparator;
+            std::cout << fmt.rowSuffix;
+            std::cout << fmt.rowSeparator;
         }
     }
     std::cout << printPrefix;
@@ -2223,7 +2223,7 @@ void io::printMatrix(TD const **idata,
 {
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         for (int i = 0; i < nRows; i++)
         {
@@ -2232,22 +2232,22 @@ void io::printMatrix(TD const **idata,
                 std::stringstream sstr;
                 sstr.copyfmt(std::cout);
                 sstr << idata[i][j];
-                this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
             }
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0; i < nRows; ++i)
         {
             std::cout << form.rowPrefix;
-            std::cout.width(this->Width);
+            std::cout.width(Width);
             std::cout << idata[i][0];
             for (int j = 1; j < nCols; ++j)
             {
                 std::cout << form.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout.width(Width);
                 std::cout << idata[i][j];
             }
             std::cout << form.rowSuffix;
@@ -2295,9 +2295,9 @@ void io::printMatrix(const char *title,
     if (std::strlen(title) > 0)
     {
         std::cout << title << "\n\n";
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
-            this->Width = 0;
+            Width = 0;
         }
     }
 
@@ -2306,7 +2306,7 @@ void io::printMatrix(const char *title,
     //DEfault case one set of data
     if (entries == 1)
     {
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
             for (int i = 0; i < nRows; i++)
             {
@@ -2315,47 +2315,47 @@ void io::printMatrix(const char *title,
                     std::stringstream sstr;
                     sstr.copyfmt(std::cout);
                     sstr << idata[i][j];
-                    this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                    Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                 }
             }
         }
 
-        if (this->Width)
+        if (Width)
         {
             for (int i = 0; i < nRows; ++i)
             {
-                std::cout << this->fmt.rowPrefix;
-                std::cout.width(this->Width);
+                std::cout << fmt.rowPrefix;
+                std::cout.width(Width);
                 std::cout << idata[i][0];
                 for (int j = 1; j < nCols[i]; ++j)
                 {
-                    std::cout << this->fmt.coeffSeparator;
-                    std::cout.width(this->Width);
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
                     std::cout << idata[i][j];
                 }
-                std::cout << this->fmt.rowSuffix;
-                std::cout << this->fmt.rowSeparator;
+                std::cout << fmt.rowSuffix;
+                std::cout << fmt.rowSeparator;
             }
         }
         else
         {
             for (int i = 0; i < nRows; ++i)
             {
-                std::cout << this->fmt.rowPrefix;
+                std::cout << fmt.rowPrefix;
                 std::cout << idata[i][0];
                 for (int j = 1; j < nCols[i]; ++j)
                 {
-                    std::cout << this->fmt.coeffSeparator;
+                    std::cout << fmt.coeffSeparator;
                     std::cout << idata[i][j];
                 }
-                std::cout << this->fmt.rowSuffix;
-                std::cout << this->fmt.rowSeparator;
+                std::cout << fmt.rowSuffix;
+                std::cout << fmt.rowSeparator;
             }
         }
     }
     else
     {
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
             for (int i = 0; i < nRows; i++)
             {
@@ -2367,13 +2367,13 @@ void io::printMatrix(const char *title,
                         std::stringstream sstr;
                         sstr.copyfmt(std::cout);
                         sstr << *ePointer++;
-                        this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                        Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                     }
                 }
             }
         }
 
-        if (this->Width)
+        if (Width)
         {
             TD *ePointer;
             for (int e = 0; e < entries; e++)
@@ -2382,17 +2382,17 @@ void io::printMatrix(const char *title,
                 {
                     ePointer = idata[i] + e * nCols[i];
 
-                    std::cout << this->fmt.rowPrefix;
-                    std::cout.width(this->Width);
+                    std::cout << fmt.rowPrefix;
+                    std::cout.width(Width);
                     std::cout << *ePointer++;
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        std::cout << this->fmt.coeffSeparator;
-                        std::cout.width(this->Width);
+                        std::cout << fmt.coeffSeparator;
+                        std::cout.width(Width);
                         std::cout << *ePointer++;
                     }
-                    std::cout << this->fmt.rowSuffix;
-                    std::cout << this->fmt.rowSeparator;
+                    std::cout << fmt.rowSuffix;
+                    std::cout << fmt.rowSeparator;
                 }
             }
         }
@@ -2405,15 +2405,15 @@ void io::printMatrix(const char *title,
                 {
                     ePointer = idata[i] + e * nCols[i];
 
-                    std::cout << this->fmt.rowPrefix;
+                    std::cout << fmt.rowPrefix;
                     std::cout << *ePointer++;
                     for (int j = 1; j < nCols[i]; ++j)
                     {
-                        std::cout << this->fmt.coeffSeparator;
+                        std::cout << fmt.coeffSeparator;
                         std::cout << *ePointer++;
                     }
-                    std::cout << this->fmt.rowSuffix;
-                    std::cout << this->fmt.rowSeparator;
+                    std::cout << fmt.rowSuffix;
+                    std::cout << fmt.rowSeparator;
                 }
             }
         }
@@ -2471,7 +2471,7 @@ void io::printMatrix(TD const **idata,
         //Default case
         if (entries == 1)
         {
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
                 for (int i = 0; i < nRows; i++)
                 {
@@ -2480,22 +2480,22 @@ void io::printMatrix(TD const **idata,
                         std::stringstream sstr;
                         sstr.copyfmt(std::cout);
                         sstr << idata[i][j];
-                        this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                        Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 for (int i = 0; i < nRows; ++i)
                 {
                     std::cout << form[i].rowPrefix;
-                    std::cout.width(this->Width);
+                    std::cout.width(Width);
                     std::cout << idata[i][0];
                     for (int j = 1; j < nCols[i]; ++j)
                     {
                         std::cout << form[i].coeffSeparator;
-                        std::cout.width(this->Width);
+                        std::cout.width(Width);
                         std::cout << idata[i][j];
                     }
                     std::cout << form[i].rowSuffix;
@@ -2520,7 +2520,7 @@ void io::printMatrix(TD const **idata,
         }
         else
         {
-            if (!this->FixedWidth)
+            if (!FixedWidth)
             {
                 for (int i = 0; i < nRows; i++)
                 {
@@ -2532,13 +2532,13 @@ void io::printMatrix(TD const **idata,
                             std::stringstream sstr;
                             sstr.copyfmt(std::cout);
                             sstr << *ePointer++;
-                            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
                         }
                     }
                 }
             }
 
-            if (this->Width)
+            if (Width)
             {
                 TD *ePointer;
                 for (int e = 0; e < entries; e++)
@@ -2548,12 +2548,12 @@ void io::printMatrix(TD const **idata,
                         ePointer = idata[i] + e * nCols[i];
 
                         std::cout << form[i].rowPrefix;
-                        std::cout.width(this->Width);
+                        std::cout.width(Width);
                         std::cout << *ePointer++;
                         for (int j = 1; j < nCols[i]; ++j)
                         {
                             std::cout << form[i].coeffSeparator;
-                            std::cout.width(this->Width);
+                            std::cout.width(Width);
                             std::cout << *ePointer++;
                         }
                         std::cout << form[i].rowSuffix;
@@ -2609,36 +2609,36 @@ void io::printMatrix(const char *title,
     {
         std::cout << title << "\n\n";
 
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
-            this->Width = 0;
+            Width = 0;
         }
     }
 
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         for (int i = 0; i < nRows * nCols; i++)
         {
             std::stringstream sstr;
             sstr.copyfmt(std::cout);
             sstr << idata[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
     }
 
     if (nCols == 1)
     {
-        std::cout << this->fmt.rowPrefix;
-        if (this->Width)
+        std::cout << fmt.rowPrefix;
+        if (Width)
         {
-            std::cout.width(this->Width);
+            std::cout.width(Width);
             std::cout << idata[0];
             for (int i = 1; i < nRows; i++)
             {
-                std::cout << this->fmt.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout << fmt.coeffSeparator;
+                std::cout.width(Width);
                 std::cout << idata[i];
             }
         }
@@ -2647,45 +2647,45 @@ void io::printMatrix(const char *title,
             std::cout << idata[0];
             for (int i = 1; i < nRows; i++)
             {
-                std::cout << this->fmt.coeffSeparator;
+                std::cout << fmt.coeffSeparator;
                 std::cout << idata[i];
             }
         }
-        std::cout << this->fmt.rowSuffix;
-        std::cout << this->fmt.rowSeparator;
+        std::cout << fmt.rowSuffix;
+        std::cout << fmt.rowSeparator;
     }
     else
     {
-        if (this->Width)
+        if (Width)
         {
             for (int i = 0, l = 0; i < nRows; i++)
             {
-                std::cout << this->fmt.rowPrefix;
-                std::cout.width(this->Width);
+                std::cout << fmt.rowPrefix;
+                std::cout.width(Width);
                 std::cout << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    std::cout << this->fmt.coeffSeparator;
-                    std::cout.width(this->Width);
+                    std::cout << fmt.coeffSeparator;
+                    std::cout.width(Width);
                     std::cout << idata[l++];
                 }
-                std::cout << this->fmt.rowSuffix;
-                std::cout << this->fmt.rowSeparator;
+                std::cout << fmt.rowSuffix;
+                std::cout << fmt.rowSeparator;
             }
         }
         else
         {
             for (int i = 0, l = 0; i < nRows; i++)
             {
-                std::cout << this->fmt.rowPrefix;
+                std::cout << fmt.rowPrefix;
                 std::cout << idata[l++];
                 for (int j = 1; j < nCols; j++)
                 {
-                    std::cout << this->fmt.coeffSeparator;
+                    std::cout << fmt.coeffSeparator;
                     std::cout << idata[l++];
                 }
-                std::cout << this->fmt.rowSuffix;
-                std::cout << this->fmt.rowSeparator;
+                std::cout << fmt.rowSuffix;
+                std::cout << fmt.rowSeparator;
             }
         }
     }
@@ -2726,28 +2726,28 @@ void io::printMatrix(TD const *idata,
     {
         setPrecision<TD>(std::cout);
 
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
             for (int i = 0; i < nRows * nCols; i++)
             {
                 std::stringstream sstr;
                 sstr.copyfmt(std::cout);
                 sstr << idata[i];
-                this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+                Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
             }
         }
 
         if (nCols == 1)
         {
             std::cout << form.rowPrefix;
-            if (this->Width)
+            if (Width)
             {
-                std::cout.width(this->Width);
+                std::cout.width(Width);
                 std::cout << idata[0];
                 for (int i = 1; i < nRows; i++)
                 {
                     std::cout << form.coeffSeparator;
-                    std::cout.width(this->Width);
+                    std::cout.width(Width);
                     std::cout << idata[i];
                 }
             }
@@ -2765,17 +2765,17 @@ void io::printMatrix(TD const *idata,
         }
         else
         {
-            if (this->Width)
+            if (Width)
             {
                 for (int i = 0, l = 0; i < nRows; i++)
                 {
                     std::cout << form.rowPrefix;
-                    std::cout.width(this->Width);
+                    std::cout.width(Width);
                     std::cout << idata[l++];
                     for (int j = 1; j < nCols; j++)
                     {
                         std::cout << form.coeffSeparator;
-                        std::cout.width(this->Width);
+                        std::cout.width(Width);
                         std::cout << idata[l++];
                     }
                     std::cout << form.rowSuffix;
@@ -2823,18 +2823,18 @@ void io::printMatrix(TD const *idata, ioFormat const &form)
 {
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         std::stringstream sstr;
         sstr.copyfmt(std::cout);
         sstr << *idata;
-        this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+        Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
     }
 
     std::cout << form.rowPrefix;
-    if (this->Width)
+    if (Width)
     {
-        std::cout.width(this->Width);
+        std::cout.width(Width);
     }
     std::cout << *idata;
     std::cout << form.rowSuffix;
@@ -2868,22 +2868,22 @@ void io::printMatrix(const char *title,
     {
         std::cout << title << "\n\n";
 
-        if (!this->FixedWidth)
+        if (!FixedWidth)
         {
-            this->Width = 0;
+            Width = 0;
         }
     }
 
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         for (int i = 0; i < nRows * idataCols; i++)
         {
             std::stringstream sstr;
             sstr.copyfmt(std::cout);
             sstr << idata[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
 
         for (int i = 0; i < nRows * ifvalueCols; i++)
@@ -2891,51 +2891,51 @@ void io::printMatrix(const char *title,
             std::stringstream sstr;
             sstr.copyfmt(std::cout);
             sstr << ifvalue[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0, l = 0, k = 0; i < nRows; i++)
         {
-            std::cout << this->fmt.rowPrefix;
-            std::cout.width(this->Width);
+            std::cout << fmt.rowPrefix;
+            std::cout.width(Width);
             std::cout << idata[l++];
             for (int j = 1; j < idataCols; j++)
             {
-                std::cout << this->fmt.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout << fmt.coeffSeparator;
+                std::cout.width(Width);
                 std::cout << idata[l++];
             }
             for (int j = 0; j < ifvalueCols; j++)
             {
-                std::cout << this->fmt.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout << fmt.coeffSeparator;
+                std::cout.width(Width);
                 std::cout << ifvalue[k++];
             }
-            std::cout << this->fmt.rowSuffix;
-            std::cout << this->fmt.rowSeparator;
+            std::cout << fmt.rowSuffix;
+            std::cout << fmt.rowSeparator;
         }
     }
     else
     {
         for (int i = 0, l = 0, k = 0; i < nRows; i++)
         {
-            std::cout << this->fmt.rowPrefix;
+            std::cout << fmt.rowPrefix;
             std::cout << idata[l++];
             for (int j = 1; j < idataCols; j++)
             {
-                std::cout << this->fmt.coeffSeparator;
+                std::cout << fmt.coeffSeparator;
                 std::cout << idata[l++];
             }
             for (int j = 0; j < ifvalueCols; j++)
             {
-                std::cout << this->fmt.coeffSeparator;
+                std::cout << fmt.coeffSeparator;
                 std::cout << ifvalue[k++];
             }
-            std::cout << this->fmt.rowSuffix;
-            std::cout << this->fmt.rowSeparator;
+            std::cout << fmt.rowSuffix;
+            std::cout << fmt.rowSeparator;
         }
     }
     std::cout << printPrefix;
@@ -2999,14 +2999,14 @@ void io::printMatrix(TD const *idata,
 {
     setPrecision<TD>(std::cout);
 
-    if (!this->FixedWidth)
+    if (!FixedWidth)
     {
         for (int i = 0; i < nRows * idataCols; i++)
         {
             std::stringstream sstr;
             sstr.copyfmt(std::cout);
             sstr << idata[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
 
         for (int i = 0; i < nRows * ifvalueCols; i++)
@@ -3014,21 +3014,21 @@ void io::printMatrix(TD const *idata,
             std::stringstream sstr;
             sstr.copyfmt(std::cout);
             sstr << ifvalue[i];
-            this->Width = std::max<std::ptrdiff_t>(this->Width, io::Idx(sstr.str().length()));
+            Width = std::max<std::ptrdiff_t>(Width, io::Idx(sstr.str().length()));
         }
     }
 
-    if (this->Width)
+    if (Width)
     {
         for (int i = 0, l = 0, k = 0; i < nRows; i++)
         {
             std::cout << formD.rowPrefix;
-            std::cout.width(this->Width);
+            std::cout.width(Width);
             std::cout << idata[l++];
             for (int j = 1; j < idataCols; j++)
             {
                 std::cout << formD.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout.width(Width);
                 std::cout << idata[l++];
             }
             std::cout << formD.rowSuffix;
@@ -3037,7 +3037,7 @@ void io::printMatrix(TD const *idata,
             for (int j = 0; j < ifvalueCols; j++)
             {
                 std::cout << formF.coeffSeparator;
-                std::cout.width(this->Width);
+                std::cout.width(Width);
                 std::cout << ifvalue[k++];
             }
             std::cout << formF.rowSuffix;

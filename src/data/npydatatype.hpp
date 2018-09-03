@@ -76,4 +76,4 @@ template <>
 constexpr NPY_TYPES NPIDatatype<long double> = NPY_LONGDOUBLE;
 
 #endif // HAVE_PYTHON
-#endif // UMUQ_NPYDATATYPE_H
+#endif // UMUQ_NPYDATATYPE

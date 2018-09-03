@@ -83,7 +83,7 @@
  */
 
 #include "../data/npydatatype.hpp"
-#include "../misc/array.hpp"
+#include "../misc/arraywrapper.hpp"
 
 /*!
  * \brief Converts a data array idata to Python array
@@ -4640,7 +4640,7 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 
         if (Stride != 1)
         {
-            ArrayWrapper<T> iArray(idata, nSize, Stride);
+            arrayWrapper<T> iArray(idata, nSize, Stride);
             nsize = static_cast<npy_intp>(iArray.size());
             if (NPIDatatype<T> == NPY_NOTYPE)
             {
@@ -4681,7 +4681,7 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 
 //         if (Stride != 1)
 //         {
-//             ArrayWrapper<TIn> iArray(idata, nSize, Stride);
+//             arrayWrapper<TIn> iArray(idata, nSize, Stride);
 //             nsize = static_cast<npy_intp>(iArray.size());
 //             if (NPIDatatype<TOut> != NPIDatatype<TIn>)
 //             {

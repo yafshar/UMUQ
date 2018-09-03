@@ -2,17 +2,39 @@
 #define UMUQ_DATABASE_H
 
 #include "../core/core.hpp"
-#include "../misc/array.hpp"
+#include "../misc/arraywrapper.hpp"
 #include "../io/io.hpp"
 #include "mpidatatype.hpp"
 
 /*!
- * \brief A polymorphic function wrapper type for update Task
+ * \brief Updating the data information at each point @iParray 
+ * 
+ * \tparam T           Data type (T is a floating-point type)
+ * 
+ * \param other        database object which is casted to long long
+ * \param iParray      Points or sampling points array
+ * \param iFvalue      Function value at the sampling point 
+ * \param iGarray      Array of data @iParray 
+ * \param indimGarray  Dimension of G array
+ * \param iSurrogate   Surrogate
+ */
+template <typename T>
+void update_Task(long long const other, T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate);
+
+/*!
+ * \brief A polymorphic function wrapper type for updateTask
  * 
  * \tparam T Data type 
  */
 template <typename T>
-using FUNCTIONPOINTER = void (*)(T const *, T const *, T const *, int const *, int const *);
+using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *, int const *, int const *);
+
+//! True if update_Task has been registered, and false otherwise (logical).
+template <typename T>
+static bool database_update_Task_registered = false;
+
+//! Muex object
+static std::mutex update_Task_m;
 
 /*! \class database
  *
@@ -87,28 +109,20 @@ class database
     bool reset(int nSize);
 
     /*!
-     * \brief Initialize the database register task
-     * Before calling this function one should set the external functor otherwise it would crash!
-     *  
-     * \returns false if Task pointer is not correctly assigned 
-     */
-    inline bool initTask();
-
-    /*!
      * \brief Register task on the TORC task library
      * Before calling this function one should set the external functor otherwise it would crash!
      * 
      * \return true 
      * \return false if Task pointer is not correctly assigned
      */
-    inline bool registerTask();
+    bool registerTask();
 
     /*!
      * \brief set the Task pointer to an external functor
      * 
      * \param func 
      */
-    inline void setTask(FUNCTIONPOINTER<T> const &func);
+    inline void setTask(UPDATETASKTYPE<T> const &func);
 
     /*!
      * \brief Swaps databses
@@ -247,7 +261,7 @@ class database
 
   private:
     //! Function pointer
-    FUNCTIONPOINTER<T> update_TaskP;
+    UPDATETASKTYPE<T> update_TaskP;
 
     //! List of sort data
     std::unique_ptr<sortType[]> list;
@@ -263,6 +277,13 @@ database<T>::database() : ndimParray(0),
     if (!std::is_floating_point<T>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
+    }
+
+    setTask(update_Task);
+
+    if (!registerTask())
+    {
+        UMUQFAIL("Failed to register the update task!");
     }
 }
 
@@ -281,6 +302,13 @@ database<T>::database(int nDim, int nSize) : ndimParray(nDim),
     {
         UMUQFAIL("Failed to initialiaze the data!");
     }
+
+    setTask(update_Task);
+
+    if (!registerTask())
+    {
+        UMUQFAIL("Failed to register the update task!");
+    }
 }
 
 template <typename T>
@@ -297,6 +325,13 @@ database<T>::database(int nDim1, int nDim2, int nSize) : ndimParray(nDim1),
     if (!reset(nSize))
     {
         UMUQFAIL("Failed to initialiaze the data!");
+    }
+
+    setTask(update_Task);
+
+    if (!registerTask())
+    {
+        UMUQFAIL("Failed to register the update task!");
     }
 }
 
@@ -370,7 +405,7 @@ bool database<T>::reset(int nSize)
         {
             Parray.reset(new T[entries * ndimParray]);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -386,7 +421,7 @@ bool database<T>::reset(int nSize)
         {
             Garray.reset(new T[entries * ndimGarray]);
         }
-        catch (std::bad_alloc &e)
+        catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
@@ -403,7 +438,7 @@ bool database<T>::reset(int nSize)
         nSelection.reset(new int[entries]());
         idxNumber.reset(new std::size_t[entries]);
     }
-    catch (std::bad_alloc &e)
+    catch (...)
     {
         UMUQFAILRETURN("Failed to allocate memory!");
     }
@@ -414,31 +449,31 @@ bool database<T>::reset(int nSize)
 }
 
 template <typename T>
-inline bool database<T>::initTask()
+bool database<T>::registerTask()
 {
-    return registerTask();
-}
-
-template <typename T>
-inline bool database<T>::registerTask()
-{
-    auto initialized(0);
-    MPI_Initialized(&initialized);
-    if (initialized)
     {
-        if (update_TaskP != nullptr)
-        {
-            torc_register_task((void *)this->update_TaskP);
+        std::lock_guard<std::mutex> lock(update_Task_m);
 
+        // Check if psrandom is already initilized
+        if (database_update_Task_registered<T>)
+        {
             return true;
         }
-        UMUQFAILRETURN("Task Pointer is not assigend to the external function!");
+
+        if (!update_TaskP)
+        {
+            UMUQFAILRETURN("Task Pointer is not assigend to the external function!");
+        }
+        database_update_Task_registered<T> = true;
     }
-    UMUQFAILRETURN("MPI is not initialized! \n You should Initialize torc first!");
+
+    torc_register_task((void *)this->update_TaskP);
+
+    return true;
 }
 
 template <typename T>
-inline void database<T>::setTask(FUNCTIONPOINTER<T> const &func)
+inline void database<T>::setTask(UPDATETASKTYPE<T> const &func)
 {
     update_TaskP = func;
 }
@@ -489,7 +524,7 @@ inline bool database<T>::sort()
     {
         list.reset(new sortType[entries]);
     }
-    catch (std::bad_alloc &e)
+    catch (...)
     {
         UMUQFAILRETURN("Failed to allocate memory!");
     }
@@ -541,9 +576,9 @@ bool database<T>::print()
         int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
 
         // Array wrapper on the data
-        ArrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
-        ArrayWrapper<T> FvalueWrapper(Fvalue, entries);
-        ArrayWrapper<int> SurrogateWrapper(Surrogate, entries);
+        arrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
+        arrayWrapper<T> FvalueWrapper(Fvalue, entries);
+        arrayWrapper<int> SurrogateWrapper(Surrogate, entries);
 
         auto fIt = FvalueWrapper.begin();
         auto sIt = SurrogateWrapper.begin();
@@ -554,7 +589,7 @@ bool database<T>::print()
 
             int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
 
-            ArrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
+            arrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
 
             auto gIt = GarrayWrapper.begin();
 
@@ -763,15 +798,48 @@ void database<T>::update(T const *iParray, T const iFvalue, T const *iGarray, in
     int const indimGarray2 = indimGarray1 ? ndimGarray : 0;
     int const indimSurroga = iSurrogate < std::numeric_limits<int>::max();
 
-    torc_create_direct(0, (void (*)())update_TaskP, 5,
+    torc_create_direct(0, (void (*)())update_TaskP, 6,
+                       1, MPIDatatype<long long>, CALL_BY_REF,
                        ndimParray, MPIDatatype<T>, CALL_BY_VAL,
                        1, MPIDatatype<T>, CALL_BY_VAL,
                        indimGarray2, MPIDatatype<T>, CALL_BY_VAL,
                        indimGarray1, MPI_INT, CALL_BY_VAL,
                        indimSurroga, MPI_INT, CALL_BY_VAL,
-                       iParray, &iFvalue, iGarray, &ndimGarray, &iSurrogate);
+                       reinterpret_cast<long long>(this), iParray, &iFvalue, iGarray, &ndimGarray, &iSurrogate);
 
     torc_waitall3();
+}
+
+template <typename T>
+void update_Task(long long const other, T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate)
+{
+    auto obj = reinterpret_cast<database<T> *>(other);
+
+    std::size_t pos;
+
+    {
+        std::lock_guard<std::mutex> lock(obj->m);
+        pos = obj->idxPos;
+        obj->idxPos++;
+    }
+
+    if (pos < obj->entries)
+    {
+        std::copy(iParray, iParray + obj->ndimParray, obj->Parray.get() + pos * obj->ndimParray);
+
+        obj->Fvalue[pos] = *iFvalue;
+
+        // indimGarray is just an indicator if we have iGarray input data or not
+        if (*indimGarray > 0)
+        {
+            std::copy(iGarray, iGarray + obj->ndimGarray, obj->Garray.get() + pos * obj->ndimGarray);
+        }
+
+        if (*iSurrogate < std::numeric_limits<int>::max())
+        {
+            obj->Surrogate[pos] = *iSurrogate;
+        }
+    }
 }
 
 #endif

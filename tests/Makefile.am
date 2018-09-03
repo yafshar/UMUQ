@@ -1,6 +1,3 @@
-export LD_LIBRARY_PATH=${FLANN_LD_LIBRARY_PATH}:$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=${FLANN_LD_LIBRARY_PATH}:$DYLD_LIBRARY_PATH
-
 TESTS=
 check_PROGRAMS=
 
@@ -55,6 +52,10 @@ TESTS += function_test
 check_PROGRAMS += function_test
 function_test_SOURCES = numerics/function/function_test.cpp 
 
+TESTS += fitfunction_test
+check_PROGRAMS += fitfunction_test
+fitfunction_test_SOURCES = numerics/function/fitfunction_test.cpp 
+
 TESTS += functionminimizer_test
 check_PROGRAMS += functionminimizer_test
 functionminimizer_test_SOURCES = numerics/function/functionminimizer_test.cpp
@@ -106,9 +107,9 @@ TESTS += parser_test
 check_PROGRAMS += parser_test
 parser_test_SOURCES = misc/parser_test.cpp
 
-TESTS += array_test
-check_PROGRAMS += array_test
-array_test_SOURCES = misc/array_test.cpp
+TESTS += arraywrapper_test
+check_PROGRAMS += arraywrapper_test
+arraywrapper_test_SOURCES = misc/arraywrapper_test.cpp
 
 TESTS += funcallcounter_test
 check_PROGRAMS += funcallcounter_test
@@ -143,3 +144,19 @@ database_test_SOURCES = data/database_test.cpp
 TESTS += datatype_test
 check_PROGRAMS += datatype_test
 datatype_test_SOURCES = data/datatype_test.cpp
+
+#inference
+#prior
+TESTS += priordistribution_test
+check_PROGRAMS += priordistribution_test
+priordistribution_test_SOURCES = inference/prior/priordistribution_test.cpp
+
+#tmcmc
+TESTS += tmcmc_test
+check_PROGRAMS += tmcmc_test
+tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
+
+#torc
+TESTS += torc_test
+check_PROGRAMS += torc_test
+torc_test_SOURCES = torc/torc_test.cpp

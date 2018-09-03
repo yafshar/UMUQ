@@ -1,11 +1,19 @@
 #include "core/core.hpp"
 #include "environment.hpp"
-#include "data/datatype.hpp"
+#include "inference/tmcmc/tmcmc.hpp"
 #include "gtest/gtest.h"
 
-//! Tests datatype which is using database object
-TEST(datatype_test, HandlesGlobalData)
+//! Tests tmcmc
+TEST(tmcmc_test, HandlesConstruction)
 {
+    //! Create an instance of the tmcmc object
+    tmcmc<double> t;
+
+    //! Set the input file
+    EXPECT_TRUE(t.setInputFileName("./data/test.txt"));
+
+    //! Initilize the object
+    EXPECT_TRUE(t.init());
 }
 
 int main(int argc, char **argv)

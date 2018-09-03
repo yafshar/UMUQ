@@ -127,7 +127,7 @@ class runinfo
     //!                                                          [maxGenerations]
     std::vector<T> acceptance;
     //! SS cluster-wide                                          [nDim][nDim]
-    //! 
+    //!
     std::vector<T> SS;
     //!                                                          [maxGenerations][nDim]
     std::vector<T> meantheta;
@@ -157,9 +157,9 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
                                                        maxGenerations(MaxGenerations),
                                                        Generation(0)
 {
-    if (!runinfo<T>::init())
+    if (!init())
     {
-        UMUQFAIL("Failed to initialiaze!")
+        UMUQFAIL("Failed to initialiaze!");
     }
 }
 
@@ -172,16 +172,16 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 template <typename T>
 runinfo<T>::runinfo(runinfo<T> &&other)
 {
-    runinfo<T>::nDim = other.nDim;
-    runinfo<T>::maxGenerations = other.maxGenerations;
-    runinfo<T>::Generation = other.Generation;
-    runinfo<T>::CoefVar = std::move(other.CoefVar);
-    runinfo<T>::p = std::move(other.p);
-    runinfo<T>::currentuniques = std::move(other.currentuniques);
-    runinfo<T>::logselection = std::move(other.logselection);
-    runinfo<T>::acceptance = std::move(other.acceptance);
-    runinfo<T>::SS = std::move(other.SS);
-    runinfo<T>::meantheta = std::move(other.meantheta);
+    nDim = other.nDim;
+    maxGenerations = other.maxGenerations;
+    Generation = other.Generation;
+    CoefVar = std::move(other.CoefVar);
+    p = std::move(other.p);
+    currentuniques = std::move(other.currentuniques);
+    logselection = std::move(other.logselection);
+    acceptance = std::move(other.acceptance);
+    SS = std::move(other.SS);
+    meantheta = std::move(other.meantheta);
 }
 
 /*!
@@ -193,16 +193,16 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 template <typename T>
 runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 {
-    runinfo<T>::nDim = other.nDim;
-    runinfo<T>::maxGenerations = other.maxGenerations;
-    runinfo<T>::Generation = other.Generation;
-    runinfo<T>::CoefVar = std::move(other.CoefVar);
-    runinfo<T>::p = std::move(other.p);
-    runinfo<T>::currentuniques = std::move(other.currentuniques);
-    runinfo<T>::logselection = std::move(other.logselection);
-    runinfo<T>::acceptance = std::move(other.acceptance);
-    runinfo<T>::SS = std::move(other.SS);
-    runinfo<T>::meantheta = std::move(other.meantheta);
+    nDim = other.nDim;
+    maxGenerations = other.maxGenerations;
+    Generation = other.Generation;
+    CoefVar = std::move(other.CoefVar);
+    p = std::move(other.p);
+    currentuniques = std::move(other.currentuniques);
+    logselection = std::move(other.logselection);
+    acceptance = std::move(other.acceptance);
+    SS = std::move(other.SS);
+    meantheta = std::move(other.meantheta);
 
     return *this;
 }
@@ -217,14 +217,14 @@ bool runinfo<T>::init()
 {
     try
     {
-        runinfo<T>::CoefVar.resize(runinfo<T>::maxGenerations, T{});
-        runinfo<T>::p.resize(runinfo<T>::maxGenerations, T{});
-        runinfo<T>::currentuniques.resize(runinfo<T>::maxGenerations, 0);
-        runinfo<T>::logselection.resize(runinfo<T>::maxGenerations, T{});
-        runinfo<T>::acceptance.resize(runinfo<T>::maxGenerations, T{});
+        CoefVar.resize(maxGenerations, T{});
+        p.resize(maxGenerations, T{});
+        currentuniques.resize(maxGenerations, 0);
+        logselection.resize(maxGenerations, T{});
+        acceptance.resize(maxGenerations, T{});
 
-        runinfo<T>::SS.resize(runinfo<T>::nDim * runinfo<T>::nDim);
-        runinfo<T>::meantheta.resize(runinfo<T>::maxGenerations * runinfo<T>::nDim);
+        SS.resize(nDim * nDim, T{});
+        meantheta.resize(maxGenerations * nDim, T{});
     }
     catch (...)
     {
@@ -232,7 +232,7 @@ bool runinfo<T>::init()
     }
 
     // set the first value to a high number
-    runinfo<T>::CoefVar[0] = std::numeric_limits<T>::max();
+    CoefVar[0] = std::numeric_limits<T>::max();
 
     return true;
 }
@@ -249,9 +249,9 @@ bool runinfo<T>::init()
 template <typename T>
 bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
 {
-    runinfo<T>::nDim = ProbDim;
-    runinfo<T>::maxGenerations = MaxGenerations;
-    return runinfo<T>::init();
+    nDim = ProbDim;
+    maxGenerations = MaxGenerations;
+    return init();
 }
 
 /*!
@@ -263,16 +263,16 @@ bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
 template <typename T>
 void runinfo<T>::swap(runinfo<T> &other)
 {
-    std::swap(runinfo<T>::nDim, other.nDim);
-    std::swap(runinfo<T>::maxGenerations, other.maxGenerations);
-    std::swap(runinfo<T>::Generation, other.Generation);
-    runinfo<T>::CoefVar.swap(other.CoefVar);
-    runinfo<T>::p.swap(other.p);
-    runinfo<T>::currentuniques.swap(other.currentuniques);
-    runinfo<T>::logselection.swap(other.logselection);
-    runinfo<T>::acceptance.swap(other.acceptance);
-    runinfo<T>::SS.swap(other.SS);
-    runinfo<T>::meantheta.swap(other.meantheta);
+    std::swap(nDim, other.nDim);
+    std::swap(maxGenerations, other.maxGenerations);
+    std::swap(Generation, other.Generation);
+    CoefVar.swap(other.CoefVar);
+    p.swap(other.p);
+    currentuniques.swap(other.currentuniques);
+    logselection.swap(other.logselection);
+    acceptance.swap(other.acceptance);
+    SS.swap(other.SS);
+    meantheta.swap(other.meantheta);
 }
 
 /*!
@@ -297,30 +297,30 @@ bool runinfo<T>::save(const char *fileName)
 
         fs << std::fixed;
 
-        fs << "ProblemDimension= " << runinfo<T>::nDim << "\n";
-        fs << "maxGenerations= " << runinfo<T>::maxGenerations << "\n";
-        fs << "Generation= " << runinfo<T>::Generation << "\n";
+        fs << "ProblemDimension= " << nDim << "\n";
+        fs << "maxGenerations= " << maxGenerations << "\n";
+        fs << "Generation= " << Generation << "\n";
 
-        fs << "CoefVar[" << runinfo<T>::maxGenerations << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::CoefVar.data(), runinfo<T>::maxGenerations);
+        fs << "CoefVar[" << maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(CoefVar.data(), maxGenerations);
 
-        fs << "p[" << runinfo<T>::maxGenerations << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::p.data(), runinfo<T>::maxGenerations);
+        fs << "p[" << maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(p.data(), maxGenerations);
 
-        fs << "currentuniques[" << runinfo<T>::maxGenerations << "]=\n";
-        tmp &= f.saveMatrix<int>(runinfo<T>::currentuniques.data(), runinfo<T>::maxGenerations);
+        fs << "currentuniques[" << maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<int>(currentuniques.data(), maxGenerations);
 
-        fs << "logselection[" << runinfo<T>::maxGenerations << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::logselection.data(), runinfo<T>::maxGenerations);
+        fs << "logselection[" << maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(logselection.data(), maxGenerations);
 
-        fs << "acceptance[" << runinfo<T>::maxGenerations << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::acceptance.data(), runinfo<T>::maxGenerations);
+        fs << "acceptance[" << maxGenerations << "]=\n";
+        tmp &= f.saveMatrix<T>(acceptance.data(), maxGenerations);
 
-        fs << "SS[" << runinfo<T>::nDim << "][" << runinfo<T>::nDim << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::SS.data(), runinfo<T>::nDim, runinfo<T>::nDim);
+        fs << "SS[" << nDim << "][" << nDim << "]=\n";
+        tmp &= f.saveMatrix<T>(SS.data(), nDim, nDim);
 
-        fs << "meantheta[" << runinfo<T>::maxGenerations << "][" << nDim << "]=\n";
-        tmp &= f.saveMatrix<T>(runinfo<T>::meantheta.data(), runinfo<T>::maxGenerations, runinfo<T>::nDim);
+        fs << "meantheta[" << maxGenerations << "][" << nDim << "]=\n";
+        tmp &= f.saveMatrix<T>(meantheta.data(), maxGenerations, nDim);
 
         f.closeFile();
         return tmp;
@@ -331,7 +331,7 @@ bool runinfo<T>::save(const char *fileName)
 template <typename T>
 bool runinfo<T>::save(std::string const &fileName)
 {
-    return runinfo<T>::save(&fileName[0]);
+    return save(&fileName[0]);
 }
 
 /*!
@@ -363,9 +363,9 @@ bool runinfo<T>::load(const char *fileName)
         prs.parse(f.getLine().substr(16));
         int MaxGenerations = prs.at<int>(0);
 
-        if (ProbDim != runinfo<T>::nDim || MaxGenerations != runinfo<T>::maxGenerations)
+        if (ProbDim != nDim || MaxGenerations != maxGenerations)
         {
-            if (!runinfo<T>::reset(ProbDim, MaxGenerations))
+            if (!reset(ProbDim, MaxGenerations))
             {
                 return false;
             }
@@ -373,28 +373,28 @@ bool runinfo<T>::load(const char *fileName)
 
         tmp &= f.readLine();
         prs.parse(f.getLine().substr(12));
-        runinfo<T>::Generation = prs.at<int>(0);
+        Generation = prs.at<int>(0);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::CoefVar.data(), runinfo<T>::maxGenerations);
+        tmp &= f.loadMatrix<T>(CoefVar.data(), maxGenerations);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::p.data(), runinfo<T>::maxGenerations);
+        tmp &= f.loadMatrix<T>(p.data(), maxGenerations);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<int>(runinfo<T>::currentuniques.data(), runinfo<T>::maxGenerations);
+        tmp &= f.loadMatrix<int>(currentuniques.data(), maxGenerations);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::logselection.data(), runinfo<T>::maxGenerations);
+        tmp &= f.loadMatrix<T>(logselection.data(), maxGenerations);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::acceptance.data(), runinfo<T>::maxGenerations);
+        tmp &= f.loadMatrix<T>(acceptance.data(), maxGenerations);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::SS.data(), runinfo<T>::nDim, runinfo<T>::nDim);
+        tmp &= f.loadMatrix<T>(SS.data(), nDim, nDim);
 
         tmp &= f.readLine();
-        tmp &= f.loadMatrix<T>(runinfo<T>::meantheta.data(), runinfo<T>::maxGenerations, runinfo<T>::nDim);
+        tmp &= f.loadMatrix<T>(meantheta.data(), maxGenerations, nDim);
 
         f.closeFile();
         return tmp;
@@ -405,7 +405,7 @@ bool runinfo<T>::load(const char *fileName)
 template <typename T>
 bool runinfo<T>::load(std::string const &fileName)
 {
-    return runinfo<T>::load(&fileName[0]);
+    return load(&fileName[0]);
 }
 
 #endif //UMUQ_RUNINFO_H

@@ -15,8 +15,8 @@
  * 
  * \tparam T Data type
  */
-template <typename T>
-class gaussianDistribution : public densityFunction<T, FUN_x<T>>
+template <typename T, class V = T const *>
+class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
 {
   public:
     /*!
@@ -26,6 +26,15 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
      * \param sigma  Standard deviation \f$ \sigma \f$
      */
     gaussianDistribution(T const mu, T const sigma);
+
+    /*!
+     * \brief Construct a new gaussian Distribution object
+     * 
+     * \param mu     Mean, \f$ \mu \f$
+     * \param sigma  Standard deviation \f$ \sigma \f$
+     * \param n      Total number of Mean + Standard deviation inputs
+     */
+    gaussianDistribution(T const *mu, T const *sigma, int const n);
 
     /*!
      * \brief Destroy the gaussian Distribution object
@@ -40,7 +49,7 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns Density function value 
      */
-    inline T gaussianDistribution_f(T const x);
+    inline T gaussianDistribution_f(T const *x);
 
     /*!
      * \brief Log of Gaussian Distribution density function
@@ -49,7 +58,7 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
      * 
      * \returns  Log of density function value 
      */
-    inline T gaussianDistribution_lf(T const x);
+    inline T gaussianDistribution_lf(T const *x);
 };
 
 /*!
@@ -58,12 +67,24 @@ class gaussianDistribution : public densityFunction<T, FUN_x<T>>
  * \param mu     Mean, \f$ \mu \f$
  * \param sigma  Standard deviation \f$ \sigma \f$
  */
-template <typename T>
-gaussianDistribution<T>::gaussianDistribution(T const mu, T const sigma) : densityFunction<T, FUN_x<T>>(std::vector<T>{mu, sigma}.data(), 2, "gaussian")
+template <typename T, class V>
+gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : densityFunction<T, std::function<T(V)>>(&mu, &sigma, 2, "gaussian")
 {
-    this->f = std::bind(&gaussianDistribution<T>::gaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gaussianDistribution<T>::gaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
 }
+
+template <typename T, class V>
+gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, int const n) : densityFunction<T, std::function<T(V)>>(mu, sigma, n, "gaussian")
+{
+    if (n % 2 != 0)
+    {
+        UMUQFAIL("Wrong number of inputs!");
+    }
+    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
+}
+
 /*!
  * \brief Gaussian Distribution density function
  * 
@@ -71,11 +92,16 @@ gaussianDistribution<T>::gaussianDistribution(T const mu, T const sigma) : densi
  * 
  * \returns Density function value 
  */
-template <typename T>
-inline T gaussianDistribution<T>::gaussianDistribution_f(T const x)
+template <typename T, class V>
+inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
 {
-    T const xSigma = x - this->params[0] / this->params[1];
-    return static_cast<T>(1) / (M_S2PI * this->params[1]) * std::exp(-xSigma * xSigma / static_cast<T>(2));
+    T sum(1);
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    {
+        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        sum *= static_cast<T>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
+    }
+    return sum;
 }
 
 /*!
@@ -85,11 +111,16 @@ inline T gaussianDistribution<T>::gaussianDistribution_f(T const x)
  * 
  * \returns  Log of density function value 
  */
-template <typename T>
-inline T gaussianDistribution<T>::gaussianDistribution_lf(T const x)
+template <typename T, class V>
+inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
 {
-    T const xSigma = x - this->params[0] / this->params[1];
-    return -0.5 * M_L2PI - std::log(this->params[1]) - 0.5 * xSigma * xSigma;
+    T sum(0);
+    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    {
+        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        sum += -0.5 * M_L2PI - std::log(this->params[k + 1]) - 0.5 * xSigma * xSigma;
+    }
+    return sum;
 }
 
 #endif //UMUQ_GAUSSIANDISTRIBUTION_H

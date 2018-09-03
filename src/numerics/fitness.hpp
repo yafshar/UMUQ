@@ -5,7 +5,7 @@
 #include "residual.hpp"
 #include "stats.hpp"
 
-enum
+enum ErrorFitnessTypes
 {
     errorFitSum = -1,
     errorFitMean = -2,
@@ -93,6 +93,13 @@ class fitness
     inline std::string getMetricName();
 
   private:
+    // Make it noncopyable
+    fitness(fitness<T> const &) = delete;
+
+    // Make it not assignable
+    fitness<T> &operator=(fitness<T> const &) = delete;
+
+  private:
     //! Fitness metric name
     std::string fitnessMetricName;
 
@@ -143,8 +150,8 @@ fitness<T>::fitness(std::string const &metric, int const inum_metrics, std::vect
     {
         UMUQWARNING("Fitness is unknown : By default it is set to sum_squared!");
 
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitSum;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitSum;
     }
 }
 
@@ -159,53 +166,53 @@ bool fitness<T>::setMetricName(std::string const &metric)
     this->fitnessMetricName = metric;
     if (this->fitnessMetricName == "sum_squared")
     {
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitSum;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitSum;
     }
     else if (this->fitnessMetricName == "mean_squared")
     {
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitMean;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitMean;
     }
     else if (this->fitnessMetricName == "root_mean_squared")
     {
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitRootMean;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitRootMean;
     }
     else if (this->fitnessMetricName == "max_squared")
     {
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitMax;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitMax;
     }
     else if (this->fitnessMetricName == "sum_scaled")
     {
-        this->fitnessResidual.set(ScaledError);
-        this->errorFit = errorFitSum;
+        this->fitnessResidual.set(ErrorTypes::ScaledError);
+        this->errorFit = ErrorFitnessTypes::errorFitSum;
     }
     else if (this->fitnessMetricName == "mean_scaled")
     {
-        this->fitnessResidual.set(ScaledError);
-        this->errorFit = errorFitMean;
+        this->fitnessResidual.set(ErrorTypes::ScaledError);
+        this->errorFit = ErrorFitnessTypes::errorFitMean;
     }
     else if (this->fitnessMetricName == "max_scaled")
     {
-        this->fitnessResidual.set(ScaledError);
-        this->errorFit = errorFitMax;
+        this->fitnessResidual.set(ErrorTypes::ScaledError);
+        this->errorFit = ErrorFitnessTypes::errorFitMax;
     }
     else if (this->fitnessMetricName == "sum_abs")
     {
-        this->fitnessResidual.set(AbsoluteError);
-        this->errorFit = errorFitSum;
+        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+        this->errorFit = ErrorFitnessTypes::errorFitSum;
     }
     else if (this->fitnessMetricName == "mean_abs")
     {
-        this->fitnessResidual.set(AbsoluteError);
-        this->errorFit = errorFitMean;
+        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+        this->errorFit = ErrorFitnessTypes::errorFitMean;
     }
     else if (this->fitnessMetricName == "max_abs")
     {
-        this->fitnessResidual.set(AbsoluteError);
-        this->errorFit = errorFitMax;
+        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+        this->errorFit = ErrorFitnessTypes::errorFitMax;
     }
     else if (this->fitnessMetricName == "press")
     {
@@ -213,7 +220,7 @@ bool fitness<T>::setMetricName(std::string const &metric)
     }
     else if (this->fitnessMetricName == "cv")
     {
-        // this->fitnessResidual.set(SquredError);
+        // this->fitnessResidual.set(ErrorTypes::SquredError);
         // this->errorFit = errorFitMean;
 
         // if (this->num_metrics > 0)
@@ -225,8 +232,8 @@ bool fitness<T>::setMetricName(std::string const &metric)
     }
     else if (this->fitnessMetricName == "rsquared")
     {
-        this->fitnessResidual.set(SquredError);
-        this->errorFit = errorFitSum;
+        this->fitnessResidual.set(ErrorTypes::SquredError);
+        this->errorFit = ErrorFitnessTypes::errorFitSum;
     }
     else
     {
@@ -332,53 +339,53 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
         {
             if (this->metric_names[i] == "sum_squared")
             {
-                this->fitnessResidual.set(SquredError);
-                this->errorFit = errorFitSum;
+                this->fitnessResidual.set(ErrorTypes::SquredError);
+                this->errorFit = ErrorFitnessTypes::errorFitSum;
             }
             else if (this->metric_names[i] == "mean_squared")
             {
-                this->fitnessResidual.set(SquredError);
-                this->errorFit = errorFitMean;
+                this->fitnessResidual.set(ErrorTypes::SquredError);
+                this->errorFit = ErrorFitnessTypes::errorFitMean;
             }
             else if (this->metric_names[i] == "root_mean_squared")
             {
-                this->fitnessResidual.set(SquredError);
-                this->errorFit = errorFitRootMean;
+                this->fitnessResidual.set(ErrorTypes::SquredError);
+                this->errorFit = ErrorFitnessTypes::errorFitRootMean;
             }
             else if (this->metric_names[i] == "max_squared")
             {
-                this->fitnessResidual.set(SquredError);
-                this->errorFit = errorFitMax;
+                this->fitnessResidual.set(ErrorTypes::SquredError);
+                this->errorFit = ErrorFitnessTypes::errorFitMax;
             }
             else if (this->metric_names[i] == "sum_scaled")
             {
-                this->fitnessResidual.set(ScaledError);
-                this->errorFit = errorFitSum;
+                this->fitnessResidual.set(ErrorTypes::ScaledError);
+                this->errorFit = ErrorFitnessTypes::errorFitSum;
             }
             else if (this->metric_names[i] == "mean_scaled")
             {
-                this->fitnessResidual.set(ScaledError);
-                this->errorFit = errorFitMean;
+                this->fitnessResidual.set(ErrorTypes::ScaledError);
+                this->errorFit = ErrorFitnessTypes::errorFitMean;
             }
             else if (this->metric_names[i] == "max_scaled")
             {
-                this->fitnessResidual.set(ScaledError);
-                this->errorFit = errorFitMax;
+                this->fitnessResidual.set(ErrorTypes::ScaledError);
+                this->errorFit = ErrorFitnessTypes::errorFitMax;
             }
             else if (this->metric_names[i] == "sum_abs")
             {
-                this->fitnessResidual.set(AbsoluteError);
-                this->errorFit = errorFitSum;
+                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+                this->errorFit = ErrorFitnessTypes::errorFitSum;
             }
             else if (this->metric_names[i] == "mean_abs")
             {
-                this->fitnessResidual.set(AbsoluteError);
-                this->errorFit = errorFitMean;
+                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+                this->errorFit = ErrorFitnessTypes::errorFitMean;
             }
             else if (this->metric_names[i] == "max_abs")
             {
-                this->fitnessResidual.set(AbsoluteError);
-                this->errorFit = errorFitMax;
+                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
+                this->errorFit = ErrorFitnessTypes::errorFitMax;
             }
             else
             {
@@ -391,16 +398,16 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
                 stats s;
                 switch (this->errorFit)
                 {
-                case errorFitSum:
+                case ErrorFitnessTypes::errorFitSum:
                     this->metric_values[i] = s.sum<T, T>(results, nSize);
                     break;
-                case errorFitMean:
+                case ErrorFitnessTypes::errorFitMean:
                     this->metric_values[i] = s.mean<T, T>(results, nSize);
                     break;
-                case errorFitRootMean:
+                case ErrorFitnessTypes::errorFitRootMean:
                     this->metric_values[i] = std::sqrt(s.mean<T, T>(results, nSize));
                     break;
-                case errorFitMax:
+                case ErrorFitnessTypes::errorFitMax:
                     this->metric_values[i] = s.maxelement<T>(results, nSize);
                     break;
                 }
@@ -421,13 +428,13 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 
             switch (this->errorFit)
             {
-            case errorFitSum:
+            case ErrorFitnessTypes::errorFitSum:
                 return s.sum<T, T>(results, nSize);
-            case errorFitMean:
+            case ErrorFitnessTypes::errorFitMean:
                 return s.mean<T, T>(results, nSize);
-            case errorFitRootMean:
+            case ErrorFitnessTypes::errorFitRootMean:
                 return std::sqrt(s.mean<T, T>(results, nSize));
-            case errorFitMax:
+            case ErrorFitnessTypes::errorFitMax:
                 return s.maxelement<T>(results, nSize);
             }
         }

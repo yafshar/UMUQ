@@ -1,9 +1,9 @@
 #include "core/core.hpp"
-#include "misc/array.hpp"
+#include "misc/arraywrapper.hpp"
 #include "gtest/gtest.h"
 
 /*!
- * \brief Construct a new TEST object for checking ArrayWrapper
+ * \brief Construct a new TEST object for checking arrayWrapper
  * 
  */
 TEST(arraywrapper_test, HandlesVectors)
@@ -20,7 +20,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        ArrayWrapper<int> iArray(iPointer, 1000);
+        arrayWrapper<int> iArray(iPointer, 1000);
         for (auto i = iArray.begin(); i != iArray.end(); i++, j++)
         {
             EXPECT_EQ(*i, j * 10);
@@ -37,7 +37,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        ArrayWrapper<double> dArray(dPointer, 100);
+        arrayWrapper<double> dArray(dPointer, 100);
         for (auto i = dArray.begin(); i != dArray.end(); i++)
         {
             EXPECT_EQ(*i, (double)j * 10);
@@ -64,7 +64,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        ArrayWrapper<srt> srtArray(srtPointer, 10);
+        arrayWrapper<srt> srtArray(srtPointer, 10);
         for (auto i = srtArray.begin(); i != srtArray.end(); i++, j++)
         {
             auto e = i.get();
@@ -77,7 +77,7 @@ TEST(arraywrapper_test, HandlesVectors)
 }
 
 /*!
- * \brief Construct a new TEST object for checking ArrayWrapper when we have stride
+ * \brief Construct a new TEST object for checking arrayWrapper when we have stride
  * 
  */
 TEST(arraywrapper_test, HandlesVectorsWithStride)
@@ -89,7 +89,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
         //Fill the array with some values
         std::iota(iPointer.get(), iPointer.get() + 10, 0);
 
-        ArrayWrapper<int> iArray(iPointer, 10, 2);
+        arrayWrapper<int> iArray(iPointer, 10, 2);
 
         int j = 0;
         for (auto i = iArray.begin(); i != iArray.end(); i++)
@@ -98,7 +98,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
             j += 2;
         }
 
-        EXPECT_EQ(iArray.size(), 5);
+        EXPECT_EQ(iArray.size(), std::size_t{5});
     }
 
     //! check for array of double with stride 9
@@ -108,7 +108,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
         //Fill the array with some values
         std::iota(dPointer.get(), dPointer.get() + 100, 1000.);
 
-        ArrayWrapper<double> dArray(dPointer, 100, 9);
+        arrayWrapper<double> dArray(dPointer, 100, 9);
 
         double sd = 1000.;
         for (auto i = dArray.begin(); i != dArray.end(); i++)
@@ -117,12 +117,12 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
             sd += 9.;
         }
 
-        EXPECT_EQ(dArray.size(), 11);
+        EXPECT_EQ(dArray.size(), std::size_t{11});
     }
 }
 
 /*!
- * \brief Construct a new TEST object for checking ArrayWrapper for N dimensional vectors 
+ * \brief Construct a new TEST object for checking arrayWrapper for N dimensional vectors 
  * 
  */
 TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
@@ -140,7 +140,7 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
             }
         }
 
-        ArrayWrapper<int> iArray(iPointer, 10, 2);
+        arrayWrapper<int> iArray(iPointer, 10, 2);
 
         {
             int j = 0;
@@ -151,9 +151,9 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
             }
         }
 
-        EXPECT_EQ(iArray.size(), 5);
+        EXPECT_EQ(iArray.size(), std::size_t{5});
 
-        ArrayWrapper<int> jArray(iPointer.get() + 1, 10, 2);
+        arrayWrapper<int> jArray(iPointer.get() + 1, 10, 2);
 
         {
             int j = 0;
@@ -164,7 +164,7 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
             }
         }
 
-        EXPECT_EQ(jArray.size(), 5);
+        EXPECT_EQ(jArray.size(), std::size_t{5});
     }
 }
 

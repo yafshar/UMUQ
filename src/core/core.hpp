@@ -6,9 +6,6 @@
 #include <UMUQ_config.h>
 #endif /* HAVE_CONFIG_H */
 
-//Include this file where all our macros are defined.
-#include "macros.hpp"
-
 // Defines symbols for compile-time detection of which instructions are used.
 // UMUQ_VECTORIZE_YY is defined if and only if the instruction set YY is used
 #define UMUQ_VECTORIZE
@@ -30,6 +27,13 @@
 #define UMUQ_VECTORIZE_SSE4_2
 #endif
 
+#if HAVE_MPI == 1
+#include <mpi.h>
+#endif //MPI
+
+//Include this file where all our macros are defined.
+#include "macros.hpp"
+
 // include files
 extern "C" {
 #ifdef UMUQ_VECTORIZE_SSE3
@@ -48,13 +52,6 @@ extern "C" {
 
 #ifdef UMUQ_HAS_OPENMP
 #include <omp.h>
-#endif
-
-#define _XOPEN_SOURCE 700
-#define _BSD_SOURCE 1
-
-#ifdef HAVE_TORC
-#include <torc.h>
 #endif
 
 #include <sys/stat.h> //stat
@@ -87,14 +84,38 @@ extern "C" {
 #include <mutex>
 #include <functional>
 
-// #define HAVE_PYTHON 0
-#ifdef HAVE_PYTHON
+#if HAVE_PYTHON == 1
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
 #include <Python.h>
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 #if PY_MAJOR_VERSION >= 3
 #define PyString_FromString PyUnicode_FromString
 #endif
+#endif
+
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+#ifdef _BSD_SOURCE
+#undef _BSD_SOURCE
+#endif
+#define _XOPEN_SOURCE 700
+#define _BSD_SOURCE 1
+#ifdef HAVE_TORC
+#include <torc.h>
+#endif
+
+#ifdef M_PI
+#undef M_PI
+#endif
+#ifdef M_2PI
+#undef M_2PI
 #endif
 
 /*!
@@ -120,13 +141,6 @@ inline static const char *SimdInstructionSetsInUse(void)
 #endif
 }
 
-#ifdef M_PI
-#undef M_PI
-#endif
-#ifdef M_2PI
-#undef M_2PI
-#endif
-
 /*!
  * \brief Constant values of \f$ \pi, 2\pi, \sqrt{\pi}, \sqrt{2\pi}, ln(\pi), and ln(2\pi) \f$
  *
@@ -140,6 +154,7 @@ inline static const char *SimdInstructionSetsInUse(void)
 #define M_LPI  1.14472988584940017414342735135305871164729481291531157151362307147213774l
 #define M_L2PI 1.83787706640934548356065947281123527972279494727556682563430308096553139l
 
+//! Maximum size of a char * in UMUQ parser & io
 #define LINESIZE 256
 } // namespace UMUQ
 
