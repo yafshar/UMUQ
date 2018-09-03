@@ -21,6 +21,7 @@ AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
 # 
 m4_include([m4/m4_ax_prog.m4])
+m4_include([m4/m4_ax_debug.m4])
 m4_include([m4/m4_ax_arch.m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
 m4_include([m4/m4_ax_mpi.m4])
@@ -30,6 +31,7 @@ m4_include([m4/m4_ax_eigen.m4])
 m4_include([m4/m4_ax_flann.m4])
 m4_include([m4/m4_ax_googletest.m4])
 m4_include([m4/m4_ax_doxygen.m4])
+m4_include([m4/m4_ax_python.m4])
 #
 
 # Configuring
