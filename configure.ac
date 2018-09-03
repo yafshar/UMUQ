@@ -6,10 +6,14 @@
 #
 AC_PREREQ([2.69])
 
-AC_INIT([UMUQ], [1.0], [ya.afshar@gmail.com])
+# Given a version number MAJOR.MINOR.PATCH, increment the:
+# MAJOR version when you make incompatible API changes,
+# MINOR version when you add functionality in a backwards-compatible manner, and
+# PATCH version when you make backwards-compatible bug fixes.
+AC_INIT([UMUQ], [1.0.0], [ya.afshar@gmail.com])
 
 AC_COPYRIGHT(Copyright 2018 University of Michigan)
-AC_REVISION([$Revision: 1.00 $])
+AC_REVISION([$Revision: 1.0.0 $])
 
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
@@ -17,6 +21,7 @@ AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
 # 
 m4_include([m4/m4_ax_prog.m4])
+m4_include([m4/m4_ax_debug.m4])
 m4_include([m4/m4_ax_arch.m4])
 m4_include([m4/m4_ax_cxx_compile_stdcxx.m4])
 m4_include([m4/m4_ax_mpi.m4])
@@ -26,6 +31,7 @@ m4_include([m4/m4_ax_eigen.m4])
 m4_include([m4/m4_ax_flann.m4])
 m4_include([m4/m4_ax_googletest.m4])
 m4_include([m4/m4_ax_doxygen.m4])
+m4_include([m4/m4_ax_python.m4])
 #
 
 # Configuring
@@ -66,6 +72,10 @@ AX_MPI
 AC_MSG_CHECKING([for - POSIX threads - ])
 AX_PTHREAD
 
+### Chech if DEBUG preprocessor flag is enabled
+AC_MSG_CHECKING([for - DEBUG - ])
+AX_DEBUG
+
 ### Checking for TORC
 AC_MSG_CHECKING([for - TORC Library - ])
 AX_TORC
@@ -82,8 +92,12 @@ AX_FLANN
 AC_MSG_CHECKING([for - GOOGLETEST Framework - ])
 AX_GOOGLETEST
 
-# Chech for Doxygen
-AC_MSG_CHECKING([ for - DOXYGEN - ])
+### Checking for python
+AC_MSG_CHECKING([for - PYTHON - ])
+AX_PYTHON
+
+### Chech for Doxygen
+AC_MSG_CHECKING([for - DOXYGEN - ])
 AX_DOXYGEN
 
 AC_LANG_PUSH([C++])
@@ -119,7 +133,7 @@ Configure Information:
     DEFS            :   $DEFS
     CFLAGS          :   $CFLAGS
 
-  C++ Compiler      : $CXX
+  C++ Compiler      : $CX
     DEFS            :   $DEFS
     CXXFLAGS        :   $CXXFLAGS
 
@@ -133,3 +147,15 @@ Configure Information:
     GTEST_LDFLAGS   : $GTEST_LDFLAGS
     GTEST_LIBS      : $GTEST_LIBS
 ])
+
+AM_COND_IF([HAVE_PYTHON], [
+  AC_MSG_RESULT([
+  Results for Python:
+  Python binary     : $PYTHON_BIN
+    Library         :   $PYTHON_LIB
+    Include dir     :   $PYTHON_INCLUDE_DIR  $NUMPY_INCLUDE_DIR
+  ])
+])
+
+
+

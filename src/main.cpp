@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "core/environment.hpp"
+#include "environment.hpp"
 #include "numerics/polynomial.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/knearestneighbors.hpp"
@@ -13,8 +13,6 @@
 int main(int argc, char **argv)
 {
 	torc_init(argc, argv);
-
-	tmcmc<double> t;
 
 	torc_finalize();
 
