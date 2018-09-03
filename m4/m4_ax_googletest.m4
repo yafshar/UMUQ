@@ -141,7 +141,7 @@ AC_DEFUN([AX_GOOGLETEST], [
 
 							if test x"$googletest_LDFLAGS" = x ; then
 								AC_LANG_PUSH([C++])
-								(cd "$googletest_PATH" && mkdir -p build && cd build && export CC=$CC && export CXX=$CXX && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$googletest_PATH" ../ && make -j 2)
+								(cd "$googletest_PATH" && mkdir -p build && cd build && export CC=$CC && export CXX=$CXX && cmake CC=$CC CXX=$CXX -DCMAKE_INSTALL_PREFIX="$googletest_PATH" ../ && make -j 4)
 								googletest_LDFLAGS=" -L$googletest_PATH"'/build/googlemock/gtest'
 								GTEST_LD_LIBRARY_PATH="$googletest_PATH"'/build/googlemock/gtest'
 								AC_LANG_POP([C++])
