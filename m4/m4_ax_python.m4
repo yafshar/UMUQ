@@ -140,11 +140,28 @@ AC_DEFUN([AX_PYTHON], [
 		fi
 	])
 
-	AM_CONDITIONAL([HAVE_PYTHON], [test x"$ax_python_ok" = xyes])
+	ax_numpy_ok=no
+	if test x"$ax_python_ok" = xyes; then
+		AC_MSG_CHECKING(for numpy python module)
+		$PYTHON_BIN -c "import numpy" 2>/dev/null	
+		if test $? == 0; then
+			AC_MSG_RESULT(found)
+			ax_numpy_ok=yes
+			AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON_BIN -c "import numpy; numpypath=numpy.__path__[[0]]; print '%s/core/include' % numpypath"`])
+			AC_SUBST([NUMPY_INCLUDE_DIR], [$_cv_numpy_header])
+		else
+			AC_MSG_WARN([ Unable to find NUMPY !])
+		fi			
+	fi
+
+	AM_CONDITIONAL([HAVE_PYTHON], [test x"$ax_numpy_ok" = xyes])
 	AM_COND_IF([HAVE_PYTHON], [
 			AC_DEFINE(HAVE_PYTHON, 1, [Define if you want to use PYTHON.])
-			CPPFLAGS+=" -I$ax_python_header"
-			LDFLAGS+=" -l$ax_python_lib"
+			CPPFLAGS+=" -I$PYTHON_INCLUDE_DIR"
+			if test x$NUMPY_INCLUDE_DIR != x; then
+				CPPFLAGS+=" -I$NUMPY_INCLUDE_DIR"
+			fi
+			LDFLAGS+=" -l$PYTHON_LIB"
 			AC_SUBST(CPPFLAGS)
 			AC_SUBST(LDFLAGS)
 		], [

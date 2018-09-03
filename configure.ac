@@ -151,7 +151,7 @@ AM_COND_IF([HAVE_PYTHON], [
   Results for Python:
   Python binary     : $PYTHON_BIN
     Library         :   $PYTHON_LIB
-    Include dir     :   $PYTHON_INCLUDE_DIR
+    Include dir     :   $PYTHON_INCLUDE_DIR  $NUMPY_INCLUDE_DIR
   ])
 ])
 
