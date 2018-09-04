@@ -8,10 +8,10 @@
  * \brief The base class for fit function which can be used in the inference process
  * 
  * \tparam T Data type
- * \tparam F Polymorphic function wrapper
+ * \tparam F Function type
  */
-template <typename T, class F = F_FTYPE<T>>
-class fitFunction
+template <typename T, class F = FITFUN_T<T>>
+class fitFunction : public umuqFunction<T, F>
 {
   public:
     /*!
@@ -22,25 +22,67 @@ class fitFunction
     explicit fitFunction(char const *Name = "");
 
     /*!
-     * \brief Set the Function to be used in this fitFunction
+     * \brief Construct a new fitFunction Function object
      * 
-     * \param umFun UMUQ Function to be used in this fitFunction
-     * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \param Params     Parameters of fitFunction object
+     * \param NumParams  Number of parameters
+     * \param Name       fitFunction name
      */
-    virtual bool set(umuqFunction<T, F> &umFun);
+    fitFunction(T const *Params, int const NumParams, char const *Name = "");
+    fitFunction(std::vector<T> const &Params, char const *Name = "");
 
     /*!
-     * \brief Set the Function to be used in this fitFunction
+     * \brief Destroy the fit Function object
      * 
-     * \param Fun Function to be used in this fitFunction
+     */
+    ~fitFunction();
+
+    /*!
+     * \brief Move constructor, Construct a new umuqFunction object
+     * 
+     * \param other umuqFunction object
+     */
+    fitFunction(fitFunction<T, F> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     */
+    fitFunction<T, F> &operator=(fitFunction<T, F> &&other);
+
+    /*!
+     * \brief Set the Init Function object
+     * 
+     * \param InitFun Initilization function which has the fixed shape of bool() 
      * 
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    virtual bool set(F &Fun);
-    virtual bool set(F const &Fun);
+    bool setInitFunction(std::function<bool()> &InitFun);
+    bool setInitFunction(std::function<bool()> const &InitFun);
+
+    /*!
+     * \brief Set the fitting Function to be used
+     * 
+     * \param fitFun  Fitting Function of type (class F)
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    bool setfitFunction(F &fitFun);
+    bool setfitFunction(F const &fitFun);
+
+    /*!
+     * \brief Setting both the Init Function & fitting Function 
+     * 
+     * \param InitFun  Initilization function which has the fixed shape of bool()
+     * \param fitFun   Fitting Function of type (class F)
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    bool set(std::function<bool()> &InitFun, F &fitFun);
+    bool set(std::function<bool()> const &InitFun, F const &fitFun);
 
     /*!
      * \brief Initilize the fitFunction
@@ -50,13 +92,6 @@ class fitFunction
      */
     virtual bool init();
 
-    /*!
-     * \brief Get the Name object
-     * 
-     * \return std::string const 
-     */
-    inline std::string const getName() const;
-
   private:
     // Make it noncopyable
     fitFunction(fitFunction<T, F> const &) = delete;
@@ -65,71 +100,143 @@ class fitFunction
     fitFunction<T, F> &operator=(fitFunction<T, F> const &) = delete;
 
   public:
-    //! Name of the fitFunction
-    std::string name;
-
-    //! Function to be used in this fitFunction
-    umuqFunction<T, F> fun;
-
-    //! Helper n-dimensional x vector
-    std::vector<T> x;
+    //! Initilization function which has the fixed shape of bool()
+    std::function<bool()> initFun;
 };
 
 template <typename T, class F>
-fitFunction<T, F>::fitFunction(char const *Name) : name(Name) {}
+fitFunction<T, F>::fitFunction(char const *Name) : umuqFunction<T, F>(Name) {}
 
 template <typename T, class F>
-bool fitFunction<T, F>::set(umuqFunction<T, F> &umFun)
+fitFunction<T, F>::fitFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name) {}
+
+template <typename T, class F>
+fitFunction<T, F>::fitFunction(std::vector<T> const &Params, const char *Name) : umuqFunction<T, F>(Params, Name) {}
+
+template <typename T, class F>
+fitFunction<T, F>::~fitFunction() {}
+
+template <typename T, class F>
+fitFunction<T, F>::fitFunction(fitFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)),
+                                                            initFun(std::move(other.initFun))
 {
-    if (umFun)
-    {
-        fun = std::move(umFun);
-    }
-    else
-    {
-        UMUQFAILRETURN("Function is not assigned!");
-    }
-    return true;
 }
 
 template <typename T, class F>
-bool fitFunction<T, F>::set(F &Fun)
+fitFunction<T, F> &fitFunction<T, F>::operator=(fitFunction<T, F> &&other)
 {
-    if (Fun)
-    {
-        fun.f = Fun;
-    }
-    else
-    {
-        UMUQFAILRETURN("Function is not assigned!");
-    }
-    return true;
+    umuqFunction<T, F>::operator=(std::move(other));
+    this->initFun = std::move(other.initFun);
+
+    return *this;
 }
 
 template <typename T, class F>
-bool fitFunction<T, F>::set(F const &Fun)
+bool fitFunction<T, F>::setInitFunction(std::function<bool()> &InitFun)
 {
-    if (Fun)
+    if (InitFun)
     {
-        fun.f = Fun;
+        initFun = InitFun;
+        return true;
+    }
+    UMUQFAILRETURN("Init function is not assigned!");
+}
+
+template <typename T, class F>
+bool fitFunction<T, F>::setInitFunction(std::function<bool()> const &InitFun)
+{
+    if (InitFun)
+    {
+        initFun = InitFun;
+        return true;
+    }
+    UMUQFAILRETURN("Init function is not assigned!");
+}
+
+template <typename T, class F>
+bool fitFunction<T, F>::setfitFunction(F &fitFun)
+{
+    if (fitFun)
+    {
+        this->f = fitFun;
+        return true;
+    }
+    UMUQFAILRETURN("Fitting function is not assigned!");
+}
+
+template <typename T, class F>
+bool fitFunction<T, F>::setfitFunction(F const &fitFun)
+{
+    if (fitFun)
+    {
+        this->f = fitFun;
+        return true;
+    }
+    UMUQFAILRETURN("Fitting function is not assigned!");
+}
+
+template <typename T, class F>
+bool fitFunction<T, F>::set(std::function<bool()> &InitFun, F &fitFun)
+{
+    if (InitFun)
+    {
+        initFun = InitFun;
+        if (fitFun)
+        {
+            this->f = fitFun;
+            return true;
+        }
+        UMUQWARNING("Fitting function is not assigned!");
+        return true;
     }
     else
     {
-        UMUQFAILRETURN("Function is not assigned!");
+        UMUQWARNING("Init function is not assigned!");
+        if (fitFun)
+        {
+            this->f = fitFun;
+            return true;
+        }
+        UMUQFAILRETURN("Fitting function is not assigned!");
     }
-    return true;
+    UMUQFAILRETURN("Init function is not assigned!");
+}
+
+template <typename T, class F>
+bool fitFunction<T, F>::set(std::function<bool()> const &InitFun, F const &fitFun)
+{
+    if (InitFun)
+    {
+        initFun = InitFun;
+        if (fitFun)
+        {
+            this->f = fitFun;
+            return true;
+        }
+        UMUQWARNING("Fitting function is not assigned!");
+        return true;
+    }
+    else
+    {
+        UMUQWARNING("Init function is not assigned!");
+        if (fitFun)
+        {
+            this->f = fitFun;
+            return true;
+        }
+        UMUQFAILRETURN("Fitting function is not assigned!");
+    }
+    UMUQFAILRETURN("Init function is not assigned!");
 }
 
 template <typename T, class F>
 bool fitFunction<T, F>::init()
 {
+    if (initFun)
+    {
+        return initFun();
+    }
     return true;
-}
-
-template <typename T, class F>
-inline std::string const fitFunction<T, F>::getName() const
-{
-    return name;
 }
 
 #endif //UMUQ_FITFUNCTION
