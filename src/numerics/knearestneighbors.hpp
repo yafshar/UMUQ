@@ -57,21 +57,21 @@ class kNearestNeighbor
 
     /*!
      * \brief Move constructor
-     * \param inputObj kNearestNeighbor to be moved
+     * \param other kNearestNeighbor to be moved
      */
-    kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj);
+    kNearestNeighbor(kNearestNeighbor<T, Distance> &&other);
 
     /*!
      * \brief Copy constructor
-     * \param inputObj kNearestNeighbor to be copied
+     * \param other kNearestNeighbor to be copied
      */
-    kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj);
+    kNearestNeighbor(kNearestNeighbor<T, Distance> const &other);
 
     /*!
      * \brief Move assignment operator
-     * \param inputObj kNearestNeighbor to be assigned
+     * \param other kNearestNeighbor to be assigned
      */
-    kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&inputObj);
+    kNearestNeighbor<T, Distance> &operator=(kNearestNeighbor<T, Distance> &&other);
 
     /*!
      * \brief Default destructor
@@ -236,53 +236,53 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const
 }
 
 template <typename T, class Distance>
-kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> &&inputObj) : drows(inputObj.drows),
-                                                                                            qrows(inputObj.qrows),
-                                                                                            cols(inputObj.cols),
-                                                                                            nn(inputObj.nn),
-                                                                                            indices_ptr(std::move(inputObj.indices_ptr)),
-                                                                                            dists_ptr(std::move(inputObj.dists_ptr)),
-                                                                                            indices(std::move(inputObj.indices)),
-                                                                                            dists(std::move(inputObj.dists)),
-                                                                                            the_same(inputObj.the_same)
+kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> &&other) : drows(other.drows),
+                                                                                            qrows(other.qrows),
+                                                                                            cols(other.cols),
+                                                                                            nn(other.nn),
+                                                                                            indices_ptr(std::move(other.indices_ptr)),
+                                                                                            dists_ptr(std::move(other.dists_ptr)),
+                                                                                            indices(std::move(other.indices)),
+                                                                                            dists(std::move(other.dists)),
+                                                                                            the_same(other.the_same)
 {
 }
 
 template <typename T, class Distance>
-kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> const &inputObj) : drows(inputObj.drows),
-                                                                                                 qrows(inputObj.qrows),
-                                                                                                 cols(inputObj.cols),
-                                                                                                 nn(inputObj.nn),
-                                                                                                 indices_ptr(new int[inputObj.qrows * inputObj.nn]),
-                                                                                                 dists_ptr(new T[inputObj.qrows * inputObj.nn]),
-                                                                                                 indices(indices_ptr.get(), inputObj.qrows, inputObj.nn),
-                                                                                                 dists(dists_ptr.get(), inputObj.qrows, inputObj.nn),
-                                                                                                 the_same(inputObj.the_same)
+kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> const &other) : drows(other.drows),
+                                                                                                 qrows(other.qrows),
+                                                                                                 cols(other.cols),
+                                                                                                 nn(other.nn),
+                                                                                                 indices_ptr(new int[other.qrows * other.nn]),
+                                                                                                 dists_ptr(new T[other.qrows * other.nn]),
+                                                                                                 indices(indices_ptr.get(), other.qrows, other.nn),
+                                                                                                 dists(dists_ptr.get(), other.qrows, other.nn),
+                                                                                                 the_same(other.the_same)
 {
     {
-        int *From = inputObj.indices_ptr.get();
+        int *From = other.indices_ptr.get();
         int *To = indices_ptr.get();
         std::copy(From, From + qrows * nn, To);
     }
     {
-        T *From = inputObj.dists_ptr.get();
+        T *From = other.dists_ptr.get();
         T *To = dists_ptr.get();
         std::copy(From, From + qrows * nn, To);
     }
 }
 
 template <typename T, class Distance>
-kNearestNeighbor<T, Distance> &kNearestNeighbor<T, Distance>::operator=(kNearestNeighbor<T, Distance> &&inputObj)
+kNearestNeighbor<T, Distance> &kNearestNeighbor<T, Distance>::operator=(kNearestNeighbor<T, Distance> &&other)
 {
-    drows = std::move(inputObj.drows);
-    qrows = std::move(inputObj.qrows);
-    cols = std::move(inputObj.cols);
-    nn = std::move(inputObj.nn);
-    the_same = std::move(inputObj.the_same);
-    indices_ptr = std::move(inputObj.indices_ptr);
-    dists_ptr = std::move(inputObj.dists_ptr);
-    indices = std::move(inputObj.indices);
-    dists = std::move(inputObj.dists);
+    drows = std::move(other.drows);
+    qrows = std::move(other.qrows);
+    cols = std::move(other.cols);
+    nn = std::move(other.nn);
+    the_same = std::move(other.the_same);
+    indices_ptr = std::move(other.indices_ptr);
+    dists_ptr = std::move(other.dists_ptr);
+    indices = std::move(other.indices);
+    dists = std::move(other.dists);
     return *this;
 }
 
@@ -438,9 +438,9 @@ class L2NearestNeighbor : public kNearestNeighbor<T, flann::L2<T>>
   public:
     L2NearestNeighbor(int const ndataPoints, int const nDim, int const nN);
     L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN);
-    L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj);
-    L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj);
-    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&inputObj);
+    L2NearestNeighbor(L2NearestNeighbor<T> &&other);
+    L2NearestNeighbor(L2NearestNeighbor<T> const &other);
+    L2NearestNeighbor<T> &operator=(L2NearestNeighbor<T> &&other);
 };
 
 template <typename T>
@@ -451,25 +451,25 @@ template <typename T>
 L2NearestNeighbor<T>::L2NearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const nN) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, nN) {}
 
 template <typename T>
-L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> &&inputObj) : kNearestNeighbor<T, flann::L2<T>>(std::move(inputObj)) {}
+L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> &&other) : kNearestNeighbor<T, flann::L2<T>>(std::move(other)) {}
 
 template <typename T>
-L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> const &inputObj) : kNearestNeighbor<T, flann::L2<T>>(inputObj) {}
+L2NearestNeighbor<T>::L2NearestNeighbor(L2NearestNeighbor<T> const &other) : kNearestNeighbor<T, flann::L2<T>>(other) {}
 
 template <typename T>
-L2NearestNeighbor<T> &L2NearestNeighbor<T>::operator=(L2NearestNeighbor<T> &&inputObj)
+L2NearestNeighbor<T> &L2NearestNeighbor<T>::operator=(L2NearestNeighbor<T> &&other)
 {
-    this->drows = std::move(inputObj.drows);
-    this->qrows = std::move(inputObj.qrows);
-    this->cols = std::move(inputObj.cols);
-    this->nn = std::move(inputObj.nn);
-    this->the_same = std::move(inputObj.the_same);
-    this->indices_ptr = std::move(inputObj.indices_ptr);
-    this->dists_ptr = std::move(inputObj.dists_ptr);
-    this->indices = std::move(inputObj.indices);
-    this->dists = std::move(inputObj.dists);
+    this->drows = std::move(other.drows);
+    this->qrows = std::move(other.qrows);
+    this->cols = std::move(other.cols);
+    this->nn = std::move(other.nn);
+    this->the_same = std::move(other.the_same);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
 
-    return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(inputObj)));
+    return static_cast<L2NearestNeighbor<T> &>(kNearestNeighbor<T, flann::L2<T>>::operator=(std::move(other)));
 }
 
 // namespace flann
