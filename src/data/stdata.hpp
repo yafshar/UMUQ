@@ -78,17 +78,17 @@ class stdata
 	stdata(int probdim, int MaxGenerations, int PopulationSize);
 
 	/*!
+     * \brief Default destructor 
+     *    
+     */
+	~stdata() {}
+
+	/*!
 	 * \brief Move constructor, construct a new stdata object from an input object
      * 
      * \param other  Input stdata object
 	 */
 	stdata(stdata<T> &&other);
-
-	/*!
-     * \brief Default destructor 
-     *    
-     */
-	~stdata() {}
 
 	/*!
 	 * \brief Move assignment operator
@@ -198,31 +198,31 @@ class stdata
 
   public:
 	//! Sampling population size for each generation
-	std::unique_ptr<int[]> eachPopulationSize;
+	std::vector<int> eachPopulationSize;
 
 	//! Sampling domain lower bounds for each dimension
-	std::unique_ptr<T[]> lowerBound;
+	std::vector<T> lowerBound;
 
 	//! Sampling domain upper bounds for each dimension
-	std::unique_ptr<T[]> upperBound;
+	std::vector<T> upperBound;
 
 	//! Composite distribution as a prior
-	std::unique_ptr<int[]> compositePriorDistribution;
+	std::vector<int> compositePriorDistribution;
 
 	//! Prior parameter 1
-	std::unique_ptr<T[]> priorParam1;
+	std::vector<T> priorParam1;
 
 	//! Prior parameter 2
-	std::unique_ptr<T[]> priorParam2;
+	std::vector<T> priorParam2;
 
 	//! Auxillary data
-	std::unique_ptr<T[]> auxilData;
+	std::vector<T> auxilData;
 
 	//! Initial Mean with the size of [populationSize*nDim]
-	std::unique_ptr<T[]> initMean;
+	std::vector<T> initMean;
 
 	//! Local covariance with the size of [populationSize*nDim*nDim]
-	std::unique_ptr<T[]> localCovariance;
+	std::vector<T> localCovariance;
 };
 
 template <typename T>
@@ -267,22 +267,14 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
 																		 TolCOV(static_cast<T>(1)),
 																		 bbeta(static_cast<T>(0.2)),
 																		 localScale(0),
-																		 options()
+																		 options(),
+																		 eachPopulationSize(maxGenerations),
+																		 lowerBound(nDim, T{}),
+																		 upperBound(nDim, T{}),
+																		 priorParam1(nDim, T{}),
+																		 priorParam2(nDim * nDim, T{}),
+																		 localCovariance(populationSize * nDim * nDim, T{})
 {
-	try
-	{
-		eachPopulationSize.reset(new int[maxGenerations]);
-		lowerBound.reset(new T[nDim]());
-		upperBound.reset(new T[nDim]());
-		priorParam1.reset(new T[nDim]());
-		priorParam2.reset(new T[nDim * nDim]());
-		localCovariance.reset(new T[populationSize * nDim * nDim]());
-	}
-	catch (...)
-	{
-		UMUQFAIL("Failed to allocate memory!");
-	}
-
 	for (int i = 0, k = 0; i < nDim; i++)
 	{
 		for (int j = 0; j < nDim; j++, k++)
@@ -294,7 +286,7 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
 		}
 	}
 
-	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
+	std::fill(eachPopulationSize.begin(), eachPopulationSize.end(), populationSize);
 
 	for (int i = 0, l = 0; i < populationSize; i++)
 	{
@@ -454,12 +446,12 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 		populationSize = 0;
 		lastPopulationSize = 0;
 
-		eachPopulationSize.reset();
-		lowerBound.reset();
-		upperBound.reset();
-		priorParam1.reset();
-		priorParam2.reset();
-		localCovariance.reset();
+		eachPopulationSize.clear();
+		lowerBound.clear();
+		upperBound.clear();
+		priorParam1.clear();
+		priorParam2.clear();
+		localCovariance.clear();
 
 		std::cout << "Warning : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
 		std::cout << " Reseting to size zero! " << std::endl;
@@ -474,12 +466,12 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 
 	try
 	{
-		eachPopulationSize.reset(new int[maxGenerations]);
-		lowerBound.reset(new T[nDim]());
-		upperBound.reset(new T[nDim]());
-		priorParam1.reset(new T[nDim]());
-		priorParam2.reset(new T[nDim * nDim]());
-		localCovariance.reset(new T[populationSize * nDim * nDim]());
+		eachPopulationSize.resize(maxGenerations);
+		lowerBound.resize(nDim, T{});
+		upperBound.resize(nDim, T{});
+		priorParam1.resize(nDim, T{});
+		priorParam2.resize(nDim * nDim, T{});
+		localCovariance.resize(populationSize * nDim * nDim, T{});
 	}
 	catch (...)
 	{
@@ -497,7 +489,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 		}
 	}
 
-	std::fill(eachPopulationSize.get(), eachPopulationSize.get() + maxGenerations, populationSize);
+	std::fill(eachPopulationSize.begin(), eachPopulationSize.end(), populationSize);
 
 	for (int i = 0, l = 0; i < populationSize; i++)
 	{
@@ -778,7 +770,7 @@ bool stdata<T>::load(const char *fname)
 			{
 				try
 				{
-					compositePriorDistribution.reset(new int[nDim]());
+					compositePriorDistribution.resize(nDim, 0);
 				}
 				catch (...)
 				{
@@ -826,7 +818,7 @@ bool stdata<T>::load(const char *fname)
 			{
 				try
 				{
-					auxilData.reset(new T[auxilSize]());
+					auxilData.resize(auxilSize);
 				}
 				catch (...)
 				{
