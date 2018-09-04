@@ -28,6 +28,8 @@
  * \endverbatim
  */
 
+namespace UMUQ
+{
 /*! \namespace multimin
  * \brief Namespace containing all the functions for Multidimensional Minimization Module
  * 
@@ -35,7 +37,7 @@
  * functions. It provides low level components for a variety of iterative minimizers 
  * and convergence tests.
  */
-namespace multimin
+inline namespace multimin
 {
 #include "function/functionminimizer.hpp"
 #include "function/differentiablefunctionminimizer.hpp"
@@ -49,6 +51,7 @@ namespace multimin
 #include "multimin/simplexnm.hpp"
 #include "multimin/simplexnm2.hpp"
 #include "multimin/simplexnm2rnd.hpp"
+}
 }
 
 #endif
