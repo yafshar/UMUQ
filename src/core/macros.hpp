@@ -188,57 +188,58 @@ std::string MPIErrorMessage(int const errorCode)
 } // namespace UMUQ
 
 #if HAVE_MPI == 1
-#define UMUQABORT MPI_Abort(MPI_COMM_WORLD, -1); \
-                  throw(std::runtime_error(ss.str()));
+#define UMUQABORT(ss)              \
+    MPI_Abort(MPI_COMM_WORLD, -1); \
+    throw(std::runtime_error(ss.str()));
 #else
-#define UMUQABORT throw(std::runtime_error(ss.str()));
+#define UMUQABORT(ss) throw(std::runtime_error(ss.str()));
 #endif // MPI
 
-#define UMUQFAIL(msg)                                                                                                                 \
-    std::ostringstream ss;                                                                                                            \
-    ss << msg;                                                                                                                        \
-    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_;                                                                                                           \
-    UMUQABORT
+#define UMUQFAIL(msg)                                                                                                                   \
+    std::ostringstream ssf;                                                                                                             \
+    ssf << msg;                                                                                                                         \
+    std::string _Messagef_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssf.str())); \
+    std::cerr << _Messagef_;                                                                                                            \
+    UMUQABORT(ssf)
 
-#define UMUQFAILRETURN(msg)                                                                                                           \
-    std::ostringstream ss;                                                                                                            \
-    ss << msg;                                                                                                                        \
-    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_;                                                                                                           \
+#define UMUQFAILRETURN(msg)                                                                                                               \
+    std::ostringstream ssfr;                                                                                                              \
+    ssfr << msg;                                                                                                                          \
+    std::string _Messagefr_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfr.str())); \
+    std::cerr << _Messagefr_;                                                                                                             \
     return false;
 
-#define UMUQFAILRETURNNULL(msg)                                                                                                       \
-    std::ostringstream ss;                                                                                                            \
-    ss << msg;                                                                                                                        \
-    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_;                                                                                                           \
+#define UMUQFAILRETURNNULL(msg)                                                                                                             \
+    std::ostringstream ssfrn;                                                                                                               \
+    ssfrn << msg;                                                                                                                           \
+    std::string _Messagefrn_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfrn.str())); \
+    std::cerr << _Messagefrn_;                                                                                                              \
     return nullptr;
 
-#define UMUQFAILRETURNSTRING(msg)                                                                                                     \
-    std::ostringstream ss;                                                                                                            \
-    ss << msg;                                                                                                                        \
-    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_;                                                                                                           \
-    return ss.str();
+#define UMUQFAILRETURNSTRING(msg)                                                                                                        \
+    std::ostringstream ssfrs;                                                                                                            \
+    ssfrs << msg;                                                                                                                        \
+    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfrs.str())); \
+    std::cerr << _Message_;                                                                                                              \
+    return ssfrs.str();
 
-#define UMUQFAILS(msg, index)                                                                                                                \
-    std::ostringstream ss;                                                                                                                   \
-    ss << msg;                                                                                                                               \
-    std::string _Message_##index(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_##index;                                                                                                           \
-    UMUQABORT
+#define UMUQFAILS(msg, index)                                                                                                                       \
+    std::ostringstream ss##index;                                                                                                                   \
+    ss##index << msg;                                                                                                                               \
+    std::string _Message_##index(UMUQ::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss##index.str())); \
+    std::cerr << _Message_##index;                                                                                                                  \
+    UMUQABORT(ss##index)
 
-#define UMUQWARNING(msg)                                                                                                                \
-    std::ostringstream ss;                                                                                                              \
-    ss << msg;                                                                                                                          \
-    std::string _Message_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
-    std::cerr << _Message_;
+#define UMUQWARNING(msg)                                                                                                                  \
+    std::ostringstream ssw;                                                                                                               \
+    ssw << msg;                                                                                                                           \
+    std::string _Messagew_(UMUQ::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ssw.str())); \
+    std::cerr << _Messagew_;
 
-#define UMUQWARNINGS(msg, index)                                                                                                               \
-    std::ostringstream ss;                                                                                                                     \
-    ss << msg;                                                                                                                                 \
-    std::string _Message_##index(UMUQ::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+#define UMUQWARNINGS(msg, index)                                                                                                                       \
+    std::ostringstream ssw##index;                                                                                                                     \
+    ssw##index << msg;                                                                                                                                 \
+    std::string _Message_##index(UMUQ::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ssw##index.str())); \
     std::cerr << _Message_##index;
 
 #define UMUQASSERT(condition, msg) \
