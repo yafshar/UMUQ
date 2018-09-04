@@ -3,14 +3,11 @@
 #include "numerics/factorial.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
-#include "numerics/function/densityfunction.hpp"
-#include "numerics/density/uniformdistribution.hpp"
-#include "numerics/density/exponentialdistribution.hpp"
-#include "numerics/density/gammadistribution.hpp"
-#include "numerics/density/gaussiandistribution.hpp"
-#include "numerics/density/multivariategaussiandistribution.hpp"
+#include "numerics/density.hpp"
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
+
+using namespace UMUQ;
 
 // Create a global instance of the Pyplot from Pyplot library
 pyplot plt;

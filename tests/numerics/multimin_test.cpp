@@ -3,7 +3,7 @@
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-using namespace multimin;
+using namespace UMUQ;
 
 /*!
  * \brief A helper function for testing the function minimizer 
