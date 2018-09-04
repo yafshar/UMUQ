@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-
+rm aclocal.m4
 rm m4/libtool.m4
 rm m4/ltoptions.m4
 rm m4/ltsugar.m4
