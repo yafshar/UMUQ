@@ -72,7 +72,7 @@ class fitness
      * \return false       If there is not enoug hmemory to continue
      */
     bool computeResiduals(T *observations, T *predictions, int const nSize, T *&results);
-
+    bool computeResiduals(T *observationspredictions, int const nSize, T *&results);
     bool computeResiduals(T *observations, T const prediction, int const nSize, T *&results);
 
     /*!
@@ -276,6 +276,32 @@ bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSi
 }
 
 template <typename T>
+bool fitness<T>::computeResiduals(T *observationspredictions, int const nSize, T *&results)
+{
+    if (nSize % 2 != 0)
+    {
+        UMUQFAILRETURN("Wrong input size!");
+    }
+
+    if (results == nullptr)
+    {
+        try
+        {
+            results = new T[nSize / 2];
+        }
+        catch (std::bad_alloc &e)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        }
+    }
+
+    T *o = observationspredictions;
+    std::for_each(results, results + nSize / 2, [&](T &r_i) { r_i = this->fitnessResidual(*o, *(o + 1)); o += 2; });
+
+    return true;
+}
+
+template <typename T>
 bool fitness<T>::computeResiduals(T *observations, T const prediction, int const nSize, T *&results)
 {
     if (results == nullptr)
@@ -308,19 +334,11 @@ bool fitness<T>::computeResiduals(T *observations, T const prediction, int const
 template <typename T>
 T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 {
-    std::unique_ptr<T[]> r;
-    try
-    {
-        r.reset(new T[nSize]);
-    }
-    catch (...)
-    {
-        UMUQFAIL("Failed to allocate memory!");
-    }
+    std::vector<T> r(nSize);
 
     if (this->fitnessMetricName == "rsquared")
     {
-        T *results = r.get();
+        T *results = r.data();
 
         stats s;
 
@@ -392,7 +410,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
                 UMUQFAILRETURN("Unknown fitness type!");
             }
 
-            T *results = r.get();
+            T *results = r.data();
             if (computeResiduals(observations, predictions, nSize, results))
             {
                 stats s;
@@ -421,7 +439,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
     }
     else
     {
-        T *results = r.get();
+        T *results = r.data();
         if (computeResiduals(observations, predictions, nSize, results))
         {
             stats s;
