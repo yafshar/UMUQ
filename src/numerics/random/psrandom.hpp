@@ -90,7 +90,7 @@ class psrandom
      * \return true  when sets the seed of the engine successfully
      * \return false If the PRNG is already initialized or the state has been set
      */
-    inline bool setSeed(int const iseed);
+    inline bool setSeed(long const iseed);
 
   private:
     // Make it noncopyable
@@ -1021,7 +1021,8 @@ bool psrandom<T>::setState()
  * \return true  when sets the seed of the engine successfully
  * \return false If the PRNG is already initialized or the state has been set
  */
-inline bool setSeed(int const iseed)
+template <typename T>
+inline bool psrandom<T>::setSeed(long const iseed)
 {
     std::lock_guard<std::mutex> lock(PRNG_m);
     if (!PRNG_initialized)
