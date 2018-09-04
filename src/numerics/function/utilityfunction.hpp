@@ -167,8 +167,8 @@ inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T con
  * \param fp0  \f$ \acute{f}(\alpha_i) \f$
  * \param f1   \f$ f(\alpha_{i-1}) \f$
  * \param fp1  \f$ \acute{f}(\alpha_{i-1}) \f$
- * \param zl   
- * \param zh 
+ * \param zl   Lower bound 
+ * \param zh   Higher bound
  * 
  * \return Interpolation value
  */
