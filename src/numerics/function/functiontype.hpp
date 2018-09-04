@@ -31,14 +31,6 @@ using FDF_MTYPE = std::function<bool(T const *, T *, T *)>;
  * 
  */
 template <typename T>
-using F_FTYPE = std::function<T(long long const, T const *, int const, T *, int const *)>;
-
-/*!
- * \brief A polymorphic function wrapper type for fitFunction object
- * 
- * \tparam T Data type 
- */
-template <typename T>
-using F_TASK_FTYPE = void (*)(long long const, T const *, int const, T *, int const *);
+using FITFUN_T = std::function<T(T const *, int const, T *, int const, int const *)>;
 
 #endif // UMUQ_FUNCTIONTYPE
