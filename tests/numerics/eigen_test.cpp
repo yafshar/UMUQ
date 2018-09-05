@@ -213,6 +213,9 @@ TEST(eigen_lu_test, HandlesLU)
     //! False as the matrix m with lu decomposition is not invertible.
     EXPECT_FALSE(lu.isInvertible());
 
+    std::cout << std::endl;
+    std::cout << lu.image(m) << std::endl;
+
     //! Column vector
     EVector3d n;
     n << 5, 5, 5;
