@@ -10,12 +10,12 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
 
+	brew install gcc;
+	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
+
 	brew uninstall gnu-sed;
 	brew install gnu-sed --with-default-names;
 
-	brew install gcc;
-	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
-	
 	sudo unlink /usr/bin/gcc && sudo ln -s /usr/local/bin/gcc-${GCC_VERSION} /usr/bin/gcc
 	sudo unlink /usr/bin/g++ && sudo ln -s /usr/local/bin/g++-${GCC_VERSION} /usr/bin/g++
 	sudo unlink /usr/bin/gfortran && sudo ln -s /usr/local/bin/gfortran-${GCC_VERSION} /usr/bin/gfortran
