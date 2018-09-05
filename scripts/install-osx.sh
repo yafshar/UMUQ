@@ -10,10 +10,12 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
 
+	sudo rm -fr /usr/local/include/c++
+
 	brew install gcc;
 	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
 
-	brew reinstall grep;
+	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
 	sudo unlink /usr/bin/gcc && sudo ln -s /usr/local/bin/gcc-${GCC_VERSION} /usr/bin/gcc
