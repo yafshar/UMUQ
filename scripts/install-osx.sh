@@ -9,9 +9,9 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
-	
+
 	brew install gcc;
-	GCC_VERSION = `gfortran -dumpversion |cut -d. -f1`  
+	GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
 	
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
