@@ -20,9 +20,9 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	export HOMEBREW_CPP=cpp-${GCC_VERSION}
 	export HOMEBREW_LD=gcc-${GCC_VERSION}
 	export HOMEBREW_FC=gfortran-${GCC_VERSION}
-
-	brew install --build-from-source mpich;
-	brew install --build-from-source flann;
+	
+	brew install mpich;
+	brew install flann;
 fi
 
 
