@@ -10,6 +10,7 @@ TEST(stats_test, HandlesStats)
     //! Create an instane of stats object
     umuq::stats s;
 
+    //! test for normal array of data
     int iArray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
 
     EXPECT_EQ(s.minelement<int>(iArray, 10), 1);
@@ -24,6 +25,27 @@ TEST(stats_test, HandlesStats)
     EXPECT_DOUBLE_EQ(sum, 55.0);
     EXPECT_DOUBLE_EQ(mean, 5.5);
     EXPECT_DOUBLE_EQ(stddev, 3.027650354097491);
+
+    //! Check for std::vector
+    std::vector<int> jArray(20);
+
+    for (int i = 0; i < 20; ++i)
+    {
+        jArray[i] = iArray[i % 10];
+    }
+
+    EXPECT_EQ(s.minelement<int>(jArray), 1);
+    EXPECT_EQ(s.maxelement<int>(jArray), 10);
+    EXPECT_EQ(s.minelement_index<int>(jArray), 4);
+    EXPECT_EQ(s.maxelement_index<int>(jArray), 7);
+
+    sum = s.sum<int, double>(jArray);
+    mean = s.mean<int, double>(jArray);
+    stddev = s.stddev<int, double>(jArray);
+
+    EXPECT_DOUBLE_EQ(sum, 110.0);
+    EXPECT_DOUBLE_EQ(mean, 5.5);
+    EXPECT_DOUBLE_EQ(stddev, 2.9468984587725089);
 }
 
 /*!
@@ -96,6 +118,136 @@ TEST(stats_test, HandlesMedianandMad)
      * So the median absolute deviation for this data is 1.
      */
     EXPECT_EQ(mad, 1);
+
+    //Check the std::vector
+    std::vector<int> jArray(iArray, iArray + 7);
+    mad = s.medianAbs<int, int>(jArray, med);
+
+    EXPECT_EQ(med, 2);
+    EXPECT_EQ(mad, 1);
+}
+
+/*!
+ * \brief Construct a new TEST object for testing minmaxNormal
+ * 
+ */
+TEST(stats_test, HandlesminmaxNormal)
+{
+    //! Create an instane of stats object
+    umuq::stats s;
+
+    { //! Input array
+        double iArray[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+        s.minmaxNormal<double>(iArray, 5);
+
+        //Min max normalized array
+        double nArray[] = {0.0, 0.25, 0.5, 0.75, 1.0};
+
+        for (int i = 0; i < 5; i++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[i]);
+        }
+
+        std::vector<double> jArray{1.0, 2.0, 3.0, 4.0, 5.0};
+
+        s.minmaxNormal<double>(jArray);
+
+        for (int i = 0; i < 5; i++)
+        {
+            EXPECT_DOUBLE_EQ(jArray[i], nArray[i]);
+        }
+    }
+
+    { //! Input array
+        double iArray[] = {1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+
+        s.minmaxNormal<double>(iArray, 10, 2);
+
+        //Min max normalized array
+        double nArray[] = {0.0, 0.5, 1.0, 0.25, 0.75};
+
+        for (int i = 0, j = 0; i < 10; i += 2, j++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[j]);
+        }
+    }
+}
+
+/*!
+ * \brief Construct a new TEST object for testing zscoreNormal
+ * 
+ */
+TEST(stats_test, HandleszscoreNormal)
+{
+    //! Create an instane of stats object
+    umuq::stats s;
+
+    { //! Input array
+        double iArray[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+        s.zscoreNormal<double>(iArray, 5);
+
+        //zscoreNormal normalized array
+        double nArray[] = {-1.2649110640673518, -0.63245553203367588, 0.0, 0.63245553203367588, 1.2649110640673518};
+
+        for (int i = 0; i < 5; i++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[i]);
+        }
+    }
+
+    { //! Input array
+        double iArray[] = {1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 5.0};
+
+        s.zscoreNormal<double>(iArray, 10, 2);
+
+        //zscoreNormal normalized array with stride
+        double nArray[] = {-1.2649110640673518, -0.63245553203367588, 0.0, 0.63245553203367588, 1.2649110640673518};
+
+        for (int i = 0, j = 0; i < 10; i += 2, j++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[j]);
+        }
+    }
+}
+
+/*!
+ * \brief Construct a new TEST object for testing robustzscoreNormal
+ * 
+ */
+TEST(stats_test, HandlesrobustzscoreNormal)
+{
+    //! Create an instane of stats object
+    umuq::stats s;
+
+    { //! Input array
+        double iArray[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+        s.robustzscoreNormal<double>(iArray, 5);
+
+        //robustzscoreNormal normalized array
+        double nArray[] = {-2.0, -1.0, 0.0, 1.0, 2.0};
+
+        for (int i = 0; i < 5; i++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[i]);
+        }
+    }
+
+    { //! Input array
+        double iArray[] = {1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 5.0};
+
+        s.robustzscoreNormal<double>(iArray, 10, 2);
+
+        //robustzscoreNormal normalized array with stride
+        double nArray[] = {-2.0, -1.0, 0.0, 1.0, 2.0};
+
+        for (int i = 0, j = 0; i < 10; i += 2, j++)
+        {
+            EXPECT_DOUBLE_EQ(iArray[i], nArray[j]);
+        }
+    }
 }
 
 /*!
@@ -113,6 +265,15 @@ TEST(stats_test, HandlesCovariance)
         double jdata[] = {8, 10, 12, 14};      //! (mean = 11)
 
         double Covariance = s.covariance<double, double>(idata, jdata, 4);
+
+        EXPECT_DOUBLE_EQ(Covariance, 6.8 / 3);
+    }
+
+    {
+        std::vector<double> idata{2.1, 2.5, 3.6, 4.0}; //! (mean = 3.1)
+        std::vector<double> jdata{8, 10, 12, 14};      //! (mean = 11)
+
+        double Covariance = s.covariance<double, double>(idata, jdata);
 
         EXPECT_DOUBLE_EQ(Covariance, 6.8 / 3);
     }
