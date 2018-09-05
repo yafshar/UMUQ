@@ -12,8 +12,13 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	sudo rm -fr /usr/local/include/c++
 
-	brew install gcc;
-	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
+	if [ "${TRAVIS_OSX_IMAGE}" = "xcode8" ]; then
+		brew install gcc;
+		export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
+	else
+		brew install gcc@6;
+		export GCC_VERSION=`gfortran-6 -dumpversion |cut -d. -f1`  
+	fi
 
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
