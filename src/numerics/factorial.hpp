@@ -1,6 +1,9 @@
 #ifndef UMUQ_FACTORIAL_H
 #define UMUQ_FACTORIAL_H
 
+namespace umuq
+{
+
 /*! \class max_factorial
  * \brief Predefined max factorial
  * 
@@ -50,7 +53,7 @@ struct max_factorial<int>
 template <class T>
 inline T unchecked_factorial(unsigned int n)
 {
-	UMUQFAIL("The unchecked_factorial is not implemented for this type!");
+    UMUQFAIL("The unchecked_factorial is not implemented for this type!");
 }
 
 template <>
@@ -330,7 +333,7 @@ inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int con
 template <class T>
 inline T factorial(unsigned int const n)
 {
-	UMUQFAIL("Factorial is not implemented for this type!");
+    UMUQFAIL("Factorial is not implemented for this type!");
 }
 
 template <>
@@ -346,7 +349,7 @@ inline float factorial(unsigned int const i)
     if (result > std::numeric_limits<float>::max())
     {
         UMUQWARNING("Overflowed value!");
-		return static_cast<float>(result);
+        return static_cast<float>(result);
     }
 
     return static_cast<float>(std::floor(result + 0.5f));
@@ -428,4 +431,6 @@ inline long int factorial(unsigned int const i)
     return static_cast<long int>(result);
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_FACTORIAL
