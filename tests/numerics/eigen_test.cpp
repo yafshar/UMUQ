@@ -220,6 +220,10 @@ TEST(eigen_lu_test, HandlesLU)
     //! Creating the new matrix from image (also called its column-space) of it and a new vector.
     m << lu.image(m), n;
 
+    std::cout << std::endl;
+    std::cout << m << std::endl;
+    std::cout << std::endl;
+
     //! LU decomposition of a matrix with complete pivoting, and related features.
     lu.compute(m);
 
