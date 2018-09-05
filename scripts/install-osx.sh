@@ -9,9 +9,9 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
-	brew install cmake || brew upgrade cmake ;
-	brew install autoconf;
-	brew install automake;
+	brew outdated cmake || brew upgrade cmake ;
+	brew outdated autoconf || brew upgrade autoconf ;
+	brew outdated automake || brew upgrade automake ;
 	brew tap homebrew/versions;
 	brew install gcc@5;
 	brew install mpich;

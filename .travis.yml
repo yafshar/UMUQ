@@ -19,16 +19,16 @@ before_install:
 # It is more tedious, but grants us far more flexibility.
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      sudo: true
-      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
-      script: ./scripts/build-linux-autotools.sh
-    - os: linux
-      compiler: clang
-      sudo: true
-      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
-      script: ./scripts/build-linux-autotools.sh
+    # - os: linux
+    #   compiler: gcc
+    #   sudo: true
+    #   install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+    #   script: ./scripts/build-linux-autotools.sh
+    # - os: linux
+    #   compiler: clang
+    #   sudo: true
+    #   install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+    #   script: ./scripts/build-linux-autotools.sh
     - os: osx
       compiler: gcc
       sudo: true
