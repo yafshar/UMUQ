@@ -8,19 +8,21 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
-	brew update;
-
 	brew install gcc;
-	GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
 	
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
 	brew outdated automake || brew upgrade automake ;
 	
-	brew install --build-from-source --cc=gcc-${GCC_VERSION} --cxx=g++-${GCC_VERSION} --fc=gfortran-${GCC_VERSION} mpich;
-	brew install --build-from-source --cc=gcc-${GCC_VERSION} --cxx=g++-${GCC_VERSION} flann;
-	
-	brew update;
+	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
+	export HOMEBREW_CC=gcc-${GCC_VERSION}
+	export HOMEBREW_CXX=g++-${GCC_VERSION}
+	export HOMEBREW_CPP=cpp-${GCC_VERSION}
+	export HOMEBREW_LD=gcc-${GCC_VERSION}
+	export HOMEBREW_FC=gfortran-${GCC_VERSION}
+
+	brew install --build-from-source mpich;
+	brew install --build-from-source flann;
 fi
 
 
