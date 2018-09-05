@@ -351,7 +351,7 @@ bool runinfo<T>::load(const char *fileName)
     if (f.openFile(fileName, f.in))
     {
         // Create an instance of the parser object
-        parser prs;
+        umuq::parser prs;
         bool tmp;
 
         tmp = f.readLine();

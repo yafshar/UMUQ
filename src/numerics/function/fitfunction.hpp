@@ -4,6 +4,9 @@
 #include "functiontype.hpp"
 #include "umuqfunction.hpp"
 
+namespace umuq
+{
+
 /*! \class fitFunction
  * \brief The base class for fit function which can be used in the inference process
  * 
@@ -238,5 +241,7 @@ bool fitFunction<T, F>::init()
     }
     return true;
 }
+
+} // namespace umuq
 
 #endif //UMUQ_FITFUNCTION

@@ -1,6 +1,9 @@
 #ifndef UMUQ_PARSER_H
 #define UMUQ_PARSER_H
 
+namespace umuq
+{
+
 /*! \class parser
 * \brief This class prases string of data to seperate words
 *	
@@ -276,4 +279,6 @@ std::string &parser::operator[]<std::string>(std::size_t const id)
     return parse<std::string>(parser::lineArg[id], parser::svalue);
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_PARSER

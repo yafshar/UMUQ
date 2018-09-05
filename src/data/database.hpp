@@ -576,9 +576,9 @@ bool database<T>::print()
         int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
 
         // Array wrapper on the data
-        arrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
-        arrayWrapper<T> FvalueWrapper(Fvalue, entries);
-        arrayWrapper<int> SurrogateWrapper(Surrogate, entries);
+        umuq::arrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
+        umuq::arrayWrapper<T> FvalueWrapper(Fvalue, entries);
+        umuq::arrayWrapper<int> SurrogateWrapper(Surrogate, entries);
 
         auto fIt = FvalueWrapper.begin();
         auto sIt = SurrogateWrapper.begin();
@@ -589,7 +589,7 @@ bool database<T>::print()
 
             int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
 
-            arrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
+            umuq::arrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
 
             auto gIt = GarrayWrapper.begin();
 

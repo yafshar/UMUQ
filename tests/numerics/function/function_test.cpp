@@ -29,7 +29,7 @@ double fun_rsqrx(double const x)
  */
 TEST(function_test, HandlesFunctionConstruction)
 {
-    umuqFunction<double, std::function<double(double const)>> fn("square");
+    umuq::umuqFunction<double, std::function<double(double const)>> fn("square");
 
     fn.f = fun_sqrx;
     EXPECT_TRUE(fn);
@@ -91,7 +91,7 @@ TEST(differentiablefunction_test, HandlesDifferentiableFunctionConstruction)
     double p[5] = {1.0, 2.0, 10.0, 20.0, 30.0};
 
     //! create an instance of a differentiable function
-    umuqDifferentiableFunction<double, FUNT, DFUNT> fn(p, 5, "paraboloid");
+    umuq::umuqDifferentiableFunction<double, FUNT, DFUNT> fn(p, 5, "paraboloid");
 
     //! Assigning function and its derivative
     fn.f = f_test;

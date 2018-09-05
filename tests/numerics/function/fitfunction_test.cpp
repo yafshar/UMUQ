@@ -28,7 +28,7 @@ double f1(double const *x, int const n)
  */
 TEST(fitFunction_test, HandlesfitFunctionConstruction)
 {
-    fitFunction<double, std::function<double(double const *, int const)>> fit;
+    umuq::fitFunction<double, std::function<double(double const *, int const)>> fit;
 
     EXPECT_TRUE(fit.setfitFunction(f1));
     EXPECT_TRUE(fit.init());
@@ -112,7 +112,7 @@ double fitfun(double const *c, int const numc, double *out, int const numout, in
 TEST(fitFunction_test, HandlesexternalfitFunctionConstruction)
 {
     //! First we create an instance of the fitFunction object with the default fitting Function type
-    fitFunction<double> fit;
+    umuq::fitFunction<double> fit;
 
     //! We can set the init and fit function together or individually
     EXPECT_TRUE(fit.setInitFunction(init));

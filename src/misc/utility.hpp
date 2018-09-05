@@ -17,6 +17,9 @@
 #include <sys/types.h> // waitpid
 #include <sys/wait.h>  // waitpid
 
+namespace umuq
+{
+
 /*! \class utility
 * \brief utility is a class which includes some helper functionality.
 *	
@@ -156,4 +159,6 @@ bool utility::executeCommand(std::string const &icommand, std::string const &dir
     return true;
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_UTILITY

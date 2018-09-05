@@ -9,7 +9,7 @@
  */
 
 //! Create an instance of funcallcounter object
-funcallcounter fc;
+umuq::funcallcounter fc;
 
 //! Global task
 void taskf()

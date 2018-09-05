@@ -528,7 +528,7 @@ bool stdata<T>::load(const char *fname)
 		if (f.openFile(fname, f.in))
 		{
 			// We need a parser object to parse
-			parser p;
+			umuq::parser p;
 
 			//! These are temporary variables
 			int probdim = nDim;

@@ -1,6 +1,9 @@
 #ifndef UMUQ_FUNCALLCOUNTER_H
 #define UMUQ_FUNCALLCOUNTER_H
 
+namespace umuq
+{
+
 //! Mutex object
 static std::mutex function_counter_m;
 
@@ -187,4 +190,6 @@ inline void funcallcounter::count()
     num_of_total_function_counter += num_of_global_function_counter;
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_FUNCALLCOUNTER

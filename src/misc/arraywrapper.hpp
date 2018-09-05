@@ -4,6 +4,9 @@
 #include <iostream>
 #include <iterator>
 
+namespace umuq
+{
+
 /*! \class arrayWrapper
   * \brief arrayWrapper is a class which creates a std iterator for an array of type T
   *
@@ -525,5 +528,7 @@ inline T *arrayWrapper<T>::iterator::get() const
 {
     return const_cast<T *>(this->iPosition);
 }
+
+} // namespace umuq
 
 #endif // UMUQ_ARRAYWRAPPER

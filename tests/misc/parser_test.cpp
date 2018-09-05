@@ -9,7 +9,7 @@
  */
 TEST(parse_test, HandlesZeroInput)
 {
-    parser p;
+    umuq::parser p;
 
     p.parse("     ");
 
@@ -30,7 +30,7 @@ TEST(parse_test, HandlesZeroInput)
  */
 TEST(parse_test, HandlesInput)
 {
-    parser p;
+    umuq::parser p;
 
     char line[BUFLEN];
 
@@ -73,7 +73,7 @@ TEST(parse_test, HandlesInput)
  */
 TEST(parse_cmd, HandlesCmd)
 {
-    parser p;
+    umuq::parser p;
 
     char line[BUFLEN];
 

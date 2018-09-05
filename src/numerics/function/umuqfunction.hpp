@@ -1,6 +1,9 @@
 #ifndef UMUQ_UMUQFUNCTION_H
 #define UMUQ_UMUQFUNCTION_H
 
+namespace umuq
+{
+
 /*!\class umuqFunction
  * \brief umuqFunction is a general-purpose polymorphic function wrapper of n variables
  *
@@ -231,5 +234,7 @@ umuqFunction<T, F>::operator bool() const noexcept
 {
   return f != nullptr;
 }
+
+} // namespace umuq
 
 #endif //UMUQ_FUNCTION

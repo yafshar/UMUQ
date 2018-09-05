@@ -107,7 +107,7 @@ bool f6(double const *x, double *f, double *df)
  */
 TEST(function_test, HandlesFunctionMinimizerConstruction)
 {
-    umuqFunction<double, umuq::F_MTYPE<double>> fn("product");
+    umuq::umuqFunction<double, umuq::F_MTYPE<double>> fn("product");
     fn.f = f1;
 
     std::vector<double> xi(2);
@@ -141,7 +141,7 @@ TEST(function_test, HandlesFunctionMinimizerConstruction)
  */
 TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruction)
 {
-    umuqDifferentiableFunction<double, umuq::F_MTYPE<double>, umuq::DF_MTYPE<double>, umuq::FDF_MTYPE<double>> fn("product2");
+    umuq::umuqDifferentiableFunction<double, umuq::F_MTYPE<double>, umuq::DF_MTYPE<double>, umuq::FDF_MTYPE<double>> fn("product2");
     fn.f = f1;
     fn.df = f2;
     fn.fdf = f3;

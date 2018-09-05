@@ -4,6 +4,9 @@
 #include <iostream>
 #include <sys/time.h>
 
+namespace umuq
+{
+
 /*! \brief Start stopwatch timer class
 *
 * tic starts a stopwatch timer, and stores the internal time at execution of the command.
@@ -84,4 +87,6 @@ double UMTimer::my_gettime()
     return (double)t.tv_sec + (double)t.tv_usec * 1.0E-6;
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_TIMER

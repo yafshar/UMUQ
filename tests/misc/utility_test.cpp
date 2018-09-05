@@ -8,9 +8,9 @@
 TEST(utility_test, HandlesExecuteCommand)
 {
     // Create an instance of parser
-    parser p;
+    umuq::parser p;
     // Create an instance of utility object
-    utility u;
+    umuq::utility u;
 
     char *argv[LINESIZE];
     std::size_t ArgNum;
