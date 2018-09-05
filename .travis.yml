@@ -30,6 +30,7 @@ matrix:
     #   install: ./scripts/install-linux.sh && ./scripts/log-config.sh
     #   script: ./scripts/build-linux-autotools.sh
     - os: osx
+      osx_image: xcode8
       compiler: gcc
       sudo: true
       install: ./scripts/install-osx.sh && ./scripts/log-config.sh
