@@ -7,6 +7,15 @@
 #include "umuqfunction.hpp"
 #include "../random/psrandom.hpp"
 
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
+
 /*! \class densityFunction
  * \brief Density function class
  * 
@@ -19,62 +28,62 @@
 template <typename T, class F>
 class densityFunction : public umuqFunction<T, F>
 {
-  public:
-    /*!
-     * \brief Construct a new density Function object
-     * 
-     * \param Name Distribution name
-     */
-    densityFunction(char const *Name = "");
+public:
+  /*!
+   * \brief Construct a new density Function object
+   * 
+   * \param Name Distribution name
+   */
+  densityFunction(char const *Name = "");
 
-    /*!
-     * \brief Construct a new density Function object
-     * 
-     * \param Params     Parameters of density Function object
-     * \param NumParams  Number of parameters
-     * \param Name       Distribution name
-     */
-    densityFunction(T const *Params, int const NumParams, char const *Name = "");
-    densityFunction(std::vector<T> const &Params, char const *Name = "");
+  /*!
+   * \brief Construct a new density Function object
+   * 
+   * \param Params     Parameters of density Function object
+   * \param NumParams  Number of parameters
+   * \param Name       Distribution name
+   */
+  densityFunction(T const *Params, int const NumParams, char const *Name = "");
+  densityFunction(std::vector<T> const &Params, char const *Name = "");
 
-    /*!
-     * \brief Construct a new density Function object
-     * 
-     * \param Params1     Parameters of density Function object
-     * \param Params2     Parameters of density Function object
-     * \param NumParams   Number of parameters
-     * \param Name        Distribution name
-     */
-    densityFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
-    densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
+  /*!
+   * \brief Construct a new density Function object
+   * 
+   * \param Params1     Parameters of density Function object
+   * \param Params2     Parameters of density Function object
+   * \param NumParams   Number of parameters
+   * \param Name        Distribution name
+   */
+  densityFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
+  densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
-    /*!
-     * \brief Destroy the density Function object
-     * 
-     */
-    ~densityFunction();
+  /*!
+   * \brief Destroy the density Function object
+   * 
+   */
+  ~densityFunction();
 
-    /*!
-     * \brief Move constructor, construct a new density Function object
-     * 
-     * \param other densityFunction object
-     */
-    densityFunction(densityFunction<T, F> &&other);
+  /*!
+   * \brief Move constructor, construct a new density Function object
+   * 
+   * \param other densityFunction object
+   */
+  densityFunction(densityFunction<T, F> &&other);
 
-    /*!
-     * \brief Move assignment operator
-     * 
-     * \param other  densityFunction object 
-     */
-    densityFunction<T, F> &operator=(densityFunction<T, F> &&other);
+  /*!
+   * \brief Move assignment operator
+   * 
+   * \param other  densityFunction object 
+   */
+  densityFunction<T, F> &operator=(densityFunction<T, F> &&other);
 
-  public:
-    /*!
-     * \brief Log of density function
-     * 
-     * \returns the function value (Log of density function)
-     */
-    F lf;
+public:
+  /*!
+   * \brief Log of density function
+   * 
+   * \returns the function value (Log of density function)
+   */
+  F lf;
 };
 
 template <typename T, class F>
@@ -93,10 +102,10 @@ template <typename T, class F>
 densityFunction<T, F>::densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, const char *Name) : umuqFunction<T, F>(Params1, Params2, Name) {}
 
 template <typename T, class F>
-densityFunction<T, F>::~densityFunction(){}
+densityFunction<T, F>::~densityFunction() {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)), 
+densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)),
                                                                         lf(std::move(other.lf))
 {
 }
@@ -104,11 +113,13 @@ densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunc
 template <typename T, class F>
 densityFunction<T, F> &densityFunction<T, F>::operator=(densityFunction<T, F> &&other)
 {
-    umuqFunction<T, F>::operator=(std::move(other));
-    this->lf = std::move(other.lf);
+  umuqFunction<T, F>::operator=(std::move(other));
+  this->lf = std::move(other.lf);
 
-    return *this;
+  return *this;
 }
 
-#endif // UMUQ_DENSITYFUNCTION_H
+} // namespace density
+} // namespace umuq
 
+#endif // UMUQ_DENSITYFUNCTION_H

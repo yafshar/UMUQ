@@ -5,6 +5,9 @@
 #include "residual.hpp"
 #include "stats.hpp"
 
+namespace umuq
+{
+
 enum ErrorFitnessTypes
 {
     errorFitSum = -1,
@@ -340,7 +343,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
     {
         T *results = r.data();
 
-        stats s;
+        umuq::stats s;
 
         T favg = s.mean<T, T>(observations, nSize);
 
@@ -413,7 +416,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
             T *results = r.data();
             if (computeResiduals(observations, predictions, nSize, results))
             {
-                stats s;
+                umuq::stats s;
                 switch (this->errorFit)
                 {
                 case ErrorFitnessTypes::errorFitSum:
@@ -442,7 +445,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
         T *results = r.data();
         if (computeResiduals(observations, predictions, nSize, results))
         {
-            stats s;
+            umuq::stats s;
 
             switch (this->errorFit)
             {
@@ -468,4 +471,6 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 template <typename T>
 inline std::string fitness<T>::getMetricName() { return this->fitnessMetricName; }
 
-#endif //UMUQ_FITNESS_H
+} // namespace umuq
+
+#endif //UMUQ_FITNESS

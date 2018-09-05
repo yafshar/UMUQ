@@ -9,7 +9,7 @@
  */
 TEST(conjugateFr_test, HandlesMinimizerConstruction)
 {
-    conjugateFr<double> fMinimizer;
+    umuq::conjugateFr<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
@@ -28,7 +28,7 @@ TEST(conjugateFr_test, HandlesRosenbrockFunction)
     double stepSize = 0.1 * std::sqrt(X[0] * X[0] + X[1] * X[1]);
 
     //! Create an instance of the minimizer
-    conjugateFr<double> fMinimizer;
+    umuq::conjugateFr<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
@@ -79,7 +79,7 @@ TEST(conjugateFr_test, HandlesRothFunction)
     double stepSize = 0.1 * std::sqrt(X[0] * X[0] + X[1] * X[1]);
 
     //! Create an instance of the minimizer
-    conjugateFr<double> fMinimizer;
+    umuq::conjugateFr<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));

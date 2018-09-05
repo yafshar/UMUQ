@@ -1,7 +1,14 @@
 #ifndef UMUQ_GAMMADISTRIBUTION_H
 #define UMUQ_GAMMADISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class gammaDistribution
  * \brief The Gamma distribution
@@ -158,5 +165,8 @@ inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
     }
     return sum;
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif // UMUQ_GAMMADISTRIBUTION

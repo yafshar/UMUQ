@@ -1,7 +1,14 @@
 #ifndef UMUQ_GAUSSIANDISTRIBUTION_H
 #define UMUQ_GAUSSIANDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class gaussianDistribution
  * \brief The Gaussian distribution
@@ -122,5 +129,8 @@ inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
     }
     return sum;
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif //UMUQ_GAUSSIANDISTRIBUTION_H

@@ -3,6 +3,12 @@
 
 #include "linearfunctionwrapper.hpp"
 
+namespace umuq
+{
+    
+inline namespace multimin
+{
+
 /*!
  * \brief Helper routines
  * \ingroup multimin_Module
@@ -187,7 +193,7 @@ T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T c
     T zmin = zl;
 
     T fmin = cubic<T>(c0, c1, c2, c3, zl);
-    
+
     check_extremum<T>(c0, c1, c2, c3, zh, &zmin, &fmin);
 
     switch (poly_solve_quadratic<T>(3 * c3, 2 * c2, c1, &z0, &z1))
@@ -446,5 +452,8 @@ bool minimize(linearFunctionWrapper<T> &obj,
 
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_UTILITYFUNCTION

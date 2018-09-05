@@ -8,6 +8,9 @@
  */
 #include <flann/flann.hpp>
 
+namespace umuq
+{
+
 /*! \class kNearestNeighbor
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
@@ -237,27 +240,27 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const
 
 template <typename T, class Distance>
 kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> &&other) : drows(other.drows),
-                                                                                            qrows(other.qrows),
-                                                                                            cols(other.cols),
-                                                                                            nn(other.nn),
-                                                                                            indices_ptr(std::move(other.indices_ptr)),
-                                                                                            dists_ptr(std::move(other.dists_ptr)),
-                                                                                            indices(std::move(other.indices)),
-                                                                                            dists(std::move(other.dists)),
-                                                                                            the_same(other.the_same)
+                                                                                         qrows(other.qrows),
+                                                                                         cols(other.cols),
+                                                                                         nn(other.nn),
+                                                                                         indices_ptr(std::move(other.indices_ptr)),
+                                                                                         dists_ptr(std::move(other.dists_ptr)),
+                                                                                         indices(std::move(other.indices)),
+                                                                                         dists(std::move(other.dists)),
+                                                                                         the_same(other.the_same)
 {
 }
 
 template <typename T, class Distance>
 kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> const &other) : drows(other.drows),
-                                                                                                 qrows(other.qrows),
-                                                                                                 cols(other.cols),
-                                                                                                 nn(other.nn),
-                                                                                                 indices_ptr(new int[other.qrows * other.nn]),
-                                                                                                 dists_ptr(new T[other.qrows * other.nn]),
-                                                                                                 indices(indices_ptr.get(), other.qrows, other.nn),
-                                                                                                 dists(dists_ptr.get(), other.qrows, other.nn),
-                                                                                                 the_same(other.the_same)
+                                                                                              qrows(other.qrows),
+                                                                                              cols(other.cols),
+                                                                                              nn(other.nn),
+                                                                                              indices_ptr(new int[other.qrows * other.nn]),
+                                                                                              dists_ptr(new T[other.qrows * other.nn]),
+                                                                                              indices(indices_ptr.get(), other.qrows, other.nn),
+                                                                                              dists(dists_ptr.get(), other.qrows, other.nn),
+                                                                                              the_same(other.the_same)
 {
     {
         int *From = other.indices_ptr.get();
@@ -548,5 +551,7 @@ L2NearestNeighbor<T> &L2NearestNeighbor<T>::operator=(L2NearestNeighbor<T> &&oth
 //     }
 // };
 // }
+
+} // namespace umuq
 
 #endif // UMUQ_FLANNLIB_H

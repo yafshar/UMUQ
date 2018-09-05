@@ -6,7 +6,7 @@
 //! TEST for file existence
 TEST(isFileExist_test, HandlesFiles)
 {
-    io f;
+    umuq::io f;
     EXPECT_TRUE(f.isFileExist("./data/test.txt"));
     EXPECT_FALSE(f.isFileExist("utility.txt"));
 }
@@ -15,7 +15,7 @@ TEST(isFileExist_test, HandlesFiles)
 TEST(openFile_test, HandlesFiles)
 {
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     EXPECT_FALSE(f.isFileOpened());
 
@@ -44,7 +44,7 @@ TEST(openFilestream_test, HandlesFiles)
     std::remove(fileName);
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     EXPECT_FALSE(f.openFile(fileName, f.in));
     EXPECT_FALSE(f.openFile(fileName, f.in | f.binary));
@@ -68,7 +68,7 @@ TEST(io_test, HandlesLoadandSaveArray)
     const char *fileName = "iotmp";
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     //! - 1
 
@@ -147,7 +147,7 @@ TEST(io_test, HandlesLoadandSaveArrayofPointers)
     const char *fileName = "iotmp";
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     //! - 2
 
@@ -207,7 +207,7 @@ TEST(io_test, HandlesLoadandSaveDifferentData)
     const char *fileName = "iotmp";
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     //! - 3
 
@@ -282,7 +282,7 @@ TEST(io_test, HandlesLoadandSaveDoubleArrays)
     const char *fileName = "iotmp";
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     //! - 4
 
@@ -347,7 +347,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
     const char *fileName = "iotmp";
 
     //!An instance of io class
-    io f;
+    umuq::io f;
 
     // ! - 5
 

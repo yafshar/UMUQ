@@ -44,7 +44,7 @@ std::vector<double> y;
  */
 bool init()
 {
-    io f;
+    umuq::io f;
     {
         // open the data file
         EXPECT_TRUE(f.openFile("./numerics/function/data.txt"));

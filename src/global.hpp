@@ -5,7 +5,7 @@
  * \brief Encapsulates global objects and functions
  * 
  */
-namespace UMUQ
+namespace umuq
 {
 
 }

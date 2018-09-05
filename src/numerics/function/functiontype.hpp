@@ -5,6 +5,10 @@
  * \brief Collection of Function types for convenience
  */
 
+namespace umuq
+{
+inline namespace multimin
+{
 /*!
  * \brief Function type that can be used in multidimensional minimization as \f$ f(x) \f$
  * 
@@ -25,6 +29,9 @@ using DF_MTYPE = std::function<bool(T const *, T *)>;
  */
 template <typename T>
 using FDF_MTYPE = std::function<bool(T const *, T *, T *)>;
+
+} // namespace multimin
+} // namespace umuq
 
 /*!
  * \brief Function type that can be used in fitFunction object

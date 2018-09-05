@@ -4,6 +4,9 @@
 #include "polynomial.hpp"
 #include "eigenlib.hpp"
 
+namespace umuq
+{
+
 /*!
  * \brief class linearRegression
  * \ingroup numerics
@@ -304,5 +307,7 @@ void linearRegression<T>::resetPolynomialOrder(int polynomialorder)
     linearRegressionkernel.clear();
     linearRegressionkernel.shrink_to_fit();
 }
+
+} // namespace umuq
 
 #endif // UMUQ_LINEARREGRESSION

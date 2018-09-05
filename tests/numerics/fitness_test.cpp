@@ -7,7 +7,7 @@
  */
 TEST(fitness_test, HandlesFitness)
 {
-    fitness<double> f;
+    umuq::fitness<double> f;
     EXPECT_EQ(f.getMetricName(), "sum_squared");
 }
 
@@ -40,7 +40,7 @@ TEST(fitness_test, HandlesLinearRegression)
     o = observations.get();
     p = predictions.get();
 
-    fitness<double> f("sum_squared");
+    umuq::fitness<double> f("sum_squared");
     std::cout << "For " << f.getMetricName() << " : " << f.getFitness(o, p, nPoints) << std::endl;
 
     f.setMetricName("mean_squared");

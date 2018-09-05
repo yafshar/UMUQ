@@ -16,14 +16,7 @@
  * \b multinomialDistribution          - The multinomial distribution \sa multinomialDistribution
  */
 
-namespace UMUQ
-{
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
-inline namespace density
-{
+
 #include "function/densityfunction.hpp"
 
 #include "density/uniformdistribution.hpp"
@@ -31,7 +24,5 @@ inline namespace density
 #include "density/gammadistribution.hpp"
 #include "density/gaussiandistribution.hpp"
 #include "density/multivariategaussiandistribution.hpp"
-}
-}
 
 #endif // UMUQ_DENSITY

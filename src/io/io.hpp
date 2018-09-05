@@ -3,6 +3,9 @@
 
 #include "../core/digits10.hpp"
 
+namespace umuq
+{
+
 /*! \class ioFormat
  * \ingroup io
  * 
@@ -3081,4 +3084,6 @@ void io::printMatrix(std::unique_ptr<TD[]> const &idata,
     io::printMatrix<TD>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, formD, formF);
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_IO

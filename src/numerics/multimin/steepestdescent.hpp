@@ -1,6 +1,18 @@
 #ifndef UMUQ_STEEPESTDESCENT_H
 #define UMUQ_STEEPESTDESCENT_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class steepestDescent
  *  \ingroup multimin_Module
  * 
@@ -162,5 +174,8 @@ inline bool steepestDescent<T>::restart()
     this->step = this->maxStep;
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_STEEPESTDESCENT

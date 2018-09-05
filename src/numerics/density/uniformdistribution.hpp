@@ -1,7 +1,14 @@
 #ifndef UMUQ_UNIFORMDISTRIBUTION_H
 #define UMUQ_UNIFORMDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class uniformDistribution
  * \brief Flat (Uniform) distribution function
@@ -147,5 +154,8 @@ inline T uniformDistribution<T, V>::uniformDistribution_lf_()
     }
     return sum;
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif //UMUQ_UNIFORMDISTRIBUTION_H

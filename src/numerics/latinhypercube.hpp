@@ -144,7 +144,7 @@ class Permutation
 	{
 		if (xSize > 0)
 		{
-			io f;
+			umuq::io f;
 			T *x = X.get();
 			f.printMatrix<T>("Permutation: base", x, xSize);
 			return;

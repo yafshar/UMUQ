@@ -7,7 +7,11 @@
 #include "numerics/function/fitfunction.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
+#include "numerics/stats.hpp"
 #include "io/io.hpp"
+
+namespace umuq
+{
 
 template <typename T, class F = fitFunction<T>>
 class tmcmc
@@ -20,8 +24,8 @@ public:
   inline bool setInputFileName(char const *fileName = "tmcmc.par")
   {
     inputFilename = std::string(fileName);
-    io f;
-    return f.isFileExist(inputFilename);
+    umuq::io f;
+    return f.isFileExist(fileName);
   }
 
 public:
@@ -47,7 +51,8 @@ private:
   //! stream data for getting the problem size and variables from the input file
   stdata<T> Data;
 
-  // psrandom<> rand;
+  //! pseudo-random numbers
+  psrandom<T> prng;
 };
 
 template <typename T, class F>
@@ -62,22 +67,24 @@ bool tmcmc<T, F>::init()
   if (Data.load(inputFilename))
   {
     // Creating a database based on the read information
-    currentData = std::move(database<T>(Data.nDim, Data.maxGenerations));
+    currentData = std::move(database<T>(Data.nDim, Data.populationSize));
+
+    //! Compute the total size of data points
+    auto sum = std::accumulate(Data.eachPopulationSize.begin(), Data.eachPopulationSize.end(), 0);
 
     // Creating a database based on the read information
-    fullData = std::move(database<T>(Data.nDim, Data.maxGenerations));
+    fullData = std::move(database<T>(Data.nDim, sum));
 
     //! Creating the run inofrmation data
     runData = std::move(runinfo<T>(Data.nDim, Data.maxGenerations));
 
-    if (!fit.init())
-    {
-      return false;
-    }
-
-    return true;
+    //! Seed of the PRNG
+    return prng.setSeed(Data.seed);
+    ;
   }
-  return false;
+  UMUQFAILRETURN("Failed to initilize the data from Input file!");
 }
+
+} // namespace umuq
 
 #endif

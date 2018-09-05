@@ -1,6 +1,18 @@
 #ifndef UMUQ_CONJUGATEFR_H
 #define UMUQ_CONJUGATEFR_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class conjugateFr
  *  \ingroup multimin Module
  * 
@@ -248,5 +260,8 @@ inline bool conjugateFr<T>::restart()
     iter = 0;
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_CONJUGATEFR

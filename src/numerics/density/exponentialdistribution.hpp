@@ -1,7 +1,14 @@
 #ifndef UMUQ_EXPONENTIALDISTRIBUTION_H
 #define UMUQ_EXPONENTIALDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class exponentialDistribution
  * \brief The exponential distribution
@@ -134,5 +141,8 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
     }
     return sum;
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif //UMUQ_EXPONENTIALDISTRIBUTION

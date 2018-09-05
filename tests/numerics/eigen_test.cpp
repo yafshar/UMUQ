@@ -14,7 +14,7 @@ TEST(eigen_test, HandlesMap)
     std::iota(A.begin(), A.end(), double{});
 
     //! Copy the buffer to the new Eigen object
-    EMatrixXd ACopy = EMapType<double>(A.data(), 3, 4);
+    umuq::EMatrixXd ACopy = umuq::EMapType<double>(A.data(), 3, 4);
 
     //! Check to make sure the values are the same
     for (int i = 0, l = 0; i < 3; i++)
@@ -26,7 +26,7 @@ TEST(eigen_test, HandlesMap)
     }
 
     //! Map the buffer to an Eigen object format no copy
-    EMapType<double> AMap(A.data(), 3, 4);
+    umuq::EMapType<double> AMap(A.data(), 3, 4);
 
     //! Change some of the values in the original buffer
     A[0] = -100.;
@@ -70,10 +70,10 @@ TEST(eigen_test, HandlesMap)
     A.resize(625, double{});
 
     //! Create a new 25*25 Eigen Matrix C and initialize to random values
-    EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
+    umuq::EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
 
     //! Copy the matrix C into A
-    EMap<EMatrixXd>(A.data(), C);
+    umuq::EMap<umuq::EMatrixXd>(A.data(), C);
 
     //! Check to see if the copy process has been done correctly
     for (int i = 0, l = 0; i < 25; i++)
@@ -113,7 +113,7 @@ TEST(eigen_test, HandlesMap)
         }
     }
 
-    EMatrixXd DCopy = EMap<EMatrixXd>(D, 3, 3);
+    umuq::EMatrixXd DCopy = umuq::EMap<umuq::EMatrixXd>(D, 3, 3);
 
     for (int j = 0; j < 3; j++)
     {
@@ -126,7 +126,7 @@ TEST(eigen_test, HandlesMap)
     //! Converts them to an array, which uses to multiply them coefficient-wise
     DCopy = DCopy.array() * DCopy.array();
 
-    EMap<EMatrixXd>(D, DCopy);
+    umuq::EMap<umuq::EMatrixXd>(D, DCopy);
 
     for (int i = 0, l = 0; i < 3; i++)
     {
@@ -145,7 +145,7 @@ TEST(eigen_test, HandlesMap)
  */
 TEST(eigen_la_test, HandlesSolver)
 {
-    EMatrix6d A;
+    umuq::EMatrix6d A;
     A << 1, 1, 0, 1, 0, 0,
         1, 0, 1, 0, 0, 1,
         1, -1, 0, 1, -0, 0,
@@ -153,12 +153,12 @@ TEST(eigen_la_test, HandlesSolver)
         1, 0.70710678118654752440, 0.70710678118654752440, 0.5, 0.5, 0.5,
         1, -0.70710678118654752440, -0.70710678118654752440, 0.5, 0.5, 0.5;
 
-    EVector6d B = EVector6d::Ones();
+    umuq::EVector6d B = umuq::EVector6d::Ones();
 
     //! LU decomposition of a matrix with complete pivoting
     //! Eigen::FullPivLU<EMatrix6d> lu(A);
 
-    EVector6d X = A.fullPivLu().solve(B);
+    umuq::EVector6d X = A.fullPivLu().solve(B);
 
     auto relative_error = (A * X - B).norm() / B.norm();
 
@@ -184,7 +184,7 @@ TEST(eigen_svd_test, HandlesSVD)
 
     //!Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
     Eigen::JacobiSVD<Eigen::Matrix<double, 4, 5>> svd(A);
-    EVector4<double> B(svd.singularValues());
+    umuq::EVector4<double> B(svd.singularValues());
 
     EXPECT_DOUBLE_EQ(3, B(0));
     EXPECT_DOUBLE_EQ(std::sqrt((double)(5)), B(1));
@@ -195,8 +195,8 @@ TEST(eigen_svd_test, HandlesSVD)
 //! LU test
 TEST(eigen_lu_test, HandlesLU)
 {
-    typedef EMatrix3<double> EMatrix3d;
-    typedef EVector3<double> EVector3d;
+    typedef umuq::EMatrix3<double> EMatrix3d;
+    typedef umuq::EVector3<double> EVector3d;
 
     //! A 3*3 matrix with rank 2 which is not invertible
     EMatrix3d m;

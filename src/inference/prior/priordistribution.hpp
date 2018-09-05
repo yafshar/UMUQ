@@ -2,12 +2,9 @@
 #define UMUQ_PRIORDISTRIBUTION_H
 
 #include "../../core/core.hpp"
-#include "../../numerics/density/uniformdistribution.hpp"
-#include "../../numerics/density/gaussiandistribution.hpp"
-#include "../../numerics/density/exponentialdistribution.hpp"
-#include "../../numerics/density/gammadistribution.hpp"
-#include "../../numerics/density/multinomialdistribution.hpp"
-#include "../../numerics/density/multivariategaussiandistribution.hpp"
+#include "../../numerics/density.hpp"
+
+using namespace umuq;
 
 /*!
  * \brief Prior distribution types

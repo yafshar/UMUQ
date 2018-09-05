@@ -3,6 +3,9 @@
 
 #include "../data/eigendatatype.hpp"
 
+namespace umuq
+{
+
 /*!
  * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
@@ -228,7 +231,6 @@ inline T EMap(typename T::Scalar **dataPtr)
 	return tmpMatrix;
 }
 
-
 //! TODO:
 //! We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
 
@@ -277,4 +279,6 @@ inline void EMap(typename T::Scalar **dataPtr, T const &eMatrix)
 	}
 }
 
-#endif // UMUQ_EIGENLIB_H
+} // namespace umuq
+
+#endif // UMUQ_EIGENLIB

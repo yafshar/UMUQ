@@ -288,7 +288,7 @@ template <typename T>
 bool runinfo<T>::save(const char *fileName)
 {
     // Create an instance of the IO object
-    io f;
+    umuq::io f;
     if (f.openFile(fileName, f.out | f.trunc))
     {
         // Get the IO stream
@@ -347,7 +347,7 @@ template <typename T>
 bool runinfo<T>::load(const char *fileName)
 {
     // Create an instance of the IO object
-    io f;
+    umuq::io f;
     if (f.openFile(fileName, f.in))
     {
         // Create an instance of the parser object

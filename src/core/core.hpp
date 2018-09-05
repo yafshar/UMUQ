@@ -121,7 +121,7 @@ extern "C" {
 /*!
  * \brief Namespace containing all symbols from the %UMUQ library. 
  */
-namespace UMUQ
+namespace umuq
 {
 
 inline static const char *SimdInstructionSetsInUse(void)
@@ -156,7 +156,7 @@ inline static const char *SimdInstructionSetsInUse(void)
 
 //! Maximum size of a char * in UMUQ parser & io
 #define LINESIZE 256
-} // namespace UMUQ
+} // namespace umuq
 
 /*! 
  * This is the main module of UMUQ

@@ -1,7 +1,14 @@
 #ifndef UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 #define UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class multivariategaussianDistribution
  * \brief The Multivariate Gaussian Distribution
@@ -458,5 +465,8 @@ inline T multivariateGaussianDistribution<T, V>::multivariateGaussianDistributio
 
     return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng.mvNormal->lu.determinant()));
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif // UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H

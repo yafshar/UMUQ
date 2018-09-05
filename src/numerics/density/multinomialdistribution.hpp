@@ -1,7 +1,14 @@
 #ifndef UMUQ_MULTINOMIALDISTRIBUTION_H
 #define UMUQ_MULTINOMIALDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class multinomialDistribution
  * \brief The multinomial distribution
@@ -152,5 +159,8 @@ inline T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsi
 
     return log_pdf;
 }
+
+} // namespace density
+} // namespace umuq
 
 #endif // UMUQ_MULTINOMIALDISTRIBUTION_H

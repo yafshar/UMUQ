@@ -1,6 +1,18 @@
 #ifndef UMUQ_BFGS_H
 #define UMUQ_BFGS_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class bfgs
  *  \ingroup multimin_Module
  * 
@@ -331,5 +343,8 @@ inline bool bfgs<T>::restart()
     iter = 0;
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_BFGS

@@ -7,10 +7,8 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-using namespace UMUQ;
-
 // Create a global instance of the Pyplot from Pyplot library
-pyplot plt;
+umuq::pyplot plt;
 
 /*! 
  * Test to check densityFunction functionality
@@ -20,14 +18,14 @@ TEST(densityFunction_test, HandlesConstruction)
     std::cout << std::fixed;
 
     //! Uniform ditrsibution between 1 and 2
-    uniformDistribution<double> u(1, 2);
+    umuq::uniformDistribution<double> u(1, 2);
     double X1 = 1.5;
     double X2 = 3.;
     EXPECT_DOUBLE_EQ(u.f(&X1), 1.);
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
 
     //! Exponential distribution with mean 1
-    exponentialDistribution<float> e(1);
+    umuq::exponentialDistribution<float> e(1);
     float X3 = 1.5f;
     float X4 = 3.f;
 
@@ -35,7 +33,7 @@ TEST(densityFunction_test, HandlesConstruction)
     EXPECT_FLOAT_EQ(e.f(&X4), std::exp(-X4));
 
     //! Gamma distribution with Shape parameter of 0.5
-    gammaDistribution<double> g(0.5);
+    umuq::gammaDistribution<double> g(0.5);
 
     //! From MATLAB gampdf(X1, 0.5, 1)
     EXPECT_DOUBLE_EQ(g.f(&X1), 0.10278688653584618); 
@@ -43,14 +41,14 @@ TEST(densityFunction_test, HandlesConstruction)
     EXPECT_DOUBLE_EQ(g.f(&X2), 0.01621739110988048);
                                
     //! Gaussian distribution with mean 2 and standard deviation of 5
-    gaussianDistribution<double> gu(2, 5);
+    umuq::gaussianDistribution<double> gu(2, 5);
     //! From MATLAB normpdf(X1,2,5)
     EXPECT_DOUBLE_EQ(gu.f(&X1), 0.079390509495402356);
     //! From MATLAB normpdf(X2, 2, 5)
     EXPECT_DOUBLE_EQ(gu.f(&X2), 0.078208538795091168);
 
     //! A multivariate Gaussian distribution with mean zero and unit covariance matrix of size (2*2)
-    multivariateGaussianDistribution<double> m(2);
+    umuq::multivariateGaussianDistribution<double> m(2);
     //! From MATLAB mvnpdf([1.5,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{1.5, 2}.data()), 0.0069927801704657913);
     //! From MATLAB mvnpdf([3,2])
@@ -61,7 +59,7 @@ TEST(densityFunction_test, HandlesConstruction)
     double M2d[4] = {1, 3. / 5., 3. / 5., 2.};
 
     //! A multivariate Gaussian distribution with mean zero and covariance matrix of M2d
-    multivariateGaussianDistribution<double> mvn(M2d, 2);
+    umuq::multivariateGaussianDistribution<double> mvn(M2d, 2);
 
     //! Prepare data.
     int n = 11;
@@ -143,14 +141,14 @@ TEST(densityFunction_test, HandlesConstruction)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
         ::testing::UnitTest::GetInstance()->listeners();
 
     // Adds UMUQ listener; Google Test owns this pointer
-    listeners.Append(new UMUQEventListener);
+    listeners.Append(new umuq::UMUQEventListener);
 
     return RUN_ALL_TESTS();
 }

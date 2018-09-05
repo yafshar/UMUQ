@@ -11,6 +11,9 @@
 #include "gtest/gtest.h"
 #endif // HAVE_GOOGLETEST
 
+namespace umuq
+{
+
 /*!
  * \brief torcEnvironment class
  * 
@@ -180,4 +183,7 @@ class UMUQEventListener : public ::testing::EmptyTestEventListener
 };
 
 #endif // HAVE_GOOGLETEST == 1
+
+} // namespace umuq
+
 #endif // UMUQ_ENVIRONMENT

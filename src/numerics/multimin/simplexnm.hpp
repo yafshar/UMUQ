@@ -1,6 +1,18 @@
 #ifndef UMUQ_SIMPLEXNM_H
 #define UMUQ_SIMPLEXNM_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class simplexNM
  *  \ingroup multimin_Module
  * 
@@ -459,5 +471,8 @@ T simplexNM<T>::computeSize()
 
     return s / static_cast<T>(n + 1);
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_SIMPLEXNM

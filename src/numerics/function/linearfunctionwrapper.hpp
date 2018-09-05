@@ -4,6 +4,11 @@
 #include "../function/functiontype.hpp"
 #include "../function/umuqdifferentiablefunction.hpp"
 
+namespace umuq
+{
+inline namespace multimin
+{
+
 /*! \class linearFunctionWrapper
  * \ingroup multimin_Module
  * 
@@ -111,6 +116,13 @@ class linearFunctionWrapper
      */
     inline T slope();
 
+  private:
+  // Make it noncopyable
+  linearFunctionWrapper(linearFunctionWrapper<T> const &) = delete;
+
+  // Make it not assignable
+  linearFunctionWrapper<T> &operator=(linearFunctionWrapper<T> const &) = delete;
+  
   private:
     //! Multidimensional function
     umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> fun;
@@ -352,5 +364,8 @@ inline T linearFunctionWrapper<T>::slope()
     }
     return s;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_LINEARFUNCTIONWRAPPER

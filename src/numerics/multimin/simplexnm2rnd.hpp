@@ -1,6 +1,18 @@
 #ifndef UMUQ_SIMPLEXNM2RND_H
 #define UMUQ_SIMPLEXNM2RND_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class simplexNM2Rnd
  *  \ingroup multimin_Module
  * 
@@ -714,5 +726,8 @@ inline std::ptrdiff_t simplexNM2Rnd<T>::submatrix::ID(int i, int j) const
 {
     return k1 * NC + k2 + i * NC + j;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_SIMPLEXNM2RND

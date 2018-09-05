@@ -1,5 +1,4 @@
 #include "core/core.hpp"
-#include "io/io.hpp"
 #include "numerics/stats.hpp"
 #include "gtest/gtest.h"
 
@@ -9,7 +8,7 @@
 TEST(stats_test, HandlesStats)
 {
     //! Create an instane of stats object
-    stats s;
+    umuq::stats s;
 
     int iArray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
 
@@ -34,7 +33,7 @@ TEST(stats_test, HandlesStats)
 TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 {
     //! Create an instane of stats object
-    stats s;
+    umuq::stats s;
 
     //! iArray is a two column array of size 10 * 2 = 20
     //! we are interested to the first column so the Stride is 2
@@ -81,7 +80,7 @@ TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 TEST(stats_test, HandlesMedianandMad)
 {
     //! Create an instane of stats object
-    stats s;
+    umuq::stats s;
 
     int iArray[] = {1, 1, 2, 2, 4, 6, 9};
     int med;
@@ -106,7 +105,7 @@ TEST(stats_test, HandlesMedianandMad)
 TEST(stats_test, HandlesCovariance)
 {
     //! Create an instane of stats object
-    stats s;
+    umuq::stats s;
 
     //! Create two vectors and compute their covariance.
     {

@@ -562,12 +562,12 @@ bool database<T>::print()
     {
         std::cout << "---- database priniting ----" << std::endl;
 
-        io f;
+        umuq::io f;
 
         // Define the printing format
-        ioFormat poFormat = {",", "", "POINT(", ") "};
-        ioFormat fvFormat = {"", "", "Fvalue=", " "};
-        ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
+        umuq::ioFormat poFormat = {",", "", "POINT(", ") "};
+        umuq::ioFormat fvFormat = {"", "", "Fvalue=", " "};
+        umuq::ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
 
         // Getting the maximum width in the data for nice printing
         int pWidth = f.getWidth<T>(Parray, entries, ndimParray, std::cout);
@@ -585,7 +585,7 @@ bool database<T>::print()
 
         if (ndimGarray > 0)
         {
-            ioFormat gvFormat = {",", "\n", "Garray=[", "]"};
+            umuq::ioFormat gvFormat = {",", "\n", "Garray=[", "]"};
 
             int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
 
@@ -641,7 +641,7 @@ bool database<T>::save(const char *fname, int const IdNumber)
             sprintf(fileName, "%s_%03d.txt", fname, IdNumber);
         }
 
-        io f;
+       umuq::io f;
         if (f.openFile(fileName, f.out | f.trunc))
         {
             if (ndimGarray > 0)
@@ -716,7 +716,7 @@ bool database<T>::load(const char *fname, int const IdNumber)
             sprintf(fileName, "%s_%03d.txt", fname, IdNumber);
         }
 
-        io f;
+        umuq::io f;
         if (f.openFile(fileName, f.in))
         {
             if (ndimGarray > 0)

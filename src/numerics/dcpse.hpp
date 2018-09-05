@@ -7,6 +7,9 @@
 #include "knearestneighbors.hpp"
 #include "primitive.hpp"
 
+namespace umuq
+{
+
 /*! \class dcpse
  * \brief This is a general class for (DC-PSE)
  * 
@@ -2640,5 +2643,7 @@ inline T *dcpse<T>::averageSpace() const
 {
     return h_average.data();
 }
+
+} // namespace umuq
 
 #endif

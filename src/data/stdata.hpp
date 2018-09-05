@@ -522,7 +522,7 @@ template <typename T>
 bool stdata<T>::load(const char *fname)
 {
 	// We use an IO object to open and read a file
-	io f;
+	umuq::io f;
 	if (f.isFileExist(fname))
 	{
 		if (f.openFile(fname, f.in))

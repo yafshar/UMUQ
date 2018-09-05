@@ -10,7 +10,7 @@
 TEST(knearestneighbors_test, HandlesKNN)
 {
 
-	io f;
+	umuq::io f;
 	EXPECT_TRUE(f.isFileExist("numerics/knearestneighbors_test.txt"));
 	EXPECT_TRUE(f.openFile("numerics/knearestneighbors_test.txt"));
 
@@ -53,7 +53,7 @@ TEST(knearestneighbors_test, HandlesKNN)
 	f.closeFile();
 
 	// kNearestNeighbor<double, flann::L2<double>> KNN(n, nDim, nn);
-	L2NearestNeighbor<double> KNN(nRows, nDim, nn);
+	umuq::L2NearestNeighbor<double> KNN(nRows, nDim, nn);
 
 	EXPECT_EQ(KNN.numNearestNeighbors(), nn);
 
