@@ -10,7 +10,6 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
 	brew install gcc@5; 
-	brew link --overwrite gcc@5;
 	
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
