@@ -119,4 +119,4 @@ class normalizedgaussian : public primitive<T, normalizedgaussian<T>>
     static T alpha = static_cast<T>(1) / static_cast<T>(0.3);
 };
 
-#endif
+#endif // UMUQ_PRIMITIVE

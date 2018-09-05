@@ -1,6 +1,9 @@
 #ifndef UMUQ_RESIDUAL_H
 #define UMUQ_RESIDUAL_H
 
+namespace umuq
+{
+    
 enum ErrorTypes
 {
     AbsoluteError = -1,
@@ -192,5 +195,7 @@ inline T residual<T>::operator()(T const &observed, T const &predicted)
         return std::abs(observed - predicted);
     }
 }
+
+} // namespace umuq
 
 #endif //UMUQ_RESIDUAL

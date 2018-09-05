@@ -3,6 +3,9 @@
 
 #include "../misc/arraywrapper.hpp"
 
+namespace umuq
+{
+
 /*! \class stats
 * \brief stats is a class which includes some functionality for statistics of the input data
 *
@@ -51,6 +54,9 @@ struct stats
     inline T minelement(T const *idata, int const nSize, int const Stride = 1) const;
 
     template <typename T>
+    inline T minelement(std::vector<T> const &idata) const;
+
+    template <typename T>
     inline T minelement(arrayWrapper<T> const &iArray) const;
 
     /*!
@@ -66,6 +72,9 @@ struct stats
      */
     template <typename T>
     inline T maxelement(T const *idata, int const nSize, int const Stride = 1) const;
+
+    template <typename T>
+    inline T maxelement(std::vector<T> const &idata) const;
 
     template <typename T>
     inline T maxelement(arrayWrapper<T> const &iArray) const;
@@ -85,6 +94,9 @@ struct stats
     inline int minelement_index(T const *idata, int const nSize, int const Stride = 1) const;
 
     template <typename T>
+    inline int minelement_index(std::vector<T> const &idata) const;
+
+    template <typename T>
     inline int minelement_index(arrayWrapper<T> const &iArray) const;
 
     /*!
@@ -100,6 +112,9 @@ struct stats
      */
     template <typename T>
     inline int maxelement_index(T const *idata, int const nSize, int const Stride = 1) const;
+
+    template <typename T>
+    inline int maxelement_index(std::vector<T> const &idata) const;
 
     template <typename T>
     inline int maxelement_index(arrayWrapper<T> const &iArray) const;
@@ -120,6 +135,9 @@ struct stats
     inline TOut sum(T const *idata, int const nSize, int const Stride = 1) const;
 
     template <typename T, typename TOut = double>
+    inline TOut sum(std::vector<T> const &idata) const;
+
+    template <typename T, typename TOut = double>
     inline TOut sum(arrayWrapper<T> const &iArray) const;
 
     /*!
@@ -138,6 +156,9 @@ struct stats
     inline TOut mean(T const *idata, const int nSize, int const Stride = 1) const;
 
     template <typename T, typename TOut = double>
+    inline TOut mean(std::vector<T> const &idata) const;
+
+    template <typename T, typename TOut = double>
     inline TOut mean(arrayWrapper<T> const &iArray) const;
 
     /*!
@@ -154,6 +175,9 @@ struct stats
      */
     template <typename T, typename TOut = double>
     inline TOut median(T const *idata, const int nSize, int const Stride = 1);
+
+    template <typename T, typename TOut = double>
+    inline TOut median(std::vector<T> const &idata);
 
     template <typename T, typename TOut = double>
     inline TOut median(arrayWrapper<T> const &iArray);
@@ -175,6 +199,9 @@ struct stats
     inline TOut medianAbs(T const *idata, const int nSize, int const Stride = 1, TOut &median_ = TOut{});
 
     template <typename T, typename TOut = double>
+    inline TOut medianAbs(std::vector<T> const &idata, TOut &median_ = TOut{});
+
+    template <typename T, typename TOut = double>
     inline TOut medianAbs(arrayWrapper<T> const &iArray, TOut &median_ = TOut{});
 
     /*!
@@ -192,6 +219,9 @@ struct stats
      */
     template <typename T, typename TOut = double>
     inline TOut stddev(T const *idata, int const nSize, int const Stride = 1, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
+
+    template <typename T, typename TOut = double>
+    inline TOut stddev(std::vector<T> const &idata, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
 
     template <typename T, typename TOut = double>
     inline TOut stddev(arrayWrapper<T> const &iArray, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
@@ -248,7 +278,10 @@ struct stats
     void minmaxNormal(T *idata, int const nSize, int const Stride = 1);
 
     template <typename T>
-    void minmaxNormal(arrayWrapper<T> const &iArray);
+    void minmaxNormal(std::vector<T> &idata);
+
+    template <typename T>
+    void minmaxNormal(arrayWrapper<T> &iArray);
 
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
@@ -267,7 +300,10 @@ struct stats
     inline void zscoreNormal(T *idata, int const nSize, int const Stride = 1);
 
     template <typename T>
-    inline void zscoreNormal(arrayWrapper<T> const &iArray);
+    inline void zscoreNormal(std::vector<T> &idata);
+
+    template <typename T>
+    inline void zscoreNormal(arrayWrapper<T> &iArray);
 
     /*!
      * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
@@ -288,7 +324,10 @@ struct stats
     inline void robustzscoreNormal(T *idata, int const nSize, int const Stride = 1);
 
     template <typename T>
-    inline void robustzscoreNormal(arrayWrapper<T> const &iArray);
+    inline void robustzscoreNormal(std::vector<T> &idata);
+
+    template <typename T>
+    inline void robustzscoreNormal(arrayWrapper<T> &iArray);
 
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
@@ -324,6 +363,9 @@ struct stats
     template <typename T, typename TOut = double>
     TOut covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray, T const imean, T const jmean);
 
+    template <typename T, typename TOut = double>
+    TOut covariance(std::vector<T> const &idata, std::vector<T> const &jdata, T const imean, T const jmean);
+
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
      * 
@@ -353,6 +395,9 @@ struct stats
      */
     template <typename T, typename TOut = double>
     TOut covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray);
+
+    template <typename T, typename TOut = double>
+    TOut covariance(std::vector<T> const &iArray, std::vector<T> const &jArray);
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
@@ -390,6 +435,12 @@ inline T stats::minelement(T const *idata, int const nSize, int const Stride) co
 }
 
 template <typename T>
+inline T stats::minelement(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? *std::min_element(idata.begin(), idata.end()) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T>
 inline T stats::minelement(arrayWrapper<T> const &iArray) const
 {
     return iArray.size() > 0 ? *std::min_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
@@ -404,6 +455,12 @@ inline T stats::maxelement(T const *idata, int const nSize, int const Stride) co
         return iArray.size() > 0 ? *std::max_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
     }
     return nSize > 0 ? *std::max_element(idata, idata + nSize) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T>
+inline T stats::maxelement(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? *std::max_element(idata.begin(), idata.end()) : throw(std::runtime_error("Wrong input size!"));
 }
 
 template <typename T>
@@ -425,6 +482,12 @@ inline int stats::minelement_index(T const *idata, int const nSize, int const St
 }
 
 template <typename T>
+inline int stats::minelement_index(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? static_cast<int>(std::distance(idata.begin(), std::min_element(idata.begin(), idata.end()))) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T>
 inline int stats::minelement_index(arrayWrapper<T> const &iArray) const
 {
     return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * iArray.stride()) : throw(std::runtime_error("Wrong input size!"));
@@ -439,6 +502,12 @@ inline int stats::maxelement_index(T const *idata, int const nSize, int const St
         return iArray.size() > 0 ? static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * Stride) : throw(std::runtime_error("Wrong input size!"));
     }
     return nSize > 0 ? static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize))) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T>
+inline int stats::maxelement_index(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? static_cast<int>(std::distance(idata.begin(), std::max_element(idata.begin(), idata.end()))) : throw(std::runtime_error("Wrong input size!"));
 }
 
 template <typename T>
@@ -459,6 +528,12 @@ inline TOut stats::sum(T const *idata, int const nSize, int const Stride) const
 }
 
 template <typename T, typename TOut>
+inline TOut stats::sum(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? static_cast<TOut>(std::accumulate(idata.begin(), idata.end(), T{})) : TOut{};
+}
+
+template <typename T, typename TOut>
 inline TOut stats::sum(arrayWrapper<T> const &iArray) const
 {
     return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) : TOut{};
@@ -473,6 +548,12 @@ inline TOut stats::mean(T const *idata, const int nSize, int const Stride) const
         return iArray.size() > 0 ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size() : throw(std::runtime_error("Wrong input size!"));
     }
     return nSize > 0 ? static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) / nSize : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T, typename TOut>
+inline TOut stats::mean(std::vector<T> const &idata) const
+{
+    return idata.size() > 0 ? static_cast<TOut>(std::accumulate(idata.begin(), idata.end(), T{})) / idata.size() : throw(std::runtime_error("Wrong input size!"));
 }
 
 template <typename T, typename TOut>
@@ -498,6 +579,16 @@ inline TOut stats::median(T const *idata, const int nSize, int const Stride)
     std::vector<TOut> data(idata, idata + nSize);
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return nSize > 1 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T, typename TOut>
+inline TOut stats::median(std::vector<T> const &idata)
+{
+    //! We do partial sorting algorithm that rearranges elements
+    std::vector<TOut> data(idata);
+
+    std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
+    return idata.size() > 0 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
 template <typename T, typename TOut>
@@ -529,6 +620,22 @@ inline TOut stats::medianAbs(T const *idata, const int nSize, int const Stride, 
 }
 
 template <typename T, typename TOut>
+inline TOut stats::medianAbs(std::vector<T> const &idata, TOut &median_)
+{
+    //! We do partial sorting algorithm that rearranges elements
+    std::vector<TOut> data(idata);
+
+    //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
+    median_ = data[data.size() / 2];
+    std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
+
+    //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
+    return idata.size() > 0 ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename T, typename TOut>
 inline TOut stats::medianAbs(arrayWrapper<T> const &iArray, TOut &median_)
 {
     //! We do partial sorting algorithm that rearranges elements
@@ -557,6 +664,15 @@ inline TOut stats::stddev(T const *idata, int const nSize, int const Stride, TOu
     }
     std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
     return nSize > 1 ? std::sqrt(s / (nSize - 1)) : std::sqrt(s);
+}
+
+template <typename T, typename TOut>
+inline TOut stats::stddev(std::vector<T> const &idata, TOut const idatamean) const
+{
+    TOut m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata);
+    TOut s(0);
+    std::for_each(idata.begin(), idata.end(), [&](T const d) { s += (d - m) * (d - m); });
+    return idata.size() > 1 ? std::sqrt(s / (idata.size() - 1)) : std::sqrt(s);
 }
 
 template <typename T, typename TOut>
@@ -667,7 +783,24 @@ void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
 }
 
 template <typename T>
-void stats::minmaxNormal(arrayWrapper<T> const &iArray)
+void stats::minmaxNormal(std::vector<T> &idata)
+{
+    T MinValue = minelement<T>(idata);
+    T MaxValue = maxelement<T>(idata);
+
+    T denom = MaxValue - MinValue;
+    if (denom < std::numeric_limits<T>::epsilon())
+    {
+        UMUQWARNING("Maximum and Minimum Value are identical!");
+        denom = std::numeric_limits<T>::epsilon();
+    }
+
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+    return;
+}
+
+template <typename T>
+void stats::minmaxNormal(arrayWrapper<T> &iArray)
 {
     T MinValue = minelement<T>(iArray);
     T MaxValue = maxelement<T>(iArray);
@@ -698,7 +831,16 @@ inline void stats::zscoreNormal(T *idata, int const nSize, int const Stride)
 }
 
 template <typename T>
-inline void stats::zscoreNormal(arrayWrapper<T> const &iArray)
+inline void stats::zscoreNormal(std::vector<T> &idata)
+{
+    T MeanValue = mean<T, T>(idata);
+    T StddevValue = stddev<T, T>(idata, MeanValue);
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+    return;
+}
+
+template <typename T>
+inline void stats::zscoreNormal(arrayWrapper<T> &iArray)
 {
     T MeanValue = mean<T, T>(iArray);
     T StddevValue = stddev<T, T>(iArray, MeanValue);
@@ -721,7 +863,16 @@ inline void stats::robustzscoreNormal(T *idata, int const nSize, int const Strid
 }
 
 template <typename T>
-inline void stats::robustzscoreNormal(arrayWrapper<T> const &iArray)
+inline void stats::robustzscoreNormal(std::vector<T> &idata)
+{
+    T median_;
+    T mad = medianAbs<T, T>(idata, median_);
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
+    return;
+}
+
+template <typename T>
+inline void stats::robustzscoreNormal(arrayWrapper<T> &iArray)
 {
     T median_;
     T mad = medianAbs<T, T>(iArray, median_);
@@ -750,6 +901,24 @@ TOut stats::covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jAr
     TOut Covariance(0);
     int iSize = 1;
     for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
+    {
+        TOut const d1 = *i - imean;
+        TOut const d2 = *j - jmean;
+
+        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+    }
+
+    --iSize;
+
+    return iSize > 1 ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+}
+
+template <typename T, typename TOut>
+TOut stats::covariance(std::vector<T> const &idata, std::vector<T> const &jdata, T const imean, T const jmean)
+{
+    TOut Covariance(0);
+    int iSize = 1;
+    for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
     {
         TOut const d1 = *i - imean;
         TOut const d2 = *j - jmean;
@@ -821,6 +990,27 @@ TOut stats::covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jAr
 }
 
 template <typename T, typename TOut>
+TOut stats::covariance(std::vector<T> const &idata, std::vector<T> const &jdata)
+{
+    T const imean = mean<T, T>(idata);
+    T const jmean = mean<T, T>(jdata);
+
+    TOut Covariance(0);
+    int iSize = 1;
+    for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
+    {
+        TOut const d1 = *i - imean;
+        TOut const d2 = *j - jmean;
+
+        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+    }
+
+    --iSize;
+
+    return iSize > 1 ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+}
+
+template <typename T, typename TOut>
 TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int const Stride)
 {
     TOut *Covariance = nullptr;
@@ -866,5 +1056,7 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int con
 
     return Covariance;
 }
+
+} // namespace umuq
 
 #endif

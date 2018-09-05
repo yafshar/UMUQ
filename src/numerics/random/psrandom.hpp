@@ -5,6 +5,9 @@
 #include "../factorial.hpp"
 #include "saruprng.hpp"
 
+namespace umuq
+{
+
 //! RNG seed
 static std::size_t PRNG_seed = 0;
 
@@ -18,7 +21,7 @@ static std::vector<Saru> saru(1);
 static bool PRNG_initialized = false;
 
 //! True if Tasks have been registered, and false otherwise (logical).
-template<typename T>
+template <typename T>
 static bool PRNG_Task_registered = false;
 
 //! Muex object
@@ -2122,4 +2125,6 @@ inline bool psrandom<T>::set_mvNormal(int const n)
     return true;
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_PSRANDOM
