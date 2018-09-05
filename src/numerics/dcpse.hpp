@@ -35,9 +35,9 @@ class dcpse
     /*!
      * \brief Move constructor, construct a new dcpse object from input dcpse object
      * 
-     * \param inputDC 
+     * \param other 
      */
-    explicit dcpse(dcpse<T> &&inputDC);
+    explicit dcpse(dcpse<T> &&other);
 
     /*!
      * \brief Move assignment operator
@@ -45,7 +45,7 @@ class dcpse
      * \param inputDB 
      * \return dcpse<T>& 
      */
-    dcpse<T> &operator=(dcpse<T> &&inputDC);
+    dcpse<T> &operator=(dcpse<T> &&other);
 
     /*!
      * \brief Destroy the dcpse object
@@ -271,20 +271,20 @@ dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
 /*!
  * \brief Move constructor, construct a new dcpse object from input dcpse object
  * 
- * \param inputDC 
+ * \param other 
  */
 template <typename T>
-dcpse<T>::dcpse(dcpse<T> &&inputDC)
+dcpse<T>::dcpse(dcpse<T> &&other)
 {
-    nDim = inputDC.nDim;
-    nTerms = inputDC.nTerms;
-    dcmonomialSize = inputDC.dcmonomialSize;
-    dckernelSize = inputDC.dckernelSize;
-    Order = std::move(inputDC.Order);
-    dckernel = std::move(inputDC.dckernel);
-    KNN = std::move(inputDC.KNN);
-    h_average = std::move(inputDC.h_average);
-    rhscoeff = inputDC.rhscoeff;
+    nDim = other.nDim;
+    nTerms = other.nTerms;
+    dcmonomialSize = other.dcmonomialSize;
+    dckernelSize = other.dckernelSize;
+    Order = std::move(other.Order);
+    dckernel = std::move(other.dckernel);
+    KNN = std::move(other.KNN);
+    h_average = std::move(other.h_average);
+    rhscoeff = other.rhscoeff;
 }
 
 /*!
@@ -294,17 +294,17 @@ dcpse<T>::dcpse(dcpse<T> &&inputDC)
  * \return dcpse<T>& 
  */
 template <typename T>
-dcpse<T> &dcpse<T>::operator=(dcpse<T> &&inputDC)
+dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
 {
-    nDim = inputDC.nDim;
-    nTerms = inputDC.nTerms;
-    dcmonomialSize = inputDC.dcmonomialSize;
-    dckernelSize = inputDC.dckernelSize;
-    Order = std::move(inputDC.Order);
-    dckernel = std::move(inputDC.dckernel);
-    KNN = std::move(inputDC.KNN);
-    h_average = std::move(inputDC.h_average);
-    rhscoeff = inputDC.rhscoeff;
+    nDim = other.nDim;
+    nTerms = other.nTerms;
+    dcmonomialSize = other.dcmonomialSize;
+    dckernelSize = other.dckernelSize;
+    Order = std::move(other.Order);
+    dckernel = std::move(other.dckernel);
+    KNN = std::move(other.KNN);
+    h_average = std::move(other.h_average);
+    rhscoeff = other.rhscoeff;
 
     return *this;
 }
@@ -2646,4 +2646,4 @@ inline T *dcpse<T>::averageSpace() const
 
 } // namespace umuq
 
-#endif
+#endif // UMUQ_DCPSE

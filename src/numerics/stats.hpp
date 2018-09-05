@@ -234,23 +234,6 @@ struct stats
      * 
      * \param  fValue  An array of log value
      * \param  fSize   size of the fValue array 
-     * \param  x       
-     * \param  p 
-     * \param  tol     a prescribed tolerance
-     * 
-     * \returns the square of the coefficient of variation (COV)
-     */
-    template <typename T, typename TOut = double>
-    TOut CoefVar(T const *fValue, int const fSize, T const x, T const p, T const tol);
-
-    /*!
-     * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
-     * 
-     * \tparam T       data type
-     * \tparam TOut    data type of the return output result (default is double)
-     * 
-     * \param  fValue  An array of log value
-     * \param  fSize   size of the fValue array 
      * \param  Stride  element stride 
      * \param  x       
      * \param  p 
@@ -260,6 +243,15 @@ struct stats
      */
     template <typename T, typename TOut = double>
     TOut CoefVar(T const *fValue, int const fSize, int const Stride, T const x, T const p, T const tol);
+
+    template <typename T, typename TOut = double>
+    TOut CoefVar(T const *fValue, int const fSize, T const x, T const p, T const tol);
+
+    template <typename T, typename TOut = double>
+    TOut CoefVar(std::vector<T> const &fValue, T const x, T const p, T const tol);
+
+    template <typename T, typename TOut = double>
+    TOut CoefVar(arrayWrapper<T> const &iArray, T const x, T const p, T const tol);
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
@@ -280,9 +272,6 @@ struct stats
     template <typename T>
     void minmaxNormal(std::vector<T> &idata);
 
-    template <typename T>
-    void minmaxNormal(arrayWrapper<T> &iArray);
-
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
      * 
@@ -301,9 +290,6 @@ struct stats
 
     template <typename T>
     inline void zscoreNormal(std::vector<T> &idata);
-
-    template <typename T>
-    inline void zscoreNormal(arrayWrapper<T> &iArray);
 
     /*!
      * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
@@ -325,9 +311,6 @@ struct stats
 
     template <typename T>
     inline void robustzscoreNormal(std::vector<T> &idata);
-
-    template <typename T>
-    inline void robustzscoreNormal(arrayWrapper<T> &iArray);
 
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
@@ -685,76 +668,107 @@ inline TOut stats::stddev(arrayWrapper<T> const &iArray, TOut const idatamean) c
 }
 
 template <typename T, typename TOut>
-TOut stats::CoefVar(T const *fValue, int const fSize, T const x, T const p, T const tol)
+TOut stats::CoefVar(T const *fValue, int const fSize, int const Stride, T const x, T const p, T const tol)
 {
-    //Find the maximum value in the array of fValue of size fSize
-    T fMaxValue = maxelement<T>(fValue, fSize);
+    arrayWrapper<T> iArray(fValue, fSize, Stride);
 
-    TOut *weight = new TOut[fSize];
+    std::vector<TOut> weight(iArray.size());
 
-    TOut diff = static_cast<TOut>(x - p);
-
-    //Compute the weight
-    for (int i = 0; i < fSize; i++)
     {
-        weight[i] = std::exp((fValue[i] - fMaxValue) * diff);
+        //Find the maximum value in the array of fValue of size fSize
+        T const fMaxValue = maxelement<T>(iArray);
+
+        TOut const diff = static_cast<TOut>(x - p);
+
+        //Compute the weight
+        for (std::size_t i = 0; i < iArray.size(); i++)
+        {
+            weight[i] = std::exp((iArray[i] - fMaxValue) * diff);
+        }
     }
 
-    //Compute the summation of weight
-    TOut weightsum = sum<TOut, TOut>(weight, fSize);
+    { //Compute the summation of weight
+        TOut const weightsum = sum<TOut, TOut>(weight);
 
-    //Normalize the weight
-    std::for_each(weight, weight + fSize, [&](T &w) { w /= weightsum; });
+        //Normalize the weight
+        std::for_each(weight.begin(), weight.end(), [&](TOut &w) { w /= weightsum; });
+    }
 
     //Compute the mean
-    TOut weightmean = mean<TOut, TOut>(weight, fSize);
+    TOut const weightmean = mean<TOut, TOut>(weight);
 
     //Compute the standard deviation
-    TOut weightstddev = stddev<TOut, TOut>(weight, fSize, 1, weightmean);
-
-    delete[] weight;
+    TOut const weightstddev = stddev<TOut, TOut>(weight, weightmean);
 
     //return the square of the coefficient of variation (COV)
     return std::pow(weightstddev / weightmean - tol, 2);
 }
 
 template <typename T, typename TOut>
-TOut stats::CoefVar(T const *fValue, int const fSize, int const Stride, T const x, T const p, T const tol)
+TOut stats::CoefVar(T const *fValue, int const fSize, T const x, T const p, T const tol)
 {
-    arrayWrapper<T> iArray(fValue, fSize, Stride);
-    auto start = iArray.begin();
-    auto end = iArray.end();
-    int aSize = iArray.size();
-
-    //Find the maximum value in the array of fValue of size fSize
-    T fMaxValue = *std::max_element(start, end);
-
-    TOut *weight = new TOut[aSize];
-
-    TOut diff = static_cast<TOut>(x - p);
+    std::vector<TOut> weight(fSize);
 
     {
-        int i(0);
+        //Find the maximum value in the array of fValue of size fSize
+        T const fMaxValue = maxelement<T>(fValue, fSize);
+
+        TOut const diff = static_cast<TOut>(x - p);
+
         //Compute the weight
-        for (auto it = start; it != end; it++)
+        for (int i = 0; i < fSize; i++)
         {
-            weight[i++] = std::exp((*it - fMaxValue) * diff);
+            weight[i] = std::exp((fValue[i] - fMaxValue) * diff);
         }
     }
 
-    //Compute the summation of weight
-    TOut weightsum = sum<TOut, TOut>(weight, aSize);
+    { //Compute the summation of weight
+        TOut const weightsum = sum<TOut, TOut>(weight);
 
-    //Normalize the weight
-    std::for_each(weight, weight + aSize, [&](T &w) { w /= weightsum; });
+        //Normalize the weight
+        std::for_each(weight.begin(), weight.end(), [&](TOut &w) { w /= weightsum; });
+    }
 
     //Compute the mean
-    TOut weightmean = mean<TOut, TOut>(weight, aSize);
+    TOut const weightmean = mean<TOut, TOut>(weight);
 
     //Compute the standard deviation
-    TOut weightstddev = stddev<TOut, TOut>(weight, aSize, 1, weightmean);
+    TOut const weightstddev = stddev<TOut, TOut>(weight, weightmean);
 
-    delete[] weight;
+    //return the square of the coefficient of variation (COV)
+    return std::pow(weightstddev / weightmean - tol, 2);
+}
+
+template <typename T, typename TOut>
+TOut stats::CoefVar(std::vector<T> const &fValue, T const x, T const p, T const tol)
+{
+    std::vector<TOut> weight(fValue.size());
+
+    {
+        //Find the maximum value in the array of fValue of size fSize
+        T const fMaxValue = maxelement<T>(fValue);
+
+        TOut const diff = static_cast<TOut>(x - p);
+
+        //Compute the weight
+        for (std::size_t i = 0; i < fValue.size(); i++)
+        {
+            weight[i] = std::exp((fValue[i] - fMaxValue) * diff);
+        }
+    }
+
+    { //Compute the summation of weight
+        TOut const weightsum = sum<TOut, TOut>(weight);
+
+        //Normalize the weight
+        std::for_each(weight.begin(), weight.end(), [&](TOut &w) { w /= weightsum; });
+    }
+
+    //Compute the mean
+    TOut const weightmean = mean<TOut, TOut>(weight);
+
+    //Compute the standard deviation
+    TOut const weightstddev = stddev<TOut, TOut>(weight, weightmean);
 
     //return the square of the coefficient of variation (COV)
     return std::pow(weightstddev / weightmean - tol, 2);
@@ -763,8 +777,8 @@ TOut stats::CoefVar(T const *fValue, int const fSize, int const Stride, T const 
 template <typename T>
 void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
 {
-    T MinValue = minelement<T>(idata, nSize, Stride);
-    T MaxValue = maxelement<T>(idata, nSize, Stride);
+    T const MinValue = minelement<T>(idata, nSize, Stride);
+    T const MaxValue = maxelement<T>(idata, nSize, Stride);
 
     T denom = MaxValue - MinValue;
     if (denom < std::numeric_limits<T>::epsilon())
@@ -775,18 +789,22 @@ void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
 
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        std::for_each(iArray.begin(), iArray.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+        for (int i = 0; i < nSize; i += Stride)
+        {
+            idata[i] -= MinValue;
+            idata[i] /= denom;
+        }
         return;
     }
     std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+    return;
 }
 
 template <typename T>
 void stats::minmaxNormal(std::vector<T> &idata)
 {
-    T MinValue = minelement<T>(idata);
-    T MaxValue = maxelement<T>(idata);
+    T const MinValue = minelement<T>(idata);
+    T const MaxValue = maxelement<T>(idata);
 
     T denom = MaxValue - MinValue;
     if (denom < std::numeric_limits<T>::epsilon())
@@ -800,51 +818,29 @@ void stats::minmaxNormal(std::vector<T> &idata)
 }
 
 template <typename T>
-void stats::minmaxNormal(arrayWrapper<T> &iArray)
-{
-    T MinValue = minelement<T>(iArray);
-    T MaxValue = maxelement<T>(iArray);
-
-    T denom = MaxValue - MinValue;
-    if (denom < std::numeric_limits<T>::epsilon())
-    {
-        UMUQWARNING("Maximum and Minimum Value are identical!");
-        denom = std::numeric_limits<T>::epsilon();
-    }
-
-    std::for_each(iArray.begin(), iArray.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
-    return;
-}
-
-template <typename T>
 inline void stats::zscoreNormal(T *idata, int const nSize, int const Stride)
 {
-    T MeanValue = mean<T, T>(idata, nSize, Stride);
-    T StddevValue = stddev<T, T>(idata, nSize, Stride, MeanValue);
+    T const MeanValue = mean<T, T>(idata, nSize, Stride);
+    T const StddevValue = stddev<T, T>(idata, nSize, Stride, MeanValue);
     if (Stride > 1)
     {
-        arrayWrapper<T> a(idata, nSize, Stride);
-        std::for_each(a.begin(), a.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+        for (int i = 0; i < nSize; i += Stride)
+        {
+            idata[i] -= MeanValue;
+            idata[i] /= StddevValue;
+        }
         return;
     }
     std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+    return;
 }
 
 template <typename T>
 inline void stats::zscoreNormal(std::vector<T> &idata)
 {
-    T MeanValue = mean<T, T>(idata);
-    T StddevValue = stddev<T, T>(idata, MeanValue);
+    T const MeanValue = mean<T, T>(idata);
+    T const StddevValue = stddev<T, T>(idata, MeanValue);
     std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
-    return;
-}
-
-template <typename T>
-inline void stats::zscoreNormal(arrayWrapper<T> &iArray)
-{
-    T MeanValue = mean<T, T>(iArray);
-    T StddevValue = stddev<T, T>(iArray, MeanValue);
-    std::for_each(iArray.begin(), iArray.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
     return;
 }
 
@@ -852,31 +848,26 @@ template <typename T>
 inline void stats::robustzscoreNormal(T *idata, int const nSize, int const Stride)
 {
     T median_;
-    T mad = medianAbs<T, T>(idata, nSize, Stride, median_);
+    T const mad = medianAbs<T, T>(idata, nSize, Stride, median_);
     if (Stride > 1)
     {
-        arrayWrapper<T> a(idata, nSize, Stride);
-        std::for_each(a.begin(), a.end(), [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
+        for (int i = 0; i < nSize; i += Stride)
+        {
+            idata[i] -= median_;
+            idata[i] /= mad;
+        }
         return;
     }
-    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
+    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - median_) / mad; });
+    return;
 }
 
 template <typename T>
 inline void stats::robustzscoreNormal(std::vector<T> &idata)
 {
     T median_;
-    T mad = medianAbs<T, T>(idata, median_);
-    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
-    return;
-}
-
-template <typename T>
-inline void stats::robustzscoreNormal(arrayWrapper<T> &iArray)
-{
-    T median_;
-    T mad = medianAbs<T, T>(iArray, median_);
-    std::for_each(iArray.begin(), iArray.end(), [&](T &d_i) { d_i = std::abs(d_i - median_) / mad; });
+    T const mad = medianAbs<T, T>(idata, median_);
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - median_) / mad; });
     return;
 }
 
@@ -934,8 +925,8 @@ TOut stats::covariance(std::vector<T> const &idata, std::vector<T> const &jdata,
 template <typename T, typename TOut>
 TOut stats::covariance(T const *idata, T const *jdata, int const nSize, int const Stride)
 {
-    T imean = mean<T, T>(idata, nSize, Stride);
-    T jmean = mean<T, T>(jdata, nSize, Stride);
+    T const imean = mean<T, T>(idata, nSize, Stride);
+    T const jmean = mean<T, T>(jdata, nSize, Stride);
 
     TOut Covariance(0);
     if (Stride != 1)
@@ -1059,4 +1050,4 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int con
 
 } // namespace umuq
 
-#endif
+#endif // UMUQ_STATS
