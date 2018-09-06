@@ -23,10 +23,10 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
-	sudo ln -s /usr/local/bin/gcc-${GCC_VERSION} /usr/bin/gcc
-	sudo ln -s /usr/local/bin/g++-${GCC_VERSION} /usr/bin/g++
-	sudo ln -s /usr/local/bin/gfortran-${GCC_VERSION} /usr/bin/gfortran
-	sudo ln -s /usr/local/bin/cpp-${GCC_VERSION} /usr/bin/cpp
+	# sudo ln -s /usr/local/bin/gcc-${GCC_VERSION} /usr/bin/gcc
+	# sudo ln -s /usr/local/bin/g++-${GCC_VERSION} /usr/bin/g++
+	# sudo ln -s /usr/local/bin/gfortran-${GCC_VERSION} /usr/bin/gfortran
+	# sudo ln -s /usr/local/bin/cpp-${GCC_VERSION} /usr/bin/cpp
 
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
