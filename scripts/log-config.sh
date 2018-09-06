@@ -3,11 +3,6 @@ set -e
 
 echo PATH=${PATH}
 
-export CXX=`which mpic++` 
-export CC=`which mpicc`
-export F77=`which mpifort` 
-export FC=`which mpifort`
-
 echo "Compiler configuration:"
 echo CXX=${CXX}
 echo CC=${CC}
