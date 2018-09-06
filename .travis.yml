@@ -35,6 +35,7 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
     - os: osx
+      osx_image: xcode7
       compiler: gcc
       sudo: true
       install: ./scripts/install-osx.sh && ./scripts/log-config.sh
