@@ -213,28 +213,34 @@ TEST(eigen_lu_test, HandlesLU)
     //! False as the matrix m with lu decomposition is not invertible.
     EXPECT_FALSE(lu.isInvertible());
 
-    std::cout << std::endl;
-    std::cout << lu.image(m) << std::endl;
-
     //! Column vector
     EVector3d n;
     n << 5, 5, 5;
 
-    //! Creating the new matrix from image (also called its column-space) of it and a new vector.
-    m << lu.image(m), n;
+    // NOTE :
+    // On travis ci OSX system there is this trange bug which would break this code so this is the temporary hack
+    {
+        Eigen::Matrix<double, 3, 2> p = lu.image(m);
 
-    std::cout << std::endl;
-    std::cout << m << std::endl;
-    std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << p << std::endl;
 
-    //! LU decomposition of a matrix with complete pivoting, and related features.
-    lu.compute(m);
+        //! Creating the new matrix from image (also called its column-space) of it and a new vector.
+        m << p, n;
 
-    //! The rank of the matrix m with lu decomposition.
-    EXPECT_EQ(lu.rank(), 3);
+        std::cout << std::endl;
+        std::cout << m << std::endl;
+        std::cout << std::endl;
 
-    //! True as the matrix m with lu decomposition is invertible.
-    EXPECT_TRUE(lu.isInvertible());
+        //! LU decomposition of a matrix with complete pivoting, and related features.
+        lu.compute(m);
+
+        //! The rank of the matrix m with lu decomposition.
+        EXPECT_EQ(lu.rank(), 3);
+
+        //! True as the matrix m with lu decomposition is invertible.
+        EXPECT_TRUE(lu.isInvertible());
+    }
 }
 
 int main(int argc, char **argv)
