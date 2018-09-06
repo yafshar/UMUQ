@@ -22,26 +22,32 @@ matrix:
     - os: linux
       compiler: gcc
       sudo: true
-      install: ./scripts/install-linux.sh && ./scripts/env-linux.sh && ./scripts/log-config.sh
+      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
       script: ./scripts/build-linux-autotools.sh
-    # - os: linux
-    #   compiler: clang
-    #   sudo: true
-    #   install: ./scripts/install-linux.sh && ./scripts/env-linux.sh && ./scripts/log-config.sh
-    #   script: ./scripts/build-linux-autotools.sh
+      env:
+        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
     - os: osx
       osx_image: xcode8
       compiler: gcc
       sudo: true
-      install: ./scripts/install-osx.sh && ./scripts/env-osx.sh && ./scripts/log-config.sh
+      install: ./scripts/install-osx.sh && ./scripts/log-config.sh
       script: ./scripts/build-osx-autotools.sh
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
     - os: osx
-      osx_image: xcode6
       compiler: gcc
       sudo: true
-      install: ./scripts/install-osx.sh && ./scripts/env-osx.sh && ./scripts/log-config.sh
+      install: ./scripts/install-osx.sh && ./scripts/log-config.sh
       script: ./scripts/build-osx-autotools.sh
-
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+    - os: linux
+      compiler: clang
+      sudo: true
+      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+      script: ./scripts/build-linux-autotools.sh
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran-5"
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
@@ -67,9 +73,6 @@ addons:
     - cmake
     - g++-5
     - clang-3.7
-
-env:
-  - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
 
 notifications:
   email: false

@@ -14,7 +14,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	if [ "${TRAVIS_OSX_IMAGE}" = "xcode8" ]; then
 		brew install gcc;
-		export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`  
+		export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1` 
 	else
 		brew install gcc@6;
 		export GCC_VERSION=`gfortran-6 -dumpversion |cut -d. -f1`  
@@ -30,7 +30,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	tar zxvf mpich-3.2.1.tar.gz
-	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple && make -j 2 && sudo make install)
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 > /dev/null && sudo make install > /dev/null)
 	
 	brew update;
 fi
