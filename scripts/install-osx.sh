@@ -23,24 +23,20 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
-	# sudo ln -s /usr/local/bin/gcc-${GCC_VERSION} /usr/bin/gcc
-	# sudo ln -s /usr/local/bin/g++-${GCC_VERSION} /usr/bin/g++
-	# sudo ln -s /usr/local/bin/gfortran-${GCC_VERSION} /usr/bin/gfortran
-	# sudo ln -s /usr/local/bin/cpp-${GCC_VERSION} /usr/bin/cpp
-
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
 	brew outdated automake || brew upgrade automake ;
+	brew outdated wget || brew upgrade wget ;
 	
-	export HOMEBREW_CC=gcc-${GCC_VERSION}
-	export HOMEBREW_CXX=g++-${GCC_VERSION}
-	export HOMEBREW_CPP=cpp-${GCC_VERSION}
-	export HOMEBREW_LD=gcc-${GCC_VERSION}
-	export HOMEBREW_FC=gfortran-${GCC_VERSION}
-
-	brew install --build-from-source mpich;
+	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+	tar zxvf mpich-3.2.1.tar.gz
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple && make -j 2 && sudo make install)
 	
 	brew update;
 fi
 
-
+	# export HOMEBREW_CC=gcc-${GCC_VERSION}
+	# export HOMEBREW_CXX=g++-${GCC_VERSION}
+	# export HOMEBREW_CPP=cpp-${GCC_VERSION}
+	# export HOMEBREW_LD=gcc-${GCC_VERSION}
+	# export HOMEBREW_FC=gfortran-${GCC_VERSION}
