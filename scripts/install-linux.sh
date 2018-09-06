@@ -10,8 +10,9 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get update 
 	
-	if [ "${CC}" = "gcc"  ]  || [ "${CC}" = "gcc-5"  ] ; then
-	    sudo apt-get install -y gcc-5 g++-5 gfortran-5 
+	sudo apt-get install -y gcc-5 g++-5 gfortran-5
+
+	if [ "${CC}" = "gcc"  ] ; then
 		sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
 		sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
 		sudo unlink /usr/bin/gfortran && sudo ln -s /usr/bin/gfortran-5 /usr/bin/gfortran
@@ -20,8 +21,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 		sudo apt-get install -y libmpich-dev
 		sudo apt-get install -y libflann-dev
 		sudo apt-get install -y libflann1.8
-	elif [ "${CC}" = "clang" ] || [ "${CC}" = "clang-3.7" ]; then
-	    sudo apt-get install -y gcc-5 g++-5 gfortran-5 clang-3.7
+	elif [ "${CC}" = "clang" ]; then
+	    sudo apt-get install -y clang-3.7
 		sudo unlink /usr/bin/gfortran && sudo ln -s /usr/bin/gfortran-5 /usr/bin/gfortran
 
 		wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz

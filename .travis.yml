@@ -25,7 +25,7 @@ matrix:
       install: ./scripts/install-linux.sh && ./scripts/log-config.sh
       script: ./scripts/build-linux-autotools.sh
       env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
+        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
     - os: osx
       osx_image: xcode8
       compiler: gcc
@@ -47,7 +47,7 @@ matrix:
       install: ./scripts/install-linux.sh && ./scripts/log-config.sh
       script: ./scripts/build-linux-autotools.sh
       env:
-        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
+        - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
