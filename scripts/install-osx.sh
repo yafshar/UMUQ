@@ -30,7 +30,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	tar zxvf mpich-3.2.1.tar.gz
-	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 > /dev/null && sudo make install > /dev/null)
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
