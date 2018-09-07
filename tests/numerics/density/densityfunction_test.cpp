@@ -11,19 +11,23 @@
 umuq::pyplot plt;
 
 /*! 
- * Test to check densityFunction functionality
+ * Test to check uniformDistribution 
  */
-TEST(densityFunction_test, HandlesConstruction)
+TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
-    std::cout << std::fixed;
-
     //! Uniform ditrsibution between 1 and 2
     umuq::uniformDistribution<double> u(1, 2);
     double X1 = 1.5;
     double X2 = 3.;
     EXPECT_DOUBLE_EQ(u.f(&X1), 1.);
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
+}
 
+/*! 
+ * Test to check exponentialDistribution 
+ */
+TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
+{
     //! Exponential distribution with mean 1
     umuq::exponentialDistribution<float> e(1);
     float X3 = 1.5f;
@@ -31,29 +35,51 @@ TEST(densityFunction_test, HandlesConstruction)
 
     EXPECT_FLOAT_EQ(e.f(&X3), std::exp(-X3));
     EXPECT_FLOAT_EQ(e.f(&X4), std::exp(-X4));
+}
 
+/*! 
+ * Test to check gammaDistribution 
+ */
+TEST(densityFunction_test, HandlesGammaDistributionConstruction)
+{
     //! Gamma distribution with Shape parameter of 0.5
     umuq::gammaDistribution<double> g(0.5);
+    double X1 = 1.5;
+    double X2 = 3.;
 
     //! From MATLAB gampdf(X1, 0.5, 1)
-    EXPECT_DOUBLE_EQ(g.f(&X1), 0.10278688653584618); 
+    EXPECT_DOUBLE_EQ(g.f(&X1), 0.10278688653584618);
     //! From MATLAB gampdf(X2, 0.5, 1)
     EXPECT_DOUBLE_EQ(g.f(&X2), 0.01621739110988048);
-                               
+}
+
+/*! 
+ * Test to check gaussianDistribution 
+ */
+TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
+{
     //! Gaussian distribution with mean 2 and standard deviation of 5
     umuq::gaussianDistribution<double> gu(2, 5);
+    double X1 = 1.5;
+    double X2 = 3.;
+
     //! From MATLAB normpdf(X1,2,5)
     EXPECT_DOUBLE_EQ(gu.f(&X1), 0.079390509495402356);
     //! From MATLAB normpdf(X2, 2, 5)
     EXPECT_DOUBLE_EQ(gu.f(&X2), 0.078208538795091168);
+}
 
+/*! 
+ * Test to check multivariateGaussianDistribution 
+ */
+TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
+{
     //! A multivariate Gaussian distribution with mean zero and unit covariance matrix of size (2*2)
     umuq::multivariateGaussianDistribution<double> m(2);
     //! From MATLAB mvnpdf([1.5,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{1.5, 2}.data()), 0.0069927801704657913);
     //! From MATLAB mvnpdf([3,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{3, 2}.data()), 0.0002392797792004706);
-
 
     //! Create a covariance matrix
     double M2d[4] = {1, 3. / 5., 3. / 5., 2.};
@@ -136,6 +162,59 @@ TEST(densityFunction_test, HandlesConstruction)
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
 #endif
+}
+
+/*! 
+ * Test to check multinomialDistribution
+ * 
+ * Example reference:
+ * http://www.probabilityformula.org/multinomial-probability.html
+ */
+TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
+{
+    /*!
+     * \brief First example
+     *  
+     * This is an experiment of drawing a random card from an ordinary playing cards deck is done with replacing it back.
+     * This was done ten times. Find the probability of getting 2 spades, 3 diamond, 3 club and 2 hearts.
+     */
+
+    {
+        //! multinomialDistribution distribution where the vector size or types of outputs is 4
+        umuq::multinomialDistribution<double> m(4);
+
+        //! A random sample (with size of K) from the multinomial distribution
+        unsigned int X[] = {2, 3, 3, 2};
+
+        //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+        double P[] = {0.25, 0.25, 0.25, 0.25};
+
+        EXPECT_DOUBLE_EQ(m.f(P, X), 0.024032592773437545);
+    }
+
+    /*!
+     * \brief Second example
+     *  
+     * In case of 10 bits, what is the probability that 5 are excellent, 2 are good and 2 are fair and 1 is poor? 
+     * Classification of individual bits are independent events and that the probabilities of A, B, C and D are 
+     * 40%, 20%, 5% and 1% respectively. 
+     * 
+     * NOTE:
+     * The multinomialDistribution would normalize the probabilities of A, B, C and D to {40/66, 20/66, 5/66, 1/66}.
+     */
+
+    {
+        //! multinomialDistribution distribution where the vector size or types of outputs is 4
+        umuq::multinomialDistribution<double> m(4);
+
+        //! A random sample (with size of K) from the multinomial distribution
+        unsigned int X[] = {5, 2, 2, 1};
+
+        //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+        double P[] = {40., 20., 5., 1.};
+
+        EXPECT_DOUBLE_EQ(m.f(P, X), 0.0049360823520927834);
+    }
 }
 
 int main(int argc, char **argv)
