@@ -7,7 +7,7 @@
  */
 namespace umuq
 {
+    
+} // umuq
 
-}
-
-#endif
+#endif // UMUQ_GLOBAL
