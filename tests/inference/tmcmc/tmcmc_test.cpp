@@ -79,7 +79,7 @@ double fitfun(double const *c, int const numc, double *out, int const numout, in
 TEST(tmcmc_test, HandlesConstruction)
 {
     //! Create an instance of the tmcmc object
-    umuq::tmcmc<double> t;
+    umuq::tmcmc::tmcmc<double> t;
 
     //! Set the input file
     EXPECT_TRUE(t.setInputFileName("./data/test.txt"));
