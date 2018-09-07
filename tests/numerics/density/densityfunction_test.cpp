@@ -189,7 +189,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
         //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {0.25, 0.25, 0.25, 0.25};
 
-        EXPECT_DOUBLE_EQ(m.f(P, X), 0.024032592773437545);
+		EXPECT_NEAR(m.f(P, X), 0.024032592773437545, 1e-14);
     }
 
     /*!
@@ -213,7 +213,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
         //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {40., 20., 5., 1.};
 
-        EXPECT_DOUBLE_EQ(m.f(P, X), 0.0049360823520927834);
+		EXPECT_NEAR(m.f(P, X), 0.0049360823520927834, 1e-14);
     }
 }
 
