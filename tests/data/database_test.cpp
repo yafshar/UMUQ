@@ -8,7 +8,7 @@ TEST(database_test, HandlesConstruction)
 {
     //! Create an instance of database object
     {
-        database<double> d;
+        umuq::tmcmc::database<double> d;
 
         EXPECT_EQ(0, d.ndimParray);
         EXPECT_EQ(0, d.ndimGarray);
@@ -20,7 +20,7 @@ TEST(database_test, HandlesConstruction)
 
     //! Create an instance of database object
     {
-        database<double> d(2, 2, 3);
+        umuq::tmcmc::database<double> d(2, 2, 3);
 
         EXPECT_EQ(2, d.ndimParray);
         EXPECT_EQ(2, d.ndimGarray);
@@ -72,12 +72,12 @@ TEST(database_test, HandlesConstruction)
 
 
     {
-        database<double> d;
+        umuq::tmcmc::database<double> d;
         EXPECT_FALSE(d.load("database", 100));
     }
 
     {
-        database<double> d(2, 2, 3);
+        umuq::tmcmc::database<double> d(2, 2, 3);
         EXPECT_TRUE(d.load("database", 100));
 
         EXPECT_DOUBLE_EQ(1., d.Parray[0]);
@@ -107,7 +107,7 @@ TEST(database_test, HandlesTask)
 {
     {
         //Create an instance of a database object
-        database<double> d(2, 2, 3);
+        umuq::tmcmc::database<double> d(2, 2, 3);
 
         //Update the data using different threads
         {

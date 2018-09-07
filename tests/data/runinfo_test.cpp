@@ -5,7 +5,7 @@
 //! Tests parse
 TEST(runinfo_test, HandlesConstruction)
 {
-    runinfo<double> runinfoObj;
+    umuq::tmcmc::runinfo<double> runinfoObj;
 
     EXPECT_EQ(0, runinfoObj.nDim);
     EXPECT_EQ(0, runinfoObj.maxGenerations);
@@ -41,7 +41,7 @@ TEST(runinfo_test, HandlesIO)
     // Create an instance of runinfo object, initialize it
     // to some random value and save it to a file @"runinfo.txt"
     {
-        runinfo<double> runinfoObj(2, 10);
+        umuq::tmcmc::runinfo<double> runinfoObj(2, 10);
 
         EXPECT_EQ(2, runinfoObj.nDim);
         EXPECT_EQ(10, runinfoObj.maxGenerations);
@@ -69,7 +69,7 @@ TEST(runinfo_test, HandlesIO)
     // Create an instance of runinfo object, initialize it
     // from a file @"runinfo.txt"
     {
-        runinfo<double> runinfoObj;
+        umuq::tmcmc::runinfo<double> runinfoObj;
 
         EXPECT_TRUE(runinfoObj.load());
         EXPECT_EQ(2, runinfoObj.nDim);

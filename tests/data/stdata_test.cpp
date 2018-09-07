@@ -5,7 +5,7 @@
 //! Tests parse
 TEST(streamdatatype, HandlesConstruction)
 {
-    stdata<double> *d1 = new stdata<double>;
+    umuq::tmcmc::stdata<double> *d1 = new umuq::tmcmc::stdata<double>;
 
     EXPECT_EQ(0, d1->nDim);
     EXPECT_EQ(0, d1->maxGenerations);
@@ -31,7 +31,7 @@ TEST(streamdatatype, HandlesConstruction)
 
     delete d1;
 
-    stdata<double> d2(4, 20, 1024);
+    umuq::tmcmc::stdata<double> d2(4, 20, 1024);
 
     EXPECT_EQ(4, d2.nDim);
     EXPECT_EQ(20, d2.maxGenerations);
@@ -62,7 +62,7 @@ TEST(streamdatatype, HandlesConstruction)
 //! Tests load input file
 TEST(streamdatatype, HandlesIO)
 {
-    stdata<double> d1;
+    umuq::tmcmc::stdata<double> d1;
 
     std::string fileName = "./data/test.txt";
 

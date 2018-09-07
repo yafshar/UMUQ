@@ -187,7 +187,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
         unsigned int X[] = {2, 3, 3, 2};
 
         //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
-        double P[] = {0.25, 0.25, 0.25, 0.25};
+        double P[] = {25, 25, 25, 25};
 
 		EXPECT_NEAR(m.f(P, X), 0.024032592773437545, 1e-14);
     }
