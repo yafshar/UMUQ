@@ -1,17 +1,22 @@
 #ifndef UMUQ_TMCMC_H
 #define UMUQ_TMCMC_H
 
-#include "data/stdata.hpp"
-#include "data/database.hpp"
-#include "data/runinfo.hpp"
+#include "data/datatype.hpp"
 #include "numerics/function/fitfunction.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 #include "numerics/stats.hpp"
-#include "../prior/priordistribution.hpp"
+#include "inference/prior/priordistribution.hpp"
 #include "io/io.hpp"
 
 namespace umuq
+{
+
+/*! \namespace tmcmc
+ * \brief Namespace containing all the functions for TMCMC algorithm
+ *
+ */
+namespace tmcmc
 {
 
 template <typename T>
@@ -183,15 +188,21 @@ bool tmcmc<T, F>::reset(char const *fileName)
       //! Creating the running inofrmation data
       runData = std::move(runinfo<T>(Data.nDim, Data.maxGenerations));
 
+      //! Seed the PRNG
+      if (!prng.setSeed(Data.seed))
+      {
+        UMUQWARNING("The Psudo random number generator has been seeded & initilized before!")
+      }
+
       //! Construct a prior Distribution object
       prior = std::move(priorDistribution<T>(Data.nDim, Data.priorType));
 
-      //! Seed the PRNG
-      return prng.setSeed(Data.seed);
+      //! Set the prior parameters
+      return prior.set(Data.priorParam1, Data.priorParam2, Data.compositePriorDistribution);
     }
     UMUQFAILRETURN("Failed to initilize the data from Input file!");
   }
-  UMUQFAILRETURN("Input file does not exist!");
+  UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
 }
 
 template <typename T, class F>
@@ -272,6 +283,7 @@ bool tmcmc<T, F>::iterate()
   }
 }
 
+} // namespace tmcmc
 } // namespace umuq
 
 #endif
