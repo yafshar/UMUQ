@@ -7,6 +7,7 @@
  * 
  * This module includes:
  * \b densityFunction                  - A base density function or a probability density (PDF) function class  \sa densityFunction
+ * 
  * \b uniformDistribution              - Flat (Uniform) distribution function
  * \b gaussianDistribution             - The Gaussian distribution
  * \b multivariategaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariategaussianDistribution
@@ -24,5 +25,6 @@
 #include "density/gammadistribution.hpp"
 #include "density/gaussiandistribution.hpp"
 #include "density/multivariategaussiandistribution.hpp"
+#include "density/multinomialdistribution.hpp"
 
 #endif // UMUQ_DENSITY
