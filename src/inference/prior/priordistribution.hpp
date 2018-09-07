@@ -1,8 +1,8 @@
 #ifndef UMUQ_PRIORDISTRIBUTION_H
 #define UMUQ_PRIORDISTRIBUTION_H
 
-#include "../../core/core.hpp"
-#include "../../numerics/density.hpp"
+#include "core/core.hpp"
+#include "numerics/density.hpp"
 
 namespace umuq
 {
@@ -94,6 +94,7 @@ class priorDistribution
      * \return false 
      */
     bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
+    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
 
     /*!
      * \brief Get the dimension
@@ -161,7 +162,7 @@ class priorDistribution
 
     //! The exponential distribution
     std::unique_ptr<exponentialDistribution<T>> expo;
-    
+
     //! The Gamma distribution
     std::unique_ptr<gammaDistribution<T>> gamm;
 
@@ -550,6 +551,12 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     };
 
     return true;
+}
+
+template <typename T>
+bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior)
+{
+    return set(Param1.data(), Param2.data(), compositeprior.data());
 }
 
 template <typename T>
