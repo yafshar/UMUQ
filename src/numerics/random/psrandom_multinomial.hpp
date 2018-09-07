@@ -1,0 +1,11 @@
+#ifndef UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION_H
+#define UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION_H
+
+namespace umuq
+{
+namespace randomdist
+{
+}
+} // namespace umuq
+
+#endif // UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION
