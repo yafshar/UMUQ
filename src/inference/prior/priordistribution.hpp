@@ -4,7 +4,8 @@
 #include "../../core/core.hpp"
 #include "../../numerics/density.hpp"
 
-using namespace umuq;
+namespace umuq
+{
 
 /*!
  * \brief Prior distribution types
@@ -50,12 +51,6 @@ class priorDistribution
     priorDistribution(int const probdim, int const prior = 0);
 
     /*!
-     * \brief Destroy the prior Distribution object
-     * 
-     */
-    ~priorDistribution();
-
-    /*!
      * \brief Move constructor, construct a new priorDistribution object from input priorDistribution object
      * 
      * \param other  Input priorDistribution object
@@ -70,6 +65,12 @@ class priorDistribution
      * \return priorDistribution<T>& 
      */
     priorDistribution<T> &operator=(priorDistribution<T> &&other);
+
+    /*!
+     * \brief Destroy the prior Distribution object
+     * 
+     */
+    ~priorDistribution();
 
     /*!
      * \brief Reset the priorDistribution class size
@@ -154,10 +155,13 @@ class priorDistribution
   private:
     //! Flat (Uniform) distribution
     std::unique_ptr<uniformDistribution<T>> unfm;
+
     //! The Multivariate Gaussian Distribution
     std::unique_ptr<multivariategaussianDistribution<T>> mvnp;
+
     //! The exponential distribution
     std::unique_ptr<exponentialDistribution<T>> expo;
+    
     //! The Gamma distribution
     std::unique_ptr<gammaDistribution<T>> gamm;
 
@@ -214,9 +218,6 @@ priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nD
         break;
     };
 }
-
-template <typename T>
-priorDistribution<T>::~priorDistribution() {}
 
 template <typename T>
 priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(other.nDim),
@@ -294,6 +295,9 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
 }
 
 template <typename T>
+priorDistribution<T>::~priorDistribution() {}
+
+template <typename T>
 bool priorDistribution<T>::reset(int const probdim, int const prior)
 {
     nDim = probdim;
@@ -364,6 +368,25 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         break;
     case priorTypes::COMPOSITE:
     {
+        if (compositeprior)
+        {
+            try
+            {
+                compositePrior.reset(new int[nDim]());
+            }
+            catch (...)
+            {
+                UMUQFAILRETURN("Failed to allocate memory!");
+            }
+
+            int *p = const_cast<int *>(compositeprior);
+            std::copy(p, p + nDim, compositePrior.get());
+        }
+        else
+        {
+            UMUQFAILRETURN("Failed to provide composite prior types for each dimension!");
+        }
+
         if (mvnp)
         {
             mvnp.reset(nullptr);
@@ -389,6 +412,9 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
                 break;
             case priorTypes::GAMMA:
                 nGAMMA++;
+                break;
+            default:
+                UMUQFAILRETURN("Unknown prior distribution type!");
                 break;
             };
         }
@@ -665,5 +691,7 @@ T priorDistribution<T>::logpdf(T const *x)
     }
     UMUQFAIL("Unknown Prior type!");
 }
+
+} // namespace umuq
 
 #endif // UMUQ_PRIORDISTRIBUTION
