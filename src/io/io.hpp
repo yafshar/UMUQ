@@ -798,7 +798,7 @@ inline bool io::isFileExist(const char *fileName)
     struct stat buffer;
     if (stat(fileName, &buffer))
     {
-        UMUQFAILRETURN(std::string("The requested file [") + std::string(fileName) + std::string("] does not exist!"));
+        UMUQFAILRETURN(std::string("The requested file [") + std::string(fileName) + std::string("] does not exist in the current PATH!!"));
     }
     return true;
 }
