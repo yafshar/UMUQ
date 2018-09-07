@@ -30,7 +30,7 @@ TEST(fitFunction_test, HandlesfitFunctionConstruction)
 {
     umuq::fitFunction<double, std::function<double(double const *, int const)>> fit;
 
-    EXPECT_TRUE(fit.setfitFunction(f1));
+    EXPECT_TRUE(fit.setFitFunction(f1));
     EXPECT_TRUE(fit.init());
 }
 
@@ -117,7 +117,7 @@ TEST(fitFunction_test, HandlesexternalfitFunctionConstruction)
     //! We can set the init and fit function together or individually
     EXPECT_TRUE(fit.setInitFunction(init));
     //!
-    EXPECT_TRUE(fit.setfitFunction(fitfun));
+    EXPECT_TRUE(fit.setFitFunction(fitfun));
 
     //! We call the init function
     EXPECT_TRUE(fit.init());
