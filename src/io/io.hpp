@@ -796,7 +796,11 @@ inline bool io::isFileOpened() const { return fs.is_open(); }
 inline bool io::isFileExist(const char *fileName)
 {
     struct stat buffer;
-    return (stat(fileName, &buffer) == 0);
+    if (stat(fileName, &buffer))
+    {
+        UMUQFAILRETURN(std::string("The requested file [") + std::string(fileName) + std::string("] does not exist!"));
+    }
+    return true;
 }
 
 inline bool io::isFileExist(std::string const &fileName)
