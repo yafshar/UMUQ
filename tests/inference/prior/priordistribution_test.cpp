@@ -42,7 +42,7 @@ TEST(priorDistribution_test, HandlesConstruction)
     std::vector<double> upperbound = {10.0, 4.0, 15.0, 1.0000};
 
     //! Set the prior
-    prior.set(lowerbound.data(), upperbound.data());
+    prior.set(lowerbound, upperbound);
 
     double x[] = {5, 3.5, 12., 0.001};
 
@@ -66,7 +66,7 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
     std::vector<int> compositeprior = {0, 0};
 
     //! Set the prior
-    prior.set(lowerbound.data(), upperbound.data(), compositeprior.data());
+    prior.set(lowerbound, upperbound, compositeprior);
 
     double x[] = {5, 3.5};
 
