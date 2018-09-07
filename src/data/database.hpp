@@ -1,10 +1,19 @@
 #ifndef UMUQ_DATABASE_H
 #define UMUQ_DATABASE_H
 
-#include "../core/core.hpp"
-#include "../misc/arraywrapper.hpp"
-#include "../io/io.hpp"
+#include "core/core.hpp"
 #include "mpidatatype.hpp"
+#include "misc/arraywrapper.hpp"
+#include "io/io.hpp"
+
+namespace umuq
+{
+/*! \namespace tmcmc
+ * \brief Namespace containing all the functions for TMCMC algorithm
+ *
+ */
+namespace tmcmc
+{
 
 /*!
  * \brief Updating the data information at each point @iParray 
@@ -641,7 +650,7 @@ bool database<T>::save(const char *fname, int const IdNumber)
             sprintf(fileName, "%s_%03d.txt", fname, IdNumber);
         }
 
-       umuq::io f;
+        umuq::io f;
         if (f.openFile(fileName, f.out | f.trunc))
         {
             if (ndimGarray > 0)
@@ -842,4 +851,7 @@ void update_Task(long long const other, T const *iParray, T const *iFvalue, T co
     }
 }
 
-#endif
+} // namespace tmcmc
+} // namespace umuq
+
+#endif // UMUQ_DATABASE

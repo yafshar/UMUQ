@@ -1,8 +1,17 @@
 #ifndef UMUQ_RUNINFO_H
 #define UMUQ_RUNINFO_H
 
-#include "../io/io.hpp"
-#include "../misc/parser.hpp"
+#include "misc/parser.hpp"
+#include "io/io.hpp"
+
+namespace umuq
+{
+/*! \namespace tmcmc
+ * \brief Namespace containing all the functions for TMCMC algorithm
+ *
+ */
+namespace tmcmc
+{
 
 /*! \class runinfo
  * \ingroup data
@@ -408,4 +417,7 @@ bool runinfo<T>::load(std::string const &fileName)
     return load(&fileName[0]);
 }
 
-#endif //UMUQ_RUNINFO_H
+} // namespace tmcmc
+} // namespace umuq
+
+#endif //UMUQ_RUNINFO

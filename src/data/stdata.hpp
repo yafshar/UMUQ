@@ -1,9 +1,18 @@
 #ifndef UMUQ_STDATA_H
 #define UMUQ_STDATA_H
 
-#include "../core/core.hpp"
-#include "../io/io.hpp"
-#include "../misc/parser.hpp"
+#include "core/core.hpp"
+#include "misc/parser.hpp"
+#include "io/io.hpp"
+
+namespace umuq
+{
+/*! \namespace tmcmc
+ * \brief Namespace containing all the functions for TMCMC algorithm
+ *
+ */
+namespace tmcmc
+{
 
 /*! \class optimizationParameters
  * \brief This is a class to set the optimization parameters 
@@ -793,7 +802,10 @@ bool stdata<T>::load(const char *fname)
 						{
 							compositePriorDistribution[n] = p.at<int>(1);
 							priorParam1[n] = p.at<T>(2);
-							priorParam2[n] = p.at<T>(3);
+							if (compositePriorDistribution[n] != 2)
+							{
+								priorParam2[n] = p.at<T>(3);
+							}
 							break;
 						}
 					}
@@ -846,7 +858,7 @@ bool stdata<T>::load(const char *fname)
 
 			return true;
 		}
-		return false;
+		UMUQFAILRETURN("An error has occurred on the associated stream from opening the file!");
 	}
 	UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
 }
@@ -857,4 +869,7 @@ bool stdata<T>::load(std::string const &fname)
 	return load(&fname[0]);
 }
 
-#endif
+} // namespace tmcmc
+} // namespace umuq
+
+#endif // UMUQ_STDATA
