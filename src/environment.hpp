@@ -42,11 +42,12 @@ class torcEnvironment
      * 
      * \param f function casted to void *
      */
-    void register_task(void *f)
+    template <class F>
+    void register_task(F f)
     {
         if (f)
         {
-            torc_register_task(f);
+            torc_register_task((void *)f);
         }
     }
 
@@ -71,11 +72,11 @@ class torcEnvironment
             funcallcounter_Task_registered = true;
         }
 
-        if (database_update_Task_registered<T>)
+        if (!umuq::tmcmc::database_update_Task_registered<T>)
         {
-            torc_register_task((void *)update_Task<T>);
+            torc_register_task((void *)umuq::tmcmc::update_Task<T>);
 
-            database_update_Task_registered<T> = true;
+            umuq::tmcmc::database_update_Task_registered<T> = true;
         }
 
         char **argv = NULL;
@@ -106,11 +107,11 @@ class torcEnvironment
             funcallcounter_Task_registered = true;
         }
 
-        if (database_update_Task_registered<T>)
+        if (umuq::tmcmc::database_update_Task_registered<T>)
         {
-            torc_register_task((void *)update_Task<T>);
+            torc_register_task((void *)umuq::tmcmc::update_Task<T>);
 
-            database_update_Task_registered<T> = true;
+            umuq::tmcmc::database_update_Task_registered<T> = true;
         }
 
         torc_init(argc, argv);
