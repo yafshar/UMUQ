@@ -65,12 +65,37 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      */
     inline T exponentialDistribution_lf(T const *x);
 
+    /*!
+     * \brief Set the Random Number Generator object 
+     * 
+     * \param PRNG  Pseudo-random number object \sa psrandom
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+    /*!
+     * \brief Create samples of the exponential distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return true
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x);
+    bool sample(std::vector<T> &x);
+
   private:
     /*!
      * \brief Construct a new exponential Distribution object
      * 
      */
     exponentialDistribution() = delete;
+
+  private:
+    //! Random non-negative values x, distributed according to probability density function \f$ \lambda e^{-\lambda x} \f$
+    std::unique_ptr<std::exponential_distribution<T>[]> exprng;
 };
 
 /*!
@@ -79,14 +104,14 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
  * \param mu Mean, \f$ \mu \f$
  */
 template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const mu) : densityFunction<T, std::function<T(V)>>(&mu, 1, "exponential")
+exponentialDistribution<T, V>::exponentialDistribution(T const mu) : densityFunction<T, std::function<T(V)>>(&mu, 1, "exponential"), exprng(nullptr)
 {
     this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n) : densityFunction<T, std::function<T(V)>>(mu, n, "exponential")
+exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n) : densityFunction<T, std::function<T(V)>>(mu, n, "exponential"), exprng(nullptr)
 {
     this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
@@ -140,6 +165,67 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
         sum -= std::log(this->params[i] - x[i] / this->params[i]);
     }
     return sum;
+}
+
+template <typename T, class V>
+inline bool exponentialDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+{
+    if (PRNG)
+    {
+        this->prng = PRNG;
+        if (this->numParams > 1)
+        {
+            return this->prng->set_expns(this->params.data(), this->numParams);
+        }
+        return this->prng->set_expn(this->params[0]);
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(T *x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            for (int i = 0; i < this->numParams; i++)
+            {
+                x[i] = this->prng->expns[i].dist();
+            }
+            return true;
+        }
+        *x = this->prng->expn->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(std::vector<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            for (int i = 0; i < this->numParams; i++)
+            {
+                x[i] = this->prng->expns[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->expn->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
 }
 
 } // namespace density

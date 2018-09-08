@@ -58,12 +58,6 @@ public:
   densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
   /*!
-   * \brief Destroy the density Function object
-   * 
-   */
-  ~densityFunction();
-
-  /*!
    * \brief Move constructor, construct a new density Function object
    * 
    * \param other densityFunction object
@@ -77,6 +71,12 @@ public:
    */
   densityFunction<T, F> &operator=(densityFunction<T, F> &&other);
 
+  /*!
+   * \brief Destroy the density Function object
+   * 
+   */
+  ~densityFunction();
+
 public:
   /*!
    * \brief Log of density function
@@ -84,29 +84,55 @@ public:
    * \returns the function value (Log of density function)
    */
   F lf;
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x Vector of random samples 
+   * 
+   * \return true 
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(T *x);
+  virtual bool sample(std::vector<T> &x);
+
+  /*!
+   * \brief Set the Random Number Generator object 
+   * 
+   * \param PRNG  Pseudo-random number object \sa psrandom
+   * 
+   * \return true 
+   * \return false If it encounters an unexpected problem
+   */
+  virtual inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+protected:
+  //! Pointer to pseudo random number generator object
+  psrandom<T> *prng;
 };
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(char const *Name) : umuqFunction<T, F>(Name) {}
+densityFunction<T, F>::densityFunction(char const *Name) : umuqFunction<T, F>(Name), prng(nullptr) {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name) {}
+densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name), prng(nullptr) {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(std::vector<T> const &Params, const char *Name) : umuqFunction<T, F>(Params, Name) {}
+densityFunction<T, F>::densityFunction(std::vector<T> const &Params, const char *Name) : umuqFunction<T, F>(Params, Name), prng(nullptr) {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(T const *Params1, T const *Params2, int const NumParams, const char *Name) : umuqFunction<T, F>(Params1, Params2, NumParams, Name) {}
+densityFunction<T, F>::densityFunction(T const *Params1, T const *Params2, int const NumParams, const char *Name) : umuqFunction<T, F>(Params1, Params2, NumParams, Name), prng(nullptr) {}
 
 template <typename T, class F>
-densityFunction<T, F>::densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, const char *Name) : umuqFunction<T, F>(Params1, Params2, Name) {}
+densityFunction<T, F>::densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, const char *Name) : umuqFunction<T, F>(Params1, Params2, Name), prng(nullptr) {}
 
 template <typename T, class F>
 densityFunction<T, F>::~densityFunction() {}
 
 template <typename T, class F>
 densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)),
-                                                                        lf(std::move(other.lf))
+                                                                        lf(std::move(other.lf)),
+                                                                        prng(other.prng)
 {
 }
 
@@ -114,9 +140,28 @@ template <typename T, class F>
 densityFunction<T, F> &densityFunction<T, F>::operator=(densityFunction<T, F> &&other)
 {
   umuqFunction<T, F>::operator=(std::move(other));
-  this->lf = std::move(other.lf);
+  lf = std::move(other.lf);
+  prng = other.prng;
 
   return *this;
+}
+
+template <typename T, class F>
+bool densityFunction<T, F>::sample(T *x)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+bool densityFunction<T, F>::sample(std::vector<T> &x)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+inline bool densityFunction<T, F>::setRandomGenerator(psrandom<T> *PRNG)
+{
+  UMUQFAILRETURN("Not implemented!");
 }
 
 } // namespace density

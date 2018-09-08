@@ -10,6 +10,9 @@
 // Create a global instance of the Pyplot from Pyplot library
 umuq::pyplot plt;
 
+// Get an instance of a double random object and seed it
+umuq::psrandom<double> prng(123);
+
 /*! 
  * Test to check uniformDistribution 
  */
@@ -17,8 +20,10 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
     //! Uniform ditrsibution between 1 and 2
     umuq::uniformDistribution<double> u(1, 2);
+
     double X1 = 1.5;
     double X2 = 3.;
+
     EXPECT_DOUBLE_EQ(u.f(&X1), 1.);
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
 }

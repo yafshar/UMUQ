@@ -74,6 +74,27 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \returns  Log of density function value 
      */
     inline T gammaDistribution_lf(T const *x);
+
+    /*!
+     * \brief Set the Random Number Generator object 
+     * 
+     * \param PRNG  Pseudo-random number object \sa psrandom
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+    /*!
+     * \brief Create samples of the Gamma distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return true
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x);
+    bool sample(std::vector<T> &x);
 };
 
 /*!
@@ -111,7 +132,7 @@ template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
 {
     T sum(1);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < T{})
         {
@@ -159,11 +180,72 @@ inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
         }
     }
     T sum(0);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<T>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
     }
     return sum;
+}
+
+template <typename T, class V>
+inline bool gammaDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+{
+    if (PRNG)
+    {
+        this->prng = PRNG;
+        if (this->numParams > 2)
+        {
+            return this->prng->set_gammas(this->params.data(), this->numParams);
+        }
+        return this->prng->set_gamma(this->params[0], this->params[1]);
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(T *x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            for (int i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->gammas[i].dist();
+            }
+            return true;
+        }
+        *x = this->prng->gamma->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(std::vector<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            for (int i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->gammas[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->gamma->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
 }
 
 } // namespace density
