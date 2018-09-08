@@ -18,6 +18,12 @@ class gammaDistribution
 {
   public:
     /*!
+     * \brief Construct a new gamma Distribution object
+     * 
+     */
+    gammaDistribution();
+
+    /*!
      * \brief Construct a new Gamma distribution object
      * 
      * \param alpha  Shape parameter \f$\alpha\f$
@@ -71,6 +77,15 @@ class gammaDistribution
     //! Random numbers according to to probability density function \f$ \lambda e^{-\lambda x} \f$
     std::gamma_distribution<T> d;
 };
+
+template <typename T>
+gammaDistribution<T>::gammaDistribution() : d(T{1}, T{1})
+{
+    if (!PRNG_initialized)
+    {
+        UMUQFAIL("One should set the current state of the engine before constructing this object!");
+    }
+}
 
 template <typename T>
 gammaDistribution<T>::gammaDistribution(T const alpha, T const beta) : d(alpha, beta)

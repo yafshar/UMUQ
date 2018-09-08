@@ -17,6 +17,12 @@ class exponentialDistribution
 {
   public:
     /*!
+     * \brief Construct a new exponential Distribution object
+     * 
+     */
+    exponentialDistribution();
+
+    /*!
      * \brief Construct a new exponential distribution object
      * 
      * \param mu Mean, \f$ \mu \f$
@@ -59,9 +65,6 @@ class exponentialDistribution
     inline T dist();
 
   private:
-    // Make non constructible with no input
-    exponentialDistribution() = delete;
-
     // Make it noncopyable
     exponentialDistribution(exponentialDistribution<T> const &) = delete;
 
@@ -72,6 +75,15 @@ class exponentialDistribution
     //! Random numbers according to to probability density function \f$ \lambda e^{-\lambda x} \f$
     std::exponential_distribution<T> d;
 };
+
+template <typename T>
+exponentialDistribution<T>::exponentialDistribution() : d(1)
+{
+    if (!PRNG_initialized)
+    {
+        UMUQFAIL("One should set the current state of the engine before constructing this object!");
+    }
+}
 
 template <typename T>
 exponentialDistribution<T>::exponentialDistribution(T const mu) : d(mu)

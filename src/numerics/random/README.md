@@ -23,10 +23,32 @@ It should contain the following files:
 
 -----------------------------------
     random
-    ├── multinomial.hpp
+    ├── psrandom_exponentialdistribution.hpp
+    ├── psrandom_gammadistribution.hpp
     ├── psrandom.hpp
+    ├── psrandom_lognormaldistribution.hpp
+    ├── psrandom_multinomial.hpp
+    ├── psrandom_multivariatenormaldistribution.hpp
+    ├── psrandom_normaldistribution.hpp
+    ├── README.md
     └── saruprng.hpp
 -----------------------------------
+
+Random number distributions
+----------------
+
+A random number distribution post-processes the output of a PRNGs in such a way that resulting output 
+is distributed according to a defined statistical probability density function. 
+
+Currently umuq has some classes of random number distributions which include:
+**normalDistribution**             produces real values on a standard normal (Gaussian) distribution    
+**NormalDistribution**             produces real values on a standard normal (Gaussian) distribution    
+**lognormalDistribution**          produces real values on a lognormal distribution   
+**logNormalDistribution**          produces real values on a lognormal distribution    
+**gammaDistribution**              produces real values on an gamma distribution   
+**exponentialDistribution**        produces real values on an exponential distribution    
+**multivariatenormalDistribution** produces real values on a multivariate normal (Gaussian, or joint normal) distribution      
+**multivariateNormalDistribution** produces real values on a multivariate normal (Gaussian, or joint normal) distribution    
 
 Contributors       
 ------------

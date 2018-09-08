@@ -238,6 +238,7 @@ class psrandom
      */
     inline bool set_normal(T const imean, T const istddev);
     inline bool set_normals(T const *imean, T const *istddev, int const N);
+    inline bool set_normals(T const *imeanistddev, int const N);
 
     /*!
      * \brief Replaces the Normal object 
@@ -404,6 +405,7 @@ class psrandom
      */
     inline bool set_gamma(T const alpha, T const beta);
     inline bool set_gammas(T const *alpha, T const *beta, int const N);
+    inline bool set_gammas(T const *alphabeta, int const N);
 
   public:
     //! Normal (or Gaussian) random number distribution (NOTE: This should be used after setting the State of psrandom object)
@@ -594,7 +596,7 @@ bool psrandom<T>::init()
 template <typename T>
 bool psrandom<T>::setState()
 {
-    return psrandom<T>::init();
+    return init();
 }
 
 template <typename T>
@@ -729,7 +731,7 @@ inline bool psrandom<T>::set_normal(T const imean, T const istddev)
 {
     try
     {
-        psrandom<T>::normal.reset(new randomdist::normalDistribution<T>(imean, istddev));
+        normal.reset(new randomdist::normalDistribution<T>(imean, istddev));
     }
     catch (...)
     {
@@ -746,7 +748,7 @@ inline bool psrandom<T>::set_normals(T const *imean, T const *istddev, int const
         nnormals = N;
         try
         {
-            psrandom<T>::normals.reset(new randomdist::normalDistribution<T>[nnormals]);
+            normals.reset(new randomdist::normalDistribution<T>[nnormals]);
         }
         catch (...)
         {
@@ -754,7 +756,30 @@ inline bool psrandom<T>::set_normals(T const *imean, T const *istddev, int const
         }
         for (int i = 0; i < nnormals; i++)
         {
-            psrandom<T>::normals[i] = std::move(randomdist::normalDistribution<T>(imean[i], istddev[i]));
+            normals[i] = std::move(randomdist::normalDistribution<T>(imean[i], istddev[i]));
+        }
+        return true;
+    }
+    UMUQFAILRETURN("Wrong number of distributions requested!");
+}
+
+template <typename T>
+inline bool psrandom<T>::set_normals(T const *imeanistddev, int const N)
+{
+    if (N > 0)
+    {
+        nnormals = N / 2;
+        try
+        {
+            normals.reset(new randomdist::normalDistribution<T>[nnormals]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        }
+        for (int i = 0, k = 0; i < nnormals; i++, k += 2)
+        {
+            normals[i] = std::move(randomdist::normalDistribution<T>(imeanistddev[k], imeanistddev[k + 1]));
         }
         return true;
     }
@@ -766,7 +791,7 @@ inline bool psrandom<T>::set_Normal(T const imean, T const istddev)
 {
     try
     {
-        psrandom<T>::Normal.reset(new randomdist::NormalDistribution<T>(imean, istddev));
+        Normal.reset(new randomdist::NormalDistribution<T>(imean, istddev));
     }
     catch (...)
     {
@@ -780,7 +805,7 @@ inline bool psrandom<T>::set_lnormal(T const imean, T const istddev)
 {
     try
     {
-        psrandom<T>::lnormal.reset(new randomdist::lognormalDistribution<T>(imean, istddev));
+        lnormal.reset(new randomdist::lognormalDistribution<T>(imean, istddev));
     }
     catch (...)
     {
@@ -794,7 +819,7 @@ inline bool psrandom<T>::set_lNormal(T const imean, T const istddev)
 {
     try
     {
-        psrandom<T>::lNormal.reset(new randomdist::logNormalDistribution<T>(imean, istddev));
+        lNormal.reset(new randomdist::logNormalDistribution<T>(imean, istddev));
     }
     catch (...)
     {
@@ -808,7 +833,7 @@ inline bool psrandom<T>::set_mvnormal(EVectorX<T> const &imean, EMatrixX<T> cons
 {
     try
     {
-        psrandom<T>::mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance));
     }
     catch (...)
     {
@@ -822,7 +847,7 @@ inline bool psrandom<T>::set_mvnormal(T const *imean, T const *icovariance, int 
 {
     try
     {
-        psrandom<T>::mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance, n));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance, n));
     }
     catch (...)
     {
@@ -836,7 +861,7 @@ inline bool psrandom<T>::set_mvnormal(EMatrixX<T> const &icovariance)
 {
     try
     {
-        psrandom<T>::mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance));
     }
     catch (...)
     {
@@ -850,7 +875,7 @@ inline bool psrandom<T>::set_mvnormal(T const *icovariance, int const n)
 {
     try
     {
-        psrandom<T>::mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance, n));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance, n));
     }
     catch (...)
     {
@@ -864,7 +889,7 @@ inline bool psrandom<T>::set_mvnormal(int const n)
 {
     try
     {
-        psrandom<T>::mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(n));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(n));
     }
     catch (...)
     {
@@ -878,7 +903,7 @@ inline bool psrandom<T>::set_mvNormal(EVectorX<T> const &imean, EMatrixX<T> cons
 {
     try
     {
-        psrandom<T>::mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance));
     }
     catch (...)
     {
@@ -892,7 +917,7 @@ inline bool psrandom<T>::set_mvNormal(T const *imean, T const *icovariance, int 
 {
     try
     {
-        psrandom<T>::mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance, n));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance, n));
     }
     catch (...)
     {
@@ -906,7 +931,7 @@ inline bool psrandom<T>::set_mvNormal(EMatrixX<T> const &icovariance)
 {
     try
     {
-        psrandom<T>::mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance));
     }
     catch (...)
     {
@@ -920,7 +945,7 @@ inline bool psrandom<T>::set_mvNormal(T const *icovariance, int const n)
 {
     try
     {
-        psrandom<T>::mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance, n));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance, n));
     }
     catch (...)
     {
@@ -934,7 +959,7 @@ inline bool psrandom<T>::set_mvNormal(int const n)
 {
     try
     {
-        psrandom<T>::mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(n));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(n));
     }
     catch (...)
     {
@@ -948,7 +973,7 @@ inline bool psrandom<T>::set_expn(T const mu)
 {
     try
     {
-        psrandom<T>::expn.reset(new randomdist::exponentialDistribution<T>(mu));
+        expn.reset(new randomdist::exponentialDistribution<T>(mu));
     }
     catch (...)
     {
@@ -965,7 +990,7 @@ inline bool psrandom<T>::set_expns(T const *mu, int const N)
         nexpns = N;
         try
         {
-            psrandom<T>::expns.reset(new randomdist::exponentialDistribution<T>[nexpns]);
+            expns.reset(new randomdist::exponentialDistribution<T>[nexpns]);
         }
         catch (...)
         {
@@ -973,7 +998,7 @@ inline bool psrandom<T>::set_expns(T const *mu, int const N)
         }
         for (int i = 0; i < nexpns; i++)
         {
-            psrandom<T>::expns[i] = std::move(randomdist::exponentialDistribution<T>(mu[i]));
+            expns[i] = std::move(randomdist::exponentialDistribution<T>(mu[i]));
         }
         return true;
     }
@@ -985,7 +1010,7 @@ inline bool psrandom<T>::set_gamma(T const alpha, T const beta)
 {
     try
     {
-        psrandom<T>::gamma.reset(new randomdist::gammaDistribution<T>(alpha, beta));
+        gamma.reset(new randomdist::gammaDistribution<T>(alpha, beta));
     }
     catch (...)
     {
@@ -1002,7 +1027,7 @@ inline bool psrandom<T>::set_gammas(T const *alpha, T const *beta, int const N)
         ngammas = N;
         try
         {
-            psrandom<T>::gammas.reset(new randomdist::gammaDistribution<T>[ngammas]);
+            gammas.reset(new randomdist::gammaDistribution<T>[ngammas]);
         }
         catch (...)
         {
@@ -1010,7 +1035,30 @@ inline bool psrandom<T>::set_gammas(T const *alpha, T const *beta, int const N)
         }
         for (int i = 0; i < ngammas; i++)
         {
-            psrandom<T>::gammas[i] = std::move(randomdist::gammaDistribution<T>(alpha[i], beta[i]));
+            gammas[i] = std::move(randomdist::gammaDistribution<T>(alpha[i], beta[i]));
+        }
+        return true;
+    }
+    UMUQFAILRETURN("Wrong number of distributions requested!");
+}
+
+template <typename T>
+inline bool psrandom<T>::set_gammas(T const *alphabeta, int const N)
+{
+    if (N > 0)
+    {
+        ngammas = N / 2;
+        try
+        {
+            gammas.reset(new randomdist::gammaDistribution<T>[ngammas]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        }
+        for (int i = 0, k = 0; i < ngammas; i++, k += 2)
+        {
+            gammas[i] = std::move(randomdist::gammaDistribution<T>(alphabeta[k], alphabeta[k + 1]));
         }
         return true;
     }
