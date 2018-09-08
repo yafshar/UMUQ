@@ -3,6 +3,7 @@
 
 #include "core/core.hpp"
 #include "numerics/density.hpp"
+#include "numerics/random/psrandom.hpp"
 
 namespace umuq
 {
@@ -73,7 +74,7 @@ class priorDistribution
     ~priorDistribution();
 
     /*!
-     * \brief Reset the priorDistribution class size
+     * \brief Reset the priorDistribution object size & type
      * 
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
@@ -84,17 +85,27 @@ class priorDistribution
     bool reset(int const probdim, int const prior = 0);
 
     /*!
-     * \brief Set the priorDistribution 
+     * \brief Set the priorDistribution parameters
      * 
      * \param Param1          First parameter for a prior distribution  
      * \param Param2          Second parameter for a prior distribution  
      * \param compositeprior  Composite priors type
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
     bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
+
+    /*!
+     * \brief Set the Random Number Generator object to 
+     * 
+     * \param PRNG  Pseudo-random number object \sa psrandom
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    inline bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
      * \brief Get the dimension
@@ -125,6 +136,7 @@ class priorDistribution
      * \return T Returns the probability density function (pdf) evaluated in x
      */
     T pdf(T const *x);
+    T pdf(std::vector<T> const &x);
 
     /*!
      * \brief Logarithm of the probability density function
@@ -134,6 +146,18 @@ class priorDistribution
      * \return T Returns the logarithm probability density function (pdf) evaluated in x
      */
     T logpdf(T const *x);
+    T logpdf(std::vector<T> const &x);
+
+    /*!
+     * \brief Create samples based on the prior distribution type
+     * 
+     * \param x Samples 
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    bool sample(T *x);
+    bool sample(std::vector<T> &x);
 
   private:
     // Make it noncopyable
@@ -170,6 +194,11 @@ class priorDistribution
     //! The Gaussian distribution
     std::unique_ptr<gaussianDistribution<T>> gaus;
 
+  private:
+    //! Pointer to psudo random number generator object
+    psrandom<T> *prng;
+
+  private:
     //! The below data are only used for composite prior distribution
     //! Index of the points
     std::vector<int> unfmIndex;
@@ -191,7 +220,8 @@ priorDistribution<T>::priorDistribution() : nDim(0),
                                             mvnp(nullptr),
                                             expo(nullptr),
                                             gamm(nullptr),
-                                            gaus(nullptr) {}
+                                            gaus(nullptr),
+                                            prng(nullptr) {}
 
 template <typename T>
 priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nDim(probdim),
@@ -200,7 +230,8 @@ priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nD
                                                                               mvnp(nullptr),
                                                                               expo(nullptr),
                                                                               gamm(nullptr),
-                                                                              gaus(nullptr)
+                                                                              gaus(nullptr),
+                                                                              prng(nullptr)
 {
     switch (priorType)
     {
@@ -229,6 +260,7 @@ priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(oth
                                                                         expo(std::move(other.expo)),
                                                                         gamm(std::move(other.gamm)),
                                                                         gaus(std::move(other.gaus)),
+                                                                        prng(other.prng),
                                                                         unfmIndex(std::move(other.unfmIndex)),
                                                                         gausIndex(std::move(other.gausIndex)),
                                                                         expoIndex(std::move(other.expoIndex)),
@@ -283,6 +315,7 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     expo = std::move(other.expo);
     gamm = std::move(other.gamm);
     gaus = std::move(other.gaus);
+    prng = other.prng;
     unfmIndex = std::move(other.unfmIndex);
     gausIndex = std::move(other.gausIndex);
     expoIndex = std::move(other.expoIndex);
@@ -560,6 +593,17 @@ bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> cons
 }
 
 template <typename T>
+inline bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
+{
+    if (PRNG)
+    {
+        prng = PRNG;
+        return true;
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+}
+
+template <typename T>
 inline int priorDistribution<T>::getDim()
 {
     return nDim;
@@ -639,6 +683,12 @@ T priorDistribution<T>::pdf(T const *x)
 }
 
 template <typename T>
+T priorDistribution<T>::pdf(std::vector<T> const &x)
+{
+    return pdf(x.data());
+}
+
+template <typename T>
 T priorDistribution<T>::logpdf(T const *x)
 {
     switch (priorType)
@@ -697,6 +747,81 @@ T priorDistribution<T>::logpdf(T const *x)
         break;
     }
     UMUQFAIL("Unknown Prior type!");
+}
+
+template <typename T>
+T priorDistribution<T>::logpdf(std::vector<T> const &x)
+{
+    return logpdf(x.data());
+}
+
+template <typename T>
+bool priorDistribution<T>::sample(T *x)
+{
+    if (prng)
+    {
+        switch (priorType)
+        {
+        case priorTypes::UNIFORM:
+            for (int i=0;i<nDim;i++)
+            {
+                x[i] = prng->unirnd();
+            }
+            return unfm->lf(x);
+            break;
+        case priorTypes::GAUSSIAN:
+            return mvnp->lf(x);
+            break;
+        case priorTypes::EXPONENTIAL:
+            return expo->lf(x);
+            break;
+        case priorTypes::GAMMA:
+            return gamm->lf(x);
+            break;
+        case priorTypes::COMPOSITE:
+            T sum(0);
+            if (unfm)
+            {
+                int j(0);
+                for (auto i : unfmIndex)
+                {
+                    unfmX[j++] = x[i];
+                }
+                sum += unfm->lf(unfmX.data());
+            }
+            if (gaus)
+            {
+                int j(0);
+                for (auto i : gausIndex)
+                {
+                    gausX[j++] = x[i];
+                }
+                sum += gaus->lf(gausX.data());
+            }
+            if (expo)
+            {
+                int j(0);
+                for (auto i : expoIndex)
+                {
+                    expoX[j++] = x[i];
+                }
+                sum += expo->lf(expoX.data());
+            }
+            if (gamm)
+            {
+                int j(0);
+                for (auto i : gammIndex)
+                {
+                    gammX[j++] = x[i];
+                }
+                sum += gamm->lf(gammX.data());
+            }
+            return sum;
+            break;
+        }
+        UMUQFAIL("Unknown Prior type!");
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
 } // namespace umuq
