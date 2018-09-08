@@ -137,6 +137,9 @@ private:
 
   //! pseudo-random numbers
   psrandom<T> prng;
+
+  //! Sample points
+  std::vector<T> inputSamplePoints;
 };
 
 template <typename T, class F>
@@ -193,6 +196,9 @@ bool tmcmc<T, F>::reset(char const *fileName)
       {
         UMUQWARNING("The Psudo random number generator has been seeded & initilized before!")
       }
+
+      //! Assign the correct size
+      inputSamplePoints.resize(Data.nDim);
 
       //! Construct a prior Distribution object
       prior = std::move(priorDistribution<T>(Data.nDim, Data.priorType));
