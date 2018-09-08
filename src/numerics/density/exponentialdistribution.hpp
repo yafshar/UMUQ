@@ -14,11 +14,24 @@ inline namespace density
  * \brief The exponential distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 
- * exponential distribution with mean \f$ \mu \f$
- * using: 
+ * exponential distribution of: 
  * \f[
- * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)}
+ * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)},
  * \f]
+ * where \f$ \mu > 0 \f$ is mean, standard deviation, and scale parameter of the 
+ * distribution, the reciprocal of the rate parameter in an another commonly used 
+ * alternative parametrization of:
+ * \f[
+ * p(x)=\lambda e^{\left(-\lambda x\right)},
+ * \f]
+ * where \f$ \lambda > 0 \f$ is rate.
+ * 
+ * It also provides random non-negative values x, distributed according to the exponential 
+ * distribution probability density function. 
+ * 
+ * NOTES: 
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
+ * - Requires that \f$ \mu > 0 \f$. 
  * 
  * \tparam T Data type
  */
@@ -92,10 +105,6 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      */
     exponentialDistribution() = delete;
-
-  private:
-    //! Random non-negative values x, distributed according to probability density function \f$ \lambda e^{-\lambda x} \f$
-    std::unique_ptr<std::exponential_distribution<T>[]> exprng;
 };
 
 /*!
@@ -104,14 +113,14 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
  * \param mu Mean, \f$ \mu \f$
  */
 template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const mu) : densityFunction<T, std::function<T(V)>>(&mu, 1, "exponential"), exprng(nullptr)
+exponentialDistribution<T, V>::exponentialDistribution(T const mu) : densityFunction<T, std::function<T(V)>>(&mu, 1, "exponential")
 {
     this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n) : densityFunction<T, std::function<T(V)>>(mu, n, "exponential"), exprng(nullptr)
+exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n) : densityFunction<T, std::function<T(V)>>(mu, n, "exponential")
 {
     this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
     this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
@@ -162,7 +171,7 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
     T sum(0);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        sum -= std::log(this->params[i] - x[i] / this->params[i]);
+        sum -= (std::log(this->params[i]) + x[i] / this->params[i]);
     }
     return sum;
 }
