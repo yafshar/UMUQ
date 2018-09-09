@@ -32,6 +32,18 @@ enum priorTypes
  * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
  * 
  * \tparam T Data type 
+ * 
+ * USE:
+ * To use the priorDistribution object:
+ * - First, construct a new prior Distribution object with problem dimension and the prior type \sa priorTypes
+ *          in case, the prior types is not known yet, you should reset the priorDistribution later with the 
+ *          correct problem dimension and corresponding prior type \sa reset .
+ * - Second, set the priorDistribution parameters \sa set .
+ * IF you only need the probability density function (pdf) \sa pdf or logarithm probability density function \sa logpdf .
+ * - Third, call the member function.
+ * IF you also need samples from the desired distribution, you must set the Random Number Generator object \sa setRandomGenerator 
+ * otherwise you can not use sample member function \sa sample .
+ * - Forth, call any member function.
  */
 template <typename T>
 class priorDistribution
@@ -343,6 +355,30 @@ bool priorDistribution<T>::reset(int const probdim, int const prior)
         UMUQFAILRETURN("Unknown prior distribution type!");
         break;
     };
+    if (compositePrior)
+    {
+        compositePrior.reset(nullptr);
+    }
+    if (unfm)
+    {
+        unfm.reset(nullptr);
+    }
+    if (mvnp)
+    {
+        mvnp.reset(nullptr);
+    }
+    if (expo)
+    {
+        expo.reset(nullptr);
+    }
+    if (gamm)
+    {
+        gamm.reset(nullptr);
+    }
+    if (gaus)
+    {
+        gaus.reset(nullptr);
+    }
     return true;
 }
 
@@ -444,15 +480,26 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
             };
         }
 
-        unfmIndex.resize(nUNIFORM);
-        gausIndex.resize(nGAUSSIAN);
-        expoIndex.resize(nEXPONENTIAL);
-        gammIndex.resize(nGAMMA);
-
-        unfmX.resize(nUNIFORM);
-        gausX.resize(nGAUSSIAN);
-        expoX.resize(nEXPONENTIAL);
-        gammX.resize(nGAMMA);
+        if (nUNIFORM)
+        {
+            unfmIndex.resize(nUNIFORM);
+            unfmX.resize(nUNIFORM);
+        }
+        if (nGAUSSIAN)
+        {
+            gausIndex.resize(nGAUSSIAN);
+            gausX.resize(nGAUSSIAN);
+        }
+        if (nEXPONENTIAL)
+        {
+            expoIndex.resize(nEXPONENTIAL);
+            expoX.resize(nEXPONENTIAL);
+        }
+        if (nGAMMA)
+        {
+            gammIndex.resize(nGAMMA);
+            gammX.resize(nGAMMA);
+        }
 
         std::vector<T> uparam1(nUNIFORM);
         std::vector<T> uparam2(nUNIFORM);
@@ -479,7 +526,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
                 break;
             case priorTypes::GAUSSIAN:
                 nparam1[nGAUSSIAN] = Param1[i];
-                nparam1[nGAUSSIAN] = Param2[i];
+                nparam2[nGAUSSIAN] = Param2[i];
                 gausIndex[nGAUSSIAN] = i;
                 nGAUSSIAN++;
                 break;
@@ -490,7 +537,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
                 break;
             case priorTypes::GAMMA:
                 gparam1[nGAMMA] = Param1[i];
-                gparam1[nGAMMA] = Param2[i];
+                gparam2[nGAMMA] = Param2[i];
                 gammIndex[nGAMMA] = i;
                 nGAMMA++;
                 break;
@@ -588,109 +635,113 @@ inline bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
-        switch (priorType)
+        if (PRNG_initialized)
         {
-        case priorTypes::UNIFORM:
-            if (unfm)
+            switch (priorType)
             {
-                return unfm->setRandomGenerator(PRNG);
-            }
-            break;
-        case priorTypes::GAUSSIAN:
-            if (mvnp)
-            {
-                return mvnp->setRandomGenerator(PRNG);
-            }
-            break;
-        case priorTypes::EXPONENTIAL:
-            if (expo)
-            {
-                return expo->setRandomGenerator(PRNG);
-            }
-            break;
-        case priorTypes::GAMMA:
-            if (gamm)
-            {
-                return gamm->setRandomGenerator(PRNG);
-            }
-            break;
-        case priorTypes::COMPOSITE:
-        {
-            bool cstatus = true;
-            bool unfmstatus = false;
-            bool gausstatus = false;
-            bool expostatus = false;
-            bool gammstatus = false;
-            for (int i = 0; i < nDim; i++)
-            {
-                switch (compositePrior[i])
+            case priorTypes::UNIFORM:
+                if (unfm)
                 {
-                case priorTypes::UNIFORM:
-                    if (!unfmstatus)
+                    return unfm->setRandomGenerator(PRNG);
+                }
+                break;
+            case priorTypes::GAUSSIAN:
+                if (mvnp)
+                {
+                    return mvnp->setRandomGenerator(PRNG);
+                }
+                break;
+            case priorTypes::EXPONENTIAL:
+                if (expo)
+                {
+                    return expo->setRandomGenerator(PRNG);
+                }
+                break;
+            case priorTypes::GAMMA:
+                if (gamm)
+                {
+                    return gamm->setRandomGenerator(PRNG);
+                }
+                break;
+            case priorTypes::COMPOSITE:
+            {
+                bool cstatus = true;
+                bool unfmstatus = false;
+                bool gausstatus = false;
+                bool expostatus = false;
+                bool gammstatus = false;
+                for (int i = 0; i < nDim; i++)
+                {
+                    switch (compositePrior[i])
                     {
-                        if (unfm)
+                    case priorTypes::UNIFORM:
+                        if (!unfmstatus)
                         {
-                            cstatus = cstatus && unfm->setRandomGenerator(PRNG);
-                            unfmstatus = cstatus;
+                            if (unfm)
+                            {
+                                cstatus = cstatus && unfm->setRandomGenerator(PRNG);
+                                unfmstatus = cstatus;
+                            }
+                            else
+                            {
+                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            }
                         }
-                        else
+                        break;
+                    case priorTypes::GAUSSIAN:
+                        if (!gausstatus)
                         {
-                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            if (gaus)
+                            {
+                                cstatus = cstatus && gaus->setRandomGenerator(PRNG);
+                                gausstatus = cstatus;
+                            }
+                            else
+                            {
+                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            }
                         }
-                    }
-                    break;
-                case priorTypes::GAUSSIAN:
-                    if (!gausstatus)
-                    {
-                        if (gaus)
+                        break;
+                    case priorTypes::EXPONENTIAL:
+                        if (!expostatus)
                         {
-                            cstatus = cstatus && gaus->setRandomGenerator(PRNG);
-                            gausstatus = cstatus;
+                            if (expo)
+                            {
+                                cstatus = cstatus && expo->setRandomGenerator(PRNG);
+                                expostatus = cstatus;
+                            }
+                            else
+                            {
+                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            }
                         }
-                        else
+                        break;
+                    case priorTypes::GAMMA:
+                        if (!gammstatus)
                         {
-                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            if (gamm)
+                            {
+                                cstatus = cstatus && gamm->setRandomGenerator(PRNG);
+                                gammstatus = cstatus;
+                            }
+                            else
+                            {
+                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                            }
                         }
-                    }
-                    break;
-                case priorTypes::EXPONENTIAL:
-                    if (!expostatus)
-                    {
-                        if (expo)
-                        {
-                            cstatus = cstatus && expo->setRandomGenerator(PRNG);
-                            expostatus = cstatus;
-                        }
-                        else
-                        {
-                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                        }
-                    }
-                    break;
-                case priorTypes::GAMMA:
-                    if (!gammstatus)
-                    {
-                        if (gamm)
-                        {
-                            cstatus = cstatus && gamm->setRandomGenerator(PRNG);
-                            gammstatus = cstatus;
-                        }
-                        else
-                        {
-                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                        }
-                    }
-                    break;
-                };
+                        break;
+                    };
+                }
+                return cstatus;
             }
-            return cstatus;
-        }
-        break;
-        default:
-            UMUQFAILRETURN("Unknown prior distribution type!");
             break;
-        };
-        UMUQFAILRETURN("PriorDistribution parameters are not set!");
+            default:
+                UMUQFAILRETURN("Unknown prior distribution type!");
+                break;
+            };
+            UMUQFAILRETURN("Prior Distribution is not set!");
+        }
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to any prior distribution!");
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
