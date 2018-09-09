@@ -1,7 +1,11 @@
 #include "core/core.hpp"
 #include "environment.hpp"
+#include "numerics/random/psrandom.hpp"
 #include "inference/prior/priordistribution.hpp"
 #include "gtest/gtest.h"
+
+// Get an instance of a random object and seed it
+umuq::psrandom<double> prng(123);
 
 //! uniform PDF
 double priorpdf(std::vector<double> const &lowerbound, std::vector<double> const &upperbound)
@@ -48,6 +52,21 @@ TEST(priorDistribution_test, HandlesConstruction)
 
     EXPECT_DOUBLE_EQ(prior.pdf(x), priorpdf(lowerbound, upperbound));
     EXPECT_DOUBLE_EQ(prior.logpdf(x), logpriorpdf(lowerbound, upperbound));
+
+    //! Set the PRNG
+    EXPECT_TRUE(prior.setRandomGenerator(&prng));
+    
+    //! Sampling from this prior distribution
+    EXPECT_TRUE(prior.sample(x));
+
+    EXPECT_TRUE(x[0] >= lowerbound[0] && x[0] <= upperbound[0]);
+    EXPECT_TRUE(x[1] >= lowerbound[1] && x[1] <= upperbound[1]);
+    EXPECT_TRUE(x[2] >= lowerbound[2] && x[2] <= upperbound[2]);
+    EXPECT_TRUE(x[3] >= lowerbound[3] && x[3] <= upperbound[3]);
+
+    std::cout << x[0] << " " << x[1] << " " << x[2]  << " " << x[3] << std::endl;
+
+
 }
 
 //! Tests composite priorDistribution
