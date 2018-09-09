@@ -32,6 +32,9 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
     EXPECT_DOUBLE_EQ(u.lf(&X1), 0.);
 
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prng.setState());
+
     //! Set the PRNG
     EXPECT_TRUE(u.setRandomGenerator(&prng));
 
@@ -87,6 +90,9 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     EXPECT_DOUBLE_EQ(g.f(&X2), 0.01621739110988048);
     EXPECT_DOUBLE_EQ(g.lf(&X2), std::log(g.f(&X2)));
 
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prng.setState());
+
     //! Set the PRNG
     EXPECT_TRUE(g.setRandomGenerator(&prng));
 
@@ -111,6 +117,9 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     //! From scipy logpdf(X1,2,25)
     EXPECT_DOUBLE_EQ(gu.lf(&X1), -2.5333764456387726);
 
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prng.setState());
+    
     //! Set the PRNG
     EXPECT_TRUE(gu.setRandomGenerator(&prng));
 
