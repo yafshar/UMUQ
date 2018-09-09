@@ -6,12 +6,17 @@ namespace umuq
 namespace randomdist
 {
 
+
 /*! \class gammaDistribution
- * \brief Generates random positive values x, distributed according to probability density function \f \frac{e^{-x/\beta}}{\beta ^\alpha \Gamma(\alpha)} x^{\alpha -1} \f$ 
- * where \f$ \alpha \f$ is known as the shape parameter and \f$ \beta \f$ is known as the scale parameter.
+ * \brief Generates random positive values x, distributed according to probability density function \f$ \frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.\f$ 
+ * where \f$ \alpha > 0 \f$ is known as the shape parameter and \f$ \beta > 0 \f$ is known as the scale parameter.
  * 
- * NOTE: This should be called after setting the State of psrandom object
- * 
+ * NOTES: 
+ * - This should be called after setting the State of psrandom object
+ * - \f$ \alpha > 0 \f$
+ * - \f$ \beta > 0 \f$
+ *
+ * \tparam T Data type 
  */
 template <typename T>
 class gammaDistribution

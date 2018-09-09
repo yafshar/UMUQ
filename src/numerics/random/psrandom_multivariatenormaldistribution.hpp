@@ -9,7 +9,8 @@ namespace randomdist
 /*! \class multivariatenormalDistribution
  * \brief Multivariate normal distribution
  * 
- * NOTE: This should be called after setting the State of psrandom object
+ * NOTE: 
+ * - This should be called after setting the State of psrandom object \sa psrandom
  * 
  */
 template <typename T = double>
@@ -69,6 +70,12 @@ public:
    * \return multivariatenormalDistribution& 
    */
   multivariatenormalDistribution<T> &operator=(multivariatenormalDistribution<T> &&other);
+
+  /*!
+   * \brief Destroy the multivariatenormal Distribution object
+   * 
+   */
+  ~multivariatenormalDistribution();
 
   /*!
    * \returns a vector with multivariate normal distribution
@@ -172,6 +179,12 @@ public:
   multivariateNormalDistribution<T> &operator=(multivariateNormalDistribution<T> &&other);
 
   /*!
+   * \brief Destroy the multivariate Normal Distribution object
+   * 
+   */
+  ~multivariateNormalDistribution();
+
+  /*!
    * \returns a vector with multivariate normal distribution
    */
   EVectorX<T> operator()();
@@ -211,12 +224,6 @@ private:
   std::normal_distribution<T> d;
 };
 
-/*!
- * \brief constructor
- *
- * \param imean        Mean vector of size \f$n\f$
- * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
                                                                                                                               covariance(icovariance),
@@ -232,13 +239,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(EVectorX<T> co
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor
- * 
- * \param imean        Input mean vector of size \f$n\f$
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- * \param n            Vector size
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T>(imean, n, 1)),
                                                                                                                        covariance(EMapTypeConst<T>(icovariance, n, n)),
@@ -254,11 +254,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *imean
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor (default mean = 0)
- *
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(EMatrixX<T> const &icovariance) : multivariatenormalDistribution(EVectorX<T>::Zero(icovariance.rows()), icovariance)
 {
@@ -268,12 +263,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(EMatrixX<T> co
   }
 }
 
-/*!
- * \brief constructor (default mean = 0)
- * 
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- * \param n            Vector size
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
                                                                                                        covariance(EMapTypeConst<T>(icovariance, n, n)),
@@ -289,11 +278,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *icova
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor (default mean = 0, covariance=I)
- * 
- * \param n vector size
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(int const n) : mean(EVectorX<T>::Zero(n)),
                                                                                  covariance(EMatrixX<T>::Identity(n, n)),
@@ -306,11 +290,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(int const n) :
   }
 }
 
-/*!
- * \brief Move constructor, construct a new multivariatenormalDistribution object from input multivariatenormalDistribution object
- * 
- * \param other  Input multivariatenormalDistribution object
- */
 template <typename T>
 multivariatenormalDistribution<T>::multivariatenormalDistribution(multivariatenormalDistribution<T> &&other) : mean(std::move(other.mean)),
                                                                                                                covariance(std::move(other.covariance)),
@@ -318,12 +297,6 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(multivariateno
                                                                                                                lu(std::move(other.lu)),
                                                                                                                d(std::move(other.d)) {}
 
-/*!
- * \brief Move assignment operator
- * 
- * \param other  Input multivariatenormalDistribution object
- * \return multivariatenormalDistribution& 
- */
 template <typename T>
 multivariatenormalDistribution<T> &multivariatenormalDistribution<T>::operator=(multivariatenormalDistribution<T> &&other)
 {
@@ -335,9 +308,9 @@ multivariatenormalDistribution<T> &multivariatenormalDistribution<T>::operator=(
   return *this;
 }
 
-/*!
- * \returns a vector with multivariate normal distribution
- */
+template <typename T>
+multivariatenormalDistribution<T>::~multivariatenormalDistribution() {}
+
 template <typename T>
 EVectorX<T> multivariatenormalDistribution<T>::operator()()
 {
@@ -345,9 +318,6 @@ EVectorX<T> multivariatenormalDistribution<T>::operator()()
   return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(NumberGenerator[me]); });
 }
 
-/*!
- * \returns a vector with multivariate normal distribution
- */
 template <typename T>
 EVectorX<T> multivariatenormalDistribution<T>::dist()
 {
@@ -355,12 +325,6 @@ EVectorX<T> multivariatenormalDistribution<T>::dist()
   return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(NumberGenerator[me]); });
 }
 
-/*!
- * \brief constructor
- *
- * \param imean        Mean vector of size \f$n\f$
- * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
                                                                                                                               covariance(icovariance),
@@ -372,13 +336,6 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(EVectorX<T> co
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor
- * 
- * \param imean        Input mean vector of size \f$n\f$
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- * \param n            Vector size
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T>(imean, n, 1)),
                                                                                                                        covariance(EMapTypeConst<T>(icovariance, n, n)),
@@ -390,20 +347,9 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *imean
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor (default mean = 0)
- *
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(EMatrixX<T> const &icovariance) : multivariateNormalDistribution(EVectorX<T>::Zero(icovariance.rows()), icovariance) {}
 
-/*!
- * \brief constructor (default mean = 0)
- * 
- * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
- * \param n            Vector size
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
                                                                                                        covariance(EMapTypeConst<T>(icovariance, n, n)),
@@ -415,11 +361,6 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *icova
   transform = es.eigenvectors() * es.eigenvalues().cwiseSqrt().asDiagonal();
 }
 
-/*!
- * \brief constructor (default mean = 0, covariance=I)
- * 
- * \param n vector size
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(int const n) : mean(EVectorX<T>::Zero(n)),
                                                                                  covariance(EMatrixX<T>::Identity(n, n)),
@@ -427,11 +368,6 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(int const n) :
                                                                                  lu(EMatrixX<T>::Identity(n, n)),
                                                                                  gen(std::random_device{}()) {}
 
-/*!
- * \brief Move constructor, construct a new multivariateNormalDistribution object from input multivariateNormalDistribution object
- * 
- * \param other  Input multivariateNormalDistribution object
- */
 template <typename T>
 multivariateNormalDistribution<T>::multivariateNormalDistribution(multivariateNormalDistribution<T> &&other) : mean(std::move(other.mean)),
                                                                                                                covariance(std::move(other.covariance)),
@@ -440,12 +376,6 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(multivariateNo
                                                                                                                gen(std::move(other.gen)),
                                                                                                                d(std::move(other.d)) {}
 
-/*!
- * \brief Move assignment operator
- * 
- * \param other  Input multivariateNormalDistribution object
- * \return multivariateNormalDistribution& 
- */
 template <typename T>
 multivariateNormalDistribution<T> &multivariateNormalDistribution<T>::operator=(multivariateNormalDistribution<T> &&other)
 {
@@ -458,18 +388,15 @@ multivariateNormalDistribution<T> &multivariateNormalDistribution<T>::operator=(
   return *this;
 }
 
-/*!
- * \returns a vector with multivariate normal distribution
- */
+template <typename T>
+multivariateNormalDistribution<T>::~multivariateNormalDistribution() {}
+
 template <typename T>
 EVectorX<T> multivariateNormalDistribution<T>::operator()()
 {
   return mean + transform * EVectorX<T>{mean.size()}.unaryExpr([&](T const x) { return d(gen); });
 }
 
-/*!
- * \returns a vector with multivariate normal distribution
- */
 template <typename T>
 EVectorX<T> multivariateNormalDistribution<T>::dist()
 {
