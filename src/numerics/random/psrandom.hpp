@@ -56,6 +56,13 @@ namespace umuq
   * 
   * NOTE:
   * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
+  * 
+  * 
+  * USE:
+  * To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction:
+  * - First, construct a new psrandom object either with a seed or without it.
+  * - Second, initialize the PRNG \sa init or set the state of the PRNG \sa setState.
+  * - Third, use any member function or set the PRNG object in other classes 
   */
 template <typename T = double>
 class psrandom
