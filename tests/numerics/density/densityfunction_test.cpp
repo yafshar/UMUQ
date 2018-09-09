@@ -13,6 +13,9 @@ umuq::pyplot plt;
 // Get an instance of a double random object and seed it
 umuq::psrandom<double> prng(123);
 
+// Get an instance of a float random object and seed it
+umuq::psrandom<float> prngf(123);
+
 /*! 
  * Test to check uniformDistribution 
  */
@@ -24,8 +27,24 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     double X1 = 1.5;
     double X2 = 3.;
 
+    //!
     EXPECT_DOUBLE_EQ(u.f(&X1), 1.);
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
+    EXPECT_DOUBLE_EQ(u.lf(&X1), 0.);
+
+    //! Set the PRNG
+    EXPECT_TRUE(u.setRandomGenerator(&prng));
+
+    //! Produce samples with uniform distribution density
+    EXPECT_TRUE(u.sample(&X1));
+
+    std::vector<double> X(10, -1);
+    double *p = X.data();
+    for (int i = 0; i < 10; i++)
+    {
+        EXPECT_TRUE(u.sample(p++));
+        EXPECT_TRUE(X[i] >= 1.0 && X[i] <= 2.0);
+    }
 }
 
 /*! 
@@ -35,11 +54,21 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 {
     //! Exponential distribution with mean 1
     umuq::exponentialDistribution<float> e(1);
-    float X3 = 1.5f;
-    float X4 = 3.f;
+    float X1 = 1.5f;
+    float X2 = 3.f;
 
-    EXPECT_FLOAT_EQ(e.f(&X3), std::exp(-X3));
-    EXPECT_FLOAT_EQ(e.f(&X4), std::exp(-X4));
+    EXPECT_FLOAT_EQ(e.f(&X1), std::exp(-X1));
+    EXPECT_FLOAT_EQ(e.f(&X2), std::exp(-X2));
+    EXPECT_FLOAT_EQ(e.lf(&X2), -X2);
+
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prngf.setState());
+
+    //! Set the PRNG
+    EXPECT_TRUE(e.setRandomGenerator(&prngf));
+
+    //! Produce samples with Exponential distribution density
+    EXPECT_TRUE(e.sample(&X1));
 }
 
 /*! 
@@ -56,6 +85,13 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     EXPECT_DOUBLE_EQ(g.f(&X1), 0.10278688653584618);
     //! From MATLAB gampdf(X2, 0.5, 1)
     EXPECT_DOUBLE_EQ(g.f(&X2), 0.01621739110988048);
+    EXPECT_DOUBLE_EQ(g.lf(&X2), std::log(g.f(&X2)));
+
+    //! Set the PRNG
+    EXPECT_TRUE(g.setRandomGenerator(&prng));
+
+    //! Produce samples with Exponential distribution density
+    EXPECT_TRUE(g.sample(&X1));
 }
 
 /*! 
@@ -72,6 +108,14 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     EXPECT_DOUBLE_EQ(gu.f(&X1), 0.079390509495402356);
     //! From MATLAB normpdf(X2, 2, 5)
     EXPECT_DOUBLE_EQ(gu.f(&X2), 0.078208538795091168);
+    //! From scipy logpdf(X1,2,25)
+    EXPECT_DOUBLE_EQ(gu.lf(&X1), -2.5333764456387726);
+
+    //! Set the PRNG
+    EXPECT_TRUE(gu.setRandomGenerator(&prng));
+
+    //! Produce samples with Exponential distribution density
+    EXPECT_TRUE(gu.sample(&X1));
 }
 
 /*! 
@@ -81,6 +125,7 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 {
     //! A multivariate Gaussian distribution with mean zero and unit covariance matrix of size (2*2)
     umuq::multivariateGaussianDistribution<double> m(2);
+
     //! From MATLAB mvnpdf([1.5,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{1.5, 2}.data()), 0.0069927801704657913);
     //! From MATLAB mvnpdf([3,2])
@@ -167,6 +212,15 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
 #endif
+
+    //! Set the PRNG
+    EXPECT_TRUE(mvn.setRandomGenerator(&prng));
+
+    {
+        double X[2];
+        //! Produce samples with  Multivariate normal distribution density
+        EXPECT_TRUE(mvn.sample(X));
+    }
 }
 
 /*! 
@@ -194,7 +248,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
         //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {25, 25, 25, 25};
 
-		EXPECT_NEAR(m.f(P, X), 0.024032592773437545, 1e-14);
+        EXPECT_NEAR(m.f(P, X), 0.024032592773437545, 1e-14);
     }
 
     /*!
@@ -218,7 +272,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
         //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {40., 20., 5., 1.};
 
-		EXPECT_NEAR(m.f(P, X), 0.0049360823520927834, 1e-14);
+        EXPECT_NEAR(m.f(P, X), 0.0049360823520927834, 1e-14);
     }
 }
 
