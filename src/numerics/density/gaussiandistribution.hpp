@@ -140,12 +140,16 @@ inline bool gaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
-        this->prng = PRNG;
-        if (this->numParams > 2)
+        if (PRNG_initialized)
         {
-            return this->prng->set_normals(this->params.data(), this->numParams);
+            this->prng = PRNG;
+            if (this->numParams > 2)
+            {
+                return this->prng->set_normals(this->params.data(), this->numParams);
+            }
+            return this->prng->set_normal(this->params[0], this->params[1]);
         }
-        return this->prng->set_normal(this->params[0], this->params[1]);
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }

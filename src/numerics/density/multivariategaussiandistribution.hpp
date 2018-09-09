@@ -259,6 +259,10 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EVector
 {
     if (PRNG)
     {
+        if (!PRNG_initialized)
+        {
+            UMUQFAIL("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        }
         this->prng = PRNG;
         if (!this->prng->set_mvnormal(imean, icovariance))
         {
@@ -287,6 +291,10 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
 {
     if (PRNG)
     {
+        if (!PRNG_initialized)
+        {
+            UMUQFAIL("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        }
         this->prng = PRNG;
         if (!this->prng->set_mvnormal(imean, icovariance, n))
         {
@@ -315,6 +323,10 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EMatrix
 {
     if (PRNG)
     {
+        if (!PRNG_initialized)
+        {
+            UMUQFAIL("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        }
         this->prng = PRNG;
         if (!this->prng->set_mvnormal(icovariance))
         {
@@ -343,6 +355,10 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
 {
     if (PRNG)
     {
+        if (!PRNG_initialized)
+        {
+            UMUQFAIL("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        }
         this->prng = PRNG;
         if (!this->prng->set_mvnormal(icovariance, n))
         {
@@ -371,6 +387,10 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(int con
 {
     if (PRNG)
     {
+        if (!PRNG_initialized)
+        {
+            UMUQFAIL("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        }
         this->prng = PRNG;
         if (!this->prng->set_mvnormal(n))
         {
@@ -442,13 +462,17 @@ inline bool multivariategaussianDistribution<T, V>::setRandomGenerator(psrandom<
 {
     if (PRNG)
     {
-        if (mvnormal)
+        if (PRNG_initialized)
         {
-            this->prng = PRNG;
-            this->prng->mvnormal = std::move(mvnormal);
-            return true;
+            if (mvnormal)
+            {
+                this->prng = PRNG;
+                this->prng->mvnormal = std::move(mvnormal);
+                return true;
+            }
+            UMUQFAILRETURN("The pseudo-random number generator is already assigned!");
         }
-        UMUQFAILRETURN("The pseudo-random number generator is already assigned!");
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
@@ -712,7 +736,6 @@ bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
 #endif
 }
-
 
 } // namespace density
 } // namespace umuq

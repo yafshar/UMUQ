@@ -181,8 +181,12 @@ inline bool uniformDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
-        this->prng = PRNG;
-        return true;
+        if (PRNG_initialized)
+        {
+            this->prng = PRNG;
+            return true;
+        }
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }

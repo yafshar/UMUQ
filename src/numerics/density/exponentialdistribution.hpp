@@ -181,12 +181,16 @@ inline bool exponentialDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
-        this->prng = PRNG;
-        if (this->numParams > 1)
+        if (PRNG_initialized)
         {
-            return this->prng->set_expns(this->params.data(), this->numParams);
+            this->prng = PRNG;
+            if (this->numParams > 1)
+            {
+                return this->prng->set_expns(this->params.data(), this->numParams);
+            }
+            return this->prng->set_expn(this->params[0]);
         }
-        return this->prng->set_expn(this->params[0]);
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
