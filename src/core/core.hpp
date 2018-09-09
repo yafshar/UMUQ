@@ -112,13 +112,6 @@ extern "C"
 #include <torc.h>
 #endif
 
-#ifdef M_PI
-#undef M_PI
-#endif
-#ifdef M_2PI
-#undef M_2PI
-#endif
-
 /*!
  * \brief Namespace containing all symbols from the %UMUQ library. 
  */
@@ -146,17 +139,46 @@ inline static const char *SimdInstructionSetsInUse(void)
 
 } // namespace internal
 
+
+#ifdef M_PI
+#undef M_PI
+#endif
+#ifdef M_2PI
+#undef M_2PI
+#endif
+#ifdef M_SPI
+#undef M_SPI
+#endif
+#ifdef M_S2PI
+#undef M_S2PI
+#endif
+#ifdef M_LPI
+#undef M_LPI
+#endif
+#ifdef M_L2PI
+#undef M_L2PI
+#endif
+#ifdef LINESIZE
+#undef LINESIZE
+#endif
+
 /*!
  * \brief Constant values of \f$ \pi, 2\pi, \sqrt{\pi}, \sqrt{2\pi}, ln(\pi), and ln(2\pi) \f$
  *
  * Reference:
  * http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html 
  */
+//! \f$ \pi \f$
 #define M_PI 3.14159265358979323846264338327950288419716939937510582097494459230781640l
+//! \f$ 2\pi \f$
 #define M_2PI 6.28318530717958647692528676655900576839433879875021164194988918461563281l
+//! \f$ \sqrt{\pi} \f$
 #define M_SPI 1.77245385090551602729816748334114518279754945612238712821380778985291128l
+//! \f$ \sqrt{2\pi} \f$
 #define M_S2PI 2.50662827463100050241576528481104525300698674060993831662992357634229365l
+//! \f$ \log{\pi} \f$
 #define M_LPI 1.14472988584940017414342735135305871164729481291531157151362307147213774l
+//! \f$ \log{2\pi} \f$
 #define M_L2PI 1.83787706640934548356065947281123527972279494727556682563430308096553139l
 
 //! Maximum size of a char * in UMUQ parser & io
