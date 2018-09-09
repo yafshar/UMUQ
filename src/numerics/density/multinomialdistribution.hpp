@@ -62,7 +62,7 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
      */
-    inline T multinomialDistribution_f(T const *p, unsigned int const *mndist);
+    T multinomialDistribution_f(T const *p, unsigned int const *mndist);
 
     /*!
      * \brief Log of multinomial distribution density function
@@ -76,14 +76,9 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
      */
-    inline T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
+    T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
 };
 
-/*!
- * \brief Construct a new multinomial distribution object
- * 
- * \param  k  Vector size
- */
 template <typename T>
 multinomialDistribution<T>::multinomialDistribution(int const k)
 {
@@ -93,38 +88,14 @@ multinomialDistribution<T>::multinomialDistribution(int const k)
     this->lf = std::bind(&multinomialDistribution<T>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-/*!
- * \brief multinomial distribution density function
- * Computes the probability from the multinomial distribution
- * 
- * This function computes the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with probabilities \f$p[K]\f$.
- * 
- * \param  p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
- * \param  mndist  A random sample (with size of K) from the multinomial distribution 
- * 
- * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
- */
 template <typename T>
-inline T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
+T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
 {
     return std::exp(multinomialDistribution_lf(p, mndist));
 }
 
-/*!
- * \brief Log of multinomial distribution density function
- * Computes the logarithm of the probability from the multinomial distribution
- * 
- * This function computes the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with probabilities \f$p[K]\f$.
- * 
- * \param p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
- * \param mndist  A random sample (with size of K) from the multinomial distribution
- * 
- * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
- */
 template <typename T>
-inline T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
+T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
 {
 #ifdef DEBUG
     for (int i = 0; i < this->numParams; i++)

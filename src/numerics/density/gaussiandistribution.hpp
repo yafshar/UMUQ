@@ -17,8 +17,12 @@ inline namespace density
  * distribution wiuh standard deviation \f$ \sigma \f$
  * using: 
  * \f[
- * p(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{\left(-\frac{\left(x - \mu \right)^2}{2\sigma^2}\right)}
+ * p(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{\left(-\frac{\left(x - \mu \right)^2}{2\sigma^2}\right)}.
  * \f]
+ * 
+ * It also provides random values x, distributed according to the Gaussian distribution probability 
+ * density function. 
+ * 
  * 
  * \tparam T Data type
  */
@@ -89,12 +93,6 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
     bool sample(std::vector<T> &x);
 };
 
-/*!
- * \brief Construct a new gaussian Distribution object
- * 
- * \param mu     Mean, \f$ \mu \f$
- * \param sigma  Standard deviation \f$ \sigma \f$
- */
 template <typename T, class V>
 gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : densityFunction<T, std::function<T(V)>>(&mu, &sigma, 2, "gaussian")
 {
@@ -113,13 +111,6 @@ gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, in
     this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
 }
 
-/*!
- * \brief Gaussian Distribution density function
- * 
- * \param x Input value
- * 
- * \returns Density function value 
- */
 template <typename T, class V>
 inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
 {
@@ -132,13 +123,6 @@ inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
     return sum;
 }
 
-/*!
- * \brief Log of Gaussian Distribution density function
- * 
- * \param x Input value
- * 
- * \returns  Log of density function value 
- */
 template <typename T, class V>
 inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
 {

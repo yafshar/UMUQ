@@ -14,17 +14,25 @@ inline namespace density
  * \brief The Gamma distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a
- * Gamma distribution with shape parameter \f$\alpha\f$ and scale parameter \f$ beta\f$.
+ * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$.
  * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$.
  * using: 
  * \f[
- * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}
+ * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.
  * \f]
  * 
  * Use the Gamma distribution with \f$\alpha > 1\f$ if you have a sharp lower bound of zero but no 
  * sharp upper bound, a single mode, and a positive skew. The Gamma distribution is especially appropriate 
  * when encoding arrival times for sets of events. A Gamma distribution with a large value for \f$\alpha\f$ 
  * is also useful when you wish to use a bell-shaped curve for a positive-only quantity.
+ * 
+ * It also provides random non-negative values x, distributed according to the Gamma distribution 
+ * probability density function. 
+ * 
+ * NOTES:
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
+ * - \f$ \alpha > 0 \f$
+ * - \f$ \beta > 0 \f$
  * 
  * 
  * \tparam T Data type
@@ -97,12 +105,6 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
     bool sample(std::vector<T> &x);
 };
 
-/*!
- * \brief Construct a new Gamma distribution object
- * 
- * \param alpha  Shape parameter \f$\alpha\f$
- * \param beta   Scale parameter \f$ beta\f$
- */
 template <typename T, class V>
 gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, std::function<T(V)>>(&alpha, &beta, 2, "gamma")
 {
@@ -121,13 +123,6 @@ gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int co
     this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
 }
 
-/*!
- * \brief Gamma distribution density function
- * 
- * \param x Input value
- * 
- * \returns Density function value 
- */
 template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
 {
@@ -162,13 +157,6 @@ inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
     return sum;
 }
 
-/*!
- * \brief Log of Gamma distribution density function
- * 
- * \param x Input value
- * 
- * \returns  Log of density function value 
- */
 template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
 {
