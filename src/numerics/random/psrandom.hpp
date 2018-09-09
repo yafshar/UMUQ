@@ -53,6 +53,9 @@ namespace umuq
   * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
   * 
   * \tparam T  Data type one of float or double
+  * 
+  * NOTE:
+  * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
   */
 template <typename T = double>
 class psrandom
