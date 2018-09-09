@@ -190,13 +190,8 @@ class priorDistribution
     //! The Gamma distribution
     std::unique_ptr<gammaDistribution<T>> gamm;
 
-  private:
     //! The Gaussian distribution
     std::unique_ptr<gaussianDistribution<T>> gaus;
-
-  private:
-    //! Pointer to psudo random number generator object
-    psrandom<T> *prng;
 
   private:
     //! The below data are only used for composite prior distribution
@@ -220,8 +215,7 @@ priorDistribution<T>::priorDistribution() : nDim(0),
                                             mvnp(nullptr),
                                             expo(nullptr),
                                             gamm(nullptr),
-                                            gaus(nullptr),
-                                            prng(nullptr) {}
+                                            gaus(nullptr) {}
 
 template <typename T>
 priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nDim(probdim),
@@ -230,8 +224,7 @@ priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nD
                                                                               mvnp(nullptr),
                                                                               expo(nullptr),
                                                                               gamm(nullptr),
-                                                                              gaus(nullptr),
-                                                                              prng(nullptr)
+                                                                              gaus(nullptr)
 {
     switch (priorType)
     {
@@ -260,7 +253,6 @@ priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(oth
                                                                         expo(std::move(other.expo)),
                                                                         gamm(std::move(other.gamm)),
                                                                         gaus(std::move(other.gaus)),
-                                                                        prng(other.prng),
                                                                         unfmIndex(std::move(other.unfmIndex)),
                                                                         gausIndex(std::move(other.gausIndex)),
                                                                         expoIndex(std::move(other.expoIndex)),
@@ -315,7 +307,6 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     expo = std::move(other.expo);
     gamm = std::move(other.gamm);
     gaus = std::move(other.gaus);
-    prng = other.prng;
     unfmIndex = std::move(other.unfmIndex);
     gausIndex = std::move(other.gausIndex);
     expoIndex = std::move(other.expoIndex);
@@ -597,10 +588,111 @@ inline bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
-        prng = PRNG;
-        return true;
+        switch (priorType)
+        {
+        case priorTypes::UNIFORM:
+            if (unfm)
+            {
+                return unfm->setRandomGenerator(PRNG);
+            }
+            break;
+        case priorTypes::GAUSSIAN:
+            if (mvnp)
+            {
+                return mvnp->setRandomGenerator(PRNG);
+            }
+            break;
+        case priorTypes::EXPONENTIAL:
+            if (expo)
+            {
+                return expo->setRandomGenerator(PRNG);
+            }
+            break;
+        case priorTypes::GAMMA:
+            if (gamm)
+            {
+                return gamm->setRandomGenerator(PRNG);
+            }
+            break;
+        case priorTypes::COMPOSITE:
+        {
+            bool cstatus = true;
+            bool unfmstatus = false;
+            bool gausstatus = false;
+            bool expostatus = false;
+            bool gammstatus = false;
+            for (int i = 0; i < nDim; i++)
+            {
+                switch (compositePrior[i])
+                {
+                case priorTypes::UNIFORM:
+                    if (!unfmstatus)
+                    {
+                        if (unfm)
+                        {
+                            cstatus = cstatus && unfm->setRandomGenerator(PRNG);
+                            unfmstatus = cstatus;
+                        }
+                        else
+                        {
+                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                        }
+                    }
+                    break;
+                case priorTypes::GAUSSIAN:
+                    if (!gausstatus)
+                    {
+                        if (gaus)
+                        {
+                            cstatus = cstatus && gaus->setRandomGenerator(PRNG);
+                            gausstatus = cstatus;
+                        }
+                        else
+                        {
+                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                        }
+                    }
+                    break;
+                case priorTypes::EXPONENTIAL:
+                    if (!expostatus)
+                    {
+                        if (expo)
+                        {
+                            cstatus = cstatus && expo->setRandomGenerator(PRNG);
+                            expostatus = cstatus;
+                        }
+                        else
+                        {
+                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                        }
+                    }
+                    break;
+                case priorTypes::GAMMA:
+                    if (!gammstatus)
+                    {
+                        if (gamm)
+                        {
+                            cstatus = cstatus && gamm->setRandomGenerator(PRNG);
+                            gammstatus = cstatus;
+                        }
+                        else
+                        {
+                            UMUQFAILRETURN("PriorDistribution parameters are not set!");
+                        }
+                    }
+                    break;
+                };
+            }
+            return cstatus;
+        }
+        break;
+        default:
+            UMUQFAILRETURN("Unknown prior distribution type!");
+            break;
+        };
+        UMUQFAILRETURN("PriorDistribution parameters are not set!");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
 template <typename T>
@@ -758,70 +850,75 @@ T priorDistribution<T>::logpdf(std::vector<T> const &x)
 template <typename T>
 bool priorDistribution<T>::sample(T *x)
 {
-    if (prng)
+    switch (priorType)
     {
-        switch (priorType)
+    case priorTypes::UNIFORM:
+        return unfm->sample(x);
+        break;
+    case priorTypes::GAUSSIAN:
+        return mvnp->sample(x);
+        break;
+    case priorTypes::EXPONENTIAL:
+        return expo->sample(x);
+        break;
+    case priorTypes::GAMMA:
+        return gamm->sample(x);
+        break;
+    case priorTypes::COMPOSITE:
+        if (unfm)
         {
-        case priorTypes::UNIFORM:
-            for (int i=0;i<nDim;i++)
-            {
-                x[i] = prng->unirnd();
-            }
-            return unfm->lf(x);
-            break;
-        case priorTypes::GAUSSIAN:
-            return mvnp->lf(x);
-            break;
-        case priorTypes::EXPONENTIAL:
-            return expo->lf(x);
-            break;
-        case priorTypes::GAMMA:
-            return gamm->lf(x);
-            break;
-        case priorTypes::COMPOSITE:
-            T sum(0);
-            if (unfm)
+            if (unfm->sample(unfmX.data()))
             {
                 int j(0);
                 for (auto i : unfmIndex)
                 {
-                    unfmX[j++] = x[i];
+                    x[i] = unfmX[j++];
                 }
-                sum += unfm->lf(unfmX.data());
             }
-            if (gaus)
+        }
+        if (gaus)
+        {
+            if (gaus->sample(gausX.data()))
             {
                 int j(0);
                 for (auto i : gausIndex)
                 {
-                    gausX[j++] = x[i];
+                    x[i] = gausX[j++];
                 }
-                sum += gaus->lf(gausX.data());
             }
-            if (expo)
+        }
+        if (expo)
+        {
+            if (expo->sample(expoX.data()))
             {
                 int j(0);
                 for (auto i : expoIndex)
                 {
-                    expoX[j++] = x[i];
+                    x[i] = expoX[j++];
                 }
-                sum += expo->lf(expoX.data());
             }
-            if (gamm)
+        }
+        if (gamm)
+        {
+            if (gamm->sample(gammX.data()))
             {
                 int j(0);
                 for (auto i : gammIndex)
                 {
-                    gammX[j++] = x[i];
+                    x[i] = gammX[j++];
                 }
-                sum += gamm->lf(gammX.data());
             }
-            return sum;
-            break;
         }
-        UMUQFAIL("Unknown Prior type!");
+        return true;
+        break;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    UMUQFAIL("Unknown Prior type!");
+}
+
+template <typename T>
+bool priorDistribution<T>::sample(std::vector<T> &x)
+{
+    return sample(x.data());
 }
 
 } // namespace umuq
