@@ -16,6 +16,17 @@ namespace umuq
 inline namespace multimin
 {
 
+/*!
+ * \brief Different available Function Minimizer available in UMUQ
+ * 
+ */
+enum FunctionMinimizerTypes
+{
+  SIMPLEXNM = 1,
+  SIMPLEXNM2 = 2,
+  SIMPLEXNM2RND = 3
+};
+
 /*! \brief The goal is finding minima of arbitrary multidimensional functions.
  *  \ingroup multimin_Module
  */

@@ -17,6 +17,19 @@ namespace umuq
 inline namespace multimin
 {
 
+/*!
+ * \brief Different available differentiable Function Minimizer available in UMUQ
+ * 
+ */
+enum differentiableFunctionMinimizerTypes
+{
+  BFGS = 10,
+  BFGS2 = 11,
+  CONJUGATEFR = 12,
+  CONJUGATEPR = 13,
+  STEEPESTDESCENT = 14
+};
+
 /*! \brief The goal is finding minima of arbitrary multidimensional functions.
  *  \ingroup multimin_Module
  */
@@ -441,7 +454,7 @@ differentiableFunctionMinimizer<T> &differentiableFunctionMinimizer<T>::operator
   maxStep = other.maxStep;
   tol = other.tol;
   fval = other.fval;
-  
+
   return *this;
 }
 

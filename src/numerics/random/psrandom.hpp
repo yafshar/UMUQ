@@ -227,14 +227,14 @@ class psrandom
      *  C.S. David, The computer generation of multinomial random variates,
      *  Comp. Stat. Data Anal. 16 (1993) 205-217
      */
-    bool multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist);
+    bool multinomial(T const *p, int const K, int const N, int *mndist);
 
     /*! \fn Multinomial
      * \brief The multinomial distribution
      * 
      * NOTE: This can be called without setting the State of psrandom object
      */
-    bool Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist);
+    bool Multinomial(T const *p, int const K, int const N, int *mndist);
 
   public:
     /*!
@@ -679,7 +679,7 @@ inline void psrandom<T>::Shuffle(D *idata, int const nSize)
 }
 
 template <typename T>
-bool psrandom<T>::multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
+bool psrandom<T>::multinomial(T const *p, int const K, int const N, int *mndist)
 {
     if (!PRNG_initialized)
     {
@@ -692,7 +692,7 @@ bool psrandom<T>::multinomial(T const *p, unsigned int const K, unsigned int con
     T const totpsum = std::accumulate(p, p + K, 0);
 
     T psum(0);
-    unsigned int nsum(0);
+    int nsum(0);
     for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
@@ -711,14 +711,14 @@ bool psrandom<T>::multinomial(T const *p, unsigned int const K, unsigned int con
 }
 
 template <typename T>
-bool psrandom<T>::Multinomial(T const *p, unsigned int const K, unsigned int const N, unsigned int *mndist)
+bool psrandom<T>::Multinomial(T const *p, int const K, int const N, int *mndist)
 {
     std::mt19937 gen(std::random_device{}());
 
     T const totpsum = std::accumulate(p, p + K, 0);
 
     T psum(0);
-    unsigned int nsum(0);
+    int nsum(0);
     for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
