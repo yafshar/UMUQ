@@ -83,7 +83,6 @@ extern "C"
 #include <random>
 #include <map>
 #include <mutex>
-#include <functional>
 
 #if HAVE_PYTHON == 1
 #ifdef _POSIX_C_SOURCE
