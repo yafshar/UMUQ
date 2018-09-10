@@ -22,20 +22,140 @@ namespace tmcmc
 template <typename T>
 struct optimizationParameters
 {
-	int MaxIter;
-	int Display;
-	T Tolerance;
-	T Step;
-
 	/*!
      *  \brief Default constructor for the default variables
      *    
      */
-	optimizationParameters() : MaxIter(100),
-							   Display(0),
-							   Tolerance(1e-6),
-							   Step(1e-5){};
+	optimizationParameters();
+
+	/*!
+	 * \brief Construct a new optimization Parameters object
+	 * 
+	 * \param other 
+	 */
+	optimizationParameters(optimizationParameters<T> const &other);
+
+	/*!
+	 * \brief Move constructor, construct a new optimizationParameters object from an input object
+     * 
+     * \param other  Input optimizationParameters object
+	 */
+	optimizationParameters(optimizationParameters<T> &&other);
+
+	/*!
+	 * \brief Copy constructor, construct a new optimizationParameters object from an input object
+	 * 
+	 * \param other 
+	 * \return optimizationParameters<T>& 
+	 */
+	optimizationParameters<T> &operator=(optimizationParameters<T> const &other);
+
+	/*!
+	 * \brief Move assignment operator
+	 * 
+	 * \param other 
+	 * \return optimizationParameters<T>& 
+	 */
+	optimizationParameters<T> &operator=(optimizationParameters<T> &&other);
+
+	/*!
+	 * \brief Destroy the optimization Parameters object
+	 * 
+	 */
+	~optimizationParameters();
+
+	/*!
+	 * \brief reset the optimizationParameters 
+	 * 
+	 * \return true 
+	 * \return false 
+	 */
+	void reset();
+	void reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step);
+
+	//! Maximum number of iterations
+	int MaxIter;
+	//! Debugging flag, if the minimization steps are shown or not
+	int Display;
+	//! function minimizer type (per default it is simplex2)
+	int FunctionMinimizerType;
+	//! minimizer tolerance
+	T Tolerance;
+	//! Minimizer step size
+	T Step;
 };
+
+template <typename T>
+optimizationParameters<T>::optimizationParameters() : MaxIter(100),
+													  Display(0),
+													  FunctionMinimizerType(2),
+													  Tolerance(1e-6),
+													  Step(1e-5){};
+
+template <typename T>
+optimizationParameters<T>::optimizationParameters(optimizationParameters<T> const &other)
+{
+	Display = other.Display;
+	MaxIter = other.MaxIter;
+	FunctionMinimizerType = other.FunctionMinimizerType;
+	Step = other.Step;
+	Tolerance = other.Tolerance;
+}
+
+template <typename T>
+optimizationParameters<T>::optimizationParameters(optimizationParameters<T> &&other)
+{
+	Display = other.Display;
+	MaxIter = other.MaxIter;
+	FunctionMinimizerType = other.FunctionMinimizerType;
+	Step = other.Step;
+	Tolerance = other.Tolerance;
+}
+
+template <typename T>
+optimizationParameters<T> &optimizationParameters<T>::operator=(optimizationParameters<T> const &other)
+{
+	Display = other.Display;
+	MaxIter = other.MaxIter;
+	FunctionMinimizerType = other.FunctionMinimizerType;
+	Step = other.Step;
+	Tolerance = other.Tolerance;
+	return *this;
+}
+
+template <typename T>
+optimizationParameters<T> &optimizationParameters<T>::operator=(optimizationParameters<T> &&other)
+{
+	Display = other.Display;
+	MaxIter = other.MaxIter;
+	FunctionMinimizerType = other.FunctionMinimizerType;
+	Step = other.Step;
+	Tolerance = other.Tolerance;
+	return *this;
+}
+
+template <typename T>
+optimizationParameters<T>::~optimizationParameters() {}
+
+template <typename T>
+void optimizationParameters<T>::reset()
+{
+	MaxIter = 100;
+	Display = 0;
+	FunctionMinimizerType = 2;
+	Tolerance = 1e-6;
+	Step = 1e-5;
+}
+
+template <typename T>
+void optimizationParameters<T>::reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step)
+{
+	MaxIter = maxIter;
+	Display = display;
+	FunctionMinimizerType = functionMinimizerType;
+	Tolerance = tolerance;
+	Step = step;
+}
 
 /*! \class stdata
  *  \brief stream data type class
@@ -334,10 +454,7 @@ stdata<T>::stdata(stdata<T> &&other)
 	TolCOV = other.TolCOV;
 	bbeta = other.bbeta;
 	localScale = other.localScale;
-	options.Display = other.options.Display;
-	options.MaxIter = other.options.MaxIter;
-	options.Step = other.options.Step;
-	options.Tolerance = other.options.Tolerance;
+	options = std::move(other.options);
 	eachPopulationSize = std::move(other.eachPopulationSize);
 	lowerBound = std::move(other.lowerBound);
 	upperBound = std::move(other.upperBound);
@@ -371,10 +488,7 @@ stdata<T> &stdata<T>::operator=(stdata<T> &&other)
 	TolCOV = other.TolCOV;
 	bbeta = other.bbeta;
 	localScale = other.localScale;
-	options.Display = other.options.Display;
-	options.MaxIter = other.options.MaxIter;
-	options.Step = other.options.Step;
-	options.Tolerance = other.options.Tolerance;
+	options = std::move(other.options);
 	eachPopulationSize = std::move(other.eachPopulationSize);
 	lowerBound = std::move(other.lowerBound);
 	upperBound = std::move(other.upperBound);
@@ -412,6 +526,7 @@ void stdata<T>::swap(stdata<T> &other)
 	std::swap(localScale, other.localScale);
 	std::swap(options.Display, other.options.Display);
 	std::swap(options.MaxIter, other.options.MaxIter);
+	std::swap(options.FunctionMinimizerType, other.options.FunctionMinimizerType);
 	std::swap(options.Step, other.options.Step);
 	std::swap(options.Tolerance, other.options.Tolerance);
 	eachPopulationSize.swap(other.eachPopulationSize);
@@ -443,10 +558,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 	TolCOV = static_cast<T>(1);
 	bbeta = static_cast<T>(0.2);
 	localScale = 0;
-	options.MaxIter = 100;
-	options.Display = 0;
-	options.Tolerance = static_cast<T>(1e-6);
-	options.Step = static_cast<T>(1e-5);
+	options.reset();
 
 	if (probdim == 0 || MaxGenerations == 0 || PopulationSize == 0)
 	{
@@ -600,6 +712,10 @@ bool stdata<T>::load(const char *fname)
 				else if (p.at<std::string>(0) == "opt.Tol")
 				{
 					options.Tolerance = p.at<T>(1);
+				}
+				else if (p.at<std::string>(0) == "opt.FMin" || p.at<std::string>(0) == "opt.Minimizer")
+				{
+					options.FunctionMinimizerType = p.at<T>(1);
 				}
 				else if (p.at<std::string>(0) == "opt.Display")
 				{
