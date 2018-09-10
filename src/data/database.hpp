@@ -214,15 +214,6 @@ class database
      */
     void update(T const *iParray, T const iFvalue, T const *iGarray = nullptr, int const iSurrogate = std::numeric_limits<int>::max());
 
-    /*!
-     * \brief Find the uniue points in an array of n-Dimensional data
-     * 
-     * \param uParray 
-     * \return true 
-     * \return false 
-     */
-    void unique(T const *iArray, int const nRows, int const nCols, std::vector<T> &uParray);
-
   private:
     // Make it noncopyable
     database(database<T> const &) = delete;
@@ -827,67 +818,6 @@ void database<T>::update(T const *iParray, T const iFvalue, T const *iGarray, in
 
     //! Do not kill the worker
     torc_waitall3();
-}
-
-template <typename T>
-void database<T>::unique(T const *iArray, int const nRows, int const nCols, std::vector<T> &uArray)
-{
-    //! Resize the unique array to the maximum size
-    uArray.resize(nRows * nCols);
-
-    //! Create a temporary array with the size of number of columns (one row of data)
-    std::vector<T> x(nCols);
-
-    //! First element in the input array is considered unique
-    std::copy(iArray, iArray + nCols, uArray.begin());
-
-    //! We have one unique
-    int nUniques(1);
-
-    for (int i = 1; i < nRows; i++)
-    {
-        int const s = i * nCols;
-        std::copy(iArray + s, iArray + s + nCols, x.begin());
-
-        //! Consider this x rows is unique among all the rows
-        bool uniqueFlag = true;
-
-        //! check it with all the unique rows
-        for (int j = 0, l = 0; j < nUniques; j++, l += nCols)
-        {
-            //! Consider they are the same
-            bool compareFlag = true;
-            for (int k = 0; k < nCols; k++)
-            {
-                if (std::abs(x[k] - uArray[l + k]) > 1e-6)
-                {
-                    //! one element in the row differs, so they are different
-                    compareFlag = false;
-                    break;
-                }
-            }
-            if (compareFlag)
-            {
-                //! It is not a unique row
-                uniqueFlag = false;
-                break;
-            }
-        }
-
-        if (uniqueFlag)
-        {
-            int const e = nUniques * nCols;
-            std::copy(x.begin(), x.end(), uArray.begin() + e);
-            nUniques++;
-        }
-    }
-
-    //! Correct the size of the unique array
-    if (nUniques * nCols < uArray.size())
-    {
-        uArray.resize(nUniques * nCols);
-    }
-    return;
 }
 
 template <typename T>
