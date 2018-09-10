@@ -117,7 +117,7 @@ class priorDistribution
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
      * \brief Get the dimension
@@ -631,7 +631,7 @@ bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> cons
 }
 
 template <typename T>
-inline bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
+bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
