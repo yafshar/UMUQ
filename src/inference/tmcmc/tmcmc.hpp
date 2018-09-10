@@ -412,7 +412,7 @@ bool tmcmc<T, F>::prepareNewGeneration(database<T> &leaders)
 	}
 
 	io f;
-	std::cout << "Complete data on Generation Number = " << runData.Generation << std::endl;
+	std::cout << "Complete data samples on Generation Number = " << runData.Generation << std::endl;
 	f.printMatrix<T>("Means", mean.data(), 1, currentData.ndimParray);
 	f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.ndimParray);
 #endif
@@ -441,7 +441,7 @@ bool tmcmc<T, F>::prepareNewGeneration(database<T> &leaders)
 		stddev[i] = s.stddev<T, T>(currentDataUniques.data() + i, nSize, currentData.ndimParray, mean[i]);
 	}
 	
-	std::cout << "Unique data base on Generation No = " << runData.Generation << std::endl;
+	std::cout << "Unique data samples on Generation No = " << runData.Generation << std::endl;
 	f.printMatrix<T>("Means", mean.data(), 1, currentData.ndimParray);
 	f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.ndimParray);
 #endif
