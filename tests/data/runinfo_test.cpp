@@ -94,6 +94,52 @@ TEST(runinfo_test, HandlesIO)
     std::remove("runinfo.txt");
 }
 
+//! Tests the unique member
+TEST(database_uniquetest, HandlesunUniqueMemberFunctionality)
+{
+    //! Create an instance of a runinfo object
+    umuq::tmcmc::runinfo<double> runinfoObj(3, 1);
+
+    //! Vector of data which has some repetetive rows
+    double p[] = {5, 12, 24,
+                  12, 30, 59,
+                  1, 4, 0,
+                  0, -10, 1,
+                  1, 2, 4,
+                  2, 5, 10,
+                  0, -1, -1,
+                  1, 4, 0,
+                  4, 25, -10,
+                  0, -10, 1,
+                  2, 5, 10,
+                  1, 4, 0};
+
+    //! Array of unique row data (each row is unqiue)
+    double pu[] = {5, 12, 24,
+                   12, 30, 59,
+                   1, 4, 0,
+                   0, -10, 1,
+                   1, 2, 4,
+                   2, 5, 10,
+                   0, -1, -1,
+                   4, 25, -10};
+
+    //! vector
+    std::vector<double> u;
+
+    //! Create a unique rows of data from p array
+    runinfoObj.getUniques(p, 12, 3, u);
+
+	//! Check the size of unique data
+    EXPECT_TRUE(u.size() == 24);
+
+	//! compqare the elements
+    for (std::size_t i = 0; i < u.size(); i++)
+    {
+        EXPECT_DOUBLE_EQ(u[i], pu[i]);
+    }
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
