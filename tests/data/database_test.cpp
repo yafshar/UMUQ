@@ -70,7 +70,6 @@ TEST(database_test, HandlesConstruction)
         EXPECT_TRUE(d.save("database", 100));
     }
 
-
     {
         umuq::tmcmc::database<double> d;
         EXPECT_FALSE(d.load("database", 100));
@@ -154,6 +153,50 @@ TEST(database_test, HandlesTask)
     }
 
     std::remove("database_100.txt");
+}
+
+//! Tests the unique member
+TEST(database_uniquetest, HandlesunUniqueMemberFunctionality)
+{
+    //Create an instance of a database object
+    umuq::tmcmc::database<double> d(3, 12);
+
+    //! Vector of data which has some repetetive rows
+    double p[] = {5, 12, 24,
+                  12, 30, 59,
+                  1, 4, 0,
+                  0, -10, 1,
+                  1, 2, 4,
+                  2, 5, 10,
+                  0, -1, -1,
+                  1, 4, 0,
+                  4, 25, -10,
+                  0, -10, 1,
+                  2, 5, 10,
+                  1, 4, 0};
+
+    //! Vector of unique rows of data
+    double pu[] = {5, 12, 24,
+                   12, 30, 59,
+                   1, 4, 0,
+                   0, -10, 1,
+                   1, 2, 4,
+                   2, 5, 10,
+                   0, -1, -1,
+                   4, 25, -10};
+
+    //! vector
+    std::vector<double> u;
+
+    //! Create a unique rows of data from p array
+    d.unique(p, 12, 3, u);
+
+    EXPECT_TRUE(u.size() == 24);
+
+    for (std::size_t i = 0; i < u.size(); i++)
+    {
+        EXPECT_DOUBLE_EQ(u[i], pu[i]);
+    }
 }
 
 int main(int argc, char **argv)
