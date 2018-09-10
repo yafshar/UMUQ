@@ -155,15 +155,15 @@ class runinfo
 	//! Max generations
 	int maxGenerations;
 	//! Current generation
-	int Generation;
+	int currentGeneration;
 
 	//! The coefficient of variation of the plausibility weights [maxGenerations]
 	std::vector<T> CoefVar;
-	//! p cluster-wide                                           [maxGenerations]
+	//! generationProbabilty cluster-wide                        [maxGenerations]
 	//! probabilty at each generation
-	std::vector<T> p;
+	std::vector<T> generationProbabilty;
 	//!                                                          [maxGenerations]
-	std::vector<int> currentuniques;
+	std::vector<int> currentUniques;
 	//!                                                          [maxGenerations]
 	std::vector<T> logselection;
 	//!                                                          [maxGenerations]
@@ -183,7 +183,7 @@ class runinfo
 template <typename T>
 runinfo<T>::runinfo() : nDim(0),
 						maxGenerations(0),
-						Generation(0)
+						currentGeneration(0)
 {
 }
 
@@ -197,7 +197,7 @@ runinfo<T>::runinfo() : nDim(0),
 template <typename T>
 runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 													   maxGenerations(MaxGenerations),
-													   Generation(0)
+													   currentGeneration(0)
 {
 	if (!init())
 	{
@@ -216,10 +216,10 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 {
 	nDim = other.nDim;
 	maxGenerations = other.maxGenerations;
-	Generation = other.Generation;
+	currentGeneration = other.currentGeneration;
 	CoefVar = std::move(other.CoefVar);
-	p = std::move(other.p);
-	currentuniques = std::move(other.currentuniques);
+	generationProbabilty = std::move(other.generationProbabilty);
+	currentUniques = std::move(other.currentUniques);
 	logselection = std::move(other.logselection);
 	acceptance = std::move(other.acceptance);
 	SS = std::move(other.SS);
@@ -237,10 +237,10 @@ runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 {
 	nDim = other.nDim;
 	maxGenerations = other.maxGenerations;
-	Generation = other.Generation;
+	currentGeneration = other.currentGeneration;
 	CoefVar = std::move(other.CoefVar);
-	p = std::move(other.p);
-	currentuniques = std::move(other.currentuniques);
+	generationProbabilty = std::move(other.generationProbabilty);
+	currentUniques = std::move(other.currentUniques);
 	logselection = std::move(other.logselection);
 	acceptance = std::move(other.acceptance);
 	SS = std::move(other.SS);
@@ -260,8 +260,8 @@ bool runinfo<T>::init()
 	try
 	{
 		CoefVar.resize(maxGenerations, T{});
-		p.resize(maxGenerations, T{});
-		currentuniques.resize(maxGenerations, 0);
+		generationProbabilty.resize(maxGenerations, T{});
+		currentUniques.resize(maxGenerations, 0);
 		logselection.resize(maxGenerations, T{});
 		acceptance.resize(maxGenerations, T{});
 
@@ -307,10 +307,10 @@ void runinfo<T>::swap(runinfo<T> &other)
 {
 	std::swap(nDim, other.nDim);
 	std::swap(maxGenerations, other.maxGenerations);
-	std::swap(Generation, other.Generation);
+	std::swap(currentGeneration, other.currentGeneration);
 	CoefVar.swap(other.CoefVar);
-	p.swap(other.p);
-	currentuniques.swap(other.currentuniques);
+	generationProbabilty.swap(other.generationProbabilty);
+	currentUniques.swap(other.currentUniques);
 	logselection.swap(other.logselection);
 	acceptance.swap(other.acceptance);
 	SS.swap(other.SS);
@@ -341,16 +341,16 @@ bool runinfo<T>::save(const char *fileName)
 
 		fs << "ProblemDimension= " << nDim << "\n";
 		fs << "maxGenerations= " << maxGenerations << "\n";
-		fs << "Generation= " << Generation << "\n";
+		fs << "Generation= " << currentGeneration << "\n";
 
 		fs << "CoefVar[" << maxGenerations << "]=\n";
 		tmp &= f.saveMatrix<T>(CoefVar.data(), maxGenerations);
 
-		fs << "p[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<T>(p.data(), maxGenerations);
+		fs << "generationProbabilty[" << maxGenerations << "]=\n";
+		tmp &= f.saveMatrix<T>(generationProbabilty.data(), maxGenerations);
 
-		fs << "currentuniques[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<int>(currentuniques.data(), maxGenerations);
+		fs << "currentUniques[" << maxGenerations << "]=\n";
+		tmp &= f.saveMatrix<int>(currentUniques.data(), maxGenerations);
 
 		fs << "logselection[" << maxGenerations << "]=\n";
 		tmp &= f.saveMatrix<T>(logselection.data(), maxGenerations);
@@ -415,16 +415,16 @@ bool runinfo<T>::load(const char *fileName)
 
 		tmp &= f.readLine();
 		prs.parse(f.getLine().substr(12));
-		Generation = prs.at<int>(0);
+		currentGeneration = prs.at<int>(0);
 
 		tmp &= f.readLine();
 		tmp &= f.loadMatrix<T>(CoefVar.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(p.data(), maxGenerations);
+		tmp &= f.loadMatrix<T>(generationProbabilty.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<int>(currentuniques.data(), maxGenerations);
+		tmp &= f.loadMatrix<int>(currentUniques.data(), maxGenerations);
 
 		tmp &= f.readLine();
 		tmp &= f.loadMatrix<T>(logselection.data(), maxGenerations);
@@ -526,23 +526,23 @@ void runinfo<T>::getUniques(std::unique_ptr<T[]> const &iArray, int const nRows,
 template <typename T>
 inline bool runinfo<T>::setUniqueNumber(int const nUniques)
 {
-	if (Generation < maxGenerations)
+	if (currentGeneration < maxGenerations)
 	{
-		currentuniques[Generation] = nUniques;
+		currentUniques[currentGeneration] = nUniques;
 		return true;
 	}
-	UMUQFAILRETURN("Generation is greater than the defined maximum number!");
+	UMUQFAILRETURN("Generation number is greater than the defined maximum number!");
 }
 
 template <typename T>
 inline bool runinfo<T>::setAcceptanceRate(T const acceptanceRate)
 {
-	if (Generation < maxGenerations)
+	if (currentGeneration < maxGenerations)
 	{
-		acceptance[Generation] = acceptanceRate;
+		acceptance[currentGeneration] = acceptanceRate;
 		return true;
 	}
-	UMUQFAILRETURN("Generation is greater than the defined maximum number!");
+	UMUQFAILRETURN("Generation number is greater than the defined maximum number!");
 }
 
 } // namespace tmcmc
