@@ -1,8 +1,6 @@
 #ifndef UMUQ_IO_H
 #define UMUQ_IO_H
 
-#include "../core/digits10.hpp"
-
 namespace umuq
 {
 
