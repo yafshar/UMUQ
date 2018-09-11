@@ -1,8 +1,6 @@
 #ifndef UMUQ_DIGITS10_H
 #define UMUQ_DIGITS10_H
 
-#include <cmath> //ceil, log10
-
 /*!
  * \brief Default digits10() class based on std::numeric_limits
  */
