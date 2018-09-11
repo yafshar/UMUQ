@@ -78,10 +78,6 @@ T pj;
 template <typename T>
 T tolerance;
 
-//! This is the minimum limit that we can reduce stepsize
-template <typename T>
-static T stepSizeLimit = std::pow(T{10}, -digits10<T>);
-
 /*! \class tmcmcStats
  * \brief 
  * 
@@ -417,7 +413,7 @@ bool tmcmcStats<T>::searchOptimumP(T const *FunValues, int const nFunValues, T c
             }
 
             stepSize /= T{10};
-            if (stepSize < stepSizeLimit<T>)
+            if (stepSize < machinePrecision<T>)
             {
                 //! Fail:-1
                 UMUQFAILRETURN("Could not find the optimum value of p through search!");
