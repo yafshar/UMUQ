@@ -1,7 +1,7 @@
 #ifndef UMUQ_EIGENLIB_H
 #define UMUQ_EIGENLIB_H
 
-#include "../data/eigendatatype.hpp"
+#include "data/eigendatatype.hpp"
 
 namespace umuq
 {
@@ -132,7 +132,7 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
 /*!
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  *  
- * \tparam T        Eigen matrix type (dynamic_size_storage matrix)
+ * \tparam EigenMatrixT  Eigen matrix type (dynamic_size_storage matrix)
  * 
  * \param  dataPtr  Pointer to the array of data
  * \param  nRows    Number of Rows in Matrix representation of Input array
@@ -142,33 +142,33 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
  * 
  * 
  * NOTE:
- * If the T template class is a dynamic_size_storage Eigen::Matrix, then one should 
+ * If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then one should 
  * provide the number of rows and number of columns at input
  * 
  */
-template <class T>
-inline typename std::enable_if<T::MaxRowsAtCompileTime == Eigen::Dynamic || T::MaxColsAtCompileTime == Eigen::Dynamic, T>::type
-EMap(typename T::Scalar *dataPtr, int const nRows, int const nCols)
+template <class EigenMatrixT>
+inline typename std::enable_if<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>::type
+EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
 {
-	return EMapTypeConst<T>(dataPtr, nRows, nCols);
+	return EMapTypeConst<EigenMatrixT>(dataPtr, nRows, nCols);
 }
 
 /*!
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * 
- * \tparam T       Eigen matrix type (fixed_size_storage matrix)
+ * \tparam EigenMatrixT Eigen matrix type (fixed_size_storage matrix)
  * 
  * \param dataPtr  Pointer to the array of data
- * \return T       Eigen Matrix representation of the array
+ * \return EigenMatrixT  Eigen Matrix representation of the array
  * 
  * NOTE:
- * If the T template class is a fixed_size_storage Eigen::Matrix, then one should not
+ * If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then one should not
  * provide the number of rows and number of columns at input
  */
-template <class T>
-inline T EMap(typename T::Scalar *dataPtr)
+template <class EigenMatrixT>
+inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
 {
-	return EMapTypeConst<T>(dataPtr);
+	return EMapTypeConst<EigenMatrixT>(dataPtr);
 }
 
 /*!
@@ -177,27 +177,27 @@ inline T EMap(typename T::Scalar *dataPtr)
  * of size(nRows, nCols). 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam T        Eigen matrix type (dynamic_size_storage matrix)
+ * \tparam EigenMatrixT Eigen matrix type (dynamic_size_storage matrix)
  * 
  * \param  dataPtr  Pointer to the array of data
  * \param  nRows    Number of Rows in Matrix representation of Input array
  * \param  nCols    Number of Columns in Matrix representation of Input array
  * 
- * \returns  Eigen Matrix representation of the array    
+ * \returns Eigen Matrix representation of the array    
  *
  * NOTE:
- * If the T template class is a dynamic_size_storage Eigen::Matrix, then the size does must  
+ * If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then the size does must  
  * be passed to the constructor, because it is not specified by the Matrix type.
  */
-template <class T>
-inline typename std::enable_if<T::MaxRowsAtCompileTime == Eigen::Dynamic || T::MaxColsAtCompileTime == Eigen::Dynamic, T>::type
-EMap(typename T::Scalar **dataPtr, int const nRows, int const nCols)
+template <class EigenMatrixT>
+inline typename std::enable_if<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>::type
+EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 {
 	//! We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
-	T tmpMatrix(nRows, nCols);
+	EigenMatrixT tmpMatrix(nRows, nCols);
 	for (int i = 0; i < nRows; i++)
 	{
-		tmpMatrix.row(i) = EVectorMapTypeConst<typename T::Scalar>(&dataPtr[i][0], nCols);
+		tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixT::Scalar>(&dataPtr[i][0], nCols);
 	}
 	return tmpMatrix;
 }
@@ -208,25 +208,25 @@ EMap(typename T::Scalar **dataPtr, int const nRows, int const nCols)
  * of size(nRows, nCols). 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  * 
- * \tparam T       Eigen matrix type (fixed_size_storage matrix)
+ * \tparam EigenMatrixT       Eigen matrix type (fixed_size_storage matrix)
  * 
  * \param dataPtr  Pointer to the array of data
  * 
  * \returns  Eigen Matrix representation of the array    
  *
  * NOTE:
- * If the T template class is a fixed_size_storage Eigen::Matrix, then the size does not have 
+ * If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then the size does not have 
  * to be passed to the constructor, because it is already specified by the Matrix type.
  */
-template <class T>
-inline T EMap(typename T::Scalar **dataPtr)
+template <class EigenMatrixT>
+inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
 {
 	//! We have a fixed_size_storage matrix
-	T tmpMatrix;
+	EigenMatrixT tmpMatrix;
 	auto nCols = tmpMatrix.cols();
 	for (auto i = 0; i < tmpMatrix.rows(); i++)
 	{
-		tmpMatrix.row(i) = EVectorMapTypeConst<typename T::Scalar>(&dataPtr[i][0], nCols);
+		tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixT::Scalar>(&dataPtr[i][0], nCols);
 	}
 	return tmpMatrix;
 }
@@ -239,7 +239,7 @@ inline T EMap(typename T::Scalar **dataPtr)
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
  * 
- * \tparam T       Eigen matrix type
+ * \tparam EigenMatrixT Eigen matrix type
  * 
  * \param dataPtr  Pointer to the array of the same Eigen matrix element type with the same size 
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
@@ -249,10 +249,10 @@ inline T EMap(typename T::Scalar **dataPtr)
  * We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
-template <class T>
-inline void EMap(typename T::Scalar *dataPtr, T const &eMatrix)
+template <class EigenMatrixT>
+inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMatrix)
 {
-	EMapType<typename T::Scalar>(dataPtr, eMatrix.rows(), eMatrix.cols()) = eMatrix;
+	EMapType<typename EigenMatrixT::Scalar>(dataPtr, eMatrix.rows(), eMatrix.cols()) = eMatrix;
 }
 
 /*!
@@ -260,7 +260,7 @@ inline void EMap(typename T::Scalar *dataPtr, T const &eMatrix)
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
  * 
- * \tparam T       Eigen matrix type
+ * \tparam EigenMatrixT Eigen matrix type
  * 
  * \param dataPtr  Pointer to the array of the same Eigen matrix element type with the same size 
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
@@ -270,14 +270,59 @@ inline void EMap(typename T::Scalar *dataPtr, T const &eMatrix)
  * We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
-template <class T>
-inline void EMap(typename T::Scalar **dataPtr, T const &eMatrix)
+template <class EigenMatrixT>
+inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eMatrix)
 {
 	for (auto i = 0; i < eMatrix.rows(); i++)
 	{
-		EVectorMapType<typename T::Scalar>(&dataPtr[i][0], eMatrix.cols()) = eMatrix.row(i);
+		EVectorMapType<typename EigenMatrixT::Scalar>(&dataPtr[i][0], eMatrix.cols()) = eMatrix.row(i);
 	}
 }
+
+/*!
+ * \brief This is a check if a selfadjoint matrix is positive definite
+ * 
+ * A matrix is selfadjoint if it equals its adjoint. For real matrices, this means 
+ * that the matrix is symmetric: it equals its transpose.
+ * 
+ * \tparam T Data type
+ * 
+ * \param dataPtr Pointer to the array of data (nDim * nDim)
+ * \param nDim    Dimension of a square matrix  
+ * 
+ * \return true  If the selfadjoint matrix is positive definite
+ * \return false If the selfadjoint matrix is not positive definite
+ */
+template <typename T>
+inline bool checkSelfAdjointMatrixIsPositiveDefinite(T *dataPtr, int const nDim)
+{
+	//! First Map the data to Eigen Matrix format
+	EMapType<T, Eigen::ColMajor> DMap(dataPtr, nDim, nDim);
+	//! Since the matrix is selfadjoint
+	Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(DMap, Eigen::EigenvaluesOnly);
+
+	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(nDim - 1) > machinePrecision<T>;
+}
+
+/*!
+ * \brief This is a check if a selfadjoint matrix is positive definite
+ * 
+ * \tparam EigenMatrixT eigen Matrix
+ * 
+ * \param eMatrix Input matrix
+ * 
+ * \return true  If the selfadjoint matrix is positive definite
+ * \return false If the selfadjoint matrix is not positive definite
+ */
+template <class EigenMatrixT>
+inline bool checkSelfAdjointMatrixIsPositiveDefinite(EigenMatrixT const &eMatrix)
+{
+	//! Since the matrix is selfadjoint
+	Eigen::SelfAdjointEigenSolver<EigenMatrixT> es(eMatrix, Eigen::EigenvaluesOnly);
+
+	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixT::Scalar>;
+}
+
 
 } // namespace umuq
 
