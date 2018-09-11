@@ -73,7 +73,7 @@ extern "C"
 #include <limits>
 #include <algorithm>   // for min/max:
 #include <type_traits> // for std::is_nothrow_move_assignable
-#include <iostream>    // for outputting debug info
+#include <iostream>	// for outputting debug info
 #include <fstream>
 #include <sstream>
 #include <ios>
@@ -122,22 +122,21 @@ namespace internal
 inline static const char *SimdInstructionSetsInUse(void)
 {
 #if defined(UMUQ_VECTORIZE_SSE4_2)
-    return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
+	return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
 #elif defined(UMUQ_VECTORIZE_SSE4_1)
-    return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
+	return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
 #elif defined(UMUQ_VECTORIZE_SSSE3)
-    return "SSE, SSE2, SSE3, SSSE3";
+	return "SSE, SSE2, SSE3, SSSE3";
 #elif defined(UMUQ_VECTORIZE_SSE3)
-    return "SSE, SSE2, SSE3";
+	return "SSE, SSE2, SSE3";
 #elif defined(UMUQ_VECTORIZE_SSE2)
-    return "SSE, SSE2";
+	return "SSE, SSE2";
 #else
-    return "None";
+	return "None";
 #endif
 }
 
 } // namespace internal
-
 
 #ifdef M_PI
 #undef M_PI
@@ -182,11 +181,30 @@ inline static const char *SimdInstructionSetsInUse(void)
 
 //! Maximum size of a char * in UMUQ parser & io
 #define LINESIZE 256
+
 } // namespace umuq
 
 /*! 
  * This is the main module of UMUQ
  */
 #include "meta.hpp"
+
+/*!
+ * Default digits10
+ */
+#include "digits10.hpp"
+
+namespace umuq
+{
+
+/*!
+ * \brief Get the machine precision accuracy for T data type
+ * 
+ * \tparam T Data type
+ */
+template <typename T>
+static T machinePrecision = std::pow(T{10}, -digits10<T>());
+
+} // namespace umuq
 
 #endif // UMUQ_CORE_H
