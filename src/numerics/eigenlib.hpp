@@ -280,7 +280,7 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
 }
 
 /*!
- * \brief This is a check if a selfadjoint matrix is positive definite
+ * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
  * A matrix is selfadjoint if it equals its adjoint. For real matrices, this means 
  * that the matrix is symmetric: it equals its transpose.
@@ -294,7 +294,7 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
  * \return false If the selfadjoint matrix is not positive definite
  */
 template <typename T>
-inline bool checkSelfAdjointMatrixIsPositiveDefinite(T *dataPtr, int const nDim)
+inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 {
 	//! First Map the data to Eigen Matrix format
 	EMapType<T, Eigen::ColMajor> DMap(dataPtr, nDim, nDim);
@@ -305,9 +305,9 @@ inline bool checkSelfAdjointMatrixIsPositiveDefinite(T *dataPtr, int const nDim)
 }
 
 /*!
- * \brief This is a check if a selfadjoint matrix is positive definite
+ * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
- * \tparam EigenMatrixT eigen Matrix
+ * \tparam EigenMatrixT Eigen Matrix type
  * 
  * \param eMatrix Input matrix
  * 
@@ -315,12 +315,189 @@ inline bool checkSelfAdjointMatrixIsPositiveDefinite(T *dataPtr, int const nDim)
  * \return false If the selfadjoint matrix is not positive definite
  */
 template <class EigenMatrixT>
-inline bool checkSelfAdjointMatrixIsPositiveDefinite(EigenMatrixT const &eMatrix)
+inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 {
 	//! Since the matrix is selfadjoint
 	Eigen::SelfAdjointEigenSolver<EigenMatrixT> es(eMatrix, Eigen::EigenvaluesOnly);
 
 	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixT::Scalar>;
+}
+
+/*!
+ * \brief Force the selfadjoint matrix to be positive definite   
+ * 
+ * \tparam T Data type
+ * 
+ * \param dataPtr Pointer to the array of data (nDim * nDim)
+ * \param nDim    Dimension of a square matrix 
+ */
+template <typename T>
+void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
+{
+	//! First Map the data to Eigen Matrix format
+	EMapType<T, Eigen::ColMajor> eMatrix(dataPtr, nDim, nDim);
+
+	//! Fixed value to increase
+	T const increaseRate(0.01);
+
+	//! Fixed value to multiply by
+	T const fixedRate(1.01);
+
+	//! Vector for diagonal elements
+	std::vector<T> D(nDim);
+
+#ifdef DEBUG
+	std::cout << "eMatrix=" << eMatrix << std::endl;
+	std::size_t iter(0);
+#endif
+
+	bool belowMachinePrecision(false);
+	for (int i = 0; i < nDim; i++)
+	{
+		D[i] = eMatrix(i, i);
+		if (D[i] <= machinePrecision<T>)
+		{
+			//! We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+			belowMachinePrecision = true;
+		}
+	}
+
+	do
+	{
+		if (belowMachinePrecision)
+		{
+			belowMachinePrecision = false;
+
+			//! Find the maximum absolute element on the diagonal of the matrix
+			T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+
+			//! Find the minimum element
+			T const MinD = *std::min_element(D.begin(), D.end());
+
+			MaxAbsD *= increaseRate;
+
+			//! There is a negative component on the diagonal, and we should get rid of it.
+			if (MinD < 0)
+			{
+				MaxAbsD -= MinD;
+			}
+
+			if (MaxAbsD < machinePrecision<T>)
+			{
+				MaxAbsD = machinePrecision<T>;
+			}
+
+			for (int i = 0; i < nDim; i++)
+			{
+				eMatrix(i, i) += MaxAbsD;
+			}
+			//! Now none of the diagonal elements are below machine precision
+		}
+		else
+		{
+			for (int i = 0; i < nDim; i++)
+			{
+				eMatrix(i, i) *= fixedRate;
+			}
+		}
+
+#ifdef DEBUG
+		iter++;
+		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
+		std::cout << "eMatrix=" << eMatrix << std::endl;
+#endif
+	} while (!isSelfAdjointMatrixPositiveDefinite<T>(dataPtr, nDim));
+
+	return;
+}
+
+/*!
+ * \brief Force the selfadjoint matrix to be positive definite   
+ * 
+ * \tparam EigenMatrixT Eigen Matrix type
+ * 
+ * \param eMatrix Input matrix
+ */
+template <class EigenMatrixT>
+void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
+{
+	typedef typename EigenMatrixT::Scalar T;
+
+	//! Fixed value to increase
+	T const increaseRate(0.01);
+
+	//! Fixed value to multiply by
+	T const fixedRate(1.01);
+
+	//! Size of the matrix
+	Eigen::Index const nDim = eMatrix.rows();
+
+	//! Vector for diagonal elements
+	std::vector<T> D(nDim);
+
+#ifdef DEBUG
+	std::cout << "eMatrix=" << eMatrix << std::endl;
+	std::size_t iter(0);
+#endif
+
+	bool belowMachinePrecision(false);
+	for (Eigen::Index i = 0; i < nDim; i++)
+	{
+		D[i] = eMatrix(i, i);
+		if (D[i] <= machinePrecision<T>)
+		{
+			//! We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+			belowMachinePrecision = true;
+		}
+	}
+
+	do
+	{
+		if (belowMachinePrecision)
+		{
+			belowMachinePrecision = false;
+
+			//! Find the maximum absolute element on the diagonal of the matrix
+			T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+
+			//! Find the minimum element
+			T const MinD = *std::min_element(D.begin(), D.end());
+
+			MaxAbsD *= increaseRate;
+
+			//! There is a negative component on the diagonal, and we should get rid of it.
+			if (MinD < 0)
+			{
+				MaxAbsD -= MinD;
+			}
+
+			if (MaxAbsD < machinePrecision<T>)
+			{
+				MaxAbsD = machinePrecision<T>;
+			}
+
+			for (Eigen::Index i = 0; i < nDim; i++)
+			{
+				eMatrix(i, i) += MaxAbsD;
+			}
+			//! Now none of the diagonal elements are below machine precision
+		}
+		else
+		{
+			for (Eigen::Index i = 0; i < nDim; i++)
+			{
+				eMatrix(i, i) *= fixedRate;
+			}
+		}
+
+#ifdef DEBUG
+		iter++;
+		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
+		std::cout << "eMatrix=" << eMatrix << std::endl;
+#endif
+	} while (!isSelfAdjointMatrixPositiveDefinite<EigenMatrixT>(eMatrix));
+
+	return;
 }
 
 
