@@ -362,52 +362,55 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 		}
 	}
 
-	do
+	if (belowMachinePrecision)
 	{
-		if (belowMachinePrecision)
+		belowMachinePrecision = false;
+
+		//! Find the maximum absolute element on the diagonal of the matrix
+		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+
+		//! Find the minimum element
+		T const MinD = *std::min_element(D.begin(), D.end());
+
+		MaxAbsD *= increaseRate;
+
+		//! There is a negative component on the diagonal, and we should get rid of it.
+		if (MinD < 0)
 		{
-			belowMachinePrecision = false;
-
-			//! Find the maximum absolute element on the diagonal of the matrix
-			T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
-
-			//! Find the minimum element
-			T const MinD = *std::min_element(D.begin(), D.end());
-
-			MaxAbsD *= increaseRate;
-
-			//! There is a negative component on the diagonal, and we should get rid of it.
-			if (MinD < 0)
-			{
-				MaxAbsD -= MinD;
-			}
-
-			if (MaxAbsD < machinePrecision<T>)
-			{
-				MaxAbsD = machinePrecision<T>;
-			}
-
-			for (int i = 0; i < nDim; i++)
-			{
-				eMatrix(i, i) += MaxAbsD;
-			}
-			//! Now none of the diagonal elements are below machine precision
-		}
-		else
-		{
-			for (int i = 0; i < nDim; i++)
-			{
-				eMatrix(i, i) *= fixedRate;
-			}
+			MaxAbsD -= MinD;
 		}
 
+		if (MaxAbsD < machinePrecision<T>)
+		{
+			MaxAbsD = machinePrecision<T>;
+		}
+
+		for (int i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) += MaxAbsD;
+		}
+		//! Now none of the diagonal elements are below machine precision
+	}
+	else
+	{
+		for (int i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) *= fixedRate;
+		}
+	}
+
+	while (!isSelfAdjointMatrixPositiveDefinite<T>(dataPtr, nDim))
+	{
 #ifdef DEBUG
 		iter++;
 		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
 		std::cout << "eMatrix=" << eMatrix << std::endl;
 #endif
-	} while (!isSelfAdjointMatrixPositiveDefinite<T>(dataPtr, nDim));
-
+		for (int i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) *= fixedRate;
+		}
+	}
 	return;
 }
 
@@ -451,55 +454,58 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 		}
 	}
 
-	do
+	if (belowMachinePrecision)
 	{
-		if (belowMachinePrecision)
+		belowMachinePrecision = false;
+
+		//! Find the maximum absolute element on the diagonal of the matrix
+		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+
+		//! Find the minimum element
+		T const MinD = *std::min_element(D.begin(), D.end());
+
+		MaxAbsD *= increaseRate;
+
+		//! There is a negative component on the diagonal, and we should get rid of it.
+		if (MinD < 0)
 		{
-			belowMachinePrecision = false;
-
-			//! Find the maximum absolute element on the diagonal of the matrix
-			T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
-
-			//! Find the minimum element
-			T const MinD = *std::min_element(D.begin(), D.end());
-
-			MaxAbsD *= increaseRate;
-
-			//! There is a negative component on the diagonal, and we should get rid of it.
-			if (MinD < 0)
-			{
-				MaxAbsD -= MinD;
-			}
-
-			if (MaxAbsD < machinePrecision<T>)
-			{
-				MaxAbsD = machinePrecision<T>;
-			}
-
-			for (Eigen::Index i = 0; i < nDim; i++)
-			{
-				eMatrix(i, i) += MaxAbsD;
-			}
-			//! Now none of the diagonal elements are below machine precision
-		}
-		else
-		{
-			for (Eigen::Index i = 0; i < nDim; i++)
-			{
-				eMatrix(i, i) *= fixedRate;
-			}
+			MaxAbsD -= MinD;
 		}
 
+		if (MaxAbsD < machinePrecision<T>)
+		{
+			MaxAbsD = machinePrecision<T>;
+		}
+
+		for (Eigen::Index i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) += MaxAbsD;
+		}
+		//! Now none of the diagonal elements are below machine precision
+	}
+	else
+	{
+		for (Eigen::Index i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) *= fixedRate;
+		}
+	}
+
+	while (!isSelfAdjointMatrixPositiveDefinite<EigenMatrixT>(eMatrix))
+	{
 #ifdef DEBUG
 		iter++;
 		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
 		std::cout << "eMatrix=" << eMatrix << std::endl;
 #endif
-	} while (!isSelfAdjointMatrixPositiveDefinite<EigenMatrixT>(eMatrix));
+		for (Eigen::Index i = 0; i < nDim; i++)
+		{
+			eMatrix(i, i) *= fixedRate;
+		}
+	}
 
 	return;
 }
-
 
 } // namespace umuq
 
