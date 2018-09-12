@@ -244,12 +244,34 @@ TEST(eigen_lu_test, HandlesLU)
 }
 
 //! MatrixIsPositiveDefinite test
-TEST(eigen_MatrixIsPositiveDefinite_test, HandlescheckSPDMatrixIsPositiveDefinite)
+TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 {
-	//! Matrix A should be selfadjoint
+	//! Matrix A is selfadjoint
 	umuq::EMatrix2d A;
 	A << 2, 2, 2, 2;
-	EXPECT_FALSE(umuq::checkSelfAdjointMatrixIsPositiveDefinite<umuq::EMatrix2d>(A));
+
+	//! Matrix A is not positive definite
+	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
+
+	//! Force the matrix to be positive definite
+	umuq::forceSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A);
+
+	//! Check to see if it is positive definite
+	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
+
+	//! Matrix B is selfadjoint
+	std::vector<double> B{1, 1, 3,
+						  1, 3, 1,
+						  3, 1, 1};
+
+	//! Matrix B is not positive definite
+	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
+
+	//! Force the matrix to be positive definite
+	umuq::forceSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3);
+
+	//! Check to see if it is positive definite
+	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
 }
 
 int main(int argc, char **argv)
