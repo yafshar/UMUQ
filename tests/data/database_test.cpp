@@ -10,8 +10,8 @@ TEST(database_test, HandlesConstruction)
     {
         umuq::tmcmc::database<double> d;
 
-        EXPECT_EQ(0, d.ndimParray);
-        EXPECT_EQ(0, d.ndimGarray);
+        EXPECT_EQ(0, d.nDimSamplePoints);
+        EXPECT_EQ(0, d.nDimDataArray);
         EXPECT_EQ(std::size_t{}, d.idxPos);
         EXPECT_EQ(std::size_t{}, d.entries);
     }
@@ -22,8 +22,8 @@ TEST(database_test, HandlesConstruction)
     {
         umuq::tmcmc::database<double> d(2, 2, 3);
 
-        EXPECT_EQ(2, d.ndimParray);
-        EXPECT_EQ(2, d.ndimGarray);
+        EXPECT_EQ(2, d.nDimSamplePoints);
+        EXPECT_EQ(2, d.nDimDataArray);
         EXPECT_EQ(std::size_t{}, d.idxPos);
         EXPECT_EQ(std::size_t{3}, d.entries);
 
@@ -45,27 +45,27 @@ TEST(database_test, HandlesConstruction)
             d.update(p, 2000, g, 0);
         }
 
-        EXPECT_DOUBLE_EQ(1., d.Parray[0]);
-        EXPECT_DOUBLE_EQ(-1., d.Parray[1]);
-        EXPECT_DOUBLE_EQ(2., d.Parray[2]);
-        EXPECT_DOUBLE_EQ(3.4, d.Parray[3]);
-        EXPECT_DOUBLE_EQ(4., d.Parray[4]);
-        EXPECT_DOUBLE_EQ(14., d.Parray[5]);
+        EXPECT_DOUBLE_EQ(1., d.samplePoints[0]);
+        EXPECT_DOUBLE_EQ(-1., d.samplePoints[1]);
+        EXPECT_DOUBLE_EQ(2., d.samplePoints[2]);
+        EXPECT_DOUBLE_EQ(3.4, d.samplePoints[3]);
+        EXPECT_DOUBLE_EQ(4., d.samplePoints[4]);
+        EXPECT_DOUBLE_EQ(14., d.samplePoints[5]);
 
-        EXPECT_DOUBLE_EQ(120., d.Garray[0]);
-        EXPECT_DOUBLE_EQ(321., d.Garray[1]);
-        EXPECT_DOUBLE_EQ(1206., d.Garray[2]);
-        EXPECT_DOUBLE_EQ(3621, d.Garray[3]);
-        EXPECT_DOUBLE_EQ(506., d.Garray[4]);
-        EXPECT_DOUBLE_EQ(132621., d.Garray[5]);
+        EXPECT_DOUBLE_EQ(120., d.dataArray[0]);
+        EXPECT_DOUBLE_EQ(321., d.dataArray[1]);
+        EXPECT_DOUBLE_EQ(1206., d.dataArray[2]);
+        EXPECT_DOUBLE_EQ(3621, d.dataArray[3]);
+        EXPECT_DOUBLE_EQ(506., d.dataArray[4]);
+        EXPECT_DOUBLE_EQ(132621., d.dataArray[5]);
 
-        EXPECT_DOUBLE_EQ(1000., d.Fvalue[0]);
-        EXPECT_DOUBLE_EQ(10000., d.Fvalue[1]);
-        EXPECT_DOUBLE_EQ(2000., d.Fvalue[2]);
+        EXPECT_DOUBLE_EQ(1000., d.fValue[0]);
+        EXPECT_DOUBLE_EQ(10000., d.fValue[1]);
+        EXPECT_DOUBLE_EQ(2000., d.fValue[2]);
 
-        EXPECT_EQ(1, d.Surrogate[0]);
-        EXPECT_EQ(1, d.Surrogate[1]);
-        EXPECT_EQ(0, d.Surrogate[2]);
+        EXPECT_EQ(1, d.surrogate[0]);
+        EXPECT_EQ(1, d.surrogate[1]);
+        EXPECT_EQ(0, d.surrogate[2]);
 
         EXPECT_TRUE(d.save("database", 100));
     }
@@ -79,23 +79,23 @@ TEST(database_test, HandlesConstruction)
         umuq::tmcmc::database<double> d(2, 2, 3);
         EXPECT_TRUE(d.load("database", 100));
 
-        EXPECT_DOUBLE_EQ(1., d.Parray[0]);
-        EXPECT_DOUBLE_EQ(-1., d.Parray[1]);
-        EXPECT_DOUBLE_EQ(2., d.Parray[2]);
-        EXPECT_DOUBLE_EQ(3.4, d.Parray[3]);
-        EXPECT_DOUBLE_EQ(4., d.Parray[4]);
-        EXPECT_DOUBLE_EQ(14., d.Parray[5]);
+        EXPECT_DOUBLE_EQ(1., d.samplePoints[0]);
+        EXPECT_DOUBLE_EQ(-1., d.samplePoints[1]);
+        EXPECT_DOUBLE_EQ(2., d.samplePoints[2]);
+        EXPECT_DOUBLE_EQ(3.4, d.samplePoints[3]);
+        EXPECT_DOUBLE_EQ(4., d.samplePoints[4]);
+        EXPECT_DOUBLE_EQ(14., d.samplePoints[5]);
 
-        EXPECT_DOUBLE_EQ(120., d.Garray[0]);
-        EXPECT_DOUBLE_EQ(321., d.Garray[1]);
-        EXPECT_DOUBLE_EQ(1206., d.Garray[2]);
-        EXPECT_DOUBLE_EQ(3621, d.Garray[3]);
-        EXPECT_DOUBLE_EQ(506., d.Garray[4]);
-        EXPECT_DOUBLE_EQ(132621., d.Garray[5]);
+        EXPECT_DOUBLE_EQ(120., d.dataArray[0]);
+        EXPECT_DOUBLE_EQ(321., d.dataArray[1]);
+        EXPECT_DOUBLE_EQ(1206., d.dataArray[2]);
+        EXPECT_DOUBLE_EQ(3621, d.dataArray[3]);
+        EXPECT_DOUBLE_EQ(506., d.dataArray[4]);
+        EXPECT_DOUBLE_EQ(132621., d.dataArray[5]);
 
-        EXPECT_DOUBLE_EQ(1000., d.Fvalue[0]);
-        EXPECT_DOUBLE_EQ(10000., d.Fvalue[1]);
-        EXPECT_DOUBLE_EQ(2000., d.Fvalue[2]);
+        EXPECT_DOUBLE_EQ(1000., d.fValue[0]);
+        EXPECT_DOUBLE_EQ(10000., d.fValue[1]);
+        EXPECT_DOUBLE_EQ(2000., d.fValue[2]);
     }
 
     std::remove("database_100.txt");
@@ -127,27 +127,27 @@ TEST(database_test, HandlesTask)
             d.update(p, 2000, g, 0);
         }
 
-        EXPECT_DOUBLE_EQ(1., d.Parray[0]);
-        EXPECT_DOUBLE_EQ(-1., d.Parray[1]);
-        EXPECT_DOUBLE_EQ(2., d.Parray[2]);
-        EXPECT_DOUBLE_EQ(3.4, d.Parray[3]);
-        EXPECT_DOUBLE_EQ(4., d.Parray[4]);
-        EXPECT_DOUBLE_EQ(14., d.Parray[5]);
+        EXPECT_DOUBLE_EQ(1., d.samplePoints[0]);
+        EXPECT_DOUBLE_EQ(-1., d.samplePoints[1]);
+        EXPECT_DOUBLE_EQ(2., d.samplePoints[2]);
+        EXPECT_DOUBLE_EQ(3.4, d.samplePoints[3]);
+        EXPECT_DOUBLE_EQ(4., d.samplePoints[4]);
+        EXPECT_DOUBLE_EQ(14., d.samplePoints[5]);
 
-        EXPECT_DOUBLE_EQ(120., d.Garray[0]);
-        EXPECT_DOUBLE_EQ(321., d.Garray[1]);
-        EXPECT_DOUBLE_EQ(1206., d.Garray[2]);
-        EXPECT_DOUBLE_EQ(3621, d.Garray[3]);
-        EXPECT_DOUBLE_EQ(506., d.Garray[4]);
-        EXPECT_DOUBLE_EQ(132621., d.Garray[5]);
+        EXPECT_DOUBLE_EQ(120., d.dataArray[0]);
+        EXPECT_DOUBLE_EQ(321., d.dataArray[1]);
+        EXPECT_DOUBLE_EQ(1206., d.dataArray[2]);
+        EXPECT_DOUBLE_EQ(3621, d.dataArray[3]);
+        EXPECT_DOUBLE_EQ(506., d.dataArray[4]);
+        EXPECT_DOUBLE_EQ(132621., d.dataArray[5]);
 
-        EXPECT_DOUBLE_EQ(1000., d.Fvalue[0]);
-        EXPECT_DOUBLE_EQ(10000., d.Fvalue[1]);
-        EXPECT_DOUBLE_EQ(2000., d.Fvalue[2]);
+        EXPECT_DOUBLE_EQ(1000., d.fValue[0]);
+        EXPECT_DOUBLE_EQ(10000., d.fValue[1]);
+        EXPECT_DOUBLE_EQ(2000., d.fValue[2]);
 
-        EXPECT_EQ(1, d.Surrogate[0]);
-        EXPECT_EQ(1, d.Surrogate[1]);
-        EXPECT_EQ(0, d.Surrogate[2]);
+        EXPECT_EQ(1, d.surrogate[0]);
+        EXPECT_EQ(1, d.surrogate[1]);
+        EXPECT_EQ(0, d.surrogate[2]);
 
         EXPECT_TRUE(d.save("database", 100));
     }
