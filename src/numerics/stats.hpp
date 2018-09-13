@@ -19,7 +19,7 @@ namespace umuq
 * \b median             Computes the mdeian of the elements in the array of data
 * \b medianAbs          Computes the median absolute deviation (MAD) of the elements in the array of data
 * \b stddev             Computes the standard deviation of the elements in the array of data
-* \b CoefVar            Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
+* \b coefvar            Computes the coefficient of variation (CV)
 * \b minmaxNormal       Scales the numeric data using the MinMax normalization method
 * \b zscoreNormal       Scales the numeric data using the Z-score normalization method
 * \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
@@ -225,6 +225,30 @@ struct stats
 
 	template <typename T, typename TOut = double>
 	inline TOut stddev(arrayWrapper<T> const &iArray, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
+
+	/*!
+	 * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
+	 * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
+	 * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
+	 * 
+     * \tparam T    data type
+     * \tparam TOut data type of return output result (default is double)
+     * 
+     * \param idata     array of data
+     * \param nSize     size of the array
+     * \param Stride    element stride (optional, default is 1)
+     * \param idatamean mean of the elements in idata (optional)
+	 * 
+	 * \returns The coefficient of variation (CV)
+	 */
+	template <typename T, typename TOut = double>
+	inline TOut coefvar(T const *idata, int const nSize, int const Stride = 1, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
+
+	template <typename T, typename TOut = double>
+	inline TOut coefvar(std::vector<T> const &idata, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
+
+	template <typename T, typename TOut = double>
+	inline TOut coefvar(arrayWrapper<T> const &iArray, TOut const idatamean = std::numeric_limits<TOut>::max()) const;
 
 	/*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
@@ -626,7 +650,7 @@ inline TOut stats::medianAbs(arrayWrapper<T> const &iArray, TOut &median_)
 template <typename T, typename TOut>
 inline TOut stats::stddev(T const *idata, int const nSize, int const Stride, TOut const idatamean) const
 {
-	TOut m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata, nSize, Stride);
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata, nSize, Stride);
 	TOut s(0);
 	if (Stride != 1)
 	{
@@ -641,7 +665,7 @@ inline TOut stats::stddev(T const *idata, int const nSize, int const Stride, TOu
 template <typename T, typename TOut>
 inline TOut stats::stddev(std::vector<T> const &idata, TOut const idatamean) const
 {
-	TOut m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata);
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata);
 	TOut s(0);
 	std::for_each(idata.begin(), idata.end(), [&](T const d) { s += (d - m) * (d - m); });
 	return idata.size() > 1 ? std::sqrt(s / (idata.size() - 1)) : std::sqrt(s);
@@ -650,10 +674,43 @@ inline TOut stats::stddev(std::vector<T> const &idata, TOut const idatamean) con
 template <typename T, typename TOut>
 inline TOut stats::stddev(arrayWrapper<T> const &iArray, TOut const idatamean) const
 {
-	TOut m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(iArray);
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(iArray);
 	TOut s(0);
 	std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
 	return iArray.size() > 1 ? std::sqrt(s / (iArray.size() - 1)) : std::sqrt(s);
+}
+
+template <typename T, typename TOut>
+inline TOut stats::coefvar(T const *idata, int const nSize, int const Stride, TOut const idatamean) const
+{
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata, nSize, Stride);
+	TOut s(0);
+	if (Stride != 1)
+	{
+		arrayWrapper<T> iArray(idata, nSize, Stride);
+		std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
+		return iArray.size() > 1 ? std::sqrt(s / (iArray.size() - 1)) / m : std::sqrt(s) / m;
+	}
+	std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
+	return nSize > 1 ? std::sqrt(s / (nSize - 1)) / m : std::sqrt(s) / m;
+}
+
+template <typename T, typename TOut>
+inline TOut stats::coefvar(std::vector<T> const &idata, TOut const idatamean) const
+{
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(idata);
+	TOut s(0);
+	std::for_each(idata.begin(), idata.end(), [&](T const d) { s += (d - m) * (d - m); });
+	return idata.size() > 1 ? std::sqrt(s / (idata.size() - 1)) / m : std::sqrt(s) / m;
+}
+
+template <typename T, typename TOut>
+inline TOut stats::coefvar(arrayWrapper<T> const &iArray, TOut const idatamean) const
+{
+	TOut const m = idatamean < std::numeric_limits<TOut>::max() ? idatamean : mean<T, TOut>(iArray);
+	TOut s(0);
+	std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
+	return iArray.size() > 1 ? std::sqrt(s / (iArray.size() - 1)) / m : std::sqrt(s) / m;
 }
 
 template <typename T>
