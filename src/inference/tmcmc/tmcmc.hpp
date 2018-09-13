@@ -71,6 +71,13 @@ public:
   inline bool setInputFileName(char const *fileName = "");
 
   /*!
+   * \brief Get the Input File Name object
+   * 
+   * \return char const* 
+   */
+  inline std::string getInputFileName();
+
+  /*!
    * \brief Reset the managed object to the correct size, which is read from input file name
    * 
    * \param fileName Input file name 
@@ -171,7 +178,7 @@ private:
   std::vector<T> samplePoints;
 
   //! Function values
-  std::vector<T> Fvalue;
+  std::vector<T> fValue;
 
   //! Array of the work inofmrtaion
   int workInformation[3];
@@ -209,6 +216,12 @@ inline bool tmcmc<T, F>::setInputFileName(char const *fileName)
 }
 
 template <typename T, class F>
+inline std::string tmcmc<T, F>::getInputFileName()
+{
+  return inputFilename;
+}
+
+template <typename T, class F>
 bool tmcmc<T, F>::reset(char const *fileName)
 {
   //! Check to see if the input file exists in the PATH or not?
@@ -232,7 +245,7 @@ bool tmcmc<T, F>::reset(char const *fileName)
       //! Assign the correct size
       samplePoints.resize(Data.nDim);
 
-      Fvalue.resize(1);
+      fValue.resize(1);
 
       //! Initilize the tstats variable from read data
       tStats = std::move(tmcmcStats<T>(Data.options));
@@ -344,7 +357,7 @@ bool tmcmc<T, F>::iterate()
     //! Step number
     workInformation[2] = 0;
 
-    int nFvalue = Fvalue.size();
+    int nFvalue = fValue.size();
 
     for (int i = 0; i < Data.eachPopulationSize[0]; i++)
     {
@@ -363,7 +376,7 @@ bool tmcmc<T, F>::iterate()
                   1, MPIDatatype<int>, CALL_BY_COP,
                   3, MPIDatatype<int>, CALL_BY_COP,
                   reinterpret_cast<long long>(this), samplePoints.data(),
-                  &Data.nDim, Fvalue.data(), &nFvalue, workInformation);
+                  &Data.nDim, fValue.data(), &nFvalue, workInformation);
     }
 
     torc_enable_stealing();
@@ -403,33 +416,33 @@ bool tmcmc<T, F>::iterate()
 template <typename T, class F>
 bool tmcmc<T, F>::prepareNewGeneration(database<T> &leaders)
 {
-  int nSize = static_cast<int>(currentData.getSize()) * currentData.ndimParray;
+  int nSize = static_cast<int>(currentData.getSize()) * currentData.nDimSamplePoints;
 
 #ifdef DEBUG
   //! Create an instance of the statistics object
   stats s;
 
   //! Compute vectors of mean and standard deviation for each dimension
-  std::vector<T> mean(currentData.ndimParray);
-  std::vector<T> stddev(currentData.ndimParray);
+  std::vector<T> mean(currentData.nDimSamplePoints);
+  std::vector<T> stddev(currentData.nDimSamplePoints);
 
-  for (int i = 0; i < currentData.ndimParray; i++)
+  for (int i = 0; i < currentData.nDimSamplePoints; i++)
   {
-    mean[i] = s.mean<T, T>(currentData.Parray.get() + i, nSize, currentData.ndimParray);
-    stddev[i] = s.stddev<T, T>(currentData.Parray.get() + i, nSize, currentData.ndimParray, mean[i]);
+    mean[i] = s.mean<T, T>(currentData.samplePoints.get() + i, nSize, currentData.nDimSamplePoints);
+    stddev[i] = s.stddev<T, T>(currentData.samplePoints.get() + i, nSize, currentData.nDimSamplePoints, mean[i]);
   }
 
   io f;
   std::cout << "Complete data samples on currentGeneration Number = " << runData.currentGeneration << std::endl;
-  f.printMatrix<T>("Means", mean.data(), 1, currentData.ndimParray);
-  f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.ndimParray);
+  f.printMatrix<T>("Means", mean.data(), 1, currentData.nDimSamplePoints);
+  f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.nDimSamplePoints);
 #endif
 
   //! Now we check to find unique points
   std::vector<T> currentDataUniques(nSize);
 
   //! Get the uniques samples
-  runData.getUniques(currentData.Parray, currentData.getSize(), currentData.ndimParray, currentDataUniques);
+  runData.getUniques(currentData.samplePoints, currentData.getSize(), currentData.nDimSamplePoints, currentDataUniques);
 
   //! Set the number of uniques samples
   runData.setUniqueNumber(currentDataUniques.size());
@@ -443,16 +456,18 @@ bool tmcmc<T, F>::prepareNewGeneration(database<T> &leaders)
   }
 
 #ifdef DEBUG
-  for (int i = 0; i < currentData.ndimParray; i++)
+  for (int i = 0; i < currentData.nDimSamplePoints; i++)
   {
-    mean[i] = s.mean<T, T>(currentDataUniques.data() + i, nSize, currentData.ndimParray);
-    stddev[i] = s.stddev<T, T>(currentDataUniques.data() + i, nSize, currentData.ndimParray, mean[i]);
+    mean[i] = s.mean<T, T>(currentDataUniques.data() + i, nSize, currentData.nDimSamplePoints);
+    stddev[i] = s.stddev<T, T>(currentDataUniques.data() + i, nSize, currentData.nDimSamplePoints, mean[i]);
   }
 
   std::cout << "Unique data samples on currentGeneration No = " << runData.currentGeneration << std::endl;
-  f.printMatrix<T>("Means", mean.data(), 1, currentData.ndimParray);
-  f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.ndimParray);
+  f.printMatrix<T>("Means", mean.data(), 1, currentData.nDimSamplePoints);
+  f.printMatrix<T>("Stddev", stddev.data(), 1, currentData.nDimSamplePoints);
 #endif
+
+  // tStats.selectNewGeneration(Data, currentData, runData);
 
 }
 
