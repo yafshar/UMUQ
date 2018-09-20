@@ -135,12 +135,79 @@ public:
    */
   bool init(char const *fileName = "");
 
+  /*!
+   * \brief Check if the restart files are available or not. In case of being available, load, and update the data.
+   * 
+   * \returns true 
+   * \returns false If this is a fresh start
+   */
+  inline bool restart();
+
+  /*!
+   * \brief Start of the TMCMC algorithm 
+   * 
+   * The original formulation of TMCMC constructs multiple intermediate target 
+   * distributions as follows:
+   * \f[
+   *      f_j \propto p(D|\theta)^{\zeta_j}p(\theta) 
+   * \f]
+   * for \f$ j=1, \cdots,m\f$ and \f$ \zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ 
+   * Starting from samples drawn from the prior at stage \f$ j = 1. \f$ 
+   *  
+   * \returns true 
+   * \returns false 
+   */
+  bool iterate0();
+
+  /*!
+   * \brief Start of the TMCMC algorithm 
+   * 
+   *  
+   * \returns true 
+   * \returns false 
+   */
+  bool iteratem();
+
+  /*!
+   * \brief Iterative part of the TMCMC algorithm 
+   * 
+   * The original formulation of TMCMC constructs multiple intermediate target 
+   * distributions as follows:
+   * \f[
+   *      f_j \propto p(D|\theta)^{\zeta_j}p(\theta) 
+   * \f]
+   * for \f$ j=1, \cdots,m\f$ and \f$ \zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ 
+   * Starting from samples drawn from the prior at stage \f$ j = 1, \f$ the
+   * posterior samples are obtained by updating the prior samples through 
+   * \f$ m - 2 \f$ intermediate target distributions. 
+   * 
+   * When \f$ \zeta_j = 1, \f$ this procedure stops and the last set of samples
+   * is approximately distributed according to the target posterior PDF, 
+   * \f$ p(\theta | D) \f$. Through the m steps, the evidence is obtained. 
+   *  
+   * \returns true 
+   * \returns false 
+   */
   bool iterate();
 
+  /*!
+   * \brief Process current data, including, calculating the statistics 
+   * and computing the probabilities based on function values, and draw 
+   * new samples 
+   * 
+   * Preparing the new data generation includes:
+   * - Process the current sampling points data
+   * - Find unique sampling points
+   * - Calculate the statistics of the data, including acceptance rate
+   * - Compute probabilities based on function values for each sample point
+   * - Select the new sample points leaders for propagating the chains and update the statistics
+   * - Compute number of selections (steps) for each leader chain
+   * - Update leaders information from current data information
+   * 
+   * \returns true 
+   * \returns false 
+   */
   bool prepareNewGeneration();
-
-private:
-  inline bool iterate0();
 
 public:
   //! Input file name
@@ -185,6 +252,43 @@ private:
 
   //! Array of the work information
   int workInformation[3];
+
+  //! Local covariance with the size of [populationSize*nDim*nDim]
+  std::vector<T> localCovariance;
+
+  //  localCovariance(populationSize * nDim * nDim, T{})
+  // for (int i = 0, l = 0; i < populationSize; i++)
+  // {
+  // 	for (int j = 0; j < nDim; j++)
+  // 	{
+  // 		for (int k = 0; k < nDim; k++, l++)
+  // 		{
+  // 			if (j == k)
+  // 			{
+  // 				localCovariance[l] = static_cast<T>(1);
+  // 			}
+  // 		}
+  // 	}
+  // }
+
+  // localCovariance = std::move(other.localCovariance);
+  // localCovariance = std::move(other.localCovariance);
+  // localCovariance.swap(other.localCovariance);
+  // localCovariance.clear();
+  // localCovariance.resize(populationSize * nDim * nDim, T{});
+  // for (int i = 0, l = 0; i < populationSize; i++)
+  // {
+  // 	for (int j = 0; j < nDim; j++)
+  // 	{
+  // 		for (int k = 0; k < nDim; k++, l++)
+  // 		{
+  // 			if (j == k)
+  // 			{
+  // 				localCovariance[l] = static_cast<T>(1);
+  // 			}
+  // 		}
+  // 	}
+  // }
 
   //! Mutex object
   std::mutex m;
@@ -343,17 +447,17 @@ bool tmcmc<T, F>::init(char const *fileName)
 }
 
 template <typename T, class F>
-inline bool tmcmc<T, F>::iterate0()
+inline bool tmcmc<T, F>::restart()
 {
   //! Check if the restart file is available or not
   return runData.load() ? currentData.load("", runData.currentGeneration) : false;
 }
 
 template <typename T, class F>
-bool tmcmc<T, F>::iterate()
+bool tmcmc<T, F>::iterate0()
 {
-  //! If it is a fresh run, or the restart data is corrupted or is not available
-  if (!iterate0())
+  //! Check if it is a fresh run, or the restart data is corrupted or is not available
+  if (!restart())
   {
     //! currentGeneration number
     workInformation[0] = runData.currentGeneration;
@@ -400,6 +504,7 @@ bool tmcmc<T, F>::iterate()
     //! Reset the local function counter to zero
     fc.reset();
 
+    //! Check if we should save the mid run data
     if (Data.saveData)
     {
       if (!currentData.save("curgen_db", runData.currentGeneration))
@@ -409,24 +514,99 @@ bool tmcmc<T, F>::iterate()
     }
 
     //! Running information for checkpoint restart
-    runData.save();
+    return runData.save();
   }
-
-  if (prepareNewGeneration())
-  {
-    //! Broadcast the information to all the nodes
-    runData.broadcast();
-
-  }
-
+  return true;
 }
 
-/* process curgen_db -> calculate statitics */
-/* compute probs based on F values */
-/* draw new samples (nchains or user-specified) */
-/* find unique samples: fill the (new) leaders table */
-/* count how many times they appear -> nsteps */
-/* return the new sample size (number of chains) */
+template <typename T, class F>
+bool tmcmc<T, F>::iteratem()
+{
+  //! currentGeneration number
+  workInformation[0] = runData.currentGeneration;
+
+  //! Step number, this is the first step
+  workInformation[2] = 0;
+
+  //! Number of function value at each sampling point
+  int nFvalue = 1;
+
+  //! Loop through all the population size
+  for (int i = 0; i < Data.eachPopulationSize[0]; i++)
+  {
+    //! Sample number
+    workInformation[1] = i;
+
+    //! Create the input sample points from the prior distribution
+    prior.sample(samplePoints);
+
+    //! Create tasks
+    torc_create(-1, (void (*)())tmcmcInitTask<T, F>, 6,
+                1, MPIDatatype<long long>, CALL_BY_REF,
+                Data.nDim, MPIDatatype<T>, CALL_BY_COP,
+                1, MPIDatatype<int>, CALL_BY_COP,
+                1, MPIDatatype<T>, CALL_BY_RES,
+                1, MPIDatatype<int>, CALL_BY_COP,
+                3, MPIDatatype<int>, CALL_BY_COP,
+                reinterpret_cast<long long>(this), samplePoints.data(),
+                &Data.nDim, fValue.data() + i, &nFvalue, workInformation);
+  }
+
+  torc_enable_stealing();
+  torc_waitall();
+  torc_disable_stealing();
+
+  //! Count the function calls
+  fc.count();
+
+  //! Print the summary
+  std::cout << "server: currentGeneration " << runData.currentGeneration << ": total elapsed time = "
+            << "secs, generation elapsed time = "
+            << "secs for function calls = " << fc.getLocalFunctionCallsNumber() << std::endl;
+
+  //! Reset the local function counter to zero
+  fc.reset();
+
+  //! Check if we should save the mid run data
+  if (Data.saveData)
+  {
+    if (!currentData.save("curgen_db", runData.currentGeneration))
+    {
+      UMUQFAILRETURN("Failed to write down the current data information!");
+    }
+  }
+
+  //! Running information for checkpoint restart
+  return runData.save();
+}
+
+template <typename T, class F>
+bool tmcmc<T, F>::iterate()
+{
+  if (!iterate0())
+  {
+    UMUQFAILRETURN("Failed to start or restart the algorithm!");
+  }
+
+  //! Prepare new generation from the current information
+  if (!prepareNewGeneration())
+  {
+    UMUQFAILRETURN("Failed to prepare the new generation of sample points!");
+  }
+
+  //! Broadcast the information to all of the nodes
+  runData.broadcast();
+
+  //! Print the sample mean and Sample covariance matrix
+  runData.print();
+
+  //! Check the current data probability
+  while (runData.generationProbabilty[runData.currentGeneration] < T{1} || runData.currentGeneration < runData.maxGenerations)
+  {
+    runData.currentGeneration++;
+  }
+}
+
 template <typename T, class F>
 bool tmcmc<T, F>::prepareNewGeneration()
 {
@@ -488,7 +668,7 @@ bool tmcmc<T, F>::prepareNewGeneration()
   //! Create database for leaders selection
   leadersData = std::move(database<T>(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
 
-  //! Select the new generaion leaders nad update the statistics
+  //! Select the new generaion leaders and update the statistics
   if (tStats.selectNewGeneration(Data, currentData, runData, leadersData))
   {
     //! Reset the number of selections for each leader chain
