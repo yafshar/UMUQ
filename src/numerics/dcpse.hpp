@@ -175,19 +175,19 @@ class dcpse
     /*!
      * \brief A pointer to kernel array of all query points
      * 
-     * \returns  A pointer to kernel array of all query points
+     * \returns A pointer to kernel array of all query points
      */
     inline T *neighborhoodKernel() const;
 
     /*!
-     * \brief   Size of the neighborhood kernel which equals to the monomial size 
+     * \brief Size of the neighborhood kernel which equals to the monomial size 
      * 
      * \returns Size of the neighborhood kernel
      */
     inline int neighborhoodKernelSize() const;
 
     /*!
-     * \brief order of accuracy of DC-PSE kernel at index
+     * \brief Order of accuracy of DC-PSE kernel at index
      * 
      * \param  index Index number in nTerms array
      * \return order of accuracy of DC-PSE kernel at index
@@ -258,8 +258,8 @@ class dcpse
 /*!
  * \brief Default constructor
  * 
- * \param ndim             Dimensiononality
- * \param nterms           Number of terms (currently only one term is implemented)
+ * \param ndim    Number of dimensions
+ * \param nterms  Number of terms (currently only one term is implemented)
  */
 template <typename T>
 dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
