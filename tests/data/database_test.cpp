@@ -3,7 +3,7 @@
 #include "data/database.hpp"
 #include "gtest/gtest.h"
 
-//! Tests databse constrcution
+//! Tests database construction
 TEST(database_test, HandlesConstruction)
 {
     //! Create an instance of database object
@@ -12,8 +12,8 @@ TEST(database_test, HandlesConstruction)
 
         EXPECT_EQ(0, d.nDimSamplePoints);
         EXPECT_EQ(0, d.nDimDataArray);
-        EXPECT_EQ(std::size_t{}, d.idxPos);
-        EXPECT_EQ(std::size_t{}, d.entries);
+        EXPECT_EQ(std::size_t{}, d.idxPosition);
+        EXPECT_EQ(0, d.nSamplePoints);
     }
 
     std::remove("database_100.txt");
@@ -24,8 +24,8 @@ TEST(database_test, HandlesConstruction)
 
         EXPECT_EQ(2, d.nDimSamplePoints);
         EXPECT_EQ(2, d.nDimDataArray);
-        EXPECT_EQ(std::size_t{}, d.idxPos);
-        EXPECT_EQ(std::size_t{3}, d.entries);
+        EXPECT_EQ(std::size_t{}, d.idxPosition);
+        EXPECT_EQ(3, d.nSamplePoints);
 
         {
             double p[] = {1., -1.};
