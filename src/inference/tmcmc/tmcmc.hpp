@@ -501,13 +501,13 @@ bool tmcmc<T, F>::iteratem()
   int const nChains = leadersData.size();
 
   //! Get the iterator to the sample points
-  T *leadersSamplePoints = leadersData.samplePoints.data();
+  // T *leadersSamplePoints = leadersData.samplePoints.data();
 
   //! Loop through all the population size
   for (int i = 0; i < nChains; i++)
   {
     //! Sample number
-    std::copy(leadersSamplePoints, leadersSamplePointsIt+Data.nDim)
+    // std::copy(leadersSamplePoints, leadersSamplePointsIt+Data.nDim)
     workInformation[1] = i;
 
     //! Create the input sample points from the prior distribution
