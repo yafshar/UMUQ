@@ -101,18 +101,18 @@ class tmcmcStats
     explicit tmcmcStats(optimizationParameters<T> const &OptParams);
 
     /*!
-	 * \brief Move constructor, construct a new tmcmcStats object from an input object
+     * \brief Move constructor, construct a new tmcmcStats object from an input object
      * 
      * \param other  Input tmcmcStats object
-	 */
+     */
     tmcmcStats(tmcmcStats<T> &&other);
 
     /*!
-	 * \brief Move assignment operator
-	 * 
-	 * \param other 
-	 * \return tmcmcStats<T>& 
-	 */
+     * \brief Move assignment operator
+     * 
+     * \param other 
+     * \return tmcmcStats<T>& 
+     */
     tmcmcStats<T> &operator=(tmcmcStats<T> &&other);
 
     /*!
@@ -389,7 +389,7 @@ bool tmcmcStats<T>::searchOptimumP(T const *FunValues, int const nFunValues, T c
 
             if (optParams.Display)
             {
-                std::cout << "Serach on CoefVarFun : CoefVar(p)=" << *OptimumCoefVar << std::endl;
+                std::cout << "Search on CoefVarFun : CoefVar(p)=" << *OptimumCoefVar << std::endl;
                 std::cout << "Converged to minimum at p = " << *OptimumP << std::endl;
             }
             return true;
