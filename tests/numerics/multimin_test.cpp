@@ -81,7 +81,7 @@ bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE
             }
             // std::cout << std::endl;
 
-            std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.getSize() << std::endl;
+            std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.size() << std::endl;
         }
 #endif
 
