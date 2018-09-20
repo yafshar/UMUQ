@@ -65,10 +65,10 @@ T CoefVarFun(T const *x);
  * \tparam T 
  */
 template <typename T>
-T *funValues;
+T *functionValues;
 
-//! Number of function values in funValues array
-int nfunValues;
+//! Number of function values in functionValues array
+int nFunctionValues;
 
 //! Current \f$ p_j \f$
 template <typename T>
@@ -76,7 +76,7 @@ T pj;
 
 //! Optimizer tolerance
 template <typename T>
-T tolerance;
+T optimizerTolerance;
 
 /*! \class tmcmcStats
  * \brief 
@@ -199,7 +199,7 @@ tmcmcStats<T>::tmcmcStats() : optParams(),
     }
 
     //! Set the prescribed tolerance
-    tolerance<T> = optParams.Tolerance;
+    optimizerTolerance<T> = optParams.Tolerance;
 }
 
 template <typename T>
@@ -230,7 +230,7 @@ tmcmcStats<T>::tmcmcStats(optimizationParameters<T> const &OptParams) : optParam
     }
 
     //! set the prescribed tolerance
-    tolerance<T> = optParams.Tolerance;
+    optimizerTolerance<T> = optParams.Tolerance;
 }
 
 template <typename T>
@@ -268,23 +268,24 @@ inline bool tmcmcStats<T>::setRandomGenerator(psrandom<T> *PRNG)
 template <typename T>
 bool tmcmcStats<T>::findOptimumP(T const *FunValues, int const nFunValues, T const PJ, T *OptimumP, T *OptimumCoefVar)
 {
-    //! Set the helper pointer & variables
-    funValues<T> = FunValues;
-    nfunValues = nFunValues;
+    //! Set the global helper pointer & variables
+    functionValues<T> = FunValues;
+    nFunctionValues = nFunValues;
     pj<T> = PJ;
 
-    //! Second, we have to set the function, input vector and stepsize
+    //! Second, we have to set the function, input vector and stepsize in the function minimizer
     if (!fMinimizer->set(CoefVarFun<T>, &pj<T>, &optParams.Step))
     {
         UMUQFAILRETURN("Failed to set the minimizer!");
     }
 
-    //! Third, initilize the minimizer
+    //! Third, initialize the minimizer
     if (!fMinimizer->init())
     {
         UMUQFAILRETURN("Failed to initialize the minimizer!");
     }
 
+    //! Print the initilia starting points, if it is requested
     if (optParams.Display)
     {
         T *x = fMinimizer->getX();
@@ -310,12 +311,13 @@ bool tmcmcStats<T>::findOptimumP(T const *FunValues, int const nFunValues, T con
         {
             T *x = fMinimizer->getX();
             std::cout << iter << ": ";
-            std::cout << "CoefVar(p=" << x[0] << ") =" << fMinimizer->getMin() << ", & characteristic size =" << fMinimizer->getSize() << std::endl;
+            std::cout << "CoefVar(p=" << x[0] << ") =" << fMinimizer->getMin() << ", & characteristic size =" << fMinimizer->size() << std::endl;
         }
 
         status = fMinimizer->testSize(optParams.Tolerance);
     }
 
+    //! If it did not fail
     if (status == 0 || status == 1)
     {
         OptimumP = fMinimizer->getX();
@@ -338,7 +340,7 @@ bool tmcmcStats<T>::searchOptimumP(T const *FunValues, int const nFunValues, T c
     T MinValp = T{};
     T MaxValp = T{4};
 
-    //! Initilize the step size to the prescribed user value
+    //! Initialize the step size to the prescribed user value
     T stepSize(optParams.Step);
 
     for (;;)
@@ -371,7 +373,7 @@ bool tmcmcStats<T>::searchOptimumP(T const *FunValues, int const nFunValues, T c
                 MaxCoefVar = NewCoefVar;
                 optimumP = p;
 
-                if (MaxCoefVar <= tolerance<T>)
+                if (MaxCoefVar <= optimizerTolerance<T>)
                 {
                     found = true;
                     break;
@@ -432,10 +434,10 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
     T *generationProbabilty = RunData.generationProbabilty.data();
 
     //! Get the pointer to the function values
-    T *Fvalue = CurrentData.fValue.get();
+    T *Fvalue = CurrentData.fValue.data();
 
     //! Total number of function values
-    int const nFvalue = CurrentData.getSize();
+    int const nCurrentSamplePoints = CurrentData.size();
 
     {
         T optimumP(T{});
@@ -447,10 +449,10 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
         bool status(true);
 
         //! Find the optimum value of \f$ p_{j+1} \f$ through optimization
-        if (!findOptimumP(Fvalue, nFvalue, PJ, &optimumP, &optimumCoefVar))
+        if (!findOptimumP(Fvalue, nCurrentSamplePoints, PJ, &optimumP, &optimumCoefVar))
         {
             //! In case we did not find the optimum value through optimization, we do the direct search
-            status = searchOptimumP(Fvalue, nFvalue, PJ, &optimumP, &optimumCoefVar);
+            status = searchOptimumP(Fvalue, nCurrentSamplePoints, PJ, &optimumP, &optimumCoefVar);
         }
 
         //! If we find the optimum value a
@@ -461,24 +463,27 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
         }
         else
         {
-            //! Increase the probability just a small value
+            //! Increase the probability just a very small value
             generationProbabilty[newGeneration] = PJ + 0.1 * optParams.Step;
             RunData.CoefVar[newGeneration] = RunData.CoefVar[currentGeneration];
         }
     }
 
+    //! If the probability of this generation is greater than one, then it is the last step
     if (generationProbabilty[newGeneration] > 1)
     {
         generationProbabilty[newGeneration] = T{1};
         StreamData.eachPopulationSize[newGeneration] = StreamData.lastPopulationSize;
     }
 
-    std::vector<T> weight(nFvalue);
+    std::vector<T> weight(nCurrentSamplePoints);
 
     {
+        //! Get the PJ1 - PJ
         T const probabiltyDiff = generationProbabilty[newGeneration] - generationProbabilty[currentGeneration];
 
-        for (int i = 0; i < nFvalue; i++)
+        //! The function value is in log space
+        for (int i = 0; i < nCurrentSamplePoints; i++)
         {
             weight[i] = Fvalue[i] * probabiltyDiff;
         }
@@ -492,7 +497,7 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
     if (optParams.Display)
     {
         io f;
-        f.printMatrix<T>("Weight matrix", weight.data(), 1, nFvalue);
+        f.printMatrix<T>("Weight matrix", weight.data(), 1, nCurrentSamplePoints);
     }
 
     //! Compute the weight sum
@@ -504,11 +509,12 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
     if (optParams.Display)
     {
         io f;
-        f.printMatrix<T>("Normalized Weight matrix", weight.data(), 1, nFvalue);
+        f.printMatrix<T>("Normalized Weight matrix", weight.data(), 1, nCurrentSamplePoints);
     }
 
     {
-        RunData.logselection[currentGeneration] = std::log(weightSum) + weightMax - std::log(static_cast<T>(nFvalue));
+        //! Keep the value for computing evidence
+        RunData.logselection[currentGeneration] = std::log(weightSum) + weightMax - std::log(static_cast<T>(nCurrentSamplePoints));
 
         if (optParams.Display)
         {
@@ -528,88 +534,101 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
 
     if (prng)
     {
+        //! Dimension of the sampling points
+        int const nDimSamplePoints = CurrentData.nDimSamplePoints;
+
         {
+            if (Leaders.nDimSamplePoints != nDimSamplePoints)
+            {
+                UMUQFAILRETURN("Sampling data dimension does not match with the leaders database!");
+            }
+
+            if (Leaders.nSamplePoints < nCurrentSamplePoints)
+            {
+                UMUQFAILRETURN("Leader database size is not large enough!");
+            }
+
             //! Get the total number of samples at the current generation
             int const nSamples = StreamData.eachPopulationSize[currentGeneration];
 
             //! Get the pointer
-            int *nSelection = Leaders.nSelection.get();
+            int *nSelection = Leaders.nSelection.data();
 
             //! Get the number of selection based on the probability
-            prng->multinomial(weight.data(), nFvalue, nSamples, nSelection);
+            prng->multinomial(weight.data(), nCurrentSamplePoints, nSamples, nSelection);
 
             if (optParams.Display)
             {
                 io f;
-                f.printMatrix<int>("Number of selection = [", nSelection, 1, nFvalue, "]\n----------------------------------------\n");
+                f.printMatrix<int>("Number of selection = [", nSelection, 1, nCurrentSamplePoints, "]\n----------------------------------------\n");
             }
         }
 
-        int const nDim = CurrentData.nDimSamplePoints;
-        int const nSize = nDim * nFvalue;
+        //! Total size of the sampling points array
+        int const nSize = nCurrentSamplePoints * nDimSamplePoints;
 
         //! Compute vectors of mean and standard deviation for each dimension
-        std::vector<T> thetaMean(nDim);
+        std::vector<T> thetaMean(nDimSamplePoints);
 
-        for (int i = 0; i < nDim; i++)
+        for (int i = 0; i < nDimSamplePoints; i++)
         {
-            arrayWrapper<T> Parray(CurrentData.samplePoints.get() + i, nSize, nDim);
+            arrayWrapper<T> Parray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
             thetaMean[i] = std::inner_product(weight.begin(), weight.end(), Parray.begin(), T{});
         }
 
-        std::copy(thetaMean.begin(), thetaMean.end(), RunData.meantheta.data() + currentGeneration * nDim);
+        std::copy(thetaMean.begin(), thetaMean.end(), RunData.meantheta.data() + currentGeneration * nDimSamplePoints);
 
         if (optParams.Display)
         {
             io f;
-            f.printMatrix<int>("Mean of theta = [", thetaMean.data(), 1, nDim, "]\n----------------------------------------\n");
+            f.printMatrix<int>("Mean of theta = [", thetaMean.data(), 1, nDimSamplePoints, "]\n----------------------------------------\n");
         }
 
         {
             T *Covariance = RunData.SS.data();
 
-            for (int i = 0; i < nDim; i++)
+            for (int i = 0; i < nDimSamplePoints; i++)
             {
-                arrayWrapper<T> iArray(CurrentData.samplePoints.get() + i, nSize, nDim);
+                arrayWrapper<T> iArray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
 
-                T const imean = thetaMean[i];
+                T const iMean = thetaMean[i];
 
-                for (int j = i; j < nDim; j++)
+                for (int j = i; j < nDimSamplePoints; j++)
                 {
-                    arrayWrapper<T> jArray(CurrentData.samplePoints.get() + j, nSize, nDim);
+                    arrayWrapper<T> jArray(CurrentData.samplePoints.data() + j, nSize, nDimSamplePoints);
 
-                    T const jmean = thetaMean[j];
+                    T const jMean = thetaMean[j];
 
                     T S(0);
                     for (auto i = iArray.begin(), j = jArray.begin(), k = weight.begin(); i != iArray.end(); i++, j++, k++)
                     {
-                        T const d1 = *i - imean;
-                        T const d2 = *j - jmean;
+                        T const d1 = *i - iMean;
+                        T const d2 = *j - jMean;
                         S += *k * d1 * d2;
                     }
-                    Covariance[i * nDim + j] = S;
+                    Covariance[i * nDimSamplePoints + j] = S;
                 }
             }
 
-            for (int i = 0; i < nDim; i++)
+            for (int i = 0; i < nDimSamplePoints; i++)
             {
                 for (int j = 0; j < i; j++)
                 {
-                    Covariance[i * nDim + j] = Covariance[j * nDim + i];
+                    Covariance[i * nDimSamplePoints + j] = Covariance[j * nDimSamplePoints + i];
                 }
             }
 
             //! If the covariance matrix is not positive definite
-            if (!isSelfAdjointMatrixPositiveDefinite<T>(Covariance, nDim))
+            if (!isSelfAdjointMatrixPositiveDefinite<T>(Covariance, nDimSamplePoints))
             {
                 //! We force it to be positive definite
-                forceSelfAdjointMatrixPositiveDefinite<T>(Covariance, nDim);
+                forceSelfAdjointMatrixPositiveDefinite<T>(Covariance, nDimSamplePoints);
             }
 
             if (optParams.Display)
             {
                 io f;
-                f.printMatrix<int>("Covariance = [", Covariance, nDim, nDim, "]\n----------------------------------------\n");
+                f.printMatrix<int>("Covariance = [", Covariance, nDimSamplePoints, nDimSamplePoints, "]\n----------------------------------------\n");
             }
         }
         return true;
@@ -733,7 +752,7 @@ TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const T
 template <typename T>
 T CoefVarFun(T const *x)
 {
-    return CoefVar<T, T>(funValues<T>, nfunValues, *x, pj<T>, tolerance<T>);
+    return CoefVar<T, T>(functionValues<T>, nFunctionValues, *x, pj<T>, optimizerTolerance<T>);
 }
 
 } // namespace tmcmc
