@@ -50,7 +50,7 @@ class conjugatePr : public differentiableFunctionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 

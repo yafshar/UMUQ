@@ -124,9 +124,8 @@ public:
 
 public:
   /*!
-   * \brief A general-purpose polymorphic function wrapper
+   * \brief A general-purpose polymorphic function wrapper 
    * 
-   * \returns the function value
    */
   F f;
 };

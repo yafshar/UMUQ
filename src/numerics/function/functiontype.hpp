@@ -7,6 +7,7 @@
 
 namespace umuq
 {
+   
 inline namespace multimin
 {
 /*!
@@ -31,7 +32,6 @@ template <typename T>
 using FDF_MTYPE = std::function<bool(T const *, T *, T *)>;
 
 } // namespace multimin
-} // namespace umuq
 
 /*!
  * \brief Function type that can be used in fitFunction object
@@ -39,5 +39,7 @@ using FDF_MTYPE = std::function<bool(T const *, T *, T *)>;
  */
 template <typename T>
 using FITFUN_T = std::function<T(T const *, int const, T *, int const, int const *)>;
+
+} // namespace umuq
 
 #endif // UMUQ_FUNCTIONTYPE

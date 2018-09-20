@@ -177,7 +177,7 @@ class Permutation
      * 
      * \return std::size_t 
      */
-	std::size_t getSize() { return xSize; }
+	std::size_t size() { return xSize; }
 
   private:
 	/*!
