@@ -30,15 +30,15 @@ class utility
 {
   public:
     /*!
-     * \brief Executing command from a spanwer
+     * \brief Executing command from a spawner
      * 
      * fork and execvp in this function are used in sequence to get a new program running as a child 
-     * of a current process (spanwer with me ID).
+     * of a current process (spawner with me ID).
      * 
-     * \param me      Id of a spanwer
-     * \param argv    A pointer to an array of character strings. More precisely, its type is char **, 
-     *                which is identical to the argv array used in the main program
-     * \param dir     Directory PATH in which to execute commands
+     * \param me    Id of a spawner
+     * \param argv  A pointer to an array of character strings. More precisely, its type is char **, 
+     *              which is identical to the argv array used in the main program
+     * \param dir   Directory PATH in which to execute commands
      * 
      * \return true 
      * \return false 
@@ -49,14 +49,14 @@ class utility
      * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with 
      * the parameter command
      * 
-     * \param icommand   Input command, character string identifying the command to be run in the command 
+     * \param inCommand  Input command, character string identifying the command to be run in the command 
      *                   processor. If a null pointer is given, command processor is checked for existence 
      * \param dir        Directory PATH in which to execute command
      * 
      * \return true 
      * \return false 
      */
-    bool executeCommand(std::string const &icommand, std::string const &dir = std::string());
+    bool executeCommand(std::string const &inCommand, std::string const &dir = std::string());
 };
 
 bool utility::executeCommand(int const me, char **argv, const char *dir)
@@ -73,7 +73,7 @@ bool utility::executeCommand(int const me, char **argv, const char *dir)
     // If fork() returns a negative value, the creation of a child process was unsuccessful
     if (pid < 0)
     {
-        std::cerr << "spanwer(" << me << "):" << std::endl;
+        std::cerr << "spawner(" << me << "):" << std::endl;
         UMUQFAILRETURN("The creation of a child process was unsuccessful");
     }
     // fork() returns a zero to the newly created child process
@@ -114,7 +114,7 @@ bool utility::executeCommand(int const me, char **argv, const char *dir)
          */
         if (!execvp(*argv, argv))
         {
-            UMUQFAILRETURN("Error occured in child process while attempting to execute the command!");
+            UMUQFAILRETURN("Error occurred in child process while attempting to execute the command!");
         }
     }
 
@@ -132,7 +132,7 @@ bool utility::executeCommand(int const me, char **argv, const char *dir)
     return true;
 }
 
-bool utility::executeCommand(std::string const &icommand, std::string const &dir)
+bool utility::executeCommand(std::string const &inCommand, std::string const &dir)
 {
     // If dir PATH is given we change to the dir PATH
     if (dir.size() > 0)
@@ -152,7 +152,7 @@ bool utility::executeCommand(std::string const &icommand, std::string const &dir
     }
 
     // Executing command
-    if (!std::system(icommand.c_str()))
+    if (!std::system(inCommand.c_str()))
     {
         UMUQWARNING("Command processor does not exists!")
     }
