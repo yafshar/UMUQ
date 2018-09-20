@@ -1,6 +1,8 @@
 #ifndef UMUQ_RUNINFO_H
 #define UMUQ_RUNINFO_H
 
+#include "core/core.hpp"
+#include "mpidatatype.hpp"
 #include "misc/parser.hpp"
 #include "io/io.hpp"
 
@@ -13,10 +15,27 @@ namespace umuq
 namespace tmcmc
 {
 
+/*!
+ * \brief Broadcasts running information to all processes of the group 
+ * 
+ * \tparam T Data type
+ * 
+ * \param other runinfo object which is casted to long long
+ */
+template <typename T>
+void broadcastTask(long long const other);
+
+//! True if update_Task has been registered, and false otherwise (logical).
+template <typename T>
+static bool isBroadcastTaskRegistered = false;
+
+//! Mutex object
+static std::mutex broadcastTask_m;
+
 /*! \class runinfo
  * \ingroup data
  * 
- * \brief This class contains the run information of the TMCMC
+ * \brief This class contains the running information of the TMCMC algorithm
  * 
  */
 template <typename T>
@@ -86,7 +105,7 @@ class runinfo
 	void swap(runinfo<T> &other);
 
 	/*!
-     * \brief Save the inofmration in a file @fileName
+     * \brief Save the information in a file @fileName
      * Write the runinfo data information to a file @fileName
      * 
      * \param fileName Name of the file (default name is runinfo.txt) for writing information
@@ -97,7 +116,7 @@ class runinfo
 	bool save(std::string const &fileName);
 
 	/*!
-     * \brief Load inofmration from a file @fileName
+     * \brief Load information from a file @fileName
      * Load the runinfo data information from a file @fileName
      * 
      * \param fileName  Name of the file (default name is runinfo.txt) for reading information
@@ -108,19 +127,6 @@ class runinfo
 	bool load(const char *fileName = "runinfo.txt");
 
 	bool load(std::string const &fileName);
-
-	/*!
-	 * \brief Get the Uniques object
-	 * Find the uniue nCols dimensions sample points in an array of nRows * nCols data
-	 * 
-	 * \param iArray    Input data
-	 * \param nRows     Number of rows
-	 * \param nCols     Number of columns (data dimension)
-	 * \param uAarray   Unique data (every row in this data is unique)
-	 */
-	void getUniques(T const *iArray, int const nRows, int const nCols, std::vector<T> &uAarray);
-	void getUniques(std::vector<T> const &iArray, int const nRows, int const nCols, std::vector<T> &uAarray);
-	void getUniques(std::unique_ptr<T[]> const &iArray, int const nRows, int const nCols, std::vector<T> &uAarray);
 
 	/*!
 	 * \brief Set the number of uniques for the current generation
@@ -141,6 +147,18 @@ class runinfo
 	 * \return false If the current generation is greater than the defined maximum number 
 	 */
 	inline bool setAcceptanceRate(T const acceptanceRate);
+
+	/**
+	 * \brief Broadcasts running information from to all the processes of the group
+	 * 
+	 */
+	inline void broadcast();
+
+	/*!
+     * \brief Printing the running information mean & covariance matrix on the standard output
+     *
+     */
+	void print();
 
   private:
 	// Make it noncopyable
@@ -185,6 +203,14 @@ runinfo<T>::runinfo() : nDim(0),
 						maxGenerations(0),
 						currentGeneration(0)
 {
+	{
+		std::lock_guard<std::mutex> lock(broadcastTask_m);
+		if (!isBroadcastTaskRegistered<T>)
+		{
+			torc_register_task((void *)broadcastTask<T>);
+			isBroadcastTaskRegistered<T> = true;
+		}
+	}
 }
 
 /*!
@@ -201,7 +227,16 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 {
 	if (!init())
 	{
-		UMUQFAIL("Failed to initialiaze!");
+		UMUQFAIL("Failed to initialize!");
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(broadcastTask_m);
+		if (!isBroadcastTaskRegistered<T>)
+		{
+			torc_register_task((void *)broadcastTask<T>);
+			isBroadcastTaskRegistered<T> = true;
+		}
 	}
 }
 
@@ -229,8 +264,9 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 /*!
  * \brief Move assignment operator
  * 
- * \param other      Input runinfo object
- * \return runinfo<T>& 
+ * \param other Input runinfo object
+ * 
+ * \returns runinfo<T>& 
  */
 template <typename T>
 runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
@@ -318,7 +354,7 @@ void runinfo<T>::swap(runinfo<T> &other)
 }
 
 /*!
- * \brief Save the inofmration in a file @fileName
+ * \brief Save the information in a file @fileName
  * Write the runinfo data information to a file @fileName
  * 
  * \param fileName Name of the file (default name is runinfo.txt) for writing information 
@@ -377,7 +413,7 @@ bool runinfo<T>::save(std::string const &fileName)
 }
 
 /*!
- * \brief Load inofmration from a file @fileName
+ * \brief Load information from a file @fileName
  * Load the runinfo data information from a file @fileName
  * 
  * \param fileName  Name of the file (default name is runinfo.txt) for reading information
@@ -451,79 +487,6 @@ bool runinfo<T>::load(std::string const &fileName)
 }
 
 template <typename T>
-void runinfo<T>::getUniques(T const *iArray, int const nRows, int const nCols, std::vector<T> &uArray)
-{
-	//! Resize the unique array to the maximum size
-	uArray.resize(nRows * nCols);
-
-	//! Create a temporary array with the size of number of columns (one row of data)
-	std::vector<T> x(nCols);
-
-	//! First element in the input array is considered unique
-	std::copy(iArray, iArray + nCols, uArray.begin());
-
-	//! We have one unique
-	int nUniques(1);
-
-	for (int i = 1; i < nRows; i++)
-	{
-		int const s = i * nCols;
-		std::copy(iArray + s, iArray + s + nCols, x.begin());
-
-		//! Consider this x rows is unique among all the rows
-		bool uniqueFlag = true;
-
-		//! check it with all the unique rows
-		for (int j = 0, l = 0; j < nUniques; j++, l += nCols)
-		{
-			//! Consider they are the same
-			bool compareFlag = true;
-			for (int k = 0; k < nCols; k++)
-			{
-				if (std::abs(x[k] - uArray[l + k]) > 1e-6)
-				{
-					//! one element in the row differs, so they are different
-					compareFlag = false;
-					break;
-				}
-			}
-			if (compareFlag)
-			{
-				//! It is not a unique row
-				uniqueFlag = false;
-				break;
-			}
-		}
-
-		if (uniqueFlag)
-		{
-			int const e = nUniques * nCols;
-			std::copy(x.begin(), x.end(), uArray.begin() + e);
-			nUniques++;
-		}
-	}
-
-	//! Correct the size of the unique array
-	if (nUniques * nCols < uArray.size())
-	{
-		uArray.resize(nUniques * nCols);
-	}
-	return;
-}
-
-template <typename T>
-void runinfo<T>::getUniques(std::vector<T> const &iArray, int const nRows, int const nCols, std::vector<T> &uArray)
-{
-	getUniques(iArray.data(), nRows, nCols, uArray);
-}
-
-template <typename T>
-void runinfo<T>::getUniques(std::unique_ptr<T[]> const &iArray, int const nRows, int const nCols, std::vector<T> &uArray)
-{
-	getUniques(iArray.get(), nRows, nCols, uArray);
-}
-
-template <typename T>
 inline bool runinfo<T>::setUniqueNumber(int const nUniques)
 {
 	if (currentGeneration < maxGenerations)
@@ -543,6 +506,57 @@ inline bool runinfo<T>::setAcceptanceRate(T const acceptanceRate)
 		return true;
 	}
 	UMUQFAILRETURN("Generation number is greater than the defined maximum number!");
+}
+
+template <typename T>
+inline void runinfo<T>::broadcast()
+{
+	if (torc_num_nodes() == 1)
+	{
+		return;
+	}
+
+#if HAVE_MPI == 1
+	for (int i = 0; i < torc_num_nodes(); i++)
+	{
+		torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())broadcastTask<T>, 1,
+					   1, MPIDatatype<long long>, CALL_BY_REF,
+					   reinterpret_cast<long long>(this));
+	}
+	torc_waitall();
+#endif // MPI
+}
+
+template <typename T>
+void runinfo<T>::print()
+{
+	std::cout << "----------------------------" << std::endl;
+	umuq::io f;
+	// Define the printing format
+	umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nCovariance=\n"};
+	umuq::ioFormat covarianceFormat = {" ", "\n", "[", "]"};
+	f.printMatrix<T>(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
+	f.printMatrix<T>(SS, nDim, nDim, covarianceFormat);
+	std::cout << "----------------------------" << std::endl;
+}
+
+template <typename T>
+void broadcastTask(long long const other)
+{
+#if HAVE_MPI == 1
+	auto obj = reinterpret_cast<runinfo<T> *>(other);
+
+	int const nDim(obj->nDim * obj->nDim);
+	int const maxGenerations(obj->maxGenerations);
+
+	MPI_Request request[3];
+
+	MPI_Ibcast(obj->SS.data(), nDim, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[0]);
+	MPI_Ibcast(obj->generationProbabilty.data(), maxGenerations, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[1]);
+	MPI_Ibcast(&obj->currentGeneration, 1, MPI_INT, 0, MPI_COMM_WORLD, &request[2]);
+
+	MPI_Waitall(3, request, MPI_STATUSES_IGNORE);
+#endif // MPI
 }
 
 } // namespace tmcmc
