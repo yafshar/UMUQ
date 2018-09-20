@@ -4,6 +4,7 @@
 #include "core/core.hpp"
 #include "misc/funcallcounter.hpp"
 #include "data/database.hpp"
+#include "data/runinfo.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 
@@ -35,7 +36,7 @@ class torcEnvironment
 #endif
 	{
 	}
-	
+
 	/*!
      * \brief This would register the function in TORC library
      * 
@@ -56,26 +57,33 @@ class torcEnvironment
      */
 	virtual void SetUp()
 	{
-		if (!PRNG_Task_registered<T>)
+		if (!isPrngTaskRegistered<T>)
 		{
-			torc_register_task((void *)psrandom<T>::init_Task);
+			torc_register_task((void *)psrandom<T>::initTask);
 
-			PRNG_Task_registered<T> = true;
+			isPrngTaskRegistered<T> = true;
 		}
 
-		if (!funcallcounter_Task_registered)
+		if (!isFuncallcounterTaskRegistered)
 		{
-			torc_register_task((void *)funcallcounter::reset_Task);
-			torc_register_task((void *)funcallcounter::count_Task);
+			torc_register_task((void *)funcallcounter::resetTask);
+			torc_register_task((void *)funcallcounter::countTask);
 
-			funcallcounter_Task_registered = true;
+			isFuncallcounterTaskRegistered = true;
 		}
 
-		if (!umuq::tmcmc::database_update_Task_registered<T>)
+		if (!umuq::tmcmc::isUpdateTaskRegistered<T>)
 		{
-			torc_register_task((void *)umuq::tmcmc::update_Task<T>);
+			torc_register_task((void *)umuq::tmcmc::updateDataTask<T>);
 
-			umuq::tmcmc::database_update_Task_registered<T> = true;
+			umuq::tmcmc::isUpdateTaskRegistered<T> = true;
+		}
+
+		if (!umuq::tmcmc::isBroadcastTaskRegistered<T>)
+		{
+			torc_register_task((void *)umuq::tmcmc::broadcastTask<T>);
+
+			umuq::tmcmc::isBroadcastTaskRegistered<T> = true;
 		}
 
 		char **argv = NULL;
@@ -92,25 +100,31 @@ class torcEnvironment
      */
 	virtual void SetUp(int argc, char **argv)
 	{
-		if (!PRNG_Task_registered<T>)
+		if (!isPrngTaskRegistered<T>)
 		{
-			torc_register_task((void *)psrandom<T>::init_Task);
-			PRNG_Task_registered<T> = true;
+			torc_register_task((void *)psrandom<T>::initTask);
+			isPrngTaskRegistered<T> = true;
 		}
 
-		if (!funcallcounter_Task_registered)
+		if (!isFuncallcounterTaskRegistered)
 		{
-			torc_register_task((void *)funcallcounter::reset_Task);
-			torc_register_task((void *)funcallcounter::count_Task);
+			torc_register_task((void *)funcallcounter::resetTask);
+			torc_register_task((void *)funcallcounter::countTask);
 
-			funcallcounter_Task_registered = true;
+			isFuncallcounterTaskRegistered = true;
 		}
 
-		if (umuq::tmcmc::database_update_Task_registered<T>)
+		if (umuq::tmcmc::isUpdateTaskRegistered<T>)
 		{
-			torc_register_task((void *)umuq::tmcmc::update_Task<T>);
+			torc_register_task((void *)umuq::tmcmc::updateDataTask<T>);
+			umuq::tmcmc::isUpdateTaskRegistered<T> = true;
+		}
 
-			umuq::tmcmc::database_update_Task_registered<T> = true;
+		if (!umuq::tmcmc::isBroadcastTaskRegistered<T>)
+		{
+			torc_register_task((void *)umuq::tmcmc::broadcastTask<T>);
+
+			umuq::tmcmc::isBroadcastTaskRegistered<T> = true;
 		}
 
 		torc_init(argc, argv);
@@ -137,6 +151,18 @@ class torcEnvironment
 
 	// Make it not assignable
 	torcEnvironment<T> &operator=(torcEnvironment<T> const &) = delete;
+
+#if HAVE_MPI == 1
+	/**
+	 *
+	 * TODO:
+	 * Complete the communicator so the algorithm can work on different groups
+	 *  
+	 */
+  private:
+	//! Communicator for MPI
+	MPI_Comm comm;
+#endif
 };
 
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
