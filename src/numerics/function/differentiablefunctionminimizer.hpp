@@ -51,7 +51,7 @@ enum differentiableFunctionMinimizerTypes
  * To use the Minimizer:
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
- * - Third, initilize the minimizer \sa init
+ * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
  * \tparam T Data type
@@ -188,7 +188,7 @@ public:
   virtual bool set(T const *X, T const StepSize, T const Tol);
 
   /*!
-   * \brief Initilize the minimizer
+   * \brief Initialize the minimizer
    * 
    * \return true 
    * \return false 

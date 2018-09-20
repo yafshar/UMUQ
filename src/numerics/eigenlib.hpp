@@ -24,7 +24,7 @@ namespace umuq
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  *
  * 
- * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
+ * NOTE: Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
  *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
  *       pass only the Eigen::Matrix as template parameters
  * 
@@ -85,7 +85,7 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
- * NOTE: Use of template is flexible enough that one can use directly the arithmatic data type and _Options 
+ * NOTE: Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
  *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
  *       pass only the Eigen::Matrix as template parameters
  * 
@@ -364,8 +364,6 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 
 	if (belowMachinePrecision)
 	{
-		belowMachinePrecision = false;
-
 		//! Find the maximum absolute element on the diagonal of the matrix
 		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
 
@@ -456,8 +454,6 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 
 	if (belowMachinePrecision)
 	{
-		belowMachinePrecision = false;
-
 		//! Find the maximum absolute element on the diagonal of the matrix
 		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
 

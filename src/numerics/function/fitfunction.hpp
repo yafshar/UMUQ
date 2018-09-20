@@ -56,7 +56,7 @@ class fitFunction : public umuqFunction<T, F>
     /*!
      * \brief Set the Init Function object
      * 
-     * \param InitFun Initilization function which has the fixed shape of bool() 
+     * \param InitFun Initialization function which has the fixed shape of bool() 
      * 
      * \return true 
      * \return false If it encounters an unexpected problem
@@ -78,7 +78,7 @@ class fitFunction : public umuqFunction<T, F>
     /*!
      * \brief Setting both the Init Function & fitting Function 
      * 
-     * \param InitFun  Initilization function which has the fixed shape of bool()
+     * \param InitFun  Initialization function which has the fixed shape of bool()
      * \param Fun      Fitting Function of type (class F)
      * 
      * \return true 
@@ -88,7 +88,7 @@ class fitFunction : public umuqFunction<T, F>
     inline bool set(std::function<bool()> const &InitFun, F const &Fun);
 
     /*!
-     * \brief Initilize the fitFunction
+     * \brief Initialize the fitFunction
      * 
      * \return true 
      * \return false 
@@ -103,7 +103,7 @@ class fitFunction : public umuqFunction<T, F>
     fitFunction<T, F> &operator=(fitFunction<T, F> const &) = delete;
 
   public:
-    //! Initilization function which has the type of bool
+    //! Initialization function which has the type of bool
     std::function<bool()> initFun;
 };
 

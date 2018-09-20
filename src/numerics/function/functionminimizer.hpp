@@ -46,7 +46,7 @@ enum FunctionMinimizerTypes
  * To use the Minimizer:
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
- * - Third, initilize the minimizer \sa init
+ * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
  * \tparam T Data type
@@ -161,7 +161,7 @@ public:
   virtual bool set(T const *X, T const *stepSize);
 
   /*!
-   * \brief Initilize the minimizer
+   * \brief Initialize the minimizer
    * 
    * \return true 
    * \return false 
@@ -190,7 +190,7 @@ public:
    * 
    * \returns minimizer-specific characteristic size
    */
-  inline T const getSize() const;
+  inline T const size() const;
 
   /*!
    * \brief Helper function to check the specific characteristic size against absolute tolerance
@@ -246,7 +246,7 @@ public:
   std::vector<T> ws2;
 
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)
-  T size;
+  T characteristicSize;
 
   //! Minimum function value
   T fval;
@@ -266,7 +266,7 @@ functionMinimizer<T>::functionMinimizer(functionMinimizer<T> &&other)
   x = std::move(other.x);
   ws1 = std::move(other.ws1);
   ws2 = std::move(other.ws2);
-  size = other.size;
+  characteristicSize = other.characteristicSize;
   fval = other.fval;
 }
 
@@ -278,7 +278,7 @@ functionMinimizer<T> &functionMinimizer<T>::operator=(functionMinimizer<T> &&oth
   x = std::move(other.x);
   ws1 = std::move(other.ws1);
   ws2 = std::move(other.ws2);
-  size = other.size;
+  characteristicSize = other.characteristicSize;
   fval = other.fval;
 
   return *this;
@@ -625,15 +625,15 @@ inline std::string const functionMinimizer<T>::getName() const
 }
 
 template <typename T>
-inline T const functionMinimizer<T>::getSize() const
+inline T const functionMinimizer<T>::size() const
 {
-  return size;
+  return characteristicSize;
 }
 
 template <typename T>
 inline int functionMinimizer<T>::testSize(T const abstol)
 {
-  return (abstol < 0) ? -1 : ((size < abstol) ? 0 : 1);
+  return (abstol < 0) ? -1 : ((characteristicSize < abstol) ? 0 : 1);
 }
 
 template <typename T>
