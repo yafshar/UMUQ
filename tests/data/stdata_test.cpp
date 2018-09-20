@@ -23,7 +23,6 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(0, d1->useLocalCovariance);
     EXPECT_DOUBLE_EQ(static_cast<double>(1), d1->TolCOV);
     EXPECT_DOUBLE_EQ(static_cast<double>(0.2), d1->bbeta);
-    EXPECT_EQ(0, d1->localScale);
     EXPECT_EQ(100, d1->options.MaxIter);
     EXPECT_DOUBLE_EQ(static_cast<double>(1e-6), d1->options.Tolerance);
     EXPECT_EQ(0, d1->options.Display);
@@ -49,10 +48,8 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(0, d2.useLocalCovariance);
     EXPECT_DOUBLE_EQ(1.0, d2.TolCOV);
     EXPECT_DOUBLE_EQ(0.2, d2.bbeta);
-    EXPECT_EQ(0, d2.localScale);
     EXPECT_DOUBLE_EQ(static_cast<double>(1), d2.TolCOV);
     EXPECT_DOUBLE_EQ(static_cast<double>(0.2), d2.bbeta);
-    EXPECT_EQ(0, d2.localScale);
     EXPECT_EQ(100, d2.options.MaxIter);
     EXPECT_DOUBLE_EQ(static_cast<double>(1e-6), d2.options.Tolerance);
     EXPECT_EQ(0, d2.options.Display);
@@ -84,7 +81,6 @@ TEST(streamdatatype, HandlesIO)
     EXPECT_EQ(1, d1.saveData);
     EXPECT_EQ(0, d1.useCmaProposal);
     EXPECT_EQ(0, d1.useLocalCovariance);
-    EXPECT_DOUBLE_EQ(0, d1.localScale);
     EXPECT_EQ(1000, d1.options.MaxIter);
     EXPECT_DOUBLE_EQ(static_cast<double>(1e-12), d1.options.Tolerance);
     EXPECT_EQ(1, d1.options.Display);
