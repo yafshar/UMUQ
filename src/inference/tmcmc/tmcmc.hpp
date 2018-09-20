@@ -256,40 +256,6 @@ private:
   //! Local covariance with the size of [populationSize*nDim*nDim]
   std::vector<T> localCovariance;
 
-  //  localCovariance(populationSize * nDim * nDim, T{})
-  // for (int i = 0, l = 0; i < populationSize; i++)
-  // {
-  // 	for (int j = 0; j < nDim; j++)
-  // 	{
-  // 		for (int k = 0; k < nDim; k++, l++)
-  // 		{
-  // 			if (j == k)
-  // 			{
-  // 				localCovariance[l] = static_cast<T>(1);
-  // 			}
-  // 		}
-  // 	}
-  // }
-
-  // localCovariance = std::move(other.localCovariance);
-  // localCovariance = std::move(other.localCovariance);
-  // localCovariance.swap(other.localCovariance);
-  // localCovariance.clear();
-  // localCovariance.resize(populationSize * nDim * nDim, T{});
-  // for (int i = 0, l = 0; i < populationSize; i++)
-  // {
-  // 	for (int j = 0; j < nDim; j++)
-  // 	{
-  // 		for (int k = 0; k < nDim; k++, l++)
-  // 		{
-  // 			if (j == k)
-  // 			{
-  // 				localCovariance[l] = static_cast<T>(1);
-  // 			}
-  // 		}
-  // 	}
-  // }
-
   //! Mutex object
   std::mutex m;
 };
@@ -531,10 +497,17 @@ bool tmcmc<T, F>::iteratem()
   //! Number of function value at each sampling point
   int nFvalue = 1;
 
+  //! Total number of sampling chains
+  int const nChains = leadersData.size();
+
+  //! Get the iterator to the sample points
+  T *leadersSamplePoints = leadersData.samplePoints.data();
+
   //! Loop through all the population size
-  for (int i = 0; i < Data.eachPopulationSize[0]; i++)
+  for (int i = 0; i < nChains; i++)
   {
     //! Sample number
+    std::copy(leadersSamplePoints, leadersSamplePointsIt+Data.nDim)
     workInformation[1] = i;
 
     //! Create the input sample points from the prior distribution
@@ -677,6 +650,9 @@ bool tmcmc<T, F>::prepareNewGeneration()
       //! Update leaders information from current data
       if (leadersData.updateSelection(currentData))
       {
+        //! Reset number of entries
+        currentData.idxPosition = 0;
+
 #ifdef DEBUG
         //! Total number of sampling points
         int const nLeadersSamplePoints = static_cast<int>(leadersData.idxPosition);
@@ -697,6 +673,33 @@ bool tmcmc<T, F>::prepareNewGeneration()
 
         if (Data.useLocalCovariance)
         {
+          // //! Total number of sampling points
+          // int const nLeadersSamplePoints = static_cast<int>(leadersData.idxPosition);
+
+          // //! Assign the correct local covariance size
+          // try
+          // {
+          //   localCovariance.resize(nLeadersSamplePoints * nDimSamplePoints * nDimSamplePoints, T{});
+          // }
+          // catch (...)
+          // {
+          //   UMUQFAILRETURN("Failed to allocate memory!");
+          // }
+
+          // //! Initialize the local covariance to an Identity matrix for each sample
+          // for (int i = 0, l = 0; i < nLeadersSamplePoints; i++)
+          // {
+          //   for (int j = 0; j < nDimSamplePoints; j++)
+          //   {
+          //     for (int k = 0; k < nDimSamplePoints; k++, l++)
+          //     {
+          //       if (j == k)
+          //       {
+          //         localCovariance[l] = T{1};
+          //       }
+          //     }
+          //   }
+          // }
           UMUQFAILRETURN("Not implemented yet!");
         }
 
