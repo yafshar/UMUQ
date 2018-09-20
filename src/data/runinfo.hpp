@@ -533,7 +533,7 @@ void runinfo<T>::print()
 	std::cout << "----------------------------" << std::endl;
 	umuq::io f;
 	// Define the printing format
-	umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nCovariance=\n"};
+	umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nSample covariance matrix=\n"};
 	umuq::ioFormat covarianceFormat = {" ", "\n", "[", "]"};
 	f.printMatrix<T>(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
 	f.printMatrix<T>(SS, nDim, nDim, covarianceFormat);
