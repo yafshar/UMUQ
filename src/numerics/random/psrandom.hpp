@@ -22,9 +22,9 @@ static bool PRNG_initialized = false;
 
 //! True if Tasks have been registered, and false otherwise (logical).
 template <typename T>
-static bool PRNG_Task_registered = false;
+static bool isPrngTaskRegistered = false;
 
-//! Muex object
+//! Mutex object
 static std::mutex PRNG_m;
 
 } // namespace umuq
@@ -77,9 +77,9 @@ class psrandom
     /*!
      * \brief Construct a new psrandom object
      * 
-     * \param iseed Input seed for random number initialization 
+     * \param inSeed Input seed for random number initialization 
      */
-    explicit psrandom(int const iseed);
+    explicit psrandom(int const inSeed);
 
     /*!
      * \brief Destroy the psrandom object
@@ -90,7 +90,7 @@ class psrandom
     /*!
      * \brief Init task on each node to set the current state of the engine for all the threads on that node 
      */
-    static void init_Task();
+    static void initTask();
 
     /*!
      * \brief Set the State of psrandom object
@@ -109,12 +109,12 @@ class psrandom
     /*!
      * \brief Set the Seed object
      * 
-     * \param iseed  Input seed for random number initialization 
+     * \param inSeed  Input seed for random number initialization 
      * 
      * \return true  when sets the seed of the engine successfully
      * \return false If the PRNG is already initialized or the state has been set
      */
-    inline bool setSeed(long const iseed);
+    inline bool setSeed(long const inSeed);
 
   private:
     // Make it noncopyable
@@ -163,8 +163,6 @@ class psrandom
      * 
      * \brief Uniform random number between \f$ [a \cdots b) \f$
      *
-     * \tparam T data type one of float or double
-     *
      * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0, b = 1 \f$)
      */
     inline T unirnd(T const a = 0, T const b = 1);
@@ -190,7 +188,7 @@ class psrandom
     inline float frnd();
 
     /*!
-     * \returns an unisgned 32 bit integer pseudo-random value
+     * \returns an unsigned 32 bit integer pseudo-random value
      * 
      * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
      * 
@@ -240,64 +238,64 @@ class psrandom
     /*!
      * \brief Replaces the normal object 
      * 
-     * \param imean    Input Mean
-     * \param istddev  Input standard deviation
+     * \param inMean    Input Mean
+     * \param inStddev  Input standard deviation
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_normal(T const imean, T const istddev);
-    inline bool set_normals(T const *imean, T const *istddev, int const N);
-    inline bool set_normals(T const *imeanistddev, int const N);
+    inline bool set_normal(T const inMean, T const inStddev);
+    inline bool set_normals(T const *inMean, T const *inStddev, int const N);
+    inline bool set_normals(T const *inMeanInStddev, int const N);
 
     /*!
      * \brief Replaces the Normal object 
      * 
-     * \param imean    Input Mean
-     * \param istddev  Input standard deviation
+     * \param inMean    Input Mean
+     * \param inStddev  Input standard deviation
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_Normal(T const imean, T const istddev);
+    inline bool set_Normal(T const inMean, T const inStddev);
 
     /*!
      * \brief Replaces the lnormal object 
      * 
-     * \param imean    Input Mean
-     * \param istddev  Input standard deviation
+     * \param inMean    Input Mean
+     * \param inStddev  Input standard deviation
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_lnormal(T const imean, T const istddev);
+    inline bool set_lnormal(T const inMean, T const inStddev);
 
     /*!
      * \brief Replaces the lNormal object 
      * 
-     * \param imean    Input Mean
-     * \param istddev  Input standard deviation
+     * \param inMean    Input Mean
+     * \param inStddev  Input standard deviation
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_lNormal(T const imean, T const istddev);
+    inline bool set_lNormal(T const inMean, T const inStddev);
 
     /*!
      * \brief Replaces the mvnormal object 
      * 
-     * \param imean        Mean vector of size \f$n\f$
+     * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_mvnormal(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+    inline bool set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
     /*!
      * \brief Replaces the mvnormal object
      *
-     * \param imean        Input mean vector of size \f$n\f$
+     * \param inMean        Input mean vector of size \f$n\f$
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
@@ -305,7 +303,7 @@ class psrandom
      * \return false in failure to allocate storage
      */
 
-    inline bool set_mvnormal(T const *imean, T const *icovariance, int const n);
+    inline bool set_mvnormal(T const *inMean, T const *icovariance, int const n);
 
     /*!
      * \brief Replaces the mvnormal object (default mean = 0)
@@ -342,25 +340,25 @@ class psrandom
     /*!
      * \brief Replaces the mvNormal object 
      * 
-     * \param imean        Mean vector of size \f$n\f$
+     * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_mvNormal(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+    inline bool set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
     /*!
      * \brief Replaces the mvNormal object
      *
-     * \param imean        Input mean vector of size \f$n\f$
+     * \param inMean        Input mean vector of size \f$n\f$
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
      * \return true 
      * \return false in failure to allocate storage
      */
-    inline bool set_mvNormal(T const *imean, T const *icovariance, int const n);
+    inline bool set_mvNormal(T const *inMean, T const *icovariance, int const n);
 
     /*!
      * \brief Replaces the mvNormal object (default mean = 0)
@@ -482,16 +480,16 @@ psrandom<T>::psrandom() : normal(nullptr),
             PRNG_seed = std::random_device{}();
         }
 
-        if (!PRNG_Task_registered<T>)
+        if (!isPrngTaskRegistered<T>)
         {
-            torc_register_task((void *)psrandom<T>::init_Task);
-            PRNG_Task_registered<T> = true;
+            torc_register_task((void *)psrandom<T>::initTask);
+            isPrngTaskRegistered<T> = true;
         }
     }
-};
+}
 
 template <typename T>
-psrandom<T>::psrandom(int const iseed) : normal(nullptr),
+psrandom<T>::psrandom(int const inSeed) : normal(nullptr),
                                          normals(nullptr),
                                          nnormals(0),
                                          Normal(nullptr),
@@ -514,13 +512,13 @@ psrandom<T>::psrandom(int const iseed) : normal(nullptr),
         std::lock_guard<std::mutex> lock(PRNG_m);
         if (PRNG_seed == 0)
         {
-            PRNG_seed = static_cast<std::size_t>(iseed);
+            PRNG_seed = static_cast<std::size_t>(inSeed);
         }
 
-        if (!PRNG_Task_registered<T>)
+        if (!isPrngTaskRegistered<T>)
         {
-            torc_register_task((void *)psrandom<T>::init_Task);
-            PRNG_Task_registered<T> = true;
+            torc_register_task((void *)psrandom<T>::initTask);
+            isPrngTaskRegistered<T> = true;
         }
     }
 }
@@ -529,9 +527,9 @@ template <typename T>
 psrandom<T>::~psrandom() {}
 
 template <typename T>
-void psrandom<T>::init_Task()
+void psrandom<T>::initTask()
 {
-    std::vector<std::size_t> rseed(std::mt19937::state_size);
+    std::vector<std::size_t> rSeed(std::mt19937::state_size);
 
     // Get the local number of workers
     std::size_t nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
@@ -544,13 +542,13 @@ void psrandom<T>::init_Task()
     for (std::size_t i = 0; i < nlocalworkers; i++)
     {
         std::size_t const j = PRNG_seed + n + i;
-        std::iota(rseed.begin(), rseed.end(), j);
+        std::iota(rSeed.begin(), rSeed.end(), j);
 
         // Seed the engine with unsigned ints
-        std::seed_seq sseq(rseed.begin(), rseed.end());
+        std::seed_seq sSeq(rSeed.begin(), rSeed.end());
 
         // For each thread feed the RNG
-        NumberGenerator[i].seed(sseq);
+        NumberGenerator[i].seed(sSeq);
 
         Saru s(PRNG_seed, n, i);
         saru[i] = std::move(s);
@@ -561,19 +559,19 @@ template <typename T>
 bool psrandom<T>::init()
 {
     {
-        // Make sure MPI is initilized
+        // Make sure MPI is initialized
         auto initialized = 0;
         MPI_Initialized(&initialized);
         if (!initialized)
         {
-            UMUQFAILRETURN("Failed to initilize MPI!");
+            UMUQFAILRETURN("Failed to initialize MPI!");
         }
     }
 
     {
         std::lock_guard<std::mutex> lock(PRNG_m);
 
-        // Check if psrandom is already initilized
+        // Check if psrandom is already initialized
         if (PRNG_initialized)
         {
             return true;
@@ -596,7 +594,7 @@ bool psrandom<T>::init()
 
     for (int i = 0; i < torc_num_nodes(); i++)
     {
-        torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom<T>::init_Task, 0);
+        torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom<T>::initTask, 0);
     }
     torc_waitall();
 
@@ -610,12 +608,12 @@ bool psrandom<T>::setState()
 }
 
 template <typename T>
-inline bool psrandom<T>::setSeed(long const iseed)
+inline bool psrandom<T>::setSeed(long const inSeed)
 {
     std::lock_guard<std::mutex> lock(PRNG_m);
     if (!PRNG_initialized)
     {
-        PRNG_seed = static_cast<std::size_t>(iseed);
+        PRNG_seed = static_cast<std::size_t>(inSeed);
         return true;
     }
     // It has been initialized before
@@ -737,11 +735,11 @@ bool psrandom<T>::Multinomial(T const *p, int const K, int const N, int *mndist)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_normal(T const imean, T const istddev)
+inline bool psrandom<T>::set_normal(T const inMean, T const inStddev)
 {
     try
     {
-        normal.reset(new randomdist::normalDistribution<T>(imean, istddev));
+        normal.reset(new randomdist::normalDistribution<T>(inMean, inStddev));
     }
     catch (...)
     {
@@ -751,7 +749,7 @@ inline bool psrandom<T>::set_normal(T const imean, T const istddev)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_normals(T const *imean, T const *istddev, int const N)
+inline bool psrandom<T>::set_normals(T const *inMean, T const *inStddev, int const N)
 {
     if (N > 0)
     {
@@ -766,7 +764,7 @@ inline bool psrandom<T>::set_normals(T const *imean, T const *istddev, int const
         }
         for (int i = 0; i < nnormals; i++)
         {
-            normals[i] = std::move(randomdist::normalDistribution<T>(imean[i], istddev[i]));
+            normals[i] = std::move(randomdist::normalDistribution<T>(inMean[i], inStddev[i]));
         }
         return true;
     }
@@ -774,7 +772,7 @@ inline bool psrandom<T>::set_normals(T const *imean, T const *istddev, int const
 }
 
 template <typename T>
-inline bool psrandom<T>::set_normals(T const *imeanistddev, int const N)
+inline bool psrandom<T>::set_normals(T const *inMeanInStddev, int const N)
 {
     if (N > 0)
     {
@@ -789,7 +787,7 @@ inline bool psrandom<T>::set_normals(T const *imeanistddev, int const N)
         }
         for (int i = 0, k = 0; i < nnormals; i++, k += 2)
         {
-            normals[i] = std::move(randomdist::normalDistribution<T>(imeanistddev[k], imeanistddev[k + 1]));
+            normals[i] = std::move(randomdist::normalDistribution<T>(inMeanInStddev[k], inMeanInStddev[k + 1]));
         }
         return true;
     }
@@ -797,11 +795,11 @@ inline bool psrandom<T>::set_normals(T const *imeanistddev, int const N)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_Normal(T const imean, T const istddev)
+inline bool psrandom<T>::set_Normal(T const inMean, T const inStddev)
 {
     try
     {
-        Normal.reset(new randomdist::NormalDistribution<T>(imean, istddev));
+        Normal.reset(new randomdist::NormalDistribution<T>(inMean, inStddev));
     }
     catch (...)
     {
@@ -811,11 +809,11 @@ inline bool psrandom<T>::set_Normal(T const imean, T const istddev)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_lnormal(T const imean, T const istddev)
+inline bool psrandom<T>::set_lnormal(T const inMean, T const inStddev)
 {
     try
     {
-        lnormal.reset(new randomdist::lognormalDistribution<T>(imean, istddev));
+        lnormal.reset(new randomdist::lognormalDistribution<T>(inMean, inStddev));
     }
     catch (...)
     {
@@ -825,11 +823,11 @@ inline bool psrandom<T>::set_lnormal(T const imean, T const istddev)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_lNormal(T const imean, T const istddev)
+inline bool psrandom<T>::set_lNormal(T const inMean, T const inStddev)
 {
     try
     {
-        lNormal.reset(new randomdist::logNormalDistribution<T>(imean, istddev));
+        lNormal.reset(new randomdist::logNormalDistribution<T>(inMean, inStddev));
     }
     catch (...)
     {
@@ -839,11 +837,11 @@ inline bool psrandom<T>::set_lNormal(T const imean, T const istddev)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_mvnormal(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
+inline bool psrandom<T>::set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance)
 {
     try
     {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(inMean, icovariance));
     }
     catch (...)
     {
@@ -853,11 +851,11 @@ inline bool psrandom<T>::set_mvnormal(EVectorX<T> const &imean, EMatrixX<T> cons
 }
 
 template <typename T>
-inline bool psrandom<T>::set_mvnormal(T const *imean, T const *icovariance, int const n)
+inline bool psrandom<T>::set_mvnormal(T const *inMean, T const *icovariance, int const n)
 {
     try
     {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance, n));
+        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(inMean, icovariance, n));
     }
     catch (...)
     {
@@ -909,11 +907,11 @@ inline bool psrandom<T>::set_mvnormal(int const n)
 }
 
 template <typename T>
-inline bool psrandom<T>::set_mvNormal(EVectorX<T> const &imean, EMatrixX<T> const &icovariance)
+inline bool psrandom<T>::set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance)
 {
     try
     {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(inMean, icovariance));
     }
     catch (...)
     {
@@ -923,11 +921,11 @@ inline bool psrandom<T>::set_mvNormal(EVectorX<T> const &imean, EMatrixX<T> cons
 }
 
 template <typename T>
-inline bool psrandom<T>::set_mvNormal(T const *imean, T const *icovariance, int const n)
+inline bool psrandom<T>::set_mvNormal(T const *inMean, T const *icovariance, int const n)
 {
     try
     {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance, n));
+        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(inMean, icovariance, n));
     }
     catch (...)
     {

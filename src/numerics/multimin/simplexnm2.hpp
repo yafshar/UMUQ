@@ -16,8 +16,8 @@ inline namespace multimin
 /*! \class simplexNM2
  *  \ingroup multimin_Module
  * 
- * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
- * It uses fixed coordinate axes around the starting point x to initilize the simplex.
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
+ * It uses fixed coordinate axes around the starting point x to initialize the simplex.
  * The size of simplex is calculated as the RMS distance of each vertex from the center
  *   
  * Ref: 
@@ -25,8 +25,7 @@ inline namespace multimin
  * 
  * This implementation uses n+1 corner points in the simplex.
  * 
- * \tparam T   data type
- * \tparam TMF multimin function type
+ * \tparam T Data type
  */
 template <typename T>
 class simplexNM2 : public functionMinimizer<T>
@@ -55,7 +54,7 @@ class simplexNM2 : public functionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 
@@ -231,7 +230,7 @@ bool simplexNM2<T>::init()
     computeCenter();
 
     // Initialize simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     count++;
 
@@ -352,7 +351,7 @@ bool simplexNM2<T>::iterate()
 
     // Update simplex size
     // Recompute if accumulated error has made size invalid
-    this->size = (S2 > 0) ? std::sqrt(S2) : computeSize();
+    this->characteristicSize = (S2 > 0) ? std::sqrt(S2) : computeSize();
 
     return true;
 }

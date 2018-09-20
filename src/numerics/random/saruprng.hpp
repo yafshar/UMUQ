@@ -274,7 +274,7 @@ class Saru
     static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset;
 
     /*! 
-     * Compile-time template function to efficently advance a state x with
+     * Compile-time template function to efficiently advance a state x with
      * a LCG (mod \f$ 2^32 \f$) N steps.  Runtime, this all becomes a super-simple
      * single multiply and add. 
      */

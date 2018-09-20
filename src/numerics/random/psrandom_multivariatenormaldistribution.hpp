@@ -20,34 +20,34 @@ public:
   /*!
    * \brief constructor
    *
-   * \param imean        Mean vector of size \f$n\f$
-   * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
+   * \param inMean        Mean vector of size \f$n\f$
+   * \param inCovariance  Input Variance-covariance matrix of size \f$n \times n\f$
    */
-  multivariatenormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+  multivariatenormalDistribution(EVectorX<T> const &inMean, EMatrixX<T> const &inCovariance);
 
   /*!
    * \brief constructor
    * 
-   * \param imean        Input mean vector of size \f$n\f$
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-   * \param n            Vector size
+   * \param inMean        Input mean vector of size \f$n\f$
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param n             Vector size
    */
-  multivariatenormalDistribution(T const *imean, T const *icovariance, int const n);
+  multivariatenormalDistribution(T const *inMean, T const *inCovariance, int const n);
 
   /*!
    * \brief constructor (default mean = 0)
    *
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
    */
-  explicit multivariatenormalDistribution(EMatrixX<T> const &icovariance);
+  explicit multivariatenormalDistribution(EMatrixX<T> const &inCovariance);
 
   /*!
    * \brief constructor (default mean = 0)
    * 
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-   * \param n            Vector size
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param n             Vector size
    */
-  multivariatenormalDistribution(T const *icovariance, int const n);
+  multivariatenormalDistribution(T const *inCovariance, int const n);
 
   /*!
    * \brief constructor (default mean = 0, covariance=I)
@@ -127,34 +127,34 @@ public:
   /*!
    * \brief constructor
    *
-   * \param imean        Mean vector of size \f$n\f$
-   * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
+   * \param inMean        Mean vector of size \f$n\f$
+   * \param inCovariance  Input Variance-covariance matrix of size \f$n \times n\f$
    */
-  multivariateNormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance);
+  multivariateNormalDistribution(EVectorX<T> const &inMean, EMatrixX<T> const &inCovariance);
 
   /*!
    * \brief constructor
    * 
-   * \param imean        Input mean vector of size \f$n\f$
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-   * \param n            Vector size
+   * \param inMean        Input mean vector of size \f$n\f$
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param n             Vector size
    */
-  multivariateNormalDistribution(T const *imean, T const *icovariance, int const n);
+  multivariateNormalDistribution(T const *inMean, T const *inCovariance, int const n);
 
   /*!
    * \brief constructor (default mean = 0)
    *
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
    */
-  explicit multivariateNormalDistribution(EMatrixX<T> const &icovariance);
+  explicit multivariateNormalDistribution(EMatrixX<T> const &inCovariance);
 
   /*!
    * \brief constructor (default mean = 0)
    * 
-   * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
+   * \param inCovariance  Input variance-covariance matrix of size \f$n \times n\f$
    * \param n            Vector size
    */
-  multivariateNormalDistribution(T const *icovariance, int const n);
+  multivariateNormalDistribution(T const *inCovariance, int const n);
 
   /*!
    * \brief constructor (default mean = 0, covariance=I)
@@ -225,9 +225,9 @@ private:
 };
 
 template <typename T>
-multivariatenormalDistribution<T>::multivariatenormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
-                                                                                                                              covariance(icovariance),
-                                                                                                                              lu(icovariance)
+multivariatenormalDistribution<T>::multivariatenormalDistribution(EVectorX<T> const &inMean, EMatrixX<T> const &inCovariance) : mean(inMean),
+                                                                                                                                covariance(inCovariance),
+                                                                                                                                lu(inCovariance)
 {
   if (!PRNG_initialized)
   {
@@ -240,9 +240,9 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(EVectorX<T> co
 }
 
 template <typename T>
-multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T>(imean, n, 1)),
-                                                                                                                       covariance(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                                       lu(EMapTypeConst<T>(icovariance, n, n))
+multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *inMean, T const *inCovariance, int const n) : mean(EMapTypeConst<T>(inMean, n, 1)),
+                                                                                                                         covariance(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                                         lu(EMapTypeConst<T>(inCovariance, n, n))
 {
   if (!PRNG_initialized)
   {
@@ -255,7 +255,7 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *imean
 }
 
 template <typename T>
-multivariatenormalDistribution<T>::multivariatenormalDistribution(EMatrixX<T> const &icovariance) : multivariatenormalDistribution(EVectorX<T>::Zero(icovariance.rows()), icovariance)
+multivariatenormalDistribution<T>::multivariatenormalDistribution(EMatrixX<T> const &inCovariance) : multivariatenormalDistribution(EVectorX<T>::Zero(inCovariance.rows()), inCovariance)
 {
   if (!PRNG_initialized)
   {
@@ -264,9 +264,9 @@ multivariatenormalDistribution<T>::multivariatenormalDistribution(EMatrixX<T> co
 }
 
 template <typename T>
-multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
-                                                                                                       covariance(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                       lu(EMapTypeConst<T>(icovariance, n, n))
+multivariatenormalDistribution<T>::multivariatenormalDistribution(T const *inCovariance, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                                                                        covariance(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                        lu(EMapTypeConst<T>(inCovariance, n, n))
 {
   if (!PRNG_initialized)
   {
@@ -326,10 +326,10 @@ EVectorX<T> multivariatenormalDistribution<T>::dist()
 }
 
 template <typename T>
-multivariateNormalDistribution<T>::multivariateNormalDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance) : mean(imean),
-                                                                                                                              covariance(icovariance),
-                                                                                                                              lu(icovariance),
-                                                                                                                              gen(std::random_device{}())
+multivariateNormalDistribution<T>::multivariateNormalDistribution(EVectorX<T> const &inMean, EMatrixX<T> const &inCovariance) : mean(inMean),
+                                                                                                                                covariance(inCovariance),
+                                                                                                                                lu(inCovariance),
+                                                                                                                                gen(std::random_device{}())
 {
   // Computes eigenvalues and eigenvectors of selfadjoint matrices.
   Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
@@ -337,10 +337,10 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(EVectorX<T> co
 }
 
 template <typename T>
-multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *imean, T const *icovariance, int const n) : mean(EMapTypeConst<T>(imean, n, 1)),
-                                                                                                                       covariance(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                                       lu(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                                       gen(std::random_device{}())
+multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *inMean, T const *inCovariance, int const n) : mean(EMapTypeConst<T>(inMean, n, 1)),
+                                                                                                                         covariance(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                                         lu(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                                         gen(std::random_device{}())
 {
   // Computes eigenvalues and eigenvectors of selfadjoint matrices.
   Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);
@@ -348,13 +348,13 @@ multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *imean
 }
 
 template <typename T>
-multivariateNormalDistribution<T>::multivariateNormalDistribution(EMatrixX<T> const &icovariance) : multivariateNormalDistribution(EVectorX<T>::Zero(icovariance.rows()), icovariance) {}
+multivariateNormalDistribution<T>::multivariateNormalDistribution(EMatrixX<T> const &inCovariance) : multivariateNormalDistribution(EVectorX<T>::Zero(inCovariance.rows()), inCovariance) {}
 
 template <typename T>
-multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *icovariance, int const n) : mean(EVectorX<T>::Zero(n)),
-                                                                                                       covariance(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                       lu(EMapTypeConst<T>(icovariance, n, n)),
-                                                                                                       gen(std::random_device{}())
+multivariateNormalDistribution<T>::multivariateNormalDistribution(T const *inCovariance, int const n) : mean(EVectorX<T>::Zero(n)),
+                                                                                                        covariance(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                        lu(EMapTypeConst<T>(inCovariance, n, n)),
+                                                                                                        gen(std::random_device{}())
 {
   // Computes eigenvalues and eigenvectors of selfadjoint matrices.
   Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(covariance);

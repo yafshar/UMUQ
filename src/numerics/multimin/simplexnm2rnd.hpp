@@ -16,9 +16,9 @@ inline namespace multimin
 /*! \class simplexNM2Rnd
  *  \ingroup multimin_Module
  * 
- * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
  * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
- * around the starting point x to initilize the simplex.
+ * around the starting point x to initialize the simplex.
  *  
  * Ref: 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
@@ -55,10 +55,10 @@ class simplexNM2Rnd : public functionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
-     * around the starting point x to initilize the simplex.
+     * around the starting point x to initialize the simplex.
      * The final dimensions of the simplex are scaled along the coordinate axes by the 
      * vector step_size. 
      * The randomization uses a simple deterministic generator so that repeated calls to 
@@ -184,7 +184,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
     /*!
      * \brief Uniform RNG
      * 
-     * \param seed Seed to initilize the PRNG 
+     * \param seed Seed to initialize the PRNG 
      * 
      * \return Uniform random number
      */
@@ -360,7 +360,7 @@ bool simplexNM2Rnd<T>::init()
     computeCenter();
 
     // Initialize simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     count++;
 
@@ -489,7 +489,7 @@ bool simplexNM2Rnd<T>::iterate()
 
     // Update simplex size
     // Recompute if accumulated error has made size invalid
-    this->size = (S2 > 0) ? std::sqrt(S2) : computeSize();
+    this->characteristicSize = (S2 > 0) ? std::sqrt(S2) : computeSize();
 
     return true;
 }
