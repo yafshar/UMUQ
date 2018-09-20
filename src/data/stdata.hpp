@@ -33,7 +33,7 @@ struct optimizationParameters
 	 * 
 	 * \param other 
 	 */
-	optimizationParameters(optimizationParameters<T> const &other);
+	explicit optimizationParameters(optimizationParameters<T> const &other);
 
 	/*!
 	 * \brief Move constructor, construct a new optimizationParameters object from an input object

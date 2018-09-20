@@ -127,7 +127,7 @@ bool copy_bool(bool b) { return b; }
 namespace umuq
 {
 namespace internal
-{
+{ 
 /*!
  * \brief This function formats messages, filename, line number and function name into an std::ostringstream object
  * 
@@ -139,6 +139,12 @@ namespace internal
  * 
  * \returns The combined std::ostringstream object as a string
  */
+std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
+                                                 std::string const &fileName,
+                                                 long lineNumber,
+                                                 std::string const &functionName,
+                                                 std::string const &message2);
+
 std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
                                                  std::string const &fileName,
                                                  long lineNumber,
@@ -305,4 +311,5 @@ std::string MPIErrorMessage(int const errorCode)
         }                                                                           \
     }
 #endif // MPI
-#endif // UMUQ_MACROS_H
+
+#endif // UMUQ_MACROS

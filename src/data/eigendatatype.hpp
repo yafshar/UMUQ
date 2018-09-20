@@ -224,4 +224,4 @@ Eigen::IOFormat eigenIOFormat(Eigen::FullPrecision);
 
 } // namespace umuq
 
-#endif // UMUQ_EIGENDATATYPE_H
+#endif // UMUQ_EIGENDATATYPE

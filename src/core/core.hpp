@@ -207,4 +207,4 @@ static T machinePrecision = std::pow(T{10}, -digits10<T>());
 
 } // namespace umuq
 
-#endif // UMUQ_CORE_H
+#endif // UMUQ_CORE
