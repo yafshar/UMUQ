@@ -100,6 +100,9 @@ TEST(parse_cmd, HandlesCmd)
     sprintf(line, "   prior_mu    1.0,0.1 ");
     p.parse(line);
 
+    EXPECT_EQ(p.toupper(p.at<std::string>(0)), "PRIOR_MU");
+    EXPECT_EQ(p.toupper(p.at<std::string>(1)), "1.0,0.1");
+
     EXPECT_DOUBLE_EQ(p.at<double>(1), 1.0);
     EXPECT_DOUBLE_EQ(p.at<double>(2), 0.1);
 }
