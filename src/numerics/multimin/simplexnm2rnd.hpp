@@ -280,7 +280,7 @@ bool simplexNM2Rnd<T>::init()
             }
         }
 
-        // Generate a random orthornomal basis
+        // Generate a random orthonormal basis
         unsigned long seed = count ^ 0x12345678;
 
         // Warm it up
@@ -308,7 +308,7 @@ bool simplexNM2Rnd<T>::init()
                 T const c = std::cos(angle);
                 T const s = std::sin(angle);
 
-                // Apply a Givens rotation
+                // Apply a given rotation
                 for (int r = 0; r < n; r++)
                 {
                     std::ptrdiff_t const Id_ci = m.ID(r, i);
