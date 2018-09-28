@@ -34,7 +34,7 @@ std::unique_ptr<torcEnvironment<T>> torc;
 funcallcounter fc;
 
 /*!
- * \brief Initialization task
+ * \brief Initialization of MCMC sampling task
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
@@ -50,7 +50,7 @@ template <typename T, class F>
 void tmcmcInitTask(long long const TMCMCObj, T const *SamplePoints, int const *nSamplePoints, T *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
- * \brief Main task
+ * \brief Main MCMC sampling task
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
@@ -200,8 +200,8 @@ public:
   /*!
    * \brief Check if the restart files are available or not. In case of being available, load, and update the data.
    * 
-   * \returns true 
-   * \returns false If this is a fresh start
+   * \returns true  For restarting from previous generation of sample points
+   * \returns false For a fresh start 
    */
   inline bool restart();
 
@@ -217,18 +217,18 @@ public:
    * Starting from samples drawn from the prior at stage \f$ j = 1. \f$ 
    *  
    * \returns true 
-   * \returns false 
+   * \returns false If it encounters an unexpected problem
    */
   bool iterate0();
 
   /*!
-   * \brief Start of the TMCMC algorithm 
+   * \brief Internal part of the main sampling iteration of the TMCMC algorithm 
    * 
    *  
    * \returns true 
-   * \returns false 
+   * \returns false If it encounters an unexpected problem
    */
-  bool iterate1();
+  bool iterateInternal();
 
   /*!
    * \brief Iterative part of the TMCMC algorithm 
@@ -506,13 +506,13 @@ bool tmcmc<T, F>::iterate0()
   }
 
   {
-    //! currentGeneration number
+    //! Current Generation number
     workInformation[0] = runData.currentGeneration;
 
-    //! Step number, this is the first step
+    //! Step number, this is the starting step
     workInformation[2] = 0;
 
-    //! Number of function value at each sampling point
+    //! Number of function value (from evaluation) at each sampling point
     int nFvalue = 1;
 
     //! Total number of sampling chains
@@ -569,27 +569,27 @@ bool tmcmc<T, F>::iterate0()
 }
 
 template <typename T, class F>
-bool tmcmc<T, F>::iterate1()
+bool tmcmc<T, F>::iterateInternal()
 {
-  //! currentGeneration number
+  //! Current Generation number
   workInformation[0] = runData.currentGeneration;
 
-  //! Number of function value at each sampling point
+  //! Number of function value (from evaluation) at each sampling point
   int nFvalue = 1;
 
   //! Total number of sampling chains
   int const nChains = leadersData.size();
 
-  //! Get the iterator to the sample points
+  //! Get the pointer to the sample points
   T *leadersSamplePoints = leadersData.samplePoints.data();
 
   //! Dimension of sample points
   int const nDimSamplePoints = leadersData.nDimSamplePoints;
 
-  //! Get the
+  //! Get this generation probability
   T *PJ = runData.generationProbabilty.data() + runData.currentGeneration;
 
-  //! Get the chain covariance
+  //! Get the scaled chain covariance as \f$ \beta covariance \f$
   if (!Data.useLocalCovariance)
   {
     std::transform(runData.SS.begin(), runData.SS.end(), localCovariance.begin(), [&](T const C) { return Data.bbeta * C; });
@@ -677,17 +677,30 @@ bool tmcmc<T, F>::iterate()
   runData.broadcast();
 
   //! Print the sample mean and Sample covariance matrix
-  runData.print();
+  runData.printSampleStatistics();
 
   //! Check the current data probability
-  while (runData.generationProbabilty[runData.currentGeneration] < T{1} && runData.currentGeneration < runData.maxGenerations)
+  while (runData.generationProbabilty[runData.currentGeneration] < T{1} &&
+         runData.currentGeneration < runData.maxGenerations)
   {
     runData.currentGeneration++;
 
-    if (!iterate1())
+    if (!iterateInternal())
     {
       UMUQFAILRETURN("Failed to update the samples!");
     }
+
+    //! Prepare new generation from the current information
+    if (!prepareNewGeneration())
+    {
+      UMUQFAILRETURN("Failed to prepare the new generation of sample points!");
+    }
+
+    //! Broadcast the running information to all of the nodes
+    runData.broadcast();
+
+    //! Print the sample mean and Sample covariance matrix
+    runData.printSampleStatistics();
   }
 }
 
@@ -761,8 +774,8 @@ bool tmcmc<T, F>::prepareNewGeneration()
       //! Update leaders information from current data
       if (leadersData.updateSelection(currentData))
       {
-        //! Reset number of entries
-        currentData.idxPosition = 0;
+        //! Reset current data number of entries for the new generation of samples
+        currentData.resetSize();
 
 #ifdef DEBUG
         //! Total number of sampling points
