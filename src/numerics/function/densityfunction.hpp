@@ -34,7 +34,7 @@ public:
    * 
    * \param Name Distribution name
    */
-  densityFunction(char const *Name = "");
+  explicit densityFunction(char const *Name = "");
 
   /*!
    * \brief Construct a new density Function object
