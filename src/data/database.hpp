@@ -45,6 +45,11 @@ static bool isUpdateTaskRegistered = false;
 //! Mutex object
 static std::mutex updateTask_m;
 
+} // namespace tmcmc
+
+namespace tmcmc
+{
+
 /*! \class database
  *
  * \brief basic data base
@@ -110,10 +115,10 @@ class database
     /*!
      * \brief Reset the database class size
      * 
-     * \param nSize   Number of points
+     * \param nSize  Number of sampling points (the new size of the database)
      * 
      * \return true 
-     * \return false  If there is not enough memory
+     * \return false If there is not enough memory
      */
     bool reset(int const nSize);
 
@@ -141,11 +146,17 @@ class database
     void swap(database<T> &other);
 
     /*!
-     * \brief Get the size of database in terms of its number of entries
+     * \brief Get the size of database (in terms of number of entries)
      *
-     * \return Size of the database in terms of its number of entries
+     * \return Size of the database (in terms of number of entries)
      */
     inline int size() const;
+
+    /*!
+     * \brief Reset the number of database entries to zero
+     * 
+     */
+    inline void resetSize();
 
     /**
      * \brief Breaking the long chain length 
@@ -571,6 +582,9 @@ void database<T>::swap(database<T> &other)
 
 template <typename T>
 inline int database<T>::size() const { return static_cast<int>(idxPosition); }
+
+template <typename T>
+inline void database<T>::resetSize() { idxPosition = 0; }
 
 template <typename T>
 bool database<T>::resetSelection(int const minLength, int const maxLength)
