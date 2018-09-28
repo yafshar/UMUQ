@@ -103,6 +103,11 @@ using TMCMTASKTYPE = void (*)(long long const, T const *, int const *, T *, int 
 template <typename T, class F>
 static bool tmcmcTaskRegistered = false;
 
+} // namespace tmcmc
+
+namespace tmcmc
+{
+
 /*! \class tmcmc
  * \brief 
  * 
