@@ -41,7 +41,7 @@ namespace umuq
 /*! \class psrandom
   *
   * This class generates pseudo-random numbers.
-  * Engines and distributions used to produce random values. 
+  * It includes engines and distributions used to produce pseudo-random values. 
   * 
   * All of the engines may be specifically seeded, for use with repeatable simulators.
   * Random number engines generate pseudo-random numbers using seed data as entropy source. 
@@ -490,19 +490,19 @@ psrandom<T>::psrandom() : normal(nullptr),
 
 template <typename T>
 psrandom<T>::psrandom(int const inSeed) : normal(nullptr),
-                                         normals(nullptr),
-                                         nnormals(0),
-                                         Normal(nullptr),
-                                         lnormal(nullptr),
-                                         lNormal(nullptr),
-                                         mvnormal(nullptr),
-                                         mvNormal(nullptr),
-                                         expn(nullptr),
-                                         expns(nullptr),
-                                         nexpns(0),
-                                         gamma(nullptr),
-                                         gammas(nullptr),
-                                         ngammas(0)
+                                          normals(nullptr),
+                                          nnormals(0),
+                                          Normal(nullptr),
+                                          lnormal(nullptr),
+                                          lNormal(nullptr),
+                                          mvnormal(nullptr),
+                                          mvNormal(nullptr),
+                                          expn(nullptr),
+                                          expns(nullptr),
+                                          nexpns(0),
+                                          gamma(nullptr),
+                                          gammas(nullptr),
+                                          ngammas(0)
 {
     if (!std::is_floating_point<T>::value)
     {
@@ -687,23 +687,23 @@ bool psrandom<T>::multinomial(T const *p, int const K, int const N, int *mndist)
     // Get the thread ID
     int const me = torc_i_worker_id();
 
-    T const totpsum = std::accumulate(p, p + K, 0);
+    T const totalProbabilitySum = std::accumulate(p, p + K, 0);
 
-    T psum(0);
-    int nsum(0);
+    T probabilitySum(0);
+    int nProbabilitySum(0);
     for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
         {
-            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            std::binomial_distribution<> d(N - nProbabilitySum, p[i] / (totalProbabilitySum - probabilitySum));
             mndist[i] = d(NumberGenerator[me]);
         }
         else
         {
             mndist[i] = 0;
         }
-        psum += p[i];
-        nsum += mndist[i];
+        probabilitySum += p[i];
+        nProbabilitySum += mndist[i];
     }
     return true;
 }
@@ -713,23 +713,23 @@ bool psrandom<T>::Multinomial(T const *p, int const K, int const N, int *mndist)
 {
     std::mt19937 gen(std::random_device{}());
 
-    T const totpsum = std::accumulate(p, p + K, 0);
+    T const totalProbabilitySum = std::accumulate(p, p + K, 0);
 
-    T psum(0);
-    int nsum(0);
+    T probabilitySum(0);
+    int nProbabilitySum(0);
     for (int i = 0; i < K; i++)
     {
         if (p[i] > 0.0)
         {
-            std::binomial_distribution<> d(N - nsum, p[i] / (totpsum - psum));
+            std::binomial_distribution<> d(N - nProbabilitySum, p[i] / (totalProbabilitySum - probabilitySum));
             mndist[i] = d(gen);
         }
         else
         {
             mndist[i] = 0;
         }
-        psum += p[i];
-        nsum += mndist[i];
+        probabilitySum += p[i];
+        nProbabilitySum += mndist[i];
     }
     return true;
 }
