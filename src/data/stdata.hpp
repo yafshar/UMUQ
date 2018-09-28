@@ -535,7 +535,7 @@ bool stdata<T>::load(const char *fname)
             int maxgens = maxGenerations;
             int datanum = populationSize;
 
-            // read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+            // Read each line in the file and skip all the commented and empty line with the default comment "#"
             while (f.readLine())
             {
                 // Parse the line into line arguments
@@ -568,10 +568,10 @@ bool stdata<T>::load(const char *fname)
 
             f.rewindFile();
 
-            // read each line in the file and skip all the commented and empty line with the defaukt comment "#"
+            //! Read each line in the file and skip all the commented and empty line with the default comment "#"
             while (f.readLine())
             {
-                // Parse the line into line arguments
+                //! Parse the line into line arguments
                 p.parse(f.getLine());
 
                 if (p.at<std::string>(0) == "TolCOV")
@@ -644,13 +644,13 @@ bool stdata<T>::load(const char *fname)
                 f.rewindFile();
 
                 found = 0;
-                std::string strt("B" + std::to_string(n));
+                std::string strTemp("B" + std::to_string(n));
 
                 while (f.readLine())
                 {
                     p.parse(f.getLine());
 
-                    if (p.at<std::string>(0) == strt)
+                    if (p.at<std::string>(0) == strTemp)
                     {
                         lowerBound[n] = p.at<T>(1);
                         upperBound[n] = p.at<T>(2);
@@ -789,13 +789,13 @@ bool stdata<T>::load(const char *fname)
                     f.rewindFile();
 
                     found = 0;
-                    std::string strt("C" + std::to_string(n));
+                    std::string strTemp("C" + std::to_string(n));
 
                     while (f.readLine())
                     {
                         p.parse(f.getLine());
 
-                        if (p.at<std::string>(0) == strt)
+                        if (p.at<std::string>(0) == strTemp)
                         {
                             compositePriorDistribution[n] = p.at<int>(1);
                             priorParam1[n] = p.at<T>(2);
