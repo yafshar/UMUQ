@@ -36,7 +36,7 @@ enum priorTypes
  * USE:
  * To use the priorDistribution object:
  * - First, construct a new prior Distribution object with problem dimension and the prior type \sa priorTypes
- *          in case, the prior types is not known yet, you should reset the priorDistribution later with the 
+ *          in case, the prior type is not known yet, you should reset the priorDistribution later with the 
  *          correct problem dimension and corresponding prior type \sa reset .
  * - Second, set the priorDistribution parameters \sa set .
  * IF you only need the probability density function (pdf) \sa pdf or logarithm probability density function \sa logpdf .
@@ -122,7 +122,7 @@ class priorDistribution
     /*!
      * \brief Get the dimension
      * 
-     * \return int Dimension of the pronlem
+     * \return int Dimension of the problem
      */
     inline int getDim();
 
@@ -186,57 +186,59 @@ class priorDistribution
     //! 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
     int priorType;
 
-    //! Composite distribution as a prior
+    //! Composite distribution prior
     std::unique_ptr<int[]> compositePrior;
 
   private:
     //! Flat (Uniform) distribution
-    std::unique_ptr<uniformDistribution<T>> unfm;
+    std::unique_ptr<uniformDistribution<T>> uniformDist;
 
     //! The Multivariate Gaussian Distribution
-    std::unique_ptr<multivariategaussianDistribution<T>> mvnp;
+    std::unique_ptr<multivariategaussianDistribution<T>> multivariategaussianDist;
 
     //! The exponential distribution
-    std::unique_ptr<exponentialDistribution<T>> expo;
+    std::unique_ptr<exponentialDistribution<T>> exponentialDist;
 
     //! The Gamma distribution
-    std::unique_ptr<gammaDistribution<T>> gamm;
+    std::unique_ptr<gammaDistribution<T>> gammaDist;
 
     //! The Gaussian distribution
-    std::unique_ptr<gaussianDistribution<T>> gaus;
+    std::unique_ptr<gaussianDistribution<T>> gaussianDist;
 
   private:
     //! The below data are only used for composite prior distribution
     //! Index of the points
-    std::vector<int> unfmIndex;
-    std::vector<int> gausIndex;
-    std::vector<int> expoIndex;
-    std::vector<int> gammIndex;
+    std::vector<int> uniformIndex;
+    std::vector<int> gaussianIndex;
+    std::vector<int> exponentialIndex;
+    std::vector<int> gammaIndex;
 
     //! Input points
-    std::vector<T> unfmX;
-    std::vector<T> gausX;
-    std::vector<T> expoX;
-    std::vector<T> gammX;
+    std::vector<T> uniformPoints;
+    std::vector<T> gaussianPoints;
+    std::vector<T> exponentialPoints;
+    std::vector<T> gammaPoints;
 };
 
 template <typename T>
 priorDistribution<T>::priorDistribution() : nDim(0),
                                             priorType(priorTypes::UNIFORM),
-                                            unfm(nullptr),
-                                            mvnp(nullptr),
-                                            expo(nullptr),
-                                            gamm(nullptr),
-                                            gaus(nullptr) {}
+                                            compositePrior(nullptr),
+                                            uniformDist(nullptr),
+                                            multivariategaussianDist(nullptr),
+                                            exponentialDist(nullptr),
+                                            gammaDist(nullptr),
+                                            gaussianDist(nullptr) {}
 
 template <typename T>
 priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nDim(probdim),
                                                                               priorType(prior),
-                                                                              unfm(nullptr),
-                                                                              mvnp(nullptr),
-                                                                              expo(nullptr),
-                                                                              gamm(nullptr),
-                                                                              gaus(nullptr)
+                                                                              compositePrior(nullptr),
+                                                                              uniformDist(nullptr),
+                                                                              multivariategaussianDist(nullptr),
+                                                                              exponentialDist(nullptr),
+                                                                              gammaDist(nullptr),
+                                                                              gaussianDist(nullptr)
 {
     switch (priorType)
     {
@@ -260,19 +262,19 @@ template <typename T>
 priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(other.nDim),
                                                                         priorType(other.priorType),
                                                                         compositePrior(std::move(other.compositePrior)),
-                                                                        unfm(std::move(other.unfm)),
-                                                                        mvnp(std::move(other.mvnp)),
-                                                                        expo(std::move(other.expo)),
-                                                                        gamm(std::move(other.gamm)),
-                                                                        gaus(std::move(other.gaus)),
-                                                                        unfmIndex(std::move(other.unfmIndex)),
-                                                                        gausIndex(std::move(other.gausIndex)),
-                                                                        expoIndex(std::move(other.expoIndex)),
-                                                                        gammIndex(std::move(other.gammIndex)),
-                                                                        unfmX(std::move(other.unfmX)),
-                                                                        gausX(std::move(other.gausX)),
-                                                                        expoX(std::move(other.expoX)),
-                                                                        gammX(std::move(other.gammX))
+                                                                        uniformDist(std::move(other.uniformDist)),
+                                                                        multivariategaussianDist(std::move(other.multivariategaussianDist)),
+                                                                        exponentialDist(std::move(other.exponentialDist)),
+                                                                        gammaDist(std::move(other.gammaDist)),
+                                                                        gaussianDist(std::move(other.gaussianDist)),
+                                                                        uniformIndex(std::move(other.uniformIndex)),
+                                                                        gaussianIndex(std::move(other.gaussianIndex)),
+                                                                        exponentialIndex(std::move(other.exponentialIndex)),
+                                                                        gammaIndex(std::move(other.gammaIndex)),
+                                                                        uniformPoints(std::move(other.uniformPoints)),
+                                                                        gaussianPoints(std::move(other.gaussianPoints)),
+                                                                        exponentialPoints(std::move(other.exponentialPoints)),
+                                                                        gammaPoints(std::move(other.gammaPoints))
 {
     switch (priorType)
     {
@@ -314,19 +316,19 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
         break;
     };
     compositePrior = std::move(other.compositePrior);
-    unfm = std::move(other.unfm);
-    mvnp = std::move(other.mvnp);
-    expo = std::move(other.expo);
-    gamm = std::move(other.gamm);
-    gaus = std::move(other.gaus);
-    unfmIndex = std::move(other.unfmIndex);
-    gausIndex = std::move(other.gausIndex);
-    expoIndex = std::move(other.expoIndex);
-    gammIndex = std::move(other.gammIndex);
-    unfmX = std::move(other.unfmX);
-    gausX = std::move(other.gausX);
-    expoX = std::move(other.expoX);
-    gammX = std::move(other.gammX);
+    uniformDist = std::move(other.uniformDist);
+    multivariategaussianDist = std::move(other.multivariategaussianDist);
+    exponentialDist = std::move(other.exponentialDist);
+    gammaDist = std::move(other.gammaDist);
+    gaussianDist = std::move(other.gaussianDist);
+    uniformIndex = std::move(other.uniformIndex);
+    gaussianIndex = std::move(other.gaussianIndex);
+    exponentialIndex = std::move(other.exponentialIndex);
+    gammaIndex = std::move(other.gammaIndex);
+    uniformPoints = std::move(other.uniformPoints);
+    gaussianPoints = std::move(other.gaussianPoints);
+    exponentialPoints = std::move(other.exponentialPoints);
+    gammaPoints = std::move(other.gammaPoints);
 
     return *this;
 }
@@ -359,25 +361,25 @@ bool priorDistribution<T>::reset(int const probdim, int const prior)
     {
         compositePrior.reset(nullptr);
     }
-    if (unfm)
+    if (uniformDist)
     {
-        unfm.reset(nullptr);
+        uniformDist.reset(nullptr);
     }
-    if (mvnp)
+    if (multivariategaussianDist)
     {
-        mvnp.reset(nullptr);
+        multivariategaussianDist.reset(nullptr);
     }
-    if (expo)
+    if (exponentialDist)
     {
-        expo.reset(nullptr);
+        exponentialDist.reset(nullptr);
     }
-    if (gamm)
+    if (gammaDist)
     {
-        gamm.reset(nullptr);
+        gammaDist.reset(nullptr);
     }
-    if (gaus)
+    if (gaussianDist)
     {
-        gaus.reset(nullptr);
+        gaussianDist.reset(nullptr);
     }
     return true;
 }
@@ -390,7 +392,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::UNIFORM:
         try
         {
-            unfm.reset(new uniformDistribution<T>(Param1, Param2, nDim * 2));
+            uniformDist.reset(new uniformDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -400,7 +402,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::GAUSSIAN:
         try
         {
-            mvnp.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim * 2));
+            multivariategaussianDist.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -410,7 +412,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::EXPONENTIAL:
         try
         {
-            expo.reset(new exponentialDistribution<T>(Param1, nDim * 2));
+            exponentialDist.reset(new exponentialDistribution<T>(Param1, nDim * 2));
         }
         catch (...)
         {
@@ -420,7 +422,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     case priorTypes::GAMMA:
         try
         {
-            gamm.reset(new gammaDistribution<T>(Param1, Param2, nDim * 2));
+            gammaDist.reset(new gammaDistribution<T>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -448,9 +450,9 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
             UMUQFAILRETURN("Failed to provide composite prior types for each dimension!");
         }
 
-        if (mvnp)
+        if (multivariategaussianDist)
         {
-            mvnp.reset(nullptr);
+            multivariategaussianDist.reset(nullptr);
         }
 
         int nUNIFORM(0);
@@ -482,23 +484,23 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
 
         if (nUNIFORM)
         {
-            unfmIndex.resize(nUNIFORM);
-            unfmX.resize(nUNIFORM);
+            uniformIndex.resize(nUNIFORM);
+            uniformPoints.resize(nUNIFORM);
         }
         if (nGAUSSIAN)
         {
-            gausIndex.resize(nGAUSSIAN);
-            gausX.resize(nGAUSSIAN);
+            gaussianIndex.resize(nGAUSSIAN);
+            gaussianPoints.resize(nGAUSSIAN);
         }
         if (nEXPONENTIAL)
         {
-            expoIndex.resize(nEXPONENTIAL);
-            expoX.resize(nEXPONENTIAL);
+            exponentialIndex.resize(nEXPONENTIAL);
+            exponentialPoints.resize(nEXPONENTIAL);
         }
         if (nGAMMA)
         {
-            gammIndex.resize(nGAMMA);
-            gammX.resize(nGAMMA);
+            gammaIndex.resize(nGAMMA);
+            gammaPoints.resize(nGAMMA);
         }
 
         std::vector<T> uparam1(nUNIFORM);
@@ -521,24 +523,24 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
             case priorTypes::UNIFORM:
                 uparam1[nUNIFORM] = Param1[i];
                 uparam2[nUNIFORM] = Param2[i];
-                unfmIndex[nUNIFORM] = i;
+                uniformIndex[nUNIFORM] = i;
                 nUNIFORM++;
                 break;
             case priorTypes::GAUSSIAN:
                 nparam1[nGAUSSIAN] = Param1[i];
                 nparam2[nGAUSSIAN] = Param2[i];
-                gausIndex[nGAUSSIAN] = i;
+                gaussianIndex[nGAUSSIAN] = i;
                 nGAUSSIAN++;
                 break;
             case priorTypes::EXPONENTIAL:
                 eparam1[nEXPONENTIAL] = Param1[i];
-                expoIndex[nEXPONENTIAL] = i;
+                exponentialIndex[nEXPONENTIAL] = i;
                 nEXPONENTIAL++;
                 break;
             case priorTypes::GAMMA:
                 gparam1[nGAMMA] = Param1[i];
                 gparam2[nGAMMA] = Param2[i];
-                gammIndex[nGAMMA] = i;
+                gammaIndex[nGAMMA] = i;
                 nGAMMA++;
                 break;
             };
@@ -548,7 +550,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                unfm.reset(new uniformDistribution<T>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
+                uniformDist.reset(new uniformDistribution<T>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
             }
             catch (...)
             {
@@ -557,16 +559,16 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         }
         else
         {
-            if (unfm)
+            if (uniformDist)
             {
-                unfm.reset(nullptr);
+                uniformDist.reset(nullptr);
             }
         }
         if (nGAUSSIAN)
         {
             try
             {
-                gaus.reset(new gaussianDistribution<T>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
+                gaussianDist.reset(new gaussianDistribution<T>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
             }
             catch (...)
             {
@@ -575,13 +577,13 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         }
         else
         {
-            gaus.reset(nullptr);
+            gaussianDist.reset(nullptr);
         }
         if (nEXPONENTIAL)
         {
             try
             {
-                expo.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL));
+                exponentialDist.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL));
             }
             catch (...)
             {
@@ -590,16 +592,16 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         }
         else
         {
-            if (expo)
+            if (exponentialDist)
             {
-                expo.reset(nullptr);
+                exponentialDist.reset(nullptr);
             }
         }
         if (nGAMMA)
         {
             try
             {
-                gamm.reset(new gammaDistribution<T>(gparam1.data(), gparam2.data(), nGAMMA * 2));
+                gammaDist.reset(new gammaDistribution<T>(gparam1.data(), gparam2.data(), nGAMMA * 2));
             }
             catch (...)
             {
@@ -608,9 +610,9 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         }
         else
         {
-            if (gamm)
+            if (gammaDist)
             {
-                gamm.reset(nullptr);
+                gammaDist.reset(nullptr);
             }
         }
     }
@@ -640,27 +642,27 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
             switch (priorType)
             {
             case priorTypes::UNIFORM:
-                if (unfm)
+                if (uniformDist)
                 {
-                    return unfm->setRandomGenerator(PRNG);
+                    return uniformDist->setRandomGenerator(PRNG);
                 }
                 break;
             case priorTypes::GAUSSIAN:
-                if (mvnp)
+                if (multivariategaussianDist)
                 {
-                    return mvnp->setRandomGenerator(PRNG);
+                    return multivariategaussianDist->setRandomGenerator(PRNG);
                 }
                 break;
             case priorTypes::EXPONENTIAL:
-                if (expo)
+                if (exponentialDist)
                 {
-                    return expo->setRandomGenerator(PRNG);
+                    return exponentialDist->setRandomGenerator(PRNG);
                 }
                 break;
             case priorTypes::GAMMA:
-                if (gamm)
+                if (gammaDist)
                 {
-                    return gamm->setRandomGenerator(PRNG);
+                    return gammaDist->setRandomGenerator(PRNG);
                 }
                 break;
             case priorTypes::COMPOSITE:
@@ -677,9 +679,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                     case priorTypes::UNIFORM:
                         if (!unfmstatus)
                         {
-                            if (unfm)
+                            if (uniformDist)
                             {
-                                cstatus = cstatus && unfm->setRandomGenerator(PRNG);
+                                cstatus = cstatus && uniformDist->setRandomGenerator(PRNG);
                                 unfmstatus = cstatus;
                             }
                             else
@@ -691,9 +693,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                     case priorTypes::GAUSSIAN:
                         if (!gausstatus)
                         {
-                            if (gaus)
+                            if (gaussianDist)
                             {
-                                cstatus = cstatus && gaus->setRandomGenerator(PRNG);
+                                cstatus = cstatus && gaussianDist->setRandomGenerator(PRNG);
                                 gausstatus = cstatus;
                             }
                             else
@@ -705,9 +707,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                     case priorTypes::EXPONENTIAL:
                         if (!expostatus)
                         {
-                            if (expo)
+                            if (exponentialDist)
                             {
-                                cstatus = cstatus && expo->setRandomGenerator(PRNG);
+                                cstatus = cstatus && exponentialDist->setRandomGenerator(PRNG);
                                 expostatus = cstatus;
                             }
                             else
@@ -719,9 +721,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                     case priorTypes::GAMMA:
                         if (!gammstatus)
                         {
-                            if (gamm)
+                            if (gammaDist)
                             {
-                                cstatus = cstatus && gamm->setRandomGenerator(PRNG);
+                                cstatus = cstatus && gammaDist->setRandomGenerator(PRNG);
                                 gammstatus = cstatus;
                             }
                             else
@@ -743,7 +745,7 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
         }
         UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to any prior distribution!");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
 }
 
 template <typename T>
@@ -770,54 +772,54 @@ T priorDistribution<T>::pdf(T const *x)
     switch (priorType)
     {
     case priorTypes::UNIFORM:
-        return unfm->f(x);
+        return uniformDist->f(x);
         break;
     case priorTypes::GAUSSIAN:
-        return mvnp->f(x);
+        return multivariategaussianDist->f(x);
         break;
     case priorTypes::EXPONENTIAL:
-        return expo->f(x);
+        return exponentialDist->f(x);
         break;
     case priorTypes::GAMMA:
-        return gamm->f(x);
+        return gammaDist->f(x);
         break;
     case priorTypes::COMPOSITE:
         T sum(1);
-        if (unfm)
+        if (uniformDist)
         {
             int j(0);
-            for (auto i : unfmIndex)
+            for (auto i : uniformIndex)
             {
-                unfmX[j++] = x[i];
+                uniformPoints[j++] = x[i];
             }
-            sum *= unfm->f(unfmX.data());
+            sum *= uniformDist->f(uniformPoints.data());
         }
-        if (gaus)
+        if (gaussianDist)
         {
             int j(0);
-            for (auto i : gausIndex)
+            for (auto i : gaussianIndex)
             {
-                gausX[j++] = x[i];
+                gaussianPoints[j++] = x[i];
             }
-            sum *= gaus->f(gausX.data());
+            sum *= gaussianDist->f(gaussianPoints.data());
         }
-        if (expo)
+        if (exponentialDist)
         {
             int j(0);
-            for (auto i : expoIndex)
+            for (auto i : exponentialIndex)
             {
-                expoX[j++] = x[i];
+                exponentialPoints[j++] = x[i];
             }
-            sum *= expo->f(expoX.data());
+            sum *= exponentialDist->f(exponentialPoints.data());
         }
-        if (gamm)
+        if (gammaDist)
         {
             int j(0);
-            for (auto i : gammIndex)
+            for (auto i : gammaIndex)
             {
-                gammX[j++] = x[i];
+                gammaPoints[j++] = x[i];
             }
-            sum *= gamm->f(gammX.data());
+            sum *= gammaDist->f(gammaPoints.data());
         }
         return sum;
         break;
@@ -837,54 +839,54 @@ T priorDistribution<T>::logpdf(T const *x)
     switch (priorType)
     {
     case priorTypes::UNIFORM:
-        return unfm->lf(x);
+        return uniformDist->lf(x);
         break;
     case priorTypes::GAUSSIAN:
-        return mvnp->lf(x);
+        return multivariategaussianDist->lf(x);
         break;
     case priorTypes::EXPONENTIAL:
-        return expo->lf(x);
+        return exponentialDist->lf(x);
         break;
     case priorTypes::GAMMA:
-        return gamm->lf(x);
+        return gammaDist->lf(x);
         break;
     case priorTypes::COMPOSITE:
         T sum(0);
-        if (unfm)
+        if (uniformDist)
         {
             int j(0);
-            for (auto i : unfmIndex)
+            for (auto i : uniformIndex)
             {
-                unfmX[j++] = x[i];
+                uniformPoints[j++] = x[i];
             }
-            sum += unfm->lf(unfmX.data());
+            sum += uniformDist->lf(uniformPoints.data());
         }
-        if (gaus)
+        if (gaussianDist)
         {
             int j(0);
-            for (auto i : gausIndex)
+            for (auto i : gaussianIndex)
             {
-                gausX[j++] = x[i];
+                gaussianPoints[j++] = x[i];
             }
-            sum += gaus->lf(gausX.data());
+            sum += gaussianDist->lf(gaussianPoints.data());
         }
-        if (expo)
+        if (exponentialDist)
         {
             int j(0);
-            for (auto i : expoIndex)
+            for (auto i : exponentialIndex)
             {
-                expoX[j++] = x[i];
+                exponentialPoints[j++] = x[i];
             }
-            sum += expo->lf(expoX.data());
+            sum += exponentialDist->lf(exponentialPoints.data());
         }
-        if (gamm)
+        if (gammaDist)
         {
             int j(0);
-            for (auto i : gammIndex)
+            for (auto i : gammaIndex)
             {
-                gammX[j++] = x[i];
+                gammaPoints[j++] = x[i];
             }
-            sum += gamm->lf(gammX.data());
+            sum += gammaDist->lf(gammaPoints.data());
         }
         return sum;
         break;
@@ -904,59 +906,59 @@ bool priorDistribution<T>::sample(T *x)
     switch (priorType)
     {
     case priorTypes::UNIFORM:
-        return unfm->sample(x);
+        return uniformDist->sample(x);
         break;
     case priorTypes::GAUSSIAN:
-        return mvnp->sample(x);
+        return multivariategaussianDist->sample(x);
         break;
     case priorTypes::EXPONENTIAL:
-        return expo->sample(x);
+        return exponentialDist->sample(x);
         break;
     case priorTypes::GAMMA:
-        return gamm->sample(x);
+        return gammaDist->sample(x);
         break;
     case priorTypes::COMPOSITE:
-        if (unfm)
+        if (uniformDist)
         {
-            if (unfm->sample(unfmX.data()))
+            if (uniformDist->sample(uniformPoints.data()))
             {
                 int j(0);
-                for (auto i : unfmIndex)
+                for (auto i : uniformIndex)
                 {
-                    x[i] = unfmX[j++];
+                    x[i] = uniformPoints[j++];
                 }
             }
         }
-        if (gaus)
+        if (gaussianDist)
         {
-            if (gaus->sample(gausX.data()))
+            if (gaussianDist->sample(gaussianPoints.data()))
             {
                 int j(0);
-                for (auto i : gausIndex)
+                for (auto i : gaussianIndex)
                 {
-                    x[i] = gausX[j++];
+                    x[i] = gaussianPoints[j++];
                 }
             }
         }
-        if (expo)
+        if (exponentialDist)
         {
-            if (expo->sample(expoX.data()))
+            if (exponentialDist->sample(exponentialPoints.data()))
             {
                 int j(0);
-                for (auto i : expoIndex)
+                for (auto i : exponentialIndex)
                 {
-                    x[i] = expoX[j++];
+                    x[i] = exponentialPoints[j++];
                 }
             }
         }
-        if (gamm)
+        if (gammaDist)
         {
-            if (gamm->sample(gammX.data()))
+            if (gammaDist->sample(gammaPoints.data()))
             {
                 int j(0);
-                for (auto i : gammIndex)
+                for (auto i : gammaIndex)
                 {
-                    x[i] = gammX[j++];
+                    x[i] = gammaPoints[j++];
                 }
             }
         }
