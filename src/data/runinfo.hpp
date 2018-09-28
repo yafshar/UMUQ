@@ -116,6 +116,12 @@ class runinfo
 	bool save(std::string const &fileName);
 
 	/*!
+	 * \brief Print the information on the standard output
+	 * 
+	 */
+	void print();
+
+	/*!
      * \brief Load information from a file @fileName
      * Load the runinfo data information from a file @fileName
      * 
@@ -155,10 +161,13 @@ class runinfo
 	inline void broadcast();
 
 	/*!
-     * \brief Printing the running information mean & covariance matrix on the standard output
-     *
+     * \brief Printing the running information mean & covariance computed from a collection 
+	 * (the sample) of data.
+	 * 
+	 * Print the sample mean and the sample covariance
+	 * 
      */
-	void print();
+	void printSampleStatistics();
 
   private:
 	// Make it noncopyable
@@ -193,11 +202,6 @@ class runinfo
 	std::vector<T> meantheta;
 };
 
-/*!
- * \brief Construct a new runinfo object
- * 
- * \tparam T 
- */
 template <typename T>
 runinfo<T>::runinfo() : nDim(0),
 						maxGenerations(0),
@@ -213,13 +217,6 @@ runinfo<T>::runinfo() : nDim(0),
 	}
 }
 
-/*!
- * \brief Construct a new runinfo object
- * 
- * 
- * \param ProbDim         Dimension
- * \param MaxGenerations  Max generations
- */
 template <typename T>
 runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 													   maxGenerations(MaxGenerations),
@@ -240,12 +237,6 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 	}
 }
 
-/*!
- * \brief Move constructor, construct a new runinfo object from an input runinfo object
- * 
- * \param other Input runinfo object
- * 
- */
 template <typename T>
 runinfo<T>::runinfo(runinfo<T> &&other)
 {
@@ -261,13 +252,6 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 	meantheta = std::move(other.meantheta);
 }
 
-/*!
- * \brief Move assignment operator
- * 
- * \param other Input runinfo object
- * 
- * \returns runinfo<T>& 
- */
 template <typename T>
 runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 {
@@ -285,11 +269,6 @@ runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 	return *this;
 }
 
-/*!
- * \brief Initialize the database class register task
- *  
- * \returns false if there is not enough memory
- */
 template <typename T>
 bool runinfo<T>::init()
 {
@@ -315,15 +294,6 @@ bool runinfo<T>::init()
 	return true;
 }
 
-/*!
- * \brief Reset the runinfo object with the new dimension and maximum generations
- * 
- * \param ProbDim         Dimension
- * \param MaxGenerations  Maximum generations
- * 
- * \return true 
- * \return false  If there is not enough memory
- */
 template <typename T>
 bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
 {
@@ -332,12 +302,6 @@ bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
 	return init();
 }
 
-/*!
- * \brief Exchanges the given runinfo object
- * 
- * \param other Input runinfo object
- * 
- */
 template <typename T>
 void runinfo<T>::swap(runinfo<T> &other)
 {
@@ -353,15 +317,6 @@ void runinfo<T>::swap(runinfo<T> &other)
 	meantheta.swap(other.meantheta);
 }
 
-/*!
- * \brief Save the information in a file @fileName
- * Write the runinfo data information to a file @fileName
- * 
- * \param fileName Name of the file (default name is runinfo.txt) for writing information 
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool runinfo<T>::save(const char *fileName)
 {
@@ -410,6 +365,59 @@ template <typename T>
 bool runinfo<T>::save(std::string const &fileName)
 {
 	return save(&fileName[0]);
+}
+
+template <typename T>
+void runinfo<T>::print()
+{
+	std::cout << "\n----------------------------\n" << std::endl;
+	std::cout << "Problem Dimension= " << nDim << "\n";
+	std::cout << "Generation= " << currentGeneration << "\n";
+
+	//! Create an instance of the IO object
+	umuq::io f;
+
+	{
+		//! Define the printing format
+		umuq::ioFormat umuqFormat = {"\n", "", "[\n", "]\n"};
+
+		std::cout << "\nEach generation coefficient of variation=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(CoefVar, currentGeneration, 1, umuqFormat);
+
+		std::cout << "\nEach generation probabilty=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(generationProbabilty, currentGeneration, 1, umuqFormat);
+
+		std::cout << "\nEach generation number of unique sample points=\n";
+		f.setWidth(-1);
+		f.printMatrix<int>(currentUniques, currentGeneration, 1, umuqFormat);
+
+		std::cout << "\nEach generation log selection for computing evidence=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(logselection, currentGeneration, 1, umuqFormat);
+
+		std::cout << "\nThe logarithm of evidence is=[" << std::accumulate(logselection.data(), logselection.data() + currentGeneration, T{}) << "]\n";
+
+		std::cout << "\nEach generation acceptance rate=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(acceptance, currentGeneration, 1, umuqFormat);
+	}
+
+	{
+		//! Define the printing format
+		umuq::ioFormat umuqFormat = {" ", "", "[", "]\n"};
+
+		std::cout << "\nEach generation mean of running information=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(meantheta, currentGeneration, nDim, umuqFormat);
+
+		std::cout << "\nCovariance of running information at generation[" << currentGeneration << "]=\n";
+		f.setWidth(-1);
+		f.printMatrix<T>(SS, nDim, nDim, umuqFormat);
+	}
+
+	std::cout << "\n----------------------------\n" << std::endl;
 }
 
 /*!
@@ -528,7 +536,7 @@ inline void runinfo<T>::broadcast()
 }
 
 template <typename T>
-void runinfo<T>::print()
+void runinfo<T>::printSampleStatistics()
 {
 	std::cout << "----------------------------" << std::endl;
 	umuq::io f;
