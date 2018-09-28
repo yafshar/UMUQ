@@ -11,7 +11,7 @@ namespace umuq
 /*!
  * \brief Prior distribution types
  * 
- * Currenly we have these types:
+ * Currently we have these types:
  * \b UNIFORM \sa uniformDistribution
  * \b GAUSSIAN \sa gaussianDistribution
  * \b EXPONENTIAL \sa exponentialDistribution
