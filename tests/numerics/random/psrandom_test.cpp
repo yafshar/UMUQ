@@ -3,6 +3,7 @@
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 #include "numerics/stats.hpp"
+#include "io/io.hpp"
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
@@ -83,6 +84,22 @@ TEST(random_test, HandlesMultivariate)
     //     idata << 4.348817, 2.995049, -3.793431, 4.711934, 1.190864, -1.357363;
 
     // cov(samples) # 19.03539 11.91384 \n 11.91384  9.28796
+
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prng.setState());
+
+    std::vector<double> Mean{3., 2.};
+    std::vector<double> Covariance{10., 5., 5., 5.};
+
+    std::vector<double> a(2);
+
+    //! Map the data to the Eigen vector format
+    umuq::EVectorMapType<double> Ea(a.data(), 2);
+
+    // Create an object of type Multivariate normal distribution
+    EXPECT_TRUE(prng.set_mvnormal(Mean.data(), Covariance.data(), 2));
+
+    Ea = prng.mvnormal->dist();
 }
 
 int main(int argc, char **argv)
