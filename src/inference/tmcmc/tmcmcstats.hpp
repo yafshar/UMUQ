@@ -78,6 +78,11 @@ T pj;
 template <typename T>
 T optimizerTolerance;
 
+} // namespace tmcmc
+
+namespace tmcmc
+{
+
 /*! \class tmcmcStats
  * \brief 
  * 
@@ -167,6 +172,17 @@ class tmcmcStats
      */
     bool searchOptimumP(T const *FunValues, int const nFunValues, T const PJ, T *OptimumP, T *OptimumCoefVar);
 
+    /*!
+     * \brief 
+     * 
+     * \param StreamData 
+     * \param CurrentData 
+     * \param RunData 
+     * \param Leaders 
+     * 
+     * \returns true 
+     * \returns false If it encounters any problem
+     */
     bool selectNewGeneration(stdata<T> &StreamData, database<T> &CurrentData, runinfo<T> &RunData, database<T> &Leaders);
 
   private:
