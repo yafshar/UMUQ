@@ -239,10 +239,10 @@ public:
   //! N-dimensional x vector
   std::vector<T> x;
 
-  // Workspace 1 for algorithm
+  //! Workspace 1 for algorithm
   std::vector<T> ws1;
 
-  // Workspace 2 for algorithm
+  //! Workspace 2 for algorithm
   std::vector<T> ws2;
 
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)
