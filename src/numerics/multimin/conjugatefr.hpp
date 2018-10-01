@@ -1,19 +1,30 @@
 #ifndef UMUQ_CONJUGATEFR_H
 #define UMUQ_CONJUGATEFR_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class conjugateFr
  *  \ingroup multimin Module
  * 
  * \brief Conjugate gradient Fletcher-Reeve algorithm
  * 
- * This is a succession of line minimizations. In this algorithm we use the value of the function 
+ * This is a succession of line minimization. In this algorithm we use the value of the function 
  * and its gradient at each evaluation point. The sequence of search directions is used to 
  * build up an approximation to the curvature of the function in the neighborhood of the minimum.
  * An initial search direction is chosen using the gradient, and line minimization is carried 
  * out in that direction. 
  * 
  * \tparam T      data type
- * \tparam TMFD   multimin differentiable function type
  */
 template <typename T>
 class conjugateFr : public differentiableFunctionMinimizer<T>
@@ -42,7 +53,7 @@ class conjugateFr : public differentiableFunctionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 
@@ -190,8 +201,8 @@ bool conjugateFr<T>::iterate()
     std::cout << "Got stepc = " << stepc << "fc = " << fc << std::endl;
 #endif
 
-    // Do a line minimisation in the region (xa,fa) (xc,fc) to find an
-    // intermediate (xb,fb) satisifying fa > fb < fc.  Choose an initial
+    // Do a line minimization in the region (xa,fa) (xc,fc) to find an
+    // intermediate (xb,fb) satisfying fa > fb < fc.  Choose an initial
     // xb based on parabolic interpolation
     this->intermediatePoint(this->x, p, dir / pnorm, pg, stepc, fa, fc, x1, dx1, this->gradient, stepb, fb);
 
@@ -248,5 +259,8 @@ inline bool conjugateFr<T>::restart()
     iter = 0;
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_CONJUGATEFR

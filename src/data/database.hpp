@@ -1,25 +1,34 @@
 #ifndef UMUQ_DATABASE_H
 #define UMUQ_DATABASE_H
 
-#include "../core/core.hpp"
-#include "../misc/arraywrapper.hpp"
-#include "../io/io.hpp"
+#include "core/core.hpp"
 #include "mpidatatype.hpp"
+#include "misc/arraywrapper.hpp"
+#include "io/io.hpp"
+
+namespace umuq
+{
+/*! \namespace tmcmc
+ * \brief Namespace containing all the functions for TMCMC algorithm
+ *
+ */
+namespace tmcmc
+{
 
 /*!
- * \brief Updating the data information at each point @iParray 
+ * \brief Updating the data information at each point @SamplePoints 
  * 
- * \tparam T           Data type (T is a floating-point type)
+ * \tparam T Data type (T is a floating-point type)
  * 
- * \param other        database object which is casted to long long
- * \param iParray      Points or sampling points array
- * \param iFvalue      Function value at the sampling point 
- * \param iGarray      Array of data @iParray 
- * \param indimGarray  Dimension of G array
- * \param iSurrogate   Surrogate
+ * \param other          Database object which is casted to long long
+ * \param SamplePoints   Points or sampling points array
+ * \param FunValue       Function value at the sampling point 
+ * \param DataArray      Array of data @SamplePoints 
+ * \param NDimDataArray  Dimension of G array
+ * \param Surrogate      Surrogate
  */
 template <typename T>
-void update_Task(long long const other, T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate);
+void updateDataTask(long long const other, T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
 /*!
  * \brief A polymorphic function wrapper type for updateTask
@@ -29,26 +38,31 @@ void update_Task(long long const other, T const *iParray, T const *iFvalue, T co
 template <typename T>
 using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *, int const *, int const *);
 
-//! True if update_Task has been registered, and false otherwise (logical).
+//! True if updateDataTask has been registered, and false otherwise (logical).
 template <typename T>
-static bool database_update_Task_registered = false;
+static bool isUpdateTaskRegistered = false;
 
-//! Muex object
-static std::mutex update_Task_m;
+//! Mutex object
+static std::mutex updateTask_m;
+
+} // namespace tmcmc
+
+namespace tmcmc
+{
 
 /*! \class database
  *
  * \brief basic data base
  * 
- * \tparam T         Data type (T is a floating-point type)
+ * \tparam T Data type (T is a floating-point type)
  *
- * \param Parray     Array for points in space
- * \param ndimParray An integer argument shows the size of Parray
- * \param Garray     Array
- * \param ndimGarray An integer argument shows the size of Garray
- * \param Fvalue     Argument for the function value
- * \param surrogate  An integer argument shows the surrogate model
- * \param nsel       An integer argument for selection of leaders only
+ * \param samplePoints       Array for points in space
+ * \param nDimSamplePoints   An integer argument shows the size of samplePoints
+ * \param dataArray          Array of data
+ * \param nDimDataArray      An integer argument shows the size of dataArray
+ * \param fValue             Function value
+ * \param surrogate          An integer argument shows the surrogate model
+ * \param nSelection         An integer argument for selection of leaders only
  */
 template <typename T>
 class database
@@ -66,7 +80,7 @@ class database
      * \param nDim   Dimension of space (points)
      * \param nSize  Number of points 
      */
-    database(int nDim, int nSize);
+    database(int const nDim, int const nSize);
 
     /*!
      * \brief Construct a new database object
@@ -75,7 +89,7 @@ class database
      * \param nDim2  Dimension of the second array which could be prior
      * \param nSize  Number of points
      */
-    database(int nDim1, int nDim2, int nSize);
+    database(int const nDim1, int const nDim2, int const nSize);
 
     /*!
      * \brief Move constructor, construct a new database object from input database object
@@ -101,12 +115,12 @@ class database
     /*!
      * \brief Reset the database class size
      * 
-     * \param nSize   Number of points
+     * \param nSize  Number of sampling points (the new size of the database)
      * 
      * \return true 
-     * \return false  If there is not enough memory
+     * \return false If there is not enough memory
      */
-    bool reset(int nSize);
+    bool reset(int const nSize);
 
     /*!
      * \brief Register task on the TORC task library
@@ -125,41 +139,63 @@ class database
     inline void setTask(UPDATETASKTYPE<T> const &func);
 
     /*!
-     * \brief Swaps databses
+     * \brief Swaps two database objects
      *
      * \param other Input database object
      */
     void swap(database<T> &other);
 
     /*!
-     * \brief Get the size of database in terms of its number of entries
+     * \brief Get the size of database (in terms of number of entries)
      *
-     * \return Size of the database in terms of its number of entries
+     * \return Size of the database (in terms of number of entries)
      */
-    inline std::size_t getSize() const;
+    inline int size() const;
 
     /*!
-     * \brief Get the Index of the current position @idxPos
-     *
-     * \return the Index of the current position @idxPos
+     * \brief Reset the number of database entries to zero
+     * 
      */
-    inline std::size_t getIndex() const;
+    inline void resetSize();
 
-    /*!
-     * \brief reset the Index position to a @IdxPos position
-     *
-     * \param IdxPos
-     *
-     * \return true
-     * \return false  If it is out of number of entries
+    /**
+     * \brief Breaking the long chain length 
+     * 
+     * Here, we break the long chain length assigned to important samples to reduce or 
+     * avoid error coming from the multiple chains mixing (default is 1 for BASIS TMCMC)
+     * 
+     * Reference:
+     * Bayesian Annealed Sequential Importance Sampling: An Unbiased Version of Transitional Markov Chain Monte Carlo, 
+     * ASCE-ASME JRU, 4(1), pp-011008, (2018)
+     * 
+     * \param minLength  Minimum chain length 
+     * \param maxLength  Maximum chain length
+     * 
+     * \returns true 
+     * \returns false If it encounters any problem
      */
-    inline bool resetIdxPos(int IdxPos);
+    bool resetSelection(int const minLength = 1, int const maxLength = 1);
 
-    /*!
-     * \brief quick sort
-     *
+    /**
+     * \brief Updating the data information on the new selections 
+     * 
+     * \param other datbase object 
+     * 
+     * \returns true 
+     * \returns false If it encounters any problem
      */
-    inline bool sort();
+    bool updateSelection(database<T> const &other);
+
+    /**
+     * \brief Update the work load on each queue based on the amount of work
+     * It uses a greedy partitioning based on the amount of workload
+     * 
+     * \param nChains Number of chains
+     * 
+     * \returns true 
+     * \returns false 
+     */
+    bool updateWorkload(int const nChains);
 
     /*!
      * \brief Printing the database data on the standard output
@@ -170,7 +206,7 @@ class database
     /*!
      * \brief helper function for writing the data into a file
      *
-     * Written data includes Parray, Fvalue, Garray (if it exists)
+     * Written data includes samplePoints, fValue, dataArray (if it exists)
      */
     bool save(const char *fname = "", int const IdNumber = 0);
 
@@ -185,25 +221,40 @@ class database
     bool load(std::string const &fname, int const IdNumber = 0);
 
     /*!
-     * \brief Updating the data information at each point @iParray 
+     * \brief Updating the data information at each point @SamplePoints 
      * 
-     * \param iParray      Points or sampling points array
-     * \param iFvalue      Function value at the sampling point
-     * \param iGarray      Array of data @iParray 
-     * \param indimGarray  Dimension of G array
-     * \param iSurrogate   Surrogate
+     * \param SamplePoints   Points or sampling points array
+     * \param FunValue       Function value at the sampling point
+     * \param DataArray      Array of data @SamplePoints 
+     * \param NDimDataArray  Dimension of G array
+     * \param Surrogate      Surrogate
      */
-    void updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate);
+    void updateData(T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
     /*!
-     * \brief Updating the data information at each point @iParray 
+     * \brief Updating the data information at each point @SamplePoints 
      * 
-     * \param iParray     Points or sampling points array
-     * \param iFvalue     Function value at the sampling point
-     * \param iGarray     Array of data @iParray 
-     * \param iSurrogate  Surrogate
+     * \param SamplePoints  Points or sampling points array
+     * \param FunValue      Function value at the sampling point
+     * \param DataArray     Array of data @SamplePoints 
+     * \param Surrogate     Surrogate
      */
-    void update(T const *iParray, T const iFvalue, T const *iGarray = nullptr, int const iSurrogate = std::numeric_limits<int>::max());
+    void update(T const *SamplePoints, T const FunValue, T const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
+
+  private:
+    /*!
+     * \brief Set the List object
+     *
+     * \return true
+     * \return false
+     */
+    inline bool resetList();
+
+    /*!
+     * \brief quick sort on list
+     *
+     */
+    inline bool sort();
 
   private:
     // Make it noncopyable
@@ -212,74 +263,99 @@ class database
     // Make it not assignable
     database<T> &operator=(database<T> const &) = delete;
 
+  private:
     /*! \class sortType
      *
-     * \brief structure for sorting entires of database structur
+     * \brief structure for sorting entires of database structure
      *
-     * \param nsel An integer argument for selection of leaders only
+     * \param nSel An integer argument for selection of leaders only
      * \param idx  An intger argument for indexing
      */
     struct sortType
     {
-        int nsel;
-        std::size_t idx;
+        /*!
+         * \brief Construct a new sort Type object
+         * 
+         */
+        sortType();
+
+        /*!
+         * \brief Copy construct a new sort Type object
+         * 
+         * \param other 
+         */
+        sortType(sortType const &other);
+
+        /*!
+         * \brief Assignment constructor
+         * 
+         * \param other 
+         * \return sortType& 
+         */
+        sortType &operator=(sortType const &other);
+
+        //! Number of selections
+        int nSel;
+        //! Index number
+        int idx;
     };
 
   public:
     //! Space dimension (Sampling points dimension)
-    int ndimParray;
+    int nDimSamplePoints;
 
-    //! Dimension of G data array
-    int ndimGarray;
+    //! Dimension of data array
+    int nDimDataArray;
+
+    //! Maximum number of data points
+    int nSamplePoints;
 
     //! Index position
-    std::size_t idxPos;
-
-    //! Number of entries in the data
-    std::size_t entries;
+    std::size_t idxPosition;
 
     //! Points or sampling points array
-    std::unique_ptr<T[]> Parray;
+    std::vector<T> samplePoints;
 
-    //! G data array
-    std::unique_ptr<T[]> Garray;
+    //! Data array
+    std::vector<T> dataArray;
 
     //! Function value
-    std::unique_ptr<T[]> Fvalue;
+    std::vector<T> fValue;
 
     //! Surrogate
-    std::unique_ptr<int[]> Surrogate;
+    std::vector<int> surrogate;
 
-    //! Number of selection or Weighting number for each point
-    std::unique_ptr<int[]> nSelection;
+    //! Number of selection or Weighting number for each leader, for selection of leaders only
+    std::vector<int> nSelection;
 
-    //! Index number for sorting
-    std::unique_ptr<std::size_t[]> idxNumber;
+    //! Queue number for each point, for selection of leaders only
+    std::vector<int> queue;
 
     //! Mutex object
     std::mutex m;
 
   private:
     //! Function pointer
-    UPDATETASKTYPE<T> update_TaskP;
+    UPDATETASKTYPE<T> updateTask;
 
     //! List of sort data
     std::unique_ptr<sortType[]> list;
 };
 
 template <typename T>
-database<T>::database() : ndimParray(0),
-                          ndimGarray(0),
-                          idxPos(0),
-                          entries(0),
-                          update_TaskP(nullptr)
+database<T>::database() : nDimSamplePoints(0),
+                          nDimDataArray(0),
+                          nSamplePoints(0),
+                          idxPosition(0),
+                          updateTask(nullptr),
+                          list(nullptr)
 {
     if (!std::is_floating_point<T>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
 
-    setTask(update_Task);
+    setTask(updateDataTask);
 
     if (!registerTask())
     {
@@ -288,22 +364,24 @@ database<T>::database() : ndimParray(0),
 }
 
 template <typename T>
-database<T>::database(int nDim, int nSize) : ndimParray(nDim),
-                                             ndimGarray(0),
-                                             idxPos(0),
-                                             entries(0),
-                                             update_TaskP(nullptr)
+database<T>::database(int const nDim, int const nSize) : nDimSamplePoints(nDim),
+                                                         nDimDataArray(0),
+                                                         nSamplePoints(0),
+                                                         idxPosition(0),
+                                                         updateTask(nullptr),
+                                                         list(nullptr)
 {
     if (!std::is_floating_point<T>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
+
     if (!reset(nSize))
     {
-        UMUQFAIL("Failed to initialiaze the data!");
+        UMUQFAIL("Failed to initialize the data!");
     }
 
-    setTask(update_Task);
+    setTask(updateDataTask);
 
     if (!registerTask())
     {
@@ -312,22 +390,24 @@ database<T>::database(int nDim, int nSize) : ndimParray(nDim),
 }
 
 template <typename T>
-database<T>::database(int nDim1, int nDim2, int nSize) : ndimParray(nDim1),
-                                                         ndimGarray(nDim2),
-                                                         idxPos(0),
-                                                         entries(0),
-                                                         update_TaskP(nullptr)
+database<T>::database(int const nDim1, int const nDim2, int const nSize) : nDimSamplePoints(nDim1),
+                                                                           nDimDataArray(nDim2),
+                                                                           nSamplePoints(0),
+                                                                           idxPosition(0),
+                                                                           updateTask(nullptr),
+                                                                           list(nullptr)
 {
     if (!std::is_floating_point<T>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
+
     if (!reset(nSize))
     {
-        UMUQFAIL("Failed to initialiaze the data!");
+        UMUQFAIL("Failed to initialize the data!");
     }
 
-    setTask(update_Task);
+    setTask(updateDataTask);
 
     if (!registerTask())
     {
@@ -336,37 +416,34 @@ database<T>::database(int nDim1, int nDim2, int nSize) : ndimParray(nDim1),
 }
 
 template <typename T>
-database<T>::database(database<T> &&other) : ndimParray(other.ndimParray),
-                                             ndimGarray(other.ndimGarray),
-                                             idxPos(other.idxPos),
-                                             entries(other.entries),
-                                             Parray(std::move(other.Parray)),
-                                             Garray(std::move(other.Garray)),
-                                             Fvalue(std::move(other.Fvalue)),
-                                             Surrogate(std::move(other.Surrogate)),
+database<T>::database(database<T> &&other) : nDimSamplePoints(other.nDimSamplePoints),
+                                             nDimDataArray(other.nDimDataArray),
+                                             nSamplePoints(other.nSamplePoints),
+                                             idxPosition(other.idxPosition),
+                                             samplePoints(std::move(other.samplePoints)),
+                                             dataArray(std::move(other.dataArray)),
+                                             fValue(std::move(other.fValue)),
+                                             surrogate(std::move(other.surrogate)),
                                              nSelection(std::move(other.nSelection)),
-                                             idxNumber(std::move(other.idxNumber)),
-                                             update_TaskP(std::move(other.update_TaskP)),
-                                             list(std::move(other.list))
-{
-    // m is default-initialized
-}
+                                             queue(std::move(other.queue)),
+                                             updateTask(std::move(other.updateTask)),
+                                             list(std::move(other.list)) {}
 
 template <typename T>
 database<T> &database<T>::operator=(database<T> &&other)
 {
-    ndimParray = other.ndimParray;
-    ndimGarray = other.ndimGarray;
-    idxPos = other.idxPos;
-    entries = other.entries;
-    Parray = std::move(other.Parray);
-    Garray = std::move(other.Garray);
-    Fvalue = std::move(other.Fvalue);
-    Surrogate = std::move(other.Surrogate);
+    nDimSamplePoints = other.nDimSamplePoints;
+    nDimDataArray = other.nDimDataArray;
+    nSamplePoints = other.nSamplePoints;
+    samplePoints = std::move(other.samplePoints);
+    idxPosition = other.idxPosition;
+    dataArray = std::move(other.dataArray);
+    fValue = std::move(other.fValue);
+    surrogate = std::move(other.surrogate);
     nSelection = std::move(other.nSelection);
-    idxNumber = std::move(other.idxNumber);
+    queue = std::move(other.queue);
     // m is default-initialized
-    update_TaskP = std::move(other.update_TaskP);
+    updateTask = std::move(other.updateTask);
     list = std::move(other.list);
 
     return *this;
@@ -376,34 +453,37 @@ template <typename T>
 database<T>::~database() {}
 
 template <typename T>
-bool database<T>::reset(int nSize)
+bool database<T>::reset(int const nSize)
 {
     if (nSize < 0)
     {
         UMUQFAILRETURN("Wrong input size!");
     }
 
-    entries = static_cast<std::size_t>(nSize);
+    nSamplePoints = nSize;
 
-    if (entries == 0)
+    if (nSamplePoints == 0)
     {
-        UMUQWARNING("No entries -> Reseting the databse object to size 0!");
+        UMUQWARNING("No entries -> Reseting the database object to size 0!");
 
-        Parray.reset();
-        Garray.reset();
-        Fvalue.reset();
-        Surrogate.reset();
-        nSelection.reset();
-        idxNumber.reset();
+        samplePoints.resize(0);
+        dataArray.resize(0);
+        fValue.resize(0);
+        surrogate.resize(0);
+        nSelection.resize(0);
+        queue.resize(0);
+
+        //! Reset number of entries in the database
+        idxPosition = 0;
 
         return true;
     }
 
-    if (ndimParray > 0)
+    if (nDimSamplePoints > 0)
     {
         try
         {
-            Parray.reset(new T[entries * ndimParray]);
+            samplePoints.resize(nSamplePoints * nDimSamplePoints);
         }
         catch (...)
         {
@@ -412,14 +492,14 @@ bool database<T>::reset(int nSize)
     }
     else
     {
-        Parray.reset();
+        samplePoints.resize(0);
     }
 
-    if (ndimGarray > 0)
+    if (nDimDataArray > 0)
     {
         try
         {
-            Garray.reset(new T[entries * ndimGarray]);
+            dataArray.resize(nSamplePoints * nDimDataArray);
         }
         catch (...)
         {
@@ -428,22 +508,23 @@ bool database<T>::reset(int nSize)
     }
     else
     {
-        Garray.reset();
+        dataArray.resize(0);
     }
 
     try
     {
-        Fvalue.reset(new T[entries]);
-        Surrogate.reset(new int[entries]());
-        nSelection.reset(new int[entries]());
-        idxNumber.reset(new std::size_t[entries]);
+        fValue.resize(nSamplePoints);
+        surrogate.resize(nSamplePoints, 0);
+        nSelection.resize(nSamplePoints, 0);
+        queue.resize(nSamplePoints, -1);
     }
     catch (...)
     {
         UMUQFAILRETURN("Failed to allocate memory!");
     }
 
-    std::iota(idxNumber.get(), idxNumber.get() + entries, std::size_t{});
+    //! Reset number of entries in the database
+    idxPosition = 0;
 
     return true;
 }
@@ -452,22 +533,22 @@ template <typename T>
 bool database<T>::registerTask()
 {
     {
-        std::lock_guard<std::mutex> lock(update_Task_m);
+        std::lock_guard<std::mutex> lock(updateTask_m);
 
-        // Check if psrandom is already initilized
-        if (database_update_Task_registered<T>)
+        // Check if update task is already initialized
+        if (isUpdateTaskRegistered<T>)
         {
             return true;
         }
 
-        if (!update_TaskP)
+        if (!updateTask)
         {
-            UMUQFAILRETURN("Task Pointer is not assigend to the external function!");
+            UMUQFAILRETURN("Task Pointer is not assigned to the external function!");
         }
-        database_update_Task_registered<T> = true;
+        isUpdateTaskRegistered<T> = true;
     }
 
-    torc_register_task((void *)this->update_TaskP);
+    torc_register_task((void *)this->updateTask);
 
     return true;
 }
@@ -475,7 +556,7 @@ bool database<T>::registerTask()
 template <typename T>
 inline void database<T>::setTask(UPDATETASKTYPE<T> const &func)
 {
-    update_TaskP = func;
+    updateTask = func;
 }
 
 template <typename T>
@@ -485,122 +566,217 @@ void database<T>::swap(database<T> &other)
     std::unique_lock<std::mutex> lock_b(other.m, std::defer_lock);
     std::lock(lock_a, lock_b);
     // Swap members
-    std::swap(ndimParray, other.ndimParray);
-    std::swap(ndimGarray, other.ndimGarray);
-    std::swap(idxPos, other.idxPos);
-    std::swap(entries, other.entries);
-    Parray.swap(other.Parray);
-    Garray.swap(other.Garray);
-    Fvalue.swap(other.Fvalue);
-    Surrogate.swap(other.Surrogate);
+    std::swap(nDimSamplePoints, other.nDimSamplePoints);
+    std::swap(nDimDataArray, other.nDimDataArray);
+    std::swap(nSamplePoints, other.nSamplePoints);
+    std::swap(idxPosition, other.idxPosition);
+    samplePoints.swap(other.samplePoints);
+    dataArray.swap(other.dataArray);
+    fValue.swap(other.fValue);
+    surrogate.swap(other.surrogate);
     nSelection.swap(other.nSelection);
-    idxNumber.swap(other.idxNumber);
-    std::swap(update_TaskP, other.update_TaskP);
+    queue.swap(other.queue);
+    std::swap(updateTask, other.updateTask);
     list.swap(other.list);
 }
 
 template <typename T>
-inline std::size_t database<T>::getSize() const { return entries; }
+inline int database<T>::size() const { return static_cast<int>(idxPosition); }
 
 template <typename T>
-inline std::size_t database<T>::getIndex() const { return idxPos; }
+inline void database<T>::resetSize() { idxPosition = 0; }
 
 template <typename T>
-inline bool database<T>::resetIdxPos(int IdxPos)
+bool database<T>::resetSelection(int const minLength, int const maxLength)
 {
-    if (IdxPos > entries || IdxPos < 0)
+    if (minLength < 1 || maxLength < 1 || maxLength < minLength)
     {
-        return false;
+        UMUQFAILRETURN("Wrong chain length size in the input!");
     }
-    idxPos = static_cast<std::size_t>(IdxPos);
-    return true;
+
+    if (!resetList())
+    {
+        UMUQFAILRETURN("Failed to allocate list array!");
+    }
+
+    if (list)
+    {
+        //! find out how many leaders we have
+        int nLeaders(0);
+        std::for_each(nSelection.begin(), nSelection.end(), [&](int const S_i) { nLeaders += static_cast<int>(S_i > 0); });
+
+        {
+            //! Get the pointer
+            int *nSel = nSelection.data();
+            //! set the counter to 0
+            int idx(0);
+            //! Fill the list
+            std::for_each(list.get(), list.get() + nSamplePoints, [&](sortType &l_i) {l_i.nSel = *nSel++; l_i.idx = idx++; });
+        }
+
+        if (this->sort())
+        {
+            int nChains(nLeaders);
+
+            //! Breaking long chains
+            for (int i = 0; i < nLeaders; i++)
+            {
+                if (list[i].nSel > maxLength)
+                {
+                    while (list[i].nSel > maxLength)
+                    {
+                        list[nChains].nSel = maxLength;
+                        list[nChains].idx = list[i].idx;
+                        list[i].nSel -= maxLength;
+                        nChains++;
+                    }
+                }
+            }
+
+            idxPosition = static_cast<std::size_t>(nChains);
+
+            //! If the maximum chain length is 1, we do not need to sort it
+            if (maxLength != 1)
+            {
+                if (!this->sort())
+                {
+                    UMUQFAILRETURN("Failed to sort list array!");
+                }
+            }
+
+            if (minLength != 1)
+            {
+                //! Increasing the chain size
+                for (int i = 0; i < nChains; i++)
+                {
+                    if (list[i].nSel && list[i].nSel < minLength)
+                    {
+                        list[i].nSel = minLength;
+                    }
+                }
+
+                if (!this->sort())
+                {
+                    UMUQFAILRETURN("Failed to sort list array!");
+                }
+            }
+
+            return true;
+        }
+        UMUQFAILRETURN("Failed to sort list array!");
+    }
+    UMUQFAILRETURN("List is not set yet!");
 }
 
 template <typename T>
-inline bool database<T>::sort()
+bool database<T>::updateSelection(database<T> const &other)
 {
-    // Allocate memory
-    try
+    if (list)
     {
-        list.reset(new sortType[entries]);
+        if (nDimSamplePoints != other.nDimSamplePoints)
+        {
+            for (std::size_t i = 0; i < idxPosition; i++)
+            {
+                int const j = list[i].idx;
+
+                T *From = other.samplePoints.data() + j * nDimSamplePoints;
+                T *To = samplePoints.data() + i * nDimSamplePoints;
+
+                std::copy(From, From + nDimSamplePoints, To);
+
+                fValue[i] = other.fValue[j];
+
+                nSelection[i] = list[i].nSel;
+            }
+
+            //! Release the memory
+            if (resetList())
+            {
+                return updateWorkload(static_cast<int>(idxPosition));
+            }
+            UMUQFAILRETURN("Failed to free list array!");
+        }
+        UMUQFAILRETURN("Input sampling points have a different dimension than the current points!");
     }
-    catch (...)
+    UMUQFAILRETURN("List is not set yet!");
+}
+
+template <typename T>
+bool database<T>::updateWorkload(int const nChains)
+{
+    if (nChains <= nSamplePoints)
     {
-        UMUQFAILRETURN("Failed to allocate memory!");
+        //! Greedy partitioning based on the workload
+        int const nWorkers = torc_num_workers();
+
+        //! Dummy work load array
+        std::vector<int> workLoad(nWorkers, 0);
+
+        for (int i = 0; i < nChains; i++)
+        {
+            //! Find the index of the work with minimum work load
+            int const minLoadWorker = static_cast<int>(std::distance(workLoad.begin(), std::min_element(workLoad.begin(), workLoad.end())));
+
+            //! Chain i would be assigned to that queue
+            queue[i] = minLoadWorker;
+
+            //! Sum up the new load on the current work load
+            workLoad[minLoadWorker] += nSelection[i];
+        }
+
+        return true;
     }
-
-    // Get the pointer
-    int *nsel = nSelection.get();
-    std::size_t *idx = idxNumber.get();
-
-    // Fill the list
-    std::for_each(list.get(), list.get() + entries, [&](sortType &si) {si.nsel = *nsel++; si.idx = *idx++; });
-
-    // Sort the list using standard library quick sort
-    std::qsort(list.get(), entries, sizeof(sortType), [](const void *p1, const void *p2) {
-        sortType const *s1 = static_cast<sortType const *>(p1);
-        sortType const *s2 = static_cast<sortType const *>(p2);
-        /* -: ascending order, +: descending order */
-        return (s2->nsel - s1->nsel);
-    });
-
-    // Get the pointer
-    nsel = nSelection.get();
-    idx = idxNumber.get();
-
-    // Correct the arrays based on the sorted list
-    std::for_each(list.get(), list.get() + entries, [&](sortType &si) {*nsel = si.nsel; *idx = si.idx; nsel++; idx++; });
-
-    // Free the memory
-    list.reset();
+    UMUQFAILRETURN("Wrong number of leading chains!");
 }
 
 template <typename T>
 bool database<T>::print()
 {
-    if (entries > 0 && ndimParray > 0)
+    if (idxPosition > 0 && nDimSamplePoints > 0)
     {
         std::cout << "---- database priniting ----" << std::endl;
 
-        io f;
+        umuq::io f;
 
         // Define the printing format
-        ioFormat poFormat = {",", "", "POINT(", ") "};
-        ioFormat fvFormat = {"", "", "Fvalue=", " "};
-        ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
+        umuq::ioFormat poFormat = {",", "", "POINT(", ") "};
+        umuq::ioFormat fvFormat = {"", "", "FValue=", " "};
+        umuq::ioFormat suFormat = {" ", "\n", "Surrogate=", ""};
+
+        int const nCurrentSamplePoints = static_cast<int>(idxPosition);
 
         // Getting the maximum width in the data for nice printing
-        int pWidth = f.getWidth<T>(Parray, entries, ndimParray, std::cout);
-        int fWidth = f.getWidth<T>(Fvalue, entries, 1, std::cout);
+        int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, std::cout);
+        int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, std::cout);
         int Width = std::max<int>(pWidth, fWidth);
-        int sWidth = f.getWidth<int>(Surrogate, entries, 1, std::cout);
+        int sWidth = f.getWidth<int>(surrogate, nCurrentSamplePoints, 1, std::cout);
 
         // Array wrapper on the data
-        arrayWrapper<T> ParrayWrapper(Parray, entries * ndimParray, ndimParray);
-        arrayWrapper<T> FvalueWrapper(Fvalue, entries);
-        arrayWrapper<int> SurrogateWrapper(Surrogate, entries);
+        umuq::arrayWrapper<T> ParrayWrapper(samplePoints, nCurrentSamplePoints * nDimSamplePoints, nDimSamplePoints);
+        umuq::arrayWrapper<T> FvalueWrapper(fValue, nCurrentSamplePoints);
+        umuq::arrayWrapper<int> SurrogateWrapper(surrogate, nCurrentSamplePoints);
 
         auto fIt = FvalueWrapper.begin();
         auto sIt = SurrogateWrapper.begin();
 
-        if (ndimGarray > 0)
+        if (nDimDataArray > 0)
         {
-            ioFormat gvFormat = {",", "\n", "Garray=[", "]"};
+            umuq::ioFormat gvFormat = {",", "\n", "dataArray=[", "]"};
 
-            int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, std::cout);
+            int gWidth = f.getWidth<T>(dataArray, nCurrentSamplePoints, nDimDataArray, std::cout);
 
-            arrayWrapper<T> GarrayWrapper(Garray, entries * ndimGarray, ndimGarray);
+            umuq::arrayWrapper<T> GarrayWrapper(dataArray, nCurrentSamplePoints * nDimDataArray, nDimDataArray);
 
             auto gIt = GarrayWrapper.begin();
 
             for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
             {
                 f.setWidth(Width);
-                f.printMatrix<T>(pIt.get(), ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
+                f.printMatrix<T>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
                 f.setWidth(sWidth);
                 f.printMatrix<int>(sIt.get(), suFormat);
                 f.setWidth(gWidth);
-                f.printMatrix<T>(gIt.get(), ndimGarray, 1, gvFormat);
+                f.printMatrix<T>(gIt.get(), nDimDataArray, 1, gvFormat);
                 fIt++;
                 sIt++;
                 gIt++;
@@ -611,7 +787,7 @@ bool database<T>::print()
             for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
             {
                 f.setWidth(Width);
-                f.printMatrix<T>(pIt.get(), ndimParray, fIt.get(), 1, 1, poFormat, fvFormat);
+                f.printMatrix<T>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
                 f.setWidth(sWidth);
                 f.printMatrix<int>(sIt.get(), suFormat);
                 fIt++;
@@ -623,13 +799,13 @@ bool database<T>::print()
 
         return true;
     }
-    return false;
+    UMUQFAILRETURN("There is no sampling point information to print!");
 }
 
 template <typename T>
 bool database<T>::save(const char *fname, int const IdNumber)
 {
-    if (entries > 0 && ndimParray > 0)
+    if (idxPosition > 0 && nDimSamplePoints > 0)
     {
         char fileName[256];
         if (strlen(fname) == 0)
@@ -641,26 +817,28 @@ bool database<T>::save(const char *fname, int const IdNumber)
             sprintf(fileName, "%s_%03d.txt", fname, IdNumber);
         }
 
-        io f;
+        umuq::io f;
         if (f.openFile(fileName, f.out | f.trunc))
         {
-            if (ndimGarray > 0)
+            int const nCurrentSamplePoints = static_cast<int>(idxPosition);
+
+            if (nDimDataArray > 0)
             {
                 // Getting the maximum width in the data for nice printing
                 {
-                    int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
-                    int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());
+                    int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
+                    int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, f.getFstream());
                     int Width = std::max<int>(pWidth, fWidth);
-                    int gWidth = f.getWidth<T>(Garray, entries, ndimGarray, f.getFstream());
+                    int gWidth = f.getWidth<T>(dataArray, nCurrentSamplePoints, nDimDataArray, f.getFstream());
                     Width = std::max<int>(Width, gWidth);
 
                     f.setWidth(Width);
                 }
 
-                T *tmp[3] = {Parray.get(), Fvalue.get(), Garray.get()};
-                int nCols[3] = {ndimParray, 1, ndimGarray};
+                T *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
+                int nCols[3] = {nDimSamplePoints, 1, nDimDataArray};
 
-                if (!f.saveMatrix<T>(tmp, 3, nCols, 1, entries))
+                if (!f.saveMatrix<T>(tmp, 3, nCols, 1, nCurrentSamplePoints))
                 {
                     return false;
                 }
@@ -669,18 +847,18 @@ bool database<T>::save(const char *fname, int const IdNumber)
             {
                 // Getting the maximum width in the data for nice printing
                 {
-                    int pWidth = f.getWidth<T>(Parray, entries, ndimParray, f.getFstream());
-                    int fWidth = f.getWidth<T>(Fvalue, entries, 1, f.getFstream());
+                    int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
+                    int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, f.getFstream());
 
                     int Width = std::max<int>(pWidth, fWidth);
 
                     f.setWidth(Width);
                 }
 
-                T *tmp[2] = {Parray.get(), Fvalue.get()};
-                int nCols[2] = {ndimParray, 1};
+                T *tmp[2] = {samplePoints.data(), fValue.data()};
+                int nCols[2] = {nDimSamplePoints, 1};
 
-                if (!f.saveMatrix<T>(tmp, 2, nCols, 1, entries))
+                if (!f.saveMatrix<T>(tmp, 2, nCols, 1, nCurrentSamplePoints))
                 {
                     return false;
                 }
@@ -690,9 +868,9 @@ bool database<T>::save(const char *fname, int const IdNumber)
 
             return true;
         }
-        return false;
+        UMUQFAILRETURN("Failed to open the file!");
     }
-    return false;
+    UMUQFAILRETURN("There is no sampling point information to write!");
 }
 
 template <typename T>
@@ -704,7 +882,7 @@ bool database<T>::save(std::string const &fname, int const IdNumber)
 template <typename T>
 bool database<T>::load(const char *fname, int const IdNumber)
 {
-    if (entries > 0 && ndimParray > 0)
+    if (nSamplePoints > 0 && nDimSamplePoints > 0)
     {
         char fileName[256];
         if (strlen(fname) == 0)
@@ -716,25 +894,25 @@ bool database<T>::load(const char *fname, int const IdNumber)
             sprintf(fileName, "%s_%03d.txt", fname, IdNumber);
         }
 
-        io f;
+        umuq::io f;
         if (f.openFile(fileName, f.in))
         {
-            if (ndimGarray > 0)
+            if (nDimDataArray > 0)
             {
-                T *tmp[3] = {Parray.get(), Fvalue.get(), Garray.get()};
-                int nCols[3] = {ndimParray, 1, ndimGarray};
+                T *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
+                int nCols[3] = {nDimSamplePoints, 1, nDimDataArray};
 
-                if (!f.loadMatrix<T>(tmp, 3, nCols, 1, entries))
+                if (!f.loadMatrix<T>(tmp, 3, nCols, 1, nSamplePoints))
                 {
                     return false;
                 }
             }
             else
             {
-                T *tmp[2] = {Parray.get(), Fvalue.get()};
-                int nCols[2] = {ndimParray, 1};
+                T *tmp[2] = {samplePoints.data(), fValue.data()};
+                int nCols[2] = {nDimSamplePoints, 1};
 
-                if (!f.loadMatrix<T>(tmp, 2, nCols, 1, entries))
+                if (!f.loadMatrix<T>(tmp, 2, nCols, 1, nSamplePoints))
                 {
                     return false;
                 }
@@ -742,11 +920,13 @@ bool database<T>::load(const char *fname, int const IdNumber)
 
             f.closeFile();
 
+            idxPosition = static_cast<std::size_t>(nSamplePoints);
+
             return true;
         }
-        return false;
+        UMUQFAILRETURN("Failed to open the file!");
     }
-    return false;
+    UMUQFAILRETURN("First you should create an instance of the database with correct size!");
 }
 
 template <typename T>
@@ -756,62 +936,64 @@ bool database<T>::load(std::string const &fname, int const IdNumber)
 }
 
 template <typename T>
-void database<T>::updateTask(T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate)
+void database<T>::updateData(T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate)
 {
     std::size_t pos;
 
     {
         std::lock_guard<std::mutex> lock(m);
-        pos = idxPos;
-        idxPos++;
+        pos = idxPosition;
+        idxPosition++;
     }
 
-    if (pos < entries)
+    if (pos < nSamplePoints)
     {
-        std::copy(iParray, iParray + ndimParray, Parray.get() + pos * ndimParray);
+        std::copy(SamplePoints, SamplePoints + nDimSamplePoints, samplePoints.data() + pos * nDimSamplePoints);
 
-        Fvalue[pos] = *iFvalue;
+        fValue[pos] = *FunValue;
 
-        //! indimGarray is just an indicator if we have iGarray input data or not
-        if (*indimGarray > 0)
+        //! NDimDataArray is just an indicator if we have DataArray input data or not
+        if (*NDimDataArray > 0)
         {
-            std::copy(iGarray, iGarray + ndimGarray, Garray.get() + pos * ndimGarray);
+            std::copy(DataArray, DataArray + nDimDataArray, dataArray.data() + pos * nDimDataArray);
         }
 
-        if (*iSurrogate < std::numeric_limits<int>::max())
+        if (*Surrogate < std::numeric_limits<int>::max())
         {
-            Surrogate[pos] = *iSurrogate;
+            surrogate[pos] = *Surrogate;
         }
     }
 }
 
 template <typename T>
-void database<T>::update(T const *iParray, T const iFvalue, T const *iGarray, int const iSurrogate)
+void database<T>::update(T const *SamplePoints, T const FunValue, T const *DataArray, int const Surrogate)
 {
     if (torc_node_id() == 0)
     {
-        updateTask(iParray, &iFvalue, iGarray, &ndimGarray, &iSurrogate);
+        updateData(SamplePoints, &FunValue, DataArray, &nDimDataArray, &Surrogate);
         return;
     }
 
-    int const indimGarray1 = iGarray != nullptr;
-    int const indimGarray2 = indimGarray1 ? ndimGarray : 0;
-    int const indimSurroga = iSurrogate < std::numeric_limits<int>::max();
+    int const nDimGarray1 = DataArray != nullptr;
+    int const nDimGarray2 = nDimGarray1 ? nDimDataArray : 0;
+    int const nDimSurroga = Surrogate < std::numeric_limits<int>::max();
 
-    torc_create_direct(0, (void (*)())update_TaskP, 6,
+    torc_create_direct(0, (void (*)())updateTask, 6,
                        1, MPIDatatype<long long>, CALL_BY_REF,
-                       ndimParray, MPIDatatype<T>, CALL_BY_VAL,
+                       nDimSamplePoints, MPIDatatype<T>, CALL_BY_VAL,
                        1, MPIDatatype<T>, CALL_BY_VAL,
-                       indimGarray2, MPIDatatype<T>, CALL_BY_VAL,
-                       indimGarray1, MPI_INT, CALL_BY_VAL,
-                       indimSurroga, MPI_INT, CALL_BY_VAL,
-                       reinterpret_cast<long long>(this), iParray, &iFvalue, iGarray, &ndimGarray, &iSurrogate);
+                       nDimGarray2, MPIDatatype<T>, CALL_BY_VAL,
+                       nDimGarray1, MPI_INT, CALL_BY_VAL,
+                       nDimSurroga, MPI_INT, CALL_BY_VAL,
+                       reinterpret_cast<long long>(this), SamplePoints,
+                       &FunValue, DataArray, &nDimDataArray, &Surrogate);
 
+    //! Do not kill the worker
     torc_waitall3();
 }
 
 template <typename T>
-void update_Task(long long const other, T const *iParray, T const *iFvalue, T const *iGarray, int const *indimGarray, int const *iSurrogate)
+void updateDataTask(long long const other, T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate)
 {
     auto obj = reinterpret_cast<database<T> *>(other);
 
@@ -819,27 +1001,82 @@ void update_Task(long long const other, T const *iParray, T const *iFvalue, T co
 
     {
         std::lock_guard<std::mutex> lock(obj->m);
-        pos = obj->idxPos;
-        obj->idxPos++;
+        pos = obj->idxPosition;
+        obj->idxPosition++;
     }
 
-    if (pos < obj->entries)
+    if (pos < obj->nSamplePoints)
     {
-        std::copy(iParray, iParray + obj->ndimParray, obj->Parray.get() + pos * obj->ndimParray);
+        std::copy(SamplePoints, SamplePoints + obj->nDimSamplePoints, obj->samplePoints.data() + pos * obj->nDimSamplePoints);
 
-        obj->Fvalue[pos] = *iFvalue;
+        obj->fValue[pos] = *FunValue;
 
-        // indimGarray is just an indicator if we have iGarray input data or not
-        if (*indimGarray > 0)
+        // NDimDataArray is just an indicator if we have DataArray input data or not
+        if (*NDimDataArray > 0)
         {
-            std::copy(iGarray, iGarray + obj->ndimGarray, obj->Garray.get() + pos * obj->ndimGarray);
+            std::copy(DataArray, DataArray + obj->nDimDataArray, obj->dataArray.data() + pos * obj->nDimDataArray);
         }
 
-        if (*iSurrogate < std::numeric_limits<int>::max())
+        if (*Surrogate < std::numeric_limits<int>::max())
         {
-            obj->Surrogate[pos] = *iSurrogate;
+            obj->surrogate[pos] = *Surrogate;
         }
     }
 }
 
-#endif
+template <typename T>
+inline bool database<T>::resetList()
+{
+    if (list)
+    {
+        list.reset(nullptr);
+        return true;
+    }
+    else
+    {
+        try
+        {
+            list.reset(new sortType[nSamplePoints]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURN("Failed to allocate memory!");
+        }
+        return true;
+    }
+}
+
+template <typename T>
+inline bool database<T>::sort()
+{
+    if (list)
+    {
+        // Sort the list using standard library quick sort
+        std::qsort(list.get(), nSamplePoints, sizeof(sortType), [](const void *p1, const void *p2) {
+            sortType const *s1 = static_cast<sortType const *>(p1);
+            sortType const *s2 = static_cast<sortType const *>(p2);
+            /* -: ascending order, +: descending order */
+            return (s2->nSel - s1->nSel);
+        });
+        return true;
+    }
+    UMUQFAILRETURN("List is not set for sorting!");
+}
+
+template <typename T>
+database<T>::sortType::sortType() : nSel(0) {}
+
+template <typename T>
+database<T>::sortType::sortType(database<T>::sortType const &other) : nSel(other.nSel), idx(other.idx) {}
+
+template <typename T>
+typename database<T>::sortType &database<T>::sortType::operator=(database<T>::sortType const &other)
+{
+    nSel = other.nSel;
+    idx = other.idx;
+}
+
+} // namespace tmcmc
+} // namespace umuq
+
+#endif // UMUQ_DATABASE

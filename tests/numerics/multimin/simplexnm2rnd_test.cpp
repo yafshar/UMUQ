@@ -9,7 +9,7 @@
  */
 TEST(simplexNM2Rnd_test, HandlesMinimizerConstruction)
 {
-    simplexNM2Rnd<double> fMinimizer;
+    umuq::simplexNM2Rnd<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
@@ -28,7 +28,7 @@ TEST(simplexNM2Rnd_test, HandlesRosenbrockFunction)
     std::vector<double> stepSize(2, 1);
 
     //! Create an instance of the minimizer
-    simplexNM2Rnd<double> fMinimizer;
+    umuq::simplexNM2Rnd<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
@@ -78,7 +78,7 @@ TEST(simplexNM2Rnd_test, HandlesRothFunction)
     std::vector<double> stepSize(2, 1);
 
     //! Create an instance of the minimizer
-    simplexNM2Rnd<double> fMinimizer;
+    umuq::simplexNM2Rnd<double> fMinimizer;
 
     //! First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));

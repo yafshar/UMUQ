@@ -22,19 +22,39 @@ matrix:
     - os: linux
       compiler: gcc
       sudo: true
-      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
+      install: ./scripts/install-linux-gcc.sh
       script: ./scripts/build-linux-autotools.sh
-    - os: linux
-      compiler: clang
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+    # - os: linux
+    #   compiler: clang
+    #   sudo: true
+    #   install: ./scripts/install-linux-clang.sh
+    #   script: ./scripts/build-linux-autotools.sh
+    #   env:
+    #     - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
+    - os: osx
+      osx_image: xcode8
+      compiler: gcc
       sudo: true
-      install: ./scripts/install-linux.sh && ./scripts/log-config.sh
-      script: ./scripts/build-linux-autotools.sh
-
+      install: ./scripts/install-osx-gcc.sh
+      script: ./scripts/build-osx-autotools.sh
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+    # - os: osx
+    #   osx_image: xcode8
+    #   compiler: gcc
+    #   sudo: true
+    #   install: ./scripts/install-osx-gcc6.sh
+    #   script: ./scripts/build-osx-autotools.sh
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
-  - ./scripts/install-${TRAVIS_OS_NAME}.sh
-  - . ./scripts/env-${TRAVIS_OS_NAME}.sh
+
+before_script:
+  - . ./scripts/env.sh
   - ./scripts/log-config.sh
 
 # after_failure phase to dump the logs
@@ -55,9 +75,6 @@ addons:
     - cmake
     - g++-5
     - clang-3.7
-
-env:
-  - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
 
 notifications:
   email: false

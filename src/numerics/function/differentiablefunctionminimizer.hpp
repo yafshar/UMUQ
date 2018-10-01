@@ -5,6 +5,31 @@
 #include "umuqdifferentiablefunction.hpp"
 #include "utilityfunction.hpp"
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
+/*!
+ * \brief Different available differentiable Function Minimizer available in UMUQ
+ * 
+ */
+enum differentiableFunctionMinimizerTypes
+{
+  BFGS = 10,
+  BFGS2 = 11,
+  CONJUGATEFR = 12,
+  CONJUGATEPR = 13,
+  STEEPESTDESCENT = 14
+};
+
 /*! \brief The goal is finding minima of arbitrary multidimensional functions.
  *  \ingroup multimin_Module
  */
@@ -26,7 +51,7 @@
  * To use the Minimizer:
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
- * - Third, initilize the minimizer \sa init
+ * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
  * \tparam T Data type
@@ -41,6 +66,25 @@ public:
    * \param Name Function name
    */
   explicit differentiableFunctionMinimizer(char const *Name = "");
+
+  /*!
+   * \brief Destroy the differentiable Function Minimizer object
+   * 
+   */
+  ~differentiableFunctionMinimizer();
+
+  /*!
+   * \brief Move constructor, Construct a new differentiableFunctionMinimizer object
+   * 
+   * \param other differentiableFunctionMinimizer object
+   */
+  differentiableFunctionMinimizer(differentiableFunctionMinimizer<T> &&other);
+
+  /*!
+   * \brief Move assignment operator
+   * 
+   */
+  differentiableFunctionMinimizer<T> &operator=(differentiableFunctionMinimizer<T> &&other);
 
   /*!
    * \brief Resizes the minimizer vectors to contain nDim elements
@@ -144,7 +188,7 @@ public:
   virtual bool set(T const *X, T const StepSize, T const Tol);
 
   /*!
-   * \brief Initilize the minimizer
+   * \brief Initialize the minimizer
    * 
    * \return true 
    * \return false 
@@ -380,6 +424,39 @@ public:
 
 template <typename T>
 differentiableFunctionMinimizer<T>::differentiableFunctionMinimizer(char const *Name) : name(Name) {}
+
+template <typename T>
+differentiableFunctionMinimizer<T>::~differentiableFunctionMinimizer() {}
+
+template <typename T>
+differentiableFunctionMinimizer<T>::differentiableFunctionMinimizer(differentiableFunctionMinimizer<T> &&other)
+{
+  name = other.name;
+  fun = std::move(other.fun);
+  x = std::move(other.x);
+  dx = std::move(other.dx);
+  gradient = std::move(other.gradient);
+  step = other.step;
+  maxStep = other.maxStep;
+  tol = other.tol;
+  fval = other.fval;
+}
+
+template <typename T>
+differentiableFunctionMinimizer<T> &differentiableFunctionMinimizer<T>::operator=(differentiableFunctionMinimizer<T> &&other)
+{
+  name = other.name;
+  fun = std::move(other.fun);
+  x = std::move(other.x);
+  dx = std::move(other.dx);
+  gradient = std::move(other.gradient);
+  step = other.step;
+  maxStep = other.maxStep;
+  tol = other.tol;
+  fval = other.fval;
+
+  return *this;
+}
 
 template <typename T>
 bool differentiableFunctionMinimizer<T>::reset(int const nDim) noexcept
@@ -1823,4 +1900,7 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
   }
 }
 
-#endif //UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER
+} // namespace multimin
+} // namespace umuq
+
+#endif // UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER

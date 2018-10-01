@@ -1,23 +1,38 @@
 #ifndef UMUQ_GAMMADISTRIBUTION_H
 #define UMUQ_GAMMADISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class gammaDistribution
  * \brief The Gamma distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a
- * Gamma distribution with shape parameter \f$\alpha\f$ and scale parameter \f$ beta\f$.
+ * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$.
  * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$.
  * using: 
  * \f[
- * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}
+ * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.
  * \f]
  * 
  * Use the Gamma distribution with \f$\alpha > 1\f$ if you have a sharp lower bound of zero but no 
  * sharp upper bound, a single mode, and a positive skew. The Gamma distribution is especially appropriate 
  * when encoding arrival times for sets of events. A Gamma distribution with a large value for \f$\alpha\f$ 
  * is also useful when you wish to use a bell-shaped curve for a positive-only quantity.
+ * 
+ * It also provides random non-negative values x, distributed according to the Gamma distribution 
+ * probability density function. 
+ * 
+ * NOTES:
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
+ * - \f$ \alpha > 0 \f$
+ * - \f$ \beta > 0 \f$
  * 
  * 
  * \tparam T Data type
@@ -67,14 +82,29 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \returns  Log of density function value 
      */
     inline T gammaDistribution_lf(T const *x);
+
+    /*!
+     * \brief Set the Random Number Generator object 
+     * 
+     * \param PRNG  Pseudo-random number object \sa psrandom
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+    /*!
+     * \brief Create samples of the Gamma distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return true
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x);
+    bool sample(std::vector<T> &x);
 };
 
-/*!
- * \brief Construct a new Gamma distribution object
- * 
- * \param alpha  Shape parameter \f$\alpha\f$
- * \param beta   Scale parameter \f$ beta\f$
- */
 template <typename T, class V>
 gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, std::function<T(V)>>(&alpha, &beta, 2, "gamma")
 {
@@ -93,18 +123,11 @@ gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int co
     this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
 }
 
-/*!
- * \brief Gamma distribution density function
- * 
- * \param x Input value
- * 
- * \returns Density function value 
- */
 template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
 {
     T sum(1);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < T{})
         {
@@ -134,13 +157,6 @@ inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
     return sum;
 }
 
-/*!
- * \brief Log of Gamma distribution density function
- * 
- * \param x Input value
- * 
- * \returns  Log of density function value 
- */
 template <typename T, class V>
 inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
 {
@@ -152,11 +168,79 @@ inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
         }
     }
     T sum(0);
-    for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
+    for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<T>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
     }
     return sum;
 }
+
+template <typename T, class V>
+inline bool gammaDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+{
+    if (PRNG)
+    {
+        if (PRNG_initialized)
+        {
+            this->prng = PRNG;
+            if (this->numParams > 2)
+            {
+                return this->prng->set_gammas(this->params.data(), this->numParams);
+            }
+            return this->prng->set_gamma(this->params[0], this->params[1]);
+        }
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(T *x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            for (int i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->gammas[i].dist();
+            }
+            return true;
+        }
+        *x = this->prng->gamma->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(std::vector<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            for (int i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->gammas[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->gamma->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+} // namespace density
+} // namespace umuq
 
 #endif // UMUQ_GAMMADISTRIBUTION

@@ -1,12 +1,24 @@
 #ifndef UMUQ_SIMPLEXNM2RND_H
 #define UMUQ_SIMPLEXNM2RND_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class simplexNM2Rnd
  *  \ingroup multimin_Module
  * 
- * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
  * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
- * around the starting point x to initilize the simplex.
+ * around the starting point x to initialize the simplex.
  *  
  * Ref: 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
@@ -43,10 +55,10 @@ class simplexNM2Rnd : public functionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
-     * around the starting point x to initilize the simplex.
+     * around the starting point x to initialize the simplex.
      * The final dimensions of the simplex are scaled along the coordinate axes by the 
      * vector step_size. 
      * The randomization uses a simple deterministic generator so that repeated calls to 
@@ -172,7 +184,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
     /*!
      * \brief Uniform RNG
      * 
-     * \param seed Seed to initilize the PRNG 
+     * \param seed Seed to initialize the PRNG 
      * 
      * \return Uniform random number
      */
@@ -268,7 +280,7 @@ bool simplexNM2Rnd<T>::init()
             }
         }
 
-        // Generate a random orthornomal basis
+        // Generate a random orthonormal basis
         unsigned long seed = count ^ 0x12345678;
 
         // Warm it up
@@ -296,7 +308,7 @@ bool simplexNM2Rnd<T>::init()
                 T const c = std::cos(angle);
                 T const s = std::sin(angle);
 
-                // Apply a Givens rotation
+                // Apply a given rotation
                 for (int r = 0; r < n; r++)
                 {
                     std::ptrdiff_t const Id_ci = m.ID(r, i);
@@ -348,7 +360,7 @@ bool simplexNM2Rnd<T>::init()
     computeCenter();
 
     // Initialize simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     count++;
 
@@ -477,7 +489,7 @@ bool simplexNM2Rnd<T>::iterate()
 
     // Update simplex size
     // Recompute if accumulated error has made size invalid
-    this->size = (S2 > 0) ? std::sqrt(S2) : computeSize();
+    this->characteristicSize = (S2 > 0) ? std::sqrt(S2) : computeSize();
 
     return true;
 }
@@ -714,5 +726,8 @@ inline std::ptrdiff_t simplexNM2Rnd<T>::submatrix::ID(int i, int j) const
 {
     return k1 * NC + k2 + i * NC + j;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_SIMPLEXNM2RND

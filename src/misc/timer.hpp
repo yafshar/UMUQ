@@ -4,7 +4,11 @@
 #include <iostream>
 #include <sys/time.h>
 
-/*! \brief Start stopwatch timer class
+namespace umuq
+{
+
+/*! \class UMUQTimer
+ * \brief Start stopwatch timer class
 *
 * tic starts a stopwatch timer, and stores the internal time at execution of the command.
 * 
@@ -12,15 +16,20 @@
 * 
 * Consecutive tic overwrites the previous recorded time.
 */
-class UMTimer
+class UMUQTimer
 {
   public:
-    //! constructor
     /*!
-    *  \brief constructor 
-    *    
-    */
-    UMTimer();
+     * \brief Construct a new UMUQTimer object
+     * 
+     */
+    UMUQTimer();
+
+    /*!
+     * \brief Destroy the UMUQTimer object
+     * 
+     */
+    ~UMUQTimer();
 
     /*!
     *  \brief tic starts a stopwatch timer, and stores the internal time at execution of the command. 
@@ -36,8 +45,7 @@ class UMTimer
     *  toc displays the elapsed time so that you can record time for simultaneous time spans. 
     */
     void toc();
-
-    void toc(std::string timing_name);
+    void toc(std::string const &timing_name);
 
   private:
     double my_gettime();
@@ -47,17 +55,19 @@ class UMTimer
     double t2_internal;
 };
 
-UMTimer::UMTimer()
+UMUQTimer::UMUQTimer()
 {
     tic();
 }
 
-void UMTimer::tic()
+UMUQTimer::~UMUQTimer() {}
+
+void UMUQTimer::tic()
 {
     t1_internal = my_gettime();
 }
 
-void UMTimer::toc()
+void UMUQTimer::toc()
 {
     t2_internal = my_gettime();
 
@@ -67,7 +77,7 @@ void UMTimer::toc()
     std::cout << " It took " << std::to_string(elapsed_seconds) << " seconds" << std::endl;
 }
 
-void UMTimer::toc(std::string timing_name)
+void UMUQTimer::toc(std::string const &timing_name)
 {
     t2_internal = my_gettime();
 
@@ -77,11 +87,13 @@ void UMTimer::toc(std::string timing_name)
     std::cout << timing_name << " took " << std::to_string(elapsed_seconds) << " seconds" << std::endl;
 }
 
-double UMTimer::my_gettime()
+double UMUQTimer::my_gettime()
 {
     struct timeval t;
     gettimeofday(&t, NULL);
     return (double)t.tv_sec + (double)t.tv_usec * 1.0E-6;
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_TIMER

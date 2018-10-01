@@ -7,6 +7,9 @@
 #include "knearestneighbors.hpp"
 #include "primitive.hpp"
 
+namespace umuq
+{
+
 /*! \class dcpse
  * \brief This is a general class for (DC-PSE)
  * 
@@ -32,9 +35,9 @@ class dcpse
     /*!
      * \brief Move constructor, construct a new dcpse object from input dcpse object
      * 
-     * \param inputDC 
+     * \param other 
      */
-    explicit dcpse(dcpse<T> &&inputDC);
+    explicit dcpse(dcpse<T> &&other);
 
     /*!
      * \brief Move assignment operator
@@ -42,7 +45,7 @@ class dcpse
      * \param inputDB 
      * \return dcpse<T>& 
      */
-    dcpse<T> &operator=(dcpse<T> &&inputDC);
+    dcpse<T> &operator=(dcpse<T> &&other);
 
     /*!
      * \brief Destroy the dcpse object
@@ -172,19 +175,19 @@ class dcpse
     /*!
      * \brief A pointer to kernel array of all query points
      * 
-     * \returns  A pointer to kernel array of all query points
+     * \returns A pointer to kernel array of all query points
      */
     inline T *neighborhoodKernel() const;
 
     /*!
-     * \brief   Size of the neighborhood kernel which equals to the monomial size 
+     * \brief Size of the neighborhood kernel which equals to the monomial size 
      * 
      * \returns Size of the neighborhood kernel
      */
     inline int neighborhoodKernelSize() const;
 
     /*!
-     * \brief order of accuracy of DC-PSE kernel at index
+     * \brief Order of accuracy of DC-PSE kernel at index
      * 
      * \param  index Index number in nTerms array
      * \return order of accuracy of DC-PSE kernel at index
@@ -255,8 +258,8 @@ class dcpse
 /*!
  * \brief Default constructor
  * 
- * \param ndim             Dimensiononality
- * \param nterms           Number of terms (currently only one term is implemented)
+ * \param ndim    Number of dimensions
+ * \param nterms  Number of terms (currently only one term is implemented)
  */
 template <typename T>
 dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
@@ -268,20 +271,20 @@ dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
 /*!
  * \brief Move constructor, construct a new dcpse object from input dcpse object
  * 
- * \param inputDC 
+ * \param other 
  */
 template <typename T>
-dcpse<T>::dcpse(dcpse<T> &&inputDC)
+dcpse<T>::dcpse(dcpse<T> &&other)
 {
-    nDim = inputDC.nDim;
-    nTerms = inputDC.nTerms;
-    dcmonomialSize = inputDC.dcmonomialSize;
-    dckernelSize = inputDC.dckernelSize;
-    Order = std::move(inputDC.Order);
-    dckernel = std::move(inputDC.dckernel);
-    KNN = std::move(inputDC.KNN);
-    h_average = std::move(inputDC.h_average);
-    rhscoeff = inputDC.rhscoeff;
+    nDim = other.nDim;
+    nTerms = other.nTerms;
+    dcmonomialSize = other.dcmonomialSize;
+    dckernelSize = other.dckernelSize;
+    Order = std::move(other.Order);
+    dckernel = std::move(other.dckernel);
+    KNN = std::move(other.KNN);
+    h_average = std::move(other.h_average);
+    rhscoeff = other.rhscoeff;
 }
 
 /*!
@@ -291,17 +294,17 @@ dcpse<T>::dcpse(dcpse<T> &&inputDC)
  * \return dcpse<T>& 
  */
 template <typename T>
-dcpse<T> &dcpse<T>::operator=(dcpse<T> &&inputDC)
+dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
 {
-    nDim = inputDC.nDim;
-    nTerms = inputDC.nTerms;
-    dcmonomialSize = inputDC.dcmonomialSize;
-    dckernelSize = inputDC.dckernelSize;
-    Order = std::move(inputDC.Order);
-    dckernel = std::move(inputDC.dckernel);
-    KNN = std::move(inputDC.KNN);
-    h_average = std::move(inputDC.h_average);
-    rhscoeff = inputDC.rhscoeff;
+    nDim = other.nDim;
+    nTerms = other.nTerms;
+    dcmonomialSize = other.dcmonomialSize;
+    dckernelSize = other.dckernelSize;
+    Order = std::move(other.Order);
+    dckernel = std::move(other.dckernel);
+    KNN = std::move(other.KNN);
+    h_average = std::move(other.h_average);
+    rhscoeff = other.rhscoeff;
 
     return *this;
 }
@@ -2641,4 +2644,6 @@ inline T *dcpse<T>::averageSpace() const
     return h_average.data();
 }
 
-#endif
+} // namespace umuq
+
+#endif // UMUQ_DCPSE

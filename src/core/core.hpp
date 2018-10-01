@@ -35,7 +35,8 @@
 #include "macros.hpp"
 
 // include files
-extern "C" {
+extern "C"
+{
 #ifdef UMUQ_VECTORIZE_SSE3
 #include <pmmintrin.h>
 #endif
@@ -72,7 +73,7 @@ extern "C" {
 #include <limits>
 #include <algorithm>   // for min/max:
 #include <type_traits> // for std::is_nothrow_move_assignable
-#include <iostream>    // for outputting debug info
+#include <iostream>	// for outputting debug info
 #include <fstream>
 #include <sstream>
 #include <ios>
@@ -82,7 +83,6 @@ extern "C" {
 #include <random>
 #include <map>
 #include <mutex>
-#include <functional>
 
 #if HAVE_PYTHON == 1
 #ifdef _POSIX_C_SOURCE
@@ -111,35 +111,54 @@ extern "C" {
 #include <torc.h>
 #endif
 
+/*!
+ * \brief Namespace containing all symbols from the %UMUQ library. 
+ */
+namespace umuq
+{
+namespace internal
+{
+
+inline static const char *SimdInstructionSetsInUse(void)
+{
+#if defined(UMUQ_VECTORIZE_SSE4_2)
+	return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
+#elif defined(UMUQ_VECTORIZE_SSE4_1)
+	return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
+#elif defined(UMUQ_VECTORIZE_SSSE3)
+	return "SSE, SSE2, SSE3, SSSE3";
+#elif defined(UMUQ_VECTORIZE_SSE3)
+	return "SSE, SSE2, SSE3";
+#elif defined(UMUQ_VECTORIZE_SSE2)
+	return "SSE, SSE2";
+#else
+	return "None";
+#endif
+}
+
+} // namespace internal
+
 #ifdef M_PI
 #undef M_PI
 #endif
 #ifdef M_2PI
 #undef M_2PI
 #endif
-
-/*!
- * \brief Namespace containing all symbols from the %UMUQ library. 
- */
-namespace UMUQ
-{
-
-inline static const char *SimdInstructionSetsInUse(void)
-{
-#if defined(UMUQ_VECTORIZE_SSE4_2)
-    return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
-#elif defined(UMUQ_VECTORIZE_SSE4_1)
-    return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
-#elif defined(UMUQ_VECTORIZE_SSSE3)
-    return "SSE, SSE2, SSE3, SSSE3";
-#elif defined(UMUQ_VECTORIZE_SSE3)
-    return "SSE, SSE2, SSE3";
-#elif defined(UMUQ_VECTORIZE_SSE2)
-    return "SSE, SSE2";
-#else
-    return "None";
+#ifdef M_SPI
+#undef M_SPI
 #endif
-}
+#ifdef M_S2PI
+#undef M_S2PI
+#endif
+#ifdef M_LPI
+#undef M_LPI
+#endif
+#ifdef M_L2PI
+#undef M_L2PI
+#endif
+#ifdef LINESIZE
+#undef LINESIZE
+#endif
 
 /*!
  * \brief Constant values of \f$ \pi, 2\pi, \sqrt{\pi}, \sqrt{2\pi}, ln(\pi), and ln(2\pi) \f$
@@ -147,20 +166,45 @@ inline static const char *SimdInstructionSetsInUse(void)
  * Reference:
  * http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html 
  */
-#define M_PI   3.14159265358979323846264338327950288419716939937510582097494459230781640l
-#define M_2PI  6.28318530717958647692528676655900576839433879875021164194988918461563281l
-#define M_SPI  1.77245385090551602729816748334114518279754945612238712821380778985291128l
+//! \f$ \pi \f$
+#define M_PI 3.14159265358979323846264338327950288419716939937510582097494459230781640l
+//! \f$ 2\pi \f$
+#define M_2PI 6.28318530717958647692528676655900576839433879875021164194988918461563281l
+//! \f$ \sqrt{\pi} \f$
+#define M_SPI 1.77245385090551602729816748334114518279754945612238712821380778985291128l
+//! \f$ \sqrt{2\pi} \f$
 #define M_S2PI 2.50662827463100050241576528481104525300698674060993831662992357634229365l
-#define M_LPI  1.14472988584940017414342735135305871164729481291531157151362307147213774l
+//! \f$ \log{\pi} \f$
+#define M_LPI 1.14472988584940017414342735135305871164729481291531157151362307147213774l
+//! \f$ \log{2\pi} \f$
 #define M_L2PI 1.83787706640934548356065947281123527972279494727556682563430308096553139l
 
 //! Maximum size of a char * in UMUQ parser & io
 #define LINESIZE 256
-} // namespace UMUQ
+
+} // namespace umuq
 
 /*! 
  * This is the main module of UMUQ
  */
 #include "meta.hpp"
 
-#endif // UMUQ_CORE_H
+/*!
+ * Default digits10
+ */
+#include "digits10.hpp"
+
+namespace umuq
+{
+
+/*!
+ * \brief Get the machine precision accuracy for T data type
+ * 
+ * \tparam T Data type
+ */
+template <typename T>
+static T machinePrecision = std::pow(T{10}, -digits10<T>());
+
+} // namespace umuq
+
+#endif // UMUQ_CORE

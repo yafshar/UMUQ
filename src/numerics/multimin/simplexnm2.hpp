@@ -1,11 +1,23 @@
 #ifndef UMUQ_SIMPLEXNM2_H
 #define UMUQ_SIMPLEXNM2_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class simplexNM2
  *  \ingroup multimin_Module
  * 
- * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm.
- * It uses fixed coordinate axes around the starting point x to initilize the simplex.
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
+ * It uses fixed coordinate axes around the starting point x to initialize the simplex.
  * The size of simplex is calculated as the RMS distance of each vertex from the center
  *   
  * Ref: 
@@ -13,8 +25,7 @@
  * 
  * This implementation uses n+1 corner points in the simplex.
  * 
- * \tparam T   data type
- * \tparam TMF multimin function type
+ * \tparam T Data type
  */
 template <typename T>
 class simplexNM2 : public functionMinimizer<T>
@@ -43,7 +54,7 @@ class simplexNM2 : public functionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 
@@ -219,7 +230,7 @@ bool simplexNM2<T>::init()
     computeCenter();
 
     // Initialize simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     count++;
 
@@ -340,7 +351,7 @@ bool simplexNM2<T>::iterate()
 
     // Update simplex size
     // Recompute if accumulated error has made size invalid
-    this->size = (S2 > 0) ? std::sqrt(S2) : computeSize();
+    this->characteristicSize = (S2 > 0) ? std::sqrt(S2) : computeSize();
 
     return true;
 }
@@ -553,5 +564,8 @@ inline T *simplexNM2<T>::operator[](std::size_t index) const
     int const n = this->getDimension();
     return x1.data() + index * n;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_SIMPLEXNM2

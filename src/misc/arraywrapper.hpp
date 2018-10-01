@@ -4,10 +4,17 @@
 #include <iostream>
 #include <iterator>
 
+namespace umuq
+{
+
 /*! \class arrayWrapper
   * \brief arrayWrapper is a class which creates a std iterator for an array of type T
   *
   * Expression of a class T (vector or matrix, or other types) as an array object
+  * 
+  * NOTE:
+  * This is a helper class which currently only has An Input Iterator.
+  * InputIterator is an iterator that can read from the pointed-to element. 
   */
 template <class T>
 class arrayWrapper
@@ -17,6 +24,8 @@ class arrayWrapper
      *
      * \brief This class defines an iterator based on std::iterator
      * 
+     * NOTE:
+     * input_iterator_tag corresponds to InputIterator. 
      */
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
@@ -58,7 +67,8 @@ class arrayWrapper
         /*!
          * \brief Operator ==
          * 
-         * \param rhs  
+         * \param rhs 
+         * 
          * \return true 
          * \return false 
          */
@@ -68,6 +78,7 @@ class arrayWrapper
          * \brief Operator !=
          * 
          * \param rhs 
+         * 
          * \return true 
          * \return false 
          */
@@ -104,10 +115,10 @@ class arrayWrapper
 
       private:
         //! Iterator position
-        T const *iPosition;
+        T const *iteratorPosition;
 
         //! Input stride
-        std::size_t iStride;
+        std::size_t inStride;
     };
 
     /*! 
@@ -125,14 +136,15 @@ class arrayWrapper
      */
     arrayWrapper(T const *InputArray, int const NumOfElements, int const Stride = 1);
 
+    arrayWrapper(std::unique_ptr<T[]> const &InputArray, int const NumOfElements, int const Stride = 1);
+
     /*!
      * \brief Construct a new Array Wrapper object
      * 
-     * \param InputArray    Input array data 
-     * \param NumOfElements Size of the input array
-     * \param Stride        Stride in the array elements
+     * \param InputArray  Input array data 
+     * \param Stride      Stride in the array elements
      */
-    arrayWrapper(std::unique_ptr<T[]> const &InputArray, int const NumOfElements, int const Stride = 1);
+    arrayWrapper(std::vector<T> const &InputArray, int const Stride = 1);
 
     /*!
      * \brief Move constructor Construct a new Array Wrapper object
@@ -156,10 +168,11 @@ class arrayWrapper
     ~arrayWrapper(){};
 
     /*!
-     * \brief set the wrapper
+     * \brief Set the wrapper
      * 
-     * \param InputArray 
-     * \param NumOfElements 
+     * \param InputArray    Input array data 
+     * \param NumOfElements Size of the input array
+     * \param Stride        Stride in the array elements
      */
     inline void set(T *InputArray, int const NumOfElements, int const Stride = 1);
 
@@ -236,294 +249,167 @@ class arrayWrapper
 
   private:
     //! Pointer to the actual Input
-    T const *iArray;
+    T const *inArray;
 
     //! Size of InputArray
-    std::size_t iNumOfElements;
+    std::size_t inNumOfElements;
 
     //! stride
-    std::size_t iStride;
+    std::size_t inStride;
 };
 
-/*! 
- *  \brief arrayWrapper constructor
- *
- */
 template <class T>
-arrayWrapper<T>::arrayWrapper() : iArray(nullptr), iNumOfElements(0), iStride(1) {}
+arrayWrapper<T>::arrayWrapper() : inArray(nullptr), inNumOfElements(0), inStride(1) {}
 
-/*!
- * \brief Construct a new Array Wrapper object
- * 
- * \param InputArray    Input array data 
- * \param NumOfElements Size of the array 
- * \param Stride        Stride in the array elements
- */
 template <class T>
-arrayWrapper<T>::arrayWrapper(T const *InputArray, int const NumOfElements, int const Stride) : iArray(InputArray),
-                                                                                                iNumOfElements(NumOfElements),
-                                                                                                iStride(Stride) {}
-/*!
- * \brief Construct a new Array Wrapper object
- * 
- * \param InputArray    Input array data 
- * \param NumOfElements Size of the input array
- * \param Stride        Stride in the array elements
- */
-template <class T>
-arrayWrapper<T>::arrayWrapper(std::unique_ptr<T[]> const &InputArray, int const NumOfElements, int const Stride) : iArray(InputArray.get()),
-                                                                                                                   iNumOfElements(NumOfElements),
-                                                                                                                   iStride(Stride) {}
+arrayWrapper<T>::arrayWrapper(T const *InputArray, int const NumOfElements, int const Stride) : inArray(InputArray),
+                                                                                                inNumOfElements(NumOfElements),
+                                                                                                inStride(Stride) {}
 
-/*!
- * \brief Move constructor Construct a new Array Wrapper object
- * 
- * \param other 
- */
+template <class T>
+arrayWrapper<T>::arrayWrapper(std::unique_ptr<T[]> const &InputArray, int const NumOfElements, int const Stride) : inArray(InputArray.get()),
+                                                                                                                   inNumOfElements(NumOfElements),
+                                                                                                                   inStride(Stride) {}
+
+template <class T>
+arrayWrapper<T>::arrayWrapper(std::vector<T> const &InputArray, int const Stride) : inArray(InputArray.data()),
+                                                                                    inNumOfElements(InputArray.size()),
+                                                                                    inStride(Stride) {}
+
 template <class T>
 arrayWrapper<T>::arrayWrapper(arrayWrapper<T> &&other)
 {
-    this->iArray = std::move(other.iArray);
-    this->iNumOfElements = other.iNumOfElements;
-    this->iStride = other.iStride;
+    inArray = std::move(other.inArray);
+    inNumOfElements = other.inNumOfElements;
+    inStride = other.inStride;
 }
 
-/*!
- * \brief Move assignment 
- * 
- * \param other 
- * \return arrayWrapper& 
- */
 template <class T>
 arrayWrapper<T> &arrayWrapper<T>::operator=(arrayWrapper<T> &&other)
 {
-    this->iArray = std::move(other.iArray);
-    this->iNumOfElements = other.iNumOfElements;
-    this->iStride = other.iStride;
+    inArray = std::move(other.inArray);
+    inNumOfElements = other.inNumOfElements;
+    inStride = other.inStride;
 
     return *this;
 }
 
-/*!
- * \brief set the wrapper
- * 
- * \param InputArray 
- * \param NumOfElements 
- */
 template <class T>
 inline void arrayWrapper<T>::set(T *InputArray, int const NumOfElements, int const Stride)
 {
-    this->iArray = InputArray;
-    this->iNumOfElements = NumOfElements >= 0 ? static_cast<std::size_t>(NumOfElements) : throw(std::runtime_error("Wrong index!"));
-    this->iStride = Stride >= 0 ? static_cast<std::size_t>(Stride) : throw(std::runtime_error("Wrong index!"));
+    inArray = InputArray;
+    inNumOfElements = (NumOfElements >= 0) ? static_cast<std::size_t>(NumOfElements) : throw(std::runtime_error("Wrong index!"));
+    inStride = (Stride >= 0) ? static_cast<std::size_t>(Stride) : throw(std::runtime_error("Wrong index!"));
 }
 
-/*! 
- * \brief Returns an iterator to the beginning of Input
- * 
- * \return an iterator to the beginning of the given Input
- */
 template <class T>
 inline typename arrayWrapper<T>::iterator arrayWrapper<T>::begin()
 {
-    return this->iStride == 1 ? arrayWrapper<T>::iterator(this->iArray) : arrayWrapper<T>::iterator(this->iArray, this->iStride);
+    return (inStride == 1) ? arrayWrapper<T>::iterator(inArray) : arrayWrapper<T>::iterator(inArray, inStride);
 }
 
 template <class T>
 inline typename arrayWrapper<T>::iterator arrayWrapper<T>::begin() const
 {
-    return this->iStride == 1 ? arrayWrapper<T>::iterator(this->iArray) : arrayWrapper<T>::iterator(this->iArray, this->iStride);
+    return (inStride == 1) ? arrayWrapper<T>::iterator(inArray) : arrayWrapper<T>::iterator(inArray, inStride);
 }
 
-/*! 
- * \brief Returns an iterator to the end
- * 
- * \return an iterator to the end of the given Input
- */
 template <class T>
 inline typename arrayWrapper<T>::iterator arrayWrapper<T>::end()
 {
-    return arrayWrapper<T>::iterator(this->iArray + this->iNumOfElements);
+    return arrayWrapper<T>::iterator(inArray + inNumOfElements);
 }
 
 template <class T>
 inline typename arrayWrapper<T>::iterator arrayWrapper<T>::end() const
 {
-    return arrayWrapper<T>::iterator(this->iArray + this->iNumOfElements);
+    return arrayWrapper<T>::iterator(inArray + inNumOfElements);
 }
 
-/*!
- * \brief Get the size of array
- * 
- * \return Size of the array
- */
 template <class T>
-inline std::size_t arrayWrapper<T>::size() const { return this->iStride == 1 ? this->iNumOfElements : this->iNumOfElements / this->iStride; }
+inline std::size_t arrayWrapper<T>::size() const { return inStride == 1 ? inNumOfElements : inNumOfElements / inStride; }
 
-/*!
- * \brief Get the Stride
- * 
- * \return stride of the array
- */
 template <class T>
-inline std::size_t arrayWrapper<T>::stride() const { return this->iStride; }
+inline std::size_t arrayWrapper<T>::stride() const { return inStride; }
 
-/*!
- * \brief Swap with the input arraywrapper object
- * 
- * \param InputArrayWrapperObj 
- */
 template <class T>
 inline void arrayWrapper<T>::swap(arrayWrapper<T> &InputArrayWrapperObj)
 {
-    std::swap(this->iArray, InputArrayWrapperObj.iArray);
-    std::swap(this->iNumOfElements, InputArrayWrapperObj.iNumOfElements);
-    std::swap(this->iStride, InputArrayWrapperObj.iStride);
+    std::swap(inArray, InputArrayWrapperObj.inArray);
+    std::swap(inNumOfElements, InputArrayWrapperObj.inNumOfElements);
+    std::swap(inStride, InputArrayWrapperObj.inStride);
 }
 
-/*!
- * \brief Access element at provided index @id with checking bounds
- * 
- * \param  id Requested index 
- * 
- * \returns Element @(id)
- */
 template <class T>
 inline T arrayWrapper<T>::at(int const id) const
 {
-    std::size_t const i = id * this->iStride;
-    return i < this->iNumOfElements ? this->iArray[i] : throw(std::runtime_error("Index out of bound!"));
+    std::size_t const i = id * inStride;
+    return (i < inNumOfElements) ? inArray[i] : throw(std::runtime_error("Index out of bound!"));
 }
 
-/*!
- * \brief Access element at provided index
- * 
- * \param id Requested id
- * 
- * \returns Element @(id)
- */
 template <class T>
 inline T arrayWrapper<T>::operator()(int const id) const
 {
-    return this->iArray[id * this->iStride];
+    return inArray[id * inStride];
 }
 
-/*!
- * \brief Access element at provided index
- * 
- * \param id Requested id
- * 
- * \returns Element @(id)
- */
 template <class T>
 inline T arrayWrapper<T>::operator[](int const id) const
 {
-    return this->iArray[id * this->iStride];
+    return inArray[id * inStride];
 }
 
-/*! 
- *  \brief iterator constructor
- *
- */
 template <class T>
-arrayWrapper<T>::iterator::iterator() : iPosition(nullptr), iStride(1) {}
+arrayWrapper<T>::iterator::iterator() : iteratorPosition(nullptr), inStride(1) {}
 
-/*!
- * \brief Construct a new iterator object
- * 
- * \param Stride 
- */
 template <class T>
-arrayWrapper<T>::iterator::iterator(std::size_t Stride) : iPosition(nullptr), iStride(Stride) {}
+arrayWrapper<T>::iterator::iterator(std::size_t Stride) : iteratorPosition(nullptr), inStride(Stride) {}
 
-/*!
- * \brief Construct a new iterator object
- * 
- * \param aPointer 
- */
 template <class T>
-arrayWrapper<T>::iterator::iterator(T const *aPointer) : iPosition(aPointer), iStride(1) {}
+arrayWrapper<T>::iterator::iterator(T const *aPointer) : iteratorPosition(aPointer), inStride(1) {}
 
-/*!
- * \brief Construct a new iterator object
- * 
- * \param aPointer 
- * \param Stride 
- */
 template <class T>
-arrayWrapper<T>::iterator::iterator(T const *aPointer, std::size_t Stride) : iPosition(aPointer), iStride(Stride) {}
+arrayWrapper<T>::iterator::iterator(T const *aPointer, std::size_t Stride) : iteratorPosition(aPointer), inStride(Stride) {}
 
-/*!
- * \brief Operator ==
- * 
- * \param rhs  
- * \return true 
- * \return false 
- */
 template <class T>
-inline bool arrayWrapper<T>::iterator::operator==(arrayWrapper<T>::iterator const &rhs) { return this->iPosition == rhs.iPosition; }
+inline bool arrayWrapper<T>::iterator::operator==(arrayWrapper<T>::iterator const &rhs) { return iteratorPosition == rhs.iteratorPosition; }
 
-/*!
- * \brief Operator !=
- * 
- * \param rhs 
- * \return true 
- * \return false 
- */
 template <class T>
-inline bool arrayWrapper<T>::iterator::operator!=(arrayWrapper<T>::iterator const &rhs) { return this->iStride == 1 ? this->iPosition != rhs.iPosition : this->iPosition < rhs.iPosition; }
+inline bool arrayWrapper<T>::iterator::operator!=(arrayWrapper<T>::iterator const &rhs) { return inStride == 1 ? iteratorPosition != rhs.iteratorPosition : iteratorPosition < rhs.iteratorPosition; }
 
-/*!
- * \brief Operator ++
- * 
- * \return iterator& 
- */
 template <class T>
 inline typename arrayWrapper<T>::iterator &arrayWrapper<T>::iterator::operator++()
 {
-    this->iPosition += this->iStride;
+    iteratorPosition += inStride;
     return *this;
 }
 
-/*!
- * \brief Operator ++
- * 
- * \return iterator 
- */
 template <class T>
 inline typename arrayWrapper<T>::iterator arrayWrapper<T>::iterator::operator++(int)
 {
     arrayWrapper<T>::iterator t(*this);
-    this->operator++();
+    operator++();
     return t;
 }
 
-/*!
- * \brief Access element at the current index 
- * 
- * \return Actual value at the current index 
- */
 template <class T>
 inline T arrayWrapper<T>::iterator::operator*()
 {
-    return *this->iPosition;
+    return *iteratorPosition;
 }
 
 template <class T>
 inline T const arrayWrapper<T>::iterator::operator*() const
 {
-    return *this->iPosition;
+    return *iteratorPosition;
 }
 
-/*! 
- * \brief Get a pointer to the managed object or nullptr if no object is owned
- * 
- * \returns a pointer to the managed object or nullptr if no object is owned 
- */
 template <class T>
 inline T *arrayWrapper<T>::iterator::get() const
 {
-    return const_cast<T *>(this->iPosition);
+    return const_cast<T *>(iteratorPosition);
 }
+
+} // namespace umuq
 
 #endif // UMUQ_ARRAYWRAPPER

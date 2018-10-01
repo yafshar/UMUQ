@@ -20,7 +20,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        arrayWrapper<int> iArray(iPointer, 1000);
+        umuq::arrayWrapper<int> iArray(iPointer, 1000);
         for (auto i = iArray.begin(); i != iArray.end(); i++, j++)
         {
             EXPECT_EQ(*i, j * 10);
@@ -37,7 +37,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        arrayWrapper<double> dArray(dPointer, 100);
+        umuq::arrayWrapper<double> dArray(dPointer, 100);
         for (auto i = dArray.begin(); i != dArray.end(); i++)
         {
             EXPECT_EQ(*i, (double)j * 10);
@@ -64,7 +64,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
 
         j = 0;
-        arrayWrapper<srt> srtArray(srtPointer, 10);
+        umuq::arrayWrapper<srt> srtArray(srtPointer, 10);
         for (auto i = srtArray.begin(); i != srtArray.end(); i++, j++)
         {
             auto e = i.get();
@@ -89,7 +89,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
         //Fill the array with some values
         std::iota(iPointer.get(), iPointer.get() + 10, 0);
 
-        arrayWrapper<int> iArray(iPointer, 10, 2);
+        umuq::arrayWrapper<int> iArray(iPointer, 10, 2);
 
         int j = 0;
         for (auto i = iArray.begin(); i != iArray.end(); i++)
@@ -108,7 +108,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
         //Fill the array with some values
         std::iota(dPointer.get(), dPointer.get() + 100, 1000.);
 
-        arrayWrapper<double> dArray(dPointer, 100, 9);
+        umuq::arrayWrapper<double> dArray(dPointer, 100, 9);
 
         double sd = 1000.;
         for (auto i = dArray.begin(); i != dArray.end(); i++)
@@ -140,7 +140,7 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
             }
         }
 
-        arrayWrapper<int> iArray(iPointer, 10, 2);
+        umuq::arrayWrapper<int> iArray(iPointer, 10, 2);
 
         {
             int j = 0;
@@ -153,7 +153,7 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
 
         EXPECT_EQ(iArray.size(), std::size_t{5});
 
-        arrayWrapper<int> jArray(iPointer.get() + 1, 10, 2);
+        umuq::arrayWrapper<int> jArray(iPointer.get() + 1, 10, 2);
 
         {
             int j = 0;

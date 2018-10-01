@@ -1,17 +1,37 @@
 #ifndef UMUQ_EXPONENTIALDISTRIBUTION_H
 #define UMUQ_EXPONENTIALDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class exponentialDistribution
  * \brief The exponential distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 
- * exponential distribution with mean \f$ \mu \f$
- * using: 
+ * exponential distribution of: 
  * \f[
- * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)}
+ * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)},
  * \f]
+ * where \f$ \mu > 0 \f$ is mean, standard deviation, and scale parameter of the 
+ * distribution, the reciprocal of the rate parameter in an another commonly used 
+ * alternative parametrization of:
+ * \f[
+ * p(x)=\lambda e^{\left(-\lambda x\right)},
+ * \f]
+ * where \f$ \lambda > 0 \f$ is rate.
+ * 
+ * It also provides random non-negative values x, distributed according to the exponential 
+ * distribution probability density function. 
+ * 
+ * NOTES: 
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
+ * - Requires that \f$ \mu > 0 \f$. 
  * 
  * \tparam T Data type
  */
@@ -57,6 +77,27 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * \returns  Log of density function value 
      */
     inline T exponentialDistribution_lf(T const *x);
+
+    /*!
+     * \brief Set the Random Number Generator object 
+     * 
+     * \param PRNG  Pseudo-random number object \sa psrandom
+     * 
+     * \return true 
+     * \return false If it encounters an unexpected problem
+     */
+    inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+    /*!
+     * \brief Create samples of the exponential distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return true
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x);
+    bool sample(std::vector<T> &x);
 
   private:
     /*!
@@ -130,9 +171,77 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
     T sum(0);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        sum -= std::log(this->params[i] - x[i] / this->params[i]);
+        sum -= (std::log(this->params[i]) + x[i] / this->params[i]);
     }
     return sum;
 }
+
+template <typename T, class V>
+inline bool exponentialDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+{
+    if (PRNG)
+    {
+        if (PRNG_initialized)
+        {
+            this->prng = PRNG;
+            if (this->numParams > 1)
+            {
+                return this->prng->set_expns(this->params.data(), this->numParams);
+            }
+            return this->prng->set_expn(this->params[0]);
+        }
+        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(T *x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            for (int i = 0; i < this->numParams; i++)
+            {
+                x[i] = this->prng->expns[i].dist();
+            }
+            return true;
+        }
+        *x = this->prng->expn->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(std::vector<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            for (int i = 0; i < this->numParams; i++)
+            {
+                x[i] = this->prng->expns[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->expn->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+} // namespace density
+} // namespace umuq
 
 #endif //UMUQ_EXPONENTIALDISTRIBUTION

@@ -5,11 +5,11 @@
 //! Tests parse
 TEST(runinfo_test, HandlesConstruction)
 {
-    runinfo<double> runinfoObj;
+    umuq::tmcmc::runinfo<double> runinfoObj;
 
     EXPECT_EQ(0, runinfoObj.nDim);
     EXPECT_EQ(0, runinfoObj.maxGenerations);
-    EXPECT_EQ(0, runinfoObj.Generation);
+    EXPECT_EQ(0, runinfoObj.currentGeneration);
 
     EXPECT_TRUE(runinfoObj.reset(2, 40));
 
@@ -26,8 +26,8 @@ TEST(runinfo_test, HandlesConstruction)
         {
             EXPECT_DOUBLE_EQ(0.0, runinfoObj.CoefVar[i]);
         }
-        EXPECT_DOUBLE_EQ(0.0, runinfoObj.p[i]);
-        EXPECT_EQ(0, runinfoObj.currentuniques[i]);
+        EXPECT_DOUBLE_EQ(0.0, runinfoObj.generationProbabilty[i]);
+        EXPECT_EQ(0, runinfoObj.currentUniques[i]);
         EXPECT_DOUBLE_EQ(0.0, runinfoObj.logselection[i]);
         EXPECT_DOUBLE_EQ(0.0, runinfoObj.acceptance[i]);
     }
@@ -41,18 +41,18 @@ TEST(runinfo_test, HandlesIO)
     // Create an instance of runinfo object, initialize it
     // to some random value and save it to a file @"runinfo.txt"
     {
-        runinfo<double> runinfoObj(2, 10);
+        umuq::tmcmc::runinfo<double> runinfoObj(2, 10);
 
         EXPECT_EQ(2, runinfoObj.nDim);
         EXPECT_EQ(10, runinfoObj.maxGenerations);
 
-        runinfoObj.Generation = 9;
+        runinfoObj.currentGeneration = 9;
 
         for (int i = 0; i < runinfoObj.maxGenerations; i++)
         {
             runinfoObj.CoefVar[i] = static_cast<double>(i);
-            runinfoObj.p[i] = static_cast<double>(i * i);
-            runinfoObj.currentuniques[i] = i;
+            runinfoObj.generationProbabilty[i] = static_cast<double>(i * i);
+            runinfoObj.currentUniques[i] = i;
             runinfoObj.logselection[i] = static_cast<double>(i * i * i);
             runinfoObj.acceptance[i] = static_cast<double>(i) / 10.;
             runinfoObj.meantheta[i * runinfoObj.nDim] = static_cast<double>(i);
@@ -69,7 +69,7 @@ TEST(runinfo_test, HandlesIO)
     // Create an instance of runinfo object, initialize it
     // from a file @"runinfo.txt"
     {
-        runinfo<double> runinfoObj;
+        umuq::tmcmc::runinfo<double> runinfoObj;
 
         EXPECT_TRUE(runinfoObj.load());
         EXPECT_EQ(2, runinfoObj.nDim);
@@ -77,8 +77,8 @@ TEST(runinfo_test, HandlesIO)
         for (int i = 0; i < runinfoObj.maxGenerations; i++)
         {
             EXPECT_DOUBLE_EQ(static_cast<double>(i), runinfoObj.CoefVar[i]);
-            EXPECT_DOUBLE_EQ(static_cast<double>(i * i), runinfoObj.p[i]);
-            EXPECT_EQ(i, runinfoObj.currentuniques[i]);
+            EXPECT_DOUBLE_EQ(static_cast<double>(i * i), runinfoObj.generationProbabilty[i]);
+            EXPECT_EQ(i, runinfoObj.currentUniques[i]);
             EXPECT_DOUBLE_EQ(static_cast<double>(i * i * i), runinfoObj.logselection[i]);
             EXPECT_DOUBLE_EQ(static_cast<double>(i) / 10., runinfoObj.acceptance[i]);
             EXPECT_DOUBLE_EQ(static_cast<double>(i), runinfoObj.meantheta[i * runinfoObj.nDim]);

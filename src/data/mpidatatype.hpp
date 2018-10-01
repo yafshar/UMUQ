@@ -1,6 +1,8 @@
 #ifndef UMUQ_MPIDATATYPE_H
 #define UMUQ_MPIDATATYPE_H
 
+#if HAVE_MPI == 1
+
 /*! 
  * \brief MPI data types variable template wrapper for the given C++ type.
  *
@@ -65,4 +67,5 @@ constexpr MPI_Datatype MPIDatatype<unsigned int> = MPI_UNSIGNED;
 template <>
 constexpr MPI_Datatype MPIDatatype<unsigned long> = MPI_UNSIGNED_LONG;
 
-#endif
+#endif // MPI
+#endif // UMUQ_MPIDATATYPE

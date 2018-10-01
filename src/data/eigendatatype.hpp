@@ -3,6 +3,9 @@
 
 #include <Eigen/Eigen>
 
+namespace umuq
+{
+
 /*!
  * \brief Eigen is a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
  * 
@@ -219,4 +222,6 @@ using EVector6d = EVector6<double>;
  */
 Eigen::IOFormat eigenIOFormat(Eigen::FullPrecision);
 
-#endif // UMUQ_EIGENDATATYPE_H
+} // namespace umuq
+
+#endif // UMUQ_EIGENDATATYPE

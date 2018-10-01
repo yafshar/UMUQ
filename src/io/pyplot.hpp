@@ -2,6 +2,12 @@
 #define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
+namespace umuq
+{
+
+inline namespace matplotlib_223
+{
+
 /*!
  * \file io/pyplot.hpp
  * \brief This module contains functions that allows to generate many kinds of plots
@@ -83,7 +89,16 @@
  */
 
 #include "../data/npydatatype.hpp"
+
+} // namespace matplotlib_223
+} // namespace umuq
+
 #include "../misc/arraywrapper.hpp"
+
+namespace umuq
+{
+inline namespace matplotlib_223
+{
 
 /*!
  * \brief Converts a data array idata to Python array
@@ -4723,7 +4738,13 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 //     return pArray;
 // }
 
+} // namespace matplotlib_223
+} // namespace umuq
+
 #else
+
+namespace umuq
+{
 
 class pyplot
 {
@@ -4739,7 +4760,16 @@ class pyplot
      * 
      */
     ~pyplot() {}
+
+  private:
+    // Make it noncopyable
+    pyplot(pyplot const &) = delete;
+
+    // Make it not assignable
+    pyplot &operator=(pyplot const &) = delete;
 };
 
-#endif //HAVE_PYTHON
-#endif //UMUQ_PYPLOT_H
+} // namespace umuq
+
+#endif // HAVEPYTHON
+#endif // UMUQ_PYPLOT

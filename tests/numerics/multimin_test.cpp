@@ -3,8 +3,6 @@
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-using namespace multimin;
-
 /*!
  * \brief A helper function for testing the function minimizer 
  * 
@@ -19,7 +17,7 @@ using namespace multimin;
  * \return false 
  */
 template <typename T>
-bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &Fun, T const *X, int const nDim, char const *FunName)
+bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE<T> const &Fun, T const *X, int const nDim, char const *FunName)
 {
     //! By default we consider stepSize 1
     std::vector<T> stepSize(nDim, 1);
@@ -83,7 +81,7 @@ bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &F
             }
             // std::cout << std::endl;
 
-            std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.getSize() << std::endl;
+            std::cout << "f(x) =" << fMinimizer.getMin() << ", & characteristic size =" << fMinimizer.size() << std::endl;
         }
 #endif
 
@@ -124,8 +122,8 @@ bool functionMinimizerTest(functionMinimizer<T> &fMinimizer, F_MTYPE<T> const &F
  * \return false 
  */
 template <typename T>
-bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMinimizer,
-                                         F_MTYPE<T> const &Fun, DF_MTYPE<T> const &DFun, FDF_MTYPE<T> const &FDFun,
+bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T> &fMinimizer,
+                                         umuq::F_MTYPE<T> const &Fun, umuq::DF_MTYPE<T> const &DFun, umuq::FDF_MTYPE<T> const &FDFun,
                                          T const *X, int const nDim, char const *FunName)
 {
     //! By default we consider stepSize as \f$ 0.1 ||x||_2 = 0.1 \sqrt {\sum x_i^2} \f$
@@ -259,8 +257,8 @@ bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMi
  * \return false 
  */
 template <typename T>
-bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMinimizer,
-                                         F_MTYPE<T> const &Fun,
+bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T> &fMinimizer,
+                                         umuq::F_MTYPE<T> const &Fun,
                                          T const *X, int const nDim, char const *FunName)
 {
     //! By default we consider stepSize as \f$ 0.1 ||x||_2 = 0.1 \sqrt {\sum x_i^2} \f$
@@ -384,7 +382,7 @@ bool differentiableFunctionMinimizerTest(differentiableFunctionMinimizer<T> &fMi
 TEST(multimin_steepestDescent_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    steepestDescent<double> fMinimizer;
+    umuq::steepestDescent<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -422,7 +420,7 @@ TEST(multimin_steepestDescent_test, Handles_TestFunctions)
 TEST(multimin_conjugatePr_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    conjugatePr<double> fMinimizer;
+    umuq::conjugatePr<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -460,7 +458,7 @@ TEST(multimin_conjugatePr_test, Handles_TestFunctions)
 TEST(multimin_conjugateFr_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    conjugateFr<double> fMinimizer;
+    umuq::conjugateFr<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -498,7 +496,7 @@ TEST(multimin_conjugateFr_test, Handles_TestFunctions)
 TEST(multimin_bfgs_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    bfgs<double> fMinimizer;
+    umuq::bfgs<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -536,7 +534,7 @@ TEST(multimin_bfgs_test, Handles_TestFunctions)
 TEST(multimin_bfgs2_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    bfgs2<double> fMinimizer;
+    umuq::bfgs2<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -574,7 +572,7 @@ TEST(multimin_bfgs2_test, Handles_TestFunctions)
 TEST(multimin_simplexNM_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    simplexNM<double> fMinimizer;
+    umuq::simplexNM<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -611,7 +609,7 @@ TEST(multimin_simplexNM_test, Handles_TestFunctions)
 TEST(multimin_simplexNM2_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    simplexNM2<double> fMinimizer;
+    umuq::simplexNM2<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};
@@ -648,7 +646,7 @@ TEST(multimin_simplexNM2_test, Handles_TestFunctions)
 TEST(multimin_simplexNM2Rnd_test, Handles_TestFunctions)
 {
     //! Create an instance of the minimizer
-    simplexNM2Rnd<double> fMinimizer;
+    umuq::simplexNM2Rnd<double> fMinimizer;
 
     //! Starting point for Rosenbrock function
     std::vector<double> X = {-1.2, 1.0};

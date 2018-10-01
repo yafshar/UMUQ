@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 
 //! Create a global instance of the Pyplot from Pyplot library
-pyplot plt;
+umuq::pyplot plt;
 
 #ifdef HAVE_PYTHON
 //! TEST for Basic functionality

@@ -107,7 +107,7 @@ bool f6(double const *x, double *f, double *df)
  */
 TEST(function_test, HandlesFunctionMinimizerConstruction)
 {
-    umuqFunction<double, F_MTYPE<double>> fn("product");
+    umuq::umuqFunction<double, umuq::F_MTYPE<double>> fn("product");
     fn.f = f1;
 
     std::vector<double> xi(2);
@@ -116,7 +116,7 @@ TEST(function_test, HandlesFunctionMinimizerConstruction)
     std::vector<double> x(2, 10.);
     std::vector<double> s(2, 0.1);
 
-    functionMinimizer<double> fnm("fmin");
+    umuq::functionMinimizer<double> fnm("fmin");
 
     //! First we have to set the dimension
     fnm.reset(2);
@@ -141,7 +141,7 @@ TEST(function_test, HandlesFunctionMinimizerConstruction)
  */
 TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruction)
 {
-    umuqDifferentiableFunction<double, F_MTYPE<double>, DF_MTYPE<double>, FDF_MTYPE<double>> fn("product2");
+    umuq::umuqDifferentiableFunction<double, umuq::F_MTYPE<double>, umuq::DF_MTYPE<double>, umuq::FDF_MTYPE<double>> fn("product2");
     fn.f = f1;
     fn.df = f2;
     fn.fdf = f3;
@@ -157,7 +157,7 @@ TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruc
     double tol = 0.1;
 
     //! Create an instance of the minimizer
-    differentiableFunctionMinimizer<double> fnm("fmin");
+    umuq::differentiableFunctionMinimizer<double> fnm("fmin");
 
     //! First we have to set the dimension, otherwise we can not set the function
     EXPECT_FALSE(fnm.set(fn, x, s, tol));
@@ -179,7 +179,7 @@ TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruc
     EXPECT_DOUBLE_EQ(fnm.fun.f(xi.data()), 432.);
 
     //! Create a new minimizer
-    differentiableFunctionMinimizer<double> fnm2("fmin2");
+    umuq::differentiableFunctionMinimizer<double> fnm2("fmin2");
     fnm2.reset(2);
 
     //! Set the minimizer functions

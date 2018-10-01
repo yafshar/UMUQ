@@ -115,6 +115,10 @@ TESTS += funcallcounter_test
 check_PROGRAMS += funcallcounter_test
 funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 
+TESTS += timer_test
+check_PROGRAMS += timer_test
+timer_test_SOURCES = misc/timer_test.cpp
+
 #io
 TESTS += io_test
 check_PROGRAMS += io_test

@@ -297,7 +297,7 @@ TEST(dcpse_1d, HandlesQianFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -315,7 +315,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -325,7 +325,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_TRAIN", file.in | file.out | file.trunc))
@@ -361,7 +361,7 @@ TEST(dcpse_1d, HandlesQianFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -379,7 +379,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -389,7 +389,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_DCPSE_3", file.in | file.out | file.trunc))
@@ -467,7 +467,7 @@ TEST(dcpse_1d, HandlesCFDResults)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -485,7 +485,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -495,7 +495,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_TRAIN", file.in | file.out | file.trunc))
@@ -531,7 +531,7 @@ TEST(dcpse_1d, HandlesCFDResults)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -549,7 +549,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -559,7 +559,7 @@ TEST(dcpse_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_DCPSE_3", file.in | file.out | file.trunc))
@@ -649,7 +649,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -667,7 +667,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -677,7 +677,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_TRAIN", file.in | file.out | file.trunc))
@@ -713,7 +713,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -731,7 +731,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -741,7 +741,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_DCPSE_3", file.in | file.out | file.trunc))
@@ -859,7 +859,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -877,7 +877,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -887,7 +887,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_TRAIN", file.in | file.out | file.trunc))
@@ -923,7 +923,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -941,7 +941,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -951,7 +951,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_DCPSE_3", file.in | file.out | file.trunc))
@@ -1041,7 +1041,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1059,7 +1059,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1069,7 +1069,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_TRAIN", file.in | file.out | file.trunc))
@@ -1105,7 +1105,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1123,7 +1123,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1133,7 +1133,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_DCPSE_3", file.in | file.out | file.trunc))
@@ -1223,7 +1223,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1241,7 +1241,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1251,7 +1251,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_TRAIN", file.in | file.out | file.trunc))
@@ -1287,7 +1287,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1305,7 +1305,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1315,7 +1315,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_DCPSE_3", file.in | file.out | file.trunc))
@@ -1405,7 +1405,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1423,7 +1423,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1433,7 +1433,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_TRAIN", file.in | file.out | file.trunc))
@@ -1469,7 +1469,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
 
     {
         //Create an instance of a DC-PSE object
-        dcpse<double> dc(nDim);
+        umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1487,7 +1487,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         dc.printInfo();
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -1497,7 +1497,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_DCPSE_3", file.in | file.out | file.trunc))

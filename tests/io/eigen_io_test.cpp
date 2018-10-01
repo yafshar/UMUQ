@@ -17,27 +17,27 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	const char *fileName = "eiotmp";
 
 	//!An instance of io class
-	io f;
+	umuq::io f;
 
 	//! - 1
 
 	//!Create a matrix of size 4*4 and of type double and fill it with random numbers
-	EMatrixXd A = Eigen::Matrix<double, 4, 4>::Random();
+	umuq::EMatrixXd A = Eigen::Matrix<double, 4, 4>::Random();
 
 	//!Create a new matrix B of the same size and type as A
-	EMatrix4<double> B;
+	umuq::EMatrix4<double> B;
 
 	//!Open a file for reading and writing
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
 		//!Write the matrix in it
-		f.saveMatrix<EMatrixXd, Eigen::IOFormat>(A, eigenIOFormat);
+		f.saveMatrix<umuq::EMatrixXd, Eigen::IOFormat>(A, umuq::eigenIOFormat);
 
 		//!Rewind the file
 		f.rewindFile();
 
 		//!Read the matrix from it
-		f.loadMatrix<EMatrix4<double>>(B);
+		f.loadMatrix<umuq::EMatrix4<double>>(B);
 
 		//!Compare that the matrix A and B are approximately the same within machine precision
 		EXPECT_TRUE(A.isApprox(B));
@@ -48,25 +48,25 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	//! - 2
 
 	//! Create a new matrix of type int and fill it with random number
-	EMatrixX<int> C = Eigen::Matrix<int, 10, 10>::Random();
+	umuq::EMatrixX<int> C = Eigen::Matrix<int, 10, 10>::Random();
 
 	//! Create a new matrix of of the same size and type as C
-	EMatrixX<int> D(10, 10);
+	umuq::EMatrixX<int> D(10, 10);
 
 	//! Open a file for reading and writing
 	if (f.openFile(fileName, f.in | f.out | f.trunc))
 	{
 		//! Write the matrix in it
-		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
+		f.saveMatrix<umuq::EMatrixX<int>, Eigen::IOFormat>(C, umuq::eigenIOFormat);
 
 		//! Rewind the file
 		f.rewindFile();
 
 		//! Read the matrix from it
-		f.loadMatrix<EMatrixX<int>>(D);
+		f.loadMatrix<umuq::EMatrixX<int>>(D);
 
 		//! Compare the matrices
-		EXPECT_PRED2(EM_equal<EMatrixX<int>>, C, D);
+		EXPECT_PRED2(EM_equal<umuq::EMatrixX<int>>, C, D);
 
 		f.closeFile();
 	}
@@ -79,22 +79,22 @@ TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 	if (f.openFile(fileName, f.in | f.out | f.app))
 	{
 		//! write down two matrices of different types in it
-		f.saveMatrix<EMatrixX<double>, Eigen::IOFormat>(A, eigenIOFormat);
-		f.saveMatrix<EMatrixX<int>, Eigen::IOFormat>(C, eigenIOFormat);
+		f.saveMatrix<umuq::EMatrixX<double>, Eigen::IOFormat>(A, umuq::eigenIOFormat);
+		f.saveMatrix<umuq::EMatrixX<int>, Eigen::IOFormat>(C, umuq::eigenIOFormat);
 
 		//! Initialize B and D to zero
-		B = EMatrix4<double>::Zero();
+		B = umuq::EMatrix4<double>::Zero();
 		D = Eigen::Matrix<int, 10, 10>::Zero();
 
 		//! Rewind the file
 		f.rewindFile();
 
-		f.loadMatrix<EMatrix4<double>>(B);
-		f.loadMatrix<EMatrixX<int>>(D);
+		f.loadMatrix<umuq::EMatrix4<double>>(B);
+		f.loadMatrix<umuq::EMatrixX<int>>(D);
 
 		//! Compare the matrices
 		EXPECT_TRUE(A.isApprox(B));
-		EXPECT_PRED2(EM_equal<EMatrixX<int>>, C, D);
+		EXPECT_PRED2(EM_equal<umuq::EMatrixX<int>>, C, D);
 
 		f.closeFile();
 	}

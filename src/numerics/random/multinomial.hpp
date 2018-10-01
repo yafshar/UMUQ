@@ -1,6 +1,0 @@
-#ifndef UMUQ_MULTINOMIAL_H
-#define UMUQ_MULTINOMIAL_H
-
-
-
-#endif // UMUQ_MULTINOMIAL_H

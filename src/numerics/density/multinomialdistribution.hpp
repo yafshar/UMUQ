@@ -1,7 +1,14 @@
 #ifndef UMUQ_MULTINOMIALDISTRIBUTION_H
 #define UMUQ_MULTINOMIALDISTRIBUTION_H
 
-#include "../function/densityfunction.hpp"
+namespace umuq
+{
+/*! \namespace density
+ * \brief Namespace containing all the functions for probability density computation
+ *
+ */
+inline namespace density
+{
 
 /*! \class multinomialDistribution
  * \brief The multinomial distribution
@@ -55,7 +62,7 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
      */
-    inline T multinomialDistribution_f(T const *p, unsigned int const *mndist);
+    T multinomialDistribution_f(T const *p, unsigned int const *mndist);
 
     /*!
      * \brief Log of multinomial distribution density function
@@ -69,14 +76,9 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
      */
-    inline T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
+    T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
 };
 
-/*!
- * \brief Construct a new multinomial distribution object
- * 
- * \param  k  Vector size
- */
 template <typename T>
 multinomialDistribution<T>::multinomialDistribution(int const k)
 {
@@ -86,71 +88,42 @@ multinomialDistribution<T>::multinomialDistribution(int const k)
     this->lf = std::bind(&multinomialDistribution<T>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-/*!
- * \brief multinomial distribution density function
- * Computes the probability from the multinomial distribution
- * 
- * This function computes the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with probabilities \f$p[K]\f$.
- * 
- * \param  p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
- * \param  mndist  A random sample (with size of K) from the multinomial distribution 
- * 
- * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
- */
 template <typename T>
-inline T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
+T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
 {
-    // compute the total number of independent trials
-    unsigned int const N = std::accumulate(mndist, mndist + this->numParams, 0);
-
-    T const totpsum = std::accumulate(p, p + this->numParams, 0);
-
-    T log_pdf = factorial<T>(N);
-
-    for (int i = 0; i < this->numParams; i++)
-    {
-        if (mndist[i] > 0)
-        {
-            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
-        }
-    }
-
-    return std::exp(log_pdf);
+    return std::exp(multinomialDistribution_lf(p, mndist));
 }
 
-/*!
- * \brief Log of multinomial distribution density function
- * Computes the logarithm of the probability from the multinomial distribution
- * 
- * This function computes the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with probabilities \f$p[K]\f$.
- * 
- * \param p       Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
- * \param mndist  A random sample (with size of K) from the multinomial distribution
- * 
- * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
- */
 template <typename T>
-inline T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
+T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
 {
+#ifdef DEBUG
+    for (int i = 0; i < this->numParams; i++)
+    {
+        if (p[i] <= T{})
+        {
+            return std::numeric_limits<T>::infinity();
+        }
+    }
+#endif
     // compute the total number of independent trials
-    unsigned int N = std::accumulate(mndist, mndist + this->numParams, 0);
+    unsigned int const N1 = std::accumulate(mndist, mndist + this->numParams, 0) + 1;
 
-    T const totpsum = std::accumulate(p, p + this->numParams, 0);
+    T const totpsum = std::accumulate(p, p + this->numParams, T{});
 
-    // Currently we have the limitation of float or double type in factorial implementation
-    T log_pdf = factorial<T>(N);
-
+    //! natural logarithm of the gamma function ~ log(N!)
+    T log_pdf = std::lgamma(N1);
     for (int i = 0; i < this->numParams; i++)
     {
         if (mndist[i] > 0)
         {
-            log_pdf += std::log(p[i] / totpsum) * mndist[i] - factorial<T>(mndist[i]);
+            log_pdf += std::log(p[i] / totpsum) * mndist[i] - std::lgamma(mndist[i] + 1);
         }
     }
-
     return log_pdf;
 }
 
-#endif // UMUQ_MULTINOMIALDISTRIBUTION_H
+} // namespace density
+} // namespace umuq
+
+#endif // UMUQ_MULTINOMIALDISTRIBUTION

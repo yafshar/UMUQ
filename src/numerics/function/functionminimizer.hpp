@@ -4,6 +4,29 @@
 #include "functiontype.hpp"
 #include "umuqfunction.hpp"
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
+/*!
+ * \brief Different available Function Minimizer available in UMUQ
+ * 
+ */
+enum FunctionMinimizerTypes
+{
+  SIMPLEXNM = 1,
+  SIMPLEXNM2 = 2,
+  SIMPLEXNM2RND = 3
+};
+
 /*! \brief The goal is finding minima of arbitrary multidimensional functions.
  *  \ingroup multimin_Module
  */
@@ -23,7 +46,7 @@
  * To use the Minimizer:
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
- * - Third, initilize the minimizer \sa init
+ * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
  * \tparam T Data type
@@ -38,6 +61,25 @@ public:
    * \param Name Multidimensional function minimizer name
    */
   explicit functionMinimizer(char const *Name = "");
+
+  /*!
+   * \brief Destroy the function Minimizer object
+   * 
+   */
+  ~functionMinimizer();
+
+  /*!
+   * \brief Move constructor, Construct a new functionMinimizer object
+   * 
+   * \param other functionMinimizer object
+   */
+  functionMinimizer(functionMinimizer<T> &&other);
+
+  /*!
+   * \brief Move assignment operator
+   * 
+   */
+  functionMinimizer<T> &operator=(functionMinimizer<T> &&other);
 
   /*!
    * \brief Resizes the x-vector to contain nDim elements 
@@ -119,7 +161,7 @@ public:
   virtual bool set(T const *X, T const *stepSize);
 
   /*!
-   * \brief Initilize the minimizer
+   * \brief Initialize the minimizer
    * 
    * \return true 
    * \return false 
@@ -148,7 +190,7 @@ public:
    * 
    * \returns minimizer-specific characteristic size
    */
-  inline T const getSize() const;
+  inline T const size() const;
 
   /*!
    * \brief Helper function to check the specific characteristic size against absolute tolerance
@@ -197,14 +239,14 @@ public:
   //! N-dimensional x vector
   std::vector<T> x;
 
-  // Workspace 1 for algorithm
+  //! Workspace 1 for algorithm
   std::vector<T> ws1;
 
-  // Workspace 2 for algorithm
+  //! Workspace 2 for algorithm
   std::vector<T> ws2;
 
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)
-  T size;
+  T characteristicSize;
 
   //! Minimum function value
   T fval;
@@ -212,6 +254,35 @@ public:
 
 template <typename T>
 functionMinimizer<T>::functionMinimizer(char const *Name) : name(Name) {}
+
+template <typename T>
+functionMinimizer<T>::~functionMinimizer() {}
+
+template <typename T>
+functionMinimizer<T>::functionMinimizer(functionMinimizer<T> &&other)
+{
+  name = other.name;
+  fun = std::move(other.fun);
+  x = std::move(other.x);
+  ws1 = std::move(other.ws1);
+  ws2 = std::move(other.ws2);
+  characteristicSize = other.characteristicSize;
+  fval = other.fval;
+}
+
+template <typename T>
+functionMinimizer<T> &functionMinimizer<T>::operator=(functionMinimizer<T> &&other)
+{
+  name = other.name;
+  fun = std::move(other.fun);
+  x = std::move(other.x);
+  ws1 = std::move(other.ws1);
+  ws2 = std::move(other.ws2);
+  characteristicSize = other.characteristicSize;
+  fval = other.fval;
+
+  return *this;
+}
 
 template <typename T>
 bool functionMinimizer<T>::reset(int const nDim) noexcept
@@ -554,15 +625,15 @@ inline std::string const functionMinimizer<T>::getName() const
 }
 
 template <typename T>
-inline T const functionMinimizer<T>::getSize() const
+inline T const functionMinimizer<T>::size() const
 {
-  return size;
+  return characteristicSize;
 }
 
 template <typename T>
 inline int functionMinimizer<T>::testSize(T const abstol)
 {
-  return (abstol < 0) ? -1 : ((size < abstol) ? 0 : 1);
+  return (abstol < 0) ? -1 : ((characteristicSize < abstol) ? 0 : 1);
 }
 
 template <typename T>
@@ -582,5 +653,8 @@ inline int functionMinimizer<T>::getDimension()
 {
   return x.size();
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif //UMUQ_FUNCTIONMINIMIZER

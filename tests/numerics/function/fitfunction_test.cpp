@@ -4,8 +4,14 @@
 #include "numerics/function/fitfunction.hpp"
 #include "gtest/gtest.h"
 
-using f1TYPE = std::function<double(double const *, int const)>;
-
+/*!
+ * \brief n-dimensional Rosenbrock function
+ * 
+ * \param x  Input x
+ * \param n  dimension of x
+ * 
+ * \return double 
+ */
 double f1(double const *x, int const n)
 {
     double sum(0);
@@ -22,44 +28,46 @@ double f1(double const *x, int const n)
  */
 TEST(fitFunction_test, HandlesfitFunctionConstruction)
 {
-    fitFunction<double, f1TYPE> fitrosenbrock;
+    umuq::fitFunction<double, std::function<double(double const *, int const)>> fit;
 
-    EXPECT_TRUE(fitrosenbrock.set(f1));
+    EXPECT_TRUE(fit.setFitFunction(f1));
+    EXPECT_TRUE(fit.init());
 }
 
+//! Global vector of data
+std::vector<double> x;
+std::vector<double> y;
+
 /*!
- * \brief Extend the fitfunction class for any use 
+ * \brief Initialization function that we want to use 
  * 
  */
-class fitTest : public fitFunction<double>
+bool init()
 {
-  public:
-    bool init()
+    umuq::io f;
     {
         // open the data file
-        std::string filename = "./numerics/function/data.txt";
+        EXPECT_TRUE(f.openFile("./numerics/function/data.txt"));
 
-        io f;
+        //Count number of data points (lines in the file)
+        int ndata = 0;
+        while (f.readLine())
         {
-            EXPECT_TRUE(f.openFile(filename));
-            int ndata = 0;
-            while (f.readLine())
-            {
-                ndata++;
-            }
-
-            //!Rewind the file
-            f.rewindFile();
-
-            this->x.resize(ndata * 2);
-
-            EXPECT_TRUE(f.loadMatrix<double>(this->x.data(), ndata, 2));
-
-            f.closeFile();
+            ndata++;
         }
-        return true;
+
+        //!Rewind the file
+        f.rewindFile();
+
+        x.resize(ndata);
+        y.resize(ndata);
+
+        EXPECT_TRUE(f.loadMatrix<double>(x.data(), 1, y.data(), 1, ndata));
+
+        f.closeFile();
     }
-};
+    return true;
+}
 
 /*!
  * \brief External function to compute the function \f$ y = c_0 \sin(c_1*x+c_2) \f$
@@ -72,32 +80,29 @@ void f2(std::vector<double> const &x, std::vector<double> &y, double const *c)
 {
     auto xit = x.begin();
     auto yit = y.begin();
-    for (; xit != x.end(); xit += 2, yit++)
+    for (; xit != x.end(); xit++, yit++)
     {
-        *yit = c[0] * std::sin(c[1] * *xit + c[2]);
+        *yit = c[0] * std::sin(*xit * c[1] + c[2]);
     }
 }
 
-double fitfun(long long const other, double const *c, int const n, double *out, int const *info)
+double fitfun(double const *c, int const numc, double *out, int const numout, int const *info)
 {
-    // To use the information from other class
-    auto obj = reinterpret_cast<fitFunction<double> *>(other);
+    double sigma2 = std::pow(c[numc - 1], 2);
 
-    double sigma2 = std::pow(c[n - 1], 2);
+    int const ndata = x.size();
 
-    int const N = obj->x.size();
+    std::vector<double> y2(ndata);
 
-    std::vector<double> y(N);
-
-    f2(obj->x, y, c);
+    f2(x, y2, c);
 
     double sum{};
-    for (int i = 0, j = 1; i < N; i++, j += 2)
+    for (int i = 0; i < ndata; i++)
     {
-        sum += std::pow(obj->x[j] - y[i], 2);
+        sum += std::pow(y[i] - y2[i], 2);
     }
 
-    double res = N * M_L2PI + N * std::log(sigma2) + sum / sigma2;
+    double res = ndata * M_L2PI + ndata * std::log(sigma2) + sum / sigma2;
     return -res * 0.5;
 }
 
@@ -106,13 +111,23 @@ double fitfun(long long const other, double const *c, int const n, double *out, 
  */
 TEST(fitFunction_test, HandlesexternalfitFunctionConstruction)
 {
-    fitTest fitExternal;
-    EXPECT_TRUE(fitExternal.init());
-    EXPECT_TRUE(fitExternal.set(fitfun));
+    //! First we create an instance of the fitFunction object with the default fitting Function type
+    umuq::fitFunction<double> fit;
 
-    std::vector<double> c = {2., 3.0, 1.0, 0.5};
+    //! We can set the init and fit function together or individually
+    EXPECT_TRUE(fit.setInitFunction(init));
+    //!
+    EXPECT_TRUE(fit.setFitFunction(fitfun));
+
+    //! We call the init function
+    EXPECT_TRUE(fit.init());
+
+    //! Check the fit function for two different model parameters coefficient of c1 & c2
+    std::vector<double> c1 = {2.0, 3.0, 1.0, 0.5};
+    std::vector<double> c2 = {1.0, 1.0, 1.0, 0.5};
     double out[4];
-    std::cout << fitExternal.fun.f(reinterpret_cast<long long>(&fitExternal), c.data(), 4, out, nullptr) << std::endl;
+
+    EXPECT_TRUE(fit.f(c1.data(), 4, out, 4, nullptr) > fit.f(c2.data(), 4, out, 4, nullptr));
 }
 
 int main(int argc, char **argv)

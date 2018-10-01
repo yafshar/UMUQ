@@ -62,7 +62,7 @@ at least several-times-n points, however, so they are best used when n is small 
 
 The available solvers can be categorized as follows:
 
-**Algorithms with Derivatives**    
+**Algorithms with Derivatives**
 
 Solver | Description
 --- | --- 
@@ -72,7 +72,7 @@ conjugateFr | Conjugate gradient Fletcher-Reeve algorithm
 conjugatePr | Conjugate gradient Polak-Ribiere algorithm
 steepestDescent | The steepest descent algorithm
 
-**Algorithms without Derivatives**    
+**Algorithms without Derivatives**
 
 Solver | Description 
 --- | ---|
@@ -80,10 +80,9 @@ simplexNM | The Simplex method of Nelder and Mead
 simplexNM2 | The Simplex method of Nelder and Mead$ (order N operations)
 simplexNM2Rnd | The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors)
 
-
 Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
 Computational Aerosciences Laboratory  
-University of Michigan, Ann Arbor 
+University of Michigan, Ann Arbor

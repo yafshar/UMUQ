@@ -297,7 +297,7 @@ TEST(linearregression_1d, HandlesQianFunction)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 1);
+        umuq::linearRegression<double> lr(nDim, 1);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -312,7 +312,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -322,7 +322,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/QIAN_TRAIN", file.in | file.out | file.trunc))
@@ -358,7 +358,7 @@ TEST(linearregression_1d, HandlesQianFunction)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 2);
+        umuq::linearRegression<double> lr(nDim, 2);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -373,7 +373,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -383,7 +383,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/QIAN_LR_2", file.in | file.out | file.trunc))
@@ -399,7 +399,7 @@ TEST(linearregression_1d, HandlesQianFunction)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 3);
+        umuq::linearRegression<double> lr(nDim, 3);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -414,7 +414,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -424,7 +424,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/QIAN_LR_3", file.in | file.out | file.trunc))
@@ -440,7 +440,7 @@ TEST(linearregression_1d, HandlesQianFunction)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 4);
+        umuq::linearRegression<double> lr(nDim, 4);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -455,7 +455,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -465,7 +465,7 @@ TEST(linearregression_1d, HandlesQianFunction)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/QIAN_LR_4", file.in | file.out | file.trunc))
@@ -546,7 +546,7 @@ TEST(linearregression_1d, HandlesCFDResults)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 1);
+        umuq::linearRegression<double> lr(nDim, 1);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -561,7 +561,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -571,7 +571,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/CFD_TRAIN", file.in | file.out | file.trunc))
@@ -607,7 +607,7 @@ TEST(linearregression_1d, HandlesCFDResults)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 2);
+        umuq::linearRegression<double> lr(nDim, 2);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -622,7 +622,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -632,7 +632,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/CFD_LR_2", file.in | file.out | file.trunc))
@@ -648,7 +648,7 @@ TEST(linearregression_1d, HandlesCFDResults)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 3);
+        umuq::linearRegression<double> lr(nDim, 3);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -663,7 +663,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -673,7 +673,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/CFD_LR_3", file.in | file.out | file.trunc))
@@ -689,7 +689,7 @@ TEST(linearregression_1d, HandlesCFDResults)
 
     {
         //Create an instance of a Linear Regression object
-        linearRegression<double> lr(nDim, 4);
+        umuq::linearRegression<double> lr(nDim, 4);
 
         data = idata.get();
         fvalue = iFvalue.get();
@@ -704,7 +704,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         EXPECT_TRUE(lr.solve(qdata, qfvalue, nqPoints));
 
         {
-            fitness<double> f("root_mean_squared");
+            umuq::fitness<double> f("root_mean_squared");
             fvalue = iqFvalueExact.get();
             qfvalue = iqFvalue.get();
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
@@ -714,7 +714,7 @@ TEST(linearregression_1d, HandlesCFDResults)
         if (WRITE_TO_FILE)
         {
             //Create an instance of io object
-            io file;
+            umuq::io file;
 
             //!Open a file for reading and writing
             if (file.openFile("./regression/CFD_LR_4", file.in | file.out | file.trunc))

@@ -1,11 +1,23 @@
 #ifndef UMUQ_SIMPLEXNM_H
 #define UMUQ_SIMPLEXNM_H
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class simplexNM
  *  \ingroup multimin_Module
  * 
- * \brief The Simplex method of Nelder and Mead, also known as the polytope search alogorithm. 
- * It uses fixed coordinate axes around the starting point x to initilize the simplex.
+ * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm. 
+ * It uses fixed coordinate axes around the starting point x to initialize the simplex.
  * The size of simplex is calculated as the mean distance of each vertex from the center.
  * 
  * Ref:
@@ -42,7 +54,7 @@ class simplexNM : public functionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 
@@ -179,7 +191,7 @@ bool simplexNM<T>::init()
     }
 
     // Initialize simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     return true;
 }
@@ -320,7 +332,7 @@ bool simplexNM<T>::iterate()
     this->fval = y1[lo];
 
     // Update simplex size
-    this->size = computeSize();
+    this->characteristicSize = computeSize();
 
     return true;
 }
@@ -459,5 +471,8 @@ T simplexNM<T>::computeSize()
 
     return s / static_cast<T>(n + 1);
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_SIMPLEXNM

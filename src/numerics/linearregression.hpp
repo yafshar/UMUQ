@@ -4,6 +4,9 @@
 #include "polynomial.hpp"
 #include "eigenlib.hpp"
 
+namespace umuq
+{
+
 /*!
  * \brief class linearRegression
  * \ingroup numerics
@@ -25,20 +28,21 @@ class linearRegression
     /*!
      * \brief Move constructor, construct a new linearRegression object from input linearRegression object
      * 
-     * \param inputLR 
+     * \param other linearRegression object
      */
-    linearRegression(linearRegression<T> &&inputLR);
+    linearRegression(linearRegression<T> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
-     * \param inputDB 
+     * \param other  linearRegression object
+     * 
      * \return linearRegression<T>& 
      */
-    linearRegression<T> &operator=(linearRegression<T> &&inputLR);
+    linearRegression<T> &operator=(linearRegression<T> &&other);
 
     /*!
-     * \brief Destroy the dcpse object
+     * \brief Destroy the linearRegression object
      * 
      */
     ~linearRegression();
@@ -97,7 +101,7 @@ class linearRegression
     linearRegression<T> &operator=(linearRegression<T> const &) = delete;
 
   private:
-    //! Dimensiononality
+    //! Dimensionality
     int nDim;
 
     //! Polynomial order
@@ -120,23 +124,23 @@ linearRegression<T>::linearRegression(int ndim, int polynomialorder) : nDim(ndim
                                                                        linearRegressionkernelSize(0) {}
 
 template <typename T>
-linearRegression<T>::linearRegression(linearRegression<T> &&inputLR)
+linearRegression<T>::linearRegression(linearRegression<T> &&other)
 {
-    nDim = inputLR.nDim;
-    polynomialOrder = inputLR.polynomialOrder;
-    linearRegressionMonomialSize = inputLR.linearRegressionMonomialSize;
-    linearRegressionkernelSize = inputLR.linearRegressionkernelSize;
-    linearRegressionkernel = std::move(inputLR.linearRegressionkernel);
+    nDim = other.nDim;
+    polynomialOrder = other.polynomialOrder;
+    linearRegressionMonomialSize = other.linearRegressionMonomialSize;
+    linearRegressionkernelSize = other.linearRegressionkernelSize;
+    linearRegressionkernel = std::move(other.linearRegressionkernel);
 }
 
 template <typename T>
-linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&inputLR)
+linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&other)
 {
-    nDim = inputLR.nDim;
-    polynomialOrder = inputLR.polynomialOrder;
-    linearRegressionMonomialSize = inputLR.linearRegressionMonomialSize;
-    linearRegressionkernelSize = inputLR.linearRegressionkernelSize;
-    linearRegressionkernel = std::move(inputLR.linearRegressionkernel);
+    nDim = other.nDim;
+    polynomialOrder = other.polynomialOrder;
+    linearRegressionMonomialSize = other.linearRegressionMonomialSize;
+    linearRegressionkernelSize = other.linearRegressionkernelSize;
+    linearRegressionkernel = std::move(other.linearRegressionkernel);
 
     return *this;
 }
@@ -303,5 +307,7 @@ void linearRegression<T>::resetPolynomialOrder(int polynomialorder)
     linearRegressionkernel.clear();
     linearRegressionkernel.shrink_to_fit();
 }
+
+} // namespace umuq
 
 #endif // UMUQ_LINEARREGRESSION

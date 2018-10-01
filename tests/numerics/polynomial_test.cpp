@@ -6,7 +6,7 @@
 TEST(binomial_coefficient_test, HandlesZeroInput)
 {
     //Create an instance of a polynomial object
-    polynomial<double> p(1);
+    umuq::polynomial<double> p(1);
 
     EXPECT_EQ(1, p.binomial_coefficient(1, 0));
     EXPECT_EQ(0, p.binomial_coefficient(0, 1));
@@ -18,7 +18,7 @@ TEST(binomial_coefficient_test, HandlesZeroInput)
 TEST(binomial_coefficient_test, HandlesOtherInput)
 {
     //Create an instance of a polynomial object
-    polynomial<double> p(1);
+    umuq::polynomial<double> p(1);
 
     EXPECT_EQ(10, p.binomial_coefficient(10, 1));
     EXPECT_EQ(1, p.binomial_coefficient(10, 10));
@@ -52,7 +52,7 @@ TEST(monomial_basis_test, HandlesInput)
     int dim = 2;
     int degree = 2;
 
-    polynomial<double> p(dim, degree);
+    umuq::polynomial<double> p(dim, degree);
 
     int *coeff = p.monomial_basis();
 

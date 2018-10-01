@@ -3,6 +3,18 @@
 
 #include "../function/utilityfunction.hpp"
 
+namespace umuq
+{
+/*! \namespace multimin
+ * \brief Namespace containing all the functions for Multidimensional Minimization Module
+ * 
+ * It includes all the functionalities for finding minima of arbitrary multidimensional 
+ * functions. It provides low level components for a variety of iterative minimizers 
+ * and convergence tests.
+ */
+inline namespace multimin
+{
+
 /*! \class bfgs2
  *  \ingroup multimin_Module
  * 
@@ -55,7 +67,7 @@ class bfgs2 : public differentiableFunctionMinimizer<T>
     bool reset(int const nDim) noexcept;
 
     /*!
-     * \brief Initilize the minimizer
+     * \brief Initialize the minimizer
      * 
      * \return true 
      * \return false 
@@ -389,5 +401,8 @@ inline bool bfgs2<T>::restart()
     iter = 0;
     return true;
 }
+
+} // namespace multimin
+} // namespace umuq
 
 #endif // UMUQ_BFGS2
