@@ -8,14 +8,13 @@
 
 namespace umuq
 {
-/*! \namespace tmcmc
- * \brief Namespace containing all the functions for TMCMC algorithm
- *
- */
+
 namespace tmcmc
 {
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Broadcasts running information to all processes of the group 
  * 
  * \tparam T Data type
@@ -33,7 +32,7 @@ static bool isBroadcastTaskRegistered = false;
 static std::mutex broadcastTask_m;
 
 /*! \class runinfo
- * \ingroup data
+ * \ingroup TMCMC_Module
  * 
  * \brief This class contains the running information of the TMCMC algorithm
  * 
@@ -105,8 +104,8 @@ class runinfo
 	void swap(runinfo<T> &other);
 
 	/*!
-     * \brief Save the information in a file @fileName
-     * Write the runinfo data information to a file @fileName
+     * \brief Save the information in a file fileName
+     * Write the runinfo data information to a file fileName
      * 
      * \param fileName Name of the file (default name is runinfo.txt) for writing information
      *  
@@ -122,8 +121,8 @@ class runinfo
 	void print();
 
 	/*!
-     * \brief Load information from a file @fileName
-     * Load the runinfo data information from a file @fileName
+     * \brief Load information from a file fileName
+     * Load the runinfo data information from a file fileName
      * 
      * \param fileName  Name of the file (default name is runinfo.txt) for reading information
      * 
@@ -420,15 +419,6 @@ void runinfo<T>::print()
 	std::cout << "\n----------------------------\n" << std::endl;
 }
 
-/*!
- * \brief Load information from a file @fileName
- * Load the runinfo data information from a file @fileName
- * 
- * \param fileName  Name of the file (default name is runinfo.txt) for reading information
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool runinfo<T>::load(const char *fileName)
 {

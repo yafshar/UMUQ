@@ -37,7 +37,7 @@ template <>
 constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<char> = NPY_CHAR;
+constexpr NPY_TYPES NPIDatatype<char> = NPY_BYTE;
 
 template <>
 constexpr NPY_TYPES NPIDatatype<std::string> = NPY_STRING;

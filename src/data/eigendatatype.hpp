@@ -7,6 +7,8 @@ namespace umuq
 {
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen is a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
  * 
  * Reference:
@@ -14,6 +16,8 @@ namespace umuq
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience matrix data type 
  * An Eigen matrix type with dynamic sizes.
  * 
@@ -22,11 +26,11 @@ namespace umuq
  * The _Options template parameter is optional
  * 
  * \tparam _Options  A combination of either 
- *                   \b #Eigen::RowMajor or 
- *                   \b #Eigen::ColMajor, 
+ *                   \b Eigen::RowMajor or 
+ *                   \b Eigen::ColMajor, 
  *                     and of either
- *                   \b #Eigen::AutoAlign or 
- *                   \b #Eigen::DontAlign.
+ *                   \b Eigen::AutoAlign or 
+ *                   \b Eigen::DontAlign.
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  */
@@ -34,12 +38,16 @@ template <typename T, int _Options = Eigen::ColMajor>
 using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief An Eigen matrix of doubles data type
  * 
  */
 using EMatrixXd = EMatrixX<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience matrix data type to cover the usual cases
  * 
  * \tparam T  Data type
@@ -97,6 +105,8 @@ template <typename T>
 using EMatrixX6 = Eigen::Matrix<T, Eigen::Dynamic, 6>; // dynamic_size_storage
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen matrix of doubles data type
  * 
  */
@@ -117,6 +127,8 @@ using EMatrix6Xd = EMatrix6X<double>;
 using EMatrixX6d = EMatrixX6<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience row-vector data type
  * An Eigen row-vector data type with dynamic size
  * 
@@ -126,12 +138,16 @@ template <typename T>
 using ERowVectorX = Eigen::Matrix<T, 1, Eigen::Dynamic>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief An Eigen row-vector of doubles data type
  * 
  */
 using ERowVectorXd = ERowVectorX<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience row-vector data type to cover the usual cases
  * 
  * \tparam T  Data type
@@ -155,6 +171,8 @@ template <typename T>
 using ERowVector6 = Eigen::Matrix<T, 1, 6>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen row-vector of doubles data type
  * 
  */
@@ -165,6 +183,8 @@ using ERowVector5d = ERowVector5<double>;
 using ERowVector6d = ERowVector6<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience column-vector data type 
  * An Eigen column-vector type with dynamic size.
  * 
@@ -174,12 +194,16 @@ template <typename T>
 using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief An Eigen column-vector of doubles data type
  * 
  */
 using EVectorXd = EVectorX<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief A convenience column-vector data type to cover the usual cases
  * 
  * \tparam T Data type
@@ -204,6 +228,8 @@ template <typename T>
 using EVector6 = Eigen::Matrix<T, 6, 1>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen column-vector of doubles data type
  * 
  */
@@ -214,6 +240,8 @@ using EVector5d = EVector5<double>;
 using EVector6d = EVector6<double>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Stores a set of parameters controlling the way matrices are printed
  * 
  * - precision \c FullPrecision.

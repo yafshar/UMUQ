@@ -7,14 +7,13 @@
 
 namespace umuq
 {
-/*! \namespace tmcmc
- * \brief Namespace containing all the functions for TMCMC algorithm
- *
- */
+
 namespace tmcmc
 {
 
 /*! \class optimizationParameters
+ * \ingroup TMCMC_Module
+ * 
  * \brief This is a class to set the optimization parameters 
  * 
  * \tparam T Data type
@@ -93,34 +92,36 @@ struct optimizationParameters
 };
 
 /*! \class stdata
- *  \brief stream data type class
+ * \ingroup TMCMC_Module
+ * 
+ * \brief stream data type class
  *
- * \param nDim                       Problem Dimension
- * \param maxGenerations             Maximum number of generations
- * \param populationSize             Sampling population size
- * \param lastPopulationSize         Sampling population size in the final generation
- * \param auxilSize                  Auxillary data size
- * \param minChainLength             Minimum size of the chain in the TMCMC algorithm (default 1)
- * \param maxChainLength             Maximum size of the chain in the TMCMC algorithm (default 1)
- * \param seed                       Random number initial seed
- * \param samplingType               Sampling type which is : 0: uniform, 1: gaussian, 2: file
- * \param priorType                  Prior type which is :   0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4: composit
- * \param iPlot                      1 for printing the data and 0 for not
- * \param saveData                   1 for saving the data and 0 for not
- * \param useCmaProposal             Indicator if we use the CMA proposal or not
- * \param useLocalCovariance         Indicator if we use the local covariance or not
- * \param lb                         Generic lower bound (It is -6 per default)
- * \param ub                         Generic upper bound (It is 6 per default)
- * \param TolCOV                     A prescribed tolerance
- * \param bbeta                      \f$ \beta \f$ parameter in the TMCMC algorithm
- * \param options                    Optimization parameter
- * \param eachPopulationSize         Sampling population size for each generation
- * \param lowerBound                 Sampling domain lower bounds for each dimension
- * \param upperBound                 Sampling domain upper bounds for each dimension
- * \param compositePriorDistribution Composite distribution as a prior
- * \param priorMu                    Prior mean, in case of gamma distribution it is alpha
- * \param priorSigma                 Prior standard deviation 
- * \param auxilData                  Auxillary data
+ * \b nDim                       Problem Dimension
+ * \b maxGenerations             Maximum number of generations
+ * \b populationSize             Sampling population size
+ * \b lastPopulationSize         Sampling population size in the final generation
+ * \b auxilSize                  Auxillary data size
+ * \b minChainLength             Minimum size of the chain in the TMCMC algorithm (default 1)
+ * \b maxChainLength             Maximum size of the chain in the TMCMC algorithm (default 1)
+ * \b seed                       Random number initial seed
+ * \b samplingType               Sampling type which is : 0: uniform, 1: gaussian, 2: file
+ * \b priorType                  Prior type which is :   0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4: composit
+ * \b iPlot                      1 for printing the data and 0 for not
+ * \b saveData                   1 for saving the data and 0 for not
+ * \b useCmaProposal             Indicator if we use the CMA proposal or not
+ * \b useLocalCovariance         Indicator if we use the local covariance or not
+ * \b lb                         Generic lower bound (It is -6 per default)
+ * \b ub                         Generic upper bound (It is 6 per default)
+ * \b TolCOV                     A prescribed tolerance
+ * \b bbeta                      \f$ \beta \f$ parameter in the TMCMC algorithm
+ * \b options                    Optimization parameter
+ * \b eachPopulationSize         Sampling population size for each generation
+ * \b lowerBound                 Sampling domain lower bounds for each dimension
+ * \b upperBound                 Sampling domain upper bounds for each dimension
+ * \b compositePriorDistribution Composite distribution as a prior
+ * \b priorMu                    Prior mean, in case of gamma distribution it is alpha
+ * \b priorSigma                 Prior standard deviation 
+ * \b auxilData                  Auxillary data
  */
 template <typename T>
 class stdata
