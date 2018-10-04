@@ -7,17 +7,13 @@
 
 namespace umuq
 {
-/*! \namespace multimin
- * \brief Namespace containing all the functions for Multidimensional Minimization Module
- * 
- * It includes all the functionalities for finding minima of arbitrary multidimensional 
- * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests.
- */
+
 inline namespace multimin
 {
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief Different available differentiable Function Minimizer available in UMUQ
  * 
  */
@@ -30,11 +26,16 @@ enum differentiableFunctionMinimizerTypes
   STEEPESTDESCENT = 14
 };
 
-/*! \brief The goal is finding minima of arbitrary multidimensional functions.
- *  \ingroup multimin_Module
+/*! 
+ * \ingroup Multimin_Module
+ * 
+ * \brief The goal is finding minima of arbitrary multidimensional functions.
+ *
  */
 
 /*! \class differentiableFunctionMinimizer
+ * \ingroup Multimin_Module
+ * 
  * \brief The base class which is for finding minima of arbitrary multidimensional functions
  * with derivative. This is the low level component for a variety of iterative minimizers.
  *
@@ -113,7 +114,7 @@ public:
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
    * 
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
-   * \param DFun      Function gradient $\nabla f$ to be used in this minimizer
+   * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
@@ -138,7 +139,7 @@ public:
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
    *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
-   * \param DFun      Function gradient $\nabla f$ to be used in this minimizer
+   * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param Params    Input parameters of the Function object
    * \param X         N-dimensional initial vector
@@ -157,7 +158,7 @@ public:
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial StepSize
    *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
-   * \param DFun      Function gradient $\nabla f$ to be used in this minimizer
+   * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param Params    Input parameters of the Function object
    * \param NumParams Number of dimensions (Number of parameters of the Function object)
@@ -291,7 +292,7 @@ public:
    * 
    * \param X  Input point
    * \param F  Function value at X
-   * \param G  Function gradient $\nabla f$ at X
+   * \param G  Function gradient \f$ \nabla \f$ at X
    * 
    * \return true 
    * \return false 
@@ -343,7 +344,7 @@ public:
                          std::vector<T> &Gradient, T &Step, T &Fval);
 
   /*!
-   * \brief   This function starting at (x0, f0) move along the direction p to find a minimum
+   * \brief   This function starting at \f$ (x0, f0) \f$ move along the direction p to find a minimum
    *          \f$ f(x0 - lambda * p) \f$, returning the new point \f$ x1 = x0-lambda*p, \f$
    *          \f$ f1=f(x1) \f$ and \f$ g1 = grad(f) \f$ at x1
    * 

@@ -10,12 +10,15 @@ inline namespace multimin
 {
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief Helper routines
- * \ingroup multimin_Module
  *
  */
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief finds the real roots of \f$ a x^2 + b x + c = 0 \f$
  * 
  * \returns number of found roots
@@ -91,9 +94,11 @@ int poly_solve_quadratic(T const a, T const b, T const c, T *x0, T *x1)
 }
 
 /*! 
+ * \ingroup Multimin_Module
+ * 
  * Find a minimum in \f$ x=[0,1] \f$ of the interpolating quadratic through
- * (0,f0) (1,f1) with derivative fp0 at x=0.  The interpolating
- * polynomial is \f$ q(x) = f0 + fp0 * z + (f1-f0-fp0) * z^2 \f$
+ * \f$(0,f0)\f$, and \f$ (1,f1) \f$ with derivative \f$ fp0 \f$ at \f$x = 0. \f$  
+ * The interpolating polynomial is \f$ q(x) = f0 + fp0 * z + (f1-f0-fp0) * z^2 \f$
  */
 template <typename T>
 T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
@@ -133,16 +138,22 @@ T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
     return zmin;
 }
 
-/* 
- * Find a minimum in x=[0,1] of the interpolating cubic through
- * (0,f0) (1,f1) with derivatives fp0 at x=0 and fp1 at x=1.
+/*! 
+ * \ingroup Multimin_Module
+ * 
+ * Find a minimum in \f$ x=[0,1] \f$ of the interpolating cubic through
+ * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$ 
+ * and \f$ fp1 \f$ at \f$ x=1. \f$
  *
  * The interpolating polynomial is:
  *
- * \f$ c(x) = f0 + fp0 * z + eta * z^2 + xi * z^3 \f$
- *
- * where \f$ eta=3*(f1-f0)-2*fp0-fp1, \f$
- *       \f$ xi=fp0+fp1-2*(f1-f0). \f$
+ * \f$ c(x) = f0 + fp0 * z + \eta * z^2 + xi * z^3 \f$, where 
+ * \f$
+ * \begin{aligned}
+ * \nonumber \eta=3*(f1-f0)-2*fp0-fp1, \\
+ * \nonumber xi=fp0+fp1-2*(f1-f0). 
+ * \end{aligned}
+ * \f$
  */
 template <typename T>
 inline T cubic(T const c0, T const c1, T const c2, T const c3, T const z)
@@ -150,6 +161,20 @@ inline T cubic(T const c0, T const c1, T const c2, T const c3, T const z)
     return c0 + z * (c1 + z * (c2 + z * c3));
 }
 
+/*!
+ * \ingroup Multimin_Module
+ * \brief check_extremum
+ * 
+ * \tparam T Data type
+ * 
+ * \param c0 
+ * \param c1 
+ * \param c2 
+ * \param c3 
+ * \param z 
+ * \param zmin 
+ * \param fmin 
+ */
 template <typename T>
 inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T const z, T *zmin, T *fmin)
 {
@@ -165,6 +190,8 @@ inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T con
 }
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief A cubic polynomial interpolation using \f$ f(\alpha_i), \acute{f}(\alpha_i), f(\alpha_{i-1}), and \acute{f}(\alpha_{i-1}) \f$.
  * 
  * \tparam T Data type
@@ -223,8 +250,22 @@ T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T c
 }
 
 /*!
- *  
- *  
+ * \ingroup Multimin_Module
+ * 
+ * \brief interpolate
+ * 
+ * \tparam T Data type
+ * 
+ * \param a 
+ * \param fa 
+ * \param fpa 
+ * \param b 
+ * \param fb 
+ * \param fpb 
+ * \param xmin 
+ * \param xmax 
+ * \param order 
+ * \returns T 
  */
 template <typename T>
 T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const fpb, T const xmin, T const xmax, int const order)
@@ -252,6 +293,8 @@ T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const
 }
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief Line search algorithm for general unconstrained minimization
  * 
  * An assumption for this algorithm is that the line search can be restricted to the 
@@ -284,7 +327,7 @@ T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const
  * \param tau2    Preset factor
  * \param tau3    Preset factor
  * \param order   
- * \param alpha1  \f$ \alpha_1 = \min{(1, -2\Deltaf/\acute{f}(0))} \f$
+ * \param alpha1  \f$ \alpha_1 = \min{(1, -2\Delta f/\acute{f}(0))} \f$
  * \param alpha_new 
  * 
  * \return true 
