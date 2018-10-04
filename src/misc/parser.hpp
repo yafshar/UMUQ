@@ -5,6 +5,7 @@ namespace umuq
 {
 
 /*! \class parser
+ *
  * \brief  This class parses string of data to seperate words
  * 
  * It ignores all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters
@@ -90,31 +91,31 @@ class parser
     inline T &parse(const char *inputLineArg);
 
     /*!
-     * \brief Access element at provided index @id with checking bounds
+     * \brief Access element at provided index id with checking bounds
      * 
      * \param id  Requested index 
      * 
-     * \returns Element @(id)
+     * \returns Element (id)
      */
     template <typename T>
     inline T &at(std::size_t const id);
 
     /*!
-     * \brief Access element at provided index @id with no check
+     * \brief Access element at provided index id with no check
      * 
      * param id  Requested id
      * 
-     * returns Element @(id)
+     * returns Element (id)
      */
     template <typename T>
     inline T &operator()(std::size_t const id);
 
     /*!
-     * \brief Access element at provided index @id with no check
+     * \brief Access element at provided index id with no check
      * 
      * param id  Requested id
      * 
-     * returns Element @(id)
+     * returns Element (id)
      */
     template <typename T>
     inline T &operator[](std::size_t const id);

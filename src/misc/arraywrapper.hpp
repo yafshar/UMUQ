@@ -8,14 +8,15 @@ namespace umuq
 {
 
 /*! \class arrayWrapper
-  * \brief arrayWrapper is a class which creates a std iterator for an array of type T
-  *
-  * Expression of a class T (vector or matrix, or other types) as an array object
-  * 
-  * NOTE:
-  * This is a helper class which currently only has An Input Iterator.
-  * InputIterator is an iterator that can read from the pointed-to element. 
-  */
+ *
+ * \brief arrayWrapper is a class which creates a std iterator for an array of type T
+ *
+ * Expression of a class T (vector or matrix, or other types) as an array object
+ * 
+ * NOTE:
+ * This is a helper class which currently only has An Input Iterator.
+ * InputIterator is an iterator that can read from the pointed-to element. 
+ */
 template <class T>
 class arrayWrapper
 {
@@ -214,11 +215,11 @@ class arrayWrapper
     inline void swap(arrayWrapper<T> &InputArrayWrapperObj);
 
     /*!
-     * \brief Access element at provided index @id with checking bounds
+     * \brief Access element at provided index id with checking bounds
      * 
      * \param  id Requested index 
      * 
-     * \returns Element @(id)
+     * \returns Element (id)
      */
     inline T at(int const id) const;
 
@@ -227,7 +228,7 @@ class arrayWrapper
      * 
      * \param id Requested id
      * 
-     * \returns Element @(id)
+     * \returns Element (id)
      */
     inline T operator()(int const id) const;
 
@@ -236,7 +237,7 @@ class arrayWrapper
      * 
      * \param id Requested id
      * 
-     * \returns Element @(id)
+     * \returns Element (id)
      */
     inline T operator[](int const id) const;
 

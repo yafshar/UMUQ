@@ -8,14 +8,15 @@ namespace umuq
 {
 
 /*! \class UMUQTimer
+ * 
  * \brief Start stopwatch timer class
-*
-* tic starts a stopwatch timer, and stores the internal time at execution of the command.
-* 
-* toc displays the elapsed time so that you can record time for simultaneous time spans.
-* 
-* Consecutive tic overwrites the previous recorded time.
-*/
+ *
+ * tic starts a stopwatch timer, and stores the internal time at execution of the command.
+ * 
+ * toc displays the elapsed time so that you can record time for simultaneous time spans.
+ * 
+ * Consecutive tic overwrites the previous recorded time.
+ */
 class UMUQTimer
 {
   public:
