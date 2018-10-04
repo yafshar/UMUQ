@@ -10,16 +10,21 @@
 namespace umuq
 {
 
+/*! \defgroup Numerics_Module Numerics module
+ * This is the numerics module of UMUQ providing all necessary classes of numerical computation.
+ */
+
+
 /*! \class dcpse
+ * \ingroup Numerics_Module
+ * 
  * \brief This is a general class for (DC-PSE)
  * 
  * It creates a discretized differential operator and interpolators
  * 
  * \tparam T Data type
  */
-
 // TODO : Currently the class works only for one term and it should be extended to multi terms
-
 template <typename T>
 class dcpse
 {
@@ -27,8 +32,8 @@ class dcpse
     /*!
      * \brief Default constructor
      * 
-     * \param ndim             Dimensiononality
-     * \param nterms           Number of terms (currently only one term is implemented)
+     * \param ndim    Dimensionality
+     * \param nterms  Number of terms (currently only one term is implemented)
      */
     explicit dcpse(int ndim, int nterms = 1);
 
@@ -53,7 +58,7 @@ class dcpse
      */
     ~dcpse() {}
 
-    /*! \fn ComputeWeights
+    /*! \fn computeWeights
      * \brief Computes generalized DC-PSE differential operators on set of input points
      *
      * This function uses one set of points as input data to compute the generalized DC-PSE 
@@ -65,18 +70,15 @@ class dcpse
      * \param nPoints  Number of data points
      * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
      *                 Notation for partial derivatives:
-     *                 \f[ 
-     *                   \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
-     *                   \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
-     *                 \f]
+     *                 \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order    Order of accuracy (default is 2nd order accurate)
-     * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param nENN     Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
      * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      * 
      */
     bool computeWeights(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
-    /*! \fn computeWeights
+    /*!
      * \brief Computes generalized DC-PSE differential operators on the set of query points.
      * 
      * This function uses one set of points as input data to compute the generalized DC-PSE 
@@ -90,9 +92,9 @@ class dcpse
      * \param nqPoints  Number of query data points
      * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
      *                  Notation for partial derivatives:
-     *                  \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
+     *                  \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order     Order of accuracy (default is 2nd order accurate)
-     * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param nENN      Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
      * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
@@ -106,12 +108,12 @@ class dcpse
      * \param idata    A pointer to input data 
      * \param nPoints  Number of data points
      * \param order    Order of accuracy (default is 2nd order accurate)
-     * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param nENN     Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
      * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeInterpolatorWeights(T *idata, int const nPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
-    /*! \fn computeInterpolatorWeights
+    /*!
      * \brief Computes generalized DC-PSE interpolator operators on the set of query points.
      * 
      * This function uses one set of points as input data to compute the generalized DC-PSE 
@@ -122,7 +124,7 @@ class dcpse
      * \param qdata            A pointer to query data 
      * \param nqPoints         Number of query data points
      * \param order            Order of accuracy (default is 2nd order accurate)
-     * \param nENN             Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
+     * \param nENN             Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
      * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
@@ -201,11 +203,11 @@ class dcpse
     inline void printInfo() const;
 
     /*!
-     * \brief Component-wise average neighbor spacing @index
+     * \brief Component-wise average neighbor spacing index
      * 
      * \param index Index of a point (from data points) to get its average neighbor spacing
      * 
-     * \returns A component-wise average neighbor spacing @index 
+     * \returns A component-wise average neighbor spacing index 
      */
     inline T averageSpace(int const index) const;
 
@@ -255,12 +257,6 @@ class dcpse
     T rhscoeff;
 };
 
-/*!
- * \brief Default constructor
- * 
- * \param ndim    Number of dimensions
- * \param nterms  Number of terms (currently only one term is implemented)
- */
 template <typename T>
 dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
                                         nTerms(nterms),
@@ -268,11 +264,6 @@ dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
                                         dckernelSize(0),
                                         Order(nterms) {}
 
-/*!
- * \brief Move constructor, construct a new dcpse object from input dcpse object
- * 
- * \param other 
- */
 template <typename T>
 dcpse<T>::dcpse(dcpse<T> &&other)
 {
@@ -287,12 +278,6 @@ dcpse<T>::dcpse(dcpse<T> &&other)
     rhscoeff = other.rhscoeff;
 }
 
-/*!
- * \brief Move assignment operator
- * 
- * \param inputDB 
- * \return dcpse<T>& 
- */
 template <typename T>
 dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
 {
@@ -309,27 +294,6 @@ dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
     return *this;
 }
 
-/*! \fn ComputeWeights
- * \brief Computes generalized DC-PSE differential operators on set of input points
- *
- * This function uses one set of points as input data to compute the generalized DC-PSE 
- * differential operators.
- * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
- * should use the interpolator function not this one. 
- * 
- * \param idata    A pointer to input data
- * \param nPoints  Number of data points
- * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
- *                 Notation for partial derivatives:
- *                 \f[ 
- *                      \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} 
- *                      \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} 
- *                  \f]
- * \param order    Order of accuracy (default is 2nd order accurate)
- * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
- * 
- */
 template <typename T>
 bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
 {
@@ -640,12 +604,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                     }
 
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix}{ {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
+                     * \f}
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -653,12 +615,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                 else
                 {
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix}{ {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -699,12 +659,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                 }
 
                 /*
-                 * \f[
-                 *  \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  *  {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                  *  {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                 *  \end{matrix}
-                 * \f]
+                 * \f}
                  */
                 BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                 AM = BMT * BMT.transpose();
@@ -799,12 +757,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
         else
         {
             /* 
-             * \f[ 
-             * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+             * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-             * \end{matrix} 
-             * \f]
+             * \f}
              */
             BMT = VMT * EMatrixX<T>(EM.asDiagonal());
 
@@ -838,25 +794,6 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
     return true;
 }
 
-/*! \fn computeWeights
- * \brief Computes generalized DC-PSE differential operators on the set of query points.
- * 
- * This function uses one set of points as input data to compute the generalized DC-PSE 
- * differential opearators on the set of query points.
- * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
- * use the interpolator function not this one. 
- * 
- * \param idata     A pointer to input data
- * \param nPoints   Number of data points
- * \param qdata     A pointer to query data
- * \param nqPoints  Number of query data points
- * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
- *                  Notation for partial derivatives:
- *                  \f$ \begin{align} D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \label{eq:1} \end{align} \f$
- * \param order     Order of accuracy (default is 2nd order accurate)
- * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
- */
 template <typename T>
 bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
 {
@@ -1160,12 +1097,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                     }
 
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -1173,12 +1108,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                 else
                 {
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -1219,12 +1152,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                 }
 
                 /* 
-                 * \f[ 
-                 * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                 * \end{matrix} 
-                 * \f]
+                 * \f}
                  */
                 BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                 AM = BMT * BMT.transpose();
@@ -1320,12 +1251,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
         else
         {
             /* 
-             * \f[ 
-             * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+             * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-             * \end{matrix} 
-             * \f]
+             * \f}
              */
             BMT = VMT * EMatrixX<T>(EM.asDiagonal());
 
@@ -1359,18 +1288,6 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
     return true;
 }
 
-/*! \fn computeInterpolatorWeights
- * \brief Computes generalized DC-PSE interpolator operators on the set of points.
- * 
- * This function uses one set of points as input data to compute the generalized DC-PSE 
- * interpolator operators on them.
- * 
- * \param idata    A pointer to input data 
- * \param nPoints  Number of data points
- * \param order    Order of accuracy (default is 2nd order accurate)
- * \param nENN     Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
- */
 template <typename T>
 bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
 {
@@ -1639,12 +1556,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                     }
 
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -1652,12 +1567,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                 else
                 {
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -1701,12 +1614,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                 }
 
                 /* 
-                 * \f[ 
-                 * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                 * \end{matrix} 
-                 * \f]
+                 * \f}
                  */
                 BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                 AM = BMT * BMT.transpose();
@@ -1802,12 +1713,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
         else
         {
             /* 
-             * \f[ 
-             * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+             * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-             * \end{matrix} 
-             * \f]
+             * \f}
              */
             BMT = VMT * EMatrixX<T>(EM.asDiagonal());
 
@@ -1842,20 +1751,6 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
     return true;
 }
 
-/*! \fn computeInterpolatorWeights
- * \brief Computes generalized DC-PSE interpolator operators on the set of query points.
- * 
- * This function uses one set of points as input data to compute the generalized DC-PSE 
- * interpolator operators on the set of query points.
- * 
- * \param idata     A pointer to input data 
- * \param nPoints   Number of data points
- * \param qdata     A pointer to query data 
- * \param nqPoints  Number of query data points
- * \param order     Order of accuracy (default is 2nd order accurate)
- * \param nENN      Number of extra nearest neighbors to aid in case of sigularity of the Vandermonde matrix (default is 2)
- * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
- */
 template <typename T>
 bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
 {
@@ -2204,12 +2099,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                     }
 
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -2217,12 +2110,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                 else
                 {
                     /* 
-                     * \f[ 
-                     * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \end{matrix} 
-                     * \f]
+                     * \f}
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -2302,12 +2193,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                 }
 
                 /* 
-                 * \f[ 
-                 * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                 * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                 * \end{matrix} 
-                 * \f]
+                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
+                 * \f}
                  */
                 BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                 AM = BMT * BMT.transpose();
@@ -2403,12 +2292,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
         else
         {
             /* 
-             * \f[ 
-             * \begin{matrix} {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+             * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-             * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-             * \end{matrix} 
-             * \f]
+             * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
+             * \f}
              */
             BMT = VMT * EMatrixX<T>(EM.asDiagonal());
 
@@ -2444,21 +2331,6 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
     return true;
 }
 
-/*! \fn compute
- * \brief Evaluate a discretized DC-PSE operator from function values of input data and put the results as the query data function values
- * 
- * This function uses function values of input data and the weights of the operator which have 
- * been previously computed to compute the query values and put the results as the query data 
- * function values. 
- * 
- * At first it checks the computed kernel size to be equal to the number of query points times the 
- * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
- * 
- * \param iFvalue   A pointer to input data function value
- * \param nPoints   Number of data points
- * \param qFvalue   A pointer to query data function value
- * \param nqPoints  Number of query data points
- */
 template <typename T>
 bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
 {
@@ -2488,23 +2360,6 @@ bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPo
     }
 }
 
-/*! \fn interpolate
- * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the 
- * interpolation results as the query data values
- * 
- * This function uses function values of input data and the weights of the interpolation operator which have 
- * been previously computed to compute the query values and put the results as the query data 
- * function values. 
- * 
- * At first it checks the computed kernel size to be equal to the number of query points times the 
- * size of monomials which has been previously computed for the required degree of DC-PSE operator
- * or interpolator.
- * 
- * \param iFvalue   A pointer to input data function value
- * \param nPoints   Number of data points
- * \param qFvalue   A pointer to query data function value
- * \param nqPoints  Number of query data points
- */
 template <typename T>
 bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
 {
@@ -2559,57 +2414,30 @@ bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const
     return true;
 }
 
-/*!
- * \brief A pointer to neighborhood kernel at index
- * 
- * \param index Index of a point (from data points) to get its neighborhood kernel
- * 
- * \returns A (pointer to a) row of the nearest neighbors kernel values.
- */
 template <typename T>
 inline T *dcpse<T>::neighborhoodKernel(int const index) const
 {
     return dckernel.data() + index * dcmonomialSize;
 }
 
-/*!
- * \brief A pointer to kernel array of all query points
- * 
- * \returns  A pointer to kernel array of all query points
- */
 template <typename T>
 inline T *dcpse<T>::neighborhoodKernel() const
 {
     return dckernel.data();
 }
 
-/*!
- * \brief Size of the neighborhood kernel which equals to the monomial size 
- * 
- * \returns Size of the neighborhood kernel
- */
 template <typename T>
 inline int dcpse<T>::neighborhoodKernelSize() const
 {
     return dcmonomialSize;
 }
 
-/*!
- * \brief Order of accuracy of DC-PSE kernel at index
- * 
- * \param  index Index number in nTerms array
- * \return order of accuracy of DC-PSE kernel at index
- */
 template <typename T>
 inline int dcpse<T>::orderofAccuracy(int const index) const
 {
     return Order[index];
 }
 
-/*!
- * \brief Print the DC-PSE information
- * 
- */
 template <typename T>
 inline void dcpse<T>::printInfo() const
 {
@@ -2620,24 +2448,12 @@ inline void dcpse<T>::printInfo() const
     }
 }
 
-/*!
- * \brief Component-wise average neighbor spacing @index
- * 
- * \param index Index of a point (from data points) to get its average neighbor spacing
- * 
- * \returns A component-wise average neighbor spacing @index 
- */
 template <typename T>
 inline T dcpse<T>::averageSpace(int const index) const
 {
     return h_average[index];
 }
 
-/*!
- * \brief A pointer to component-wise average neighbor spacing
- * 
- * \returns A pointer to component-wise average neighbor spacing
- */
 template <typename T>
 inline T *dcpse<T>::averageSpace() const
 {

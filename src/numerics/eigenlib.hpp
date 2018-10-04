@@ -7,6 +7,8 @@ namespace umuq
 {
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
