@@ -52,9 +52,10 @@ Prerequisites
 ------------
 If you wish to compile UMUQ from source, you will require the following components (these are **not** necessary for running the statically linked binary):
 
-1. **Torc**; _latest version_ (https://github.com/cselab/torc_lite)
+1. **Torc**; _latest version_ (https://github.com/yafshar/torc_lite-1)
 
-   A tasking library that allows to write platform-independent code.
+   A tasking library that allows to write platform-independent code. 
+   UMUQ uses [torc](https://github.com/yafshar/torc_lite-1) which is forked from the original work of (TORC tasking library), and contains changes towards the original library.
 
 2. **Eigen**; _at least 3.3.2_ release (http://eigen.tuxfamily.org)
 
@@ -99,8 +100,8 @@ The [LICENSE](https://github.com/yafshar/UMUQ/blob/master/LICENSE) file contains
 
 Packages in [external](https://github.com/yafshar/UMUQ/tree/master/external) folder contain 
 third-party code under 
-[MPL2](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.MPL2), [GPL](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.GPL), 
-[BSD](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD) and [BSD3](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD3) licenses.
+[MPL2](https://www.mozilla.org/en-US/MPL/2.0), [GPL3](https://www.gnu.org/licenses/gpl-3.0.html), [GPL2](https://www.gnu.org/licenses/gpl-2.0.html),
+[BSD](https://github.com/eigenteam/eigen-git-mirror/blob/72741bba73c97bdd1a16896ad3eed6934ea4ccb6/COPYING.BSD) and [BSD3](https://github.com/mariusmuja/flann/blob/f3a17cd3f94a0e9dd8f6a55bce11536c50d4fb24/COPYING) licenses.
 
 Contact us
 ------------
