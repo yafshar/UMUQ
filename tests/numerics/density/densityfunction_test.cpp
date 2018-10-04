@@ -7,13 +7,13 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-// Create a global instance of the Pyplot from Pyplot library
+//! Create a global instance of the Pyplot from Pyplot library
 umuq::pyplot plt;
 
-// Get an instance of a double random object and seed it
+//! Get an instance of a double random object and seed it
 umuq::psrandom<double> prng(123);
 
-// Get an instance of a float random object and seed it
+//! Get an instance of a float random object and seed it
 umuq::psrandom<float> prngf(123);
 
 /*! 
@@ -21,7 +21,7 @@ umuq::psrandom<float> prngf(123);
  */
 TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
-    //! Uniform ditrsibution between 1 and 2
+    //! Uniform distribution between 1 and 2
     umuq::uniformDistribution<double> u(1, 2);
 
     double X1 = 1.5;
@@ -119,7 +119,7 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
-    
+
     //! Set the PRNG
     EXPECT_TRUE(gu.setRandomGenerator(&prng));
 
@@ -149,9 +149,11 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     //! Prepare data.
     int n = 11;
 
-    //! X coordinates
+    //! Coordinates
     std::vector<double> x(n * n);
+    std::vector<double> x2(n);
     std::vector<double> y(n * n);
+    std::vector<double> y2(n);
 
     //! PDF at coordinates
     std::vector<double> pdf(n * n);
@@ -171,6 +173,16 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
                 y[l++] = -4. + dx * j;
             }
         }
+
+        for (int i = 0; i < n; i++)
+        {
+            x2[i] = -4. + dx * i;
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            y2[i] = -4. + dx * i;
+        }
     }
 
     //! Compute PDF at (x,y)
@@ -189,10 +201,10 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 
     //! Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
-    keywords["marker"] = "o";
+    keywords["marker"] = "s";
 
     //! Size
-    std::vector<double> s(n * n, 16);
+    std::vector<int> s(n * n, 1000);
 
     //! Clear previous plot
     EXPECT_TRUE(plt.clf());
@@ -205,6 +217,27 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
+
+    fileName = "./multivariatecontourpdf.svg";
+    std::remove(fileName.c_str());
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.contourf<double>(x2, y2, pdf));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("multivariate normal distribution PDF contour"));
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatescatterlogpdf.svg";
     std::remove(fileName.c_str());
@@ -220,6 +253,27 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
+
+    fileName = "./multivariatecontourlogpdf.svg";
+    std::remove(fileName.c_str());
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.contourf<double>(x2, y2, lpdf));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF contour"));
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 #endif
 
     //! Set the PRNG

@@ -43,7 +43,7 @@ TEST(random_test, HandlesRandoms)
     std::remove(fileName.c_str());
 
     //! Prepare data.
-    int n = 100;
+    int n = 500;
 
     //! X coordinates
     std::vector<double> x(n);
@@ -59,19 +59,22 @@ TEST(random_test, HandlesRandoms)
     }
     //! Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
-    keywords["marker"] = "D";
+    keywords["marker"] = "s";
 
     //! Clear previous plot
     EXPECT_TRUE(plt.clf());
 
     //! Create scatter plot
-    EXPECT_TRUE(plt.scatter<double>(x, y, 20, 2, keywords));
+    EXPECT_TRUE(plt.scatter<double>(x, y, 800, "lime", keywords));
 
     //! Add graph title
     EXPECT_TRUE(plt.title("Sample points from a multivariate normal distribution"));
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 #endif
 }
 
