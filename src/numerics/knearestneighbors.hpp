@@ -2,6 +2,8 @@
 #define UMUQ_KNEARESTNEIGHBORS_H
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces. 
  * It contains a collection of algorithms we found to work best for nearest neighbor search and a system 
  * for automatically choosing the best algorithm and optimum parameters depending on the dataset.
@@ -12,6 +14,8 @@ namespace umuq
 {
 
 /*! \class kNearestNeighbor
+ * \ingroup Numerics_Module
+ * 
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
  * \tparam T         data type
@@ -431,6 +435,8 @@ inline int kNearestNeighbor<T, Distance>::numQuerydata() const
 // FIXME: to the correct templated version
 
 /*! \class L2NearestNeighbor
+ * \ingroup Numerics_Module
+ * 
  * \brief Finding K nearest neighbors in high dimensional spaces using L2 distance functor
  * 
  * \tparam T data type

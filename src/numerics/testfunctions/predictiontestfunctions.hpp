@@ -58,12 +58,14 @@ struct franke2d
   /*! \fn f
    * \brief Franke's bivariate function
    * 
-   * Franke's bivariate function is a weighted sum of four exponentials
+   * Franke's bivariate function is a weighted sum of four exponential
    * \f[
-   * f(x) &= 0.75 e^\left(-\frac{(9x_1-2)^2}{4} - \frac{(9x_2-2)^2}{4} \right) \\
-   *      &+ 0.75 e^\left(-\frac{(9x_1+1)^2}{49} - \frac{(9x_2+1)}{10} \right) \\
-   *      &+ 0.5 e^\left(-\frac{(9x_1-7)^2}{4} - \frac{(9x_2-3)^2}{4} \right) \\
-   *      &- 0.2 e^\left(-(9x_1-4)^2 - (9x_2-7)^2 \right)
+   * \begin{aligned} 
+   * \nonumber f(x) &= 0.75 e^{\left(-\frac{(9x_1-2)^2}{4} - \frac{(9x_2-2)^2}{4} \right)} \\
+   * \nonumber      &+ 0.75 e^{\left(-\frac{(9x_1+1)^2}{49} - \frac{(9x_2+1)}{10} \right)} \\
+   * \nonumber      &+ 0.5 e^{\left(-\frac{(9x_1-7)^2}{4} - \frac{(9x_2-3)^2}{4} \right)} \\
+   * \nonumber      &- 0.2 e^{\left(-(9x_1-4)^2 - (9x_2-7)^2 \right)}
+   * \end{aligned}
    * \f]
    * 
    * \param  x  input data point
