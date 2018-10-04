@@ -3,6 +3,10 @@
 #include "data/mpidatatype.hpp"
 #include "gtest/gtest.h"
 
+/*!
+ * \brief This class is designed to test TORC functionality for virtual function
+ * 
+ */
 class A
 {
   public:
@@ -16,6 +20,10 @@ class A
     }
 };
 
+/*!
+ * \brief This class is designed to test TORC functionality for virtual function
+ * 
+ */
 class B : public A
 {
   public:
@@ -30,12 +38,23 @@ class B : public A
     }
 };
 
+/*!
+ * \brief Function for TORC test
+ * 
+ * \param other Casted pointer to class A 
+ * \param a1 Input value 
+ * \param a2 Input value
+ */
 void FUN(long long const other, int const a1, double const *a2)
 {
     auto obj = reinterpret_cast<A *>(other);
     obj->fun(a1, a2);
 }
 
+/*!
+ * \brief This class is designed to test TORC functionality
+ * 
+ */
 class C
 {
   public:
