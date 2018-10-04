@@ -14,14 +14,12 @@
 namespace umuq
 {
 
-/*! \namespace tmcmc
- * \brief Namespace containing all the functions for TMCMC algorithm
- *
- */
 namespace tmcmc
 {
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
  * 
  * \tparam T    Input data type
@@ -46,6 +44,8 @@ template <typename T, typename TOut = double>
 TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const Tolerance);
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
  * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used 
  * in multidimensional minimization \sa functionMinimizer
@@ -60,9 +60,11 @@ template <typename T>
 T CoefVarFun(T const *x);
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Pointer to array of function values
  * 
- * \tparam T 
+ * \tparam T Data type
  */
 template <typename T>
 T *functionValues;
@@ -84,22 +86,24 @@ namespace tmcmc
 {
 
 /*! \class tmcmcStats
- * \brief 
+ * \ingroup TMCMC_Module
  * 
+ * \brief Statistic class for TMCMC algorithm
  * 
+ * \tparam T Data type
  */
 template <typename T>
 class tmcmcStats
 {
   public:
     /*!
-     * \brief Construct a new tmcmc Stats object
+     * \brief Construct a new tmcmcStats object
      * 
      */
     tmcmcStats();
 
     /*!
-     * \brief Construct a new tmcmc Stats object
+     * \brief Construct a new tmcmcStats object
      * 
      * \param OptParams optimization Parameters
      */
@@ -173,12 +177,12 @@ class tmcmcStats
     bool searchOptimumP(T const *FunValues, int const nFunValues, T const PJ, T *OptimumP, T *OptimumCoefVar);
 
     /*!
-     * \brief 
+     * \brief This function, prepares and set the new generation from current sample points
      * 
-     * \param StreamData 
-     * \param CurrentData 
-     * \param RunData 
-     * \param Leaders 
+     * \param StreamData   IO data, which includes general information 
+     * \param CurrentData  Current generation of sample points
+     * \param RunData      Running information data
+     * \param Leaders      Leader generation of sample points
      * 
      * \returns true 
      * \returns false If it encounters any problem
@@ -186,10 +190,10 @@ class tmcmcStats
     bool selectNewGeneration(stdata<T> &StreamData, database<T> &CurrentData, runinfo<T> &RunData, database<T> &Leaders);
 
   private:
-    // Make it noncopyable
+    //! Make it noncopyable
     tmcmcStats(tmcmcStats<T> const &) = delete;
 
-    // Make it not assignable
+    //! Make it not assignable
     tmcmcStats<T> &operator=(tmcmcStats<T> const &) = delete;
 
   private:
