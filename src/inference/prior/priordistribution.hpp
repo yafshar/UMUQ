@@ -9,14 +9,17 @@ namespace umuq
 {
 
 /*!
+ * \ingroup Inference_Module
+ * 
  * \brief Prior distribution types
  * 
  * Currently we have these types:
- * \b UNIFORM \sa uniformDistribution
- * \b GAUSSIAN \sa gaussianDistribution
- * \b EXPONENTIAL \sa exponentialDistribution
- * \b GAMMA \sa gammaDistribution
- * \b COMPOSITE
+ * 
+ * - \b UNIFORM \sa uniformDistribution
+ * - \b GAUSSIAN \sa gaussianDistribution
+ * - \b EXPONENTIAL \sa exponentialDistribution
+ * - \b GAMMA \sa gammaDistribution
+ * - \b COMPOSITE
  */
 enum priorTypes
 {
@@ -27,9 +30,20 @@ enum priorTypes
     COMPOSITE = 4
 };
 
-/*!
+/*! \class priorDistribution
+ * \ingroup Inference_Module
+ * 
  * \brief Prior distribution which is one of the:
- * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
+ * 
+ * <table>
+ * <caption id="multi_row">Prior distribution types</caption>
+ * <tr><th> Index number <th> Prior distribution type        
+ * <tr><td> 0       <td> UNIFORM  
+ * <tr><td> 1       <td> GAUSSIAN    
+ * <tr><td> 2       <td> EXPONENTIAL     
+ * <tr><td> 3       <td> GAMMA 
+ * <tr><td> 4       <td> COMPOSITE
+ * </table>
  * 
  * \tparam T Data type 
  * 
