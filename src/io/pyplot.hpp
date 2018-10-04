@@ -97,10 +97,21 @@ inline namespace matplotlib_223
 
 namespace umuq
 {
+
+/*! \namespace umuq::matplotlib_223
+ * \ingroup IO_Module
+ * 
+ * \brief It contains several common approaches to plotting with Matplotlib python 2D library
+ * 
+ * It contains several common approaches to plotting with Matplotlib python 2D library from Matplotlib version 2.2.3
+ * 
+ */
 inline namespace matplotlib_223
 {
 
 /*!
+ * \ingroup IO_Module
+ * 
  * \brief Converts a data array idata to Python array
  * 
  * \tparam T Data type
@@ -116,6 +127,26 @@ template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata);
 
 /*!
+ * \ingroup IO_Module
+ * 
+ * \brief Converts a data idata to Python array of size nSize
+ * 
+ * \tparam T Data type
+ * 
+ * \param idata  Input data
+ * \param nSize  Size of the requested array
+ * 
+ * \return PyObject* Python array
+ */
+template <typename T>
+PyObject *PyArray(T const idata, int const nSize);
+
+template <typename TIn, typename TOut>
+PyObject *PyArray(TIn const idata, int const nSize);
+
+/*!
+ * \ingroup IO_Module
+ * 
  * \brief Converts a data array idata to Python array
  * 
  * \tparam T Data type
@@ -133,6 +164,30 @@ template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
 
 /*!
+ * \ingroup IO_Module
+ * 
+ * \brief Converts a data array idata to the Python 2D array 
+ * 
+ * \tparam T Data type 
+ * 
+ * \param idata  Input array of data (with size of nDimX*nDimY)
+ * \param nDimX  X size in the 2D array
+ * \param nDimY  Y size in the 2D array
+ * 
+ * \returns PyObject* Python 2D array
+ */
+template <typename T>
+PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDimY);
+
+template <typename TIn, typename TOut>
+PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY);
+
+template <typename T>
+PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
+
+/*!
+ * \ingroup IO_Module
+ * 
  * \verbatim
  * To support all of use cases, matplotlib can target different outputs, and each of these capabilities is called a backend;
  * the “frontend” is the user facing code, i.e., the plotting code, whereas the “backend” does all the hard work
@@ -148,6 +203,8 @@ PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 
 static std::string backend;
 
 /*!
+ * \ingroup IO_Module
+ * 
  * \brief Set the “backend” to any of user interface backends
  * 
  * \param WXbackends user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; 
@@ -196,13 +253,33 @@ inline void setbackend(std::string const &WXbackends)
 }
 
 /*!
- * \brief 
+ * \ingroup IO_Module
  * 
+ * \brief The following color abbreviations are supported
+ * 
+ * <table>
+ * <caption id="multi_row">Colors</caption>
+ * <tr><th> Character <th> Color        
+ * <tr><td> 'b'       <td> blue  
+ * <tr><td> 'g'       <td> green    
+ * <tr><td> 'r'       <td> red     
+ * <tr><td> 'c'       <td> cyan 
+ * <tr><td> 'm'       <td> magenta
+ * <tr><td> 'y'       <td> yellow
+ * <tr><td> 'k'       <td> black
+ * <tr><td> 'w'       <td> white
+ * </table>
  */
-char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
+constexpr char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
+
+//! Size of the color abbreviations maps
 int const DefaultColorsSize = 8;
 
+// colors = {u'c': (0.0, 0.75, 0.75), u'b': (0.0, 0.0, 1.0), u'w': (1.0, 1.0, 1.0), u'g': (0.0, 0.5, 0.0), u'y': (0.75, 0.75, 0), u'k': (0.0, 0.0, 0.0), u'r': (1.0, 0.0, 0.0), u'm': (0.75, 0, 0.75)}
+
 /*! \class pyplot
+ * \ingroup IO_Module
+ * 
  * \brief This module contains several common approaches to plotting with Matplotlib python 2D library
  *
  * It contains below functions that allow you to generate many kinds of plots quickly:
@@ -212,6 +289,8 @@ int const DefaultColorsSize = 8;
  * \b cla           Clear the current axis
  * \b clf           Clear the current figure
  * \b close         Close a figure window
+ * \b contour       Plot contours
+ * \b contourf      Plot filled contours
  * \b draw          Redraw the current figure
  * \b errorbar      Plot y versus x as lines and/or markers with attached errorbars
  * \b figure        Creates a new figure
@@ -237,6 +316,39 @@ int const DefaultColorsSize = 8;
  * \b xkcd          Turns on xkcd sketch-style drawing mode
  * \b ylim          Set/Get the y limits of the current axes
  * \b ylabel        Set the y-axis label of the current axes
+ * 
+ * 
+ * The following format string characters are accepted to control the line style or marker:
+ * <table>
+ * <caption id="multi_row">Character to control the line style or marker</caption>
+ * <tr><th> Character <th> Description        
+ * <tr><td> '-'       <td> solid line style
+ * <tr><td> '--'      <td> dashed line style
+ * <tr><td> '-.'      <td> dash-dot line style
+ * <tr><td> ':'       <td> dotted line style
+ * <tr><td> '.'       <td> point marker
+ * <tr><td> ','       <td> pixel marker
+ * <tr><td> 'o'       <td> circle marker
+ * <tr><td> 'v'       <td> triangle_down marker
+ * <tr><td> '^'       <td> triangle_up marker
+ * <tr><td> '<'       <td> triangle_left marker
+ * <tr><td> '>'       <td> triangle_right marker
+ * <tr><td> '1'       <td> tri_down marker
+ * <tr><td> '2'       <td> tri_up marker
+ * <tr><td> '3'       <td> tri_left marker
+ * <tr><td> '4'       <td> tri_right marker
+ * <tr><td> 's'       <td> square marker
+ * <tr><td> 'p'       <td> pentagon marker
+ * <tr><td> '*'       <td> star marker
+ * <tr><td> 'h'       <td> hexagon1 marker
+ * <tr><td> 'H'       <td> hexagon2 marker
+ * <tr><td> '+'       <td> plus marker
+ * <tr><td> 'x'       <td> x marker
+ * <tr><td> 'D'       <td> diamond marker
+ * <tr><td> 'd'       <td> thin_diamond marker
+ * <tr><td> '|'       <td> vline marker
+ * <tr><td> '_'       <td> hline marker
+ * </table>
  * 
  * Reference:
  * https://matplotlib.org/api/pyplot_summary.html
@@ -273,7 +385,7 @@ class pyplot
      * \param y           y point (x,y) to annotate
      *
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool annotate(std::string const &annotation, T x, T y);
@@ -304,6 +416,68 @@ class pyplot
     inline bool close();
 
     /*!
+     * \brief Draw contour lines
+     * 
+     * \tparam T Data type
+     * 
+     * \param x         Array-like (1D arrays representing the x coordinates of a grid)
+     *                  such that len(x) is the number of columns in z
+     * \param y         Array-like (1D arrays representing the y coordinates of a grid)
+     *                  such that len(y) is the number of rows in z
+     * \param z         Array-like with size [len(x) * len(y)] grids. 
+     *                  The height values over which the contour is drawn.
+     * \param levels    Int scalar value or array-like, optional
+     *                  If array-like, draw contour lines at the specified levels. 
+     *                  The values must be in increasing order.
+     * \param keywords  All other keyword arguments are passed on to contour. They control it's properties.
+     * 
+     * \returns true 
+     * \returns false 
+     */
+    template <typename T>
+    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+                        std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+                        std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+                        std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    /*!
+     * \brief Draw filled contour
+     *
+     * \tparam T Data type
+     *
+     * \param x         Array-like (1D arrays representing the x coordinates of a grid)
+     *                  such that len(x) is the number of columns in z
+     * \param y         Array-like (1D arrays representing the y coordinates of a grid)
+     *                  such that len(y) is the number of rows in z
+     * \param z         Array-like with size [len(x) * len(y)] grids. 
+     *                  The height values over which the contour is drawn.
+     * \param levels    Int scalar value or array-like, optional
+     *                  If array-like, draw contour lines at the specified levels. 
+     *                  The values must be in increasing order.
+     * \param keywords  All other keyword arguments are passed on to contour. They control it's properties.
+     *
+     * \returns true
+     * \returns false
+     */
+    template <typename T>
+    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    /*!
      * \brief Redraw the current figure
      * This is used to update a figure that has been altered, 
      * but not automatically re-drawn. If interactive mode is 
@@ -323,7 +497,7 @@ class pyplot
      * \param fmt     Plot format string
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr,
@@ -346,7 +520,7 @@ class pyplot
      * \param fmt       Plot format string
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -366,7 +540,7 @@ class pyplot
      * \param fmt       Plot format string
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool errorbar(T const *x, T const *y, T const *yerr, int const nSize,
@@ -386,7 +560,7 @@ class pyplot
      * \param dpi     resolution of the figure (default is 100)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     bool figure(std::size_t const width, std::size_t const height, std::size_t const dpi = 100);
 
@@ -403,7 +577,7 @@ class pyplot
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2,
@@ -428,7 +602,7 @@ class pyplot
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -450,7 +624,7 @@ class pyplot
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool fill_between(T const *x, T const *y1, T const *y2, int const nSize,
@@ -485,7 +659,7 @@ class pyplot
      * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool hist(std::vector<T> const &x, long const bins = 50, bool const density = false,
@@ -516,7 +690,7 @@ class pyplot
      * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool hist(T const *x, int const nSizeX, std::size_t const StrideX = 1,
@@ -550,7 +724,7 @@ class pyplot
      * \param label  object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool loglog(std::vector<T> const &x, std::vector<T> const &y,
@@ -574,7 +748,7 @@ class pyplot
      * \param label     object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool loglog(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -596,7 +770,7 @@ class pyplot
      * \param label     object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool loglog(T const *x, T const *y, int const nSize,
@@ -621,7 +795,7 @@ class pyplot
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(std::vector<T> const &x, std::vector<T> const &y,
@@ -641,7 +815,7 @@ class pyplot
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -659,7 +833,7 @@ class pyplot
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(T const *x, T const *y, int const nSize,
@@ -677,7 +851,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      *  
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(std::vector<T> const &x, std::vector<T> const &y,
@@ -699,7 +873,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      *  
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -719,7 +893,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      *  
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool plot(T const *x, T const *y, int const nSize,
@@ -741,33 +915,43 @@ class pyplot
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar or array-like, marker size in points**2
      * \param c         Scalar or array-like, data color
+     *                  The marker color. Possible values:
+     *                      - A single color format, \sa DefaultColors.
+     *                      - A sequence of color specifications of length n equals to length of array x.
+     *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(std::vector<T> const &x, std::vector<T> const &y,
-                 std::vector<T> const &s, std::vector<T> const &c,
+                 std::vector<int> const &s, std::vector<T> const &c,
+                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
+                 std::vector<int> const &s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and color
      * 
-     * \tparam T        Data type 
+     * \tparam T Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar marker size in points**2
-     * \param c         Scalar data color
+     * \param c         The marker color. Possible value:
+     *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(std::vector<T> const &x, std::vector<T> const &y,
-                 T const s, T const c,
+                 int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -787,16 +971,27 @@ class pyplot
      * \param c         Scalar or array-like, data colors
      * \param nSizeC    Size of array c
      * \param StrideC   Stride element stride 
+     *                  The marker color. Possible values:
+     *                      - A single color format, \sa DefaultColors.
+     *                      - A sequence of color specifications of length n equals to length of array x.
+     *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
                  T const *y, int const nSizeY, std::size_t const StrideY,
-                 T const *s, int const nSizeS, std::size_t const StrideS,
+                 int const *s, int const nSizeS, std::size_t const StrideS,
                  T const *c, int const nSizeC, std::size_t const StrideC,
+                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
+                 T const *y, int const nSizeY, std::size_t const StrideY,
+                 int const *s, int const nSizeS, std::size_t const StrideS,
+                 std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -811,16 +1006,17 @@ class pyplot
      * \param nSizeY    Size of array y
      * \param StrideY   Stride element stride 
      * \param s         Scalar marker size in points**2
-     * \param c         Scalar data colors
+     * \param c         The marker color. Possible value:
+     *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
                  T const *y, int const nSizeY, std::size_t const StrideY,
-                 T const s, T const c,
+                 int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -832,15 +1028,24 @@ class pyplot
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar or array-like, marker size in points**2
      * \param c         Scalar or array-like, data colors
+     *                  The marker color. Possible values:
+     *                      - A single color format, \sa DefaultColors.
+     *                      - A sequence of color specifications of length n equals to length of array x.
+     *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param nSize     Size of arrays
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(T const *x, T const *y, int const nSize,
-                 T const *s, T const *c,
+                 int const *s, T const *c,
+                 std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
+
+    template <typename T>
+    bool scatter(T const *x, T const *y, int const nSize,
+                 int const *s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -852,15 +1057,16 @@ class pyplot
      * \param y         Scalar or array-like, data positions
      * \param nSize     Size of arrays
      * \param s         Scalar marker size in points**2
-     * \param c         Scalar data color
+     * \param c         The marker color. Possible value:
+     *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool scatter(T const *x, T const *y, int const nSize,
-                 T const s, T const c,
+                 int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -876,7 +1082,7 @@ class pyplot
      * \param label  object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogx(std::vector<T> const &x, std::vector<T> const &y,
@@ -899,7 +1105,7 @@ class pyplot
      * \param label     Object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -920,7 +1126,7 @@ class pyplot
      * \param label  Object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogx(T const *x, T const *y, int const nSize,
@@ -939,7 +1145,7 @@ class pyplot
      * \param label  Object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogy(std::vector<T> const &x, std::vector<T> const &y,
@@ -962,7 +1168,7 @@ class pyplot
      * \param label     Object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -983,7 +1189,7 @@ class pyplot
      * \param label  object (Set the label to s for auto legend)
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool semilogy(T const *x, T const *y, int const nSize,
@@ -1007,7 +1213,7 @@ class pyplot
      * \param keywords  
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(std::vector<T> const &x, std::vector<T> const &y,
@@ -1028,7 +1234,7 @@ class pyplot
      * \param keywords  
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -1047,7 +1253,7 @@ class pyplot
      * \param keywords  
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(T const *x, T const *y, int const nSize,
@@ -1065,7 +1271,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(std::vector<T> const &x, std::vector<T> const &y,
@@ -1087,7 +1293,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
@@ -1107,7 +1313,7 @@ class pyplot
      * \param label     object. Set the label to s for auto legend
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     template <typename T>
     bool stem(T const *x, T const *y, int const nSize,
@@ -1115,14 +1321,14 @@ class pyplot
 
     /*!
      * \brief Return a subplot axes at the given grid position
-     * In the current figure, create and return an Axes, at position index of a (virtual) grid of nrows by ncols axes. 
-     * Indexes go from 1 to nrows * ncols, incrementing in row-major order.
+     * In the current figure, create and return an Axes, at position index of a (virtual) grid of nDimX by nDimY axes. 
+     * Indexes go from 1 to nDimX * nDimY, incrementing in row-major order.
      * 
-     * \param nrows 
-     * \param ncols 
+     * \param nDimX 
+     * \param nDimY 
      * \param index 
      */
-    bool subplot(long const nrows, long const ncols, long const index);
+    bool subplot(long const nDimX, long const nDimY, long const index);
 
     /*!
      * \brief Set a title of the current axes
@@ -1214,6 +1420,8 @@ class pyplot
 
   private:
     /*! \class matplotlib
+     * \ingroup IO_Module
+     * 
      * \brief This class sets and initializes python matplotlib for different use cases
      * 
      * \verbatim
@@ -1275,6 +1483,10 @@ class pyplot
         PyObject *pyclf;
         //! Close the current figure
         PyObject *pyclose;
+        //! Plot contours
+        PyObject *pycontour;
+        //! Plot filled contours
+        PyObject *pycontourf;
         //! Redraw the current figure
         PyObject *pydraw;
         //! Plot y versus x as lines and/or markers with attached errorbars
@@ -1332,14 +1544,8 @@ class pyplot
     static matplotlib mpl;
 };
 
-//! An instance of matplotlib object
 pyplot::matplotlib pyplot::mpl;
 
-/*!
- * \brief Get the name of the current backend
- * 
- * \return The name of the current backend
- */
 inline std::string pyplot::get_backend()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyget_backend, pyplot::mpl.pyEmpty);
@@ -1352,23 +1558,12 @@ inline std::string pyplot::get_backend()
     UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
 }
 
-/*!
- * \brief Annotate the point xy with text s
- * 
- * \tparam Data type
- * 
- * \param annotation  The text of the annotation
- * \param x           x point (x,y) to annotate
- * \param y           y point (x,y) to annotate
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::annotate(std::string const &annotation, T x, T y)
 {
     return annotate<double>(annotation, static_cast<double>(x), static_cast<double>(y));
 }
+
 template <>
 bool pyplot::annotate<double>(std::string const &annotation, double x, double y)
 {
@@ -1405,11 +1600,6 @@ bool pyplot::annotate<double>(std::string const &annotation, double x, double y)
     UMUQFAILRETURN("Call to annotate failed!");
 }
 
-/*!
- * \brief Convenience method to get or set axis properties
- * 
- * \param axisArguments 
- */
 bool pyplot::axis(std::string const &axisArguments)
 {
     PyObject *args = PyTuple_New(1);
@@ -1430,10 +1620,6 @@ bool pyplot::axis(std::string const &axisArguments)
     UMUQFAILRETURN("Call to axis failed!");
 }
 
-/*!
- * \brief Clear the current axis
- * 
- */
 inline bool pyplot::cla()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pycla, pyplot::mpl.pyEmpty);
@@ -1446,10 +1632,6 @@ inline bool pyplot::cla()
     UMUQFAILRETURN("Call to cla failed!");
 }
 
-/*!
- * \brief Clear the current figure
- * 
- */
 inline bool pyplot::clf()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyclf, pyplot::mpl.pyEmpty);
@@ -1462,10 +1644,6 @@ inline bool pyplot::clf()
     UMUQFAILRETURN("Call to clf failed!");
 }
 
-/*!
- * \brief Close a figure window
- * 
- */
 inline bool pyplot::close()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyclose, pyplot::mpl.pyEmpty);
@@ -1478,13 +1656,303 @@ inline bool pyplot::close()
     UMUQFAILRETURN("Call to close failed!");
 }
 
-/*!
- * \brief Redraw the current figure
- * This is used to update a figure that has been altered, 
- * but not automatically re-drawn. If interactive mode is 
- * on (ion()), this should be only rarely needed
- * 
- */
+template <typename T>
+inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+                            std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(4);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *larray = PyArray<T>(levels);
+
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+        PyTuple_SetItem(args, 3, larray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontour, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contour failed!");
+}
+
+template <typename T>
+inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+                            std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(4);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *larray = PyInt_FromLong(levels);
+
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+        PyTuple_SetItem(args, 3, larray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontour, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contour failed!");
+}
+
+template <typename T>
+inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+                            std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(3);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+
+        std::cout << std::endl;
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontour, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contour failed!");
+}
+
+template <typename T>
+inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+                             std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(4);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *larray = PyArray<T>(levels);
+
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+        PyTuple_SetItem(args, 3, larray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontourf, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contourf failed!");
+}
+
+template <typename T>
+inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+                             std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(4);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *larray = PyInt_FromLong(levels);
+
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+        PyTuple_SetItem(args, 3, larray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontourf, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contourf failed!");
+}
+
+template <typename T>
+inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+                             std::map<std::string, std::string> const &keywords)
+{
+
+    if (x.size() * y.size() != z.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the correct size! (len(z) != len(x) * len(y))");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(3);
+    {
+        int const nDimX = static_cast<int>(x.size());
+        int const nDimY = static_cast<int>(y.size());
+
+        // Using numpy arrays
+        PyObject *xarray = PyArray<T>(x);
+        PyObject *yarray = PyArray<T>(y);
+        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+
+        PyTuple_SetItem(args, 0, xarray);
+        PyTuple_SetItem(args, 1, yarray);
+        PyTuple_SetItem(args, 2, zarray);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyUnicode_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pycontourf, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to contourf failed!");
+}
+
 inline bool pyplot::draw()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pydraw, pyplot::mpl.pyEmpty);
@@ -1497,19 +1965,6 @@ inline bool pyplot::draw()
     UMUQFAILRETURN("Call to draw failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers with attached errorbars
- * 
- * \tparam T
- * 
- * \param x       Scalar or array-like, data positions
- * \param y       Scalar or array-like, data positions
- * \param yerr    Errorbar
- * \param fmt     Plot format string
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr, std::string const &fmt)
 {
@@ -1543,25 +1998,6 @@ bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vec
     UMUQFAILRETURN("Call to errorbar failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers with attached errorbars
- * 
- * \tparam T Data type
- * 
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride   
- * \param yerr      Scalar or array-like, data positions
- * \param nSizeE    Size of array
- * \param StrideE   Stride element stride 
- * \param fmt       Plot format string
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
                       T const *y, int const nSizeY, std::size_t const StrideY,
@@ -1605,20 +2041,6 @@ bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to errorbar failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers with attached errorbars
- * 
- * \tparam T Data type
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param yerr      Scalar or array-like, data positions
- * \param nSize     Size of array
- * \param fmt       Plot format string
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::errorbar(T const *x, T const *y, T const *yerr, int const nSize, std::string const &fmt)
 {
@@ -1648,10 +2070,6 @@ bool pyplot::errorbar(T const *x, T const *y, T const *yerr, int const nSize, st
     UMUQFAILRETURN("Call to errorbar failed!");
 }
 
-/*!
- * \brief Creates a new figure.
- * 
- */
 inline bool pyplot::figure()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyfigure, pyplot::mpl.pyEmpty);
@@ -1664,16 +2082,6 @@ inline bool pyplot::figure()
     UMUQFAILRETURN("Call to figure failed!");
 }
 
-/*!
- * \brief Creates a new figure
- * 
- * \param width   width in inches
- * \param height  height in inches
- * \param dpi     resolution of the figure (default is 100)
- * 
- * \return true 
- * \return false 
- */
 bool pyplot::figure(std::size_t const width, std::size_t const height, std::size_t const dpi)
 {
     // Create a new empty dictionary
@@ -1701,21 +2109,6 @@ bool pyplot::figure(std::size_t const width, std::size_t const height, std::size
     UMUQFAILRETURN("Call to figure failed!");
 }
 
-/*!
- * \brief Fill the area between two horizontal curves.
- * The curves are defined by the points (x, y1) and (x, y2). 
- * This creates one or multiple polygons describing the filled area.
- * 
- * \tparam T         Data type
- * 
- * \param x          The x coordinates of the nodes defining the curves.
- * \param y1         The y coordinates of the nodes defining the first curve.
- * \param y2         The y coordinates of the nodes defining the second curve.
- * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2, std::map<std::string, std::string> const &keywords)
 {
@@ -1759,27 +2152,6 @@ bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std
     UMUQFAILRETURN("Call to fill_between failed!");
 }
 
-/*!
- * \brief Fill the area between two horizontal curves.
- * The curves are defined by the points (x, y1) and (x, y2). 
- * This creates one or multiple polygons describing the filled area.
- * 
- * \tparam T         Data type
- * 
- * \param x          The x coordinates of the nodes defining the curves.
- * \param nSizeX     Size of array x
- * \param StrideX    Stride element stride 
- * \param y1         The y coordinates of the nodes defining the first curve.
- * \param nSizeY1    Size of array y1
- * \param StrideY1   Stride element stride  
- * \param y2         The y coordinates of the nodes defining the second curve.
- * \param nSizeY2    Size of array y2
- * \param StrideY2   Stride element stride   
- * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
                           T const *y1, int const nSizeY1, std::size_t const StrideY1,
@@ -1832,22 +2204,6 @@ bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const Stride
     UMUQFAILRETURN("Call to fill_between failed!");
 }
 
-/*!
- * \brief Fill the area between two horizontal curves.
- * The curves are defined by the points (x, y1) and (x, y2). 
- * This creates one or multiple polygons describing the filled area.
- * 
- * \tparam T         Data type
- * 
- * \param x          The x coordinates of the nodes defining the curves.
- * \param y1         The y coordinates of the nodes defining the first curve.
- * \param y2         The y coordinates of the nodes defining the second curve.
- * \param nSize      Size of arrays  
- * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::fill_between(T const *x, T const *y1, T const *y2, int const nSize, std::map<std::string, std::string> const &keywords)
 {
@@ -1886,11 +2242,6 @@ bool pyplot::fill_between(T const *x, T const *y1, T const *y2, int const nSize,
     UMUQFAILRETURN("Call to fill_between failed!");
 }
 
-/*!
- * \brief Turn the axes grids on or off
- * 
- * \param flag 
- */
 bool pyplot::grid(bool flag)
 {
     PyObject *args = PyTuple_New(1);
@@ -1910,30 +2261,6 @@ bool pyplot::grid(bool flag)
     UMUQFAILRETURN("Call to grid failed!");
 }
 
-/*!
- * \brief Plot a histogram
- * Compute and draw the histogram of x. 
- * 
- * \tparam T       Data type
- * 
- * \param x        Input values
- * \param bins     The bin specification (The default value is 10)
- * \param density  density (Default is false)
- *                 If True, the first element of the return tuple will be the counts 
- *                 normalized to form a probability density, i.e., the area (or integral) 
- *                 under the histogram will sum to 1. 
- *                 This is achieved by dividing the count by the number of observations 
- *                 times the bin width and not dividing by the total number of observations. 
- * \param color    Color or None, optional (The default value is "b")
- * \param label    default is None
- * \param alpha    The alpha blending value \f$ 0 <= scalar <= 1 \f$ or None, optional
- * \param Rcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * \param Gcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
                   std::string const &color, std::string const &label, double const alpha,
@@ -1955,7 +2282,9 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
         // Construct keyword args
         if (density)
         {
-            PyDict_SetItemString(kwargs, "normed", Py_True);
+            // NOTE:
+            // In some cases density keyword does not work and one has to use normed instead
+            PyDict_SetItemString(kwargs, "density", Py_True);
         }
         if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
         {
@@ -1999,32 +2328,6 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
     UMUQFAILRETURN("Call to hist failed!");
 }
 
-/*!
- * \brief Plot a histogram
- * Compute and draw the histogram of x. 
- * 
- * \tparam T       Data type
- * 
- * \param x        Input values
- * \param nSizeX   Size of array x
- * \param StrideX  Stride element stride 
- * \param bins     The bin specification (The default value is 10)
- * \param density  density (default false)
- *                 If True, the first element of the return tuple will be the counts 
- *                 normalized to form a probability density, i.e., the area (or integral) 
- *                 under the histogram will sum to 1. 
- *                 This is achieved by dividing the count by the number of observations 
- *                 times the bin width and not dividing by the total number of observations. 
- * \param color    Color or None, optional (The default value is "b")
- * \param label    default is None
- * \param alpha    The alpha blending value \f$ 0 <= scalar <= 1 \f$ or None, optional
- * \param Rcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * \param Gcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
                   long const bins, bool const density, std::string const &color,
@@ -2047,7 +2350,7 @@ bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
         // Construct keyword args
         if (density)
         {
-            PyDict_SetItemString(kwargs, "normed", Py_True);
+            PyDict_SetItemString(kwargs, "density", Py_True);
         }
         if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
         {
@@ -2091,10 +2394,6 @@ bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to hist failed!");
 }
 
-/*!
- * \brief Turn interactive mode on
- * 
- */
 inline bool pyplot::ion()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyion, pyplot::mpl.pyEmpty);
@@ -2107,10 +2406,6 @@ inline bool pyplot::ion()
     UMUQFAILRETURN("Call to ion failed!");
 }
 
-/*!
- * \brief Places a legend on the axes
- * 
- */
 inline bool pyplot::legend()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pylegend, pyplot::mpl.pyEmpty);
@@ -2123,22 +2418,6 @@ inline bool pyplot::legend()
     UMUQFAILRETURN("Call to legend failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on both the x and y axis
- * This is just a thin wrapper around plot which additionally changes 
- * both the x-axis and the y-axis to log scaling. All of the concepts 
- * and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type
- * 
- * \param x      Input values
- * \param y      Input values
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
@@ -2179,26 +2458,6 @@ bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::strin
     UMUQFAILRETURN("Call to loglog failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on both the x and y axis
- * This is just a thin wrapper around plot which additionally changes 
- * both the x-axis and the y-axis to log scaling. All of the concepts 
- * and parameters of plot can be used here as well.
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param fmt       Plot format string
- * \param label     object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
                     T const *y, int const nSizeY, std::size_t const StrideY,
@@ -2246,23 +2505,6 @@ bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to loglog failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on both the x and y axis
- * This is just a thin wrapper around plot which additionally changes 
- * both the x-axis and the y-axis to log scaling. All of the concepts 
- * and parameters of plot can be used here as well.
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param nSize     Size of array y
- * \param fmt       Plot format string
- * \param label     object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::loglog(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
@@ -2298,13 +2540,6 @@ bool pyplot::loglog(T const *x, T const *y, int const nSize, std::string const &
     UMUQFAILRETURN("Call to loglog failed!");
 }
 
-/*!
- * \brief Pause for interval seconds.
- * 
- * \tparam T 
- * 
- * \param interval 
- */
 bool pyplot::pause(double const interval)
 {
     PyObject *args = PyTuple_New(1);
@@ -2324,18 +2559,6 @@ bool pyplot::pause(double const interval)
     UMUQFAILRETURN("Call to pause failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
 {
@@ -2377,22 +2600,6 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
                   T const *y, int const nSizeY, std::size_t const StrideY,
@@ -2441,19 +2648,6 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param nSize     Size of arrays
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
@@ -2490,20 +2684,6 @@ bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param fmt       A format string, e.g. ‘ro’ for red circles.
- *                  Format strings are just an abbreviation for quickly setting basic line properties. 
- * \param label     object. Set the label to s for auto legend
- *  
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
@@ -2546,24 +2726,6 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string 
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param fmt       A format string, e.g. ‘ro’ for red circles.
- *                  Format strings are just an abbreviation for quickly setting basic line properties. 
- * \param label     object. Set the label to s for auto legend
- *  
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
                   T const *y, int const nSizeY, std::size_t const StrideY,
@@ -2613,21 +2775,6 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-/*!
- * \brief Plot y versus x as lines and/or markers.
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param nSize     Size of arrays
- * \param fmt       A format string, e.g. ‘ro’ for red circles.
- *                  Format strings are just an abbreviation for quickly setting basic line properties. 
- * \param label     object. Set the label to s for auto legend
- *  
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::plot(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
@@ -2690,30 +2837,72 @@ bool pyplot::savefig(std::string const &filename)
     UMUQFAILRETURN("Call to savefig failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with varying marker size and/or color
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param s         Scalar or array-like, marker size in points**2
- * \param c         Scalar or array-like, data color
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * NOTE:
- * Currently in case of scalar color number we map it to DefaultColors which is
- * one of {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
- * 
- * TODO:
- * We should add a flexible coloring scheme 
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
-                     std::vector<T> const &s, std::vector<T> const &c,
+                     std::vector<int> const &s, std::vector<T> const &c,
+                     std::map<std::string, std::string> const &keywords)
+{
+    if (x.size() != y.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the same size!");
+    }
+    if (s.size() > 1)
+    {
+        if (x.size() != s.size())
+        {
+            UMUQFAILRETURN("Two input vectors do not have the same size!");
+        }
+    }
+    if (x.size() != c.size())
+    {
+        UMUQFAILRETURN("Two input vectors do not have the same size!");
+    }
+
+    // Construct positional args
+    PyObject *args = PyTuple_New(4);
+    {
+        // Using numpy arrays
+        PyObject *PyArrayX = PyArray<T>(x);
+        PyObject *PyArrayY = PyArray<T>(y);
+        PyObject *PyArrayS = s.size() > 1 ? PyArray<int>(s) : PyInt_FromLong(s[0]);
+        PyObject *PyArrayC = PyArray<T>(c);
+
+        PyTuple_SetItem(args, 0, PyArrayX);
+        PyTuple_SetItem(args, 1, PyArrayY);
+        PyTuple_SetItem(args, 2, PyArrayS);
+        PyTuple_SetItem(args, 3, PyArrayC);
+    }
+
+    // Create a new empty dictionary
+    PyObject *kwargs = PyDict_New();
+    {
+        // No patch boundary will be drawn
+        // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
+        PyDict_SetItemString(kwargs, "edgecolor", PyString_FromString("None"));
+    }
+    for (std::map<std::string, std::string>::const_iterator it = keywords.begin(); it != keywords.end(); ++it)
+    {
+        // Construct keyword args
+        PyDict_SetItemString(kwargs, it->first.c_str(), PyString_FromString(it->second.c_str()));
+    }
+
+    PyObject *res = PyObject_Call(pyplot::mpl.pyscatter, args, kwargs);
+
+    if (res)
+    {
+        Py_DECREF(res);
+        Py_DECREF(kwargs);
+        Py_DECREF(args);
+        return true;
+    }
+    Py_DECREF(kwargs);
+    Py_DECREF(args);
+    UMUQFAILRETURN("Call to scatter failed!");
+}
+
+template <typename T>
+bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
+                     std::vector<int> const &s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y.size())
@@ -2728,40 +2917,24 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         }
     }
 
-    //! Temporary color
-    std::vector<char> tmpC;
-
-    if (c.size() > 1)
-    {
-        if (x.size() != c.size())
-        {
-            UMUQFAILRETURN("Two input vectors do not have the same size!");
-        }
-    }
-    else
-    {
-        tmpC.resize(x.size());
-        char const tmpColor = c.size() < 1 ? 'k' : DefaultColors[static_cast<int>(std::round(c[0])) % DefaultColorsSize];
-        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
-    }
-
     // Construct positional args
-    PyObject *args = PyTuple_New(4);
+    PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
-        PyObject *PyArrayS = s.size() > 1 ? PyArray<T>(s) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = c.size() > 1 ? PyArray<T>(c) : PyArray<char>(tmpC);
+        PyObject *PyArrayS = s.size() > 1 ? PyArray<int>(s) : PyInt_FromLong(s[0]);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
         PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
     }
 
     // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
+    {
+        PyDict_SetItemString(kwargs, "c", PyString_FromString(c.c_str()));
+    }
     {
         // No patch boundary will be drawn
         // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
@@ -2787,23 +2960,9 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with scaler marker size and color
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param s         Scalar marker size in points**2
- * \param c         Scalar data color
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
-                     T const s, T const c,
+                     int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y.size())
@@ -2811,30 +2970,24 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
         UMUQFAILRETURN("Two input vectors do not have the same size!");
     }
 
-    //! Temporary color
-    std::vector<char> tmpC(x.size());
-    {
-        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
-        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
-    }
-
     // Construct positional args
-    PyObject *args = PyTuple_New(4);
+    PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x);
         PyObject *PyArrayY = PyArray<T>(y);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyArray<char>(tmpC);
+        PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
         PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
     }
 
     // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
+    {
+        PyDict_SetItemString(kwargs, "c", PyString_FromString(c.c_str()));
+    }
     {
         // No patch boundary will be drawn
         // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
@@ -2860,32 +3013,10 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with varying marker size and/or color
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param s         Scalar or array-like, marker size in points**2
- * \param nSizeS    Size of array s
- * \param StrideS   Stride element stride 
- * \param c         Scalar or array-like, data colors
- * \param nSizeC    Size of array c
- * \param StrideC   Stride element stride 
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
                      T const *y, int const nSizeY, std::size_t const StrideY,
-                     T const *s, int const nSizeS, std::size_t const StrideS,
+                     int const *s, int const nSizeS, std::size_t const StrideS,
                      T const *c, int const nSizeC, std::size_t const StrideC,
                      std::map<std::string, std::string> const &keywords)
 {
@@ -2906,22 +3037,9 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
             UMUQFAILRETURN("Two input vectors do not have the same size!");
         }
     }
-
-    //! Temporary color
-    std::vector<char> tmpC;
-
-    if (nsizeC > 1)
+    if (nsizeX != nsizeC)
     {
-        if (nsizeX != nsizeC)
-        {
-            UMUQFAILRETURN("Two input vectors do not have the same size!");
-        }
-    }
-    else
-    {
-        tmpC.resize(nsizeX);
-        char const tmpColor = nsizeC < 1 ? 'k' : DefaultColors[static_cast<int>(std::round(c[0])) % DefaultColorsSize];
-        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
+        UMUQFAILRETURN("Two input vectors do not have the same size!");
     }
 
     // Construct positional args
@@ -2930,8 +3048,8 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
         PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *PyArrayS = nsizeS > 1 ? PyArray<T>(s, nSizeS, StrideS) : PyFloat_FromDouble(static_cast<double>(s[0]));
-        PyObject *PyArrayC = nsizeC > 1 ? PyArray<T>(c, nsizeC, StrideC) : PyArray<char>(tmpC);
+        PyObject *PyArrayS = nsizeS > 1 ? PyArray<int>(s, nSizeS, StrideS) : PyInt_FromLong(s[0]);
+        PyObject *PyArrayC = PyArray<T>(c, nsizeC, StrideC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -2966,28 +3084,10 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with scaler marker size and color
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param s         Scalar marker size in points**2
- * \param c         Scalar data colors
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
                      T const *y, int const nSizeY, std::size_t const StrideY,
-                     T const s, T const c,
+                     int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
 
@@ -2998,30 +3098,24 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
         UMUQFAILRETURN("Two input vectors do not have the same size!");
     }
 
-    //! Temporary color
-    std::vector<char> tmpC(nsizeX);
-    {
-        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
-        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
-    }
-
     // Construct positional args
-    PyObject *args = PyTuple_New(4);
+    PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
         PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyArray<char>(tmpC);
+        PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
         PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
     }
 
     // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
+    {
+        PyDict_SetItemString(kwargs, "c", PyString_FromString(c.c_str()));
+    }
     {
         // No patch boundary will be drawn
         // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
@@ -3047,24 +3141,9 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with varying marker size and/or color
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param s         Scalar or array-like, marker size in points**2
- * \param c         Scalar or array-like, data colors
- * \param nSize     Size of arrays
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(T const *x, T const *y, int const nSize,
-                     T const *s, T const *c,
+                     int const *s, T const *c,
                      std::map<std::string, std::string> const &keywords)
 {
     // Construct positional args
@@ -3073,7 +3152,7 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x, nSize);
         PyObject *PyArrayY = PyArray<T>(y, nSize);
-        PyObject *PyArrayS = PyArray<T>(s, nSize);
+        PyObject *PyArrayS = PyArray<int>(s, nSize);
         PyObject *PyArrayC = PyArray<T>(c, nSize);
 
         PyTuple_SetItem(args, 0, PyArrayX);
@@ -3109,50 +3188,29 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief A scatter plot of y vs x with scaler marker size and/or color
- * 
- * \tparam T        Data type 
- *  
- * \param x         Scalar or array-like, data positions
- * \param y         Scalar or array-like, data positions
- * \param nSize     Size of arrays
- * \param s         Scalar marker size in points**2
- * \param c         Scalar data color
- * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::scatter(T const *x, T const *y, int const nSize,
-                     T const s, T const c,
+                     int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
-    //! Temporary color
-    std::vector<char> tmpC(nSize);
-    {
-        char const tmpColor = DefaultColors[static_cast<int>(std::round(c)) % DefaultColorsSize];
-        std::fill(tmpC.begin(), tmpC.end(), tmpColor);
-    }
-
     // Construct positional args
-    PyObject *args = PyTuple_New(4);
+    PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
         PyObject *PyArrayX = PyArray<T>(x, nSize);
         PyObject *PyArrayY = PyArray<T>(y, nSize);
-        PyObject *PyArrayS = PyFloat_FromDouble(static_cast<double>(s));
-        PyObject *PyArrayC = PyArray<char>(tmpC);
+        PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
         PyTuple_SetItem(args, 2, PyArrayS);
-        PyTuple_SetItem(args, 3, PyArrayC);
     }
 
     // Create a new empty dictionary
     PyObject *kwargs = PyDict_New();
+    {
+        PyDict_SetItemString(kwargs, "c", PyString_FromString(c.c_str()));
+    }
     {
         // No patch boundary will be drawn
         // For non-filled markers, the edgecolors kwarg is ignored and forced to ‘face’ internally.
@@ -3178,21 +3236,6 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the x axis
- * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type 
- * 
- * \param x      Scalar or array-like, data positions
- * \param y      Scalar or array-like, data positions
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
@@ -3233,25 +3276,6 @@ bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::str
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the x axis
- * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param fmt       Plot format string
- * \param label     object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
                       T const *y, int const nSizeY, std::size_t const StrideY,
@@ -3300,22 +3324,6 @@ bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the x axis
- * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type 
- * 
- * \param x      Scalar or array-like, data positions
- * \param y      Scalar or array-like, data positions
- * \param nSize  Size of arrays
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
@@ -3352,21 +3360,6 @@ bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the y axis
- * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type 
- * 
- * \param x      Scalar or array-like, data positions
- * \param y      Scalar or array-like, data positions
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
@@ -3407,25 +3400,6 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
     UMUQFAILRETURN("Call to semilogy failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the y axis
- * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T        Data type 
- * 
- * \param x         Scalar or array-like, data positions
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         Scalar or array-like, data positions
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride 
- * \param fmt       Plot format string
- * \param label     object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
                       T const *y, int const nSizeY, std::size_t const StrideY,
@@ -3474,22 +3448,6 @@ bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to semilogy failed!");
 }
 
-/*!
- * \brief Make a plot with log scaling on the y axis
- * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
- * All of the concepts and parameters of plot can be used here as well.
- * 
- * \tparam T     Data type 
- * 
- * \param x      Scalar or array-like, data positions
- * \param y      Scalar or array-like, data positions
- * \param nSize  Size of arrays
- * \param fmt    Plot format string
- * \param label  object (Set the label to s for auto legend)
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
@@ -3526,11 +3484,6 @@ bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const
     UMUQFAILRETURN("Call to semilogy failed!");
 }
 
-/*!
- * \brief Display a figure. 
- * 
- * \param block 
- */
 bool pyplot::show(bool const block)
 {
     PyObject *res;
@@ -3564,19 +3517,6 @@ bool pyplot::show(bool const block)
     UMUQFAILRETURN("Call to show failed!");
 }
 
-/*!
- * \brief Create a stem plot.
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
- * 
- * \tparam T 
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
- * \param y         The y-values of the stem heads
- * \param keywords  
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
 {
@@ -3618,23 +3558,6 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Create a stem plot.
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
- * 
- * \tparam T        Data type 
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         The y-values of the stem heads
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride   
- * \param keywords  
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
                   T const *y, int const nSizeY, std::size_t const StrideY,
@@ -3683,20 +3606,6 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Create a stem plot.
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
- * 
- * \tparam T        Data type 
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
- * \param y         The y-values of the stem heads
- * \param nSize     Size of arrays   
- * \param keywords  
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
@@ -3733,20 +3642,6 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Create a stem plot
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
- * 
- * \tparam T
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1).
- * \param y         The y-values of the stem heads.
- * \param fmt       A format string
- * \param label     object. Set the label to s for auto legend
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
 {
@@ -3789,24 +3684,6 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string 
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Create a stem plot
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
- * 
- * \tparam T        Data type 
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
- * \param nSizeX    Size of array x
- * \param StrideX   Stride element stride 
- * \param y         The y-values of the stem heads
- * \param nSizeY    Size of array y
- * \param StrideY   Stride element stride   
- * \param fmt       A format string
- * \param label     object. Set the label to s for auto legend
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
                   T const *y, int const nSizeY, std::size_t const StrideY,
@@ -3856,21 +3733,6 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Create a stem plot
- * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
- * 
- * \tparam T        Data type 
- * 
- * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
- * \param y         The y-values of the stem heads
- * \param nSize     Size of arrays  
- * \param fmt       A format string
- * \param label     object. Set the label to s for auto legend
- * 
- * \return true 
- * \return false 
- */
 template <typename T>
 bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
@@ -3908,23 +3770,13 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fm
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-/*!
- * \brief Return a subplot axes at the given grid position
- * In the current figure, create and return an Axes, 
- * at position index of a (virtual) grid of nrows by ncols axes. 
- * Indexes go from 1 to nrows * ncols, incrementing in row-major order.
- * 
- * \param nrows 
- * \param ncols 
- * \param index 
- */
-bool pyplot::subplot(long const nrows, long const ncols, long const index)
+bool pyplot::subplot(long const nDimX, long const nDimY, long const index)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
-        PyTuple_SetItem(args, 0, PyFloat_FromDouble(nrows));
-        PyTuple_SetItem(args, 1, PyFloat_FromDouble(ncols));
+        PyTuple_SetItem(args, 0, PyFloat_FromDouble(nDimX));
+        PyTuple_SetItem(args, 1, PyFloat_FromDouble(nDimY));
         PyTuple_SetItem(args, 2, PyFloat_FromDouble(index));
     }
 
@@ -3940,11 +3792,6 @@ bool pyplot::subplot(long const nrows, long const ncols, long const index)
     UMUQFAILRETURN("Call to subplot failed!");
 }
 
-/*!
- * \brief Set a title of the current axes
- * 
- * \param label Text to use for the title
- */
 bool pyplot::title(std::string const &label)
 {
     PyObject *args = PyTuple_New(1);
@@ -3965,11 +3812,6 @@ bool pyplot::title(std::string const &label)
     UMUQFAILRETURN("Call to title failed!");
 }
 
-// Actually, is there any reason not to call this automatically for every plot?
-/*!
- * \brief Automatically adjust subplot parameters to give specified padding.
- * 
- */
 inline bool pyplot::tight_layout()
 {
     PyObject *res = PyObject_CallObject(pyplot::mpl.pytight_layout, pyplot::mpl.pyEmpty);
@@ -3982,14 +3824,6 @@ inline bool pyplot::tight_layout()
     UMUQFAILRETURN("Call to tight_layout failed!");
 }
 
-/*!
- * \brief Set the x limits of the current axes
- * 
- * \tparam T Data type
- * 
- * \param left  xmin
- * \param right xmax
- */
 template <typename T>
 bool pyplot::xlim(T left, T right)
 {
@@ -4013,14 +3847,7 @@ bool pyplot::xlim(T left, T right)
     Py_DECREF(args);
     UMUQFAILRETURN("Call to xlim failed!");
 }
-/*!
- * \brief Get the x limits of the current axes
- * 
- * \tparam T Data type
- * 
- * \param left  xmin
- * \param right xmax
- */
+
 template <typename T>
 bool pyplot::xlim(T *left, T *right)
 {
@@ -4042,11 +3869,6 @@ bool pyplot::xlim(T *left, T *right)
     UMUQFAILRETURN("Call to xlim failed!");
 }
 
-/*!
- * \brief Set the x-axis label of the current axes
- * 
- * \param label The label text
- */
 bool pyplot::xlabel(std::string const &label)
 {
     PyObject *args = PyTuple_New(1);
@@ -4066,11 +3888,6 @@ bool pyplot::xlabel(std::string const &label)
     UMUQFAILRETURN("Call to xlabel failed!");
 }
 
-/*!
- * \brief Turns on xkcd sketch-style drawing mode
- * This will only have effect on things drawn after this function is called
- * 
- */
 inline bool pyplot::xkcd()
 {
     PyObject *kwargs = PyDict_New();
@@ -4085,14 +3902,6 @@ inline bool pyplot::xkcd()
     UMUQFAILRETURN("Call to xkcd failed!");
 }
 
-/*!
- * \brief Set the y limits of the current axes
- * 
- * \tparam T Data type
- * 
- * \param left  ymin
- * \param right ymax
- */
 template <typename T>
 bool pyplot::ylim(T left, T right)
 {
@@ -4116,14 +3925,7 @@ bool pyplot::ylim(T left, T right)
     Py_DECREF(args);
     UMUQFAILRETURN("Call to ylim failed!");
 }
-/*!
- * \brief Get the y limits of the current axes
- * 
- * \tparam T Data type
- * 
- * \param left  ymin
- * \param right ymax
- */
+
 template <typename T>
 bool pyplot::ylim(T *left, T *right)
 {
@@ -4145,11 +3947,6 @@ bool pyplot::ylim(T *left, T *right)
     UMUQFAILRETURN("Call to ylim failed!");
 }
 
-/*!
- * \brief Set the y-axis label of the current axes
- * 
- * \param label The label text
- */
 bool pyplot::ylabel(std::string const &label)
 {
     PyObject *args = PyTuple_New(1);
@@ -4169,10 +3966,6 @@ bool pyplot::ylabel(std::string const &label)
     UMUQFAILRETURN("Call to ylabel failed!");
 }
 
-/*!
- * \brief Construct a new pyplot::matplotlib object
- * 
- */
 pyplot::matplotlib::matplotlib()
 {
 // optional but recommended
@@ -4321,6 +4114,26 @@ pyplot::matplotlib::matplotlib()
         UMUQFAIL("Couldn't find close function!");
     }
     if (!PyFunction_Check(pyclose))
+    {
+        UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+    }
+    // Retrieve an attribute named contour from object pyplotModule.
+    pycontour = PyObject_GetAttrString(pyplotModule, "contour");
+    if (!pycontour)
+    {
+        UMUQFAIL("Couldn't find contour function!");
+    }
+    if (!PyFunction_Check(pycontour))
+    {
+        UMUQFAIL("Python object unexpectedly is not a PyFunction!");
+    }
+    // Retrieve an attribute named contourf from object pyplotModule.
+    pycontourf = PyObject_GetAttrString(pyplotModule, "contourf");
+    if (!pycontourf)
+    {
+        UMUQFAIL("Couldn't find contourf function!");
+    }
+    if (!PyFunction_Check(pycontourf))
     {
         UMUQFAIL("Python object unexpectedly is not a PyFunction!");
     }
@@ -4577,15 +4390,6 @@ pyplot::matplotlib::matplotlib()
     }
 }
 
-/*!
- * \brief Converts a data array idata to a Python array
- * 
- * \tparam T Data type
- * 
- * \param idata Input array of data
- * 
- * \return PyObject* Python array
- */
 template <typename T>
 PyObject *PyArray(std::vector<T> const &idata)
 {
@@ -4635,17 +4439,71 @@ PyObject *PyArray(std::vector<TIn> const &idata)
     return pArray;
 }
 
-/*!
- * \brief Converts a data array idata to Python array
- * 
- * \tparam T Data type
- * 
- * \param idata   Input array of data
- * \param nSize   Size of the array
- * \param Stride  Element stride (default is 1)
- * 
- * \return PyObject* Python array 
- */
+template <typename T>
+PyObject *PyArray(T const idata, int const nSize)
+{
+    PyObject *pArray;
+    {
+        npy_intp nsize = static_cast<npy_intp>(nSize);
+        if (NPIDatatype<T> == NPY_NOTYPE)
+        {
+            std::vector<double> vd(nsize);
+            std::fill(vd.begin(), vd.end(), static_cast<double>(idata));
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+        }
+        else
+        {
+            std::vector<T> vd(nsize);
+            std::fill(vd.begin(), vd.end(), idata);
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(vd.data()));
+        }
+    }
+    return pArray;
+}
+
+template <>
+PyObject *PyArray<char>(char const idata, int const nSize)
+{
+    PyObject *pArray;
+    {
+        npy_intp nsize(1);
+        std::string vd(nSize, idata);
+        pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_STRING, (void *)(vd.c_str()));
+    }
+    return pArray;
+}
+
+template <typename TIn, typename TOut>
+PyObject *PyArray(TIn const idata, int const nSize)
+{
+    PyObject *pArray;
+    {
+        npy_intp nsize = static_cast<npy_intp>(nSize);
+        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+        {
+            if (NPIDatatype<TOut> == NPY_NOTYPE)
+            {
+                std::vector<double> vd(nsize);
+                std::fill(vd.begin(), vd.end(), static_cast<double>(idata));
+                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
+            }
+            else
+            {
+                std::vector<TOut> vd(nsize);
+                std::fill(vd.begin(), vd.end(), static_cast<TOut>(idata));
+                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
+            }
+        }
+        else
+        {
+            std::vector<TIn> vd(nsize);
+            std::fill(vd.begin(), vd.end(), idata);
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata.data()));
+        }
+    }
+    return pArray;
+}
+
 template <typename T>
 PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 {
@@ -4738,6 +4596,84 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 //     return pArray;
 // }
 
+template <typename T>
+PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDimY)
+{
+    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
+    {
+        UMUQFAIL("Data size does not match with mesh numbers!");
+    }
+
+    PyObject *pArray;
+    {
+        npy_intp PyArrayDims[] = {nDimY, nDimX};
+        if (NPIDatatype<T> == NPY_NOTYPE)
+        {
+            std::vector<double> vd(idata.size());
+            std::copy(idata.begin(), idata.end(), vd.begin());
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
+        }
+        else
+        {
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<T>, (void *)(idata.data()));
+        }
+    }
+    return pArray;
+}
+
+template <typename TIn, typename TOut>
+PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY)
+{
+    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
+    {
+        UMUQFAIL("Data size does not match with mesh numbers!");
+    }
+
+    PyObject *pArray;
+    {
+        npy_intp PyArrayDims[] = {nDimY, nDimX};
+        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
+        {
+            if (NPIDatatype<TOut> == NPY_NOTYPE)
+            {
+                std::vector<double> vd(idata.size());
+                std::copy(idata.begin(), idata.end(), vd.begin());
+                pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
+            }
+            else
+            {
+                std::vector<TOut> vd(idata.size());
+                std::copy(idata.begin(), idata.end(), vd.begin());
+                pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<TOut>, (void *)(vd.data()));
+            }
+        }
+        else
+        {
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<TIn>, (void *)(idata.data()));
+        }
+    }
+    return pArray;
+}
+
+template <typename T>
+PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY)
+{
+    PyObject *pArray;
+    {
+        npy_intp PyArrayDims[] = {nDimY, nDimX};
+        if (NPIDatatype<T> == NPY_NOTYPE)
+        {
+            std::vector<double> vd{idata, idata + nDimX * nDimY};
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
+        }
+        else
+        {
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<T>, (void *)(idata));
+        }
+    }
+    return pArray;
+}
+
 } // namespace matplotlib_223
 } // namespace umuq
 
@@ -4757,6 +4693,7 @@ class pyplot
 
     /*!
      * \brief Destroy the pyplot object
+            std::vector<double> vd{idata, idata + nRows * nCols};
      * 
      */
     ~pyplot() {}
