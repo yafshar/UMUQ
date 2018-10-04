@@ -4,8 +4,13 @@
 namespace umuq
 {
 
+/*! \defgroup IO_Module IO module
+ * This is the Input/OUTPUT module of UMUQ providing all necessary classes of reading and writing data.
+ */
+
+
 /*! \class ioFormat
- * \ingroup io
+ * \ingroup IO_Module
  * 
  * \brief Stores a set of parameters controlling the way matrices are printed
  *
@@ -65,7 +70,7 @@ struct ioFormat
 //! we should remove all options from them
 
 /*! \class io
- * \ingroup io
+ * \ingroup IO_Module
  * 
  * \brief This class includes IO functionality.
  *
@@ -195,11 +200,11 @@ class io
     /*!
      * \brief Set the stream Precision 
      * 
-     * \tparam TD Data type
+     * \tparam T Data type
      * 
      * \param  os File based streams
      */
-    template <typename TD>
+    template <typename T>
     inline void setPrecision(std::ostream &os);
 
     /*!
@@ -214,7 +219,7 @@ class io
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam TD  data type
+     * \tparam T  data type
      * 
      * \param idata  Input array of data
      * \param nRows  Number of Rows
@@ -223,19 +228,19 @@ class io
      * 
      * \returns the width
      */
-    template <typename TD>
-    int getWidth(TD *idata, int const nRows, int const nCols, std::ostream &os);
+    template <typename T>
+    int getWidth(T *idata, int const nRows, int const nCols, std::ostream &os);
 
-    template <typename TD>
-    int getWidth(std::unique_ptr<TD[]> const &idata, int const nRows, int const nCols, std::ostream &os);
+    template <typename T>
+    int getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &os);
 
-    template <typename TD>
-    int getWidth(std::vector<TD> const &idata, int const nRows, int const nCols, std::ostream &os);
+    template <typename T>
+    int getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &os);
 
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam TD  data type
+     * \tparam T  data type
      * 
      * \param idata  Input array of data
      * \param nRows  Number of Rows
@@ -244,8 +249,8 @@ class io
      * 
      * \returns the width
      */
-    template <typename TD>
-    int getWidth(TD **idata, int const nRows, int const nCols, std::ostream &os);
+    template <typename T>
+    int getWidth(T **idata, int const nRows, int const nCols, std::ostream &os);
 
     /*!
      * \brief Helper function to save the matrix of type TM with TF format into a file 
@@ -264,9 +269,9 @@ class io
     /*!
      * \brief Helper function to save one matrix into a file 
      * 
-     * \tparam  TD     Data type 
+     * \tparam  T     Data type 
      * 
-     * \param   idata  Array of input data of type TD
+     * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
      * \param options  (Default) 0 Save matrix in matrix format and proceed the position indicator to the next line & 
@@ -275,15 +280,15 @@ class io
      * 
      * \returns true if no error occurs during writing the matrix
      */
-    template <typename TD>
-    bool saveMatrix(TD **idata, int const nRows, int const nCols, int const options = 0);
+    template <typename T>
+    bool saveMatrix(T **idata, int const nRows, int const nCols, int const options = 0);
 
     /*!
      * \brief Helper function to save one matrix (or entries number matrices) into a file 
      * 
-     * \tparam  TD     Data type 
+     * \tparam  T     Data type 
      * 
-     * \param   idata  Array of input data of type TD
+     * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row
      * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
@@ -294,8 +299,8 @@ class io
      * 
      * \returns true if no error occurs during writing the matrix
      */
-    template <typename TD>
-    bool saveMatrix(TD **idata,
+    template <typename T>
+    bool saveMatrix(T **idata,
                     int const nRows,
                     int const *nCols,
                     int const options = 0,
@@ -305,29 +310,29 @@ class io
     /*!
      * \brief Helper function to save the matrix or a vector into a file 
      * 
-     * \tparam TD      Data type 
+     * \tparam T      Data type 
      * 
-     * \param idata    Array of input data of type TD
+     * \param idata    Array of input data of type T
      * \param nRows    Number of rows 
      * \param nCols    Number of columns for each row (default is 1)
      * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
      *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                           2 Saves matrix in vector format and keep the position indicator on the same line
      */
-    template <typename TD>
-    bool saveMatrix(TD *idata,
+    template <typename T>
+    bool saveMatrix(T *idata,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
 
-    template <typename TD>
-    bool saveMatrix(std::unique_ptr<TD[]> const &idata,
+    template <typename T>
+    bool saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
 
-    template <typename TD>
-    bool saveMatrix(std::vector<TD> const &idata,
+    template <typename T>
+    bool saveMatrix(std::vector<T> const &idata,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
@@ -335,32 +340,32 @@ class io
     /*!
      * \brief Helper function to save two arrays of data into a file 
      * 
-     * \tparam TD          Data type 
+     * \tparam T          Data type 
      * 
-     * \param idata        Array of input data of type TD
+     * \param idata        Array of input data of type T
      * \param idataCols    Number of columns of inpput array data (idata)
-     * \param ifvalue      Array of input value data of type TD
+     * \param ifvalue      Array of input value data of type T
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
      * \param nRows        Number of rows in each data set
      */
-    template <typename TD>
-    bool saveMatrix(TD *idata,
+    template <typename T>
+    bool saveMatrix(T *idata,
                     int const idataCols,
-                    TD *ifvalue,
+                    T *ifvalue,
                     int const ifvalueCols,
                     int const nRows);
 
-    template <typename TD>
-    bool saveMatrix(std::unique_ptr<TD[]> const &idata,
+    template <typename T>
+    bool saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const idataCols,
-                    std::unique_ptr<TD[]> const &ifvalue,
+                    std::unique_ptr<T[]> const &ifvalue,
                     int const ifvalueCols,
                     int const nRows);
 
-    template <typename TD>
-    bool saveMatrix(std::vector<TD> const &idata,
+    template <typename T>
+    bool saveMatrix(std::vector<T> const &idata,
                     int const idataCols,
-                    std::vector<TD> const &ifvalue,
+                    std::vector<T> const &ifvalue,
                     int const ifvalueCols,
                     int const nRows);
 
@@ -379,24 +384,24 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  TD     Data type 
+     * \tparam  T     Data type 
      * 
-     * \param   idata  Array of input data of type TD
+     * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
      * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
      *
      * \returns true if no error occurs during reading data
      */
-    template <typename TD>
-    bool loadMatrix(TD **idata, int const nRows, int const nCols, int const options = 0);
+    template <typename T>
+    bool loadMatrix(T **idata, int const nRows, int const nCols, int const options = 0);
 
     /*!
      * \brief Helper function to load one matrix (or entries number of matrcies) from a file 
      * 
-     * \tparam  TD     Data type 
+     * \tparam  T     Data type 
      * 
-     * \param   idata  Array of input data of type TD
+     * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row
      * \param options  (Default) 0 load matrix from matrix format and 1 load matrix from vector format
@@ -404,65 +409,65 @@ class io
      *
      * \returns true if no error occurs during reading data
      */
-    template <typename TD>
-    bool loadMatrix(TD **idata, int const nRows, int const *nCols, int const options = 0, int const entries = 1);
+    template <typename T>
+    bool loadMatrix(T **idata, int const nRows, int const *nCols, int const options = 0, int const entries = 1);
 
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  TD     Data type 
+     * \tparam  T     Data type 
      * 
-     * \param   idata  Input array of data of type TD
+     * \param   idata  Input array of data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row (default is 1)
      *
      * \returns true if no error occurs during reading data
      */
-    template <typename TD>
-    bool loadMatrix(TD *idata, int const nRows, int const nCols = 1);
+    template <typename T>
+    bool loadMatrix(T *idata, int const nRows, int const nCols = 1);
 
-    template <typename TD>
-    bool loadMatrix(std::unique_ptr<TD[]> &idata, int const nRows, int const nCols = 1);
+    template <typename T>
+    bool loadMatrix(std::unique_ptr<T[]> &idata, int const nRows, int const nCols = 1);
 
-    template <typename TD>
-    bool loadMatrix(std::vector<TD> &idata, int const nRows, int const nCols = 1);
+    template <typename T>
+    bool loadMatrix(std::vector<T> &idata, int const nRows, int const nCols = 1);
 
     /*!
      * \brief Helper function to load two vector of data from a file
      * 
-     * \tparam TD          Data type 
+     * \tparam T          Data type 
      * 
-     * \param idata        Input array of data of type TD
+     * \param idata        Input array of data of type T
      * \param idataCols    Number of columns of inpput array data (idata)
-     * \param ifvalue      Array of input value data of type TD
+     * \param ifvalue      Array of input value data of type T
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
      * \param nRows        Number of rows in each data set
      * 
      * \returns true if no error occurs during reading data
      */
-    template <typename TD>
-    bool loadMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifvalueCols, int const nRows);
+    template <typename T>
+    bool loadMatrix(T *idata, int const idataCols, T *ifvalue, int const ifvalueCols, int const nRows);
 
-    template <typename TD>
-    bool loadMatrix(std::unique_ptr<TD[]> &idata, int const idataCols, std::unique_ptr<TD[]> &ifvalue, int const ifvalueCols, int const nRows);
+    template <typename T>
+    bool loadMatrix(std::unique_ptr<T[]> &idata, int const idataCols, std::unique_ptr<T[]> &ifvalue, int const ifvalueCols, int const nRows);
 
-    template <typename TD>
-    bool loadMatrix(std::vector<TD> &idata, int const idataCols, std::vector<TD> &ifvalue, int const ifvalueCols, int const nRows);
+    template <typename T>
+    bool loadMatrix(std::vector<T> &idata, int const idataCols, std::vector<T> &ifvalue, int const ifvalueCols, int const nRows);
 
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD         Data type
+     * \tparam  T         Data type
      * 
      * \param  title       Title (string) that should be written at the top 
-     * \param  idata       Array of input data of type TD
+     * \param  idata       Array of input data of type T
      * \param  nRows       Number of rows
      * \param  nCols       Number of columns
      * \param  printPrefix Prefix and suffix of the print  
      */
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     TD const **idata,
+                     T const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -470,15 +475,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam TD          Data type
+     * \tparam T          Data type
      * 
-     * \param idata        Array of input data of type TD
+     * \param idata        Array of input data of type T
      * \param nRows        Number of rows
      * \param nCols        Number of columns
      * \param  printPrefix Prefix and suffix of the print  
      */
-    template <typename TD>
-    void printMatrix(TD const **idata,
+    template <typename T>
+    void printMatrix(T const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -486,15 +491,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD     Data type
+     * \tparam  T     Data type
      * 
-     * \param   idata  Array of input data of type TD
+     * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
      * \param   form   Print format
      */
-    template <typename TD>
-    void printMatrix(TD const **idata,
+    template <typename T>
+    void printMatrix(T const **idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form);
@@ -502,18 +507,18 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD     Data type
+     * \tparam  T     Data type
      * 
      * \param  title       Title (string) that should be written at the top 
-     * \param  idata       Array of input data of type TD
+     * \param  idata       Array of input data of type T
      * \param  nRows       Number of rows
      * \param  nCols       Number of columns for each row
      * \param  entries     Number of data entry   
      * \param  printPrefix Prefix and suffix of the print  
      */
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     TD const **idata,
+                     T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -522,34 +527,33 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam TD          Data type
+     * \tparam T          Data type
      * 
-     * \param  idata       Array of input data of type TD
+     * \param  idata       Array of input data of type T
      * \param  nRows       Number of rows
      * \param  nCols       Number of columns for each row
      * \param  printPrefix Prefix and suffix of the print  
      */
-    template <typename TD>
-    void printMatrix(TD const **idata,
+    template <typename T>
+    void printMatrix(T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
     /*!
-     * \brief Helper function to print one matrix (or @entries number of matrices)
+     * \brief Helper function to print one matrix (or entries number of matrices)
      * 
-     * \tparam  TD     Data type
+     * \tparam  T     Data type
      * 
-     * \param  title   Title (string) that should be written at the top 
-     * \param  idata   Array of input data of type TD
+     * \param  idata   Array of input data of type T
      * \param  nRows   Number of rows
      * \param  nCols   Number of columns for each row
      * \param  entries Number of data entry   
      * \param  form    Print format for each row 
      */
-    template <typename TD>
-    void printMatrix(TD const **idata,
+    template <typename T>
+    void printMatrix(T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -558,31 +562,31 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD         Data type
+     * \tparam  T         Data type
      * 
      * \param  title       Title (string) that should be written at the top 
-     * \param  idata       Array of input data of type TD
+     * \param  idata       Array of input data of type T
      * \param  nRows       Number of rows
      * \param  nCols       Number of columns (default is 1)
      * \param  printPrefix Prefix and suffix of the print  
      */
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     TD const *idata,
+                     T const *idata,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     std::unique_ptr<TD[]> const &idata,
+                     std::unique_ptr<T[]> const &idata,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     std::vector<TD> const &idata,
+                     std::vector<T> const &idata,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -590,27 +594,27 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  TD    Data type
+     * \tparam  T    Data type
      * 
-     * \param  idata  Array of input data of type TD
+     * \param  idata  Array of input data of type T
      * \param  nRows  Number of rows
      * \param  nCols  Number of columns (default is 1)
      * \param  form   Print format
      */
-    template <typename TD>
-    void printMatrix(TD const *idata,
+    template <typename T>
+    void printMatrix(T const *idata,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
 
-    template <typename TD>
-    void printMatrix(std::unique_ptr<TD[]> const &idata,
+    template <typename T>
+    void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
 
-    template <typename TD>
-    void printMatrix(std::vector<TD> const &idata,
+    template <typename T>
+    void printMatrix(std::vector<T> const &idata,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
@@ -618,73 +622,73 @@ class io
     /*!
      * \brief Helper function to print one element of input data
      * 
-     * \tparam  TD    Data type
+     * \tparam  T    Data type
      * 
-     * \param  idata  Array of input data of type TD
+     * \param  idata  Array of input data of type T
      * \param  form   Print format
      */
-    template <typename TD>
-    void printMatrix(TD const *idata, ioFormat const &form);
+    template <typename T>
+    void printMatrix(T const *idata, ioFormat const &form);
 
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam TD             Data type
+     * \tparam T             Data type
      * 
      * \param  title          Title (string) that should be written at the top 
-     * \param  idata          Array of input data of type TD
+     * \param  idata          Array of input data of type T
      * \param  idataCols      Number of columns of inpput array data (idata)
-     * \param  ifvalue        Array of input value data of type TD
+     * \param  ifvalue        Array of input value data of type T
      * \param  ifvalueCols    Number of columns of inpput value data (ifvalue)
      * \param  nRows          Number of rows
      * \param  printPrefix    Prefix and suffix of the print  
      */
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     TD const *idata,
+                     T const *idata,
                      int const idataCols,
-                     TD const *ifvalue,
+                     T const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     std::unique_ptr<TD[]> const &idata,
+                     std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
+    template <typename T>
     void printMatrix(const char *title,
-                     std::vector<TD> const &idata,
+                     std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
-    void printMatrix(TD const *idata,
-                     int const idataCols, TD *ifvalue,
+    template <typename T>
+    void printMatrix(T const *idata,
+                     int const idataCols, T *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
-    void printMatrix(std::unique_ptr<TD[]> const &idata,
+    template <typename T>
+    void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
-    template <typename TD>
-    void printMatrix(std::vector<TD> const &idata,
+    template <typename T>
+    void printMatrix(std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -692,39 +696,38 @@ class io
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
      * 
-     * \tparam TD             Data type
+     * \tparam T Data type
      * 
-     * \param  title          Title (string) that should be written at the top 
-     * \param  idata          Array of input data of type TD
+     * \param  idata          Array of input data of type T
      * \param  idataCols      Number of columns of inpput array data (idata)
-     * \param  ifvalue        Array of input value data of type TD
+     * \param  ifvalue        Array of input value data of type T
      * \param  ifvalueCols    Number of columns of inpput value data (ifvalue)
      * \param  nRows          Number of rows
      * \param  formD          Print format for input data
      * \param  formF          Print format for input function value 
      */
-    template <typename TD>
-    void printMatrix(TD const *idata,
+    template <typename T>
+    void printMatrix(T const *idata,
                      int const idataCols,
-                     TD const *ifvalue,
+                     T const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
                      ioFormat const &formF);
 
-    template <typename TD>
-    void printMatrix(std::unique_ptr<TD[]> const &idata,
+    template <typename T>
+    void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
                      ioFormat const &formF);
 
-    template <typename TD>
-    void printMatrix(std::vector<TD> const &idata,
+    template <typename T>
+    void printMatrix(std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
@@ -887,10 +890,10 @@ inline std::fstream &io::getFstream() { return fs; }
 
 inline std::string &io::getLine() { return line; }
 
-template <typename TD>
+template <typename T>
 inline void io::setPrecision(std::ostream &os)
 {
-    if (std::numeric_limits<TD>::is_integer)
+    if (std::numeric_limits<T>::is_integer)
     {
         //!Manages the precision (i.e. how many digits are generated)
         os.precision(0);
@@ -898,7 +901,7 @@ inline void io::setPrecision(std::ostream &os)
     else
     {
         //!Manages the precision (i.e. how many digits are generated)
-        os.precision(digits10<TD>());
+        os.precision(digits10<T>());
         os << std::fixed;
     }
 }
@@ -909,11 +912,11 @@ inline void io::setWidth(int Width_)
     FixedWidth = Width_ >= 0;
 }
 
-template <typename TD>
-int io::getWidth(TD *idata, int const nRows, int const nCols, std::ostream &os)
+template <typename T>
+int io::getWidth(T *idata, int const nRows, int const nCols, std::ostream &os)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<TD>(os);
+    setPrecision<T>(os);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -924,11 +927,11 @@ int io::getWidth(TD *idata, int const nRows, int const nCols, std::ostream &os)
     return static_cast<int>(tWidth);
 }
 
-template <typename TD>
-int io::getWidth(std::unique_ptr<TD[]> const &idata, int const nRows, int const nCols, std::ostream &os)
+template <typename T>
+int io::getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &os)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<TD>(os);
+    setPrecision<T>(os);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -939,11 +942,11 @@ int io::getWidth(std::unique_ptr<TD[]> const &idata, int const nRows, int const 
     return static_cast<int>(tWidth);
 }
 
-template <typename TD>
-int io::getWidth(std::vector<TD> const &idata, int const nRows, int const nCols, std::ostream &os)
+template <typename T>
+int io::getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &os)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<TD>(os);
+    setPrecision<T>(os);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -954,11 +957,11 @@ int io::getWidth(std::vector<TD> const &idata, int const nRows, int const nCols,
     return static_cast<int>(tWidth);
 }
 
-template <typename TD>
-int io::getWidth(TD **idata, int const nRows, int const nCols, std::ostream &os)
+template <typename T>
+int io::getWidth(T **idata, int const nRows, int const nCols, std::ostream &os)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<TD>(os);
+    setPrecision<T>(os);
     for (int i = 0; i < nRows; i++)
     {
         for (int j = 0; j < nCols; j++)
@@ -986,8 +989,8 @@ bool io::saveMatrix(TM &MX, TF const &IOfmt)
     UMUQFAILRETURN("This file stream is not open for writing!");
 }
 
-template <typename TD>
-bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const options)
+template <typename T>
+bool io::saveMatrix(T **idata, int const nRows, int const nCols, int const options)
 {
     if (!fs.is_open())
     {
@@ -1001,7 +1004,7 @@ bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const opti
         fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<TD>(fs);
+    setPrecision<T>(fs);
 
     if (!FixedWidth)
     {
@@ -1071,8 +1074,8 @@ bool io::saveMatrix(TD **idata, int const nRows, int const nCols, int const opti
     return false;
 }
 
-template <typename TD>
-bool io::saveMatrix(TD **idata,
+template <typename T>
+bool io::saveMatrix(T **idata,
                     int const nRows,
                     int const *nCols,
                     int const options,
@@ -1084,7 +1087,7 @@ bool io::saveMatrix(TD **idata,
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<TD>(fs);
+    setPrecision<T>(fs);
 
     //Default case, only one set of data
     if (entries == 1)
@@ -1236,7 +1239,7 @@ bool io::saveMatrix(TD **idata,
 
                 for (int i = 0; i < nRows; i++)
                 {
-                    TD *ePointer = idata[i];
+                    T *ePointer = idata[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -1254,7 +1257,7 @@ bool io::saveMatrix(TD **idata,
             {
                 if (options == 1)
                 {
-                    TD *ePointer;
+                    T *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1278,7 +1281,7 @@ bool io::saveMatrix(TD **idata,
                 }
                 else
                 {
-                    TD *ePointer;
+                    T *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1304,7 +1307,7 @@ bool io::saveMatrix(TD **idata,
             {
                 if (options == 1)
                 {
-                    TD *ePointer;
+                    T *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1326,7 +1329,7 @@ bool io::saveMatrix(TD **idata,
                 }
                 else
                 {
-                    TD *ePointer;
+                    T *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1373,7 +1376,7 @@ bool io::saveMatrix(TD **idata,
 
                 for (int i = 0; i < nRows; i++)
                 {
-                    TD *ePointer = idata[i];
+                    T *ePointer = idata[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -1389,7 +1392,7 @@ bool io::saveMatrix(TD **idata,
 
             if (Width)
             {
-                TD *ePointer;
+                T *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -1412,7 +1415,7 @@ bool io::saveMatrix(TD **idata,
             }
             else
             {
-                TD *ePointer;
+                T *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -1437,8 +1440,8 @@ bool io::saveMatrix(TD **idata,
     }
 }
 
-template <typename TD>
-bool io::saveMatrix(TD *idata,
+template <typename T>
+bool io::saveMatrix(T *idata,
                     int const nRows,
                     int const nCols,
                     int const options)
@@ -1455,7 +1458,7 @@ bool io::saveMatrix(TD *idata,
         fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<TD>(fs);
+    setPrecision<T>(fs);
 
     if (!FixedWidth)
     {
@@ -1553,28 +1556,28 @@ bool io::saveMatrix(TD *idata,
     return false;
 }
 
-template <typename TD>
-bool io::saveMatrix(std::unique_ptr<TD[]> const &idata,
+template <typename T>
+bool io::saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const nRows,
                     int const nCols,
                     int const options)
 {
-    return io::saveMatrix<TD>(idata.get(), nRows, nCols, options);
+    return io::saveMatrix<T>(idata.get(), nRows, nCols, options);
 }
 
-template <typename TD>
-bool io::saveMatrix(std::vector<TD> const &idata,
+template <typename T>
+bool io::saveMatrix(std::vector<T> const &idata,
                     int const nRows,
                     int const nCols,
                     int const options)
 {
-    return io::saveMatrix<TD>(idata.data(), nRows, nCols, options);
+    return io::saveMatrix<T>(idata.data(), nRows, nCols, options);
 }
 
-template <typename TD>
-bool io::saveMatrix(TD *idata,
+template <typename T>
+bool io::saveMatrix(T *idata,
                     int const idataCols,
-                    TD *ifvalue,
+                    T *ifvalue,
                     int const ifvalueCols,
                     int const nRows)
 {
@@ -1583,7 +1586,7 @@ bool io::saveMatrix(TD *idata,
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<TD>(fs);
+    setPrecision<T>(fs);
 
     if (!FixedWidth)
     {
@@ -1653,24 +1656,24 @@ bool io::saveMatrix(TD *idata,
     return true;
 }
 
-template <typename TD>
-bool io::saveMatrix(std::unique_ptr<TD[]> const &idata,
+template <typename T>
+bool io::saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const idataCols,
-                    std::unique_ptr<TD[]> const &ifvalue,
+                    std::unique_ptr<T[]> const &ifvalue,
                     int const ifvalueCols,
                     int const nRows)
 {
-    return io::saveMatrix<TD>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows);
+    return io::saveMatrix<T>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows);
 }
 
-template <typename TD>
-bool io::saveMatrix(std::vector<TD> const &idata,
+template <typename T>
+bool io::saveMatrix(std::vector<T> const &idata,
                     int const idataCols,
-                    std::vector<TD> const &ifvalue,
+                    std::vector<T> const &ifvalue,
                     int const ifvalueCols,
                     int const nRows)
 {
-    return io::saveMatrix<TD>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows);
+    return io::saveMatrix<T>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows);
 }
 
 template <typename TM>
@@ -1697,8 +1700,8 @@ bool io::loadMatrix(TM &MX)
     return true;
 }
 
-template <typename TD>
-bool io::loadMatrix(TD **idata, int const nRows, int const nCols, int const options)
+template <typename T>
+bool io::loadMatrix(T **idata, int const nRows, int const nCols, int const options)
 {
     std::string Line;
 
@@ -1744,8 +1747,8 @@ bool io::loadMatrix(TD **idata, int const nRows, int const nCols, int const opti
     return false;
 }
 
-template <typename TD>
-bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const options, int const entries)
+template <typename T>
+bool io::loadMatrix(T **idata, int const nRows, int const *nCols, int const options, int const entries)
 {
     std::string Line;
 
@@ -1797,7 +1800,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
     {
         if (options == 0)
         {
-            TD *ePointer;
+            T *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; i++)
@@ -1823,7 +1826,7 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
         }
         else if (options == 1)
         {
-            TD *ePointer;
+            T *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 if (std::getline(fs, Line))
@@ -1851,8 +1854,8 @@ bool io::loadMatrix(TD **idata, int const nRows, int const *nCols, int const opt
     }
 }
 
-template <typename TD>
-bool io::loadMatrix(TD *idata, int const nRows, int const nCols)
+template <typename T>
+bool io::loadMatrix(T *idata, int const nRows, int const nCols)
 {
     std::string Line;
 
@@ -1895,20 +1898,20 @@ bool io::loadMatrix(TD *idata, int const nRows, int const nCols)
     return false;
 }
 
-template <typename TD>
-bool io::loadMatrix(std::unique_ptr<TD[]> &idata, int const nRows, int const nCols)
+template <typename T>
+bool io::loadMatrix(std::unique_ptr<T[]> &idata, int const nRows, int const nCols)
 {
-    return io::loadMatrix<TD>(idata.get(), nRows, nCols);
+    return io::loadMatrix<T>(idata.get(), nRows, nCols);
 }
 
-template <typename TD>
-bool io::loadMatrix(std::vector<TD> &idata, int const nRows, int const nCols)
+template <typename T>
+bool io::loadMatrix(std::vector<T> &idata, int const nRows, int const nCols)
 {
-    return io::loadMatrix<TD>(idata.data(), nRows, nCols);
+    return io::loadMatrix<T>(idata.data(), nRows, nCols);
 }
 
-template <typename TD>
-bool io::loadMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifvalueCols, int const nRows)
+template <typename T>
+bool io::loadMatrix(T *idata, int const idataCols, T *ifvalue, int const ifvalueCols, int const nRows)
 {
     std::string Line;
 
@@ -1936,29 +1939,29 @@ bool io::loadMatrix(TD *idata, int const idataCols, TD *ifvalue, int const ifval
     return true;
 }
 
-template <typename TD>
-bool io::loadMatrix(std::unique_ptr<TD[]> &idata,
+template <typename T>
+bool io::loadMatrix(std::unique_ptr<T[]> &idata,
                     int const idataCols,
-                    std::unique_ptr<TD[]> &ifvalue,
+                    std::unique_ptr<T[]> &ifvalue,
                     int const ifvalueCols,
                     int const nRows)
 {
-    return io::loadMatrix<TD>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows);
+    return io::loadMatrix<T>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows);
 }
 
-template <typename TD>
-bool io::loadMatrix(std::vector<TD> &idata,
+template <typename T>
+bool io::loadMatrix(std::vector<T> &idata,
                     int const idataCols,
-                    std::vector<TD> &ifvalue,
+                    std::vector<T> &ifvalue,
                     int const ifvalueCols,
                     int const nRows)
 {
-    return io::loadMatrix<TD>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows);
+    return io::loadMatrix<T>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows);
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     TD const **idata,
+                     T const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -1973,7 +1976,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2024,22 +2027,22 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename TD>
-void io::printMatrix(TD const **idata,
+template <typename T>
+void io::printMatrix(T const **idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>("", idata, nRows, nCols, printPrefix);
+    io::printMatrix<T>("", idata, nRows, nCols, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(TD const **idata,
+template <typename T>
+void io::printMatrix(T const **idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
 {
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2089,9 +2092,9 @@ void io::printMatrix(TD const **idata,
     }
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     TD const **idata,
+                     T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2107,7 +2110,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     //DEfault case one set of data
     if (entries == 1)
@@ -2165,7 +2168,7 @@ void io::printMatrix(const char *title,
         {
             for (int i = 0; i < nRows; i++)
             {
-                TD *ePointer = idata[i];
+                T *ePointer = idata[i];
                 for (int e = 0; e < entries; e++)
                 {
                     for (int j = 0; j < nCols[i]; j++)
@@ -2181,7 +2184,7 @@ void io::printMatrix(const char *title,
 
         if (Width)
         {
-            TD *ePointer;
+            T *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; ++i)
@@ -2204,7 +2207,7 @@ void io::printMatrix(const char *title,
         }
         else
         {
-            TD *ePointer;
+            T *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; ++i)
@@ -2227,18 +2230,18 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename TD>
-void io::printMatrix(TD const **idata,
+template <typename T>
+void io::printMatrix(T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>("", idata, nRows, nCols, entries, printPrefix);
+    io::printMatrix<T>("", idata, nRows, nCols, entries, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(TD const **idata,
+template <typename T>
+void io::printMatrix(T const **idata,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2246,11 +2249,11 @@ void io::printMatrix(TD const **idata,
 {
     if (form.size() != static_cast<decltype(form.size())>(nRows))
     {
-        io::printMatrix<TD>(idata, nRows, nCols, entries);
+        io::printMatrix<T>(idata, nRows, nCols, entries);
     }
     else
     {
-        setPrecision<TD>(std::cout);
+        setPrecision<T>(std::cout);
 
         //Default case
         if (entries == 1)
@@ -2308,7 +2311,7 @@ void io::printMatrix(TD const **idata,
             {
                 for (int i = 0; i < nRows; i++)
                 {
-                    TD *ePointer = idata[i];
+                    T *ePointer = idata[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -2324,7 +2327,7 @@ void io::printMatrix(TD const **idata,
 
             if (Width)
             {
-                TD *ePointer;
+                T *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -2347,7 +2350,7 @@ void io::printMatrix(TD const **idata,
             }
             else
             {
-                TD *ePointer;
+                T *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -2370,9 +2373,9 @@ void io::printMatrix(TD const **idata,
     }
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     TD const *idata,
+                     T const *idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2388,7 +2391,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2465,39 +2468,39 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     std::unique_ptr<TD[]> const &idata,
+                     std::unique_ptr<T[]> const &idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>(title, idata.get(), nRows, nCols, printPrefix);
+    io::printMatrix<T>(title, idata.get(), nRows, nCols, printPrefix);
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     std::vector<TD> const &idata,
+                     std::vector<T> const &idata,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>(title, idata.data(), nRows, nCols, printPrefix);
+    io::printMatrix<T>(title, idata.data(), nRows, nCols, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(TD const *idata,
+template <typename T>
+void io::printMatrix(T const *idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
 {
     if (form.coeffSeparator == "NO")
     {
-        io::printMatrix<TD>("", idata, nRows, nCols);
+        io::printMatrix<T>("", idata, nRows, nCols);
     }
     else
     {
-        setPrecision<TD>(std::cout);
+        setPrecision<T>(std::cout);
 
         if (!FixedWidth)
         {
@@ -2574,28 +2577,28 @@ void io::printMatrix(TD const *idata,
     }
 }
 
-template <typename TD>
-void io::printMatrix(std::unique_ptr<TD[]> const &idata,
+template <typename T>
+void io::printMatrix(std::unique_ptr<T[]> const &idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
 {
-    io::printMatrix<TD>(idata.get(), nRows, nCols, form);
+    io::printMatrix<T>(idata.get(), nRows, nCols, form);
 }
 
-template <typename TD>
-void io::printMatrix(std::vector<TD> const &idata,
+template <typename T>
+void io::printMatrix(std::vector<T> const &idata,
                      int const nRows,
                      int const nCols,
                      ioFormat const &form)
 {
-    io::printMatrix<TD>(idata.data(), nRows, nCols, form);
+    io::printMatrix<T>(idata.data(), nRows, nCols, form);
 }
 
-template <typename TD>
-void io::printMatrix(TD const *idata, ioFormat const &form)
+template <typename T>
+void io::printMatrix(T const *idata, ioFormat const &form)
 {
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2615,11 +2618,11 @@ void io::printMatrix(TD const *idata, ioFormat const &form)
     std::cout << form.rowSeparator;
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     TD const *idata,
+                     T const *idata,
                      int const idataCols,
-                     TD const *ifvalue,
+                     T const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
@@ -2635,7 +2638,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2702,72 +2705,72 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     std::unique_ptr<TD[]> const &idata,
+                     std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>(title, idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, printPrefix);
+    io::printMatrix<T>(title, idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, printPrefix);
 }
 
-template <typename TD>
+template <typename T>
 void io::printMatrix(const char *title,
-                     std::vector<TD> const &idata,
+                     std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>(title, idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, printPrefix);
+    io::printMatrix<T>(title, idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(TD const *idata,
-                     int const idataCols, TD *ifvalue,
+template <typename T>
+void io::printMatrix(T const *idata,
+                     int const idataCols, T *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>("", idata, idataCols, ifvalue, ifvalueCols, nRows, printPrefix);
+    io::printMatrix<T>("", idata, idataCols, ifvalue, ifvalueCols, nRows, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(std::unique_ptr<TD[]> const &idata,
+template <typename T>
+void io::printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>("", idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, printPrefix);
+    io::printMatrix<T>("", idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(std::vector<TD> const &idata,
+template <typename T>
+void io::printMatrix(std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<TD>("", idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, printPrefix);
+    io::printMatrix<T>("", idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, printPrefix);
 }
 
-template <typename TD>
-void io::printMatrix(TD const *idata,
+template <typename T>
+void io::printMatrix(T const *idata,
                      int const idataCols,
-                     TD const *ifvalue,
+                     T const *ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
                      ioFormat const &formF)
 {
-    setPrecision<TD>(std::cout);
+    setPrecision<T>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2839,28 +2842,28 @@ void io::printMatrix(TD const *idata,
     }
 }
 
-template <typename TD>
-void io::printMatrix(std::unique_ptr<TD[]> const &idata,
+template <typename T>
+void io::printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
-                     std::unique_ptr<TD[]> const &ifvalue,
+                     std::unique_ptr<T[]> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
                      ioFormat const &formF)
 {
-    io::printMatrix<TD>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, formD, formF);
+    io::printMatrix<T>(idata.get(), idataCols, ifvalue.get(), ifvalueCols, nRows, formD, formF);
 }
 
-template <typename TD>
-void io::printMatrix(std::vector<TD> const &idata,
+template <typename T>
+void io::printMatrix(std::vector<T> const &idata,
                      int const idataCols,
-                     std::vector<TD> const &ifvalue,
+                     std::vector<T> const &ifvalue,
                      int const ifvalueCols,
                      int const nRows,
                      ioFormat const &formD,
                      ioFormat const &formF)
 {
-    io::printMatrix<TD>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, formD, formF);
+    io::printMatrix<T>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows, formD, formF);
 }
 
 } // namespace umuq
