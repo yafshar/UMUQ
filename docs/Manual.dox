@@ -1,0 +1,12 @@
+
+// This file strutures pages and modules into a convenient hierarchical structure.
+
+namespace umuq {
+
+/** \page UserManual_CustomizingiUMUQ Extending/Customizing umuq
+  %UMUQ can be extended in several ways, for instance, by defining global methods, by inserting custom methods within %UMUQ's classes through the.
+*/
+
+/** \internal \brief Namespace containing low-level routines from the %UMUQ library. */
+namespace internal {}
+}
