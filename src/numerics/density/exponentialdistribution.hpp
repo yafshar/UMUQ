@@ -3,14 +3,13 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
+
 inline namespace density
 {
 
 /*! \class exponentialDistribution
+ * \ingroup Density_Module
+ * 
  * \brief The exponential distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 

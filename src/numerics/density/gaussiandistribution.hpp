@@ -3,14 +3,13 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
+
 inline namespace density
 {
 
 /*! \class gaussianDistribution
+ * \ingroup Density_Module
+ * 
  * \brief The Gaussian distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a Gaussian 
