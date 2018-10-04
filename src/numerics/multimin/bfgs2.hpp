@@ -5,18 +5,12 @@
 
 namespace umuq
 {
-/*! \namespace multimin
- * \brief Namespace containing all the functions for Multidimensional Minimization Module
- * 
- * It includes all the functionalities for finding minima of arbitrary multidimensional 
- * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests.
- */
+
 inline namespace multimin
 {
 
 /*! \class bfgs2
- *  \ingroup multimin_Module
+ * \ingroup Multimin_Module
  * 
  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
  * 

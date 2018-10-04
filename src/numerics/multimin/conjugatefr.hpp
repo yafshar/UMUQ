@@ -3,18 +3,12 @@
 
 namespace umuq
 {
-/*! \namespace multimin
- * \brief Namespace containing all the functions for Multidimensional Minimization Module
- * 
- * It includes all the functionalities for finding minima of arbitrary multidimensional 
- * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests.
- */
+
 inline namespace multimin
 {
 
 /*! \class conjugateFr
- *  \ingroup multimin Module
+ * \ingroup Multimin_Module
  * 
  * \brief Conjugate gradient Fletcher-Reeve algorithm
  * 

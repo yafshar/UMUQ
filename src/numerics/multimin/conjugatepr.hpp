@@ -3,20 +3,15 @@
 
 namespace umuq
 {
-/*! \namespace multimin
- * \brief Namespace containing all the functions for Multidimensional Minimization Module
- * 
- * It includes all the functionalities for finding minima of arbitrary multidimensional 
- * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests.
- */
+
 inline namespace multimin
 {
 
 /*! \class conjugatePr
- *  \ingroup multimin_Module
+ * \ingroup Multimin_Module
  * 
- * \brief Conjugate Polak-Ribiere gradient algorithm
+ * \brief Conjugate Polak-Ribiere gradient algorithm.
+ * 
  * It differs from the Fletcher-Reeves method, only in the choice of the coefficient \f$ \beta \f$.
  * It works well when the evaluation point is close enough to the minimum of the objective function 
  * that it is well approximated by a quadratic hypersurface. 
