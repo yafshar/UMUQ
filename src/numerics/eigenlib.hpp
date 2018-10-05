@@ -16,7 +16,7 @@ namespace umuq
  * \tparam _Options  optional parameter, a combination of either 
  *                   - \b Eigen::RowMajor 
  *                   - \b Eigen::ColMajor, <br> 
- *                     and one of either <br>
+ *                     or one of either <br>
  *                   - \b Eigen::AutoAlign, 
  *                   - \b Eigen::DontAlign.<br>
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
@@ -40,13 +40,13 @@ namespace umuq
  * 
  * Output: 
  * 
- * \f[
+ * \f$
  * \begin{matrix}
  * 0 & 3 & 6 & ~9 \\ 
  * 1 & 4 & 7 & 10 \\ 
  * 2 & 5 & 8 & 11
  * \end{matrix}
- * \f]
+ * \f$
  * 
  * \code 
  * using EMd = Eigen::Matrix<double, 3, 4>;
@@ -56,13 +56,13 @@ namespace umuq
  * 
  * Output: 
  * 
- * \f[
+ * \f$
  * \begin{matrix}
  * 0 & 3 & 6 & ~9 \\ 
  * 1 & 4 & 7 & 10 \\ 
  * 2 & 5 & 8 & 11
  * \end{matrix}
- * \f]
+ * \f$
  *
  */
 template <class T, int _Options = Eigen::RowMajor>
