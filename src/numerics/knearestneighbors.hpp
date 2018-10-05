@@ -20,23 +20,23 @@ namespace umuq
  * 
  * \tparam T         data type
  * \tparam Distance  Distance type for computing the distances to the nearest neighbors
- *                   (Default is a specialized class \b kNearestNeighbor<T> with L2 distance)
+ *                   (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)
  * 
- * \b EUCLIDEAN      Squared Euclidean distance functor, optimized version 
- * \b L2             Squared Euclidean distance functor, optimized version 
- * \b MANHATTAN      Manhattan distance functor, optimized version
- * \b L1             Manhattan distance functor, optimized version
- * \b L2_SIMPLE      Squared Euclidean distance functor
- * \b MINKOWSKI      The Minkowsky (L_p) distance between two vectors.
- * \b MAX
- * \b HIST_INTERSECT
- * \b HELLINGER      The Hellinger distance, quantify the similarity between two probability distributions.
- * \b CHI_SQUARE     The distance between two histograms
- * \b KULLBACK_LEIBLER
- * \b HAMMING
- * \b HAMMING_LUT    Hamming distance functor - counts the bit differences between two strings - 
+ * - \b EUCLIDEAN      Squared Euclidean distance functor, optimized version 
+ * - \b L2             Squared Euclidean distance functor, optimized version 
+ * - \b MANHATTAN      Manhattan distance functor, optimized version
+ * - \b L1             Manhattan distance functor, optimized version
+ * - \b L2_SIMPLE      Squared Euclidean distance functor
+ * - \b MINKOWSKI      The Minkowsky (L_p) distance between two vectors.
+ * - \b MAX
+ * - \b HIST_INTERSECT
+ * - \b HELLINGER      The Hellinger distance, quantify the similarity between two probability distributions.
+ * - \b CHI_SQUARE     The distance between two histograms
+ * - \b KULLBACK_LEIBLER
+ * - \b HAMMING
+ * - \b HAMMING_LUT    Hamming distance functor - counts the bit differences between two strings - 
  *                   useful for the Brief descriptor bit count of A exclusive XOR'ed with B
- * \b HAMMING_POPCNT Hamming distance functor (pop count between two binary vectors, i.e. xor them 
+ * - \b HAMMING_POPCNT Hamming distance functor (pop count between two binary vectors, i.e. xor them 
  *                   and count the number of bits set)
  */
 template <typename T, class Distance>
@@ -115,7 +115,7 @@ class kNearestNeighbor
      * 
      * The function returns a pointer of size(nPoints * (nN+1)) 
      * all points neighbors.
-     * The retorned pointer looks like below:
+     * The returned pointer looks like below:
      *    0                1      .     nN
      *   ---------------------------------
      *  | 0               0_1     .     0_nN
@@ -431,8 +431,11 @@ inline int kNearestNeighbor<T, Distance>::numQuerydata() const
     return qrows;
 }
 
-// TODO : Somehow the specialized template did not work.
-// FIXME: to the correct templated version
+/*!
+ * \todo
+ * Somehow the specialized template did not work.
+ * FIXME: to the correct templated version
+ */
 
 /*! \class L2NearestNeighbor
  * \ingroup Numerics_Module

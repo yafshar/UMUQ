@@ -14,7 +14,6 @@ namespace umuq
  * This is the numerics module of UMUQ providing all necessary classes of numerical computation.
  */
 
-
 /*! \class dcpse
  * \ingroup Numerics_Module
  * 
@@ -24,7 +23,10 @@ namespace umuq
  * 
  * \tparam T Data type
  */
-// TODO : Currently the class works only for one term and it should be extended to multi terms
+/*!
+ * \todo
+ * Currently the class works only for one term and it should be extended to multi terms
+ */
 template <typename T>
 class dcpse
 {
@@ -423,7 +425,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
             }
         }
 
-        // TODO : check this again
+        /*!
+         * \todo
+         * Check this again
+         */
         /* 
          * When applicable, and for stability reasons, set the zeroth moment to 5
          */
@@ -683,7 +688,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                 SV = svd.solve(RHSB);
             }
 
-            // TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+            /*!
+             * \todo
+             * Correct IndexId in the case of SVD. Right now, this is the best I can do
+             */
             /*
              * Later I should check on SVD solution and to find out which columns are the
              * Most important one, then I can correct the IndexId order
@@ -928,7 +936,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
             }
         }
 
-        // TODO : check this again
+        /*!
+         * \todo
+         * Check this again
+         */
         /* 
          * At off-particle locations it should be always zero to obtain kernels
          * with a vanishing zeroth-order moment that can be consistently evaluated
@@ -1176,7 +1187,10 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                 SV = svd.solve(RHSB);
             }
 
-            // TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+            /*!
+             * \todo
+             * Correct IndexId in the case of SVD. Right now, this is the best I can do
+             */
             /*
              * Later I should check on SVD solution and to find out which columns are the
              * Most important one, then I can correct the IndexId order
@@ -1638,7 +1652,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                 SV = svd.solve(RHSB);
             }
 
-            // TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+            /*!
+             * \todo
+             * Correct IndexId in the case of SVD. Right now, this is the best I can do
+             */
             /*
              * Later I should check on SVD solution and to find out which columns are the
              * Most important one, then I can correct the IndexId order
@@ -2217,7 +2234,10 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                 SV = svd.solve(RHSB);
             }
 
-            // TODO: Correct IndexId in the case of SVD. Right now, this is the best I can do
+            /*!
+             * \todo
+             * Correct IndexId in the case of SVD. Right now, this is the best I can do
+             */
             /*
              * Later I should check on SVD solution and to find out which columns are the
              * Most important one, then I can correct the IndexId order

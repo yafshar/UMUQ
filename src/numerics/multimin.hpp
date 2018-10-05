@@ -3,7 +3,7 @@
 
 /*!
  * \file numerics/multimin.hpp
- * \ingroup Numerics_Module
+ * \ingroup Multimin_Module
  * 
  * \brief Implementation of the Multidimensional Minimization.
  *

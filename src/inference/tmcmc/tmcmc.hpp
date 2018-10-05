@@ -984,7 +984,7 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
       workInformation[2] = step;
 
       /*!
-       * TODO:
+       * \todo
        * Check if the fitting function is in the log mod or not!
        */
       //! Call the fitting function

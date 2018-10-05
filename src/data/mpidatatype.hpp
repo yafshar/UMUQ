@@ -15,20 +15,21 @@ constexpr MPI_Datatype MPIDatatype = MPI_DATATYPE_NULL; // variable template
 /*!
  * \brief Explicit instantiation for:
  * 
- * \b char
- * \b signed short
- * \b int
- * \b signed long
- * \b signed long long
- * \b float
- * \b double
- * \b long double
- * \b unsigned char
- * \b unsigned short
- * \b unsigned int
- * \b unsigned long
- * 
- * TODO: Complete the list
+ * - \b char
+ * - \b signed short
+ * - \b int
+ * - \b signed long
+ * - \b signed long long
+ * - \b float
+ * - \b double
+ * - \b long double
+ * - \b unsigned char
+ * - \b unsigned short
+ * - \b unsigned int
+ * - \b unsigned long
+ *
+ * \todo
+ * Complete the list.
  * Any valid MPI data type value must have a corresponding explicit template instantiation below.
  */
 template <>

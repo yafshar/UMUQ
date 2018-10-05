@@ -12,21 +12,21 @@ namespace umuq
  * \brief stats is a class which includes some functionality for statistics of the input data
  *
  * It includes:
- * \b minelement         Finds the smallest element in the array of data
- * \b maxelement         Finds the greatest element in the array of data
- * \b minelement_index   Finds the position of the smallest element in the array of data 
- * \b maxelement_index   Finds the position of the greatest element in the array of data 
- * \b sum                Computes the sum of the elements in the array of data
- * \b mean               Computes the mean of the elements in the array of data
- * \b median             Computes the median of the elements in the array of data
- * \b medianAbs          Computes the median absolute deviation (MAD) of the elements in the array of data
- * \b stddev             Computes the standard deviation of the elements in the array of data
- * \b coefvar            Computes the coefficient of variation (CV)
- * \b minmaxNormal       Scales the numeric data using the MinMax normalization method
- * \b zscoreNormal       Scales the numeric data using the Z-score normalization method
- * \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
- * \b covariance         Compute the covariance
- * \b unique             Eliminates all but the first element from every consecutive sample points,
+ * - \b minelement         Finds the smallest element in the array of data
+ * - \b maxelement         Finds the greatest element in the array of data
+ * - \b minelement_index   Finds the position of the smallest element in the array of data 
+ * - \b maxelement_index   Finds the position of the greatest element in the array of data 
+ * - \b sum                Computes the sum of the elements in the array of data
+ * - \b mean               Computes the mean of the elements in the array of data
+ * - \b median             Computes the median of the elements in the array of data
+ * - \b medianAbs          Computes the median absolute deviation (MAD) of the elements in the array of data
+ * - \b stddev             Computes the standard deviation of the elements in the array of data
+ * - \b coefvar            Computes the coefficient of variation (CV)
+ * - \b minmaxNormal       Scales the numeric data using the MinMax normalization method
+ * - \b zscoreNormal       Scales the numeric data using the Z-score normalization method
+ * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
+ * - \b covariance         Compute the covariance
+ * - \b unique             Eliminates all but the first element from every consecutive sample points,
  *                       Find the unique n-dimensions sample points in an array of nRows * nCols data
  */
 struct stats
@@ -838,7 +838,10 @@ inline void stats::robustzscoreNormal(std::vector<T> &idata)
 template <typename T, typename TOut>
 TOut stats::covariance(T const *idata, T const *jdata, int const nSize, T const iMean, T const jMean)
 {
-    //TODO If the data size is too big, maybe we should force long double
+    /*!
+     * \todo
+     * If the data size is too big, maybe we should force long double
+     */
     TOut Covariance(0);
     for (int i = 0; i < nSize; i++)
     {

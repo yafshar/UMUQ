@@ -6,9 +6,9 @@
  * 
  * \brief Given a version number MAJOR.MINOR.PATCH, increment the:
  * 
- * \b MAJOR version when you make incompatible changes,
- * \b MINOR version when you add functionality in a backwards-compatible manner, and
- * \b PATCH version when you make backwards-compatible bug fixes. 
+ * - \b MAJOR version when you make incompatible changes,
+ * - \b MINOR version when you add functionality in a backwards-compatible manner, and
+ * - \b PATCH version when you make backwards-compatible bug fixes. 
  * 
  * Ref:
  * https://semver.org

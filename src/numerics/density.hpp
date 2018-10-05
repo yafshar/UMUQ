@@ -6,15 +6,15 @@
  * \brief Implementation of the collections of density functions (probability density (PDF))
  * 
  * This module includes:
- * \b densityFunction                  - A base density function or a probability density (PDF) function class  \sa densityFunction
+ * - \b densityFunction                  - A base density function or a probability density (PDF) function class  \sa densityFunction
  * 
- * \b uniformDistribution              - Flat (Uniform) distribution function
- * \b gaussianDistribution             - The Gaussian distribution
- * \b multivariategaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariategaussianDistribution
- * \b multivariateGaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariateGaussianDistribution
- * \b exponentialDistribution          - The exponential distribution \sa exponentialDistribution
- * \b gammaDistribution                - The Gamma distribution \sa gammaDistribution
- * \b multinomialDistribution          - The multinomial distribution \sa multinomialDistribution
+ * - \b uniformDistribution              - Flat (Uniform) distribution function
+ * - \b gaussianDistribution             - The Gaussian distribution
+ * - \b multivariategaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariategaussianDistribution
+ * - \b multivariateGaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariateGaussianDistribution
+ * - \b exponentialDistribution          - The exponential distribution \sa exponentialDistribution
+ * - \b gammaDistribution                - The Gamma distribution \sa gammaDistribution
+ * - \b multinomialDistribution          - The multinomial distribution \sa multinomialDistribution
  */
 
 

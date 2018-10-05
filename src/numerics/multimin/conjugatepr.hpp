@@ -254,7 +254,10 @@ bool conjugatePr<T>::iterate()
 
 #ifdef DEBUG
     std::cout << "updated conjugate directions" << std::endl;
-    //TODO print vector p and g
+    /*!
+     * \todo 
+     * print vector p and g
+     */
 #endif
 
     return true;

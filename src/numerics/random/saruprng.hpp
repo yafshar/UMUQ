@@ -373,7 +373,9 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2)
 
 /* 
  * 3 seeds. We have to premix the seeds before dropping to 64 bits.
- * TODO: this may be better optimized in a future version 
+ * 
+ * \todo
+ * this may be better optimized in a future version 
  */
 inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
 {

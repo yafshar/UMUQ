@@ -26,11 +26,11 @@ namespace umuq
  * The _Options template parameter is optional
  * 
  * \tparam _Options  A combination of either 
- *                   \b Eigen::RowMajor or 
- *                   \b Eigen::ColMajor, 
+ *                   - \b Eigen::RowMajor or 
+ *                   - \b Eigen::ColMajor, 
  *                     and of either
- *                   \b Eigen::AutoAlign or 
- *                   \b Eigen::DontAlign.
+ *                   - \b Eigen::AutoAlign or 
+ *                   - \b Eigen::DontAlign.
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  */
@@ -52,7 +52,7 @@ using EMatrixXd = EMatrixX<double>;
  * 
  * \tparam T  Data type
  * 
- * \b EMatrixn : E + Matrix + n=(2, 3, 4, 5, or 6)
+ * - \b EMatrixn : E + Matrix + n=(2, 3, 4, 5, or 6)
  * E is the abbreviation for Eigen followed by Matrix and any number of (2, 3, 4, 5, or 6) 
  * A rectangular matrix of T types of n*n=(2*2, 3*3, 4*4, 5*5, or 6*6) size.
  * 
@@ -60,11 +60,11 @@ using EMatrixXd = EMatrixX<double>;
  * EMatrix2<double> is a Eigen::Matrix of doubles with size of 2*2.
  * EMatrix5<int>    is a Eigen::Matrix of integers with size of 5*5.
  * 
- * \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X
+ * - \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X
  * E followed by Matrix and any number of n=(2, 3, 4, 5, or 6) and X
  * A rectangular matrix of type T with row size of n=(2, 3, 4, 5, or 6) and dynamic size columns
  * 
- * \b EMatrixXn : E + Matrix + X + n=(2, 3, 4, 5, or 6)
+ * - \b EMatrixXn : E + Matrix + X + n=(2, 3, 4, 5, or 6)
  * E followed by Matrix and X and any number of (2, 3, 4, 5, or 6)
  * A rectangular matrix of type T with dynamic size rows and column numbers of n=(2, 3, 4, 5, or 6)
  * 
@@ -152,7 +152,7 @@ using ERowVectorXd = ERowVectorX<double>;
  * 
  * \tparam T  Data type
  * 
- * \b ERowVectorn : E + RowVector + n=(2, 3, 4, 5, or 6)
+ * - \b ERowVectorn : E + RowVector + n=(2, 3, 4, 5, or 6)
  * E followed by RowVector is a row-vector 
  * 
  * For example:
@@ -209,7 +209,7 @@ using EVectorXd = EVectorX<double>;
  * \tparam T Data type
  * 
  * 
- * \b EVectorn : E + Vector + n=(2, 3, 4, 5, or 6)
+ * - \b EVectorn : E + Vector + n=(2, 3, 4, 5, or 6)
  * E followed by Vector is a column-vector
  * 
  * For example:

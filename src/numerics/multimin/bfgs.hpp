@@ -325,7 +325,10 @@ bool bfgs<T>::iterate()
 
 #ifdef DEBUG
     std::cout << "updated directions" << std::endl;
-    //TODO print vector p and g
+    /*!
+     * \todo
+     * print vector p and g
+     */
 #endif
 
     return true;

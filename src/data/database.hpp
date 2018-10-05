@@ -39,11 +39,22 @@ void updateDataTask(long long const other, T const *SamplePoints, T const *FunVa
 template <typename T>
 using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *, int const *, int const *);
 
-//! True if updateDataTask has been registered, and false otherwise (logical).
+/*!
+ * \ingroup TMCMC_Module
+ * 
+ * \brief It is True if updateDataTask has been registered, and false otherwise (logical).
+ * 
+ * \tparam T 
+ */
 template <typename T>
 static bool isUpdateTaskRegistered = false;
 
-//! Mutex object
+/*!
+ * \ingroup TMCMC_Module
+ * 
+ * \brief Mutex object
+ * 
+ */
 static std::mutex updateTask_m;
 
 } // namespace tmcmc

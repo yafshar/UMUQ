@@ -109,7 +109,7 @@ namespace umuq
 inline namespace matplotlib_223
 {
 
-/*!
+/*! \fn PyArray
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to Python array
@@ -126,7 +126,7 @@ PyObject *PyArray(std::vector<T> const &idata);
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata);
 
-/*!
+/*! \fn PyArray
  * \ingroup IO_Module
  * 
  * \brief Converts a data idata to Python array of size nSize
@@ -144,7 +144,7 @@ PyObject *PyArray(T const idata, int const nSize);
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const idata, int const nSize);
 
-/*!
+/*! \fn PyArray
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to Python array
@@ -163,7 +163,7 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride = 1)
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
 
-/*!
+/*! \fn Py2DArray
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to the Python 2D array 
@@ -185,7 +185,7 @@ PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nD
 template <typename T>
 PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
 
-/*!
+/*! \var static std::string backend
  * \ingroup IO_Module
  * 
  * \verbatim
@@ -202,7 +202,7 @@ PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
  */
 static std::string backend;
 
-/*!
+/*! \fn setbackend
  * \ingroup IO_Module
  * 
  * \brief Set the “backend” to any of user interface backends
@@ -252,7 +252,7 @@ inline void setbackend(std::string const &WXbackends)
     backend = WXbackends;
 }
 
-/*!
+/*! \var constexpr char const DefaultColors
  * \ingroup IO_Module
  * 
  * \brief The following color abbreviations are supported
@@ -272,7 +272,12 @@ inline void setbackend(std::string const &WXbackends)
  */
 constexpr char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
 
-//! Size of the color abbreviations maps
+/*! \var int const DefaultColorsSize
+ * \ingroup IO_Module
+ * 
+ * \brief Size of the color abbreviations maps
+ * 
+ */
 int const DefaultColorsSize = 8;
 
 // colors = {u'c': (0.0, 0.75, 0.75), u'b': (0.0, 0.0, 1.0), u'w': (1.0, 1.0, 1.0), u'g': (0.0, 0.5, 0.0), u'y': (0.75, 0.75, 0), u'k': (0.0, 0.0, 0.0), u'r': (1.0, 0.0, 0.0), u'm': (0.75, 0, 0.75)}
@@ -284,38 +289,38 @@ int const DefaultColorsSize = 8;
  *
  * It contains below functions that allow you to generate many kinds of plots quickly:
  * 
- * \b annotate      Annotate the point xy with text s
- * \b axis          Convenience method to get or set axis properties
- * \b cla           Clear the current axis
- * \b clf           Clear the current figure
- * \b close         Close a figure window
- * \b contour       Plot contours
- * \b contourf      Plot filled contours
- * \b draw          Redraw the current figure
- * \b errorbar      Plot y versus x as lines and/or markers with attached errorbars
- * \b figure        Creates a new figure
- * \b fill_between  Fill the area between two horizontal curves
- * \b grid          Turn the axes grids on or off
- * \b hist          Plot a histogram
- * \b ion           Turn interactive mode on
- * \b legend        Places a legend on the axes
- * \b loglog        Make a plot with log scaling on both the x and y axis
- * \b pause         Pause for interval seconds
- * \b plot          Plot y versus x as lines and/or markers
- * \b savefig       Save the current figure
- * \b scatter       A scatter plot of y vs x with varying marker size and/or color
- * \b semilogx      Make a plot with log scaling on the x axis
- * \b semilogy      Make a plot with log scaling on the y axis
- * \b show          Display a figure
- * \b stem          Create a stem plot
- * \b subplot       Return a subplot axes at the given grid position
- * \b title         Set a title of the current axes
- * \b tight_layout  Automatically adjust subplot parameters to give specified padding
- * \b xlim          Set/Get the x limits of the current axes
- * \b xlabel        Set the x-axis label of the current axes
- * \b xkcd          Turns on xkcd sketch-style drawing mode
- * \b ylim          Set/Get the y limits of the current axes
- * \b ylabel        Set the y-axis label of the current axes
+ * - \b annotate      Annotate the point xy with text s
+ * - \b axis          Convenience method to get or set axis properties
+ * - \b cla           Clear the current axis
+ * - \b clf           Clear the current figure
+ * - \b close         Close a figure window
+ * - \b contour       Plot contours
+ * - \b contourf      Plot filled contours
+ * - \b draw          Redraw the current figure
+ * - \b errorbar      Plot y versus x as lines and/or markers with attached errorbars
+ * - \b figure        Creates a new figure
+ * - \b fill_between  Fill the area between two horizontal curves
+ * - \b grid          Turn the axes grids on or off
+ * - \b hist          Plot a histogram
+ * - \b ion           Turn interactive mode on
+ * - \b legend        Places a legend on the axes
+ * - \b loglog        Make a plot with log scaling on both the x and y axis
+ * - \b pause         Pause for interval seconds
+ * - \b plot          Plot y versus x as lines and/or markers
+ * - \b savefig       Save the current figure
+ * - \b scatter       A scatter plot of y vs x with varying marker size and/or color
+ * - \b semilogx      Make a plot with log scaling on the x axis
+ * - \b semilogy      Make a plot with log scaling on the y axis
+ * - \b show          Display a figure
+ * - \b stem          Create a stem plot
+ * - \b subplot       Return a subplot axes at the given grid position
+ * - \b title         Set a title of the current axes
+ * - \b tight_layout  Automatically adjust subplot parameters to give specified padding
+ * - \b xlim          Set/Get the x limits of the current axes
+ * - \b xlabel        Set the x-axis label of the current axes
+ * - \b xkcd          Turns on xkcd sketch-style drawing mode
+ * - \b ylim          Set/Get the y limits of the current axes
+ * - \b ylabel        Set the y-axis label of the current axes
  * 
  * 
  * The following format string characters are accepted to control the line style or marker:
@@ -1340,8 +1345,8 @@ class pyplot
     /*!
      * \brief Automatically adjust subplot parameters to give specified padding
      * 
-     * TOCHECK:
-     * NOTE: We should call this automatically for every plot!
+     * \todo
+     * We should call this automatically for every plot!
      * 
      */
     inline bool tight_layout();
@@ -1412,10 +1417,17 @@ class pyplot
     bool ylabel(std::string const &label);
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Make construct noncopyable
+     * 
+     */
     pyplot(pyplot const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Make it not assignable
+     * 
+     * \returns pyplot& 
+     */
     pyplot &operator=(pyplot const &) = delete;
 
   private:
@@ -1466,10 +1478,16 @@ class pyplot
         matplotlib &operator=(matplotlib const &) = delete;
 
       public:
-        //!
+        /*!
+         * \brief Backend object
+         * 
+         */
         PyObject *pyget_backend;
 
-        //! Tuple object
+        /*!
+         * \brief Tuple object
+         * 
+         */
         PyObject *pyEmpty;
 
       public:

@@ -1678,7 +1678,10 @@ bool differentiableFunctionMinimizer<T>::minimize(T const *X, T const *P,
       gnorm1 = std::sqrt(s);
 
 #ifdef DEBUG
-      //TODO Use IO class to print out p, gradient, pg for debugging purpose
+      /*!
+       * \todo
+       * Use IO class to print out p, gradient, pg for debugging purpose
+       */
 #endif
       *Fval = fm;
       *Step = stepm;
@@ -1867,7 +1870,10 @@ bool differentiableFunctionMinimizer<T>::minimize(std::vector<T> const &X, std::
       gnorm1 = std::sqrt(s);
 
 #ifdef DEBUG
-      //TODO Use IO class to print out p, gradient, pg for debugging purpose
+      /*!
+       * \todo
+       * Use IO class to print out p, gradient, pg for debugging purpose
+       */
 #endif
       Fval = fm;
       Step = stepm;

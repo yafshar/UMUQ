@@ -12,8 +12,7 @@ namespace umuq
 /*! \defgroup Density_Module density module
  * \ingroup Numerics_Module
  * 
- * This is the inference module of UMUQ providing all necessary classes of statistical inference in which 
- * Bayes' theorem is used to update the probability for a hypothesis as more evidence or information becomes available.
+ * This is the density module of %UMUQ providing all necessary classes for probability density computation.
  */
 
 /*! \namespace umuq::density

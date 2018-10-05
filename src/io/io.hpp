@@ -65,9 +65,11 @@ struct ioFormat
     std::string rowSuffix;
 };
 
-//! TODO
-//! All the functions should use the ioFormat for printing and saving and loading and
-//! we should remove all options from them
+/*!
+ * \todo
+ * All the functions should use the ioFormat for printing, save and load and
+ * we should remove all options from them.
+ */
 
 /*! \class io
  * \ingroup IO_Module
@@ -102,17 +104,29 @@ struct ioFormat
 class io
 {
   public:
-    //! Seeks to the end of stream before each write
+    /*! \var static const std::ios_base::openmode app
+     * \brief Seeks to the end of stream before each write
+     */
     static const std::ios_base::openmode app = std::fstream::app;
-    //! Binary mode
+    /*! \var static const std::ios_base::openmode binary
+     * \brief Binary mode
+     */
     static const std::ios_base::openmode binary = std::fstream::binary;
-    //! Reading
+    /*! \var static const std::ios_base::openmode in
+     * \brief Reading mode
+     */
     static const std::ios_base::openmode in = std::fstream::in;
-    //! Writing
+    /*! \var static const std::ios_base::openmode out
+     * \brief Writing mode
+     */
     static const std::ios_base::openmode out = std::fstream::out;
-    //! Discard the contents of the stream when opening
-    static const std::ios_base::openmode trunc = std::fstream::trunc;
-    //! Seeks to the end of stream immediately after open
+    /*! \var static const std::ios_base::openmode trunc
+     * \brief Discard the contents of the stream when opening
+     */
+    static const std::ios_base::openmode trunc = std::fstream::trunc; 
+    /*! \var static const std::ios_base::openmode ate
+     * \brief Seeks to the end of stream immediately after open
+     */
     static const std::ios_base::openmode ate = std::fstream::ate;
 
     /*!

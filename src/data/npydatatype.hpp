@@ -14,22 +14,23 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
 /*!
  * \brief Explicit instantiation for
  * 
- * \b bool
- * \b char
- * \b std::string
- * \b int8_t
- * \b uint8_t
- * \b int16_t
- * \b uint16_t
- * \b int32_t
- * \b uint32_t
- * \b int64_t
- * \b uint64_t
- * \b float
- * \b double
- * \b long double
+ * - \b bool
+ * - \b char
+ * - \b std::string
+ * - \b int8_t
+ * - \b uint8_t
+ * - \b int16_t
+ * - \b uint16_t
+ * - \b int32_t
+ * - \b uint32_t
+ * - \b int64_t
+ * - \b uint64_t
+ * - \b float
+ * - \b double
+ * - \b long double
  * 
- * TODO: Complete the list
+ * \todo 
+ * Complete the list.
  * Any valid data type value must have a corresponding explicit template instantiation below.
  * 
  */
