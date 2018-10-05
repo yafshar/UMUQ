@@ -13,7 +13,7 @@ namespace randomdist
  * \brief Generates random positive values x, distributed according to probability density function \f$ \frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.\f$ 
  * where \f$ \alpha > 0 \f$ is known as the shape parameter and \f$ \beta > 0 \f$ is known as the scale parameter.
  * 
- * NOTES: 
+ * \note
  * - This should be called after setting the State of psrandom object
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$

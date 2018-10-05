@@ -12,23 +12,21 @@ namespace umuq
  * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T         Data type or Eigen::Matrix type
- * 
- * The _Options template parameter is optional
- * 
- * \tparam _Options  A combination of either 
- *                   - \b #Eigen::RowMajor or 
- *                   - \b #Eigen::ColMajor, 
- *                     and of either
- *                   - \b #Eigen::AutoAlign or 
- *                   - \b #Eigen::DontAlign.
+ * \tparam T Data type or Eigen::Matrix type
+ * \tparam _Options  optional parameter, a combination of either 
+ *                   - \b Eigen::RowMajor 
+ *                   - \b Eigen::ColMajor, <br> 
+ *                     and one of either <br>
+ *                   - \b Eigen::AutoAlign, 
+ *                   - \b Eigen::DontAlign.<br>
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  *
  * 
- * NOTE: Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
- *       pass only the Eigen::Matrix as template parameters
+ * \note 
+ * 	- Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
+ *    to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ *    pass only the Eigen::Matrix as template parameters
  * 
  * For example:
  * 
@@ -71,6 +69,8 @@ template <class T, int _Options = Eigen::RowMajor>
 using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
@@ -79,23 +79,26 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * The _Options template parameter is optional
  * 
  * \tparam _Options  A combination of either 
- *                   - \b #Eigen::RowMajor or 
- *                   - \b #Eigen::ColMajor, 
+ *                   - \b Eigen::RowMajor or 
+ *                   - \b Eigen::ColMajor, 
  *                     and of either
- *                   - \b #Eigen::AutoAlign or 
- *                   - \b #Eigen::DontAlign.
+ *                   - \b Eigen::AutoAlign or 
+ *                   - \b Eigen::DontAlign.
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
- * NOTE: Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *       to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
- *       pass only the Eigen::Matrix as template parameters
+ * \note 
+ * - Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
+ *   to be used as an Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ *   pass only the Eigen::Matrix as template parameters
  * 
  */
 template <typename T, int _Options = Eigen::RowMajor>
 using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type const>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen row vector map type is a new type, used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -105,6 +108,8 @@ template <typename T>
 using ERowVectorMapType = Eigen::Map<ERowVectorX<T>>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen row vector constant map type is a new read-only map type to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -114,6 +119,8 @@ template <typename T>
 using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<T> const>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen vector map type is a new type to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -123,6 +130,8 @@ template <typename T>
 using EVectorMapType = Eigen::Map<EVectorX<T>>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief New read-only map type is used to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
@@ -132,6 +141,8 @@ template <typename T>
 using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  *  
  * \tparam EigenMatrixT  Eigen matrix type (dynamic_size_storage matrix)
@@ -143,8 +154,8 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
  * \returns  Eigen Matrix representation of the array    
  * 
  * 
- * NOTE:
- * If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then one should 
+ * \note
+ * - If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then one should 
  * provide the number of rows and number of columns at input
  * 
  */
@@ -156,6 +167,8 @@ EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * 
  * \tparam EigenMatrixT Eigen matrix type (fixed_size_storage matrix)
@@ -163,8 +176,8 @@ EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
  * \param dataPtr  Pointer to the array of data
  * \return EigenMatrixT  Eigen Matrix representation of the array
  * 
- * NOTE:
- * If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then one should not
+ * \note
+ * - If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then one should not
  * provide the number of rows and number of columns at input
  */
 template <class EigenMatrixT>
@@ -174,6 +187,8 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * Eigen map function copies the existing C++ memory buffer to a temporary Eigen Matrix object 
  * of size(nRows, nCols). 
@@ -187,8 +202,8 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
  * 
  * \returns Eigen Matrix representation of the array    
  *
- * NOTE:
- * If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then the size does must  
+ * \note
+ * - If the EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then the size does must  
  * be passed to the constructor, because it is not specified by the Matrix type.
  */
 template <class EigenMatrixT>
@@ -205,6 +220,8 @@ EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * Eigen map function copies the existing C++ memory buffer to a temporary Eigen Matrix object 
  * of size(nRows, nCols). 
@@ -216,8 +233,8 @@ EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
  * 
  * \returns  Eigen Matrix representation of the array    
  *
- * NOTE:
- * If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then the size does not have 
+ * \note
+ * - If the EigenMatrixT template class is a fixed_size_storage Eigen::Matrix, then the size does not have 
  * to be passed to the constructor, because it is already specified by the Matrix type.
  */
 template <class EigenMatrixT>
@@ -234,11 +251,15 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \todo
  * We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map function copies the Eigen Matrix data to the array of data
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
@@ -249,8 +270,8 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
  * \param eMatrix  Eigen matrix
  * 
- * NOTE:
- * We have to copy the data as we do not know before hand that the internal Eigen matrix data 
+ * \note
+ * - We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
 template <class EigenMatrixT>
@@ -260,6 +281,8 @@ inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMa
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map function copies the Eigen Matrix data to the array of data
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
@@ -270,8 +293,8 @@ inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMa
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
  * \param eMatrix  Eigen matrix
  * 
- * NOTE:
- * We have to copy the data as we do not know before hand that the internal Eigen matrix data 
+ * \note
+ * - We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
 template <class EigenMatrixT>
@@ -284,6 +307,8 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
  * A matrix is selfadjoint if it equals its adjoint. For real matrices, this means 
@@ -309,6 +334,8 @@ inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
  * \tparam EigenMatrixT Eigen Matrix type
@@ -328,6 +355,8 @@ inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
  * \tparam T Data type
@@ -417,6 +446,8 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
  * \tparam EigenMatrixT Eigen Matrix type

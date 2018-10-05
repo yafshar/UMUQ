@@ -12,7 +12,8 @@ namespace randomdist
  * 
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
  * 
- * NOTE: This should be called after setting the State of psrandom object
+ * \note 
+ * - This should be called after setting the State of psrandom object
  * 
  */
 template <typename T = double>
@@ -78,7 +79,8 @@ class lognormalDistribution
 /*! \class logNormalDistribution
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
  * 
- * NOTE: This can be called without setting the State of psrandom object
+ * \note 
+ * - This can be called without setting the State of psrandom object
  * 
  */
 template <typename T = double>

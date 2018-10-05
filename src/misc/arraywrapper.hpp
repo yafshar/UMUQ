@@ -13,9 +13,9 @@ namespace umuq
  *
  * Expression of a class T (vector or matrix, or other types) as an array object
  * 
- * NOTE:
- * This is a helper class which currently only has An Input Iterator.
- * InputIterator is an iterator that can read from the pointed-to element. 
+ * \note
+ * - This is a helper class which currently only has An Input Iterator.
+ * - InputIterator is an iterator that can read from the pointed-to element. 
  */
 template <class T>
 class arrayWrapper
@@ -25,8 +25,8 @@ class arrayWrapper
      *
      * \brief This class defines an iterator based on std::iterator
      * 
-     * NOTE:
-     * input_iterator_tag corresponds to InputIterator. 
+     * \note
+     * - input_iterator_tag corresponds to InputIterator. 
      */
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {

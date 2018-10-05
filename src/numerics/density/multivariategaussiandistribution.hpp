@@ -29,7 +29,7 @@ inline namespace density
  * It also provides random values x, distributed according to the Multivariate Gaussian Distribution probability 
  * density function. 
  * 
- * NOTE:
+ * \note
  * - For using any member function, a pointer to a Random Number Generator object \sa psrandom in the 
  * construction is required, otherwise, it fails.
  * 
@@ -131,7 +131,12 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
     bool sample(std::vector<T> &x);
 
   private:
-    //! Multivariate random number distribution (NOTE: This should be used after setting the State of psrandom object)
+    /*!
+     * \brief Multivariate random number distribution
+     * 
+     * \note 
+     * - This should be used after setting the State of psrandom object
+     */
     std::unique_ptr<randomdist::multivariatenormalDistribution<T>> mvnormal;
 };
 
@@ -249,7 +254,12 @@ class multivariateGaussianDistribution : public densityFunction<T, std::function
     bool sample(std::vector<T> &x);
 
   private:
-    //! Multivariate random number distribution (NOTE: This can be used without setting the State of psrandom object)
+    /*!
+     * \brief Multivariate random number distribution
+     * 
+     * \note 
+     * - This should be used after setting the State of psrandom object
+     */
     std::unique_ptr<randomdist::multivariateNormalDistribution<T>> mvNormal;
 };
 

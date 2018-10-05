@@ -28,7 +28,7 @@ inline namespace density
  * It also provides random non-negative values x, distributed according to the exponential 
  * distribution probability density function. 
  * 
- * NOTES: 
+ * \note
  * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * - Requires that \f$ \mu > 0 \f$. 
  * 

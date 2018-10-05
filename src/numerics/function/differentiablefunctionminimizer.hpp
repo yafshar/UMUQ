@@ -45,8 +45,8 @@ enum differentiableFunctionMinimizerTypes
  * The search direction is then updated with local information from the function and its derivatives,
  * and the whole process repeated until the true n-dimensional minimum is found.
  *
- * NOTE:
- * It is important to note that the minimization algorithms find local minima; there is
+ * \note
+ * - It is important to note that the minimization algorithms find local minima; there is
  * no way to determine whether a minimum is a global minimum of the function in question.
  *
  * To use the Minimizer:
@@ -270,11 +270,12 @@ public:
   /*!
    * \brief Helper function to compute the gradient of the function f at X (\f$ \frac{\partial f}{\partial x} \f$)
    * 
-   * Note: 
-   * Helper function to compute the gradient by a finite-difference approximation in one-dimension.
-   * Using this routine is not advised, you should probably use a derivative-free algorithm instead.
-   * Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff 
-   * errors. On the other hand, finite-difference approximations are very useful to check that your analytical 
+   * \note 
+   * - Helper function to compute the gradient by a finite-difference approximation in one-dimension.
+   * - Using this routine is not advised, you should probably use a derivative-free algorithm instead.
+   * - Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff 
+   * errors. 
+   * - On the other hand, finite-difference approximations are very useful to check that your analytical 
    * gradient computation is correct—this is always a good idea, because in my experience it is very easy to have 
    * bugs in your gradient code, and an incorrect gradient will cause weird problems with a gradient-based 
    * optimization algorithm.

@@ -211,9 +211,11 @@ static std::string backend;
  *                   also referred to as “interactive backends”) or hardcopy backends to make image 
  *                   files (PNG, SVG, PDF, PS; also referred to as “non-interactive backends”)
  * 
- * NOTE: Must be called before the first regular call to matplotlib to have any effect
+ * \note 
+ * - Must be called before the first regular call to matplotlib to have any effect
  * 
- * NOTE : Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent. 
+ * \note 
+ * - Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent. 
  * 
  * Reference:
  * https://matplotlib.org/tutorials/introductory/usage.html
@@ -2299,9 +2301,11 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
     {
         // Construct keyword args
         if (density)
-        {
-            // NOTE:
-            // In some cases density keyword does not work and one has to use normed instead
+        {          
+            /*!
+             * \note 
+             * - In some cases density keyword does not work and one has to use normed instead
+             */
             PyDict_SetItemString(kwargs, "density", Py_True);
         }
         if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)

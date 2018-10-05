@@ -192,8 +192,8 @@ public:
   /*!
    * \brief Set the Fitting Function object to be used
    * 
-   * NOTE:
-   * std::move is used so that the Fit Function object fitFun may be "moved from", 
+   * \note
+   * - std::move is used so that the Fit Function object fitFun may be "moved from", 
    * i.e. allowing the efficient transfer of resources from fitFun to tmcmc member object. 
    * Thus, the fitFun object is not accessible after calling this function!
    * 

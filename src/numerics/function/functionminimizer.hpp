@@ -55,8 +55,8 @@ enum FunctionMinimizerTypes
  * This class is the base class for algorithms which do not require the gradient of the function. 
  * For example, the Nelder-Mead Simplex algorithm.
  * 
- * NOTE:
- * It is important to note that the minimization algorithms find local minima; there is 
+ * \note
+ * - It is important to note that the minimization algorithms find local minima; there is 
  * no way to determine whether a minimum is a global minimum of the function in question.
  * 
  * 

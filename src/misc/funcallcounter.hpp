@@ -42,8 +42,8 @@ class funcallcounter
     /*! 
      * \brief Initializes and registers tasks on TORC library
      * 
-     * NOTE: 
-     * init should be called before calling any other functions
+     * \note
+     * - init should be called before calling any other functions
      */
     inline bool init();
 
@@ -118,8 +118,8 @@ funcallcounter::~funcallcounter() {}
 /*! 
  * \brief Initialize and registers tasks on TORC library
  * 
- * NOTE: 
- * init should be called before calling any other functions
+ * \note
+ * - init should be called before calling any other functions
  */
 inline bool funcallcounter::init()
 {

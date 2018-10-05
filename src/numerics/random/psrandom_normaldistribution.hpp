@@ -17,7 +17,7 @@ namespace randomdist
  * 
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * 
- * NOTE: 
+ * \note
  * - This should be called after setting the State of psrandom object
  * 
  */
@@ -84,7 +84,8 @@ private:
 /*! \class NormalDistribution
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * 
- * NOTE: This can be called without setting the State of psrandom object
+ * \note 
+ * - This can be called without setting the State of psrandom object
  *
  */
 template <typename T = double>

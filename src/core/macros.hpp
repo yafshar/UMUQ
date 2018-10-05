@@ -47,8 +47,9 @@
  * 
  * \brief Operating system identification, UMUQ_OS_*
  * UMUQ_OS_ANDROID set to 1 if the OS is Android
- * NOTE:
- * ANDROID is defined when using ndk_build, __ANDROID__ is defined when using a standalone toolchain.
+ * 
+ * \note
+ * - ANDROID is defined when using ndk_build, __ANDROID__ is defined when using a standalone toolchain.
  */
 #if defined(__ANDROID__) || defined(ANDROID)
 #define UMUQ_OS_ANDROID 1

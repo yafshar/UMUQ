@@ -12,7 +12,7 @@ namespace randomdist
  * 
  * \brief Multivariate normal distribution
  * 
- * NOTE: 
+ * \note 
  * - This should be called after setting the State of psrandom object \sa psrandom
  * 
  */
@@ -120,7 +120,8 @@ private:
 /*! \class multivariatenormalDistribution
  * \brief Multivariate normal distribution
  * 
- * NOTE: This can be called without setting the State of psrandom object
+ * \note 
+ * - This can be called without setting the State of psrandom object
  * 
  */
 template <typename T = double>

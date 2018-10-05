@@ -25,7 +25,7 @@ namespace randomdist
  * \f]
  * where \f$ \lambda > 0 \f$ is rate. Thus we have \f$ \lambda = \frac{1}{\mu} \f$
  * 
- * NOTES: 
+ * \note
  * - This should be called after setting the State of psrandom object
  * - Requires that \f$ \mu > 0 \f$. 
  * 

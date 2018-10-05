@@ -28,11 +28,10 @@ inline namespace density
  * It also provides random non-negative values x, distributed according to the Gamma distribution 
  * probability density function. 
  * 
- * NOTES:
+ * \note
  * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$
- * 
  * 
  * \tparam T Data type
  */
