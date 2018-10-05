@@ -3,7 +3,10 @@
 
 namespace umuq {
 
-/** \page UserManual_CustomizingiUMUQ Extending/Customizing umuq
+
+
+
+/** \page UserManual_CustomizingUMUQ Extending/Customizing umuq
   %UMUQ can be extended in several ways, for instance, by defining global methods, by inserting custom methods within %UMUQ's classes through the.
 */
 
