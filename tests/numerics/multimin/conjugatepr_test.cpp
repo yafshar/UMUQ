@@ -5,7 +5,9 @@
 #include "gtest/gtest.h"
 
 /*! 
- * Test to check conjugatePr construction
+ * \ingroup Test_Module
+ * 
+ * \brief Test to check conjugatePr construction
  */
 TEST(conjugatePr_test, HandlesMinimizerConstruction)
 {
@@ -16,6 +18,8 @@ TEST(conjugatePr_test, HandlesMinimizerConstruction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if conjugatePr can handle a Rosenbrock function
  * 
  */
@@ -67,6 +71,8 @@ TEST(conjugatePr_test, HandlesRosenbrockFunction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if conjugatePr can handle a Roth function
  * 
  */

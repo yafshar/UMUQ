@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Computes \f$ x_0^2 \times x_1^3 \f$
  * 
  * \param x  Input data
@@ -17,6 +19,8 @@ double f1(double const *x)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Computes df = (df/dx, df/dy)
  * 
  * \param x   Input data
@@ -37,6 +41,8 @@ bool f2(double const *x, double *df)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Computes \f$ f=x_0 \times x_1, \text{ and } df = (df/dx_0, df/dx_1) \f$
  * 
  * \param x  Input data
@@ -66,11 +72,31 @@ bool f3(double const *x, double *f, double *df)
     UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Computes \f$ x_0^4 \times x_1^3 \f$
+ * 
+ * \param x  Input data
+ * 
+ * \returns  \f$ x_0^4 \times x_1^3 \f$
+ */
 double f4(double const *x)
 {
     return std::pow(x[0], 4) * std::pow(x[1], 3);
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Computes df = (df/dx, df/dy)
+ * 
+ * \param x   Input data
+ * \param df  Output gradient
+ * 
+ * \return true 
+ * \return false 
+ */
 bool f5(double const *x, double *df)
 {
     if (df)
@@ -82,6 +108,18 @@ bool f5(double const *x, double *df)
     UMUQFAILRETURN("The gradient pointer is not assigned!");
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Computes \f$ f=x_0 \times x_1, \text{ and } df = (df/dx_0, df/dx_1) \f$
+ * 
+ * \param x  Input data
+ * \param f  Output function value 
+ * \param df Output function value 
+ * 
+ * \return true 
+ * \return false 
+ */
 bool f6(double const *x, double *f, double *df)
 {
     if (f)
@@ -103,6 +141,8 @@ bool f6(double const *x, double *f, double *df)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check functionminimizer construction
  */
 TEST(function_test, HandlesFunctionMinimizerConstruction)
@@ -137,6 +177,8 @@ TEST(function_test, HandlesFunctionMinimizerConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check differentiablefunctionminimizer construction
  */
 TEST(differentiablefunction_test, HandlesDifferentiableFunctionMinimizerConstruction)

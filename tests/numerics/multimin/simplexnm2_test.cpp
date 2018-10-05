@@ -5,7 +5,9 @@
 #include "gtest/gtest.h"
 
 /*! 
- * Test to check simplexNM2 construction
+ * \ingroup Test_Module
+ * 
+ * \brief Test to check simplexNM2 construction
  */
 TEST(simplexNM2_test, HandlesMinimizerConstruction)
 {
@@ -16,6 +18,8 @@ TEST(simplexNM2_test, HandlesMinimizerConstruction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if simplexNM2 can handle a Rosenbrock function
  * 
  */
@@ -66,6 +70,8 @@ TEST(simplexNM2_test, HandlesRosenbrockFunction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if simplexNM2 can handle a Roth function
  * 
  */

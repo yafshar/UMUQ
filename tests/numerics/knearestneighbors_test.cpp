@@ -4,6 +4,8 @@
 #include "gtest/gtest.h"
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check flannlib functionality
  * for a fast approximate nearest neighbor searches
  */

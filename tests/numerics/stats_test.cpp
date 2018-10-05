@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check stats functionality
  */
 TEST(stats_test, HandlesStats)
@@ -49,6 +51,8 @@ TEST(stats_test, HandlesStats)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for data arrays with stride
  * 
  */
@@ -96,6 +100,8 @@ TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for testing median
  * 
  */
@@ -128,6 +134,8 @@ TEST(stats_test, HandlesMedianandMad)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for testing minmaxNormal
  * 
  */
@@ -175,6 +183,8 @@ TEST(stats_test, HandlesminmaxNormal)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for testing zscoreNormal
  * 
  */
@@ -213,6 +223,8 @@ TEST(stats_test, HandleszscoreNormal)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for testing robustzscoreNormal
  * 
  */
@@ -251,6 +263,8 @@ TEST(stats_test, HandlesrobustzscoreNormal)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for covariance
  * 
  */
@@ -354,10 +368,15 @@ TEST(stats_test, HandlesCovariance)
 	}
 }
 
-//! Tests the unique member
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Construct a new test for the unique member
+ * 
+ */
 TEST(stats_test, HandlesunUniqueMemberFunctionality)
 {
-    //! Vector of data which has some repetetive rows
+    //! Vector of data which has some repetitive rows
     double p[] = {5, 12, 24,
                   12, 30, 59,
                   1, 4, 0,
@@ -371,7 +390,7 @@ TEST(stats_test, HandlesunUniqueMemberFunctionality)
                   2, 5, 10,
                   1, 4, 0};
 
-    //! Array of unique row data (each row is unqiue)
+    //! Array of unique row data (each row is unique)
     double pu[] = {5, 12, 24,
                    12, 30, 59,
                    1, 4, 0,
@@ -393,7 +412,7 @@ TEST(stats_test, HandlesunUniqueMemberFunctionality)
 	//! Check the size of unique data
     EXPECT_TRUE(u.size() == 24);
 
-	//! compqare the elements
+	//! compare the elements
     for (std::size_t i = 0; i < u.size(); i++)
     {
         EXPECT_DOUBLE_EQ(u[i], pu[i]);

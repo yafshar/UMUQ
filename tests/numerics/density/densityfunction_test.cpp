@@ -7,16 +7,33 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-//! Create a global instance of the Pyplot from Pyplot library
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Create a global instance of the Pyplot from Pyplot library
+ * 
+ */
 umuq::pyplot plt;
 
-//! Get an instance of a double random object and seed it
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Get an instance of a seeded double random object
+ * 
+ */
 umuq::psrandom<double> prng(123);
 
-//! Get an instance of a float random object and seed it
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Get an instance of a seeded float random object
+ * 
+ */
 umuq::psrandom<float> prngf(123);
 
-/*! 
+/*!
+ * \ingroup Test_Module
+ *  
  * Test to check uniformDistribution 
  */
 TEST(densityFunction_test, HandlesUniformDistributionConstruction)
@@ -51,6 +68,8 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check exponentialDistribution 
  */
 TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
@@ -75,6 +94,8 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check gammaDistribution 
  */
 TEST(densityFunction_test, HandlesGammaDistributionConstruction)
@@ -101,6 +122,8 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check gaussianDistribution 
  */
 TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
@@ -128,6 +151,8 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check multivariateGaussianDistribution 
  */
 TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
@@ -287,6 +312,8 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check multinomialDistribution
  * 
  * Example reference:

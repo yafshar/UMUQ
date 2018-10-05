@@ -269,4 +269,8 @@ static T machinePrecision = std::pow(T{10}, -digits10<T>());
 
 } // namespace umuq
 
+/*! \defgroup Test_Module test module
+ * This is the test module of %UMUQ providing functionality and classes for a unit testing.
+ */
+
 #endif // UMUQ_CORE

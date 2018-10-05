@@ -7,13 +7,25 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-// Create a global instance of the Pyplot from Pyplot library
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief  Create a global instance of the Pyplot from Pyplot library
+ * 
+ */
 umuq::pyplot plt;
 
-// Get an instance of a double random object and seed it
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Get an instance of a seeded double random object
+ * 
+ */
 umuq::psrandom<double> prng(123);
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check random functionality
  */
 TEST(random_test, HandlesRandoms)
@@ -79,6 +91,8 @@ TEST(random_test, HandlesRandoms)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check random functionality
  */
 TEST(random_test, HandlesMultivariate)

@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check about map type handling is done correctly
  */
 TEST(eigen_test, HandlesMap)
@@ -141,6 +143,8 @@ TEST(eigen_test, HandlesMap)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * Linear Algebra test
  */
 TEST(eigen_la_test, HandlesSolver)
@@ -171,7 +175,12 @@ TEST(eigen_la_test, HandlesSolver)
 	EXPECT_TRUE(std::isnan(relative_error));
 }
 
-//! SVD test
+/*! 
+ * \ingroup Test_Module
+ * 
+ * \brief SVD test
+ * 
+ */
 TEST(eigen_svd_test, HandlesSVD)
 {
 	//! This is the example from wikipedia
@@ -192,7 +201,12 @@ TEST(eigen_svd_test, HandlesSVD)
 	EXPECT_DOUBLE_EQ(0, B(3));
 }
 
-//! LU test
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief LU test
+ * 
+ */
 TEST(eigen_lu_test, HandlesLU)
 {
 	typedef umuq::EMatrix3<double> EMatrix3d;
@@ -243,7 +257,12 @@ TEST(eigen_lu_test, HandlesLU)
 	}
 }
 
-//! MatrixIsPositiveDefinite test
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief test to check if the matrix is positive definite
+ * 
+ */
 TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 {
 	//! Matrix A is selfadjoint
