@@ -5,7 +5,9 @@
 #include "gtest/gtest.h"
 
 /*! 
- * Test to check steepestDescent construction
+ * \ingroup Test_Module
+ * 
+ * \brief Test to check steepestDescent construction
  */
 TEST(steepestDescent_test, HandlesMinimizerConstruction)
 {
@@ -16,6 +18,8 @@ TEST(steepestDescent_test, HandlesMinimizerConstruction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if steepestDescent can handle a Rosenbrock function
  * 
  */
@@ -67,6 +71,8 @@ TEST(steepestDescent_test, HandlesRosenbrockFunction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if steepestDescent can handle a Roth function
  * 
  */

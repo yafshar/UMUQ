@@ -3,28 +3,69 @@
 
 #include "../../core/core.hpp"
 #include "../factorial.hpp"
+
+/*! \defgroup Random_Module random distribution module
+ * \ingroup Numerics_Module
+ * 
+ * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. 
+ * A random number distribution post-processes the output of a uniform random generators in such a way that 
+ * resulting output is distributed according to a defined statistical probability density function.
+ */
+
 #include "saruprng.hpp"
 
 namespace umuq
 {
 
-//! RNG seed
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief pseudo-random number seed
+ * 
+ */
 static std::size_t PRNG_seed = 0;
 
-//! 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
+ * 
+ */
 static std::vector<std::mt19937> NumberGenerator(1);
 
-//! C++ Saru PRNG
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief C++ Saru pseudo-random number generator.
+ * 
+ * \sa Saru
+ */
 static std::vector<Saru> saru(1);
 
-//! True if PRNG state has been initialized, and false otherwise (logical).
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief It would be true if PRNG state has been initialized, and false otherwise (logical).
+ * 
+ */
 static bool PRNG_initialized = false;
 
-//! True if Tasks have been registered, and false otherwise (logical).
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief It would be true if Tasks have been registered, and false otherwise (logical).
+ * 
+ * \tparam T Data type
+ */
 template <typename T>
 static bool isPrngTaskRegistered = false;
 
-//! Mutex object
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief Mutex object
+ * 
+ */
 static std::mutex PRNG_m;
 
 } // namespace umuq
@@ -39,31 +80,32 @@ namespace umuq
 {
 
 /*! \class psrandom
-  *
-  * This class generates pseudo-random numbers.
-  * It includes engines and distributions used to produce pseudo-random values. 
-  * 
-  * All of the engines may be specifically seeded, for use with repeatable simulators.
-  * Random number engines generate pseudo-random numbers using seed data as entropy source. 
-  * The choice of which engine to use involves a number of tradeoffs: 
-  * 
-  * Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast. 
-  * 
-  * The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
-  * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
-  * 
-  * \tparam T  Data type one of float or double
-  * 
-  * NOTE:
-  * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
-  * 
-  * 
-  * USE:
-  * To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction:
-  * - First, construct a new psrandom object either with a seed or without it.
-  * - Second, initialize the PRNG \sa init or set the state of the PRNG \sa setState.
-  * - Third, use any member function or set the PRNG object in other classes 
-  */
+ * \ingroup Random_Module
+ *
+ * This class generates pseudo-random numbers.
+ * It includes engines and distributions used to produce pseudo-random values. 
+ * 
+ * All of the engines may be specifically seeded, for use with repeatable simulators.
+ * Random number engines generate pseudo-random numbers using seed data as entropy source. 
+ * The choice of which engine to use involves a number of tradeoffs: 
+ * 
+ * Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast. 
+ * 
+ * The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
+ * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
+ * 
+ * \tparam T  Data type one of float or double
+ * 
+ * NOTE:
+ * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
+ * 
+ * 
+ * USE:
+ * To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction:
+ * - First, construct a new psrandom object either with a seed or without it.
+ * - Second, initialize the PRNG \sa init or set the state of the PRNG \sa setState.
+ * - Third, use any member function or set the PRNG object in other classes 
+ */
 template <typename T = double>
 class psrandom
 {

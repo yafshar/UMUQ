@@ -7,6 +7,8 @@ namespace umuq
 {
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
@@ -15,11 +17,11 @@ namespace umuq
  * The _Options template parameter is optional
  * 
  * \tparam _Options  A combination of either 
- *                   \b #Eigen::RowMajor or 
- *                   \b #Eigen::ColMajor, 
+ *                   - \b #Eigen::RowMajor or 
+ *                   - \b #Eigen::ColMajor, 
  *                     and of either
- *                   \b #Eigen::AutoAlign or 
- *                   \b #Eigen::DontAlign.
+ *                   - \b #Eigen::AutoAlign or 
+ *                   - \b #Eigen::DontAlign.
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  *
@@ -77,11 +79,11 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * The _Options template parameter is optional
  * 
  * \tparam _Options  A combination of either 
- *                   \b #Eigen::RowMajor or 
- *                   \b #Eigen::ColMajor, 
+ *                   - \b #Eigen::RowMajor or 
+ *                   - \b #Eigen::ColMajor, 
  *                     and of either
- *                   \b #Eigen::AutoAlign or 
- *                   \b #Eigen::DontAlign.
+ *                   - \b #Eigen::AutoAlign or 
+ *                   - \b #Eigen::DontAlign.
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
@@ -231,8 +233,10 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
 	return tmpMatrix;
 }
 
-//! TODO:
-//! We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
+/*!
+ * \todo
+ * We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
+ */
 
 /*!
  * \brief Eigen map function copies the Eigen Matrix data to the array of data

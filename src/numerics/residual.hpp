@@ -3,7 +3,13 @@
 
 namespace umuq
 {
-    
+
+/*!
+ * \ingroup Numerics_Module
+ * 
+ * \brief Different residuals Error type
+ * 
+ */
 enum ErrorTypes
 {
     AbsoluteError = -1,
@@ -12,7 +18,7 @@ enum ErrorTypes
 };
 
 /*! \class residual
- * \ingroup numerics
+ * \ingroup Numerics_Module
  *
  * \brief Computes residuals of observation and predicted data based on different Error type
  *
@@ -82,20 +88,10 @@ class residual
     int errorType;
 };
 
-/*!
- * \brief Construct a new residual object
- * 
- * \param ierrorType Input error type is a residual type (default AbsoluteError) 
- */
+
 template <typename T>
 residual<T>::residual(int const ierrorType) : errorType(ierrorType) {}
 
-/*!
- * \brief Construct a new residual object
- * 
- * \param ierrorType Input error type is a residual type (default AbsoluteError)
- * 
- */
 template <typename T>
 residual<T>::residual(std::string const &ierrorType)
 {
@@ -118,15 +114,6 @@ residual<T>::residual(std::string const &ierrorType)
     }
 }
 
-/*!
- * \brief set the new error type
- * 
- * \param  ierrorType  Input error type in computing residual
- * 
- * \return true
- * \return false  if the error type is unknown
- * 
- */
 template <typename T>
 bool residual<T>::set(std::string const &ierrorType)
 {
@@ -149,15 +136,6 @@ bool residual<T>::set(std::string const &ierrorType)
     return true;
 }
 
-/*!
- * \brief set the new error type
- * 
- * \param  ierrorType  Input error type in computing residual
- * 
- * \return true 
- * \return false  if the error type is unknown
- * 
- */
 template <typename T>
 bool residual<T>::set(int ierrorType)
 {
@@ -172,14 +150,6 @@ bool residual<T>::set(int ierrorType)
     return true;
 }
 
-/*!
- * \brief Compute the residual based on error type
- * 
- * \param observed  Observed data
- * \param predicted Predicted data
- * 
- * \return Residual based on error type
- */
 template <typename T>
 inline T residual<T>::operator()(T const &observed, T const &predicted)
 {

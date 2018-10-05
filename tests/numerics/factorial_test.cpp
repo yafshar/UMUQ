@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check factorial functionality
  */
 TEST(factorial_test, HandlesInput)

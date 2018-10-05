@@ -7,13 +7,25 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-// Create a global instance of the Pyplot from Pyplot library
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief  Create a global instance of the Pyplot from Pyplot library
+ * 
+ */
 umuq::pyplot plt;
 
-// Get an instance of a double random object and seed it
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Get an instance of a seeded double random object
+ * 
+ */
 umuq::psrandom<double> prng(123);
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check random functionality
  */
 TEST(random_test, HandlesRandoms)
@@ -43,7 +55,7 @@ TEST(random_test, HandlesRandoms)
     std::remove(fileName.c_str());
 
     //! Prepare data.
-    int n = 100;
+    int n = 500;
 
     //! X coordinates
     std::vector<double> x(n);
@@ -59,23 +71,28 @@ TEST(random_test, HandlesRandoms)
     }
     //! Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
-    keywords["marker"] = "D";
+    keywords["marker"] = "s";
 
     //! Clear previous plot
     EXPECT_TRUE(plt.clf());
 
     //! Create scatter plot
-    EXPECT_TRUE(plt.scatter<double>(x, y, 20, 2, keywords));
+    EXPECT_TRUE(plt.scatter<double>(x, y, 800, "lime", keywords));
 
     //! Add graph title
     EXPECT_TRUE(plt.title("Sample points from a multivariate normal distribution"));
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 #endif
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check random functionality
  */
 TEST(random_test, HandlesMultivariate)

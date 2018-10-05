@@ -2,11 +2,13 @@
 #define UMUQ_PRIMITIVE_H
 
 /*! \class primitive
-  * \brief A class for primitive function
-  * 
-  * \tparam T  data type
-  * \tparam TF function type
-  */
+ * \ingroup Numerics_Module
+ * 
+ * \brief A class for primitive function
+ * 
+ * \tparam T  Data type
+ * \tparam TF Function type
+ */
 template <typename T, class TF>
 class primitive
 {
@@ -27,6 +29,8 @@ class primitive
 };
 
 /*! \class quartic_spline
+ * \ingroup Numerics_Module
+ * 
  * \brief Primitive function (quartic spline)
  * 
  * \tparam T data type
@@ -53,16 +57,20 @@ class quartic_spline : public primitive<T, quartic_spline<T>>
 };
 
 /*! \class cubic_spline
+ * \ingroup Numerics_Module
+ * 
  * \brief Primitive function (cubic spline)
  * 
  * \tparam T data type
  * 
  * cubic spline function
  * \f[ 
- * {\mathbf C}(s)=\left\{\begin{matrix} 
+ * {\mathbf C}(s)=\left\{
+ * \begin{matrix} 
  * 6s^3 -6 s^2 + 1   &\text{for } &s\le \left(\frac{1}{2}\right) \\ 
  * -2 s^3+6 s^2-6s+2 &\text{for } &\left(\frac{1}{2}\right) < s \le 1 \\
- * 0                 &\text{for } &s > 1 \end{matrix} 
+ * 0                 &\text{for } &s > 1 
+ * \end{matrix} 
  * \right. 
  * \f]
  * 
@@ -85,15 +93,19 @@ class cubic_spline : public primitive<T, cubic_spline<T>>
 };
 
 /*! \class normalizedgaussian
+ * \ingroup Numerics_Module
+ * 
  * \brief Primitive function (normalized Gaussian)
  * 
  * \tparam T data type
  * 
  * normalized Gaussian function
  * \f[ 
- * {\mathbf C}(s)=\left\{\begin{matrix} 
- * \frac{e^{-\left(s/\alpha\right)^2} - e^{-\left(1/\alpha\right)^2}}{1-e^{-\left(1/\alpha\right)^2}} &\text{for } &s \le 1\\
+ * {\mathbf C}(s)=\left\{
+ * \begin{matrix} 
+ * \frac{e^{-\left(s/\alpha\right)^2} - e^{-\left(1/\alpha\right)^2}}{1-e^{-\left(1/\alpha\right)^2}} &\text{for } &s \le 1 \\
  * 0                                                                                                  &\text{for } &s > 1
+ * \end{matrix} 
  * \right. 
  * \f]
  * 

@@ -21,11 +21,12 @@ namespace umuq
 {
 
 /*! \class utility
-* \brief utility is a class which includes some helper functionality.
-*	
-* Utility class contains functionality for exectuing commands
-* 
-*/
+ *
+ * \brief utility is a class which includes some helper functionality.
+ *	
+ * Utility class contains functionality for exectuing commands
+ * 
+ */
 class utility
 {
   public:

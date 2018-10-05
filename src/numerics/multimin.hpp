@@ -3,6 +3,8 @@
 
 /*!
  * \file numerics/multimin.hpp
+ * \ingroup Multimin_Module
+ * 
  * \brief Implementation of the Multidimensional Minimization.
  *
  * The multimin Module contains the c++ re-implamentation and modification 

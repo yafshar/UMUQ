@@ -2,7 +2,11 @@
 #define UMUQ_DIGITS10_H
 
 /*!
+ * \ingroup Core_Module
+ * 
  * \brief Default digits10() class based on std::numeric_limits
+ * 
+ * \tparam T data type
  */
 template <typename T,
           bool use_numeric_limits = std::numeric_limits<T>::is_specialized,
@@ -13,7 +17,11 @@ struct default_digits10
 };
 
 /*!
- * \brief Floating point
+ * \ingroup Core_Module
+ * 
+ * \brief Specialization for Floating point
+ * 
+ * \tparam T data type
  */
 template <typename T>
 struct default_digits10<T, false, false>
@@ -22,7 +30,11 @@ struct default_digits10<T, false, false>
 };
 
 /*!
- * \brief Integer
+ * \ingroup Core_Module
+ * 
+ * \brief Specialization for Integer
+ * 
+ * \tparam T data type
  */
 template <typename T>
 struct default_digits10<T, false, true>
@@ -31,9 +43,13 @@ struct default_digits10<T, false, true>
 };
 
 /*!
+ * \ingroup Core_Module
+ * 
  * \brief digits10(), implementation 
- * It is based on std::numeric_limits if specialized,
- * 0 for integer types, and log10(epsilon()) otherwise.
+ * 
+ * It is based on std::numeric_limits if specialized, 0 for integer types, and 
+ * log10(epsilon()) otherwise.
+ * 
  * \tparam T data type
  */
 template <typename T>

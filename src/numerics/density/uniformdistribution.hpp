@@ -3,24 +3,25 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
+
 inline namespace density
 {
 
 /*! \class uniformDistribution
+ * \ingroup Density_Module
+ * 
  * \brief Flat (Uniform) distribution function
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a uniform distribution 
- * from \f$ \[a \cdots b\] \f$, 
+ * from \f$ [a \cdots b] \f$, 
  * using: 
  * \f[
- * p(x)= \left\{\begin{matrix}
+ * p(x)= \left\{
+ * \begin{matrix}
  * 1/(b-a)  &a \leqslant  x < b \\ 
  *  0       &otherwise
- * \end{matrix}\right.
+ * \end{matrix}
+ * \right.
  * \f]
  * 
  * \tparam T Data type

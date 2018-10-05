@@ -4,7 +4,10 @@
 
 #define BUFLEN 256
 
-/*! Tests parse class in case of empty line or line with tabs and spaces
+/*!
+ * \ingroup Test_Module
+ *  
+ * \brief Tests parse class in case of empty line or line with tabs and spaces
  *
  */
 TEST(parse_test, HandlesZeroInput)
@@ -26,7 +29,9 @@ TEST(parse_test, HandlesZeroInput)
 }
 
 /*! 
- * Tests parse class to make sure it can parse commands correctly
+ * \ingroup Test_Module
+ * 
+ * \brief Tests parse class to make sure it can parse commands correctly
  */
 TEST(parse_test, HandlesInput)
 {
@@ -69,7 +74,9 @@ TEST(parse_test, HandlesInput)
 }
 
 /*! 
- * Tests parse class in translating the text file
+ * \ingroup Test_Module
+ * 
+ * \brief Tests parse class in translating the text file
  */
 TEST(parse_cmd, HandlesCmd)
 {

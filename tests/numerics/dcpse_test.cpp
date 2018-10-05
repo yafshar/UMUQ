@@ -20,6 +20,23 @@ double *qdata;
 double *fvalue;
 double *qfvalue;
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief 
+ * 
+ * \tparam T Data type
+ * 
+ * \param inDataPt Input data pointer 
+ * \param coords 
+ * \param d 
+ * \param lx 
+ * \param ly 
+ * \param dx 
+ * \param dy 
+ * \param x 
+ * \param y 
+ */
 template <typename T>
 void fillPagebyPage(T *inDataPt, T *coords, int const d, T lx, T ly, T dx, T dy, int x, int y)
 {
@@ -37,6 +54,8 @@ void fillPagebyPage(T *inDataPt, T *coords, int const d, T lx, T ly, T dx, T dy,
 }
 
 /*! \fn meshgrid
+ * \ingroup Test_Module
+ * 
  * \brief Compute N-D grid coordinates between \f$ [Lb \cdots Ub] \f$
  * 
  * \tparam T        data type
@@ -153,6 +172,8 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
 }
 
 /*! \fn meshgrid
+ * \ingroup Test_Module
+ * 
  * \brief Compute N-D coordinates randomly distributed between \f$ [Lb \cdots Ub] \f$
  * 
  * \tparam T        data type
@@ -226,6 +247,8 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for Qian function
  */
 TEST(dcpse_1d, HandlesQianFunction)
@@ -405,6 +428,8 @@ TEST(dcpse_1d, HandlesQianFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for CFD results
  */
 TEST(dcpse_1d, HandlesCFDResults)
@@ -575,6 +600,8 @@ TEST(dcpse_1d, HandlesCFDResults)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for Matlab Peaks function
  */
 TEST(dcpse_2d, HandlesPeaksFunction)
@@ -757,6 +784,8 @@ TEST(dcpse_2d, HandlesPeaksFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for Matlab Peaks function
  */
 TEST(dcpse_2d, HandlesPeaksRndFunction)
@@ -967,6 +996,8 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for franke2d function
  */
 TEST(dcpse_2d, HandlesFrankFunction)
@@ -1149,6 +1180,8 @@ TEST(dcpse_2d, HandlesFrankFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for franke2d function
  */
 TEST(dcpse_2d, HandlesFrankRndFunction)
@@ -1331,6 +1364,8 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check dcpse functionality for Rastrigin function
  */
 TEST(dcpse_2d, HandlesRastriginFunction)

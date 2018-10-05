@@ -6,11 +6,12 @@
 
 namespace umuq
 {
+
 inline namespace multimin
 {
 
 /*! \class linearFunctionWrapper
- * \ingroup multimin_Module
+ * \ingroup Multimin_Module
  * 
  * \brief Wrapper for an external Multidimensional function
  *  

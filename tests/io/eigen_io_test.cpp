@@ -3,6 +3,19 @@
 #include "io/io.hpp"
 #include "gtest/gtest.h"
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Check the equality of Matrix A & B  
+ * 
+ * \tparam TM Matrix type
+ * 
+ * \param A Matrix A 
+ * \param B Matrix B
+ * 
+ * \returns true 
+ * \returns false If A != B
+ */
 template <typename TM>
 bool EM_equal(TM A, TM B)
 {
@@ -10,7 +23,9 @@ bool EM_equal(TM A, TM B)
 }
 
 /*! 
- * Load and Save of an Eigen mtrix from and to a file in Matrix Format
+ * \ingroup Test_Module
+ * 
+ * Load and Save of an Eigen matrix from and to a file in Matrix Format
  */
 TEST(eigen_io_test, HandlesLoadandSaveinMatrixFormat)
 {

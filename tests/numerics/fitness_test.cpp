@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check fitness and residual functionality
  */
 TEST(fitness_test, HandlesFitness)
@@ -11,7 +13,9 @@ TEST(fitness_test, HandlesFitness)
     EXPECT_EQ(f.getMetricName(), "sum_squared");
 }
 
-/*! 
+/*!
+ * \ingroup Test_Module
+ *  
  * Test to check fitness and residual functionality in simple linear regression
  */
 TEST(fitness_test, HandlesLinearRegression)

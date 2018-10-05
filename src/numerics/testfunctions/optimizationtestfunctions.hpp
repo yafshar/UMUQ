@@ -2,6 +2,8 @@
 #define UMUQ_OPTIMIZATIONTESTFUNCTIONS_H
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief The Rosenbrock function
  * 
  * The Rosenbrock function, also referred to as the Valley or Banana function, is a 
@@ -16,6 +18,8 @@
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Rosenbrock function
  * 
  * \param x  2-D Input point
@@ -33,6 +37,8 @@ double rosenbrock_f(double const *x)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Derivative of Rosenbrock function
  * 
  * \param x   2-D Input point
@@ -54,6 +60,8 @@ bool rosenbrock_df(double const *x, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Rosenbrock function & it's derivative
  * 
  * \param x   2-D Input point
@@ -79,6 +87,8 @@ bool rosenbrock_fdf(double const *x, double *f, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief The Freudenstein-Roth's Function
  * 
  * The Freudenstein-Roth's Function, also referred to roth function.
@@ -88,6 +98,8 @@ bool rosenbrock_fdf(double const *x, double *f, double *df)
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Roth function
  * 
  * \param x  2-D Input point
@@ -106,6 +118,8 @@ double roth_f(double const *x)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Derivative of Roth function
  * 
  * \param x   2-D Input point
@@ -130,6 +144,8 @@ bool roth_df(double const *x, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Roth function & it's derivative
  * 
  * \param x   2-D Input point
@@ -157,6 +173,8 @@ bool roth_fdf(double const *x, double *f, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief The Wood's (or Colville's) function
  * 
  * The Wood's (or Colville's) function, also referred to wood function.
@@ -169,6 +187,8 @@ bool roth_fdf(double const *x, double *f, double *df)
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Wood function
  * 
  * \param x  4-D Input point
@@ -189,6 +209,8 @@ double wood_f(double const *x)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Derivative of Wood function
  * 
  * \param x   4-D Input point
@@ -216,6 +238,8 @@ bool wood_df(double const *x, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Wood function & it's derivative
  * 
  * \param x    4-D Input point
@@ -246,11 +270,15 @@ bool wood_fdf(double const *x, double *f, double *df)
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief The Spring function
  * 
  */
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Spring function
  * 
  * \param x  3-D Input point
@@ -283,4 +311,4 @@ double spring_f(double const *x)
     return 0.1 * (std::expm1(tmz * tmz + rm1 * rm1) + std::abs(x2 / 10));
 }
 
-#endif
+#endif // UMUQ_OPTIMIZATIONTESTFUNCTIONS

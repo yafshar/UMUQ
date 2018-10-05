@@ -7,9 +7,12 @@
 namespace umuq
 {
 
-/*!
- * \brief class linearRegression
- * \ingroup numerics
+/*! \class linearRegression
+ * \ingroup Numerics_Module
+ * 
+ * \brief linearRegression is a linear approach to modelling the relationship between a 
+ * scalar response (or dependent variable) and one or more explanatory variables (or 
+ * independent variables).
  * 
  * \tparam T Data type
  */

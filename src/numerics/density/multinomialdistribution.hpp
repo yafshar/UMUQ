@@ -3,14 +3,13 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
+
 inline namespace density
 {
 
 /*! \class multinomialDistribution
+ * \ingroup Density_Module
+ * 
  * \brief The multinomial distribution
  * The multinomial distribution models the probability of counts for rolling a k-sided die n times. 
  * For n independent trials each of which leads to a success for exactly one of k categories, with 

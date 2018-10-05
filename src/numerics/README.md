@@ -1,5 +1,3 @@
-# UMUQ
-
 Numerics Module
 ------------
 
@@ -8,36 +6,40 @@ The Module contains all the numerical classes
 Contents
 ----------------
 
-It should contain the following files:    
+It should contain the following files:
 
------------------------------------
+````
     numerics
-    ├── dcpse.hpp
-    ├── eigenlib.hpp
-    ├── factorial.hpp
-    ├── knearestneighbors.hpp
-    ├── multimin.hpp
-    ├── polynomial.hpp
-    ├── primitive.hpp
-    ├── psrandom.hpp
-    ├── README.md
-    ├── saruprng.hpp
-    └── stats.hpp
------------------------------------
+    |-- dcpse.hpp
+    |-- density.hpp
+    |-- eigenlib.hpp
+    |-- factorial.hpp
+    |-- fitness.hpp
+    |-- knearestneighbors.hpp
+    |-- latinhypercube.hpp
+    |-- linearregression.hpp
+    |-- multimin.hpp
+    |-- polynomial.hpp
+    |-- primitive.hpp
+    |-- README.md
+    |-- residual.hpp
+    `-- stats.hpp
+````
 
 and the following directories:  
 
------------------------------------
+````
     numerics
-    ├── densityfunction
-    ├── multimin
-    ├── random
-    └── testfunctions
------------------------------------
+    |-- density
+    |-- function
+    |-- multimin
+    |-- random
+    `-- testfunctions
+````
 
-Contributors       
+Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
-Computational Aerosciences Laboratory  
-University of Michigan, Ann Arbor 
+Computational Aerosciences Laboratory<br>
+University of Michigan, Ann Arbor

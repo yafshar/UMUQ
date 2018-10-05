@@ -8,22 +8,21 @@
 
 namespace umuq
 {
-/*! \namespace tmcmc
- * \brief Namespace containing all the functions for TMCMC algorithm
- *
- */
+
 namespace tmcmc
 {
 
 /*!
- * \brief Updating the data information at each point @SamplePoints 
+ * \ingroup TMCMC_Module
+ * 
+ * \brief Updating the data information at each point SamplePoints 
  * 
  * \tparam T Data type (T is a floating-point type)
  * 
  * \param other          Database object which is casted to long long
  * \param SamplePoints   Points or sampling points array
  * \param FunValue       Function value at the sampling point 
- * \param DataArray      Array of data @SamplePoints 
+ * \param DataArray      Array of data SamplePoints 
  * \param NDimDataArray  Dimension of G array
  * \param Surrogate      Surrogate
  */
@@ -31,6 +30,8 @@ template <typename T>
 void updateDataTask(long long const other, T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief A polymorphic function wrapper type for updateTask
  * 
  * \tparam T Data type 
@@ -38,11 +39,22 @@ void updateDataTask(long long const other, T const *SamplePoints, T const *FunVa
 template <typename T>
 using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *, int const *, int const *);
 
-//! True if updateDataTask has been registered, and false otherwise (logical).
+/*!
+ * \ingroup TMCMC_Module
+ * 
+ * \brief It is True if updateDataTask has been registered, and false otherwise (logical).
+ * 
+ * \tparam T 
+ */
 template <typename T>
 static bool isUpdateTaskRegistered = false;
 
-//! Mutex object
+/*!
+ * \ingroup TMCMC_Module
+ * 
+ * \brief Mutex object
+ * 
+ */
 static std::mutex updateTask_m;
 
 } // namespace tmcmc
@@ -51,6 +63,7 @@ namespace tmcmc
 {
 
 /*! \class database
+ * \ingroup TMCMC_Module
  *
  * \brief basic data base
  * 
@@ -221,22 +234,22 @@ class database
     bool load(std::string const &fname, int const IdNumber = 0);
 
     /*!
-     * \brief Updating the data information at each point @SamplePoints 
+     * \brief Updating the data information at each point SamplePoints 
      * 
      * \param SamplePoints   Points or sampling points array
      * \param FunValue       Function value at the sampling point
-     * \param DataArray      Array of data @SamplePoints 
+     * \param DataArray      Array of data SamplePoints 
      * \param NDimDataArray  Dimension of G array
      * \param Surrogate      Surrogate
      */
     void updateData(T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
     /*!
-     * \brief Updating the data information at each point @SamplePoints 
+     * \brief Updating the data information at each point SamplePoints 
      * 
      * \param SamplePoints  Points or sampling points array
      * \param FunValue      Function value at the sampling point
-     * \param DataArray     Array of data @SamplePoints 
+     * \param DataArray     Array of data SamplePoints 
      * \param Surrogate     Surrogate
      */
     void update(T const *SamplePoints, T const FunValue, T const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
@@ -1064,13 +1077,13 @@ inline bool database<T>::sort()
 }
 
 template <typename T>
-database<T>::sortType::sortType() : nSel(0) {}
+umuq::tmcmc::database<T>::sortType::sortType() : nSel(0) {}
 
 template <typename T>
-database<T>::sortType::sortType(database<T>::sortType const &other) : nSel(other.nSel), idx(other.idx) {}
+umuq::tmcmc::database<T>::sortType::sortType(umuq::tmcmc::database<T>::sortType const &other) : nSel(other.nSel), idx(other.idx) {}
 
 template <typename T>
-typename database<T>::sortType &database<T>::sortType::operator=(database<T>::sortType const &other)
+typename umuq::tmcmc::database<T>::sortType &umuq::tmcmc::database<T>::sortType::operator=(umuq::tmcmc::database<T>::sortType const &other)
 {
     nSel = other.nSel;
     idx = other.idx;

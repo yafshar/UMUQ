@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Computes the square of x
  * 
  * \param x  Input data
@@ -14,6 +16,8 @@ double fun_sqrx(double const x)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Computes the root square of x
  * 
  * \param x  Input data
@@ -25,6 +29,8 @@ double fun_rsqrx(double const x)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check function construction
  */
 TEST(function_test, HandlesFunctionConstruction)
@@ -40,6 +46,8 @@ TEST(function_test, HandlesFunctionConstruction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Differentiable Function test for any general-purpose differentiable function of n variables
  * 
  */
@@ -48,6 +56,8 @@ using FUNT = std::function<double(std::vector<double> const &, void *)>;
 using DFUNT = std::function<std::vector<double>(std::vector<double> const &, void *)>;
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief A two-dimensional paraboloid with five parameters
  * 
  * \param v       Input vector of data 
@@ -61,7 +71,15 @@ double f_test(std::vector<double> const &v, void *params)
     return p[2] * (v[0] - p[0]) * (v[0] - p[0]) + p[3] * (v[1] - p[1]) * (v[1] - p[1]) + p[4];
 }
 
-//! The gradient of f, df = (df/dx, df/dy)
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief The gradient of f, df = (df/dx, df/dy)
+ * 
+ * \param v 
+ * \param params 
+ * \returns std::vector<double> 
+ */
 std::vector<double> df_test(std::vector<double> const &v, void *params)
 {
     //Creating output vector
@@ -75,6 +93,16 @@ std::vector<double> df_test(std::vector<double> const &v, void *params)
     return df;
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Function and its derivative
+ * 
+ * \param v 
+ * \param p 
+ * \param f 
+ * \param df 
+ */
 void fdf_test(double const *v, double const *p, double *f, double *df)
 {
     *f = p[2] * (v[0] - p[0]) * (v[0] - p[0]) + p[3] * (v[1] - p[1]) * (v[1] - p[1]) + p[4];
@@ -83,6 +111,8 @@ void fdf_test(double const *v, double const *p, double *f, double *df)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check differentiable function construction
  */
 TEST(differentiablefunction_test, HandlesDifferentiableFunctionConstruction)

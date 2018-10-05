@@ -4,16 +4,16 @@ directory = $(top_srcdir)/docs/man/man3/
 
 man_MANS = $(directory)
 
-$(directory):	doxyfile.stamp
+$(directory):	UMUQ.doxyfile.stamp
 
-doxyfile.stamp:	Doxyfile
+doxyfile.stamp: UMUQ.Doxyfile	
 	$(DOXYGEN) $^  
 	cd latex && $(MAKE)	
 	echo Timestamp > doxyfile.stamp
 
-CLEANFILES = doxyfile.stamp
+CLEANFILES = UMUQ.doxyfile.stamp
 
-all-local:	doxyfile.stamp
+all-local:	UMUQ.doxyfile.stamp
 
 clean-local:
 	rm -rf $(top_srcdir)/docs/man

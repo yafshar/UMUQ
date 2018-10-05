@@ -5,7 +5,9 @@
 #include "gtest/gtest.h"
 
 /*! 
- * Test to check bfgs2 construction
+ * \ingroup Test_Module
+ * 
+ * \brief Test to check bfgs2 construction
  */
 TEST(bfgs2_test, HandlesMinimizerConstruction)
 {
@@ -16,6 +18,8 @@ TEST(bfgs2_test, HandlesMinimizerConstruction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if bfgs2 can handle a Rosenbrock function
  * 
  */
@@ -67,6 +71,8 @@ TEST(bfgs2_test, HandlesRosenbrockFunction)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Test if bfgs2 can handle a Roth function
  * 
  */

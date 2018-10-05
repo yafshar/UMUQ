@@ -1,9 +1,7 @@
-# UMUQ
-
-Multidimensional Minimization
+Multidimensional Minimization Module
 ------------
 
-The multimin Module contains the c++ re-implamentation and modifications to the original 
+The multimin Module contains the c++ re-implementation and modifications to the original<br>
 GSL Multidimensional Minimization source codes made available under the following license:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,19 +27,18 @@ Contents
 
 It should contain the following files:  
 
------------------------------------
+````
     multimin
-    ├── COPYING
-    ├── bfgs.hpp
-    ├── bfgs2.hpp
-    ├── conjugatefr.hpp
-    ├── conjugatepr.hpp
-    ├── simplexnm.hpp
-    ├── simplexnm2.hpp
-    ├── simplexnm2rnd.hpp
-    ├── steepestdescent.hpp
-    └── README.md
------------------------------------
+    |-- COPYING.GPL
+    |-- bfgs2.hpp
+    |-- bfgs.hpp
+    |-- conjugatefr.hpp
+    |-- conjugatepr.hpp
+    |-- simplexnm2.hpp
+    |-- simplexnm2rnd.hpp
+    |-- simplexnm.hpp
+    `-- steepestdescent.hpp
+````
 
 For local optimization, the most efficient algorithms typically require the user to supply 
 the gradient in addition to the value f(x) for any given point x. This exploits the fact 
@@ -49,7 +46,7 @@ that, in principle, the gradient can almost always be computed at the same time 
 of f using very little additional computational effort (at worst, about the same as that of 
 evaluating f a second time). If a quick way to compute the derivative of f is not obvious, 
 one typically finds gradient using an adjoint method, or possibly using automatic differentiation 
-tools. 
+tools.<br>
 Gradient-based methods are critical for the efficient optimization of very high-dimensional 
 parameter spaces (e.g. n in the thousands or more).
 On the other hand, computing the gradient is sometimes cumbersome and inconvenient if the 
@@ -84,5 +81,5 @@ Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
-Computational Aerosciences Laboratory  
+Computational Aerosciences Laboratory<br>
 University of Michigan, Ann Arbor

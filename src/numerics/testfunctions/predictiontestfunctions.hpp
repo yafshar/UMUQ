@@ -2,6 +2,8 @@
 #define UMUQ_PREDICTIONTESTFUNCTIONS_H
 
 /*! \class qian
+ * \ingroup Numerics_Module
+ * 
  * \brief Qian's 1-Dimensional Function class
  * 
  * \tparam T data type
@@ -38,6 +40,8 @@ struct qian
 };
 
 /*! \class franke2d
+ * \ingroup Numerics_Module
+ * 
  * \brief Franke's 2-Dimensional Function class
  * 
  * \tparam T data type
@@ -58,12 +62,14 @@ struct franke2d
   /*! \fn f
    * \brief Franke's bivariate function
    * 
-   * Franke's bivariate function is a weighted sum of four exponentials
+   * Franke's bivariate function is a weighted sum of four exponential
    * \f[
-   * f(x) &= 0.75 e^\left(-\frac{(9x_1-2)^2}{4} - \frac{(9x_2-2)^2}{4} \right) \\
-   *      &+ 0.75 e^\left(-\frac{(9x_1+1)^2}{49} - \frac{(9x_2+1)}{10} \right) \\
-   *      &+ 0.5 e^\left(-\frac{(9x_1-7)^2}{4} - \frac{(9x_2-3)^2}{4} \right) \\
-   *      &- 0.2 e^\left(-(9x_1-4)^2 - (9x_2-7)^2 \right)
+   * \begin{aligned} 
+   * \nonumber f(x) &= 0.75 e^{\left(-\frac{(9x_1-2)^2}{4} - \frac{(9x_2-2)^2}{4} \right)} \\
+   * \nonumber      &+ 0.75 e^{\left(-\frac{(9x_1+1)^2}{49} - \frac{(9x_2+1)}{10} \right)} \\
+   * \nonumber      &+ 0.5 e^{\left(-\frac{(9x_1-7)^2}{4} - \frac{(9x_2-3)^2}{4} \right)} \\
+   * \nonumber      &- 0.2 e^{\left(-(9x_1-4)^2 - (9x_2-7)^2 \right)}
+   * \end{aligned}
    * \f]
    * 
    * \param  x  input data point
@@ -83,6 +89,8 @@ struct franke2d
 };
 
 /*! \class rastrigin
+ * \ingroup Numerics_Module
+ * 
  * \brief Rastrigin's N-Dimensional Function class 
  * 
  * \tparam T data type
@@ -127,6 +135,8 @@ private:
 };
 
 /*! \class ackley
+ * \ingroup Numerics_Module
+ * 
  * \brief Ackley's N-Dimensional Function class 
  * 
  * \tparam T data type
@@ -195,6 +205,8 @@ private:
 };
 
 /*! \class peaks
+ * \ingroup Numerics_Module
+ * 
  * \brief Matlab peaks 2-Dimensional Function class
  * 
  * Matlab peaks is a function of two variables, obtained by translating and scaling Gaussian distributions
@@ -235,4 +247,4 @@ struct peaks
   }
 };
 
-#endif
+#endif // UMUQ_PREDICTIONTESTFUNCTIONS

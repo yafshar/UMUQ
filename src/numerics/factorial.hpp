@@ -5,6 +5,8 @@ namespace umuq
 {
 
 /*! \class max_factorial
+ * \ingroup Numerics_Module
+ * 
  * \brief Predefined max factorial
  * 
  * \tparam T data type one of float, double, int, unsigned int
@@ -15,27 +17,18 @@ struct max_factorial
     static unsigned int const value = 0;
 };
 
-/*! 
- * 
- */
 template <>
 struct max_factorial<float>
 {
     static unsigned int const value = 34;
 };
 
-/*! 
- * 
- */
 template <>
 struct max_factorial<double>
 {
     static unsigned int const value = 170;
 };
 
-/*!
- *
- */
 template <>
 struct max_factorial<int>
 {
@@ -43,6 +36,8 @@ struct max_factorial<int>
 };
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Predefined unchecked factorial
  * 
  * \tparam T data type one of float, double, long double
@@ -323,6 +318,8 @@ inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int con
 }
 
 /*!
+ * \ingroup Numerics_Module
+ * 
  * \brief Compute the factorial of n \f$\left(n!\right)\f$
  * 
  * \tparam T data type one of float, double, int, long int, and unsigned int

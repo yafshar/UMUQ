@@ -8,6 +8,12 @@
 namespace umuq
 {
 
+/*!
+ * \ingroup Numerics_Module
+ * 
+ * \brief Available Error Fitness type
+ * 
+ */
 enum ErrorFitnessTypes
 {
     errorFitSum = -1,
@@ -17,7 +23,7 @@ enum ErrorFitnessTypes
 };
 
 /*! \class fitness
- * \ingroup numerics
+ * \ingroup Numerics_Module
  *
  * \brief This class evalutes the model fitness 
  *
@@ -122,30 +128,6 @@ class fitness
     std::unique_ptr<T[]> metric_values;
 };
 
-/*!
- * \brief Construct a new fitness object
- * 
- * \param metric         Metric name for evaluating the model fitness
- * \param inum_metrics   Input number of metrics (default  1)
- * \param imetric_names  Input names of different metrics (default )
- * 
- * List of available metrics:
- *  - \b sum_squared
- *  - \b mean_squared     
- *  - \b root_mean_squared     
- *  - \b max_squared
- *  - \b sum_scaled
- *  - \b mean_scaled     
- *  - \b root_mean_scaled    
- *  - \b max_scaled
- *  - \b sum_abs
- *  - \b mean_abs   
- *  - \b root_mean_abs
- *  - \b max_abs
- *  - \b press   
- *  - \b cv
- *  - \b rsquared
- */
 template <typename T>
 fitness<T>::fitness(std::string const &metric, int const inum_metrics, std::vector<std::string> const imetric_names) : num_metrics(inum_metrics)
 {
@@ -158,11 +140,6 @@ fitness<T>::fitness(std::string const &metric, int const inum_metrics, std::vect
     }
 }
 
-/*!
- * \brief Set the Metric object name
- * 
- * \param metric  Metric name to set for evaluating the model fitness
- */
 template <typename T>
 bool fitness<T>::setMetricName(std::string const &metric)
 {
@@ -245,17 +222,6 @@ bool fitness<T>::setMetricName(std::string const &metric)
     return true;
 }
 
-/*!
- * \brief Compute residuals  
- * 
- * \param observations  Array of observations data
- * \param predictions   Array of predicted data
- * \param nSize         Size of the array
- * \param results       Array of results
- * 
- * \return true        
- * \return false        If there is not enoug hmemory to continue
- */
 template <typename T>
 bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSize, T *&results)
 {
@@ -325,15 +291,6 @@ bool fitness<T>::computeResiduals(T *observations, T const prediction, int const
     return true;
 }
 
-/*!
- * \brief Get the Fitness value
- * 
- * \param observations Array of observed data
- * \param predictions  Array of predicted data 
- * \param nSize        Size of the array
- * 
- * \return             The Fitness value
- */
 template <typename T>
 T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 {
@@ -463,11 +420,6 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
     return std::numeric_limits<T>::max();
 }
 
-/*!
- * \brief Get the Metric object name
- * 
- * \return the Metric object name
- */
 template <typename T>
 inline std::string fitness<T>::getMetricName() { return this->fitnessMetricName; }
 

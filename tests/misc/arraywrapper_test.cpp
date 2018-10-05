@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for checking arrayWrapper
  * 
  */
@@ -77,6 +79,8 @@ TEST(arraywrapper_test, HandlesVectors)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for checking arrayWrapper when we have stride
  * 
  */
@@ -122,6 +126,8 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Construct a new TEST object for checking arrayWrapper for N dimensional vectors 
  * 
  */

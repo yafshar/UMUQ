@@ -5,6 +5,7 @@ namespace umuq
 {
 
 /*! \class polynomial
+ * \ingroup Numerics_Module
  *
  * \brief Multivariate monomials with the degree of r in a space of d dimensions.
  *

@@ -6,17 +6,29 @@
 
 namespace umuq
 {
-/*! \namespace multimin
+
+/*! \defgroup Multimin_Module multimin module
+ * \ingroup Numerics_Module
+ *
+ * This is the Multidimensional Minimization Module of UMUQ providing all necessary classes 
+ * for finding minima of arbitrary multidimensional functions.
+ */
+
+/*! \namespace umuq::multimin
+ * \ingroup Multimin_Module
+ * 
  * \brief Namespace containing all the functions for Multidimensional Minimization Module
  * 
  * It includes all the functionalities for finding minima of arbitrary multidimensional 
  * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests.
+ * and convergence tests. 
  */
 inline namespace multimin
 {
 
 /*!
+ * \ingroup Multimin_Module
+ * 
  * \brief Different available Function Minimizer available in UMUQ
  * 
  */
@@ -27,11 +39,16 @@ enum FunctionMinimizerTypes
   SIMPLEXNM2RND = 3
 };
 
-/*! \brief The goal is finding minima of arbitrary multidimensional functions.
- *  \ingroup multimin_Module
+/*!
+ * \ingroup Multimin_Module
+ *  
+ * \brief The goal is finding minima of arbitrary multidimensional functions.
+ * 
  */
 
 /*! \class functionMinimizer
+ * \ingroup Multimin_Module
+ * 
  * \brief The base class which is for finding minima of arbitrary multidimensional functions.
  * This is the low level component for a variety of iterative minimizers
  * 

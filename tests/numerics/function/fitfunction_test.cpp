@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief n-dimensional Rosenbrock function
  * 
  * \param x  Input x
@@ -23,6 +25,8 @@ double f1(double const *x, int const n)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check fitFunction construction
  * One can easily fix the fitfunction class with any functionality
  */
@@ -39,6 +43,8 @@ std::vector<double> x;
 std::vector<double> y;
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief Initialization function that we want to use 
  * 
  */
@@ -70,6 +76,8 @@ bool init()
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * \brief External function to compute the function \f$ y = c_0 \sin(c_1*x+c_2) \f$
  * 
  * \param x Input x coordinates
@@ -86,6 +94,19 @@ void f2(std::vector<double> const &x, std::vector<double> &y, double const *c)
     }
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Testing fitting function
+ * 
+ * \param c Input parameter
+ * \param numc Number of input parameters
+ * \param out Output
+ * \param numout Number of outputs
+ * \param info Task information
+ * 
+ * \returns log likelihood 
+ */
 double fitfun(double const *c, int const numc, double *out, int const numout, int const *info)
 {
     double sigma2 = std::pow(c[numc - 1], 2);
@@ -107,6 +128,8 @@ double fitfun(double const *c, int const numc, double *out, int const numout, in
 }
 
 /*!
+ * \ingroup Test_Module
+ * 
  * Test to check fitFunction construction with external extension
  */
 TEST(fitFunction_test, HandlesexternalfitFunctionConstruction)

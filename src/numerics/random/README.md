@@ -1,16 +1,14 @@
-# UMUQ
-
 Random Module
 ------------
 
-The Module contains all the PRNG classes currenly implemented in UMUQ
+The Module contains all the PRNG classes currently implemented in UMUQ
 
 It contains Engines and distributions used to produce random values. 
 Also, the psrandom class generates pseudo-random numbers. 
 All of the engines may be specifically seeded, for use with repeatable simulators. 
 Random number engines generate pseudo-random numbers using seed data as entropy source. 
 The choice of which engine to use involves a number of tradeoffs:
- 
+
 Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast.
 
 The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
@@ -19,20 +17,19 @@ the longest non-repeating sequence with the most desirable spectral characterist
 Contents
 ----------------
 
-It should contain the following files:    
+It should contain the following files:
 
------------------------------------
+````
     random
-    ├── psrandom_exponentialdistribution.hpp
-    ├── psrandom_gammadistribution.hpp
-    ├── psrandom.hpp
-    ├── psrandom_lognormaldistribution.hpp
-    ├── psrandom_multinomial.hpp
-    ├── psrandom_multivariatenormaldistribution.hpp
-    ├── psrandom_normaldistribution.hpp
-    ├── README.md
-    └── saruprng.hpp
------------------------------------
+    |-- psrandom_exponentialdistribution.hpp
+    |-- psrandom_gammadistribution.hpp
+    |-- psrandom.hpp
+    |-- psrandom_lognormaldistribution.hpp
+    |-- psrandom_multinomial.hpp
+    |-- psrandom_multivariatenormaldistribution.hpp
+    |-- psrandom_normaldistribution.hpp
+    `-- saruprng.hpp
+````
 
 Random number distributions
 ----------------
@@ -56,5 +53,5 @@ Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
-Computational Aerosciences Laboratory  
+Computational Aerosciences Laboratory<br>
 University of Michigan, Ann Arbor

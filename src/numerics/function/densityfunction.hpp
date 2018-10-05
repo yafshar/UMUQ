@@ -9,17 +9,27 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
+/*! \defgroup Density_Module density module
+ * \ingroup Numerics_Module
+ * 
+ * This is the density module of %UMUQ providing all necessary classes for probability density computation.
+ */
+
+/*! \namespace umuq::density
+ * \ingroup Density_Module
+ * 
+ * \brief Namespace containing all the functions for probability density computation.
+ * 
  */
 inline namespace density
 {
 
 /*! \class densityFunction
+ * \ingroup Density_Module
+ * 
  * \brief Density function class
  * 
- * A density function or a probability density (PDF), is a function, with a value at any given point (or sample point) 
+ * Density function or a probability density (PDF), is a function, with a value at any given point (or sample point) 
  * interpreted as a relative likelihood that the value of the random variable would be equal to that sample.
  * 
  * \tparam T   Data type

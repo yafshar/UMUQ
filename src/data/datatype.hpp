@@ -2,6 +2,8 @@
 #define UMUQ_DATATYPE_H
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief UMUQ data types
  * 
  * \file datatype.hpp

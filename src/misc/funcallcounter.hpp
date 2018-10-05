@@ -3,6 +3,7 @@
 
 namespace umuq
 {
+
 //! Local number of function calls
 static int nLocalFunctionCounter = 0;
 
@@ -19,10 +20,10 @@ static bool isFuncallcounterTaskRegistered = false;
 static std::mutex functionCounter_m;
 
 /*! \class funcallcounter
-* 
-* \brief Function call counters
-*	
-*/
+ * 
+ * \brief Function call counters
+ *	
+ */
 class funcallcounter
 {
   public:

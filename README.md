@@ -12,7 +12,9 @@ Purpose :
 
 <table>
   <tr>
-    <td colspan="2"> Multivariate normal distribution  &nbsp; &nbsp; <img src="https://latex.codecogs.com/svg.latex?&space;f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" title="f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" /> </td>
+    <td colspan="2"> Multivariate normal distribution  &nbsp; &nbsp; 
+    <img src="https://latex.codecogs.com/svg.latex?&space;f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" title="f=0.1\mathcal{N}\left(\mu_1,\sigma^2\right)+0.9\mathcal{N}\left(\mu_2,\sigma^2\right)" /> 
+    </td>
 </td>
   </tr>
   <tr>
@@ -20,7 +22,6 @@ Purpose :
     <td> <img src="./docs/two_Gaussian.gif?raw=true" width="400" height="400"> </td>
   </tr>
 </table>
-
 
 <table>
   <tr>
@@ -38,7 +39,7 @@ Initial release of UMUQ source program.
 
 Getting the code
 ------------
-You can download the latest version from [here](https://github.com/yafshar/UMUQ).
+You can download the latest version from [here](https://github.com/yafshar/UMUQ).<br>
 The very latest version is always available via 'github' by invoking one of the following:
 ````
 ## For the traditional ssh-based Git interaction:
@@ -52,9 +53,10 @@ Prerequisites
 ------------
 If you wish to compile UMUQ from source, you will require the following components (these are **not** necessary for running the statically linked binary):
 
-1. **Torc**; _latest version_ (https://github.com/cselab/torc_lite)
+1. **Torc**; _latest version_ (https://github.com/yafshar/torc_lite-1)
 
-   A tasking library that allows to write platform-independent code.
+   A tasking library that allows to write platform-independent code. 
+   UMUQ uses [torc](https://github.com/yafshar/torc_lite-1) which is forked from the original work of (TORC tasking library), and contains changes towards the original library.
 
 2. **Eigen**; _at least 3.3.2_ release (http://eigen.tuxfamily.org)
 
@@ -91,16 +93,19 @@ UMUQ is tested and developed on UNIX-like systems, hence supporting Microsoft Wi
 
 Licenses
 ------------
-UMUQ is LGPL 3.0 licensed. See these links:    
-    [LGPL3](https://www.gnu.org/licenses/lgpl-3.0.en.html)    
+UMUQ is LGPL 3.0 licensed. See these links:<br>
+    [LGPL3](https://www.gnu.org/licenses/lgpl-3.0.en.html)<br>
     [GPL-FAQ](https://www.gnu.org/licenses/gpl-faq.html)
 
 The [LICENSE](https://github.com/yafshar/UMUQ/blob/master/LICENSE) file contains the LGPL 3.0 text.
 
 Packages in [external](https://github.com/yafshar/UMUQ/tree/master/external) folder contain 
-third-party code under 
-[MPL2](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.MPL2), [GPL](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.GPL), 
-[BSD](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD) and [BSD3](https://github.com/yafshar/UMUQ/tree/master/external/COPYING.BSD3) licenses.
+third-party code under:<br> 
+[MPL2](https://www.mozilla.org/en-US/MPL/2.0),<br> 
+[GPL3](https://www.gnu.org/licenses/gpl-3.0.html),<br> 
+[GPL2](https://www.gnu.org/licenses/gpl-2.0.html),<br>
+[BSD](https://github.com/eigenteam/eigen-git-mirror/blob/72741bba73c97bdd1a16896ad3eed6934ea4ccb6/COPYING.BSD) and<br> 
+[BSD3](https://github.com/mariusmuja/flann/blob/f3a17cd3f94a0e9dd8f6a55bce11536c50d4fb24/COPYING) licenses.
 
 Contact us
 ------------
@@ -113,5 +118,5 @@ Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>
 
-Computational Aerosciences Laboratory  
+Computational Aerosciences Laboratory<br>
 University of Michigan, Ann Arbor 

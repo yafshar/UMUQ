@@ -88,7 +88,7 @@ public:
   /*!
      * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function \sa f
      * 
-     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nable f = \frac{\partial f(x)}{\partial x_i} \f$)
+     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla f = \frac{\partial f(x)}{\partial x_i} \f$)
      */
   D df;
 

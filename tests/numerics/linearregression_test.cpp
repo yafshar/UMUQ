@@ -37,6 +37,8 @@ void fillPagebyPage(T *inDataPt, T *coords, int const d, T lx, T ly, T dx, T dy,
 }
 
 /*! \fn meshgrid
+ * \ingroup Test_Module
+ * 
  * \brief Compute N-D grid coordinates between \f$ [Lb \cdots Ub] \f$
  * 
  * \tparam T        data type
@@ -153,6 +155,8 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
 }
 
 /*! \fn meshgrid
+ * \ingroup Test_Module
+ * 
  * \brief Compute N-D coordinates randomly distributed between \f$ [Lb \cdots Ub] \f$
  * 
  * \tparam T        data type
@@ -226,6 +230,8 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check linearregression functionality for Qian function
  */
 TEST(linearregression_1d, HandlesQianFunction)
@@ -481,6 +487,8 @@ TEST(linearregression_1d, HandlesQianFunction)
 }
 
 /*! 
+ * \ingroup Test_Module
+ * 
  * Test to check linearregression functionality for CFD results
  */
 TEST(linearregression_1d, HandlesCFDResults)

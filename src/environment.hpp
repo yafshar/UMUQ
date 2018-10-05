@@ -154,10 +154,8 @@ class torcEnvironment
 
 #if HAVE_MPI == 1
 	/**
-	 *
-	 * TODO:
+	 * \todo
 	 * Complete the communicator so the algorithm can work on different groups
-	 *  
 	 */
   private:
 	//! Communicator for MPI

@@ -3,14 +3,13 @@
 
 namespace umuq
 {
-/*! \namespace density
- * \brief Namespace containing all the functions for probability density computation
- *
- */
+
 inline namespace density
 {
 
 /*! \class multivariategaussianDistribution
+ * \ingroup Density_Module
+ * 
  * \brief The Multivariate Gaussian Distribution
  * 
  * The Multivariate Gaussian Distribution is a generalization of the one-dimensional (univariate) Gaussian 

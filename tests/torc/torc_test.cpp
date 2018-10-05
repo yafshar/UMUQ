@@ -3,46 +3,73 @@
 #include "data/mpidatatype.hpp"
 #include "gtest/gtest.h"
 
-class A
+/*! \class baseA
+ * \ingroup Test_Module
+ * 
+ * \brief This class is designed to test TORC functionality for virtual function
+ * 
+ */
+class baseA
 {
   public:
-    A() : a(10) {}
+    baseA() : a(10) {}
     int a;
     virtual void fun(int const a1, double const *a2)
     {
         std::cout << std::endl;
-        std::cout << "Class A, a1=" << a1 << ", a2=" << *a2 << std::endl;
+        std::cout << "Class baseA, a1=" << a1 << ", a2=" << *a2 << std::endl;
         std::cout << std::endl;
     }
 };
 
-class B : public A
+/*! \class driveA
+ * \ingroup Test_Module
+ * 
+ * \brief This class is designed to test TORC functionality for virtual function
+ * 
+ */
+class driveA : public baseA
 {
   public:
-    B() : A(), aa(100), aaa(-1.) {}
+    driveA() : baseA(), aa(100), aaa(-1.) {}
     int aa;
     double aaa;
     void fun(int const a1, double const *a2)
     {
         std::cout << std::endl;
-        std::cout << "Class B, a1=" << a1 << ", a2=" << *a2 << std::endl;
+        std::cout << "Class driveA, a1=" << a1 << ", a2=" << *a2 << std::endl;
         std::cout << std::endl;
     }
 };
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Function for TORC test
+ * 
+ * \param other Casted pointer to class baseA 
+ * \param a1 Input value 
+ * \param a2 Input value
+ */
 void FUN(long long const other, int const a1, double const *a2)
 {
-    auto obj = reinterpret_cast<A *>(other);
+    auto obj = reinterpret_cast<baseA *>(other);
     obj->fun(a1, a2);
 }
 
-class C
+/*! \class torcTest
+ * \ingroup Test_Module
+ * 
+ * \brief This class is designed to test TORC functionality
+ * 
+ */
+class torcTest
 {
   public:
     void loop()
     {
-        A obj1;
-        B obj2;
+        baseA obj1;
+        driveA obj2;
 
         int a1 = 100;
         double a2[] = {-10., 20.};
@@ -75,7 +102,7 @@ TEST(torc_test, HandlesClass)
 {
     torc_register_task((void *)FUN);
 
-    C obj;
+    torcTest obj;
     obj.loop();
 }
 

@@ -2,7 +2,12 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-//! Create a global instance of the Pyplot from Pyplot library
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Create a global instance of the Pyplot from Pyplot library
+ * 
+ */
 umuq::pyplot plt;
 
 #ifdef HAVE_PYTHON
@@ -55,6 +60,9 @@ TEST(Pyplot_test, HandlesBasic)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 }
 
 //! TEST for fill_between functionality
@@ -110,6 +118,9 @@ TEST(Pyplot_test, HandlesFill_Between)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 }
 
 // //! TEST for animation functionality
@@ -161,6 +172,9 @@ TEST(Pyplot_test, HandlesFill_Between)
 //         }
 //         t += dx;
 //     }
+//
+//     //! close figure
+//     EXPECT_TRUE(plt.close());
 // }
 
 //! TEST for histogram functionality
@@ -197,10 +211,13 @@ TEST(Pyplot_test, HandlesHist)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 }
 
 //! TEST for scatter functionality
-TEST(Pyplot_test, HandlesScatter)
+TEST(Pyplot_test, HandlesScatterWithArrayOfColors)
 {
     std::string fileName = "./scatter.svg";
     std::remove(fileName.c_str());
@@ -213,14 +230,14 @@ TEST(Pyplot_test, HandlesScatter)
     //! Y coordinates
     std::vector<double> y(n);
     //! Marker size in points**2
-    std::vector<double> s(1, 50);
-    //! Scalar data color
+    std::vector<int> s(1, 1000);
+    // //! Scalar data color
     std::vector<double> c(n);
 
     //! std::random_device rd;
     std::mt19937 gen(123);
     std::uniform_real_distribution<> dis(0, 1.0);
-    std::uniform_int_distribution<> idis(0, 255);
+    std::uniform_int_distribution<> idis(250, 255);
 
     std::for_each(x.begin(), x.end(), [&](double &x_i) { x_i = dis(gen); });
     std::for_each(y.begin(), y.end(), [&](double &y_i) { y_i = dis(gen); });
@@ -247,10 +264,164 @@ TEST(Pyplot_test, HandlesScatter)
 
     //! save figure
     EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
+}
+
+TEST(Pyplot_test, HandlesScatterWithFormat)
+{
+    std::string fileName = "./scatter.png";
+    std::remove(fileName.c_str());
+
+    //! Prepare data.
+    int n = 11 * 11;
+
+    //! X coordinates
+    std::vector<double> x(n);
+    //! Y coordinates
+    std::vector<double> y(n);
+
+    double dx = 0.1;
+    double dy = 0.1;
+
+    for (int i = 0, k = 0; i < 11; i++)
+    {
+        for (int j = 0; j < 11; j++)
+        {
+            x[k] = i * dx;
+            y[k] = j * dy;
+            k++;
+        }
+    }
+
+    //! Prepare keywords to pass to PolyCollection. See
+    std::map<std::string, std::string> keywords;
+    keywords["marker"] = "D";
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Set the size of output image = 1200x780 pixels
+    EXPECT_TRUE(plt.figure(1200, 780));
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.scatter<double>(x, y, 200, "b", keywords));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("Scatter"));
+
+    //! Enable legend.
+    EXPECT_TRUE(plt.legend());
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
+}
+
+//! TEST for contour functionality
+TEST(Pyplot_test, HandlesContour)
+{
+    std::string fileName = "./contour.png";
+    std::remove(fileName.c_str());
+
+    //! Prepare data.
+    int nDimX = 20;
+    int nDimY = 8;
+
+    //! X coordinates
+    std::vector<double> x(nDimX);
+    std::iota(x.begin(), x.end(), 1.0);
+
+    //! Y coordinates
+    std::vector<double> y(nDimY);
+    std::iota(y.begin(), y.end(), 1.0);
+
+    //! The height values over which the contour is drawn
+    std::vector<double> z(nDimX * nDimY);
+
+    //! std::random_device rd;
+    std::mt19937 gen(123);
+    std::uniform_real_distribution<> dis(0, 1.0);
+
+    std::for_each(z.begin(), z.end(), [&](double &z_i) { z_i = dis(gen); });
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Set the size of output image = 2000x800 pixels
+    EXPECT_TRUE(plt.figure(2000, 800));
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.contour<double>(x, y, z));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("Contour"));
+
+    //! Enable legend.
+    EXPECT_TRUE(plt.legend());
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
+}
+
+//! TEST for contour functionality
+TEST(Pyplot_test, HandlesContourf)
+{
+    std::string fileName = "./contourf.png";
+    std::remove(fileName.c_str());
+
+    //! Prepare data.
+    int nDimX = 20;
+    int nDimY = 8;
+
+    //! X coordinates
+    std::vector<double> x(nDimX);
+    std::iota(x.begin(), x.end(), 1.0);
+
+    //! Y coordinates
+    std::vector<double> y(nDimY);
+    std::iota(y.begin(), y.end(), 1.0);
+
+    //! The height values over which the contour is drawn
+    std::vector<double> z(nDimX * nDimY);
+
+    //! std::random_device rd;
+    std::mt19937 gen(123);
+    std::exponential_distribution<> dis(1.0);
+
+    std::for_each(z.begin(), z.end(), [&](double &z_i) { z_i = dis(gen); });
+
+    //! Clear previous plot
+    EXPECT_TRUE(plt.clf());
+
+    //! Set the size of output image = 2000x800 pixels
+    EXPECT_TRUE(plt.figure(2000, 800));
+
+    //! Create scatter plot
+    EXPECT_TRUE(plt.contourf<double>(x, y, z));
+
+    //! Add graph title
+    EXPECT_TRUE(plt.title("Contourf"));
+
+    //! Enable legend.
+    EXPECT_TRUE(plt.legend());
+
+    //! save figure
+    EXPECT_TRUE(plt.savefig(fileName));
+
+    //! close figure
+    EXPECT_TRUE(plt.close());
 }
 
 #else
 
+//! TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)
 {
 }

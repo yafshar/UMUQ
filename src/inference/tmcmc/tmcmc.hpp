@@ -15,14 +15,28 @@
 namespace umuq
 {
 
-/*! \namespace tmcmc
- * \brief Namespace containing all the functions for TMCMC algorithm
- *
+/*! \defgroup Inference_Module Inference module
+ * This is the inference module of UMUQ providing all necessary classes of statistical inference in which 
+ * Bayes' theorem is used to update the probability for a hypothesis as more evidence or information becomes available.
+ */
+
+/*! \defgroup TMCMC_Module TMCMC module
+ * \ingroup Inference_Module
+ * 
+ * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.
+ */
+
+/*! \namespace umuq::tmcmc
+ * \ingroup TMCMC_Module
+ * \brief Namespace containing all Transitional Markov Chain Monte Carlo Method symbols from the %UMUQ library.
+ * 
  */
 namespace tmcmc
 {
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief TORC environemnt object
  * 
  * \tparam T Data type
@@ -34,6 +48,8 @@ std::unique_ptr<torcEnvironment<T>> torc;
 funcallcounter fc;
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Initialization of MCMC sampling task
  * 
  * \tparam T  Data type
@@ -50,6 +66,8 @@ template <typename T, class F>
 void tmcmcInitTask(long long const TMCMCObj, T const *SamplePoints, int const *nSamplePoints, T *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief Main MCMC sampling task
  * 
  * \tparam T  Data type
@@ -75,22 +93,26 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
                    T const *PJ, T const *Covariance, int const *nBurningSteps);
 
 /*!
- * \brief 
+ * \ingroup TMCMC_Module
+ * 
+ * \brief MCMC update sample task
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
  * 
- * \param TMCMCObj 
- * \param SamplePoints 
- * \param nSamplePoints 
- * \param Fvalue 
- * \param nFvalue 
- * \param WorkInformation 
+ * \param TMCMCObj         TMCMC object which is casted to long long
+ * \param SamplePoints     Array of sample points
+ * \param nSamplePoints    Dimension of sample points
+ * \param Fvalue           Function values at sampling points
+ * \param nFvalue          Number of function values
+ * \param WorkInformation  Information regarding this task work
  */
 template <typename T, class F>
 void tmcmcUpdateTask(long long const TMCMCObj, T const *SamplePoints, int const *nSamplePoints, T *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
+ * \ingroup TMCMC_Module
+ * 
  * \brief TMCMC task type (function pointer)
  * 
  * \tparam T  Data type
@@ -109,7 +131,17 @@ namespace tmcmc
 {
 
 /*! \class tmcmc
- * \brief 
+ * \ingroup TMCMC_Module
+ * 
+ * \brief This class performs Transitional Markov Chain Monte Carlo Method
+ * 
+ * This implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo
+ * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
+ * in [pi4u](https://github.com/cselab/pi4u) code made available under the following LICENSE:
+ * 
+ * \verbatim
+ * GNU General Public License v2.0
+ * \endverbatim
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
@@ -118,8 +150,16 @@ template <typename T, class F = FITFUN_T<T>>
 class tmcmc
 {
 public:
+  /*!
+   * \brief Construct a new tmcmc object
+   * 
+   */
   tmcmc();
 
+  /*!
+   * \brief Destroy the tmcmc object
+   * 
+   */
   ~tmcmc();
 
   /*!
@@ -944,7 +984,7 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
       workInformation[2] = step;
 
       /*!
-       * TODO:
+       * \todo
        * Check if the fitting function is in the log mod or not!
        */
       //! Call the fitting function

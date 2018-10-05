@@ -1,33 +1,34 @@
-# UMUQ
+M4
+------------
 
-The below macros: 
+The below macros:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+````
 	m4
 	├── m4_ax_arch.m4
-	├── m4_ax_blas.m4
-	├── m4_ax_cxx_compile_stdcxx.m4
-	├── m4_ax_debug.m4
-	├── m4_ax_doxygen.m4
-	├── m4_ax_eigen.m4
-	├── m4_ax_flann.m4
-	├── m4_ax_googletest.m4
-	├── m4_ax_lapack.m4
-	├── m4_ax_mpi.m4
-	├── m4_ax_prog.m4
-	├── m4_ax_pthread.m4
-        ├── m4_ax_python.m4
-	├── m4_ax_torc.m4
-	└── README.md
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	|-- m4_ax_arch.m4
+	|-- m4_ax_blas.m4
+	|-- m4_ax_cxx_compile_stdcxx.m4
+	|-- m4_ax_debug.m4
+	|-- m4_ax_doxygen.m4
+	|-- m4_ax_eigen.m4
+	|-- m4_ax_flann.m4
+	|-- m4_ax_googletest.m4
+	|-- m4_ax_lapack.m4
+	|-- m4_ax_mpi.m4
+	|-- m4_ax_prog.m4
+	|-- m4_ax_pthread.m4
+	|-- m4_ax_python.m4
+	`-- m4_ax_torc.m4
+````
 
-have been written and adapted by Yaser Afshar and designed to be used for this library. 
-As they are not meant for general purposes, in case of porting to any other work, please 
+have been written and adapted by Yaser Afshar and designed to be used for this library.<br>
+As they are not meant for general purposes, in case of porting to any other work, please<br>
 check their implementation and do all the changes.
 
-Contributors       
+Contributors
 ------------
 UMUQ package maintainer: Yaser Afshar <yafshar@umich.edu>  
 
-Computational Aerosciences Laboratory  
-University of Michigan, Ann Arbor 
+Computational Aerosciences Laboratory<br>
+University of Michigan, Ann Arbor
