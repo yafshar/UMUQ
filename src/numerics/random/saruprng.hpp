@@ -2,9 +2,11 @@
 #define UMUQ_SARUPRNG_H
 
 /*! \file saruprng.hpp
+ * \ingroup Random_Module
+ * 
  * \brief Implementation of the Saru random number generator.
  *
- * This file contains minor modifications to the original Saru
+ * This file contains minor addition to the original Saru
  * source code made available under the following license:
  *
  * \verbatim
@@ -29,8 +31,11 @@
  * \endverbatim
  */
 
-//! Saru random number generator
 /*!
+ * \ingroup Random_Module
+ * 
+ * Saru random number generator: 
+ * 
  * Saru is a pseudo-random number generator that requires only a 64-bit state vector.
  * The generator is first seeded using one, two, or three 32-bit unsigned integers.
  * The seeds are hashed together to generate an initially random state consisting
@@ -55,11 +60,12 @@
  * for Brownian Dynamics and Dissipative Particle Dynamics simulations on GPU devices",
  * J. Comput. Phys. 230, 7191-7201 (2011).
  *
- *
  * for more details.
  */
 
 /* \class saru
+ * \ingroup Random_Module
+ * 
  * Usage:
  * 
  * Constructors for 0, 1, 2, or 3 integer seeds.
@@ -107,17 +113,32 @@ class Saru
      */
     Saru() : state(0x12345678), wstate(12345678) {}
 
-    //! One-seed constructor
+    /*!
+     * \brief Construct a new Saru object (One-seed constructor)
+     * 
+     * \param seed PRNG seed
+     */
     explicit inline Saru(unsigned int seed);
     
-    //! Two-seeds constructor
+    /*!
+     * \brief Construct a new Saru object (Two-seeds constructor)
+     * 
+     * \param seed1 PRNG seed1
+     * \param seed2 PRNG seed2
+     */
     inline Saru(unsigned int seed1, unsigned int seed2);
     
-    //! Three-seeds constructor
+    /*!
+     * \brief Construct a new Saru object (Three-seeds constructor)
+     * 
+     * \param seed1 PRNG seed1
+     * \param seed2 PRNG seed2
+     * \param seed3 PRNG seed3
+     */
     inline Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
 
     /*! 
-     * Efficient compile-time computed advancements 
+     * \brief Efficient compile-time computed advancements 
      */
     template <unsigned int steps>
     inline void advance()
@@ -548,4 +569,4 @@ inline double Saru::d(double low, double high)
     return d<1>(low, high);
 }
 
-#endif /* SARUPRNG_H */
+#endif // SARUPRNG

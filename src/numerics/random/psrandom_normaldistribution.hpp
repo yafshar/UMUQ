@@ -3,10 +3,18 @@
 
 namespace umuq
 {
+
+/*! \namespace umuq::randomdist
+ * \ingroup Random_Module
+ * 
+ * \brief Namespace containing all necessary classes that generate random number distributions
+ */
 namespace randomdist
 {
 
 /*! \class normalDistribution
+ * \ingroup Random_Module
+ * 
  * \brief Generates random numbers according to the Normal (or Gaussian) random number distribution
  * 
  * NOTE: 

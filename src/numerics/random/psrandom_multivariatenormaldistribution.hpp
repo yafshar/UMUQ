@@ -3,10 +3,13 @@
 
 namespace umuq
 {
+
 namespace randomdist
 {
 
 /*! \class multivariatenormalDistribution
+ * \ingroup Random_Module
+ * 
  * \brief Multivariate normal distribution
  * 
  * NOTE: 

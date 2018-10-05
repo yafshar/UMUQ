@@ -3,10 +3,13 @@
 
 namespace umuq
 {
+
 namespace randomdist
 {
 
 /*! \class exponentialDistribution
+ * \ingroup Random_Module
+ * 
  * \brief Generates random non-negative values x, distributed according to probability density function \f$ \frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)} \f$ 
  * 
  * This class provides random non-negative values x, distributed according to the probability 

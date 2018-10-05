@@ -3,10 +3,13 @@
 
 namespace umuq
 {
+
 namespace randomdist
 {
 
 /*! \class lognormalDistribution
+ * \ingroup Random_Module
+ * 
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
  * 
  * NOTE: This should be called after setting the State of psrandom object
