@@ -4,10 +4,23 @@
 #include "inference/prior/priordistribution.hpp"
 #include "gtest/gtest.h"
 
-// Get an instance of a random object and seed it
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief An instance of a seeded pseudo-random object
+ * 
+ */
 umuq::psrandom<double> prng(123);
 
-//! uniform PDF
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief uniform PDF
+ * 
+ * \param param1 lower bound
+ * \param param2 upper bound
+ * \returns  uniform PDF
+ */
 double priorpdf(std::vector<double> const &param1, std::vector<double> const &param2)
 {
     double sum{1};
@@ -18,7 +31,15 @@ double priorpdf(std::vector<double> const &param1, std::vector<double> const &pa
     return sum;
 }
 
-//! uniform Log(PDF)
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief uniform Log(PDF)
+ * 
+ * \param param1 lower bound
+ * \param param2 upper bound
+ * \returns uniform Log(PDF) 
+ */
 double logpriorpdf(std::vector<double> const &param1, std::vector<double> const &param2)
 {
     double sum{};

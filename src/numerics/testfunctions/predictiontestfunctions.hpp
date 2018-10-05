@@ -2,6 +2,8 @@
 #define UMUQ_PREDICTIONTESTFUNCTIONS_H
 
 /*! \class qian
+ * \ingroup Numerics_Module
+ * 
  * \brief Qian's 1-Dimensional Function class
  * 
  * \tparam T data type
@@ -38,6 +40,8 @@ struct qian
 };
 
 /*! \class franke2d
+ * \ingroup Numerics_Module
+ * 
  * \brief Franke's 2-Dimensional Function class
  * 
  * \tparam T data type
@@ -85,6 +89,8 @@ struct franke2d
 };
 
 /*! \class rastrigin
+ * \ingroup Numerics_Module
+ * 
  * \brief Rastrigin's N-Dimensional Function class 
  * 
  * \tparam T data type
@@ -129,6 +135,8 @@ private:
 };
 
 /*! \class ackley
+ * \ingroup Numerics_Module
+ * 
  * \brief Ackley's N-Dimensional Function class 
  * 
  * \tparam T data type
@@ -197,6 +205,8 @@ private:
 };
 
 /*! \class peaks
+ * \ingroup Numerics_Module
+ * 
  * \brief Matlab peaks 2-Dimensional Function class
  * 
  * Matlab peaks is a function of two variables, obtained by translating and scaling Gaussian distributions
@@ -237,4 +247,4 @@ struct peaks
   }
 };
 
-#endif
+#endif // UMUQ_PREDICTIONTESTFUNCTIONS

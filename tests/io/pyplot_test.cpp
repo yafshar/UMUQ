@@ -2,7 +2,12 @@
 #include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
-//! Create a global instance of the Pyplot from Pyplot library
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Create a global instance of the Pyplot from Pyplot library
+ * 
+ */
 umuq::pyplot plt;
 
 #ifdef HAVE_PYTHON
