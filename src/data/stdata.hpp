@@ -531,7 +531,7 @@ bool stdata<T>::load(const char *fname)
             // We need a parser object to parse
             umuq::parser p;
 
-            //! These are temporary variables
+            // These are temporary variables
             int probdim = nDim;
             int maxgens = maxGenerations;
             int datanum = populationSize;
@@ -569,10 +569,10 @@ bool stdata<T>::load(const char *fname)
 
             f.rewindFile();
 
-            //! Read each line in the file and skip all the commented and empty line with the default comment "#"
+            // Read each line in the file and skip all the commented and empty line with the default comment "#"
             while (f.readLine())
             {
-                //! Parse the line into line arguments
+                // Parse the line into line arguments
                 p.parse(f.getLine());
 
                 if (p.at<std::string>(0) == "TolCOV")
@@ -668,7 +668,7 @@ bool stdata<T>::load(const char *fname)
                 }
             }
 
-            //! 0: uniform
+            // 0: uniform
             if (priorType == 0)
             {
                 for (n = 0; n < nDim; n++)
@@ -678,7 +678,7 @@ bool stdata<T>::load(const char *fname)
                 }
             }
 
-            //! 1: gaussian
+            // 1: gaussian
             if (priorType == 1)
             {
                 f.rewindFile();
@@ -714,7 +714,7 @@ bool stdata<T>::load(const char *fname)
                 }
             }
 
-            //! 2: exponential
+            // 2: exponential
             if (priorType == 2)
             {
                 f.rewindFile();
@@ -734,7 +734,7 @@ bool stdata<T>::load(const char *fname)
                 }
             }
 
-            //! 3: gamma
+            // 3: gamma
             if (priorType == 3)
             {
                 f.rewindFile();
@@ -743,7 +743,7 @@ bool stdata<T>::load(const char *fname)
                 {
                     p.parse(f.getLine());
 
-                    //! \f$ \alpha \f$ parameter in Gamma distribution
+                    // \f$ \alpha \f$ parameter in Gamma distribution
                     if (p.at<std::string>(0) == "priorGammaAlpha")
                     {
                         for (n = 0; n < nDim; n++)
@@ -760,7 +760,7 @@ bool stdata<T>::load(const char *fname)
                 {
                     p.parse(f.getLine());
 
-                    //! \f$ \beta \f$ parameter in Gamma distribution
+                    // \f$ \beta \f$ parameter in Gamma distribution
                     if (p.at<std::string>(0) == "priorGammaBeta")
                     {
                         for (n = 0; n < nDim; n++)
@@ -772,7 +772,7 @@ bool stdata<T>::load(const char *fname)
                 }
             }
 
-            //! 4:composite
+            // 4:composite
             if (priorType == 4)
             {
                 try

@@ -49,10 +49,10 @@ enum FunctionMinimizerTypes
 /*! \class functionMinimizer
  * \ingroup Multimin_Module
  * 
- * \brief The base class which is for finding minima of arbitrary multidimensional functions.
+ * \brief The base class which is for finding minima of arbitrary multidimensional functions.<br>
  * This is the low level component for a variety of iterative minimizers
  * 
- * This class is the base class for algorithms which do not require the gradient of the function. 
+ * This class is the base class for algorithms which do not require the gradient of the function. <br>
  * For example, the Nelder-Mead Simplex algorithm.
  * 
  * \note
@@ -60,7 +60,7 @@ enum FunctionMinimizerTypes
  * no way to determine whether a minimum is a global minimum of the function in question.
  * 
  * 
- * To use the Minimizer:
+ * To use the Minimizer: <br>
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
  * - Third, initialize the minimizer \sa init
@@ -181,7 +181,7 @@ public:
    * \brief Initialize the minimizer
    * 
    * \return true 
-   * \return false 
+   * \return false If it encounters an unexpected problem
    */
   virtual bool init();
 

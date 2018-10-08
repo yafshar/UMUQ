@@ -41,7 +41,7 @@ enum differentiableFunctionMinimizerTypes
  *
  * This class is the base class for algorithms which require use of the gradient of the function
  * and perform a one-dimensional line minimization along this direction until the lowest point
- * is found to a suitable tolerance.
+ * is found to a suitable tolerance.<br>
  * The search direction is then updated with local information from the function and its derivatives,
  * and the whole process repeated until the true n-dimensional minimum is found.
  *
@@ -224,21 +224,21 @@ public:
   /*!
    * \brief Get N-dimensional x vector
    *
-   * \return T*
+   * \return T* N-dimensional x vector
    */
   inline T *getX();
 
   /*!
    * \brief Get N-dimensional dx vector
    *
-   * \return T*
+   * \return T* N-dimensional dx vector
    */
   inline T *getdX();
 
   /*!
    * \brief Get N-dimensional gradient vector
    *
-   * \return T*
+   * \return T* N-dimensional gradient vector
    */
   inline T *getGradient();
 
@@ -256,32 +256,32 @@ public:
   /*!
    * \brief Get the minimum function value
    *
-   * \return the minimum function value
+   * \return The minimum function value
    */
   inline T getMin();
 
   /*!
    * \brief Get the number of dimensions 
    * 
-   * \return /number of dimensions
+   * \returns Number of dimensions
    */
   inline int getDimension();
 
   /*!
-   * \brief Helper function to compute the gradient of the function f at X (\f$ \frac{\partial f}{\partial x} \f$)
+   * \brief Helper function to compute the gradient of the function f at X, \f$~(\frac{\partial f}{\partial x}) \f$
    * 
    * \note 
    * - Helper function to compute the gradient by a finite-difference approximation in one-dimension.
    * - Using this routine is not advised, you should probably use a derivative-free algorithm instead.
    * - Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff 
-   * errors. 
+   * errors. <br>
    * - On the other hand, finite-difference approximations are very useful to check that your analytical 
    * gradient computation is correct—this is always a good idea, because in my experience it is very easy to have 
    * bugs in your gradient code, and an incorrect gradient will cause weird problems with a gradient-based 
    * optimization algorithm.
    * 
    * \param X  Input point
-   * \param G  Gradient of the function f at X (\f$ \frac{\partial f}{\partial x} \f$)
+   * \param G  Gradient of the function f at X, \f$~(\frac{\partial f}{\partial x}) \f$
    * 
    * \return true 
    * \return false 
@@ -289,7 +289,7 @@ public:
   bool df(T const *X, T *G);
 
   /*!
-   * \brief Helper function to compute the function value, and its gradient at X (\f$ \frac{\partial f}{\partial x} \f$)
+   * \brief Helper function to compute the function value, and its gradient at X, \f$~(\frac{\partial f}{\partial x})\f$
    * 
    * \param X  Input point
    * \param F  Function value at X
@@ -345,9 +345,9 @@ public:
                          std::vector<T> &Gradient, T &Step, T &Fval);
 
   /*!
-   * \brief   This function starting at \f$ (x0, f0) \f$ move along the direction p to find a minimum
-   *          \f$ f(x0 - lambda * p) \f$, returning the new point \f$ x1 = x0-lambda*p, \f$
-   *          \f$ f1=f(x1) \f$ and \f$ g1 = grad(f) \f$ at x1
+   * \brief This function starting at \f$ (x_0, f_0) \f$ move along the direction \f$ p \f$ to find a minimum
+   *          \f$ f(x_0 - \lambda * p) \f$, returning the new point \f$ x_1 = x_0-\lambda*p, \f$
+   *          \f$ f_1=f(x_1) \f$ and \f$ g_1 = \nabla{f} \f$ at \f$ x_1\f$
    * 
    * \param X 
    * \param P 

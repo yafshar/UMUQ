@@ -110,7 +110,7 @@ T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned in
 
     T const totpsum = std::accumulate(p, p + this->numParams, T{});
 
-    //! natural logarithm of the gamma function ~ log(N!)
+    // natural logarithm of the gamma function ~ log(N!)
     T log_pdf = std::lgamma(N1);
     for (int i = 0; i < this->numParams; i++)
     {

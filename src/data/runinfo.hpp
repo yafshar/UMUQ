@@ -373,11 +373,11 @@ void runinfo<T>::print()
 	std::cout << "Problem Dimension= " << nDim << "\n";
 	std::cout << "Generation= " << currentGeneration << "\n";
 
-	//! Create an instance of the IO object
+	// Create an instance of the IO object
 	umuq::io f;
 
 	{
-		//! Define the printing format
+		// Define the printing format
 		umuq::ioFormat umuqFormat = {"\n", "", "[\n", "]\n"};
 
 		std::cout << "\nEach generation coefficient of variation=\n";
@@ -404,7 +404,7 @@ void runinfo<T>::print()
 	}
 
 	{
-		//! Define the printing format
+		// Define the printing format
 		umuq::ioFormat umuqFormat = {" ", "", "[", "]\n"};
 
 		std::cout << "\nEach generation mean of running information=\n";

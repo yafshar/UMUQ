@@ -590,13 +590,13 @@ inline TOut stats::median(T const *idata, const int nSize, int const Stride)
     {
         arrayWrapper<T> iArray(idata, nSize, Stride);
 
-        //! We do partial sorting algorithm that rearranges elements
+        // We do partial sorting algorithm that rearranges elements
         std::vector<TOut> data(iArray.begin(), iArray.end());
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
         return (iArray.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(idata, idata + nSize);
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (nSize > 1) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
@@ -605,7 +605,7 @@ inline TOut stats::median(T const *idata, const int nSize, int const Stride)
 template <typename T, typename TOut>
 inline TOut stats::median(std::vector<T> const &idata)
 {
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(idata);
 
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
@@ -615,7 +615,7 @@ inline TOut stats::median(std::vector<T> const &idata)
 template <typename T, typename TOut>
 inline TOut stats::median(arrayWrapper<T> const &iArray)
 {
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(iArray.begin(), iArray.end());
 
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
@@ -627,15 +627,15 @@ inline TOut stats::medianAbs(T const *idata, const int nSize, int const Stride, 
 {
     arrayWrapper<T> iArray(idata, nSize, Stride);
 
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(iArray.begin(), iArray.end());
 
-    //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    // std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     median_ = data[data.size() / 2];
     std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
 
-    //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    // std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (nSize > 1) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
@@ -643,7 +643,7 @@ inline TOut stats::medianAbs(T const *idata, const int nSize, int const Stride, 
 template <typename T, typename TOut>
 inline TOut stats::medianAbs(std::vector<T> const &idata, TOut &median_)
 {
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(idata);
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
@@ -659,7 +659,7 @@ inline TOut stats::medianAbs(std::vector<T> const &idata, TOut &median_)
 template <typename T, typename TOut>
 inline TOut stats::medianAbs(arrayWrapper<T> const &iArray, TOut &median_)
 {
-    //! We do partial sorting algorithm that rearranges elements
+    // We do partial sorting algorithm that rearranges elements
     std::vector<TOut> data(iArray.begin(), iArray.end());
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
@@ -983,10 +983,10 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int con
 
     std::vector<T> iMean(nDim);
 
-    //! We should make sure of the correct stride
+    // We should make sure of the correct stride
     int const stride = Stride > nDim ? Stride : nDim;
 
-    //! Compute the mean for each dimension
+    // Compute the mean for each dimension
     for (int i = 0; i < nDim; i++)
     {
         iMean[i] = mean<T, T>(idata + i, nSize, stride);
@@ -1056,17 +1056,17 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
 {
     if (udata.size() < nRows * nCols)
     {
-        //! Resize the unique array to the maximum size
+        // Resize the unique array to the maximum size
         udata.resize(nRows * nCols);
     }
 
-    //! Create a temporary array with the size of number of columns (one row of data)
+    // Create a temporary array with the size of number of columns (one row of data)
     std::vector<T> x(nCols);
 
-    //! First element in the input array is considered unique
+    // First element in the input array is considered unique
     std::copy(idata, idata + nCols, udata.begin());
 
-    //! We have one unique
+    // We have one unique
     int nUniques(1);
 
     for (int i = 1; i < nRows; i++)
@@ -1074,26 +1074,26 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
         int const s = i * nCols;
         std::copy(idata + s, idata + s + nCols, x.begin());
 
-        //! Consider this x rows is unique among all the rows
+        // Consider this x rows is unique among all the rows
         bool uniqueFlag(true);
 
-        //! check it with all the unique rows
+        // check it with all the unique rows
         for (int j = 0, l = 0; j < nUniques; j++, l += nCols)
         {
-            //! Consider they are the same
+            // Consider they are the same
             bool compareFlag = true;
             for (int k = 0; k < nCols; k++)
             {
                 if (std::abs(x[k] - udata[l + k]) > 1e-6)
                 {
-                    //! one element in the row differs, so they are different
+                    // one element in the row differs, so they are different
                     compareFlag = false;
                     break;
                 }
             }
             if (compareFlag)
             {
-                //! It is not a unique row
+                // It is not a unique row
                 uniqueFlag = false;
                 break;
             }
@@ -1107,7 +1107,7 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
         }
     }
 
-    //! Correct the size of the unique array
+    // Correct the size of the unique array
     if (nUniques * nCols < udata.size())
     {
         udata.resize(nUniques * nCols);

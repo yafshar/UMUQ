@@ -44,7 +44,7 @@ namespace tmcmc
 template <typename T>
 std::unique_ptr<torcEnvironment<T>> torc;
 
-//! Create an instance of funcallcounter object
+//! An instance of funcallcounter object
 funcallcounter fc;
 
 /*!
@@ -53,7 +53,7 @@ funcallcounter fc;
  * \brief Initialization of MCMC sampling task
  * 
  * \tparam T  Data type
- * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
+ * \tparam F  Function type, which is used in fit function (default \c FITFUN_T<T>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
@@ -98,7 +98,7 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
  * \brief MCMC update sample task
  * 
  * \tparam T  Data type
- * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
+ * \tparam F  Function type, which is used in fit function (default \c FITFUN_T<T>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Array of sample points
@@ -116,7 +116,7 @@ void tmcmcUpdateTask(long long const TMCMCObj, T const *SamplePoints, int const 
  * \brief TMCMC task type (function pointer)
  * 
  * \tparam T  Data type
- * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
+ * \tparam F  Function type, which is used in fit function (default \c FITFUN_T<T>) 
  */
 template <typename T, class F>
 using TMCMTASKTYPE = void (*)(long long const, T const *, int const *, T *, int const *, int const *);
@@ -135,13 +135,10 @@ namespace tmcmc
  * 
  * \brief This class performs Transitional Markov Chain Monte Carlo Method
  * 
- * This implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo
+ * This implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo.<br>
  * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
- * in [pi4u](https://github.com/cselab/pi4u) code made available under the following LICENSE:
- * 
- * \verbatim
- * GNU General Public License v2.0
- * \endverbatim
+ * of [pi4u](https://github.com/cselab/pi4u) code made available under the following [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html):<br>
+ * \verbatim GNU General Public License v2.0 \endverbatim
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
@@ -249,11 +246,8 @@ public:
    * \brief Start of the TMCMC algorithm 
    * 
    * The original formulation of TMCMC constructs multiple intermediate target 
-   * distributions as follows:
-   * \f[
-   *      f_j \propto p(D|\theta)^{\zeta_j}p(\theta) 
-   * \f]
-   * for \f$ j=1, \cdots,m\f$ and \f$ \zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ 
+   * distributions as follows: <br>
+   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots, m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1. \f$ <br> 
    * Starting from samples drawn from the prior at stage \f$ j = 1. \f$ 
    *  
    * \returns true 
@@ -274,30 +268,26 @@ public:
    * \brief Iterative part of the TMCMC algorithm 
    * 
    * The original formulation of TMCMC constructs multiple intermediate target 
-   * distributions as follows:
-   * \f[
-   *      f_j \propto p(D|\theta)^{\zeta_j}p(\theta) 
-   * \f]
-   * for \f$ j=1, \cdots,m\f$ and \f$ \zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ 
+   * distributions as follows: <br>
+   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots,m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ <br> 
    * Starting from samples drawn from the prior at stage \f$ j = 1, \f$ the
    * posterior samples are obtained by updating the prior samples through 
-   * \f$ m - 2 \f$ intermediate target distributions. 
-   * 
+   * \f$ m - 2 \f$ intermediate target distributions.<br>
    * When \f$ \zeta_j = 1, \f$ this procedure stops and the last set of samples
-   * is approximately distributed according to the target posterior PDF, 
-   * \f$ p(\theta | D) \f$. Through the m steps, the evidence is obtained. 
+   * is approximately distributed according to the target posterior PDF,  
+   * \f$~p(\theta | D) \f$. Through the m steps, the evidence is obtained. 
    *  
    * \returns true 
-   * \returns false 
+   * \returns false  If it encounters an unexpected problem
    */
   bool iterate();
 
   /*!
    * \brief Process current data, including, calculating the statistics 
    * and computing the probabilities based on function values, and draw 
-   * new samples 
+   * new samples.
    * 
-   * Preparing the new data generation includes:
+   * Preparing the new data generation includes:<br>
    * - Process the current sampling points data
    * - Find unique sampling points
    * - Calculate the statistics of the data, including acceptance rate
@@ -307,7 +297,7 @@ public:
    * - Update leaders information from current data information
    * 
    * \returns true 
-   * \returns false 
+   * \returns false  If it encounters an unexpected problem
    */
   bool prepareNewGeneration();
 
@@ -382,7 +372,7 @@ tmcmc<T, F>::~tmcmc()
 template <typename T, class F>
 inline bool tmcmc<T, F>::setInputFileName(char const *fileName)
 {
-  //! Create an instance of the io object
+  // Create an instance of the io object
   umuq::io f;
   if (strlen(fileName) > 0)
   {
@@ -401,49 +391,49 @@ inline std::string tmcmc<T, F>::getInputFileName()
 template <typename T, class F>
 bool tmcmc<T, F>::reset(char const *fileName)
 {
-  //! Check to see if the input file exists in the PATH or not?
+  // Check to see if the input file exists in the PATH or not?
   if (setInputFileName(fileName))
   {
-    //! Read the input problem size and variables from an input file
+    // Read the input problem size and variables from an input file
     if (Data.load(inputFilename))
     {
-      //! Creating a database based on the read information
+      // Creating a database based on the read information
       currentData = std::move(database<T>(Data.nDim, Data.lastPopulationSize));
 
-      //! Creating the running information data
+      // Creating the running information data
       runData = std::move(runinfo<T>(Data.nDim, Data.maxGenerations));
 
-      //! Seed the PRNG
+      // Seed the PRNG
       if (!prng.setSeed(Data.seed))
       {
         UMUQWARNING("The Pseudo random number generator has been seeded & initialized before!")
       }
 
-      //! Assign the correct size
+      // Assign the correct size
       samplePoints.resize(Data.nDim);
 
-      //! Function values
+      // Function values
       fValue.resize(Data.lastPopulationSize);
 
-      //! Local covariance
+      // Local covariance
       if (Data.useLocalCovariance)
       {
-        //! Local covariance with the size of [populationSize * sample dimension * sample dimension]
+        // Local covariance with the size of [populationSize * sample dimension * sample dimension]
         localCovariance.resize(Data.lastPopulationSize * Data.nDim * Data.nDim);
       }
       else
       {
-        //! Local covariance with the size of [sample dimension * sample dimension]
+        // Local covariance with the size of [sample dimension * sample dimension]
         localCovariance.resize(Data.nDim * Data.nDim);
       }
 
-      //! Initialize the tstats variable from io data
+      // Initialize the tstats variable from io data
       tStats = std::move(tmcmcStats<T>(Data.options));
 
-      //! Construct a prior Distribution object
+      // Construct a prior Distribution object
       prior = std::move(priorDistribution<T>(Data.nDim, Data.priorType));
 
-      //! Set the prior parameters
+      // Set the prior parameters
       return prior.set(Data.priorParam1, Data.priorParam2, Data.compositePriorDistribution);
     }
     UMUQFAILRETURN("Failed to initialize the data from the Input file!");
@@ -493,13 +483,13 @@ bool tmcmc<T, F>::init(char const *fileName)
   {
     if (setInputFileName(fileName))
     {
-      //! Initialize the fitting function, this should be done before initializing the TORC environment
+      // Initialize the fitting function, this should be done before initializing the TORC environment
       fitfun.init();
 
-      //! Create a torc environment object
+      // Create a torc environment object
       torc<T>.reset(new torcEnvironment<T>);
 
-      //! Register tasks
+      // Register tasks
       {
         std::lock_guard<std::mutex> lock(m);
 
@@ -513,13 +503,13 @@ bool tmcmc<T, F>::init(char const *fileName)
         }
       }
 
-      //! Set up the TORC environemnt
+      // Set up the TORC environemnt
       torc<T>->SetUp();
 
-      //! Set the State of pseudo random number generator
+      // Set the State of pseudo random number generator
       if (prng.setState())
       {
-        //! Set the Random Number Generator object in the prior
+        // Set the Random Number Generator object in the prior
         return prior.setRandomGenerator(&prng);
       }
       UMUQFAILRETURN("Failed to initialize the PRNG or set the state of that!");
@@ -532,42 +522,42 @@ bool tmcmc<T, F>::init(char const *fileName)
 template <typename T, class F>
 inline bool tmcmc<T, F>::restart()
 {
-  //! Check if the restart file is available and we can load runData from it
+  // Check if the restart file is available and we can load runData from it
   return runData.load() ? currentData.load("", runData.currentGeneration) : false;
 }
 
 template <typename T, class F>
 bool tmcmc<T, F>::iterate0()
 {
-  //! Check if it is a fresh run, or the restart data is corrupted or is not available
+  // Check if it is a fresh run, or the restart data is corrupted or is not available
   if (restart())
   {
     return true;
   }
 
   {
-    //! Current Generation number
+    // Current Generation number
     workInformation[0] = runData.currentGeneration;
 
-    //! Step number, this is the starting step
+    // Step number, this is the starting step
     workInformation[2] = 0;
 
-    //! Number of function value (from evaluation) at each sampling point
+    // Number of function value (from evaluation) at each sampling point
     int nFvalue = 1;
 
-    //! Total number of sampling chains
+    // Total number of sampling chains
     int const nChains = Data.eachPopulationSize[0];
 
-    //! Loop through all the population size
+    // Loop through all the population size
     for (int i = 0; i < nChains; i++)
     {
-      //! Sample number
+      // Sample number
       workInformation[1] = i;
 
-      //! Create the input sample points from the prior distribution
+      // Create the input sample points from the prior distribution
       prior.sample(samplePoints);
 
-      //! Create and submit tasks
+      // Create and submit tasks
       torc_create(-1, (void (*)())tmcmcInitTask<T, F>, 6,
                   1, MPIDatatype<long long>, CALL_BY_REF,
                   Data.nDim, MPIDatatype<T>, CALL_BY_COP,
@@ -583,18 +573,18 @@ bool tmcmc<T, F>::iterate0()
     torc_waitall();
     torc_disable_stealing();
 
-    //! Count the function calls
+    // Count the function calls
     fc.count();
 
-    //! Print the summary
+    // Print the summary
     std::cout << "server: currentGeneration " << runData.currentGeneration << ": total elapsed time = "
               << "secs, generation elapsed time = "
               << "secs for function calls = " << fc.getLocalFunctionCallsNumber() << std::endl;
 
-    //! Reset the local function counter to zero
+    // Reset the local function counter to zero
     fc.reset();
 
-    //! Check if we should save the mid run data
+    // Check if we should save the mid run data
     if (Data.saveData)
     {
       if (!currentData.save("curgen_db", runData.currentGeneration))
@@ -603,7 +593,7 @@ bool tmcmc<T, F>::iterate0()
       }
     }
 
-    //! Running information for checkpoint restart file
+    // Running information for checkpoint restart file
     return runData.save();
   }
 }
@@ -611,43 +601,43 @@ bool tmcmc<T, F>::iterate0()
 template <typename T, class F>
 bool tmcmc<T, F>::iterateInternal()
 {
-  //! Current Generation number
+  // Current Generation number
   workInformation[0] = runData.currentGeneration;
 
-  //! Number of function value (from evaluation) at each sampling point
+  // Number of function value (from evaluation) at each sampling point
   int nFvalue = 1;
 
-  //! Total number of sampling chains
+  // Total number of sampling chains
   int const nChains = leadersData.size();
 
-  //! Get the pointer to the sample points
+  // Get the pointer to the sample points
   T *leadersSamplePoints = leadersData.samplePoints.data();
 
-  //! Dimension of sample points
+  // Dimension of sample points
   int const nDimSamplePoints = leadersData.nDimSamplePoints;
 
-  //! Get this generation probability
+  // Get this generation probability
   T *PJ = runData.generationProbabilty.data() + runData.currentGeneration;
 
-  //! Get the scaled chain covariance as \f$ \beta covariance \f$
+  // Get the scaled chain covariance as \f$ \beta covariance \f$
   if (!Data.useLocalCovariance)
   {
     std::transform(runData.SS.begin(), runData.SS.end(), localCovariance.begin(), [&](T const C) { return Data.bbeta * C; });
   }
 
-  //! Number of burning steps
+  // Number of burning steps
   int const nBurningSteps = 0;
 
-  //! Loop through all the population size
+  // Loop through all the population size
   for (int i = 0; i < nChains; i++)
   {
-    //! Sample number
+    // Sample number
     workInformation[1] = i;
 
-    //! Step number, this is the first step
+    // Step number, this is the first step
     workInformation[2] = leadersData.nSelection[i];
 
-    //! Fill the input sample points from the leaders
+    // Fill the input sample points from the leaders
     std::copy(leadersSamplePoints, leadersSamplePoints + nDimSamplePoints, samplePoints.data());
     leadersSamplePoints += nDimSamplePoints;
 
@@ -655,7 +645,7 @@ bool tmcmc<T, F>::iterateInternal()
     {
     }
 
-    //! Create tasks
+    // Create tasks
     torc_create(-1, (void (*)())tmcmcMainTask<T, F>, 9,
                 1, MPIDatatype<long long>, CALL_BY_REF,
                 Data.nDim, MPIDatatype<T>, CALL_BY_COP,
@@ -675,18 +665,18 @@ bool tmcmc<T, F>::iterateInternal()
   torc_waitall();
   torc_disable_stealing();
 
-  //! Count the function calls
+  // Count the function calls
   fc.count();
 
-  //! Print the summary
+  // Print the summary
   std::cout << "server: currentGeneration " << runData.currentGeneration << ": total elapsed time = "
             << "secs, generation elapsed time = "
             << "secs for function calls = " << fc.getLocalFunctionCallsNumber() << std::endl;
 
-  //! Reset the local function counter to zero
+  // Reset the local function counter to zero
   fc.reset();
 
-  //! Check if we should save the mid run data
+  // Check if we should save the mid run data
   if (Data.saveData)
   {
     if (!currentData.save("curgen_db", runData.currentGeneration))
@@ -695,7 +685,7 @@ bool tmcmc<T, F>::iterateInternal()
     }
   }
 
-  //! Running information for checkpoint restart
+  // Running information for checkpoint restart
   return runData.save();
 }
 
@@ -707,19 +697,19 @@ bool tmcmc<T, F>::iterate()
     UMUQFAILRETURN("Failed to start the TMCMC sampling algorithm!");
   }
 
-  //! Prepare new generation from the current information
+  // Prepare new generation from the current information
   if (!prepareNewGeneration())
   {
     UMUQFAILRETURN("Failed to prepare the new generation of sample points!");
   }
 
-  //! Broadcast the running information to all of the nodes
+  // Broadcast the running information to all of the nodes
   runData.broadcast();
 
-  //! Print the sample mean and Sample covariance matrix
+  // Print the sample mean and Sample covariance matrix
   runData.printSampleStatistics();
 
-  //! Check the current data probability
+  // Check the current data probability
   while (runData.generationProbabilty[runData.currentGeneration] < T{1} &&
          runData.currentGeneration < runData.maxGenerations)
   {
@@ -730,16 +720,16 @@ bool tmcmc<T, F>::iterate()
       UMUQFAILRETURN("Failed to update the samples!");
     }
 
-    //! Prepare new generation from the current information
+    // Prepare new generation from the current information
     if (!prepareNewGeneration())
     {
       UMUQFAILRETURN("Failed to prepare the new generation of sample points!");
     }
 
-    //! Broadcast the running information to all of the nodes
+    // Broadcast the running information to all of the nodes
     runData.broadcast();
 
-    //! Print the sample mean and Sample covariance matrix
+    // Print the sample mean and Sample covariance matrix
     runData.printSampleStatistics();
   }
 }
@@ -750,14 +740,14 @@ bool tmcmc<T, F>::prepareNewGeneration()
   int const nDimSamplePoints = currentData.nDimSamplePoints;
   int const nCurrentSamplePoints = currentData.size();
 
-  //! Total size of the sampling points array Dim * number of sample points
+  // Total size of the sampling points array Dim * number of sample points
   int const nSize = nCurrentSamplePoints * nDimSamplePoints;
 
-  //! Create an instance of the statistics object
+  // Create an instance of the statistics object
   stats s;
 
 #ifdef DEBUG
-  //! Compute vectors of mean and standard deviation for each dimension
+  // Compute vectors of mean and standard deviation for each dimension
   std::vector<T> mean(nDimSamplePoints);
   std::vector<T> stddev(nDimSamplePoints);
 
@@ -773,20 +763,20 @@ bool tmcmc<T, F>::prepareNewGeneration()
   f.printMatrix<T>("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
 
-  //! Now we check to find unique sampling points
+  // Now we check to find unique sampling points
   std::vector<T> currentDataUniques(nSize);
 
-  //! Get the uniques samples
+  // Get the uniques samples
   s.unique<T>(currentData.samplePoints, nCurrentSamplePoints, nDimSamplePoints, currentDataUniques);
 
-  //! Set the number of uniques samples
+  // Set the number of uniques samples
   runData.setUniqueNumber(currentDataUniques.size());
 
   {
-    //! Compute the acceptance rate
+    // Compute the acceptance rate
     T const acceptanceRate = static_cast<T>(currentDataUniques.size()) / static_cast<T>(nCurrentSamplePoints);
 
-    //! Set the acceptance rate
+    // Set the acceptance rate
     runData.setAcceptanceRate(acceptanceRate);
   }
 
@@ -802,26 +792,26 @@ bool tmcmc<T, F>::prepareNewGeneration()
   f.printMatrix<T>("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
 
-  //! Create database for leaders selection
+  // Create database for leaders selection
   leadersData = std::move(database<T>(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
 
-  //! Select the new generaion leaders and update the statistics
+  // Select the new generaion leaders and update the statistics
   if (tStats.selectNewGeneration(Data, currentData, runData, leadersData))
   {
-    //! Reset the number of selections for each leader chain
+    // Reset the number of selections for each leader chain
     if (leadersData.resetSelection(Data.minChainLength, Data.maxChainLength))
     {
-      //! Update leaders information from current data
+      // Update leaders information from current data
       if (leadersData.updateSelection(currentData))
       {
-        //! Reset current data number of entries for the new generation of samples
+        // Reset current data number of entries for the new generation of samples
         currentData.resetSize();
 
 #ifdef DEBUG
-        //! Total number of sampling points
+        // Total number of sampling points
         int const nLeadersSamplePoints = static_cast<int>(leadersData.idxPosition);
 
-        //! Total size of the sampling points array Dim * number of sample points
+        // Total size of the sampling points array Dim * number of sample points
         int const nLeadersSize = nLeadersSamplePoints * nDimSamplePoints;
 
         for (int i = 0; i < nDimSamplePoints; i++)
@@ -837,10 +827,10 @@ bool tmcmc<T, F>::prepareNewGeneration()
 
         if (Data.useLocalCovariance)
         {
-          // //! Total number of sampling points
+          // // Total number of sampling points
           // int const nLeadersSamplePoints = static_cast<int>(leadersData.idxPosition);
 
-          // //! Assign the correct local covariance size
+          // // Assign the correct local covariance size
           // try
           // {
           //   localCovariance.resize(nLeadersSamplePoints * nDimSamplePoints * nDimSamplePoints, T{});
@@ -850,7 +840,7 @@ bool tmcmc<T, F>::prepareNewGeneration()
           //   UMUQFAILRETURN("Failed to allocate memory!");
           // }
 
-          // //! Initialize the local covariance to an Identity matrix for each sample
+          // // Initialize the local covariance to an Identity matrix for each sample
           // for (int i = 0, l = 0; i < nLeadersSamplePoints; i++)
           // {
           //   for (int j = 0; j < nDimSamplePoints; j++)
@@ -882,28 +872,28 @@ void tmcmcInitTask(long long const TMCMCObj, T const *SamplePoints, int const *n
 {
   auto tmcmcObj = reinterpret_cast<tmcmc<T, F> *>(TMCMCObj);
 
-  //! If we have set the fitting function
+  // If we have set the fitting function
   if (tmcmcObj->fitfun)
   {
     int const nSamples = *nSamplePoints;
     int const nFunvals = *nFvalue;
 
-    //! Create an array of sample points
+    // Create an array of sample points
     std::vector<T> samplePoints{SamplePoints, SamplePoints + nSamples};
 
-    //! Create an array of work information
+    // Create an array of work information
     std::vector<int> workInformation{WorkInformation, WorkInformation + 3};
 
-    //! Increment function call counter
+    // Increment function call counter
     fc.increment();
 
-    //! Call the fitting function
+    // Call the fitting function
     Fvalue[0] = tmcmcObj->fitfun.f(samplePoints.data(), nSamples, Fvalue, nFunvals, workInformation.data());
 
     // T *fv = Fvalue;
     // fv += (nFunvals > 1 ? 1 : 0);
 
-    //! Update the data
+    // Update the data
     tmcmcObj->currentData.update(samplePoints.data(), Fvalue[0]);
 
     return;
@@ -918,7 +908,7 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
 {
   auto tmcmcObj = reinterpret_cast<tmcmc<T, F> *>(TMCMCObj);
 
-  //! If we have set the fitting function
+  // If we have set the fitting function
   if (!tmcmcObj->fitfun)
   {
     UMUQFAIL("Fitting function is not assigned! \n Fitting function must be set before initializing the TMCMC object!");
@@ -930,21 +920,21 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
   int const nBurnSteps = *nBurningSteps;
   T const pj = *PJ;
 
-  //! Create an array of sample points & function values for leaders
+  // Create an array of sample points & function values for leaders
   std::vector<T> leaderSamplePoints{SamplePoints, SamplePoints + nSamples};
   std::vector<T> leaderFvalue{Fvalue, Fvalue + nFunvals};
 
-  //! Create an array of sample points & function values for candidates
+  // Create an array of sample points & function values for candidates
   std::vector<T> candidateSamplePoints(nSamples);
   std::vector<T> candidateFvalue(nFunvals);
 
-  //! Map the data to the Eigen vector format without memory copy
+  // Map the data to the Eigen vector format without memory copy
   umuq::EVectorMapType<T> EcandidateSamplePoints(candidateSamplePoints.data(), nSamples);
 
-  //! Create an array of work information
+  // Create an array of work information
   std::vector<int> workInformation{WorkInformation, WorkInformation + 3};
 
-  //! Sample mean for the first step
+  // Sample mean for the first step
   std::vector<T> chainMean{SamplePoints, SamplePoints + nSamples};
 
   for (int step = 0; step < nSteps + nBurnSteps; step++)
@@ -959,10 +949,10 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
       UMUQFAIL("The pseudo-random number generator failed to set mvnormal object!");
     }
 
-    //! Generate a candidate
+    // Generate a candidate
     EcandidateSamplePoints = tmcmcObj->prng.mvnormal->dist();
 
-    //! Check the candidate
+    // Check the candidate
     bool isCandidateSamplePointBounded(true);
     for (int i = 0; i < nSamples; i++)
     {
@@ -974,30 +964,30 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
       }
     }
 
-    //! If the candidate is in the domain
+    // If the candidate is in the domain
     if (isCandidateSamplePointBounded)
     {
-      //! Increment function call counter
+      // Increment function call counter
       fc.increment();
 
-      //! Pass the step number
+      // Pass the step number
       workInformation[2] = step;
 
       /*!
        * \todo
        * Check if the fitting function is in the log mod or not!
        */
-      //! Call the fitting function
+      // Call the fitting function
       candidateFvalue[0] = tmcmcObj->fitfun.f(candidateSamplePoints.data(), nSamples,
                                               candidateFvalue.data(), nFunvals, workInformation.data());
 
-      //! Accept or Reject
+      // Accept or Reject
 
-      //! The acceptance ratio
+      // The acceptance ratio
       T acceptanceRatio;
 
       {
-        //! Calculate the acceptance ratio
+        // Calculate the acceptance ratio
 
         T const candidateLogPrior = tmcmcObj->prior.logpdf(candidateSamplePoints);
         T const leaderLogPrior = tmcmcObj->prior.logpdf(leaderSamplePoints);
@@ -1010,41 +1000,41 @@ void tmcmcMainTask(long long const TMCMCObj, T const *SamplePoints, int const *n
         }
       }
 
-      //! Generate a uniform random number uniformRandomNumber on [0,1]
+      // Generate a uniform random number uniformRandomNumber on [0,1]
       T uniformRandomNumber = tmcmcObj->prng.unirnd();
 
       if (uniformRandomNumber < acceptanceRatio)
       {
-        //! Accept the candidate
+        // Accept the candidate
 
-        //! New leader!
+        // New leader!
         std::copy(candidateSamplePoints.begin(), candidateSamplePoints.end(), leaderSamplePoints.begin());
         std::copy(candidateFvalue.begin(), candidateFvalue.end(), leaderFvalue.begin());
 
         if (step >= nBurnSteps)
         {
-          //! Update the data
+          // Update the data
           tmcmcObj->currentData.update(leaderSamplePoints.data(), leaderFvalue[0]);
         }
       }
       else
       {
-        //! Reject the candidate
+        // Reject the candidate
 
-        //! Increase counter or add the leader again in the data
+        // Increase counter or add the leader again in the data
         if (step >= nBurnSteps)
         {
-          //! Update the data
+          // Update the data
           tmcmcObj->currentData.update(leaderSamplePoints.data(), leaderFvalue[0]);
         }
       }
     }
     else
     {
-      //! Increase counter or add the leader again in the data
+      // Increase counter or add the leader again in the data
       if (step >= nBurnSteps)
       {
-        //! Update the data
+        // Update the data
         tmcmcObj->currentData.update(leaderSamplePoints.data(), leaderFvalue[0]);
       }
     }
@@ -1057,7 +1047,7 @@ void tmcmcUpdateTask(long long const TMCMCObj, T const *SamplePoints, int const 
 {
   auto tmcmcObj = reinterpret_cast<tmcmc<T, F> *>(TMCMCObj);
 
-  //! If we have set the fittiting function
+  // If we have set the fittiting function
   if (tmcmcObj->fitfun)
   {
     return;

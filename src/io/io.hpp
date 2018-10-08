@@ -187,7 +187,8 @@ class io
     bool readLine(const char comment = '#');
 
     /*!
-     * \brief Set position of stream to the beginning
+     * \brief Set position of stream at the beginning
+     * 
      * Sets the position indicator associated with stream to the beginning of the file.
      */
     inline void rewindFile();
@@ -238,7 +239,7 @@ class io
      * \param idata  Input array of data
      * \param nRows  Number of Rows
      * \param nCols  Number of Columns
-     * \param  os    File based streams
+     * \param os     File based streams 
      * 
      * \returns the width
      */
@@ -259,7 +260,7 @@ class io
      * \param idata  Input array of data
      * \param nRows  Number of Rows
      * \param nCols  Number of Columns
-     * \param  os    File based streams
+     * \param os     File based streams
      * 
      * \returns the width
      */
@@ -288,9 +289,10 @@ class io
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
-     * \param options  (Default) 0 Save matrix in matrix format and proceed the position indicator to the next line & 
-     *                           1 Save matrix in vector format and proceed the position indicator to the next line &
-     *                           2 Save matrix in vector format and keep the position indicator on the same line
+     * \param options  (0 Default) 
+     *                  - \b 0 Save matrix in matrix format and proceed the position indicator to the next line & 
+     *                  - \b 1 Save matrix in vector format and proceed the position indicator to the next line &
+     *                  - \b 2 Save matrix in vector format and keep the position indicator on the same line
      * 
      * \returns true if no error occurs during writing the matrix
      */
@@ -305,9 +307,10 @@ class io
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row
-     * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
-     *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
-     *                           2 Saves matrix in vector format and keep the position indicator on the same line
+     * \param options  (0 Default) 
+     *                      - \b 0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
      * \param  entries           Number of data entry (Input data contains pointer to array of data)
      * \param  form              Print format for each row 
      * 
@@ -329,9 +332,10 @@ class io
      * \param idata    Array of input data of type T
      * \param nRows    Number of rows 
      * \param nCols    Number of columns for each row (default is 1)
-     * \param options  (Default) 0 Saves matrix in matrix format and proceeds the position indicator to the next line & 
-     *                           1 Saves matrix in vector format and proceeds the position indicator to the next line &
-     *                           2 Saves matrix in vector format and keep the position indicator on the same line
+     * \param options  (0 Default) 
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
      */
     template <typename T>
     bool saveMatrix(T *idata,
@@ -403,7 +407,7 @@ class io
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
-     * \param options  (default) 0 load matrix from matrix format and 1 load matrix from vector format
+     * \param options  (0 default) Load matrix from matrix format and 1 load matrix from vector format
      *
      * \returns true if no error occurs during reading data
      */
@@ -418,7 +422,7 @@ class io
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns for each row
-     * \param options  (Default) 0 load matrix from matrix format and 1 load matrix from vector format
+     * \param options  (0 Default) Load matrix from matrix format and 1 load matrix from vector format
      * \param  entries Number of data entry
      *
      * \returns true if no error occurs during reading data
@@ -844,7 +848,7 @@ bool io::openFile(const char *fileName, const std::ios_base::openmode mode)
         UMUQFAILRETURN("The requested File to open does not exists!");
     }
 
-    //! Returns false if an error has occurred on the associated stream.
+    // Returns false if an error has occurred on the associated stream.
     if (fs.fail())
     {
         UMUQFAILRETURN("An error has occurred on the associated stream from opening the file!");
@@ -886,10 +890,10 @@ bool io::readLine(const char comment)
 
 inline void io::rewindFile()
 {
-    //clearing all error state flags if there is any
+    // Clearing all error state flags if there is any
     fs.clear();
 
-    //!Rewind the file
+    // Rewind the file
     fs.seekg(0);
     return;
 }
@@ -909,12 +913,12 @@ inline void io::setPrecision(std::ostream &os)
 {
     if (std::numeric_limits<T>::is_integer)
     {
-        //!Manages the precision (i.e. how many digits are generated)
+        // Manages the precision (i.e. how many digits are generated)
         os.precision(0);
     }
     else
     {
-        //!Manages the precision (i.e. how many digits are generated)
+        // Manages the precision (i.e. how many digits are generated)
         os.precision(digits10<T>());
         os << std::fixed;
     }

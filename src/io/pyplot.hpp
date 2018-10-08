@@ -207,13 +207,12 @@ static std::string backend;
  * 
  * \brief Set the “backend” to any of user interface backends
  * 
- * \param WXbackends user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; 
+ * \param WXbackends User interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; <br>
  *                   also referred to as “interactive backends”) or hardcopy backends to make image 
  *                   files (PNG, SVG, PDF, PS; also referred to as “non-interactive backends”)
  * 
  * \note 
- * - Must be called before the first regular call to matplotlib to have any effect
- * 
+ * - Must be called before the first regular call to matplotlib to have any effect.
  * \note 
  * - Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent. 
  * 
@@ -257,7 +256,7 @@ inline void setbackend(std::string const &WXbackends)
 /*! \var constexpr char const DefaultColors
  * \ingroup IO_Module
  * 
- * \brief The following color abbreviations are supported
+ * \brief The following color abbreviations are supported:
  * 
  * <table>
  * <caption id="multi_row">Colors</caption>

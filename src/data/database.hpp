@@ -486,7 +486,7 @@ bool database<T>::reset(int const nSize)
         nSelection.resize(0);
         queue.resize(0);
 
-        //! Reset number of entries in the database
+        // Reset number of entries in the database
         idxPosition = 0;
 
         return true;
@@ -536,7 +536,7 @@ bool database<T>::reset(int const nSize)
         UMUQFAILRETURN("Failed to allocate memory!");
     }
 
-    //! Reset number of entries in the database
+    // Reset number of entries in the database
     idxPosition = 0;
 
     return true;
@@ -614,16 +614,16 @@ bool database<T>::resetSelection(int const minLength, int const maxLength)
 
     if (list)
     {
-        //! find out how many leaders we have
+        // find out how many leaders we have
         int nLeaders(0);
         std::for_each(nSelection.begin(), nSelection.end(), [&](int const S_i) { nLeaders += static_cast<int>(S_i > 0); });
 
         {
-            //! Get the pointer
+            // Get the pointer
             int *nSel = nSelection.data();
-            //! set the counter to 0
+            // set the counter to 0
             int idx(0);
-            //! Fill the list
+            // Fill the list
             std::for_each(list.get(), list.get() + nSamplePoints, [&](sortType &l_i) {l_i.nSel = *nSel++; l_i.idx = idx++; });
         }
 
@@ -631,7 +631,7 @@ bool database<T>::resetSelection(int const minLength, int const maxLength)
         {
             int nChains(nLeaders);
 
-            //! Breaking long chains
+            // Breaking long chains
             for (int i = 0; i < nLeaders; i++)
             {
                 if (list[i].nSel > maxLength)
@@ -648,7 +648,7 @@ bool database<T>::resetSelection(int const minLength, int const maxLength)
 
             idxPosition = static_cast<std::size_t>(nChains);
 
-            //! If the maximum chain length is 1, we do not need to sort it
+            // If the maximum chain length is 1, we do not need to sort it
             if (maxLength != 1)
             {
                 if (!this->sort())
@@ -659,7 +659,7 @@ bool database<T>::resetSelection(int const minLength, int const maxLength)
 
             if (minLength != 1)
             {
-                //! Increasing the chain size
+                // Increasing the chain size
                 for (int i = 0; i < nChains; i++)
                 {
                     if (list[i].nSel && list[i].nSel < minLength)
@@ -702,7 +702,7 @@ bool database<T>::updateSelection(database<T> const &other)
                 nSelection[i] = list[i].nSel;
             }
 
-            //! Release the memory
+            // Release the memory
             if (resetList())
             {
                 return updateWorkload(static_cast<int>(idxPosition));
@@ -719,21 +719,21 @@ bool database<T>::updateWorkload(int const nChains)
 {
     if (nChains <= nSamplePoints)
     {
-        //! Greedy partitioning based on the workload
+        // Greedy partitioning based on the workload
         int const nWorkers = torc_num_workers();
 
-        //! Dummy work load array
+        // Dummy work load array
         std::vector<int> workLoad(nWorkers, 0);
 
         for (int i = 0; i < nChains; i++)
         {
-            //! Find the index of the work with minimum work load
+            // Find the index of the work with minimum work load
             int const minLoadWorker = static_cast<int>(std::distance(workLoad.begin(), std::min_element(workLoad.begin(), workLoad.end())));
 
-            //! Chain i would be assigned to that queue
+            // Chain i would be assigned to that queue
             queue[i] = minLoadWorker;
 
-            //! Sum up the new load on the current work load
+            // Sum up the new load on the current work load
             workLoad[minLoadWorker] += nSelection[i];
         }
 
@@ -965,7 +965,7 @@ void database<T>::updateData(T const *SamplePoints, T const *FunValue, T const *
 
         fValue[pos] = *FunValue;
 
-        //! NDimDataArray is just an indicator if we have DataArray input data or not
+        // NDimDataArray is just an indicator if we have DataArray input data or not
         if (*NDimDataArray > 0)
         {
             std::copy(DataArray, DataArray + nDimDataArray, dataArray.data() + pos * nDimDataArray);
@@ -1001,7 +1001,7 @@ void database<T>::update(T const *SamplePoints, T const FunValue, T const *DataA
                        reinterpret_cast<long long>(this), SamplePoints,
                        &FunValue, DataArray, &nDimDataArray, &Surrogate);
 
-    //! Do not kill the worker
+    // Do not kill the worker
     torc_waitall3();
 }
 

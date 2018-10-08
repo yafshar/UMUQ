@@ -192,7 +192,7 @@ bool bfgs2<T>::init()
 
     fp0 = -g0norm;
 
-    //! Set the Multidimensional function for the wrapper
+    // Set the Multidimensional function for the wrapper
     if (funw.set(this->fun))
     {
         int const n = this->getDimension();

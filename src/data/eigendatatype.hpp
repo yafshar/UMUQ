@@ -21,16 +21,11 @@ namespace umuq
  * \brief A convenience matrix data type 
  * An Eigen matrix type with dynamic sizes.
  * 
- * \tparam T         Data type 
- * 
- * The _Options template parameter is optional
- * 
- * \tparam _Options  A combination of either 
- *                   - \b Eigen::RowMajor or 
- *                   - \b Eigen::ColMajor, 
- *                     and of either
- *                   - \b Eigen::AutoAlign or 
- *                   - \b Eigen::DontAlign.
+ * \tparam T Data type 
+ * \tparam _Options  optional parameter, a combination of either 
+ *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
+ *                     or one of either <br>
+ *                   - \b Eigen::AutoAlign or \b Eigen::DontAlign. <br>
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  */
@@ -52,20 +47,17 @@ using EMatrixXd = EMatrixX<double>;
  * 
  * \tparam T  Data type
  * 
- * - \b EMatrixn : E + Matrix + n=(2, 3, 4, 5, or 6)
- * E is the abbreviation for Eigen followed by Matrix and any number of (2, 3, 4, 5, or 6) 
- * A rectangular matrix of T types of n*n=(2*2, 3*3, 4*4, 5*5, or 6*6) size.
- * 
- * For example:
- * EMatrix2<double> is a Eigen::Matrix of doubles with size of 2*2.
- * EMatrix5<int>    is a Eigen::Matrix of integers with size of 5*5.
- * 
- * - \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X
- * E followed by Matrix and any number of n=(2, 3, 4, 5, or 6) and X
- * A rectangular matrix of type T with row size of n=(2, 3, 4, 5, or 6) and dynamic size columns
- * 
- * - \b EMatrixXn : E + Matrix + X + n=(2, 3, 4, 5, or 6)
- * E followed by Matrix and X and any number of (2, 3, 4, 5, or 6)
+ * - \b EMatrixn : E + Matrix + n=(2, 3, 4, 5, or 6) <br>
+ * E is the abbreviation for Eigen followed by Matrix and any number of (2, 3, 4, 5, or 6). <br>
+ * A rectangular matrix of T types of n*n=(2*2, 3*3, 4*4, 5*5, or 6*6) size. <br>
+ * For example: <br>
+ * \b EMatrix2<double> is an \c Eigen::Matrix of doubles with size of 2*2. <br>
+ * \b EMatrix5<int>    is an \c Eigen::Matrix of integers with size of 5*5.
+ * - \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X <br>
+ * E followed by Matrix and any number of n=(2, 3, 4, 5, or 6) and X. <br>
+ * A rectangular matrix of type T with row size of n=(2, 3, 4, 5, or 6) and dynamic size columns. 
+ * - \b EMatrixXn : E + Matrix + X + n=(2, 3, 4, 5, or 6) <br>
+ * E followed by Matrix and X and any number of (2, 3, 4, 5, or 6). <br>
  * A rectangular matrix of type T with dynamic size rows and column numbers of n=(2, 3, 4, 5, or 6)
  * 
  */
@@ -129,7 +121,7 @@ using EMatrixX6d = EMatrixX6<double>;
 /*!
  * \ingroup Numerics_Module
  * 
- * \brief A convenience row-vector data type
+ * \brief A convenience row-vector data type.
  * An Eigen row-vector data type with dynamic size
  * 
  * \tparam T  Data type
@@ -152,10 +144,9 @@ using ERowVectorXd = ERowVectorX<double>;
  * 
  * \tparam T  Data type
  * 
- * - \b ERowVectorn : E + RowVector + n=(2, 3, 4, 5, or 6)
- * E followed by RowVector is a row-vector 
- * 
- * For example:
+ * \b ERowVectorn : E + RowVector + n=(2, 3, 4, 5, or 6). <br>
+ * E followed by RowVector is a row-vector. <br>
+ * For example:<br>
  * ERowVector6<float> is a row-vector of 6 floats.
  * 
  */
@@ -185,7 +176,7 @@ using ERowVector6d = ERowVector6<double>;
 /*!
  * \ingroup Numerics_Module
  * 
- * \brief A convenience column-vector data type 
+ * \brief A convenience column-vector data type. 
  * An Eigen column-vector type with dynamic size.
  * 
  * \tparam T  Data type 
@@ -204,16 +195,15 @@ using EVectorXd = EVectorX<double>;
 /*!
  * \ingroup Numerics_Module
  * 
- * \brief A convenience column-vector data type to cover the usual cases
+ * \brief A convenience column-vector data type to cover the usual cases.
  * 
  * \tparam T Data type
  * 
  * 
- * - \b EVectorn : E + Vector + n=(2, 3, 4, 5, or 6)
- * E followed by Vector is a column-vector
- * 
- * For example:
- * EVector3<int> is a column-vector of 3 integers.
+ * - \b EVectorn : E + Vector + n=(2, 3, 4, 5, or 6). <br>
+ * E followed by Vector is a column-vector. <br>
+ * For example: <br>
+ * \c EVector3<int> is a column-vector of 3 integers.
  * 
  */
 template <typename T>
@@ -242,11 +232,11 @@ using EVector6d = EVector6<double>;
 /*!
  * \ingroup Numerics_Module
  * 
- * \brief Stores a set of parameters controlling the way matrices are printed
+ * \brief Stores a set of parameters controlling the way matrices are printed.
  * 
- * - precision \c FullPrecision.
- * - coeffSeparator string printed between two coefficients of the same row
- * - rowSeparator string printed between two rows
+ * - \b precision \c FullPrecision. <br>
+ * - \b coeffSeparator string printed between two coefficients of the same row
+ * - \b rowSeparator string printed between two rows
  */
 Eigen::IOFormat eigenIOFormat(Eigen::FullPrecision);
 

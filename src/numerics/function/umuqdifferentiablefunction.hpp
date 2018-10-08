@@ -88,7 +88,7 @@ public:
   /*!
      * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function \sa f
      * 
-     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla f = \frac{\partial f(x)}{\partial x_i} \f$)
+     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla {f} = \frac{\partial f(x)}{\partial x_i} \f$)
      */
   D df;
 
@@ -96,7 +96,7 @@ public:
      * \brief A general-purpose polymorphic function wrapper which calculates both the function value and it's derivative together.
      *  
      * It uses a provided parametric function of n variables to operate on and also 
-     * a function which calculates the gradient of the function. 
+     * a function which calculates the gradient of the function. <br>
      * It is faster to compute the function and its derivative at the same time.
      */
   FD fdf;

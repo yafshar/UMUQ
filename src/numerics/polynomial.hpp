@@ -393,4 +393,4 @@ bool polynomial<T>::graded_reverse_lexicographic_order(int *x)
 
 } // namespace umuq
 
-#endif //! UMUQ_POLYNOMIAL
+#endif // UMUQ_POLYNOMIAL
