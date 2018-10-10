@@ -280,11 +280,11 @@ struct stats
      * standard deviations an observation is from the mean of each dimension. 
      * This allows to compare data to a normally distributed random variable.
      * 
-     * \tparam T data type
+     * \tparam T Data type
      * 
-     * \param idata array of data
-     * \param nSize size of array
-     * \param Stride element stride (default is 1)
+     * \param idata  Input data
+     * \param nSize  Size of array
+     * \param Stride Element stride (default is 1)
      */
     template <typename T>
     inline void zscoreNormal(T *idata, int const nSize, int const Stride = 1);
@@ -297,15 +297,16 @@ struct stats
      * 
      * Using the robust Z-score normalization method, one can lessen the influence of outliers 
      * on Z-score calculations. Robust Z-score normalization uses the median value as opposed 
-     * to the mean value used in Z-score. 
+     * to the mean value used in Z-score. <br>
      * By using the median instead of the mean, it helps remove some of the influence of outliers 
      * in the data.
-     * medianAbs
-     * \tparam T    data type
      * 
-     * \param idata array of data
-     * \param nSize size of array
-     * \param Stride element stride (default is 1)
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata  Input data
+     * \param nSize  Size of the array
+     * \param Stride Element stride (default is 1)
      */
     template <typename T>
     inline void robustzscoreNormal(T *idata, int const nSize, int const Stride = 1);
