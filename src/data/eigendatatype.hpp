@@ -51,8 +51,8 @@ using EMatrixXd = EMatrixX<double>;
  * E is the abbreviation for Eigen followed by Matrix and any number of (2, 3, 4, 5, or 6). <br>
  * A rectangular matrix of T types of n*n=(2*2, 3*3, 4*4, 5*5, or 6*6) size. <br>
  * For example: <br>
- * \b EMatrix2<double> is an \c Eigen::Matrix of doubles with size of 2*2. <br>
- * \b EMatrix5<int>    is an \c Eigen::Matrix of integers with size of 5*5.
+ * \b EMatrix2<double> is an \c Eigen::Matrix of doubles with the size of 2*2. <br>
+ * \b EMatrix5<int>    is an \c Eigen::Matrix of integers with the size of 5*5.
  * - \b EMatrixnX : E + Matrix + n=(2, 3, 4, 5, or 6) + X <br>
  * E followed by Matrix and any number of n=(2, 3, 4, 5, or 6) and X. <br>
  * A rectangular matrix of type T with row size of n=(2, 3, 4, 5, or 6) and dynamic size columns. 
