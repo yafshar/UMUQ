@@ -12,7 +12,7 @@ namespace umuq
 namespace tmcmc
 {
 
-/*!
+/*! \fn broadcastTask
  * \ingroup TMCMC_Module
  * 
  * \brief Broadcasts running information to all processes of the group 
@@ -28,7 +28,7 @@ void broadcastTask(long long const other);
 template <typename T>
 static bool isBroadcastTaskRegistered = false;
 
-//! Mutex object
+//! Mutex object for data broadcast
 static std::mutex broadcastTask_m;
 
 /*! \class runinfo
@@ -178,26 +178,30 @@ class runinfo
   public:
 	//! Dimension
 	int nDim;
-	//! Max generations
+	//! Maximum generations
 	int maxGenerations;
 	//! Current generation
 	int currentGeneration;
 
-	//! The coefficient of variation of the plausibility weights [maxGenerations]
+	//! The coefficient of variation of the plausibility of weights
 	std::vector<T> CoefVar;
-	//! generationProbabilty cluster-wide                        [maxGenerations]
-	//! probabilty at each generation
+	//! Probabilty at each generation
 	std::vector<T> generationProbabilty;
-	//!                                                          [maxGenerations]
+	//! Unique samples in the current generation
 	std::vector<int> currentUniques;
-	//!                                                          [maxGenerations]
+	/*!
+	 * In the Bayesian framework \f$ p(\theta|D)=\frac{p(D|\theta)p(\theta)}{p(D)}, \f$ where 
+	 * \f$ p(D) \f$ is the evidence and it can be estimated as a by-product in the TMCMC method. <br>
+	 * logselection at each stage is used to estimate the log-evidence. <br>
+	 * The log-evidence is estimated as a by-product of the method from 
+	 * \f$ \ln p(D) \approx \ln{\prod_{j=1}^{m-1}\left( \frac{1}{N_j} \sum_{k=1}^{N_j} w_{j,k} \right )}. \f$ 
+	 */
 	std::vector<T> logselection;
-	//!                                                          [maxGenerations]
+	//! Each generation acceptance rate
 	std::vector<T> acceptance;
-	//! SS cluster-wide                                          [nDim][nDim]
-	//!
-	std::vector<T> SS;
-	//!                                                          [maxGenerations][nDim]
+	//! Samples covariance \f$ COV(\Theta(j)) \f$ at the generation \f$ j \f$ 
+	std::vector<T> covariance;
+	//! The sample mean \f$ \Theta(j) \f$ at the generation \f$ j \f$ 
 	std::vector<T> meantheta;
 };
 
@@ -247,7 +251,7 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 	currentUniques = std::move(other.currentUniques);
 	logselection = std::move(other.logselection);
 	acceptance = std::move(other.acceptance);
-	SS = std::move(other.SS);
+	covariance = std::move(other.covariance);
 	meantheta = std::move(other.meantheta);
 }
 
@@ -262,7 +266,7 @@ runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 	currentUniques = std::move(other.currentUniques);
 	logselection = std::move(other.logselection);
 	acceptance = std::move(other.acceptance);
-	SS = std::move(other.SS);
+	covariance = std::move(other.covariance);
 	meantheta = std::move(other.meantheta);
 
 	return *this;
@@ -279,7 +283,7 @@ bool runinfo<T>::init()
 		logselection.resize(maxGenerations, T{});
 		acceptance.resize(maxGenerations, T{});
 
-		SS.resize(nDim * nDim, T{});
+		covariance.resize(nDim * nDim, T{});
 		meantheta.resize(maxGenerations * nDim, T{});
 	}
 	catch (...)
@@ -312,7 +316,7 @@ void runinfo<T>::swap(runinfo<T> &other)
 	currentUniques.swap(other.currentUniques);
 	logselection.swap(other.logselection);
 	acceptance.swap(other.acceptance);
-	SS.swap(other.SS);
+	covariance.swap(other.covariance);
 	meantheta.swap(other.meantheta);
 }
 
@@ -348,8 +352,8 @@ bool runinfo<T>::save(const char *fileName)
 		fs << "acceptance[" << maxGenerations << "]=\n";
 		tmp &= f.saveMatrix<T>(acceptance.data(), maxGenerations);
 
-		fs << "SS[" << nDim << "][" << nDim << "]=\n";
-		tmp &= f.saveMatrix<T>(SS.data(), nDim, nDim);
+		fs << "covariance[" << nDim << "][" << nDim << "]=\n";
+		tmp &= f.saveMatrix<T>(covariance.data(), nDim, nDim);
 
 		fs << "meantheta[" << maxGenerations << "][" << nDim << "]=\n";
 		tmp &= f.saveMatrix<T>(meantheta.data(), maxGenerations, nDim);
@@ -413,7 +417,7 @@ void runinfo<T>::print()
 
 		std::cout << "\nCovariance of running information at generation[" << currentGeneration << "]=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(SS, nDim, nDim, umuqFormat);
+		f.printMatrix<T>(covariance, nDim, nDim, umuqFormat);
 	}
 
 	std::cout << "\n----------------------------\n" << std::endl;
@@ -467,7 +471,7 @@ bool runinfo<T>::load(const char *fileName)
 		tmp &= f.loadMatrix<T>(acceptance.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(SS.data(), nDim, nDim);
+		tmp &= f.loadMatrix<T>(covariance.data(), nDim, nDim);
 
 		tmp &= f.readLine();
 		tmp &= f.loadMatrix<T>(meantheta.data(), maxGenerations, nDim);
@@ -534,7 +538,7 @@ void runinfo<T>::printSampleStatistics()
 	umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nSample covariance matrix=\n"};
 	umuq::ioFormat covarianceFormat = {" ", "\n", "[", "]"};
 	f.printMatrix<T>(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
-	f.printMatrix<T>(SS, nDim, nDim, covarianceFormat);
+	f.printMatrix<T>(covariance, nDim, nDim, covarianceFormat);
 	std::cout << "----------------------------" << std::endl;
 }
 
@@ -549,7 +553,7 @@ void broadcastTask(long long const other)
 
 	MPI_Request request[3];
 
-	MPI_Ibcast(obj->SS.data(), nDim, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[0]);
+	MPI_Ibcast(obj->covariance.data(), nDim, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[0]);
 	MPI_Ibcast(obj->generationProbabilty.data(), maxGenerations, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[1]);
 	MPI_Ibcast(&obj->currentGeneration, 1, MPI_INT, 0, MPI_COMM_WORLD, &request[2]);
 
