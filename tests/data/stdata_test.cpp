@@ -21,7 +21,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(1, d1->saveData);
     EXPECT_EQ(0, d1->useCmaProposal);
     EXPECT_EQ(0, d1->useLocalCovariance);
-    EXPECT_DOUBLE_EQ(static_cast<double>(1), d1->TolCOV);
+    EXPECT_DOUBLE_EQ(static_cast<double>(1), d1->coefVarPresetThreshold);
     EXPECT_DOUBLE_EQ(static_cast<double>(0.2), d1->bbeta);
     EXPECT_EQ(100, d1->options.MaxIter);
     EXPECT_DOUBLE_EQ(static_cast<double>(1e-6), d1->options.Tolerance);
@@ -46,9 +46,9 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(1, d2.saveData);
     EXPECT_EQ(0, d2.useCmaProposal);
     EXPECT_EQ(0, d2.useLocalCovariance);
-    EXPECT_DOUBLE_EQ(1.0, d2.TolCOV);
+    EXPECT_DOUBLE_EQ(1.0, d2.coefVarPresetThreshold);
     EXPECT_DOUBLE_EQ(0.2, d2.bbeta);
-    EXPECT_DOUBLE_EQ(static_cast<double>(1), d2.TolCOV);
+    EXPECT_DOUBLE_EQ(static_cast<double>(1), d2.coefVarPresetThreshold);
     EXPECT_DOUBLE_EQ(static_cast<double>(0.2), d2.bbeta);
     EXPECT_EQ(100, d2.options.MaxIter);
     EXPECT_DOUBLE_EQ(static_cast<double>(1e-6), d2.options.Tolerance);
@@ -72,7 +72,7 @@ TEST(streamdatatype, HandlesIO)
     EXPECT_EQ(0, d1.auxilSize);
     EXPECT_EQ(1, d1.minChainLength);
     EXPECT_EQ(1, d1.maxChainLength);
-    EXPECT_DOUBLE_EQ(static_cast<double>(1), d1.TolCOV);
+    EXPECT_DOUBLE_EQ(static_cast<double>(1), d1.coefVarPresetThreshold);
     EXPECT_DOUBLE_EQ(static_cast<double>(0.04), d1.bbeta);
     EXPECT_EQ(280675, d1.seed);
     EXPECT_EQ(0, d1.samplingType);
