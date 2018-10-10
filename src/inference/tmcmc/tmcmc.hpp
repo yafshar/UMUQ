@@ -23,7 +23,17 @@ namespace umuq
 /*! \defgroup TMCMC_Module TMCMC module
  * \ingroup Inference_Module
  * 
- * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.
+ * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.<br>
+ * The %UMUQ implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo.<br>
+ * 
+ * Reference: 
+ * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
+ * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
+ *
+ * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
+ * of [pi4u](https://github.com/cselab/pi4u) code made available under the following [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html):<br>
+ * \verbatim GNU General Public License v2.0 \endverbatim.
+ *
  */
 
 /*! \namespace umuq::tmcmc
@@ -134,11 +144,6 @@ namespace tmcmc
  * \ingroup TMCMC_Module
  * 
  * \brief This class performs Transitional Markov Chain Monte Carlo Method
- * 
- * This implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo.<br>
- * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
- * of [pi4u](https://github.com/cselab/pi4u) code made available under the following [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html):<br>
- * \verbatim GNU General Public License v2.0 \endverbatim
  * 
  * \tparam T  Data type
  * \tparam F  Function type, which is used in fit function (default FITFUN_T<T>) 
@@ -428,7 +433,7 @@ bool tmcmc<T, F>::reset(char const *fileName)
       }
 
       // Initialize the tstats variable from io data
-      tStats = std::move(tmcmcStats<T>(Data.options));
+      tStats = std::move(tmcmcStats<T>(Data.options, Data.coefVarPresetThreshold));
 
       // Construct a prior Distribution object
       prior = std::move(priorDistribution<T>(Data.nDim, Data.priorType));
@@ -622,7 +627,7 @@ bool tmcmc<T, F>::iterateInternal()
   // Get the scaled chain covariance as \f$ \beta covariance \f$
   if (!Data.useLocalCovariance)
   {
-    std::transform(runData.SS.begin(), runData.SS.end(), localCovariance.begin(), [&](T const C) { return Data.bbeta * C; });
+    std::transform(runData.covariance.begin(), runData.covariance.end(), localCovariance.begin(), [&](T const C) { return Data.bbeta * C; });
   }
 
   // Number of burning steps
