@@ -58,10 +58,10 @@ TEST(runinfo_test, HandlesIO)
             runinfoObj.meantheta[i * runinfoObj.nDim] = static_cast<double>(i);
             runinfoObj.meantheta[i * runinfoObj.nDim + 1] = static_cast<double>(i);
         }
-        runinfoObj.SS[0] = 12.;
-        runinfoObj.SS[1] = 123.;
-        runinfoObj.SS[2] = 112.;
-        runinfoObj.SS[3] = 13.;
+        runinfoObj.covariance[0] = 12.;
+        runinfoObj.covariance[1] = 123.;
+        runinfoObj.covariance[2] = 112.;
+        runinfoObj.covariance[3] = 13.;
 
         EXPECT_TRUE(runinfoObj.save());
     }
@@ -85,10 +85,10 @@ TEST(runinfo_test, HandlesIO)
             EXPECT_DOUBLE_EQ(static_cast<double>(i), runinfoObj.meantheta[i * runinfoObj.nDim + 1]);
         }
 
-        EXPECT_DOUBLE_EQ(12., runinfoObj.SS[0]);
-        EXPECT_DOUBLE_EQ(123., runinfoObj.SS[1]);
-        EXPECT_DOUBLE_EQ(112., runinfoObj.SS[2]);
-        EXPECT_DOUBLE_EQ(13., runinfoObj.SS[3]);
+        EXPECT_DOUBLE_EQ(12., runinfoObj.covariance[0]);
+        EXPECT_DOUBLE_EQ(123., runinfoObj.covariance[1]);
+        EXPECT_DOUBLE_EQ(112., runinfoObj.covariance[2]);
+        EXPECT_DOUBLE_EQ(13., runinfoObj.covariance[3]);
     }
 
     std::remove("runinfo.txt");
