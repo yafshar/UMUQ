@@ -112,7 +112,7 @@ struct optimizationParameters
  * - \b useLocalCovariance         Indicator if we use the local covariance or not
  * - \b lb                         Generic lower bound (It is -6 per default)
  * - \b ub                         Generic upper bound (It is 6 per default)
- * - \b TolCOV                     A prescribed tolerance
+ * - \b coefVarPresetThreshold     A preset threshold
  * - \b bbeta                      \f$ \beta \f$ parameter in the TMCMC algorithm
  * - \b options                    Optimization parameter
  * - \b eachPopulationSize         Sampling population size for each generation
@@ -246,10 +246,23 @@ class stdata
     T ub;
 
   public:
-    //! A prescribed tolerance
-    T TolCOV;
+    /*!
+     * A preset threshold for coefficient of variation of the plausibility of weights.<br>
+     * At each stage \f$ j, \f$ of the MCMC algorithm, \f$ \zeta_{j+1} \f$ is chosen such that 
+     * the coefficient of variation of \f$ w_{j,k} \f$ is smaller than some preset threshold. 
+     * 
+     * Reference: 
+     * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
+     * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
+     */
+    T coefVarPresetThreshold;
 
-    //! \f$ \beta \f$ parameter in the TMCMC algorithm
+    /*!
+     * \f$ \beta, \f$ a user-specified scaling factor in the TMCMC algorithm.<br>
+     * The proposal PDF for the MCMC step is a Gaussian distribution centered at the sample with covariance equal to 
+     * \f$ \beta^2 COV(\Theta(j)), \f$ where \f$ \beta, \f$ is a user-specified scaling factor, and  
+     * \f$ \Theta(j) \f$ is the collective samples from MCMC step.
+     */
     T bbeta;
 
     //! Optimization parameter
@@ -295,7 +308,7 @@ stdata<T>::stdata() : nDim(0),
                       useLocalCovariance(0),
                       lb(-static_cast<T>(6)),
                       ub(static_cast<T>(6)),
-                      TolCOV(static_cast<T>(1)),
+                      coefVarPresetThreshold(static_cast<T>(1)),
                       bbeta(static_cast<T>(0.2)),
                       options(){};
 
@@ -316,7 +329,7 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
                                                                          useLocalCovariance(0),
                                                                          lb(-static_cast<T>(6)),
                                                                          ub(static_cast<T>(6)),
-                                                                         TolCOV(static_cast<T>(1)),
+                                                                         coefVarPresetThreshold(static_cast<T>(1)),
                                                                          bbeta(static_cast<T>(0.2)),
                                                                          options(),
                                                                          eachPopulationSize(maxGenerations),
@@ -358,7 +371,7 @@ stdata<T>::stdata(stdata<T> &&other)
     useLocalCovariance = other.useLocalCovariance;
     lb = other.lb;
     ub = other.ub;
-    TolCOV = other.TolCOV;
+    coefVarPresetThreshold = other.coefVarPresetThreshold;
     bbeta = other.bbeta;
     options = std::move(other.options);
     eachPopulationSize = std::move(other.eachPopulationSize);
@@ -389,7 +402,7 @@ stdata<T> &stdata<T>::operator=(stdata<T> &&other)
     useLocalCovariance = other.useLocalCovariance;
     lb = other.lb;
     ub = other.ub;
-    TolCOV = other.TolCOV;
+    coefVarPresetThreshold = other.coefVarPresetThreshold;
     bbeta = other.bbeta;
     options = std::move(other.options);
     eachPopulationSize = std::move(other.eachPopulationSize);
@@ -422,7 +435,7 @@ void stdata<T>::swap(stdata<T> &other)
     std::swap(useLocalCovariance, other.useLocalCovariance);
     std::swap(lb, other.lb);
     std::swap(ub, other.ub);
-    std::swap(TolCOV, other.TolCOV);
+    std::swap(coefVarPresetThreshold, other.coefVarPresetThreshold);
     std::swap(bbeta, other.bbeta);
     std::swap(options.Display, other.options.Display);
     std::swap(options.MaxIter, other.options.MaxIter);
@@ -453,7 +466,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
     useLocalCovariance = 0;
     lb = -static_cast<T>(6);
     ub = static_cast<T>(6);
-    TolCOV = static_cast<T>(1);
+    coefVarPresetThreshold = static_cast<T>(1);
     bbeta = static_cast<T>(0.2);
     options.reset();
 
@@ -575,9 +588,9 @@ bool stdata<T>::load(const char *fname)
                 // Parse the line into line arguments
                 p.parse(f.getLine());
 
-                if (p.at<std::string>(0) == "TolCOV")
+                if (p.at<std::string>(0) == "coefVarPresetThreshold")
                 {
-                    TolCOV = p.at<T>(1);
+                    coefVarPresetThreshold = p.at<T>(1);
                 }
                 else if (p.at<std::string>(0) == "bbeta")
                 {
