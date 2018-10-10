@@ -17,7 +17,7 @@ namespace umuq
 namespace tmcmc
 {
 
-/*!
+/*! \fn CoefVar
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
@@ -43,7 +43,7 @@ TOut CoefVar(T const *FunValues, int const nFunValues, T const PJ1, T const PJ, 
 template <typename T, typename TOut = double>
 TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const Tolerance);
 
-/*!
+/*! \fn CoefVarFun
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
@@ -76,9 +76,9 @@ int nFunctionValues;
 template <typename T>
 T pj;
 
-//! Optimizer tolerance
+//! A preset threshold for coefficient of variation of the plausibility of weights.
 template <typename T>
-T optimizerTolerance;
+T coefVarPresetThreshold;
 
 } // namespace tmcmc
 
@@ -103,11 +103,12 @@ class tmcmcStats
     tmcmcStats();
 
     /*!
-     * \brief Construct a new tmcmcStats object
+     * \brief Construct a new tmcmc Stats object
      * 
-     * \param OptParams optimization Parameters
+     * \param OptParams               Optimization Parameters
+     * \param CoefVarPresetThreshold  A preset threshold for coefficient of variation of the plausibility of weights
      */
-    explicit tmcmcStats(optimizationParameters<T> const &OptParams);
+    tmcmcStats(optimizationParameters<T> const &OptParams, T const CoefVarPresetThreshold);
 
     /*!
      * \brief Move constructor, construct a new tmcmcStats object from an input object
@@ -218,13 +219,13 @@ tmcmcStats<T>::tmcmcStats() : optParams(),
         UMUQFAIL("Failed to set the minimizer dimension!");
     }
 
-    // Set the prescribed tolerance
-    optimizerTolerance<T> = optParams.Tolerance;
+    // Set the preset threshold for coefficient of variation of the plausibility of weights to the default value of 1
+    coefVarPresetThreshold<T> = T{1};
 }
 
 template <typename T>
-tmcmcStats<T>::tmcmcStats(optimizationParameters<T> const &OptParams) : optParams(OptParams),
-                                                                        prng(nullptr)
+tmcmcStats<T>::tmcmcStats(optimizationParameters<T> const &OptParams, T const CoefVarPresetThreshold) : optParams(OptParams),
+                                                                                                        prng(nullptr)
 {
     // Get the correct instance of the minimizer
     switch (optParams.FunctionMinimizerType)
@@ -249,8 +250,8 @@ tmcmcStats<T>::tmcmcStats(optimizationParameters<T> const &OptParams) : optParam
         UMUQFAIL("Failed to set the minimizer dimension!");
     }
 
-    // set the prescribed tolerance
-    optimizerTolerance<T> = optParams.Tolerance;
+    // Set the preset threshold for coefficient of variation of the plausibility of weights
+    coefVarPresetThreshold<T> = CoefVarPresetThreshold;
 }
 
 template <typename T>
@@ -305,7 +306,7 @@ bool tmcmcStats<T>::findOptimumP(T const *FunValues, int const nFunValues, T con
         UMUQFAILRETURN("Failed to initialize the minimizer!");
     }
 
-    // Print the initilia starting points, if it is requested
+    // Print the initial starting points, if it is requested
     if (optParams.Display)
     {
         T *x = fMinimizer->getX();
@@ -393,7 +394,7 @@ bool tmcmcStats<T>::searchOptimumP(T const *FunValues, int const nFunValues, T c
                 MaxCoefVar = NewCoefVar;
                 optimumP = p;
 
-                if (MaxCoefVar <= optimizerTolerance<T>)
+                if (MaxCoefVar <= coefVarPresetThreshold<T>)
                 {
                     found = true;
                     break;
@@ -605,7 +606,7 @@ bool tmcmcStats<T>::selectNewGeneration(stdata<T> &StreamData, database<T> &Curr
         }
 
         {
-            T *Covariance = RunData.SS.data();
+            T *Covariance = RunData.covariance.data();
 
             for (int i = 0; i < nDimSamplePoints; i++)
             {
@@ -772,7 +773,7 @@ TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const T
 template <typename T>
 T CoefVarFun(T const *x)
 {
-    return CoefVar<T, T>(functionValues<T>, nFunctionValues, *x, pj<T>, optimizerTolerance<T>);
+    return CoefVar<T, T>(functionValues<T>, nFunctionValues, *x, pj<T>, coefVarPresetThreshold<T>);
 }
 
 } // namespace tmcmc
