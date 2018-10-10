@@ -18,7 +18,7 @@ minChainLength    1
 maxChainLength    1
 
 # Desired coefficient of variation (=std/mean) of the weights
-TolCOV    1
+coefVarPresetThreshold 1
 
 #------------------------ PRIOR OPTIONS ---------------------------------------
 # Type of the prior:
