@@ -32,7 +32,7 @@ class dcpse
 {
   public:
     /*!
-     * \brief Default constructor
+     * \brief Construct a new dcpse object
      * 
      * \param ndim    Dimensionality
      * \param nterms  Number of terms (currently only one term is implemented)
@@ -40,17 +40,18 @@ class dcpse
     explicit dcpse(int ndim, int nterms = 1);
 
     /*!
-     * \brief Move constructor, construct a new dcpse object from input dcpse object
+     * \brief Move constructor, construct a new dcpse object
      * 
-     * \param other 
+     * \param other dcpse object
      */
     explicit dcpse(dcpse<T> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
-     * \param inputDB 
-     * \return dcpse<T>& 
+     * \param other dcpse object
+     * 
+     * \returns dcpse<T>& dcpse object
      */
     dcpse<T> &operator=(dcpse<T> &&other);
 
@@ -60,7 +61,7 @@ class dcpse
      */
     ~dcpse() {}
 
-    /*! \fn computeWeights
+    /*!
      * \brief Computes generalized DC-PSE differential operators on set of input points
      *
      * This function uses one set of points as input data to compute the generalized DC-PSE 
@@ -71,7 +72,7 @@ class dcpse
      * \param idata    A pointer to input data
      * \param nPoints  Number of data points
      * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
-     *                 Notation for partial derivatives:
+     *                 Notation for partial derivatives:<br>
      *                 \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order    Order of accuracy (default is 2nd order accurate)
      * \param nENN     Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
@@ -93,7 +94,7 @@ class dcpse
      * \param qdata     A pointer to query data
      * \param nqPoints  Number of query data points
      * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
-     *                  Notation for partial derivatives:
+     *                  Notation for partial derivatives:<br>
      *                  \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order     Order of accuracy (default is 2nd order accurate)
      * \param nENN      Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
@@ -121,23 +122,22 @@ class dcpse
      * This function uses one set of points as input data to compute the generalized DC-PSE 
      * interpolator operators on the set of query points.
      * 
-     * \param idata            A pointer to input data 
-     * \param nPoints          Number of data points
-     * \param qdata            A pointer to query data 
-     * \param nqPoints         Number of query data points
-     * \param order            Order of accuracy (default is 2nd order accurate)
-     * \param nENN             Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio            The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param idata     A pointer to input data 
+     * \param nPoints   Number of data points
+     * \param qdata     A pointer to query data 
+     * \param nqPoints  Number of query data points
+     * \param order     Order of accuracy (default is 2nd order accurate)
+     * \param nENN      Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
+     * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
     bool computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
-    /*! \fn compute
+    /*!
      * \brief Evaluate a discretized DC-PSE operator from function values of input data and put the results as the query data function values
      * 
      * This function uses function values of input data and the weights of the operator which have 
      * been previously computed to compute the query values and put the results as the query data 
-     * function values. 
-     * 
+     * function values. <br>
      * At first it checks the computed kernel size to be equal to the number of query points times the 
      * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
      * 
@@ -148,7 +148,7 @@ class dcpse
      */
     bool compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints);
 
-    /*! \fn interpolate
+    /*!
      * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the 
      * interpolation results as the query data values
      * 
@@ -193,13 +193,14 @@ class dcpse
     /*!
      * \brief Order of accuracy of DC-PSE kernel at index
      * 
-     * \param  index Index number in nTerms array
-     * \return order of accuracy of DC-PSE kernel at index
+     * \param index Index number in nTerms array
+     * 
+     * \returns Order of accuracy of DC-PSE kernel at index
      */
     inline int orderofAccuracy(int const index = 0) const;
 
     /*!
-     * \brief print the DC-PSE information
+     * \brief Prints the DC-PSE information
      * 
      */
     inline void printInfo() const;
@@ -221,10 +222,17 @@ class dcpse
     inline T *averageSpace() const;
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Make it noncopyable construct of a new dcpse object
+     * 
+     */
     dcpse(dcpse<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief  Make it not assignable
+     * 
+     * \returns dcpse<T>& 
+     */
     dcpse<T> &operator=(dcpse<T> const &) = delete;
 
   private:
@@ -442,7 +450,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
         }
     }
 
-    // Total number of nearest neighbours for each point
+    // Total number of nearest neighbors for each point
     int nNN = KNN->numNearestNeighbors();
 
     /*
@@ -483,7 +491,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
         // A pointer to nearest neighbors indices of point i
         int *NearestNeighbors = KNN->NearestNeighbors(i);
 
-        // A pointer to nearest neighbors distances from the point i
+        // A pointer to nearest neighbors square distances from the point i
         T *nnDist = KNN->NearestNeighborsDistances(i);
 
         /* 
@@ -551,7 +559,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
         for (int j = 0; j < dcmonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
         }
 
         int dcrank;
@@ -605,7 +613,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
                     for (int j = dcmonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
                     }
 
                     /* 
@@ -660,7 +668,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
                 }
 
                 /*
@@ -709,7 +717,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
                     EVectorMapType<T> columnV(column + alphamin, dcmonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -732,13 +740,13 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonsq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonsq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -788,7 +796,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
                 EVectorMapType<T> columnV(column + alphamin, dcmonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -988,7 +996,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
         // A pointer to nearest neighbors indices of point i
         int *NearestNeighbors = KNN->NearestNeighbors(i);
 
-        // A pointer to nearest neighbors distances from the point i
+        // A pointer to nearest neighbors square distances from the point i
         T *nnDist = KNN->NearestNeighborsDistances(i);
 
         /*
@@ -1050,7 +1058,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
         for (int j = 0; j < dcmonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
         }
 
         int dcrank;
@@ -1104,7 +1112,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
                     for (int j = dcmonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
                     }
 
                     /* 
@@ -1159,7 +1167,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
                 }
 
                 /* 
@@ -1209,7 +1217,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
                     EVectorMapType<T> columnV(column + alphamin, dcmonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -1232,13 +1240,13 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonsq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonsq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -1288,7 +1296,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
                 EVectorMapType<T> columnV(column + alphamin, dcmonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -1446,7 +1454,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
         // A pointer to nearest neighbors indices of point i
         int *NearestNeighbors = KNN->NearestNeighbors(i);
 
-        // A pointer to nearest neighbors distances from point i
+        // A pointer to nearest neighbors square distances from the point i
         T *nnDist = KNN->NearestNeighborsDistances(i);
 
         /*
@@ -1512,7 +1520,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
         for (int j = 0; j < dcmonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
         }
 
         int dcrank;
@@ -1566,7 +1574,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
                     for (int j = dcmonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
                     }
 
                     /* 
@@ -1624,7 +1632,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
                 }
 
                 /* 
@@ -1674,7 +1682,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
                     EVectorMapType<T> columnV(column, dcmonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -1697,13 +1705,13 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonsq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonsq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -1753,7 +1761,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
                 EVectorMapType<T> columnV(column, dcmonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -1938,7 +1946,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
         // A pointer to nearest neighbors indices of point i
         int *NearestNeighbors = KNN->NearestNeighbors(i);
 
-        // A pointer to nearest neighbors distances from point i
+        // A pointer to nearest neighbors square distances from the point i
         T *nnDist = KNN->NearestNeighborsDistances(i);
 
         /*
@@ -2010,7 +2018,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
              * Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
              * between the point and its nearest neighbors
              */
-            T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
+            T s = std::sqrt(nnDist[j]) / (0.9 * std::sqrt(idataminDist[IdJ]));
 
             // Compute the kernel value at the point
             T dckernelV = q.f(&s);
@@ -2034,7 +2042,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
         for (int j = 0; j < dcmonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
         }
 
         int dcrank;
@@ -2094,7 +2102,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                          * Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
                          * between the point and its nearest neighbors
                          */
-                        T s = nnDist[j] / (0.9 * idataminDist[IdJ]);
+                        T s = std::sqrt(nnDist[j]) / (0.9 * std::sqrt(idataminDist[IdJ]));
 
                         // Compute the kernel value at the point
                         T dckernelV = q.f(&s);
@@ -2112,7 +2120,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
                     for (int j = dcmonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq2);
+                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
                     }
 
                     /* 
@@ -2173,7 +2181,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                      * Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
                      * between the point and its nearest neighbors
                      */
-                    T s = nnDist[k] / (0.9 * idataminDist[IdJ]);
+                    T s = std::sqrt(nnDist[k]) / (0.9 * std::sqrt(idataminDist[IdJ]));
 
                     // Compute the kernel value at the point IdK
                     T dckernelV = q.f(&s);
@@ -2196,7 +2204,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
                     // Neighbor point number of point l which causes singularity
                     int const IdJL = NearestNeighbors[l];
-                    s = nnDist[l] / (0.9 * idataminDist[IdJL]);
+                    s = std::sqrt(nnDist[l]) / (0.9 * std::sqrt(idataminDist[IdJL]));
                     dckernelV = q.f(&s);
                     RHSB += dckernelV * columnL;
                 }
@@ -2206,7 +2214,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * nnDist[k] * byEpsilonsq2);
+                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
                 }
 
                 /* 
@@ -2256,7 +2264,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
                     EVectorMapType<T> columnV(column, dcmonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -2279,13 +2287,13 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonsq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonsq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -2335,7 +2343,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
                 EVectorMapType<T> columnV(column, dcmonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -2364,7 +2372,7 @@ bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPo
     }
     if (dckernelSize != nqPoints * dcmonomialSize)
     {
-        UMUQFAILRETURN("Previously computed weights does not macth with this query data!");
+        UMUQFAILRETURN("Previously computed weights does not match with this query data!");
     }
 
     if (qFvalue == nullptr)
@@ -2393,7 +2401,7 @@ bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const
     }
     if (dckernelSize != nqPoints * dcmonomialSize)
     {
-        UMUQFAILRETURN("Previously computed weights does not macth with this query data!");
+        UMUQFAILRETURN("Previously computed weights does not match with this query data!");
     }
 
     if (qFvalue == nullptr)
