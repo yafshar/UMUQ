@@ -8,12 +8,12 @@ namespace umuq
  * This is the Input/OUTPUT module of UMUQ providing all necessary classes of reading and writing data.
  */
 
-
 /*! \class ioFormat
  * \ingroup IO_Module
  * 
  * \brief Stores a set of parameters controlling the way matrices are printed
  *
+ * Controlling the way matrices are printed. <br>
  * List of available parameters:
  *  - \b coeffSeparator string printed between two coefficients of the same row
  *  - \b rowSeparator   string printed between two rows
@@ -24,44 +24,48 @@ namespace umuq
 struct ioFormat
 {
     /*!
-     * \brief Construct a new io Format object
+     * \brief Construct a new ioFormat object
      * 
-     * \param _coeffSeparator  string printed between two coefficients of the same row
-     * \param _rowSeparator    string printed between two rows
-     * \param _rowPrefix       string printed at the beginning of each row
-     * \param _rowSuffix       string printed at the end of each row
+     * \param CoeffSeparator  String printed between two coefficients of the same row
+     * \param RowSeparator    String printed between two rows
+     * \param RowPrefix       String printed at the beginning of each row
+     * \param RowSuffix       String printed at the end of each row
      */
-    ioFormat(std::string const &_coeffSeparator = " ",
-             std::string const &_rowSeparator = "\n",
-             std::string const &_rowPrefix = "",
-             std::string const &_rowSuffix = "");
+    ioFormat(std::string const &CoeffSeparator = " ",
+             std::string const &RowSeparator = "\n",
+             std::string const &RowPrefix = "",
+             std::string const &RowSuffix = "");
 
     /*!
-     * \brief Operator ==
+     * \brief Operator \c == compares the underlying ioFormat object
      * 
-     * \param rhs io Format object
+     * \param rhs ioFormat object
      * 
-     * \return true 
-     * \return false 
+     * \returns true If lhs \c == rhs 
+     * \returns false  
      */
     inline bool operator==(ioFormat const &rhs);
     inline bool operator==(ioFormat const &rhs) const;
 
     /*!
-     * \brief Operator !=
+     * \brief Operator \c != compares the underlying ioFormat object
      * 
-     * \param rhs  io Format object
+     * \param rhs  ioFormat object
      * 
-     * \return true 
-     * \return false 
+     * \returns true  If lhs \c != rhs 
+     * \returns false 
      */
     inline bool operator!=(ioFormat const &rhs);
     inline bool operator!=(ioFormat const &rhs) const;
 
   public:
+    /*! String printed between two coefficients */
     std::string coeffSeparator;
+    /*! String printed between two rows */
     std::string rowSeparator;
+    /*! String printed at the beginning of each row */
     std::string rowPrefix;
+    /*! String printed at the end of each row */
     std::string rowSuffix;
 };
 
@@ -76,7 +80,7 @@ struct ioFormat
  * 
  * \brief This class includes IO functionality.
  *
- * List of available functions:
+ * List of available functions: <br>
  * - \b isFileOpened  Check if the file is opened
  * - \b isFileExist   Check if the file exists
  * 
@@ -123,7 +127,7 @@ class io
     /*! \var static const std::ios_base::openmode trunc
      * \brief Discard the contents of the stream when opening
      */
-    static const std::ios_base::openmode trunc = std::fstream::trunc; 
+    static const std::ios_base::openmode trunc = std::fstream::trunc;
     /*! \var static const std::ios_base::openmode ate
      * \brief Seeks to the end of stream immediately after open
      */
@@ -142,7 +146,7 @@ class io
     ~io();
 
     /*!
-     * \brief   It is true if the file is opened
+     * \brief Check to see whether the file is opened or not
      * 
      * \returns true if the file is already opened 
      */
@@ -151,7 +155,7 @@ class io
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
      *  
-     * \returns true if the file exists 
+     * \returns true If the file exists 
      */
     inline bool isFileExist(const char *fileName);
     inline bool isFileExist(std::string const &fileName);
@@ -161,9 +165,9 @@ class io
      *  
      * Opens the file whose name is specified in the parameter filename and
      * associates it with a stream that can be identified in future operations 
-     * by the FILE pointer returned.inline   
+     * by the FILE pointer returned.   
      * 
-     * Available file open flags:
+     * Available file open flags: <br>
      * - \b std::fstream::app 	  Seeks to the end of stream before each write
      * - \b std::fstream::binary  Open in binary mode
      * - \b std::fstream::in 	  Open for reading
@@ -171,7 +175,7 @@ class io
      * - \b std::fstream::trunc   Discard the contents of the stream when opening
      * - \b std::fstream::ate 	  Seeks to the end of stream immediately after open
      * 
-     * \returns true if everything goes OK
+     * \returns true If everything goes OK
      */
     bool openFile(const char *fileName, const std::ios_base::openmode mode = in);
     bool openFile(std::string const &fileName, const std::ios_base::openmode mode = in);
@@ -182,7 +186,7 @@ class io
      * Get a string from stream and stores them into line until 
      * a newline or the end-of-file is reached, whichever happens first.
      * 
-     * \returns true if no error occurs on the associated stream
+     * \returns true If no error occurs on the associated stream
      */
     bool readLine(const char comment = '#');
 
@@ -208,7 +212,7 @@ class io
     /*!
      * \brief Get the Line object
      * 
-     * \return std::string& 
+     * \returns std::string& 
      */
     inline std::string &getLine();
 
@@ -217,55 +221,55 @@ class io
      * 
      * \tparam T Data type
      * 
-     * \param  os File based streams
+     * \param streamBuffer  Stream buffer to use as output sequence
      */
     template <typename T>
-    inline void setPrecision(std::ostream &os);
+    inline void setPrecision(std::ostream &streamBuffer);
 
     /*!
      * \brief Set the width parameter of the stream to exactly n.
      * 
-     * If Input Width_ is < 0 the function will set the stream to zero and its setting flag to false 
+     * If Input streamWidth is \c < 0, the function will set the stream to zero and its setting flag to false 
      * 
-     * \param Width_ New value for Width 
+     * \param streamWidth New value for Width 
      */
-    inline void setWidth(int Width_ = 0);
+    inline void setWidth(int streamWidth = 0);
+
+    /*!
+     * \brief Get the width parameter of the input data and stream for the precision 
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata         Input array of data
+     * \param nRows         Number of Rows
+     * \param nCols         Number of Columns
+     * \param streamBuffer  Stream buffer to use as output sequence 
+     * 
+     * \returns the width
+     */
+    template <typename T>
+    int getWidth(T *idata, int const nRows, int const nCols, std::ostream &streamBuffer);
+
+    template <typename T>
+    int getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer);
+
+    template <typename T>
+    int getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
      * \tparam T  data type
      * 
-     * \param idata  Input array of data
-     * \param nRows  Number of Rows
-     * \param nCols  Number of Columns
-     * \param os     File based streams 
+     * \param idata         Input array of data
+     * \param nRows         Number of Rows
+     * \param nCols         Number of Columns
+     * \param streamBuffer  Stream buffer to use as output sequence 
      * 
-     * \returns the width
+     * \returns The width
      */
     template <typename T>
-    int getWidth(T *idata, int const nRows, int const nCols, std::ostream &os);
-
-    template <typename T>
-    int getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &os);
-
-    template <typename T>
-    int getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &os);
-
-    /*!
-     * \brief Get the width parameter of the input data and stream for the precision 
-     * 
-     * \tparam T  data type
-     * 
-     * \param idata  Input array of data
-     * \param nRows  Number of Rows
-     * \param nCols  Number of Columns
-     * \param os     File based streams
-     * 
-     * \returns the width
-     */
-    template <typename T>
-    int getWidth(T **idata, int const nRows, int const nCols, std::ostream &os);
+    int getWidth(T **idata, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Helper function to save the matrix of type TM with TF format into a file 
@@ -284,7 +288,7 @@ class io
     /*!
      * \brief Helper function to save one matrix into a file 
      * 
-     * \tparam  T     Data type 
+     * \tparam T Data type 
      * 
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
@@ -304,17 +308,17 @@ class io
      * 
      * \tparam  T     Data type 
      * 
-     * \param   idata  Array of input data of type T
-     * \param   nRows  Number of rows
-     * \param   nCols  Number of columns for each row
-     * \param options  (0 Default) 
+     * \param   idata   Array of input data of type T
+     * \param   nRows   Number of rows
+     * \param   nCols   Number of columns for each row
+     * \param options   (0 Default) 
      *                      - \b 0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
      *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
-     * \param  entries           Number of data entry (Input data contains pointer to array of data)
-     * \param  form              Print format for each row 
+     * \param  entries  Number of data entry (Input data contains pointer to array of data)
+     * \param  form     Print format for each row 
      * 
-     * \returns true if no error occurs during writing the matrix
+     * \returns true If no error occurs during writing the matrix
      */
     template <typename T>
     bool saveMatrix(T **idata,
@@ -336,6 +340,8 @@ class io
      *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
      *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true If no error occurs during writing the matrix
      */
     template <typename T>
     bool saveMatrix(T *idata,
@@ -358,13 +364,15 @@ class io
     /*!
      * \brief Helper function to save two arrays of data into a file 
      * 
-     * \tparam T          Data type 
+     * \tparam T Data type 
      * 
      * \param idata        Array of input data of type T
      * \param idataCols    Number of columns of inpput array data (idata)
      * \param ifvalue      Array of input value data of type T
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
      * \param nRows        Number of rows in each data set
+     * 
+     * \returns true If no error occurs during writing the matrix
      */
     template <typename T>
     bool saveMatrix(T *idata,
@@ -390,11 +398,11 @@ class io
     /*!
      * \brief Helper function to load the matrix of type TM from a file 
      * 
-     * \tparam  TM   Matrix type
+     * \tparam TM Matrix type
      * 
-     * \param   MX   Input matrix of data
+     * \param MX  Input matrix of data
      *
-     * \returns true if no error occurs during reading a matrix
+     * \returns true If no error occurs during reading a matrix
      */
     template <typename TM>
     bool loadMatrix(TM &MX);
@@ -402,14 +410,14 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  T     Data type 
+     * \tparam T  Data type 
      * 
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
      * \param options  (0 default) Load matrix from matrix format and 1 load matrix from vector format
      *
-     * \returns true if no error occurs during reading data
+     * \returns true If no error occurs during reading data
      */
     template <typename T>
     bool loadMatrix(T **idata, int const nRows, int const nCols, int const options = 0);
@@ -417,7 +425,7 @@ class io
     /*!
      * \brief Helper function to load one matrix (or entries number of matrcies) from a file 
      * 
-     * \tparam  T     Data type 
+     * \tparam T  Data type 
      * 
      * \param   idata  Array of input data of type T
      * \param   nRows  Number of rows
@@ -433,11 +441,11 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam  T     Data type 
+     * \tparam T  Data type 
      * 
-     * \param   idata  Input array of data of type T
-     * \param   nRows  Number of rows
-     * \param   nCols  Number of columns for each row (default is 1)
+     * \param idata  Input array of data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns for each row (default is 1)
      *
      * \returns true if no error occurs during reading data
      */
@@ -453,7 +461,7 @@ class io
     /*!
      * \brief Helper function to load two vector of data from a file
      * 
-     * \tparam T          Data type 
+     * \tparam T Data type 
      * 
      * \param idata        Input array of data of type T
      * \param idataCols    Number of columns of inpput array data (idata)
@@ -461,7 +469,7 @@ class io
      * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
      * \param nRows        Number of rows in each data set
      * 
-     * \returns true if no error occurs during reading data
+     * \returns true If no error occurs during reading data
      */
     template <typename T>
     bool loadMatrix(T *idata, int const idataCols, T *ifvalue, int const ifvalueCols, int const nRows);
@@ -475,7 +483,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  T         Data type
+     * \tparam T Data type
      * 
      * \param  title       Title (string) that should be written at the top 
      * \param  idata       Array of input data of type T
@@ -493,7 +501,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T          Data type
+     * \tparam T Data type
      * 
      * \param idata        Array of input data of type T
      * \param nRows        Number of rows
@@ -509,12 +517,12 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  T     Data type
+     * \tparam T Data type
      * 
-     * \param   idata  Array of input data of type T
-     * \param   nRows  Number of rows
-     * \param   nCols  Number of columns
-     * \param   form   Print format
+     * \param idata  Array of input data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns
+     * \param form   Print format
      */
     template <typename T>
     void printMatrix(T const **idata,
@@ -525,14 +533,14 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  T     Data type
+     * \tparam T Data type
      * 
-     * \param  title       Title (string) that should be written at the top 
-     * \param  idata       Array of input data of type T
-     * \param  nRows       Number of rows
-     * \param  nCols       Number of columns for each row
-     * \param  entries     Number of data entry   
-     * \param  printPrefix Prefix and suffix of the print  
+     * \param title       Title (string) that should be written at the top 
+     * \param idata       Array of input data of type T
+     * \param nRows       Number of rows
+     * \param nCols       Number of columns for each row
+     * \param entries     Number of data entry   
+     * \param printPrefix Prefix and suffix of the print  
      */
     template <typename T>
     void printMatrix(const char *title,
@@ -545,12 +553,12 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T          Data type
+     * \tparam T Data type
      * 
-     * \param  idata       Array of input data of type T
-     * \param  nRows       Number of rows
-     * \param  nCols       Number of columns for each row
-     * \param  printPrefix Prefix and suffix of the print  
+     * \param idata       Array of input data of type T
+     * \param nRows       Number of rows
+     * \param nCols       Number of columns for each row
+     * \param printPrefix Prefix and suffix of the print  
      */
     template <typename T>
     void printMatrix(T const **idata,
@@ -562,13 +570,13 @@ class io
     /*!
      * \brief Helper function to print one matrix (or entries number of matrices)
      * 
-     * \tparam  T     Data type
+     * \tparam T Data type
      * 
-     * \param  idata   Array of input data of type T
-     * \param  nRows   Number of rows
-     * \param  nCols   Number of columns for each row
-     * \param  entries Number of data entry   
-     * \param  form    Print format for each row 
+     * \param idata   Array of input data of type T
+     * \param nRows   Number of rows
+     * \param nCols   Number of columns for each row
+     * \param entries Number of data entry   
+     * \param form    Print format for each row 
      */
     template <typename T>
     void printMatrix(T const **idata,
@@ -580,13 +588,13 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  T         Data type
+     * \tparam T Data type
      * 
-     * \param  title       Title (string) that should be written at the top 
-     * \param  idata       Array of input data of type T
-     * \param  nRows       Number of rows
-     * \param  nCols       Number of columns (default is 1)
-     * \param  printPrefix Prefix and suffix of the print  
+     * \param title       Title (string) that should be written at the top 
+     * \param idata       Array of input data of type T
+     * \param nRows       Number of rows
+     * \param nCols       Number of columns (default is 1)
+     * \param printPrefix Prefix and suffix of the print  
      */
     template <typename T>
     void printMatrix(const char *title,
@@ -612,12 +620,12 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam  T    Data type
+     * \tparam T Data type
      * 
-     * \param  idata  Array of input data of type T
-     * \param  nRows  Number of rows
-     * \param  nCols  Number of columns (default is 1)
-     * \param  form   Print format
+     * \param idata  Array of input data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns (default is 1)
+     * \param form   Print format
      */
     template <typename T>
     void printMatrix(T const *idata,
@@ -640,10 +648,10 @@ class io
     /*!
      * \brief Helper function to print one element of input data
      * 
-     * \tparam  T    Data type
+     * \tparam T Data type
      * 
-     * \param  idata  Array of input data of type T
-     * \param  form   Print format
+     * \param idata  Array of input data of type T
+     * \param form   Print format
      */
     template <typename T>
     void printMatrix(T const *idata, ioFormat const &form);
@@ -651,15 +659,15 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T             Data type
+     * \tparam T Data type
      * 
-     * \param  title          Title (string) that should be written at the top 
-     * \param  idata          Array of input data of type T
-     * \param  idataCols      Number of columns of inpput array data (idata)
-     * \param  ifvalue        Array of input value data of type T
-     * \param  ifvalueCols    Number of columns of inpput value data (ifvalue)
-     * \param  nRows          Number of rows
-     * \param  printPrefix    Prefix and suffix of the print  
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
      */
     template <typename T>
     void printMatrix(const char *title,
@@ -716,13 +724,13 @@ class io
      * 
      * \tparam T Data type
      * 
-     * \param  idata          Array of input data of type T
-     * \param  idataCols      Number of columns of inpput array data (idata)
-     * \param  ifvalue        Array of input value data of type T
-     * \param  ifvalueCols    Number of columns of inpput value data (ifvalue)
-     * \param  nRows          Number of rows
-     * \param  formD          Print format for input data
-     * \param  formF          Print format for input function value 
+     * \param idata         Array of input data of type T
+     * \param idataCols     Number of columns of inpput array data (idata)
+     * \param ifvalue       Array of input value data of type T
+     * \param ifvalueCols   Number of columns of inpput value data (ifvalue)
+     * \param nRows         Number of rows
+     * \param formD         Print format for input data
+     * \param formF         Print format for input function value 
      */
     template <typename T>
     void printMatrix(T const *idata,
@@ -752,7 +760,7 @@ class io
                      ioFormat const &formF);
 
   private:
-    //! Input/output operations on file based streams
+    //! Input/output file based stream
     std::fstream fs;
 
     //! Line for reading the string of data
@@ -771,13 +779,13 @@ class io
     ioFormat fmt;
 };
 
-ioFormat::ioFormat(std::string const &_coeffSeparator,
-                   std::string const &_rowSeparator,
-                   std::string const &_rowPrefix,
-                   std::string const &_rowSuffix) : coeffSeparator(_coeffSeparator),
-                                                    rowSeparator(_rowSeparator),
-                                                    rowPrefix(_rowPrefix),
-                                                    rowSuffix(_rowSuffix) {}
+ioFormat::ioFormat(std::string const &CoeffSeparator,
+                   std::string const &RowSeparator,
+                   std::string const &RowPrefix,
+                   std::string const &RowSuffix) : coeffSeparator(CoeffSeparator),
+                                                   rowSeparator(RowSeparator),
+                                                   rowPrefix(RowPrefix),
+                                                   rowSuffix(RowSuffix) {}
 
 inline bool ioFormat::operator==(ioFormat const &rhs)
 {
@@ -909,36 +917,36 @@ inline std::fstream &io::getFstream() { return fs; }
 inline std::string &io::getLine() { return line; }
 
 template <typename T>
-inline void io::setPrecision(std::ostream &os)
+inline void io::setPrecision(std::ostream &streamBuffer)
 {
     if (std::numeric_limits<T>::is_integer)
     {
         // Manages the precision (i.e. how many digits are generated)
-        os.precision(0);
+        streamBuffer.precision(0);
     }
     else
     {
         // Manages the precision (i.e. how many digits are generated)
-        os.precision(digits10<T>());
-        os << std::fixed;
+        streamBuffer.precision(digits10<T>());
+        streamBuffer << std::fixed;
     }
 }
 
-inline void io::setWidth(int Width_)
+inline void io::setWidth(int streamWidth)
 {
-    Width = Width_ < 0 ? std::ptrdiff_t{} : static_cast<std::ptrdiff_t>(Width_);
-    FixedWidth = Width_ >= 0;
+    Width = streamWidth < 0 ? std::ptrdiff_t{} : static_cast<std::ptrdiff_t>(streamWidth);
+    FixedWidth = streamWidth >= 0;
 }
 
 template <typename T>
-int io::getWidth(T *idata, int const nRows, int const nCols, std::ostream &os)
+int io::getWidth(T *idata, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(os);
+    setPrecision<T>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
-        sstr.copyfmt(os);
+        sstr.copyfmt(streamBuffer);
         sstr << idata[i];
         tWidth = std::max<std::ptrdiff_t>(tWidth, io::Idx(sstr.str().length()));
     }
@@ -946,14 +954,14 @@ int io::getWidth(T *idata, int const nRows, int const nCols, std::ostream &os)
 }
 
 template <typename T>
-int io::getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &os)
+int io::getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(os);
+    setPrecision<T>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
-        sstr.copyfmt(os);
+        sstr.copyfmt(streamBuffer);
         sstr << idata[i];
         tWidth = std::max<std::ptrdiff_t>(tWidth, io::Idx(sstr.str().length()));
     }
@@ -961,14 +969,14 @@ int io::getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const n
 }
 
 template <typename T>
-int io::getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &os)
+int io::getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(os);
+    setPrecision<T>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
-        sstr.copyfmt(os);
+        sstr.copyfmt(streamBuffer);
         sstr << idata[i];
         tWidth = std::max<std::ptrdiff_t>(tWidth, io::Idx(sstr.str().length()));
     }
@@ -976,16 +984,16 @@ int io::getWidth(std::vector<T> const &idata, int const nRows, int const nCols, 
 }
 
 template <typename T>
-int io::getWidth(T **idata, int const nRows, int const nCols, std::ostream &os)
+int io::getWidth(T **idata, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(os);
+    setPrecision<T>(streamBuffer);
     for (int i = 0; i < nRows; i++)
     {
         for (int j = 0; j < nCols; j++)
         {
             std::stringstream sstr;
-            sstr.copyfmt(os);
+            sstr.copyfmt(streamBuffer);
             sstr << idata[i][j];
             tWidth = std::max<std::ptrdiff_t>(tWidth, io::Idx(sstr.str().length()));
         }

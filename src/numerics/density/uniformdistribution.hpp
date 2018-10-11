@@ -13,16 +13,17 @@ inline namespace density
  * \brief Flat (Uniform) distribution function
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a uniform distribution 
- * from \f$ [a \cdots b] \f$, 
- * using: 
- * \f[
+ * from \f$ [a \cdots b] \f$, <br>
+ * using:
+ * 
+ * \f$
  * p(x)= \left\{
  * \begin{matrix}
- * 1/(b-a)  &a \leqslant  x < b \\ 
+ * 1/(b-a)  &a \leq x < b \\ 
  *  0       &otherwise
  * \end{matrix}
  * \right.
- * \f]
+ * \f$
  * 
  * \tparam T Data type
  */

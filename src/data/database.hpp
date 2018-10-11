@@ -177,7 +177,7 @@ class database
      * Here, we break the long chain length assigned to important samples to reduce or 
      * avoid error coming from the multiple chains mixing (default is 1 for BASIS TMCMC)
      * 
-     * Reference:
+     * Reference:<br>
      * Bayesian Annealed Sequential Importance Sampling: An Unbiased Version of Transitional Markov Chain Monte Carlo, 
      * ASCE-ASME JRU, 4(1), pp-011008, (2018)
      * 

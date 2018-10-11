@@ -59,11 +59,11 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * functionMinimizer set for a given solver object will vary the orientation in a 
      * well-defined way.
      * 
-     * Reference:
+     * Reference:<br>
      * https://www.gnu.org/software/gsl/doc/html/multimin.html
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     bool init();
 

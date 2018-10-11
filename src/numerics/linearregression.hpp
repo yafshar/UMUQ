@@ -65,9 +65,9 @@ class linearRegression
     /*!
      * \brief Solution for the new points using the computed Kernel weights
      * 
-     * \param qdata     N-dimensional input qury data points
+     * \param qdata     N-dimensional input query data points
      * \param qFvalue   [out] Value of the function at the query points
-     * \param nqPoints  Number of qury points
+     * \param nqPoints  Number of query points
      * 
      * \return true     
      * \return false    If polynomialOrder has been changed between computing the kernels and solution
@@ -97,10 +97,17 @@ class linearRegression
     void resetPolynomialOrder(int polynomialorder);
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Make a noncopyable construct of new linear Regression object
+     * 
+     */
     linearRegression(linearRegression<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Make it not assignable
+     * 
+     * \returns linearRegression<T>& 
+     */
     linearRegression<T> &operator=(linearRegression<T> const &) = delete;
 
   private:
@@ -216,16 +223,16 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
 
     {
         /*
-             * Two-sided Jacobi SVD decomposition, ensuring optimal reliability and accuracy.
-             * Thin U and V are all we need for (least squares) solving.
-             */
+         * Two-sided Jacobi SVD decomposition, ensuring optimal reliability and accuracy.
+         * Thin U and V are all we need for (least squares) solving.
+         */
         Eigen::JacobiSVD<EMatrixX<T>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
         /*
-             * SV contains the least-squares solution of 
-             * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b} \f$
-             * using the current SVD decomposition of A.
-             */
+         * SV contains the least-squares solution of 
+         * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b} \f$
+         * using the current SVD decomposition of A.
+         */
         SV = svd.solve(BV);
     }
 

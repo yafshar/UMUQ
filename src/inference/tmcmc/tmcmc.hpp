@@ -26,13 +26,12 @@ namespace umuq
  * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.<br>
  * The %UMUQ implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo.<br>
  * 
- * Reference: 
- * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
- * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
+ * Reference: <br>
+ * Wu S, et. al. Bayesian Annealed Sequential Importance Sampling: An Unbiased Version <br>
+ * of Transitional Markov Chain Monte Carlo. ASME J. Risk Uncertainty Part B. 2017;4(1)
  *
  * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
- * of [pi4u](https://github.com/cselab/pi4u) code made available under the following [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html):<br>
- * \verbatim GNU General Public License v2.0 \endverbatim.
+ * of [pi4u](https://github.com/cselab/pi4u) code made available under the [GNU General Public License v2.0](https://www.gnu.org/licenses/gpl-2.0.html) license. <br>
  *
  */
 
@@ -40,6 +39,10 @@ namespace umuq
  * \ingroup TMCMC_Module
  * \brief Namespace containing all Transitional Markov Chain Monte Carlo Method symbols from the %UMUQ library.
  * 
+ *
+ * Reference: <br>
+ * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version <br>
+ * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1) 
  */
 namespace tmcmc
 {

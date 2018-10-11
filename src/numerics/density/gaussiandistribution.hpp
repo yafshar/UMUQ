@@ -13,11 +13,12 @@ inline namespace density
  * \brief The Gaussian distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a Gaussian 
- * distribution wiuh standard deviation \f$ \sigma \f$
- * using: 
- * \f[
+ * distribution with standard deviation \f$ \sigma \f$ <br>
+ * using:
+ * 
+ * \f$
  * p(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{\left(-\frac{\left(x - \mu \right)^2}{2\sigma^2}\right)}.
- * \f]
+ * \f$
  * 
  * It also provides random values x, distributed according to the Gaussian distribution probability 
  * density function. 

@@ -4,17 +4,17 @@
 /*!
  * \file numerics/density.hpp
  * \brief Implementation of the collections of density functions (probability density (PDF))
- * 
+ *
  * This module includes:
- * - \b densityFunction                  - A base density function or a probability density (PDF) function class  \sa densityFunction
- * 
- * - \b uniformDistribution              - Flat (Uniform) distribution function
- * - \b gaussianDistribution             - The Gaussian distribution
- * - \b multivariategaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariategaussianDistribution
- * - \b multivariateGaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa multivariateGaussianDistribution
- * - \b exponentialDistribution          - The exponential distribution \sa exponentialDistribution
- * - \b gammaDistribution                - The Gamma distribution \sa gammaDistribution
- * - \b multinomialDistribution          - The multinomial distribution \sa multinomialDistribution
+ * - \b densityFunction                  - A base density function or a probability density (PDF) function class  \sa umuq::density::densityFunction
+ *
+ * - \b uniformDistribution              - Flat (Uniform) distribution function \sa umuq::density::uniformDistribution
+ * - \b gaussianDistribution             - The Gaussian distribution \sa umuq::density::gaussianDistribution
+ * - \b multivariategaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa umuq::density::multivariategaussianDistribution
+ * - \b multivariateGaussianDistribution - The Multivariate Gaussian Distribution (generalization of the one-dimensional (univariate) Gaussian ) \sa umuq::density::multivariateGaussianDistribution
+ * - \b exponentialDistribution          - The exponential distribution \sa umuq::density::exponentialDistribution
+ * - \b gammaDistribution                - The Gamma distribution \sa umuq::density::gammaDistribution
+ * - \b multinomialDistribution          - The multinomial distribution \sa umuq::density::multinomialDistribution
  */
 
 

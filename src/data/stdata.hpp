@@ -45,7 +45,7 @@ struct optimizationParameters
      * \brief Copy constructor, construct a new optimizationParameters object from an input object
      * 
      * \param other 
-     * \return optimizationParameters<T>& 
+     * \returns optimizationParameters<T>& 
      */
     optimizationParameters<T> &operator=(optimizationParameters<T> const &other);
 
@@ -53,7 +53,7 @@ struct optimizationParameters
      * \brief Move assignment operator
      * 
      * \param other 
-     * \return optimizationParameters<T>& 
+     * \returns optimizationParameters<T>& 
      */
     optimizationParameters<T> &operator=(optimizationParameters<T> &&other);
 
@@ -73,8 +73,8 @@ struct optimizationParameters
      * - \b tolerance = 1e-6
      * - \b step = 1e-5
      * 
-     * \return true 
-     * \return false 
+     * \returns true 
+     * \returns false 
      */
     void reset();
     void reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step);
@@ -156,7 +156,7 @@ class stdata
      * \brief Move assignment operator
      * 
      * \param other 
-     * \return stdata<T>& 
+     * \returns stdata<T>& 
      */
     stdata<T> &operator=(stdata<T> &&other);
 
@@ -167,8 +167,8 @@ class stdata
      * \param MaxGenerations   Maximum number of generations
      * \param PopulationSize   Sampling population size
      * 
-     * \return true 
-     * \return false If there is not enough memory available for allocating the data
+     * \returns true 
+     * \returns false If there is not enough memory available for allocating the data
      */
     bool reset(int probdim, int MaxGenerations, int PopulationSize);
 
@@ -176,7 +176,7 @@ class stdata
      * \brief load the input file fname
      *
      * \param fname              name of the input file
-     * \return true on success
+     * \returns true on success
      */
     bool load(const char *fname = "tmcmc.par");
     bool load(std::string const &fname = "tmcmc.par");
@@ -251,7 +251,7 @@ class stdata
      * At each stage \f$ j, \f$ of the MCMC algorithm, \f$ \zeta_{j+1} \f$ is chosen such that 
      * the coefficient of variation of \f$ w_{j,k} \f$ is smaller than some preset threshold. 
      * 
-     * Reference: 
+     * Reference: <br>
      * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
      * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
      */
@@ -529,8 +529,8 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
  * 
  * \param fname   Input file name
  *  
- * \return true 
- * \return false 
+ * \returns true 
+ * \returns false 
  */
 template <typename T>
 bool stdata<T>::load(const char *fname)

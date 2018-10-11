@@ -9,13 +9,16 @@ namespace umuq
 
 /*! \class arrayWrapper
  *
- * \brief arrayWrapper is a class which creates a std iterator for an array of type T
- *
- * Expression of a class T (vector or matrix, or other types) as an array object
+ * \brief This is a class which creates a std iterator for an array of class T.
+ * 
+ * Expression of a class T (vector or matrix, or other types) as an array object.
+ * 
+ * \tparam T Vector or matrix, or other types
+ * 
  * 
  * \note
- * - This is a helper class which currently only has An Input Iterator.
- * - InputIterator is an iterator that can read from the pointed-to element. 
+ * - This is a helper class which currently only has An InputIterator. <br>
+ *   InputIterator is an iterator that can read from the pointed-to elements. 
  */
 template <class T>
 class arrayWrapper
@@ -23,10 +26,19 @@ class arrayWrapper
   public:
     /*! \class iterator
      *
-     * \brief This class defines an iterator based on std::iterator
+     * \brief This class defines an iterator based on std::iterator.
+     * 
+     * The base class provided to simplify definitions of the required types for iterators. 
      * 
      * \note
-     * - input_iterator_tag corresponds to InputIterator. 
+     * - input_iterator_tag corresponds to InputIterator. <br>
+     *   InputIterator is an iterator that can read from the pointed-to elements. 
+     * 
+     * \warning
+     * - The \c std::iterator is deprecated in C++17.
+     * 
+     * \todo
+     * - Update the iterator class.
      */
     class iterator : public std::iterator<std::input_iterator_tag, T>
     {
@@ -40,22 +52,22 @@ class arrayWrapper
         /*!
          * \brief Construct a new iterator object
          * 
-         * \param Stride 
+         * \param Stride Stride in the input array of data
          */
         explicit iterator(std::size_t Stride);
 
         /*!
          * \brief Construct a new iterator object
          * 
-         * \param aPointer 
+         * \param aPointer Pointer to the input array data 
          */
         explicit iterator(T const *aPointer);
 
         /*!
          * \brief Construct a new iterator object
          * 
-         * \param aPointer 
-         * \param Stride 
+         * \param aPointer  Pointer to the input array data 
+         * \param Stride    Stride in the array of data
          */
         iterator(T const *aPointer, std::size_t Stride);
 
@@ -66,43 +78,43 @@ class arrayWrapper
         ~iterator(){}; // nothing to do
 
         /*!
-         * \brief Operator ==
+         * \brief Operator == compares the underlying iterators 
          * 
-         * \param rhs 
+         * \param rhs  Iterator adaptor to compare 
          * 
-         * \return true 
-         * \return false 
+         * \returns true If lhs  = rhs 
+         * \returns false 
          */
         inline bool operator==(iterator const &rhs);
 
         /*!
-         * \brief Operator !=
+         * \brief Operator != compares the underlying iterators 
          * 
-         * \param rhs 
+         * \param rhs   Iterator adaptor to compare 
          * 
-         * \return true 
-         * \return false 
+         * \returns true If lhs != rhs 
+         * \returns false 
          */
         inline bool operator!=(iterator const &rhs);
 
         /*!
-         * \brief Operator ++
+         * \brief Operator ++ Advances the iterator 
          * 
-         * \return iterator& 
+         * \returns iterator& The incremented iterator
          */
         inline iterator &operator++();
 
         /*!
-         * \brief Operator ++
+         * \brief Operator ++ Advances the iterator 
          * 
-         * \return iterator 
+         * \returns iterator The incremented iterator 
          */
         inline iterator operator++(int);
 
         /*!
          * \brief Access element at the current index 
          * 
-         * \return Actual value at the current index 
+         * \returns Actual value at the current index 
          */
         inline T operator*();
         inline T const operator*() const;
@@ -118,7 +130,7 @@ class arrayWrapper
         //! Iterator position
         T const *iteratorPosition;
 
-        //! Input stride
+        //! Stride in the input array of data
         std::size_t inStride;
     };
 
@@ -150,15 +162,16 @@ class arrayWrapper
     /*!
      * \brief Move constructor Construct a new Array Wrapper object
      * 
-     * \param other 
+     * \param other Array Wrapper object
      */
     arrayWrapper(arrayWrapper<T> &&other);
 
     /*!
      * \brief Move assignment 
      * 
-     * \param other 
-     * \return arrayWrapper& 
+     * \param other Array Wrapper object
+     * 
+     * \returns arrayWrapper& 
      */
     arrayWrapper<T> &operator=(arrayWrapper<T> &&other);
 
@@ -180,7 +193,7 @@ class arrayWrapper
     /*! 
      * \brief Returns an iterator to the beginning of Input
      * 
-     * \return an iterator to the beginning of the given Input
+     * \returns An iterator to the beginning of the given Input
      */
     inline iterator begin();
     inline iterator begin() const;
@@ -188,7 +201,7 @@ class arrayWrapper
     /*! 
      * \brief Returns an iterator to the end
      * 
-     * \return an iterator to the end of the given Input
+     * \returns An iterator to the end of the given Input
      */
     inline iterator end();
     inline iterator end() const;
@@ -196,56 +209,63 @@ class arrayWrapper
     /*!
      * \brief Get the size of array
      * 
-     * \return Size of the array
+     * \returns Size of the array
      */
     inline std::size_t size() const;
 
     /*!
      * \brief Get the Stride
      * 
-     * \return stride of the array
+     * \returns Stride of the array
      */
     inline std::size_t stride() const;
 
     /*!
      * \brief Swap with the input arraywrapper object
      * 
-     * \param InputArrayWrapperObj 
+     * \param other arraywrapper object
      */
-    inline void swap(arrayWrapper<T> &InputArrayWrapperObj);
+    inline void swap(arrayWrapper<T> &other);
 
     /*!
      * \brief Access element at provided index id with checking bounds
      * 
-     * \param  id Requested index 
+     * \param id  Requested index 
      * 
-     * \returns Element (id)
+     * \returns Element at (id)
      */
     inline T at(int const id) const;
 
     /*!
      * \brief Access element at provided index
      * 
-     * \param id Requested id
+     * \param id  Requested id
      * 
-     * \returns Element (id)
+     * \returns Element at (id)
      */
     inline T operator()(int const id) const;
 
     /*!
      * \brief Access element at provided index
      * 
-     * \param id Requested id
+     * \param id  Requested id
      * 
-     * \returns Element (id)
+     * \returns Element at (id)
      */
     inline T operator[](int const id) const;
 
   private:
-    // make it noncopyable
+    /*!
+     * \brief Make a noncopyable construct array Wrapper object
+     * 
+     */
     arrayWrapper(arrayWrapper const &) = delete;
 
-    // make it not assignable
+    /*!
+     * \brief Make it not assignable
+     * 
+     * \returns arrayWrapper& 
+     */
     arrayWrapper &operator=(const arrayWrapper &) = delete;
 
   private:
@@ -255,7 +275,7 @@ class arrayWrapper
     //! Size of InputArray
     std::size_t inNumOfElements;
 
-    //! stride
+    //! Stride in the input array of data (default is 1)
     std::size_t inStride;
 };
 
@@ -334,11 +354,11 @@ template <class T>
 inline std::size_t arrayWrapper<T>::stride() const { return inStride; }
 
 template <class T>
-inline void arrayWrapper<T>::swap(arrayWrapper<T> &InputArrayWrapperObj)
+inline void arrayWrapper<T>::swap(arrayWrapper<T> &other)
 {
-    std::swap(inArray, InputArrayWrapperObj.inArray);
-    std::swap(inNumOfElements, InputArrayWrapperObj.inNumOfElements);
-    std::swap(inStride, InputArrayWrapperObj.inStride);
+    std::swap(inArray, other.inArray);
+    std::swap(inNumOfElements, other.inNumOfElements);
+    std::swap(inStride, other.inStride);
 }
 
 template <class T>

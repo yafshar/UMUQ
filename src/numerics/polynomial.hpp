@@ -7,11 +7,11 @@ namespace umuq
 /*! \class polynomial
  * \ingroup Numerics_Module
  *
- * \brief Multivariate monomials with the degree of r in a space of d dimensions.
+ * \brief Multivariate monomials with the degree of \b r in a space of \b d dimensions.
  *
- *  A (univariate) monomial in 1 variable x is simply any (non-negative integer) power of x:
- *  \f$  1, x, x^2, x^3, \cdots, x^r \f$
- *  The highest exponent of x is termed the degree of the monomial.
+ *  A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) power of \f$ x \f$:<br>
+ *  \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
+ *  The highest exponent of \f$ x \f$ is termed the degree of the monomial.
  */
 template <typename T>
 class polynomial
@@ -38,12 +38,12 @@ class polynomial
     /*! 
      * \brief Computes the binomial coefficient C(n, k).
      *
-     * 1) A binomial coefficient C(n, k) can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n \f$
+     * 1) A binomial coefficient C(n, k) can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n. \f$ <br>
      * 2) A binomial coefficient C(n, k) also gives the number of ways, disregarding order, that k objects can be 
-     * chosen from among n objects; 
-     * more formally, the number of k-element subsets (or k-combinations) of an n-element set.
+     * chosen from among n objects; <br>
+     * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
      * 
-     * The formula used is:
+     * The formula used is: <br>
      * \f$ c(n,k) = \frac{n!}{ n! * (n-k)! } \f$ 
      * 
      * \param n Input parameter
@@ -56,7 +56,8 @@ class polynomial
     /*! 
      * \brief Here, \f$\alpha=\f$ all the monomials in a d dimensional space, with total degree r.
      *   
-     * For example:
+     * For example: <br>
+     * \verbatim
      *       d = 2
      *       r = 2
      *
@@ -74,7 +75,8 @@ class polynomial
      *       monomial_basis_(d=3,r=2)   = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
      *                            alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
      *
-     *
+     *\endverbatim
+
      * \returns A pointer to monomial sequence
      */
     int *monomial_basis();
@@ -115,7 +117,7 @@ class polynomial
      * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and r
      *  all monomials in a d dimensional space, with order of accuracy r.
      *
-     * \param x   Current monomial on input and next monomial on the output (last value in the sequence is r).
+     * \param x  Current monomial on input and next monomial on the output (last value in the sequence is r).
      */
     bool graded_reverse_lexicographic_order(int *x);
 

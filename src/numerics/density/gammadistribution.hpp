@@ -12,13 +12,14 @@ inline namespace density
  * 
  * \brief The Gamma distribution
  * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x for a
- * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$.
- * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$.
- * using: 
- * \f[
+ * This class provides probability density \f$ p(x) \f$ and it's Log at x for a 
+ * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$. <br>
+ * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$. <br>
+ * using:
+ * 
+ * \f$
  * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.
- * \f]
+ * \f$
  * 
  * Use the Gamma distribution with \f$\alpha > 1\f$ if you have a sharp lower bound of zero but no 
  * sharp upper bound, a single mode, and a positive skew. The Gamma distribution is especially appropriate 

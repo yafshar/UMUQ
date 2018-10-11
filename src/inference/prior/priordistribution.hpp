@@ -8,22 +8,22 @@
 namespace umuq
 {
 
-/*!
+/*! \enum priorTypes
  * \ingroup Inference_Module
  * 
  * \brief Prior distribution types
  * 
  * Currently we have these types:
  * 
- * - \b UNIFORM \sa uniformDistribution
- * - \b GAUSSIAN \sa gaussianDistribution
- * - \b EXPONENTIAL \sa exponentialDistribution
- * - \b GAMMA \sa gammaDistribution
+ * - \b UNIFORM \sa umuq::density::uniformDistribution
+ * - \b GAUSSIAN \sa umuq::density::gaussianDistribution
+ * - \b EXPONENTIAL \sa umuq::density::exponentialDistribution
+ * - \b GAMMA \sa umuq::density::gammaDistribution
  * - \b COMPOSITE
  */
 enum priorTypes
 {
-    UNIFORM = 0,
+    UNIFORM = 0, 
     GAUSSIAN = 1,
     EXPONENTIAL = 2,
     GAMMA = 3,
@@ -47,17 +47,31 @@ enum priorTypes
  * 
  * \tparam T Data type 
  * 
- * USE:
+ * USE: <br>
  * To use the priorDistribution object:
- * - First, construct a new prior Distribution object with problem dimension and the prior type \sa priorTypes
- *          in case, the prior type is not known yet, you should reset the priorDistribution later with the 
- *          correct problem dimension and corresponding prior type \sa reset .
- * - Second, set the priorDistribution parameters \sa set .
- * IF you only need the probability density function (pdf) \sa pdf or logarithm probability density function \sa logpdf .
- * - Third, call the member function.
- * IF you also need samples from the desired distribution, you must set the Random Number Generator object \sa setRandomGenerator 
- * otherwise you can not use sample member function \sa sample .
- * - Forth, call any member function.
+ * - First, construct a new prior Distribution object with problem dimension and the prior type. <br>
+ *   In case, the prior type is not known yet, you should reset the priorDistribution later in the code with the 
+ *   correct problem dimension and corresponding prior type. <br>
+ *   \sa priorTypes. <br>
+ *   \sa reset. <br>
+ * 
+ * - Second, set the priorDistribution parameters. <br> 
+ *   \sa set.
+ * 
+ * - Third, call the member function. <br>
+ *   You can call the probability density function (pdf). <br>
+ *    or <br>
+ *   logarithm probability density function (logpdf). <br>
+ *   \sa pdf. <br>
+ *   \sa logpdf. <br>
+ * 
+ *   IF you also need samples from the desired distribution, you must set the Random Number Generator object. <br>
+ *   otherwise <br> 
+ *   you can not use sample member function (sample). <br>
+ *   \sa setRandomGenerator.<br>   
+ *   \sa sample. <br>
+ * 
+ * - Forth, call any other member function.
  */
 template <typename T>
 class priorDistribution
@@ -80,7 +94,7 @@ class priorDistribution
     /*!
      * \brief Move constructor, construct a new priorDistribution object from input priorDistribution object
      * 
-     * \param other  Input priorDistribution object
+     * \param other priorDistribution object
      */
     priorDistribution(priorDistribution<T> &&other);
 
@@ -89,7 +103,7 @@ class priorDistribution
      * 
      * \param other priorDistribution object
      * 
-     * \return priorDistribution<T>& 
+     * \returns priorDistribution<T>& 
      */
     priorDistribution<T> &operator=(priorDistribution<T> &&other);
 
@@ -105,8 +119,8 @@ class priorDistribution
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      * 
-     * \return true 
-     * \return false  If there is not enough memory or wrong prior type
+     * \returns true 
+     * \returns false  If there is not enough memory or wrong prior type
      */
     bool reset(int const probdim, int const prior = 0);
 
@@ -117,8 +131,8 @@ class priorDistribution
      * \param Param2          Second parameter for a prior distribution  
      * \param compositeprior  Composite priors type
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
      */
     bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
     bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
@@ -128,29 +142,29 @@ class priorDistribution
      * 
      * \param PRNG  Pseudo-random number object \sa psrandom
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
      */
     bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
      * \brief Get the dimension
      * 
-     * \return int Dimension of the problem
+     * \returns int Dimension of the problem
      */
     inline int getDim();
 
     /*!
      * \brief Get the prior type
      * 
-     * \return int prior type
+     * \returns int prior type
      */
     inline int getpriorType();
 
     /*!
      * \brief Get the Prior Types for the composite prior
      * 
-     * \return int* Prior Types
+     * \returns int* Prior Types
      */
     inline int *getPriorTypes();
 
@@ -159,7 +173,7 @@ class priorDistribution
      * 
      * \param x  Input point
      *  
-     * \return T Returns the probability density function (pdf) evaluated in x
+     * \returns T Returns the probability density function (pdf) evaluated in x
      */
     T pdf(T const *x);
     T pdf(std::vector<T> const &x);
@@ -169,7 +183,7 @@ class priorDistribution
      * 
      * \param x  Input point
      * 
-     * \return T Returns the logarithm probability density function (pdf) evaluated in x
+     * \returns T Returns the logarithm probability density function (pdf) evaluated in x
      */
     T logpdf(T const *x);
     T logpdf(std::vector<T> const &x);
@@ -179,8 +193,8 @@ class priorDistribution
      * 
      * \param x Samples 
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
      */
     bool sample(T *x);
     bool sample(std::vector<T> &x);
@@ -195,9 +209,11 @@ class priorDistribution
   private:
     //! Problem Dimension
     int nDim;
-
-    //! Prior type which is :
-    //! 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
+  
+    /*!
+     * Prior type which is one of : <br>
+     * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
+     */
     int priorType;
 
     //! Composite distribution prior
@@ -220,8 +236,10 @@ class priorDistribution
     std::unique_ptr<gaussianDistribution<T>> gaussianDist;
 
   private:
-    //! The below data are only used for composite prior distribution
-    //! Index of the points
+    /*!
+     * The below data are only used for composite prior distribution
+     * indexing of the points
+     */
     std::vector<int> uniformIndex;
     std::vector<int> gaussianIndex;
     std::vector<int> exponentialIndex;

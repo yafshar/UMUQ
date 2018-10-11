@@ -7,7 +7,7 @@
 /*! \defgroup Random_Module random distribution module
  * \ingroup Numerics_Module
  * 
- * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. 
+ * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. <br>
  * A random number distribution post-processes the output of a uniform random generators in such a way that 
  * resulting output is distributed according to a defined statistical probability density function.
  */
@@ -36,9 +36,9 @@ static std::vector<std::mt19937> NumberGenerator(1);
 /*!
  * \ingroup Random_Module
  * 
- * \brief C++ Saru pseudo-random number generator.
+ * \brief \c C++ Saru pseudo-random number generator.
  * 
- * \sa Saru
+ * \sa Saru.
  */
 static std::vector<Saru> saru(1);
 
@@ -82,26 +82,26 @@ namespace umuq
 /*! \class psrandom
  * \ingroup Random_Module
  *
- * This class generates pseudo-random numbers.
+ * This class generates pseudo-random numbers. <br>
  * It includes engines and distributions used to produce pseudo-random values. 
  * 
- * All of the engines may be specifically seeded, for use with repeatable simulators.
- * Random number engines generate pseudo-random numbers using seed data as entropy source. 
- * The choice of which engine to use involves a number of tradeoffs: 
+ * All of the engines may be specifically seeded, for use with repeatable simulators. <br>
+ * Random number engines generate pseudo-random numbers using seed data as entropy source.  <br>
+ * The choice of which engine to use involves a number of tradeoffs: <br>
  * 
  * Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast. 
  * 
  * The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
  * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
  * 
- * \tparam T  Data type one of float or double
+ * \tparam T Data type one of float or double
  * 
  * \note
  * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
  * 
  * 
  * \note
- * - To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction:
+ * - To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction: <br>
  *   - First, construct a new psrandom object either with a seed or without it.
  *   - Second, initialize the PRNG \sa init or set the state of the PRNG \sa setState.
  *   - Third, use any member function or set the PRNG object in other classes 
@@ -137,14 +137,14 @@ class psrandom
     /*!
      * \brief Set the State of psrandom object
      * 
-     * \return \a true when sets the current state of the engine successfully 
+     * \returns \a true when sets the current state of the engine successfully 
      */
     bool init();
 
     /*!
      * \brief Set the State of psrandom object
      * 
-     * \return \a true when sets the current state of the engine successfully
+     * \returns \a true when sets the current state of the engine successfully
      */
     bool setState();
 
@@ -153,8 +153,8 @@ class psrandom
      * 
      * \param inSeed  Input seed for random number initialization 
      * 
-     * \return true  when sets the seed of the engine successfully
-     * \return false If the PRNG is already initialized or the state has been set
+     * \returns true  when sets the seed of the engine successfully
+     * \returns false If the PRNG is already initialized or the state has been set
      */
     inline bool setSeed(long const inSeed);
 
@@ -216,7 +216,7 @@ class psrandom
      * 
      * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
      * 
-     * Reference:
+     * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
     inline double drnd();
@@ -226,7 +226,7 @@ class psrandom
      * 
      * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
      * 
-     * Reference:
+     * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
     inline float frnd();
@@ -236,7 +236,7 @@ class psrandom
      * 
      * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
      * 
-     * Reference:
+     * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
      */
     inline unsigned int u32rnd();
@@ -244,30 +244,30 @@ class psrandom
     /*! \fn multinomial
      * \brief The multinomial random distribution
      *  
-     * \param    p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
-     * \param    K        Size of vector which shows K possible mutually exclusive outcomes 
-     * \param    N        N independent trials
-     * \param    mndist   A random sample from the multinomial distribution (with size of K)
+     * \param p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
+     * \param K        Size of vector which shows K possible mutually exclusive outcomes 
+     * \param N        N independent trials
+     * \param mndist   A random sample from the multinomial distribution (with size of K)
      * 
      * 
      * \note 
      * - This should be called after setting the State of psrandom object
      * 
      * 
-     * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * The distribution of \f$ X \f$ is given by:
-     * \f[
+     * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$ <br>
+     * The distribution of \f$ X \f$ is given by: <br>
+     * \f$
      *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
-     * \f] 
+     * \f$ <br> 
      *
-     * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$,
+     * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$, <br>
      * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
      *
-     * Random variates are generated using the conditional binomial method.
+     * Random variates are generated using the conditional binomial method. <br>
      * This scales well with N and does not require a setup step.
      *   
-     *  Ref: 
-     *  C.S. David, The computer generation of multinomial random variates,
+     *  Reference: <br>
+     *  C.S. David, The computer generation of multinomial random variates, <br>
      *  Comp. Stat. Data Anal. 16 (1993) 205-217
      */
     bool multinomial(T const *p, int const K, int const N, int *mndist);
@@ -287,8 +287,8 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_normal(T const inMean, T const inStddev);
     inline bool set_normals(T const *inMean, T const *inStddev, int const N);
@@ -300,8 +300,8 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_Normal(T const inMean, T const inStddev);
 
@@ -311,8 +311,8 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_lnormal(T const inMean, T const inStddev);
 
@@ -322,8 +322,8 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_lNormal(T const inMean, T const inStddev);
 
@@ -333,8 +333,8 @@ class psrandom
      * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
@@ -345,8 +345,8 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
 
     inline bool set_mvnormal(T const *inMean, T const *icovariance, int const n);
@@ -356,8 +356,8 @@ class psrandom
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvnormal(EMatrixX<T> const &icovariance);
 
@@ -367,8 +367,8 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
 
     inline bool set_mvnormal(T const *icovariance, int const n);
@@ -378,8 +378,8 @@ class psrandom
      *
      * \param n vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvnormal(int const n);
 
@@ -389,8 +389,8 @@ class psrandom
      * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
@@ -401,8 +401,8 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvNormal(T const *inMean, T const *icovariance, int const n);
 
@@ -411,8 +411,8 @@ class psrandom
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvNormal(EMatrixX<T> const &icovariance);
 
@@ -422,8 +422,8 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvNormal(T const *icovariance, int const n);
 
@@ -432,8 +432,8 @@ class psrandom
      *
      * \param n vector size
      *
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_mvNormal(int const n);
 
@@ -442,8 +442,8 @@ class psrandom
      * 
      * \param mu Mean, \f$ \mu \f$
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_expn(T const mu);
     inline bool set_expns(T const *mu, int const N);
@@ -454,8 +454,8 @@ class psrandom
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * \returns true 
+     * \returns false in failure to allocate storage
      */
     inline bool set_gamma(T const alpha, T const beta);
     inline bool set_gammas(T const *alpha, T const *beta, int const N);

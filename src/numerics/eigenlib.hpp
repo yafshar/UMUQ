@@ -146,7 +146,6 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
  * 
  * \returns  Eigen Matrix representation of the array    
  * 
- * 
  * \note
  * - If the \c EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then one should 
  * provide the number of rows and number of columns at input
@@ -204,7 +203,7 @@ template <class EigenMatrixT>
 inline typename std::enable_if<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>::type
 EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 {
-	//! We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
+	// We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
 	EigenMatrixT tmpMatrix(nRows, nCols);
 	for (int i = 0; i < nRows; i++)
 	{
@@ -234,7 +233,7 @@ EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 template <class EigenMatrixT>
 inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
 {
-	//! We have a fixed_size_storage matrix
+	// We have a fixed_size_storage matrix
 	EigenMatrixT tmpMatrix;
 	auto nCols = tmpMatrix.cols();
 	for (auto i = 0; i < tmpMatrix.rows(); i++)
@@ -300,7 +299,7 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
 	}
 }
 
-/*!
+/*! \fn isSelfAdjointMatrixPositiveDefinite
  * \ingroup Numerics_Module
  * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
@@ -313,21 +312,21 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
  * \param dataPtr Pointer to the array of data (nDim * nDim)
  * \param nDim    Dimension of a square matrix  
  * 
- * \return true  If the selfadjoint matrix is positive definite
- * \return false If the selfadjoint matrix is not positive definite
+ * \returns true  If the selfadjoint matrix is positive definite
+ * \returns false If the selfadjoint matrix is not positive definite
  */
 template <typename T>
 inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 {
-	//! First Map the data to Eigen Matrix format
+	// First Map the data to Eigen Matrix format
 	EMapType<T, Eigen::ColMajor> DMap(dataPtr, nDim, nDim);
-	//! Since the matrix is selfadjoint
+	// Since the matrix is selfadjoint
 	Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(DMap, Eigen::EigenvaluesOnly);
 
 	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(nDim - 1) > machinePrecision<T>;
 }
 
-/*!
+/*! \fn isSelfAdjointMatrixPositiveDefinite
  * \ingroup Numerics_Module
  * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
@@ -336,19 +335,19 @@ inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
  * 
  * \param eMatrix Input matrix
  * 
- * \return true  If the selfadjoint matrix is positive definite
- * \return false If the selfadjoint matrix is not positive definite
+ * \returns true  If the selfadjoint matrix is positive definite
+ * \returns false If the selfadjoint matrix is not positive definite
  */
 template <class EigenMatrixT>
 inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 {
-	//! Since the matrix is selfadjoint
+	// Since the matrix is selfadjoint
 	Eigen::SelfAdjointEigenSolver<EigenMatrixT> es(eMatrix, Eigen::EigenvaluesOnly);
 
 	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixT::Scalar>;
 }
 
-/*!
+/*! \fn forceSelfAdjointMatrixPositiveDefinite
  * \ingroup Numerics_Module
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
@@ -361,16 +360,16 @@ inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 template <typename T>
 void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 {
-	//! First Map the data to Eigen Matrix format
+	// First Map the data to Eigen Matrix format
 	EMapType<T, Eigen::ColMajor> eMatrix(dataPtr, nDim, nDim);
 
-	//! Fixed value to increase
+	// Fixed value to increase
 	T const increaseRate(0.01);
 
-	//! Fixed value to multiply by
+	// Fixed value to multiply by
 	T const fixedRate(1.01);
 
-	//! Vector for diagonal elements
+	// Vector for diagonal elements
 	std::vector<T> D(nDim);
 
 #ifdef DEBUG
@@ -384,22 +383,22 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 		D[i] = eMatrix(i, i);
 		if (D[i] <= machinePrecision<T>)
 		{
-			//! We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+			// We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
 			belowMachinePrecision = true;
 		}
 	}
 
 	if (belowMachinePrecision)
 	{
-		//! Find the maximum absolute element on the diagonal of the matrix
+		// Find the maximum absolute element on the diagonal of the matrix
 		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
 
-		//! Find the minimum element
+		// Find the minimum element
 		T const MinD = *std::min_element(D.begin(), D.end());
 
 		MaxAbsD *= increaseRate;
 
-		//! There is a negative component on the diagonal, and we should get rid of it.
+		// There is a negative component on the diagonal, and we should get rid of it.
 		if (MinD < 0)
 		{
 			MaxAbsD -= MinD;
@@ -414,7 +413,7 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 		{
 			eMatrix(i, i) += MaxAbsD;
 		}
-		//! Now none of the diagonal elements are below machine precision
+		// Now none of the diagonal elements are below machine precision
 	}
 	else
 	{
@@ -439,7 +438,7 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 	return;
 }
 
-/*!
+/*! \fn forceSelfAdjointMatrixPositiveDefinite
  * \ingroup Numerics_Module
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
@@ -453,16 +452,16 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 {
 	typedef typename EigenMatrixT::Scalar T;
 
-	//! Fixed value to increase
+	// Fixed value to increase
 	T const increaseRate(0.01);
 
-	//! Fixed value to multiply by
+	// Fixed value to multiply by
 	T const fixedRate(1.01);
 
-	//! Size of the matrix
+	// Size of the matrix
 	Eigen::Index const nDim = eMatrix.rows();
 
-	//! Vector for diagonal elements
+	// Vector for diagonal elements
 	std::vector<T> D(nDim);
 
 #ifdef DEBUG
@@ -476,22 +475,22 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 		D[i] = eMatrix(i, i);
 		if (D[i] <= machinePrecision<T>)
 		{
-			//! We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+			// We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
 			belowMachinePrecision = true;
 		}
 	}
 
 	if (belowMachinePrecision)
 	{
-		//! Find the maximum absolute element on the diagonal of the matrix
+		// Find the maximum absolute element on the diagonal of the matrix
 		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
 
-		//! Find the minimum element
+		// Find the minimum element
 		T const MinD = *std::min_element(D.begin(), D.end());
 
 		MaxAbsD *= increaseRate;
 
-		//! There is a negative component on the diagonal, and we should get rid of it.
+		// There is a negative component on the diagonal, and we should get rid of it.
 		if (MinD < 0)
 		{
 			MaxAbsD -= MinD;
@@ -506,7 +505,7 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 		{
 			eMatrix(i, i) += MaxAbsD;
 		}
-		//! Now none of the diagonal elements are below machine precision
+		// Now none of the diagonal elements are below machine precision
 	}
 	else
 	{

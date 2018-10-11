@@ -26,7 +26,7 @@ inline namespace multimin
  * The user-supplied tolerance tol corresponds to the parameter \f$ \sigma \f$ used by Fletcher. 
  * A value of 0.1 is recommended for typical use (larger values correspond to less accurate line searches).
  *
- * Reference:
+ * Reference:<br>
  * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
  * Algorithms 2.6.2 and 2.6.4.
  * 

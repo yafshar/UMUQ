@@ -163,7 +163,7 @@ inline static const char *SimdInstructionSetsInUse(void)
  * Constant values: \f$ \pi,~2\pi,~\sqrt{\pi},~\sqrt{2\pi},~ln(\pi),~\text{and}~ln(2\pi)~\f$ are defined in 
  * this module.
  * 
- * Reference:
+ * Reference:<br>
  * http://www.geom.uiuc.edu/~huberty/math5337/groupe/digits.html 
  */
 

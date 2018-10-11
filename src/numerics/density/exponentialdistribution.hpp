@@ -13,16 +13,20 @@ inline namespace density
  * \brief The exponential distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 
- * exponential distribution of: 
- * \f[
+ * exponential distribution of:
+ * 
+ * \f$
  * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)},
- * \f]
+ * \f$<br>
+ * 
  * where \f$ \mu > 0 \f$ is mean, standard deviation, and scale parameter of the 
  * distribution, the reciprocal of the rate parameter in an another commonly used 
- * alternative parametrization of:
- * \f[
+ * alternative parametrization of:<br>
+ * 
+ * \f$
  * p(x)=\lambda e^{\left(-\lambda x\right)},
- * \f]
+ * \f$<br>
+ * 
  * where \f$ \lambda > 0 \f$ is rate.
  * 
  * It also provides random non-negative values x, distributed according to the exponential 

@@ -70,7 +70,7 @@ public:
    * \brief Move assignment operator
    * 
    * \param other  Input multivariatenormalDistribution object
-   * \return multivariatenormalDistribution& 
+   * \returns multivariatenormalDistribution& 
    */
   multivariatenormalDistribution<T> &operator=(multivariatenormalDistribution<T> &&other);
 
@@ -178,7 +178,7 @@ public:
    * \brief Move assignment operator
    * 
    * \param other  Input multivariateNormalDistribution object
-   * \return multivariateNormalDistribution& 
+   * \returns multivariateNormalDistribution& 
    */
   multivariateNormalDistribution<T> &operator=(multivariateNormalDistribution<T> &&other);
 

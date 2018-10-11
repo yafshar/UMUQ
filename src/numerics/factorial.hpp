@@ -4,6 +4,11 @@
 namespace umuq
 {
 
+/*!
+ * \file numerics/factorial.hpp
+ * 
+ */
+
 /*! \class max_factorial
  * \ingroup Numerics_Module
  * 
@@ -35,15 +40,16 @@ struct max_factorial<int>
     static unsigned int const value = 11;
 };
 
-/*!
+/*! \fn unchecked_factorial
  * \ingroup Numerics_Module
  * 
  * \brief Predefined unchecked factorial
  * 
- * \tparam T data type one of float, double, long double
- * \param  n input number 
+ * \tparam T  Data type one of float, double, long double
  * 
- * \returns the factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
+ * \param  n  Input number 
+ * 
+ * \returns The factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
 template <class T>
 inline T unchecked_factorial(unsigned int n)
@@ -302,28 +308,71 @@ inline int unchecked_factorial<int>(unsigned int const n)
 template <>
 inline unsigned int unchecked_factorial<unsigned int>(unsigned int const n)
 {
-    return static_cast<unsigned int>(unchecked_factorial<int>(n));
+    static unsigned int const factorials[] =
+        {
+            1,
+            1,
+            2,
+            6,
+            24,
+            120,
+            720,
+            5040,
+            40320,
+            362880,
+            3628800,
+            1065353216};
+    return factorials[n];
 }
 
 template <>
 inline long int unchecked_factorial<long int>(unsigned int const n)
 {
-    return static_cast<long int>(unchecked_factorial<int>(n));
+    static long int const factorials[] =
+        {
+            1,
+            1,
+            2,
+            6,
+            24,
+            120,
+            720,
+            5040,
+            40320,
+            362880,
+            3628800,
+            1065353216};
+    return factorials[n];
 }
 
 template <>
 inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int const n)
 {
-    return static_cast<long unsigned int>(unchecked_factorial<int>(n));
+    static long unsigned int const factorials[] =
+        {
+            1,
+            1,
+            2,
+            6,
+            24,
+            120,
+            720,
+            5040,
+            40320,
+            362880,
+            3628800,
+            1065353216};
+    return factorials[n];
 }
 
-/*!
+/*! \fn factorial
  * \ingroup Numerics_Module
  * 
  * \brief Compute the factorial of n \f$\left(n!\right)\f$
  * 
  * \tparam T data type one of float, double, int, long int, and unsigned int
- * \param  n input number 
+ * 
+ * \param n Input number 
  * 
  * \returns the factorial of n \f$\left(n!\right)\f$ for type float and double, int, unsigned int, long int and Error for anything else
  */

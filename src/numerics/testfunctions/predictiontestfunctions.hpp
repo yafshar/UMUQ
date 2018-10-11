@@ -8,7 +8,7 @@
  * 
  * \tparam T data type
  * 
- * Reference:
+ * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
@@ -31,7 +31,7 @@ struct qian
    * 
    * \param  x  input data point
    * 
-   * \return f  function value at input data point
+   * \returns f  function value at input data point
    */
   inline T f(T const *x)
   {
@@ -46,7 +46,7 @@ struct qian
  * 
  * \tparam T data type
  * 
- * Reference:
+ * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
@@ -74,7 +74,7 @@ struct franke2d
    * 
    * \param  x  input data point
    * 
-   * \return f  function value at input data point
+   * \returns f  function value at input data point
    */
   inline T f(T const *x)
   {
@@ -96,7 +96,7 @@ struct franke2d
  * \tparam T data type
  * 
  * 
- * Reference:
+ * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
@@ -120,7 +120,7 @@ public:
    * 
    * \param  x  input data point
    * 
-   * \return f  function value at input data point
+   * \returns f  function value at input data point
    */
   inline T f(T const *x)
   {
@@ -141,7 +141,7 @@ private:
  * 
  * \tparam T data type
  * 
- * Reference:
+ * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
@@ -178,7 +178,7 @@ public:
    * 
    * \param  x  input data point
    * 
-   * \return f  function value at input data point
+   * \returns f  function value at input data point
    */
   inline T f(T const *x)
   {
@@ -213,7 +213,7 @@ private:
  * 
  * \tparam T data type
  * 
- * Reference:
+ * Reference:<br>
  * https://www.mathworks.com/help/matlab/ref/peaks.html 
  */
 template <typename T>
@@ -228,14 +228,14 @@ struct peaks
   /*! \fn f
    * \brief Matlab peaks's function
    * 
-   * Matlab peaks's function
-   * \f[
+   * Matlab peaks's function <br>
+   * \f$
    * f(x) = 3(1-x_1)^2e^{\left(-x_1^2-(x_2+1)^2\right)}-10\left(\frac{x_1}{5}-x_1^3-x_2^5\right)e^{\left(-x_1^2-x_2^2 \right)}-\frac{1}{3}e^{\left(-x_2^2-(x_1+1)^2\right)}
-   * \f]
+   * \f$
    * 
-   * \param  x  input data point
+   * \param x  Input data point
    * 
-   * \return f  function value at input data point
+   * \returns f Function value at input data point
    */
   inline T f(T const *x)
   {

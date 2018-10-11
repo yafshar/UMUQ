@@ -9,6 +9,7 @@
  * This file contains minor addition to the original Saru
  * source code made available under the following license:
  *
+ * \copyright
  * \verbatim
  * Copyright (c) 2008 Steve Worley < m a t h g e e k@(my last name).com >
  * BSD license will go here when it's released..
@@ -34,9 +35,9 @@
 /*!
  * \ingroup Random_Module
  * 
- * Saru random number generator: 
+ * Saru random number generator: <br>
  * 
- * Saru is a pseudo-random number generator that requires only a 64-bit state vector.
+ * Saru is a pseudo-random number generator that requires only a 64-bit state vector. <br>
  * The generator is first seeded using one, two, or three 32-bit unsigned integers.
  * The seeds are hashed together to generate an initially random state consisting
  * of two 32-bit words. The hash routines pass TestU01's Crush. The seeded generator
@@ -48,16 +49,15 @@
  * to generate random microstreams (e.g., each thread gets a generator hashed from
  * the particle tag, the timestep, and a user-defined seed).
  *
- * See
- *
- * Y. Afshar, F. Schmid, A. Pishevar, and S. Worley. "Exploiting seeding of random
- * number generators for efficient domain decomposition parallelization of dissipative
- * particle dynamics", Comput. Phys. Commun. 184, 1119-1128 (2013).
+ * See:  <br>
+ * Y. Afshar, F. Schmid, A. Pishevar, and S. Worley. Exploiting seeding of random <br>
+ * number generators for efficient domain decomposition parallelization of dissipative <br>
+ * particle dynamics, Comput. Phys. Commun. 184, 1119-1128 (2013).
  * 
  * and
  * 
- * C.L. Phillips, J.A. Anderson, and S.C. Glotzer. "Pseudo-random number generation
- * for Brownian Dynamics and Dissipative Particle Dynamics simulations on GPU devices",
+ * C.L. Phillips, J.A. Anderson, and S.C. Glotzer. Pseudo-random number generation  <br>
+ * for Brownian Dynamics and Dissipative Particle Dynamics simulations on GPU devices, <br>
  * J. Comput. Phys. 230, 7191-7201 (2011).
  *
  * for more details.
@@ -68,35 +68,35 @@
  * 
  * Usage:
  * 
- * Constructors for 0, 1, 2, or 3 integer seeds.
- * Saru z, s(12345), t(123, 456), u(123, 456, 789);
+ * Constructors for 0, 1, 2, or 3 integer seeds. <br>
+ * Saru z, s(12345), t(123, 456), u(123, 456, 789); <br>
  * 
- * Advance state by 1, and output a 32 bit integer pseudo-random value.
- * cout << s.u32() << endl; //  Passes BigCrush and DIEHARD
+ * Advance state by 1, and output a 32 bit integer pseudo-random value. <br>
+ * cout << s.u32() << endl; //  Passes BigCrush and DIEHARD <br>
  * 
- * Advance state by 1, and output a double precision [0..1) floating point
+ * Advance state by 1, and output a double precision [0..1) floating point <br>
  * cout << s.d() << endl;
  * 
- * Advance state by 1, and output a single precision [0..1) floating point
+ * Advance state by 1, and output a single precision [0..1) floating point <br>
  * cout << s.f() << endl;
  * 
- * Move the generator state forwards a variable number of steps
+ * Move the generator state forwards a variable number of steps <br>
  * s.advance(steps);
  * 
- * Efficient state advancement or rewind when delta is known at compiletime
- * s.advance<123>();
- * s.rewind<123>();
+ * Efficient state advancement or rewind when delta is known at compiletime <br>
+ * s.advance<123>(); <br>
+ * s.rewind<123>(); <br>
  * 
- * Advance state by a different step (other than 1) and output a pseudorandom value.
- * cout << s.u32<4>() << endl; // skips forward 4 values and outputs the prand.
+ * Advance state by a different step (other than 1) and output a pseudorandom value. <br>
+ * cout << s.u32<4>() << endl; // skips forward 4 values and outputs the prand. <br>
  * 
- * Small structure size (64 bits of plain old data) means it's easy and fast
- * to copy, store, pass, or revert the state.
+ * Small structure size (64 bits of plain old data) means it's easy and fast <br>
+ * to copy, store, pass, or revert the state. <br>
  * z=s;
  * 
  * Fork the PRNG, creating a new independent stream, seeded using
  * current generator's state. Template seeding allows multiple
- * independent children forks.
+ * independent children forks. <br>
  * Saru n=s.fork<123>();
  * 
  * In practice you will likely extend or wrap this class to provide
@@ -107,8 +107,9 @@ class Saru
 {
 
   public:
-    /*! 
-     * \brief Default constructor
+    /*!
+     * \brief Construct a new Saru object
+     * 
      * The default constructor initializes a dummy state.
      */
     Saru() : state(0x12345678), wstate(12345678) {}
@@ -163,8 +164,11 @@ class Saru
      */
     inline void advance(unsigned int steps);
 
-    /*!  
-     * Set the state
+    /*!
+     * \brief Set the state
+     * 
+     * \param istate 
+     * \param iwstate 
      */
     void setstate(unsigned int istate, unsigned int iwstate)
     {
@@ -172,6 +176,13 @@ class Saru
         wstate = iwstate;
     }
 
+    /*!
+     * \brief Fork
+     * 
+     * \tparam seed PRNG seed
+     * 
+     * \returns Saru Saru object
+     */
     template <unsigned int seed>
     inline Saru fork() const;
 
@@ -571,4 +582,4 @@ inline double Saru::d(double low, double high)
     return d<1>(low, high);
 }
 
-#endif // SARUPRNG
+#endif // UMUQ_SARUPRNG

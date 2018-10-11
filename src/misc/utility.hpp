@@ -22,7 +22,7 @@ namespace umuq
 
 /*! \class utility
  *
- * \brief utility is a class which includes some helper functionality.
+ * \brief This class includes some utility helpers.
  *	
  * Utility class contains functionality for exectuing commands
  * 
@@ -42,7 +42,7 @@ class utility
      * \param dir   Directory PATH in which to execute commands
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     bool executeCommand(int const me, char **argv, const char *dir = nullptr);
 
@@ -55,7 +55,7 @@ class utility
      * \param dir        Directory PATH in which to execute command
      * 
      * \return true 
-     * \return false 
+     * \return false If it encounters an unexpected problem
      */
     bool executeCommand(std::string const &inCommand, std::string const &dir = std::string());
 };
@@ -63,31 +63,31 @@ class utility
 bool utility::executeCommand(int const me, char **argv, const char *dir)
 {
     /*!
-     * After the system call to fork()
-     * Unix will make an exact copy of the parent's address space and give it to the child. 
-     * Therefore, the parent and child processes have separate address spaces. 
-     * 
-     * fork() returns a positive value, the process ID of the child process, to the parent. 
+     * \b fork() : <br>
+     * After the system call to \c fork(), Unix will make an exact copy of the 
+     * parent's address space and give it to the child. <br>
+     * Therefore, the parent and child processes have separate address spaces. <br>
+     * \c fork() returns a positive value, the process ID of the child process, to the parent. 
      */
     pid_t pid = fork();
 
-    // If fork() returns a negative value, the creation of a child process was unsuccessful
+    /*! If \c fork() returns a negative value, the creation of a child process was unsuccessful */
     if (pid < 0)
     {
         std::cerr << "spawner(" << me << "):" << std::endl;
         UMUQFAILRETURN("The creation of a child process was unsuccessful");
     }
-    // fork() returns a zero to the newly created child process
+    /* otherwise, \c fork() returns a zero to the newly created child process */
     else if (pid == 0)
     {
         // If dir PATH is given we change to the dir PATH
         if (dir != nullptr)
         {
-            /*!
-             * The chdir() function shall cause the directory named by the pathname pointed 
-             * to by the path argument to become the current working directory
+            /*! \b chdir() : <br>
+             * The \c chdir() function shall cause the directory named by the pathname pointed 
+             * to by the path argument to become the current working directory.
              * 
-             * Reference:
+             * Reference: <br>
              * https://linux.die.net/man/3/chdir
              */
             if (chdir(dir) < 0)
@@ -97,20 +97,19 @@ bool utility::executeCommand(int const me, char **argv, const char *dir)
             }
         }
 
-        /*!
-         * The execvp() system call requires two arguments:
-         * - The first argument is a character string that contains the name of a file to be executed.
+        /*! \b execvp() : <br>
+         * The \c execvp() system call requires two arguments:
+         * - The first argument is a character string that contains the name of a file to be executed. <br>
          * - The second argument is a pointer to an array of character strings. More precisely, its type is char **, 
-         *   which is exactly identical to the argv array used in the main program
+         *   which is exactly identical to the argv array used in the main program.
          * 
-         * When execvp() is executed, the program file given by the first argument will be loaded into the caller's 
+         * When \c execvp() is executed, the program file given by the first argument will be loaded into the caller's 
          * address space and over-write the program there. Then, the second argument will be provided to the program 
          * and starts the execution. As a result, once the specified program file starts its execution, the original 
-         * program in the caller's address space is gone and is replaced by the new program.
-         * 
+         * program in the caller's address space is gone and is replaced by the new program. <br>
          * It returns a negative value if the execution fails (e.g., the request file does not exist). 
          * 
-         * Reference:
+         * Reference: <br>
          * https://linux.die.net/man/3/execvp
          */
         if (!execvp(*argv, argv))
@@ -119,13 +118,12 @@ bool utility::executeCommand(int const me, char **argv, const char *dir)
         }
     }
 
-    /*!
-     * The waitpid() system call suspends execution of the calling process until a child specified by pid argument 
-     * has changed state.
-     * 
+    /*! \b waitpid() : <br> 
+     * The \c waitpid() system call suspends execution of the calling process until a child specified by pid argument 
+     * has changed state.<br>
      * 0 means wait for any child process whose process group ID is equal to that of the calling process
      * 
-     * Reference:
+     * Reference: <br> 
      * https://linux.die.net/man/2/waitpid
      */
     waitpid(pid, NULL, 0);
@@ -138,11 +136,11 @@ bool utility::executeCommand(std::string const &inCommand, std::string const &di
     // If dir PATH is given we change to the dir PATH
     if (dir.size() > 0)
     {
-        /*!
-         * The chdir() function shall cause the directory named by the pathname pointed 
+        /*! \b chdir() : <br>
+         * The \c chdir() function shall cause the directory named by the pathname pointed 
          * to by the path argument to become the current working directory
          * 
-         * Reference:
+         * Reference: <br>
          * https://linux.die.net/man/3/chdir
          */
         if (chdir(dir.c_str()) < 0)

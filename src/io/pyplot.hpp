@@ -197,7 +197,7 @@ PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
  * referred to as “non-interactive backends”).
  * \endverbatim
  * 
- * Reference:
+ * Reference:<br>
  * https://matplotlib.org/tutorials/introductory/usage.html
  */
 static std::string backend;
@@ -216,7 +216,7 @@ static std::string backend;
  * \note 
  * - Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent. 
  * 
- * Reference:
+ * Reference:<br>
  * https://matplotlib.org/tutorials/introductory/usage.html
  * 
  * 
@@ -244,7 +244,7 @@ static std::string backend;
  * ----------------------------------------------------------
  * \endverbatim
  * 
- * Reference:
+ * Reference:<br>
  * https://matplotlib.org/faq/usage_faq.html#wx-backends
  * 
  */
@@ -356,7 +356,7 @@ int const DefaultColorsSize = 8;
  * <tr><td> '_'       <td> hline marker
  * </table>
  * 
- * Reference:
+ * Reference:<br>
  * https://matplotlib.org/api/pyplot_summary.html
  */
 class pyplot
@@ -1447,7 +1447,7 @@ class pyplot
      * the figure.
      * \endverbatim
      * 
-     * Reference:
+     * Reference:<br>
      * https://matplotlib.org
      * 
      */

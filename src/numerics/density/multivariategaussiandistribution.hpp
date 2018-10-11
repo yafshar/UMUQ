@@ -16,15 +16,16 @@ inline namespace density
  * distribution to higher dimensions. One definition is that a random vector is said to be k-variate normally 
  * distributed if every linear combination of its k components has a univariate Gaussian distribution.
  * 
- * Reference:
+ * Reference:<br>
  * https://en.wikipedia.org/wiki/Multivariate_normal_distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x using mean vector imean
- * and variance-covariance matrix icovariance.
- * using: 
- * \f[
+ * and variance-covariance matrix icovariance. <br>
+ * using:
+ * 
+ * \f$
  * p(x_1,\cdots,x_k) = \frac{1}{\sqrt{(2 \pi)^k |\Sigma|}} \exp \left(-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)\right).
- * \f]
+ * \f$
  * 
  * It also provides random values x, distributed according to the Multivariate Gaussian Distribution probability 
  * density function. 
@@ -147,15 +148,16 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
  * distribution to higher dimensions. One definition is that a random vector is said to be k-variate normally 
  * distributed if every linear combination of its k components has a univariate Gaussian distribution.
  * 
- * Reference:
+ * Reference:<br>
  * https://en.wikipedia.org/wiki/Multivariate_normal_distribution
  * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x using mean vector imean
- * and variance-covariance matrix icovariance.
- * using: 
- * \f[
+ * and variance-covariance matrix icovariance. <br>
+ * using:
+ * 
+ * \f$
  * p(x_1,\cdots,x_k) = \frac{1}{\sqrt{(2 \pi)^k |\Sigma|}} \exp \left(-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)\right).
- * \f]
+ * \f$
  * 
  * It also provides random values x, distributed according to the Multivariate Gaussian Distribution probability 
  * density function. 

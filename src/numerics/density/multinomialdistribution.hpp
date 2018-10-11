@@ -16,18 +16,19 @@ inline namespace density
  * each category having a given fixed success probability, the multinomial distribution gives the 
  * probability of any particular combination of numbers of successes for the various categories.
  * 
- * Reference:
+ * Reference:<br>
  * https://en.wikipedia.org/wiki/Multinomial_distribution
  * 
  * 
  * This class provides probability density \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ 
- * from a multinomial distribution with probabilities \f$p[K]\f$.
- * using: 
- * \f[
+ * from a multinomial distribution with probabilities \f$p[K]\f$. <br>
+ * using:
+ * 
+ * \f$
  *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
- * \f] 
- *
- * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$,
+ * \f$ <br>
+ * 
+ * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$, 
  * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
  * 
  * \tparam T Data type

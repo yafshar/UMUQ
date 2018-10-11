@@ -316,7 +316,7 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
  * 
  * Test to check multinomialDistribution
  * 
- * Example reference:
+ * Example reference: <br>
  * http://www.probabilityformula.org/multinomial-probability.html
  */
 TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
@@ -348,7 +348,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
      * Classification of individual bits are independent events and that the probabilities of A, B, C and D are 
      * 40%, 20%, 5% and 1% respectively. 
      * 
-     * NOTE:
+     * \note
      * The multinomialDistribution would normalize the probabilities of A, B, C and D to {40/66, 20/66, 5/66, 1/66}.
      */
 

@@ -11,7 +11,7 @@ namespace umuq
  * 
  * \brief Eigen is a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
  * 
- * Reference:
+ * Reference:<br>
  * <a href="http://eigen.tuxfamily.org/"> Eigen C++ template library </a> 
  */
 
