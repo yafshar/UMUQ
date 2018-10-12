@@ -5,22 +5,9 @@
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
 #include "gtest/gtest.h"
 
-#define WRITE_TO_FILE 0
+#define WRITE_TO_FILE 1
 
-//Data container
-std::unique_ptr<double[]> idata;
-std::unique_ptr<double[]> iqdata;
-std::unique_ptr<double[]> iFvalue;
-std::unique_ptr<double[]> iqFvalue;
-std::unique_ptr<double[]> iqFvalueExact;
-
-//Dummy pointer
-double *data;
-double *qdata;
-double *fvalue;
-double *qfvalue;
-
-/*!
+/*! \fn fillPagebyPage
  * \ingroup Test_Module
  * 
  * \brief 
@@ -40,7 +27,7 @@ double *qfvalue;
 template <typename T>
 void fillPagebyPage(T *inDataPt, T *coords, int const d, T lx, T ly, T dx, T dy, int x, int y)
 {
-    data = inDataPt;
+    double *data = inDataPt;
     for (int r = 0; r < x; r++)
     {
         for (int c = 0; c < y; c++)
@@ -78,7 +65,7 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
         return false;
     }
 
-    //compute total number of points
+    // compute total number of points
     int nPoints(1);
     std::for_each(nDPoints, nDPoints + nDim, [&](int const d_i) { nPoints *= d_i; });
 
@@ -253,16 +240,29 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
  */
 TEST(dcpse_1d, HandlesQianFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 1;
-    //! Bounds
+    //  Bounds
     double Lb[] = {0};
     double Ub[] = {1};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {10};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 30;
 
     try
@@ -279,15 +279,15 @@ TEST(dcpse_1d, HandlesQianFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of Qian object
+    // Create an instance of Qian object
     qian<double> Qian;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -301,7 +301,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -309,7 +309,7 @@ TEST(dcpse_1d, HandlesQianFunction)
             qdata += nDim;
         }
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -319,22 +319,22 @@ TEST(dcpse_1d, HandlesQianFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -344,38 +344,38 @@ TEST(dcpse_1d, HandlesQianFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -383,22 +383,22 @@ TEST(dcpse_1d, HandlesQianFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -408,18 +408,18 @@ TEST(dcpse_1d, HandlesQianFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/QIAN_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -434,13 +434,26 @@ TEST(dcpse_1d, HandlesQianFunction)
  */
 TEST(dcpse_1d, HandlesCFDResults)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 1;
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {9};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 27;
 
     try
@@ -458,7 +471,7 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         for (int i = 0; i < nPoints; ++i)
         {
@@ -472,14 +485,14 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
 
     {
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
             qdata[i] = -4. + i * 0.2;
         }
 
-        //Get the function value at each query point
+        // Get the function value at each query point
         double FVALUE[] = {-4.86257420168973407e-03, -5.35699999999999978e-03, -5.48294572673046956e-03, -5.18719553406514142e-03, -4.55299999999999976e-03, -3.77857337305603086e-03,
                            -3.08158623047766591e-03, -2.57599999999999973e-03, -2.20345834008881187e-03, -1.77996424185716470e-03, -1.14099999999999879e-03, -2.88267401909034519e-04,
                            5.73070180457921569e-04, 1.14500000000000040e-03, 1.22525475319120000e-03, 8.45239315114444537e-04, 2.65000000000000912e-04, -1.67025267563533728e-04,
@@ -491,22 +504,22 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -516,38 +529,38 @@ TEST(dcpse_1d, HandlesCFDResults)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_KRIGING", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -555,22 +568,22 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -580,18 +593,18 @@ TEST(dcpse_1d, HandlesCFDResults)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/CFD_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -606,16 +619,29 @@ TEST(dcpse_1d, HandlesCFDResults)
  */
 TEST(dcpse_2d, HandlesPeaksFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 2;
-    //! Bounds
+    //  Bounds
     double Lb[] = {-3, -3};
     double Ub[] = {3, 3};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {5, 5};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 150;
 
     try
@@ -632,15 +658,15 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of peaks object
+    // Create an instance of peaks object
     peaks<double> Peaks;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -654,7 +680,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
 
         for (int i = 0; i < nqPoints; i++)
@@ -665,7 +691,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
             }
         }
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -675,22 +701,22 @@ TEST(dcpse_2d, HandlesPeaksFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -700,38 +726,38 @@ TEST(dcpse_2d, HandlesPeaksFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -739,22 +765,22 @@ TEST(dcpse_2d, HandlesPeaksFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -764,18 +790,18 @@ TEST(dcpse_2d, HandlesPeaksFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -790,16 +816,29 @@ TEST(dcpse_2d, HandlesPeaksFunction)
  */
 TEST(dcpse_2d, HandlesPeaksRndFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 2;
-    //! Bounds
+    //  Bounds
     double Lb[] = {-3, -3};
     double Ub[] = {3, 3};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {5, 5};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 169;
 
     try
@@ -816,11 +855,11 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of peaks object
+    // Create an instance of peaks object
     peaks<double> Peaks;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nPoints, nDim, Lb, Ub));
 
@@ -832,7 +871,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         //                   -1.10169632000000006e+00, 1.89351391999999996e+00, 2.84759918000000001e+00, -2.62754845999999986e+00, 1.31288841000000001e+00, -4.53010866999999984e-01,
         //                   -2.65530153999999996e+00, -2.23173899000000020e+00, 1.91541044999999999e+00, 9.77562617000000023e-01};
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -851,7 +890,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
 
         for (int i = 0; i < nqPoints; i++)
@@ -865,7 +904,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         // int nQPoints[] = {13, 13};
         // EXPECT_TRUE(meshgrid<double>(qdata, nQPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -887,22 +926,22 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -912,38 +951,38 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -951,22 +990,22 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -976,18 +1015,18 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/PEAKS_RND_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1002,16 +1041,29 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
  */
 TEST(dcpse_2d, HandlesFrankFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 2;
-    //! Bounds
+    //  Bounds
     double Lb[] = {0, 0};
     double Ub[] = {1, 1};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {5, 5};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 150;
 
     try
@@ -1028,15 +1080,15 @@ TEST(dcpse_2d, HandlesFrankFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of Frank2d object
+    // Create an instance of Frank2d object
     franke2d<double> Frank2d;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -1050,7 +1102,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
 
         for (int i = 0; i < nqPoints; i++)
@@ -1061,7 +1113,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
             }
         }
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -1071,22 +1123,22 @@ TEST(dcpse_2d, HandlesFrankFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1096,38 +1148,38 @@ TEST(dcpse_2d, HandlesFrankFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1135,22 +1187,22 @@ TEST(dcpse_2d, HandlesFrankFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1160,18 +1212,18 @@ TEST(dcpse_2d, HandlesFrankFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1186,16 +1238,29 @@ TEST(dcpse_2d, HandlesFrankFunction)
  */
 TEST(dcpse_2d, HandlesFrankRndFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 2;
-    //! Bounds
+    //  Bounds
     double Lb[] = {0, 0};
     double Ub[] = {1, 1};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {5, 5};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 150;
 
     try
@@ -1212,15 +1277,15 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of Frank2d object
+    // Create an instance of Frank2d object
     franke2d<double> Frank2d;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -1230,11 +1295,11 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     }
 
     {
-        // std::random_device rd;
+        //  std::random_device rd;
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
 
         for (int i = 0; i < nqPoints; i++)
@@ -1245,7 +1310,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
             }
         }
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -1255,22 +1320,22 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1280,38 +1345,38 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1319,22 +1384,22 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1344,18 +1409,18 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/FRANKS2D_RND_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1370,16 +1435,29 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
  */
 TEST(dcpse_2d, HandlesRastriginFunction)
 {
-    //! Dimension
+    // Data container
+    std::unique_ptr<double[]> idata;
+    std::unique_ptr<double[]> iqdata;
+    std::unique_ptr<double[]> iFvalue;
+    std::unique_ptr<double[]> iqFvalue;
+    std::unique_ptr<double[]> iqFvalueExact;
+
+    // Dummy pointer
+    double *data;
+    double *qdata;
+    double *fvalue;
+    double *qfvalue;
+
+    //  Dimension
     int nDim = 2;
-    //! Bounds
+    //  Bounds
     double Lb[] = {-5.12, -5.12};
     double Ub[] = {5.12, 5.12};
-    //! Number of points in each direction
+    //  Number of points in each direction
     int nDPoints[] = {61, 61};
-    //! Total number of training points
+    //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
-    //! Number of query points
+    //  Number of query points
     int nqPoints = 150;
 
     try
@@ -1396,15 +1474,15 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
     }
 
-    //Create an instance of Rastrigin object
+    // Create an instance of Rastrigin object
     rastrigin<double> Rastrigin;
 
     {
-        //Create input points
+        // Create input points
         data = idata.get();
         EXPECT_TRUE(meshgrid<double>(data, nDPoints, nDim, Lb, Ub));
 
-        //Compute the function value at each input point
+        // Compute the function value at each input point
         data = idata.get();
         for (int i = 0; i < nPoints; i++)
         {
@@ -1414,11 +1492,11 @@ TEST(dcpse_2d, HandlesRastriginFunction)
     }
 
     {
-        // std::random_device rd;
+        //  std::random_device rd;
         std::mt19937 gen(1);
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        //Create random query data points
+        // Create random query data points
         qdata = iqdata.get();
 
         for (int i = 0; i < nqPoints; i++)
@@ -1429,7 +1507,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
             }
         }
 
-        //Compute the function value at each query point
+        // Compute the function value at each query point
         qdata = iqdata.get();
         for (int i = 0; i < nqPoints; i++)
         {
@@ -1439,22 +1517,22 @@ TEST(dcpse_2d, HandlesRastriginFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 2));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1464,38 +1542,38 @@ TEST(dcpse_2d, HandlesRastriginFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_TRAIN", file.in | file.out | file.trunc))
             {
                 data = idata.get();
                 fvalue = iFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(data, nDim, fvalue, 1, nPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_DCPSE_2", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_EXACT", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalueExact.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
@@ -1503,22 +1581,22 @@ TEST(dcpse_2d, HandlesRastriginFunction)
     }
 
     {
-        //Create an instance of a DC-PSE object
+        // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
 
-        //Compute the interpolator weights & operator kernel
+        // Compute the interpolator weights & operator kernel
         EXPECT_TRUE(dc.computeInterpolatorWeights(data, nPoints, qdata, nqPoints, 3));
 
         fvalue = iFvalue.get();
         qfvalue = iqFvalue.get();
 
-        //Compute the interpolated values
+        // Compute the interpolated values
         EXPECT_TRUE(dc.interpolate(fvalue, nPoints, qfvalue, nqPoints));
 
-        //Prining the information
+        // Printing the information
         dc.printInfo();
 
         {
@@ -1528,18 +1606,18 @@ TEST(dcpse_2d, HandlesRastriginFunction)
             std::cout << "For " << f.getMetricName() << " : " << f.getFitness(fvalue, qfvalue, nqPoints) << std::endl;
         }
 
-        //Writing to external files
+        // Writing to external files
         if (WRITE_TO_FILE)
         {
-            //Create an instance of io object
+            // Create an instance of io object
             umuq::io file;
 
-            //!Open a file for reading and writing
+            // Open a file for reading and writing
             if (file.openFile("./dcpse/RASTRIGIN_DCPSE_3", file.in | file.out | file.trunc))
             {
                 qdata = iqdata.get();
                 qfvalue = iqFvalue.get();
-                //!Write the matrix in it
+                // Write the matrix in it
                 file.saveMatrix<double>(qdata, nDim, qfvalue, 1, nqPoints);
                 file.closeFile();
             }
