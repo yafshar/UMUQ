@@ -5,7 +5,7 @@
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
 #include "gtest/gtest.h"
 
-#define WRITE_TO_FILE 1
+#define WRITE_TO_FILE 0
 
 /*! \fn fillPagebyPage
  * \ingroup Test_Module
@@ -60,9 +60,7 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
 {
     if (nDim < 1)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Wrong dimension ! " << std::endl;
-        return false;
+        UMUQFAILRETURN("Wrong dimension !");
     }
 
     // compute total number of points
@@ -77,9 +75,7 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+            UMUQFAILRETURN("Failed to allocate memory!");
         }
     }
 
@@ -90,9 +86,7 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-        return false;
+        UMUQFAILRETURN("Failed to allocate memory!");
     }
     {
         double *d = dx;
@@ -178,9 +172,7 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
 {
     if (nDim < 1)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Wrong dimension ! " << std::endl;
-        return false;
+        UMUQFAILRETURN("Wrong dimension !");
     }
 
     if (inDataPt == nullptr)
@@ -191,9 +183,7 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
         }
         catch (std::bad_alloc &e)
         {
-            std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-            std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
-            return false;
+            UMUQFAILRETURN("Failed to allocate memory!");
         }
     }
 
@@ -275,8 +265,7 @@ TEST(dcpse_1d, HandlesQianFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of Qian object
@@ -466,8 +455,7 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     {
@@ -654,8 +642,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of peaks object
@@ -851,8 +838,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of peaks object
@@ -1076,8 +1062,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of Frank2d object
@@ -1273,8 +1258,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of Frank2d object
@@ -1470,8 +1454,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
     }
     catch (std::bad_alloc &e)
     {
-        std::cerr << "Error : " << __FILE__ << ":" << __LINE__ << " : " << std::endl;
-        std::cerr << " Failed to allocate memory : " << e.what() << std::endl;
+        UMUQFAIL("Failed to allocate memory!");
     }
 
     // Create an instance of Rastrigin object
