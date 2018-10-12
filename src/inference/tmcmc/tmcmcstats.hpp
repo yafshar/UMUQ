@@ -48,7 +48,7 @@ TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const T
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
  * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used 
- * in multidimensional minimization \sa functionMinimizer.
+ * in multidimensional minimization \sa umuq::functionMinimizer.
  * 
  * \tparam T Data type 
  * 
@@ -134,7 +134,7 @@ class tmcmcStats
     /*!
      * \brief Set the Random Number Generator object 
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
      * \return true 
      * \return false If it encounters an unexpected problem

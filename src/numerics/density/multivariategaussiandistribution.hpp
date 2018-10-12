@@ -31,8 +31,9 @@ inline namespace density
  * density function. 
  * 
  * \note
- * - For using any member function, a pointer to a Random Number Generator object \sa psrandom in the 
- * construction is required, otherwise, it fails.
+ * - For using any member function, a pointer to a Random Number Generator object 
+ *   in the construction is required, otherwise, it fails.<br>
+ *   \sa umuq::random::psrandom. 
  * 
  * \tparam T Data type
  */
@@ -45,7 +46,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      *
      * \param imean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
-     * \param PRNG         Pseudo-random number object \sa psrandom
+     * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
     multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
 
@@ -55,7 +56,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param imean        Input mean vector of size \f$n\f$
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
-     * \param PRNG         Pseudo-random number object \sa psrandom
+     * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
     multivariategaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
 
@@ -63,7 +64,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param PRNG         Pseudo-random number object \sa psrandom
+     * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
     explicit multivariategaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
 
@@ -72,7 +73,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * 
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
-     * \param PRNG         Pseudo-random number object \sa psrandom
+     * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
     multivariategaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
 
@@ -80,7 +81,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \brief Construct a new multivariategaussian distribution object (default mean = 0, covariance=I)
      * 
      * \param n vector size
-     * \param PRNG     Pseudo-random number object \sa psrandom
+     * \param PRNG     Pseudo-random number object. \sa umuq::random::psrandom.
      */
     explicit multivariategaussianDistribution(int const n, psrandom<T> *PRNG = nullptr);
 
@@ -113,7 +114,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
     /*!
      * \brief Set the Random Number Generator object 
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
      * \return true 
      * \return false If it encounters an unexpected problem
@@ -237,7 +238,7 @@ class multivariateGaussianDistribution : public densityFunction<T, std::function
     /*!
      * \brief Set the Random Number Generator object 
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
      * \return true 
      * \return false If it encounters an unexpected problem

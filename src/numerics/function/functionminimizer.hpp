@@ -57,7 +57,7 @@ enum FunctionMinimizerTypes
  * 
  * \note
  * - It is important to note that the minimization algorithms find local minima; there is 
- * no way to determine whether a minimum is a global minimum of the function in question.
+ *   no way to determine whether a minimum is a global minimum of the function in question.
  * 
  * 
  * To use the Minimizer: <br>
@@ -239,7 +239,7 @@ public:
    */
   inline int getDimension();
 
-private:
+protected:
   // Make it noncopyable
   functionMinimizer(functionMinimizer<T> const &) = delete;
 

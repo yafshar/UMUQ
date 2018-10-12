@@ -140,7 +140,7 @@ class priorDistribution
     /*!
      * \brief Set the Random Number Generator object to 
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
      * \returns true 
      * \returns false If it encounters an unexpected problem

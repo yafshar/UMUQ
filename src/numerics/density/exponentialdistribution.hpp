@@ -84,7 +84,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
     /*!
      * \brief Set the Random Number Generator object 
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
      * \return true 
      * \return false If it encounters an unexpected problem

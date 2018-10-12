@@ -21,13 +21,18 @@ namespace umuq
  * 
  * It creates a discretized differential operator and interpolators
  * 
- * \tparam T Data type
+ * \tparam T         Data type
+ * \tparam Distance  Distance type for computing the distances to the nearest neighbors
+ *                   (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)
+ *                   \sa umuq::kNearestNeighbor.<br>
+ *                   \sa umuq::L2NearestNeighbor.<br>
+ *                   \sa umuq::MahalanobisNearestNeighbor.
  */
 /*!
  * \todo
  * Currently the class works only for one term and it should be extended to multi terms
  */
-template <typename T>
+template <typename T, class Distance = L2NearestNeighbor<T>>
 class dcpse
 {
   public:
@@ -44,16 +49,16 @@ class dcpse
      * 
      * \param other dcpse object
      */
-    explicit dcpse(dcpse<T> &&other);
+    explicit dcpse(dcpse<T, Distance> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other dcpse object
      * 
-     * \returns dcpse<T>& dcpse object
+     * \returns dcpse<T, Distance>& dcpse object
      */
-    dcpse<T> &operator=(dcpse<T> &&other);
+    dcpse<T, Distance> &operator=(dcpse<T, Distance> &&other);
 
     /*!
      * \brief Destroy the dcpse object
@@ -226,17 +231,17 @@ class dcpse
      * \brief Make it noncopyable construct of a new dcpse object
      * 
      */
-    dcpse(dcpse<T> const &) = delete;
+    dcpse(dcpse<T, Distance> const &) = delete;
 
     /*!
      * \brief  Make it not assignable
      * 
-     * \returns dcpse<T>& 
+     * \returns dcpse<T, Distance>& 
      */
-    dcpse<T> &operator=(dcpse<T> const &) = delete;
+    dcpse<T, Distance> &operator=(dcpse<T, Distance> const &) = delete;
 
   private:
-    //! Dimensionality
+    //! Dimension of space
     int nDim;
 
     //! Number of terms
@@ -244,7 +249,7 @@ class dcpse
 
     //! The monomial size
     /* 
-     * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
+     * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
      */
     int dcmonomialSize;
 
@@ -258,7 +263,7 @@ class dcpse
     std::vector<T> dckernel;
 
     //! k-NearestNeighbor Object
-    std::unique_ptr<L2NearestNeighbor<T>> KNN;
+    std::unique_ptr<Distance> KNN;
 
     //! Component-wise average neighbor spacing \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
     std::vector<T> h_average;
@@ -267,15 +272,15 @@ class dcpse
     T rhscoeff;
 };
 
-template <typename T>
-dcpse<T>::dcpse(int ndim, int nterms) : nDim(ndim),
-                                        nTerms(nterms),
-                                        dcmonomialSize(0),
-                                        dckernelSize(0),
-                                        Order(nterms) {}
+template <typename T, class Distance>
+dcpse<T, Distance>::dcpse(int ndim, int nterms) : nDim(ndim),
+                                                  nTerms(nterms),
+                                                  dcmonomialSize(0),
+                                                  dckernelSize(0),
+                                                  Order(nterms) {}
 
-template <typename T>
-dcpse<T>::dcpse(dcpse<T> &&other)
+template <typename T, class Distance>
+dcpse<T, Distance>::dcpse(dcpse<T, Distance> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -288,8 +293,8 @@ dcpse<T>::dcpse(dcpse<T> &&other)
     rhscoeff = other.rhscoeff;
 }
 
-template <typename T>
-dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
+template <typename T, class Distance>
+dcpse<T, Distance> &dcpse<T, Distance>::operator=(dcpse<T, Distance> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -304,8 +309,8 @@ dcpse<T> &dcpse<T>::operator=(dcpse<T> &&other)
     return *this;
 }
 
-template <typename T>
-bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -342,7 +347,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
 
     /*
      * Get the monomials size
-     * \f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
+     * \f$ \text{monomialSize} = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
      */
     dcmonomialSize = poly.monomialsize() - alphamin;
 
@@ -377,7 +382,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+                KNN.reset(new Distance(nPoints, nDim, dcmonomialSize + nENN));
             }
             catch (...)
             {
@@ -394,7 +399,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nDim, dcmonomialSize + nENN));
+            KNN.reset(new Distance(nPoints, nDim, dcmonomialSize + nENN));
         }
         catch (...)
         {
@@ -810,8 +815,8 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, int *beta, int order,
     return true;
 }
 
-template <typename T>
-bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -853,7 +858,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
 
     /*
      * Get the monomials size
-     * \f$ monomialSize = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
+     * \f$ \text{monomialSize} = \left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} \f$
      */
     dcmonomialSize = poly.monomialsize() - alphamin;
 
@@ -888,7 +893,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
+                KNN.reset(new Distance(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
             }
             catch (...)
             {
@@ -905,7 +910,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
+            KNN.reset(new Distance(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
         }
         catch (...)
         {
@@ -955,7 +960,7 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
         RHSB(0) = T{};
     }
 
-    // Total number of nearest neighbours for each point
+    // Total number of nearest neighbors for each point
     int nNN = KNN->numNearestNeighbors();
 
     // Array for keeping the component-wise L1 distances
@@ -1310,8 +1315,8 @@ bool dcpse<T>::computeWeights(T *idata, int const nPoints, T *qdata, int const n
     return true;
 }
 
-template <typename T>
-bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -1336,7 +1341,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
 
     /* 
      * Get the monomials size
-     * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
+     * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
      */
     dcmonomialSize = poly.monomialsize();
 
@@ -1371,7 +1376,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, nDim, dcmonomialSize + nENN));
+                KNN.reset(new Distance(nPoints, nPoints, nDim, dcmonomialSize + nENN));
             }
             catch (...)
             {
@@ -1388,7 +1393,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nPoints, nDim, dcmonomialSize + nENN));
+            KNN.reset(new Distance(nPoints, nPoints, nDim, dcmonomialSize + nENN));
         }
         catch (...)
         {
@@ -1776,8 +1781,8 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, int order
     return true;
 }
 
-template <typename T>
-bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -1807,7 +1812,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
     /* 
      * Get the monomials size
-     * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
+     * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
      */
     dcmonomialSize = poly.monomialsize();
 
@@ -1842,7 +1847,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
+                KNN.reset(new Distance(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
             }
             catch (...)
             {
@@ -1859,7 +1864,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new L2NearestNeighbor<T>(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
+            KNN.reset(new Distance(nPoints, nqPoints, nDim, dcmonomialSize + nENN));
         }
         catch (...)
         {
@@ -1875,7 +1880,7 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
 
     {
         // Finding only one nearest neighbor for the input data points
-        L2NearestNeighbor<T> KNN1(nPoints, nDim, 1);
+        Distance KNN1(nPoints, nDim, 1);
 
         // Construct a kd-tree index & do nearest neighbors search
         KNN1.buildIndex(idata);
@@ -2359,8 +2364,8 @@ bool dcpse<T>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata,
     return true;
 }
 
-template <typename T>
-bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
 {
     if (KNN->numInputdata() != nPoints)
     {
@@ -2388,8 +2393,8 @@ bool dcpse<T>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPo
     }
 }
 
-template <typename T>
-bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
+template <typename T, class Distance>
+bool dcpse<T, Distance>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
 {
     if (KNN->numInputdata() != nPoints)
     {
@@ -2442,32 +2447,32 @@ bool dcpse<T>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const
     return true;
 }
 
-template <typename T>
-inline T *dcpse<T>::neighborhoodKernel(int const index) const
+template <typename T, class Distance>
+inline T *dcpse<T, Distance>::neighborhoodKernel(int const index) const
 {
     return dckernel.data() + index * dcmonomialSize;
 }
 
-template <typename T>
-inline T *dcpse<T>::neighborhoodKernel() const
+template <typename T, class Distance>
+inline T *dcpse<T, Distance>::neighborhoodKernel() const
 {
     return dckernel.data();
 }
 
-template <typename T>
-inline int dcpse<T>::neighborhoodKernelSize() const
+template <typename T, class Distance>
+inline int dcpse<T, Distance>::neighborhoodKernelSize() const
 {
     return dcmonomialSize;
 }
 
-template <typename T>
-inline int dcpse<T>::orderofAccuracy(int const index) const
+template <typename T, class Distance>
+inline int dcpse<T, Distance>::orderofAccuracy(int const index) const
 {
     return Order[index];
 }
 
-template <typename T>
-inline void dcpse<T>::printInfo() const
+template <typename T, class Distance>
+inline void dcpse<T, Distance>::printInfo() const
 {
     for (int i = 0; i < nTerms; i++)
     {
@@ -2476,14 +2481,14 @@ inline void dcpse<T>::printInfo() const
     }
 }
 
-template <typename T>
-inline T dcpse<T>::averageSpace(int const index) const
+template <typename T, class Distance>
+inline T dcpse<T, Distance>::averageSpace(int const index) const
 {
     return h_average[index];
 }
 
-template <typename T>
-inline T *dcpse<T>::averageSpace() const
+template <typename T, class Distance>
+inline T *dcpse<T, Distance>::averageSpace() const
 {
     return h_average.data();
 }

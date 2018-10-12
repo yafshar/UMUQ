@@ -1597,7 +1597,7 @@ bool io::saveMatrix(std::vector<T> const &idata,
                     int const nCols,
                     int const options)
 {
-    return io::saveMatrix<T>(idata.data(), nRows, nCols, options);
+    return io::saveMatrix<T>(const_cast<T *>(idata.data()), nRows, nCols, options);
 }
 
 template <typename T>
@@ -1699,7 +1699,7 @@ bool io::saveMatrix(std::vector<T> const &idata,
                     int const ifvalueCols,
                     int const nRows)
 {
-    return io::saveMatrix<T>(idata.data(), idataCols, ifvalue.data(), ifvalueCols, nRows);
+    return io::saveMatrix<T>(const_cast<T *>(idata.data()), idataCols, ifvalue.data(), ifvalueCols, nRows);
 }
 
 template <typename TM>

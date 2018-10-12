@@ -49,16 +49,16 @@
  * to generate random microstreams (e.g., each thread gets a generator hashed from
  * the particle tag, the timestep, and a user-defined seed).
  *
- * See:  <br>
+ * \b See: <br>
  * Y. Afshar, F. Schmid, A. Pishevar, and S. Worley. Exploiting seeding of random <br>
  * number generators for efficient domain decomposition parallelization of dissipative <br>
- * particle dynamics, Comput. Phys. Commun. 184, 1119-1128 (2013).
+ * particle dynamics, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
  * 
- * and
+ * \b &
  * 
  * C.L. Phillips, J.A. Anderson, and S.C. Glotzer. Pseudo-random number generation  <br>
  * for Brownian Dynamics and Dissipative Particle Dynamics simulations on GPU devices, <br>
- * J. Comput. Phys. 230, 7191-7201 (2011).
+ * [J. Comput. Phys. 230, 7191-7201 (2011)](https://www.sciencedirect.com/science/article/pii/S0021999111003329).
  *
  * for more details.
  */

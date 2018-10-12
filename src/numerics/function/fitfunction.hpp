@@ -95,7 +95,7 @@ class fitFunction : public umuqFunction<T, F>
      */
     virtual bool init();
 
-  private:
+  protected:
     // Make it noncopyable
     fitFunction(fitFunction<T, F> const &) = delete;
 

@@ -13,7 +13,7 @@ namespace randomdist
  * \brief Multivariate normal distribution
  * 
  * \note 
- * - This should be called after setting the State of psrandom object \sa psrandom
+ * - This should be called after setting the State of psrandom object. \sa umuq::random::psrandom.
  * 
  */
 template <typename T = double>

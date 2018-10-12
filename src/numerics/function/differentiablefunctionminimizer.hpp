@@ -47,9 +47,9 @@ enum differentiableFunctionMinimizerTypes
  *
  * \note
  * - It is important to note that the minimization algorithms find local minima; there is
- * no way to determine whether a minimum is a global minimum of the function in question.
+ *   no way to determine whether a minimum is a global minimum of the function in question.
  *
- * To use the Minimizer:
+ * To use the Minimizer: <br>
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
  * - Third, initialize the minimizer \sa init
@@ -388,7 +388,7 @@ public:
                 std::vector<T> &Gradient, T &Step,
                 T &Fval, T &Gnorm);
 
-private:
+protected:
   // Make it noncopyable
   differentiableFunctionMinimizer(differentiableFunctionMinimizer<T> const &) = delete;
 
