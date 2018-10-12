@@ -183,20 +183,20 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	int const nDim = 2;
 
 	// Number of nearest neighbors to find
-	int nNearestNeighbors = 3;
+	int nNearestNeighbors = 20;
 
 	// Number of sampling points
 	int nSPoints = 1000;
 
 	// Number of query points
-	int nQPoints = 3;
+	int nQPoints = 1;
 
 	// Create a zero vector
 	umuq::EVector2d V2d(umuq::EVector2d::Zero());
 
 	// Create a 2 by 2 matrix
 	umuq::EMatrix2d M2d;
-	M2d << 10, 0.5, 0.5, 1;
+	M2d << 20, 0.5, 0.5, 1;
 
 	// Create an object of type Multivariate normal distribution
 	EXPECT_TRUE(prng.set_mvNormal(V2d, M2d));
@@ -228,11 +228,39 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	// MahalanobisNearestNeighbor
 	umuq::MahalanobisNearestNeighbor<double> KNN(nSPoints, nQPoints, nDim, nNearestNeighbors);
 
-	std::vector<int> Yaser{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	// set the covariance
+	KNN.setCovariance(M2d);
 
-	umuq::EMatrixX<int> Data = umuq::EMap<umuq::EMatrixX<int, Eigen::RowMajor>>(Yaser.data(), 5, 2);
+	// Construct a kd-tree index & do a knn search
+	KNN.buildIndex(xPoints.data(), yPoints.data());
 
-	std::cout << Data << std::endl;
+	umuq::io f;
+	if (f.openFile("numerics/Xdata", umuq::io::out))
+	{
+		EXPECT_TRUE(f.saveMatrix<double>(xPoints, nSPoints, nDim));
+		f.closeFile();
+	}
+
+	if (f.openFile("numerics/Qdata", umuq::io::out))
+	{
+		EXPECT_TRUE(f.saveMatrix<double>(yPoints, nQPoints, nDim));
+		f.closeFile();
+	}
+
+	if (f.openFile("numerics/Ndata", umuq::io::out))
+	{
+		for (int i = 0; i < nQPoints; ++i)
+		{
+			int *p = KNN.NearestNeighbors(i);
+			for (int j = 0; j < nNearestNeighbors; j++)
+			{
+				int const IdJ = p[j] * nDim;
+				x = xPoints.data() + IdJ;
+				EXPECT_TRUE(f.saveMatrix<double>(x, 1, nDim));
+			}
+		}
+		f.closeFile();
+	}
 }
 
 int main(int argc, char **argv)
