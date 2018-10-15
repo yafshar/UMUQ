@@ -211,7 +211,7 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
         std::ptrdiff_t const IdI = i * nDim;
 
         // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        poly.monomial_value(idata + IdI, rowdata);
+        poly.monomialValue(idata + IdI, rowdata);
 
         // Loop through the neighbors
         for (int j = 0; j < linearRegressionMonomialSize; j++)
@@ -278,7 +278,7 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
         rowdata = rowData.get();
 
         // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        poly.monomial_value(qdata + IdI, rowdata);
+        poly.monomialValue(qdata + IdI, rowdata);
 
         T sum(0);
         std::for_each(sv, sv + linearRegressionMonomialSize, [&](T const s) { sum += s * (*rowdata++); });
