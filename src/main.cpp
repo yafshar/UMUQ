@@ -25,8 +25,8 @@ int main(int argc, char **argv)
 
 	// UMTimer t;
 
-	// alpha = p.monomial_basis();
-	// t.toc("monomial_basis");
+	// alpha = p.monomialBasis();
+	// t.toc("monomialBasis");
 
 	// std::cout << " d =  " << d << std::endl;
 	// std::cout << " r =  " << r << std::endl;
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 	// int i, n;
 	// n = 0;
-	// for (i = 0; i < p.binomial_coefficient(d + r, r); i++)
+	// for (i = 0; i < p.binomialCoefficient(d + r, r); i++)
 	// {
 	//     std::cout << std::setw(3) << i << "   ";
 	//     for (int j = 0; j < d; j++)
@@ -46,9 +46,9 @@ int main(int argc, char **argv)
 	// }
 	// std::cout << "----------------" << std::endl;
 
-	// n = p.binomial_coefficient(d + r, r);
+	// n = p.binomialCoefficient(d + r, r);
 
-	// t.toc("binomial_coefficient");
+	// t.toc("binomialCoefficient");
 
 	// double *value = nullptr;
 	// double *x = nullptr;
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	//         x[1] = -.70710678118654752440;
 	//     }
 
-	//     if (p.monomial_value(x, value))
+	//     if (p.monomialValue(x, value))
 	//     {
 
 	//         for (int j = 0; j < n; j++)
