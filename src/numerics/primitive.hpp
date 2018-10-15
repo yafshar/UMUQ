@@ -39,7 +39,7 @@ class primitive
  * \f$ 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
  * 
  * Reference: <br>
- * Chen et al., Int. J. Numer. Meth. Engng 2003; 56:935–960.
+ * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
 template <typename T>
 class quartic_spline : public primitive<T, quartic_spline<T>>
@@ -76,7 +76,7 @@ class quartic_spline : public primitive<T, quartic_spline<T>>
  * \f$
  * 
  * Reference: <br>
- * Chen et al., Int. J. Numer. Meth. Engng 2003; 56:935–960.
+ * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
 template <typename T>
 class cubic_spline : public primitive<T, cubic_spline<T>>
@@ -112,7 +112,7 @@ class cubic_spline : public primitive<T, cubic_spline<T>>
  * \f$
  * 
  * Reference: <br>
- * Chen et al., Int. J. Numer. Meth. Engng 2003; 56:935–960.
+ * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
 template <typename T>
 class normalizedgaussian : public primitive<T, normalizedgaussian<T>>
