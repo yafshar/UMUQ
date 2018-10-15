@@ -11,7 +11,7 @@ namespace umuq
  *
  *  A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) power of \f$ x \f$:<br>
  *  \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
- *  The highest exponent of \f$ x \f$ is termed the degree of the monomial.
+ *  The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.
  */
 template <typename T>
 class polynomial
