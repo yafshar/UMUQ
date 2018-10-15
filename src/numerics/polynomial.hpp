@@ -21,7 +21,7 @@ class polynomial
      * \brief constructor
      * 
      * \param dim  Dimension
-     * \param ord Order (the default order or degree of r in a space of dm dimensions is 2)
+     * \param ord  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
      */
     polynomial(int const dim, int const ord = 2);
 
@@ -36,22 +36,22 @@ class polynomial
     void reset(int const dim, int const ord = 2);
 
     /*! 
-     * \brief Computes the binomial coefficient C(n, k).
+     * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) \f$ C(n, k) \f$.
      *
-     * 1) A binomial coefficient C(n, k) can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n. \f$ <br>
-     * 2) A binomial coefficient C(n, k) also gives the number of ways, disregarding order, that k objects can be 
+     * 1) A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n. \f$ <br>
+     * 2) A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order, that k objects can be 
      * chosen from among n objects; <br>
      * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
      * 
      * The formula used is: <br>
-     * \f$ c(n,k) = \frac{n!}{ n! * (n-k)! } \f$ 
+     * \f$ C(n, k) = \frac{n!}{ n! * (n-k)! } \f$ 
      * 
-     * \param n Input parameter
-     * \param k Input parameter
+     * \param n  Input parameter
+     * \param k  Input parameter
      * 
      * \returns The binomial coefficient \f$ C(n, k) \f$
      */
-    int binomial_coefficient(int const n, int const k);
+    int binomialCoefficient(int const n, int const k);
 
     /*! 
      * \brief Here, \f$\alpha=\f$ all the monomials in a d dimensional space, with total degree r.
@@ -68,33 +68,33 @@ class polynomial
      *       alpha[ 8],[ 9] = 1, 1 = x^1 y^1
      *       alpha[10],[11] = 0, 2 = x^0 y^2
      *
-     *       monomial_basis_(d=2,r=2)   = {1,    x,   y,  x^2, xy,  y^2}
-     *                            alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
+     *       monomialBasis_(d=2,r=2)   = {1,    x,   y,  x^2, xy,  y^2}
+     *                           alpha = {0,0, 1,0, 0,1, 2,0, 1,1, 0,2}
      *
      *
-     *       monomial_basis_(d=3,r=2)   = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
-     *                            alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
+     *       monomialBasis_(d=3,r=2)   = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
+     *                           alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
      *
-     *\endverbatim
-
+     * \endverbatim
+     *
      * \returns A pointer to monomial sequence
      */
-    int *monomial_basis();
+    int *monomialBasis();
 
     /*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x       The coordinates of the evaluation points
-     * \param  value   Monomial_value, the array value of the monomial at point x
+     * \param  value   The (monomial value) array value of the monomial at point x
      * 
-     * \returns the size of the monomial array
+     * \returns The size of the monomial array
      */
-    int monomial_value(T const *x, T *&value);
+    int monomialValue(T const *x, T *&value);
 
     /*!
      * \brief Get the monomial size
      * 
-     * \return monomial size
+     * \return Monomial size
      */
     inline int monomialsize() const;
 
@@ -155,7 +155,7 @@ polynomial<T>::polynomial(int const dim, int const ord) : nDim(dim), Order(ord)
         UMUQFAIL("Maximum accuracy order < 0!");
     }
 
-    monomialSize = binomial_coefficient(nDim + Order, Order);
+    monomialSize = binomialCoefficient(nDim + Order, Order);
     if (monomialSize == 0)
     {
         UMUQFAIL("Monomial size of zero degree is requested!");
@@ -177,7 +177,7 @@ void polynomial<T>::reset(int const dim, int const ord)
         UMUQFAIL("Maximum accuracy order < 0!");
     }
 
-    monomialSize = binomial_coefficient(nDim + Order, Order);
+    monomialSize = binomialCoefficient(nDim + Order, Order);
     if (monomialSize == 0)
     {
         UMUQFAIL("Monomial size of zero degree is requested!");
@@ -187,7 +187,7 @@ void polynomial<T>::reset(int const dim, int const ord)
 }
 
 template <typename T>
-int polynomial<T>::binomial_coefficient(int const n, int const k)
+int polynomial<T>::binomialCoefficient(int const n, int const k)
 {
     if ((k < 0) || (n < 0))
     {
@@ -224,7 +224,7 @@ int polynomial<T>::binomial_coefficient(int const n, int const k)
 }
 
 template <typename T>
-int *polynomial<T>::monomial_basis()
+int *polynomial<T>::monomialBasis()
 {
     if (alpha)
     {
@@ -270,12 +270,12 @@ int *polynomial<T>::monomial_basis()
 }
 
 template <typename T>
-int polynomial<T>::monomial_value(T const *x, T *&value)
+int polynomial<T>::monomialValue(T const *x, T *&value)
 {
     if (!alpha)
     {
         //Have to create monomial sequence
-        int *tmp = monomial_basis();
+        int *tmp = monomialBasis();
 
         if (tmp == nullptr)
         {
