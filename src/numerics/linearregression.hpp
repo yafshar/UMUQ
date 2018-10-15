@@ -230,7 +230,7 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
 
         /*
          * SV contains the least-squares solution of 
-         * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b} \f$
+         * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b}, \f$
          * using the current SVD decomposition of A.
          */
         SV = svd.solve(BV);
