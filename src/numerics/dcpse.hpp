@@ -17,13 +17,13 @@ namespace umuq
 /*! \class dcpse
  * \ingroup Numerics_Module
  * 
- * \brief This is a general class for (DC-PSE)
+ * \brief General class for (DC-PSE)
  * 
  * It creates a discretized differential operator and interpolators
  * 
  * \tparam T         Data type
  * \tparam Distance  Distance type for computing the distances to the nearest neighbors
- *                   (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)
+ *                   (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)<br>
  *                   \sa umuq::kNearestNeighbor.<br>
  *                   \sa umuq::L2NearestNeighbor.<br>
  *                   \sa umuq::MahalanobisNearestNeighbor.
@@ -70,13 +70,13 @@ class dcpse
      * \brief Computes generalized DC-PSE differential operators on set of input points
      *
      * This function uses one set of points as input data to compute the generalized DC-PSE 
-     * differential operators.
+     * differential operators.<br>
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
      * should use the interpolator function not this one. 
      * 
      * \param idata    A pointer to input data
      * \param nPoints  Number of data points
-     * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+     * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
      *                 Notation for partial derivatives:<br>
      *                 \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order    Order of accuracy (default is 2nd order accurate)
@@ -90,7 +90,7 @@ class dcpse
      * \brief Computes generalized DC-PSE differential operators on the set of query points.
      * 
      * This function uses one set of points as input data to compute the generalized DC-PSE 
-     * differential opearators on the set of query points.
+     * differential opearators on the set of query points.<br>
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
      * use the interpolator function not this one. 
      * 
@@ -98,7 +98,7 @@ class dcpse
      * \param nPoints   Number of data points
      * \param qdata     A pointer to query data
      * \param nqPoints  Number of query data points
-     * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right) \f$
+     * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
      *                  Notation for partial derivatives:<br>
      *                  \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order     Order of accuracy (default is 2nd order accurate)
@@ -159,8 +159,7 @@ class dcpse
      * 
      * This function uses function values of input data and the weights of the interpolation operator which have 
      * been previously computed to compute the query values and put the results as the query data 
-     * function values. 
-     * 
+     * function values. <br>
      * At first it checks the computed kernel size to be equal to the number of query points times the 
      * size of monomials which has been previously computed for the required degree of DC-PSE operator
      * or interpolator.
@@ -505,9 +504,9 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
         /* 
          * For each point \f$ {\mathbf x} \f$ we define:
          * 
-         * \[f
+         * \f$
          * \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, 
-         * \f]
+         * \f$
          * 
          * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points 
          * \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
@@ -625,10 +624,13 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
                     }
 
                     /* 
-                     * \f{matrix}{ {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
-                     * \f}
+                     * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -636,10 +638,13 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
                 else
                 {
                     /* 
-                     * \f{matrix}{ {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -1123,11 +1128,14 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
                         EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
                     }
 
-                    /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                    /*
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -1135,10 +1143,13 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
                 else
                 {
                     /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -1586,10 +1597,13 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
                     }
 
                     /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -1597,10 +1611,13 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
                 else
                 {
                     /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
@@ -2116,12 +2133,12 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
                         T dckernelV = q.f(&s);
 
                         /*
-                         * Assemble the right hand side
-                         * \f[
+                         * Assemble the right hand side<br>
+                         * \f$
                          *  {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - 
-                         * \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} 
-                         * {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) 
-                         * \f]
+                         *  \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} 
+                         *  {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) 
+                         * \f$
                          */
                         RHSB -= dckernelV * columnV;
                     }
@@ -2132,10 +2149,13 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
                     }
 
                     /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
@@ -2143,10 +2163,13 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
                 else
                 {
                     /* 
-                     * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
+                     * \f$
+                     * \begin{matrix} 
+                     * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
-                     * \f}
+                     * \end{matrix}
+                     * \f$
                      */
                     BMT = VMT * EMatrixX<T>(EM.asDiagonal());
                     AM = BMT * BMT.transpose();
