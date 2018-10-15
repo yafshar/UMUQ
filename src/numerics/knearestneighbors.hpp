@@ -578,6 +578,10 @@ L2NearestNeighbor<T> &L2NearestNeighbor<T>::operator=(L2NearestNeighbor<T> &&oth
  * \nonumber                                           &={(L^{-1}\vec{X})}^T{(L^{-1}\vec{X})}
  * \end{align}
  * \f$
+ * 
+ * 
+ * \todo
+ * The Mahalanobis distance should be integrated in FLANN framework for efficiency.
  *
  * \tparam T Data type
  */
