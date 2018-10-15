@@ -1,6 +1,12 @@
 #ifndef UMUQ_PARSER_H
 #define UMUQ_PARSER_H
 
+#if HAVE_PYTHON == 1
+#ifdef toupper
+#undef toupper
+#endif
+#endif
+
 namespace umuq
 {
 
