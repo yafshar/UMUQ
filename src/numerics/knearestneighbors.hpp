@@ -804,9 +804,34 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata)
             // A pointer to nearest neighbors square distances from the point i
             T *nnDist = this->NearestNeighborsDistances(i);
 
+#if unrolledIncrement == 0
             {
                 T *last = idata + IdI + this->cols;
-                T *lastgroup = last - 3;
+
+                for (int j = 0; j < nNN; j++)
+                {
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+
+                    // pointer to query data
+                    T *Idata = idata + IdI;
+
+                    // pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    T result(0);
+                    while (Idata < last)
+                    {
+                        T const diff0 = *Idata++ - *Jdata++;
+                        result += diff0 * diff0;
+                    }
+
+                    nnDist[j] = result;
+                }
+            }
+#else
+            {
+                T *last = idata + IdI + this->cols;
+                T *lastgroup = last - unrolledIncrement + 1;
 
                 for (int j = 0; j < nNN; j++)
                 {
@@ -820,18 +845,52 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata)
 
                     T result(0);
 
-                    // Process 4 items with each loop for efficiency.
+                    // Process unrolled Increment items with each loop for efficiency.
                     while (Idata < lastgroup)
                     {
                         T const diff0 = Idata[0] - Jdata[0];
                         T const diff1 = Idata[1] - Jdata[1];
                         T const diff2 = Idata[2] - Jdata[2];
                         T const diff3 = Idata[3] - Jdata[3];
+#if unrolledIncrement == 4
                         result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
-                        Idata += 4;
-                        Jdata += 4;
+#endif
+#if unrolledIncrement == 6
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5;
+#endif
+#if unrolledIncrement == 8
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7;
+#endif
+#if unrolledIncrement == 10
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        T const diff8 = Idata[8] - Jdata[8];
+                        T const diff9 = Idata[9] - Jdata[9];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9;
+#endif
+#if unrolledIncrement == 12
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        T const diff8 = Idata[8] - Jdata[8];
+                        T const diff9 = Idata[9] - Jdata[9];
+                        T const diff10 = Idata[10] - Jdata[10];
+                        T const diff11 = Idata[11] - Jdata[11];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9 + diff10 * diff10 + diff11 * diff11;
+#endif
+                        Idata += unrolledIncrement;
+                        Jdata += unrolledIncrement;
                     }
-                    // Process last 0-3 pixels.
+                    // Process last pixels.
                     while (Idata < last)
                     {
                         T const diff0 = *Idata++ - *Jdata++;
@@ -841,6 +900,7 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata)
                     nnDist[j] = result;
                 }
             }
+#endif
         }
     }
 }
@@ -907,9 +967,34 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata, T *qdata)
             // A pointer to nearest neighbors square distances from the point i
             T *nnDist = this->NearestNeighborsDistances(i);
 
+#if unrolledIncrement == 0
             {
                 T *last = qdata + IdI + this->cols;
-                T *lastgroup = last - 3;
+
+                for (int j = 0; j < nNN; j++)
+                {
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+
+                    // pointer to query data
+                    T *Idata = qdata + IdI;
+
+                    // pointer to idata (neighbors of i)
+                    T *Jdata = idata + IdJ;
+
+                    T result(0);
+                    while (Idata < last)
+                    {
+                        T const diff0 = *Idata++ - *Jdata++;
+                        result += diff0 * diff0;
+                    }
+
+                    nnDist[j] = result;
+                }
+            }
+#else
+            {
+                T *last = qdata + IdI + this->cols;
+                T *lastgroup = last - unrolledIncrement + 1;
 
                 for (int j = 0; j < nNN; j++)
                 {
@@ -930,9 +1015,43 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata, T *qdata)
                         T const diff1 = Idata[1] - Jdata[1];
                         T const diff2 = Idata[2] - Jdata[2];
                         T const diff3 = Idata[3] - Jdata[3];
+#if unrolledIncrement == 4
                         result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
-                        Idata += 4;
-                        Jdata += 4;
+#endif
+#if unrolledIncrement == 6
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5;
+#endif
+#if unrolledIncrement == 8
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7;
+#endif
+#if unrolledIncrement == 10
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        T const diff8 = Idata[8] - Jdata[8];
+                        T const diff9 = Idata[9] - Jdata[9];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9;
+#endif
+#if unrolledIncrement == 12
+                        T const diff4 = Idata[4] - Jdata[4];
+                        T const diff5 = Idata[5] - Jdata[5];
+                        T const diff6 = Idata[6] - Jdata[6];
+                        T const diff7 = Idata[7] - Jdata[7];
+                        T const diff8 = Idata[8] - Jdata[8];
+                        T const diff9 = Idata[9] - Jdata[9];
+                        T const diff10 = Idata[10] - Jdata[10];
+                        T const diff11 = Idata[11] - Jdata[11];
+                        result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9 + diff10 * diff10 + diff11 * diff11;
+#endif
+                        Idata += unrolledIncrement;
+                        Jdata += unrolledIncrement;
                     }
                     // Process last 0-3 pixels.
                     while (Idata < last)
@@ -944,6 +1063,7 @@ void MahalanobisNearestNeighbor<T>::buildIndex(T *idata, T *qdata)
                     nnDist[j] = result;
                 }
             }
+#endif
         }
     }
 }
