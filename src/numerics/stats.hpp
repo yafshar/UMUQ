@@ -17,6 +17,7 @@ namespace umuq
  * - \b minelement_index   Finds the position of the smallest element in the array of data 
  * - \b maxelement_index   Finds the position of the greatest element in the array of data 
  * - \b sum                Computes the sum of the elements in the array of data
+ * - \b sumAbs             Computes the sum of the absolute value of the elements in the array of data
  * - \b mean               Computes the mean of the elements in the array of data
  * - \b median             Computes the median of the elements in the array of data
  * - \b medianAbs          Computes the median absolute deviation (MAD) of the elements in the array of data
@@ -27,7 +28,7 @@ namespace umuq
  * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
  * - \b covariance         Compute the covariance
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
- *                       Find the unique n-dimensions sample points in an array of nRows * nCols data
+ *                         Find the unique n-dimensions sample points in an array of nRows * nCols data
  */
 struct stats
 {
@@ -126,11 +127,11 @@ struct stats
     /*!
      * \brief Computes the sum of the elements in the array of data with stride
      * 
-     * \tparam T    data type
-     * \tparam TOut data type of return output result (default is double)
+     * \tparam T    Data type
+     * \tparam TOut Data type of the return output result (default is double)
      * 
-     * \param idata array of data
-     * \param nSize size of the array
+     * \param idata  Array of data
+     * \param nSize  Size of the array
      * \param Stride element stride (default is 1)
      * 
      * \returns The sum of the elements in the array of data
@@ -145,6 +146,27 @@ struct stats
     inline TOut sum(arrayWrapper<T> const &iArray) const;
 
     /*!
+     * \brief Computes the sum of the absolute value of the elements in the array of data with stride
+     * 
+     * \tparam T    Data type
+     * \tparam TOut Data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data
+     * \param nSize  Size of the array
+     * \param Stride Element stride (default is 1)
+     * 
+     * \returns The sum of the absolute value of the elements in the array of data
+     */
+    template <typename T, typename TOut = double>
+    inline TOut sumAbs(T const *idata, int const nSize, int const Stride = 1) const;
+
+    template <typename T, typename TOut = double>
+    inline TOut sumAbs(std::vector<T> const &idata) const;
+
+    template <typename T, typename TOut = double>
+    inline TOut sumAbs(arrayWrapper<T> const &iArray) const;
+
+    /*!
      * \brief Computes the mean of the elements in the array of data with stride
      * 
      * \tparam T data type
@@ -157,7 +179,7 @@ struct stats
      * \returns The mean of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut mean(T const *idata, const int nSize, int const Stride = 1) const;
+    inline TOut mean(T const *idata, int const nSize, int const Stride = 1) const;
 
     template <typename T, typename TOut = double>
     inline TOut mean(std::vector<T> const &idata) const;
@@ -178,7 +200,7 @@ struct stats
      * \returns The median of the elements in the array of data with Stride
      */
     template <typename T, typename TOut = double>
-    inline TOut median(T const *idata, const int nSize, int const Stride = 1);
+    inline TOut median(T const *idata, int const nSize, int const Stride = 1);
 
     template <typename T, typename TOut = double>
     inline TOut median(std::vector<T> const &idata);
@@ -200,7 +222,7 @@ struct stats
      * \returns The median absolute deviation of the elements in the array of data
      */
     template <typename T, typename TOut = double>
-    inline TOut medianAbs(T const *idata, const int nSize, int const Stride = 1, TOut &median_ = TOut{});
+    inline TOut medianAbs(T const *idata, int const nSize, int const Stride = 1, TOut &median_ = TOut{});
 
     template <typename T, typename TOut = double>
     inline TOut medianAbs(std::vector<T> const &idata, TOut &median_ = TOut{});
@@ -441,7 +463,13 @@ struct stats
     void unique(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::vector<T> &udata);
 };
 
-stats::stats() {}
+stats::stats()
+{
+    if (!(unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
+    {
+        UMUQFAIL("The unrolled Increment value is not correctly set!");
+    }
+}
 
 stats::~stats() {}
 
@@ -541,12 +569,47 @@ inline int stats::maxelement_index(arrayWrapper<T> const &iArray) const
 template <typename T, typename TOut>
 inline TOut stats::sum(T const *idata, int const nSize, int const Stride) const
 {
+    if (nSize <= 0)
+    {
+        return TOut{};
+    }
     if (Stride > 1)
     {
         arrayWrapper<T> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) : TOut{};
     }
-    return (nSize > 0) ? static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) : TOut{};
+#if unrolledIncrement == 0
+    return static_cast<TOut>(std::accumulate(idata, idata + nSize, T{}));
+#else
+    T s(0);
+    int const m = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (m)
+    {
+        for (int i = 0; i < m; i++)
+        {
+            s += idata[i];
+        }
+    }
+    for (int i = m; i < nSize; i += unrolledIncrement)
+    {
+#if unrolledIncrement == 4
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3];
+#endif
+#if unrolledIncrement == 6
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5];
+#endif
+#if unrolledIncrement == 8
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7];
+#endif
+#if unrolledIncrement == 10
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7] + idata[i + 8] + idata[i + 9];
+#endif
+#if unrolledIncrement == 12
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7] + idata[i + 8] + idata[i + 9] + idata[i + 10] + idata[i + 11];
+#endif
+    }
+    return static_cast<TOut>(s);
+#endif
 }
 
 template <typename T, typename TOut>
@@ -562,14 +625,111 @@ inline TOut stats::sum(arrayWrapper<T> const &iArray) const
 }
 
 template <typename T, typename TOut>
-inline TOut stats::mean(T const *idata, const int nSize, int const Stride) const
+inline TOut stats::sumAbs(T const *idata, int const nSize, int const Stride) const
 {
+    if (nSize <= 0)
+    {
+        return TOut{};
+    }
+    if (Stride > 1)
+    {
+        arrayWrapper<T> iArray(idata, nSize, Stride);
+        return (iArray.size() > 0) ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{}, [](T const &lhs, T const &rhs) { return lhs + std::abs(rhs); })) : TOut{};
+    }
+#if unrolledIncrement == 0
+    return static_cast<TOut>(std::accumulate(idata, idata + nSize, T{}, [](T const &lhs, T const &rhs) { return lhs + std::abs(rhs); }));
+#else
+    T s(0);
+    int const m = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (m)
+    {
+        for (int i = 0; i < m; i++)
+        {
+            s += std::abs(idata[i]);
+        }
+    }
+    for (int i = m; i < nSize; i += unrolledIncrement)
+    {
+#if unrolledIncrement == 4
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]);
+#endif
+#if unrolledIncrement == 6
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]);
+#endif
+#if unrolledIncrement == 8
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]);
+#endif
+#if unrolledIncrement == 10
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]) +
+             std::abs(idata[i + 8]) +
+             std::abs(idata[i + 9]);
+#endif
+#if unrolledIncrement == 12
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]) +
+             std::abs(idata[i + 8]) +
+             std::abs(idata[i + 9]) +
+             std::abs(idata[i + 10]) +
+             std::abs(idata[i + 11]);
+#endif
+    }
+    return static_cast<TOut>(s);
+#endif
+}
+
+template <typename T, typename TOut>
+inline TOut stats::sumAbs(std::vector<T> const &idata) const
+{
+    return (idata.size() > 0) ? (static_cast<TOut>(std::accumulate(idata.begin(), idata.end(), T{}, [](T const &lhs, T const &rhs) { return lhs + std::abs(rhs); }))) : TOut{};
+}
+
+template <typename T, typename TOut>
+inline TOut stats::sumAbs(arrayWrapper<T> const &iArray) const
+{
+    return (iArray.size() > 0) ? (static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{}, [](T const &lhs, T const &rhs) { return lhs + std::abs(rhs); }))) : TOut{};
+}
+
+template <typename T, typename TOut>
+inline TOut stats::mean(T const *idata, int const nSize, int const Stride) const
+{
+    if (nSize <= 0)
+    {
+        UMUQFAIL("Wrong input size!");
+    }
     if (Stride > 1)
     {
         arrayWrapper<T> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? (static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
     }
-    return (nSize > 0) ? (static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) / nSize) : throw(std::runtime_error("Wrong input size!"));
+    return sum<T, TOut>(idata, nSize) / static_cast<TOut>(nSize);
 }
 
 template <typename T, typename TOut>
@@ -585,7 +745,7 @@ inline TOut stats::mean(arrayWrapper<T> const &iArray) const
 }
 
 template <typename T, typename TOut>
-inline TOut stats::median(T const *idata, const int nSize, int const Stride)
+inline TOut stats::median(T const *idata, int const nSize, int const Stride)
 {
     if (Stride > 1)
     {
@@ -624,7 +784,7 @@ inline TOut stats::median(arrayWrapper<T> const &iArray)
 }
 
 template <typename T, typename TOut>
-inline TOut stats::medianAbs(T const *idata, const int nSize, int const Stride, TOut &median_)
+inline TOut stats::medianAbs(T const *idata, int const nSize, int const Stride, TOut &median_)
 {
     arrayWrapper<T> iArray(idata, nSize, Stride);
 
@@ -684,7 +844,60 @@ inline TOut stats::stddev(T const *idata, int const nSize, int const Stride, TOu
         std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
         return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) : std::sqrt(s);
     }
+#if unrolledIncrement == 0
     std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            s += (idata[i] - m) * (idata[i] - m);
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        TOut const diff0 = idata[i] - m;
+        TOut const diff1 = idata[i + 1] - m;
+        TOut const diff2 = idata[i + 2] - m;
+        TOut const diff3 = idata[i + 3] - m;
+#if unrolledIncrement == 4
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
+#endif
+#if unrolledIncrement == 6
+        TOut const diff4 = idata[i + 4] - m;
+        TOut const diff5 = idata[i + 5] - m;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5;
+#endif
+#if unrolledIncrement == 8
+        TOut const diff4 = idata[i + 4] - m;
+        TOut const diff5 = idata[i + 5] - m;
+        TOut const diff6 = idata[i + 6] - m;
+        TOut const diff7 = idata[i + 7] - m;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7;
+#endif
+#if unrolledIncrement == 10
+        TOut const diff4 = idata[i + 4] - m;
+        TOut const diff5 = idata[i + 5] - m;
+        TOut const diff6 = idata[i + 6] - m;
+        TOut const diff7 = idata[i + 7] - m;
+        TOut const diff8 = idata[i + 8] - m;
+        TOut const diff9 = idata[i + 9] - m;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9;
+#endif
+#if unrolledIncrement == 12
+        TOut const diff4 = idata[i + 4] - m;
+        TOut const diff5 = idata[i + 5] - m;
+        TOut const diff6 = idata[i + 6] - m;
+        TOut const diff7 = idata[i + 7] - m;
+        TOut const diff8 = idata[i + 8] - m;
+        TOut const diff9 = idata[i + 9] - m;
+        TOut const diff10 = idata[i + 10] - m;
+        TOut const diff11 = idata[i + 11] - m;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9 + diff10 * diff10 + diff11 * diff11;
+#endif
+    }
+#endif
     return (nSize > 1) ? std::sqrt(s / (nSize - 1)) : std::sqrt(s);
 }
 
@@ -710,15 +923,8 @@ template <typename T, typename TOut>
 inline TOut stats::coefvar(T const *idata, int const nSize, int const Stride, TOut const idataMean) const
 {
     TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(idata, nSize, Stride);
-    TOut s(0);
-    if (Stride != 1)
-    {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
-        return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) / m : std::sqrt(s) / m;
-    }
-    std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
-    return (nSize > 1) ? std::sqrt(s / (nSize - 1)) / m : std::sqrt(s) / m;
+    TOut const s = stddev<T, TOut>(idata, nSize, Stride, m);
+    return s / m;
 }
 
 template <typename T, typename TOut>
@@ -751,7 +957,6 @@ void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
         UMUQWARNING("Maximum and Minimum Value are identical!");
         denom = std::numeric_limits<T>::epsilon();
     }
-
     if (Stride > 1)
     {
         for (int i = 0; i < nSize; i += Stride)
@@ -761,7 +966,78 @@ void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
         }
         return;
     }
+#if unrolledIncrement == 0
     std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= MinValue;
+            idata[i] /= denom;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= MinValue;
+        idata[i] /= denom;
+        idata[i + 1] -= MinValue;
+        idata[i + 1] /= denom;
+        idata[i + 2] -= MinValue;
+        idata[i + 2] /= denom;
+        idata[i + 3] -= MinValue;
+        idata[i + 3] /= denom;
+#if unrolledIncrement == 6
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= denom;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= denom;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= denom;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= denom;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= denom;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= denom;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= denom;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= denom;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= denom;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= denom;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= denom;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= denom;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= denom;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= denom;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= denom;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= denom;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= denom;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= denom;
+        idata[i + 10] -= MinValue;
+        idata[i + 10] /= denom;
+        idata[i + 11] -= MinValue;
+        idata[i + 11] /= denom;
+#endif
+    }
+#endif
     return;
 }
 
@@ -796,7 +1072,78 @@ inline void stats::zscoreNormal(T *idata, int const nSize, int const Stride)
         }
         return;
     }
+#if unrolledIncrement == 0
     std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= MeanValue;
+            idata[i] /= StddevValue;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= MeanValue;
+        idata[i] /= StddevValue;
+        idata[i + 1] -= MeanValue;
+        idata[i + 1] /= StddevValue;
+        idata[i + 2] -= MeanValue;
+        idata[i + 2] /= StddevValue;
+        idata[i + 3] -= MeanValue;
+        idata[i + 3] /= StddevValue;
+#if unrolledIncrement == 6
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+        idata[i + 8] -= MeanValue;
+        idata[i + 8] /= StddevValue;
+        idata[i + 9] -= MeanValue;
+        idata[i + 9] /= StddevValue;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+        idata[i + 8] -= MeanValue;
+        idata[i + 8] /= StddevValue;
+        idata[i + 9] -= MeanValue;
+        idata[i + 9] /= StddevValue;
+        idata[i + 10] -= MeanValue;
+        idata[i + 10] /= StddevValue;
+        idata[i + 11] -= MeanValue;
+        idata[i + 11] /= StddevValue;
+#endif
+    }
+#endif
     return;
 }
 
@@ -823,7 +1170,78 @@ inline void stats::robustzscoreNormal(T *idata, int const nSize, int const Strid
         }
         return;
     }
+#if unrolledIncrement == 0
     std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - median_) / mad; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= median_;
+            idata[i] /= mad;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= median_;
+        idata[i] /= mad;
+        idata[i + 1] -= median_;
+        idata[i + 1] /= mad;
+        idata[i + 2] -= median_;
+        idata[i + 2] /= mad;
+        idata[i + 3] -= median_;
+        idata[i + 3] /= mad;
+#if unrolledIncrement == 6
+        idata[i + 4] -= median_;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= median_;
+        idata[i + 5] /= mad;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= median_;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= median_;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= median_;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= median_;
+        idata[i + 7] /= mad;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= median_;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= median_;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= median_;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= median_;
+        idata[i + 7] /= mad;
+        idata[i + 8] -= median_;
+        idata[i + 8] /= mad;
+        idata[i + 9] -= median_;
+        idata[i + 9] /= mad;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= median_;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= median_;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= median_;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= median_;
+        idata[i + 7] /= mad;
+        idata[i + 8] -= median_;
+        idata[i + 8] /= mad;
+        idata[i + 9] -= median_;
+        idata[i + 9] /= mad;
+        idata[i + 10] -= median_;
+        idata[i + 10] /= mad;
+        idata[i + 11] -= median_;
+        idata[i + 11] /= mad;
+#endif
+    }
+#endif
     return;
 }
 
