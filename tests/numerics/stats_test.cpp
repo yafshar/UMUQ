@@ -9,7 +9,7 @@
  */
 TEST(stats_test, HandlesStats)
 {
-	//! Create an instane of stats object
+	//! Create an instance of stats object
 	umuq::stats s;
 
 	//! test for normal array of data
@@ -48,6 +48,15 @@ TEST(stats_test, HandlesStats)
 	EXPECT_DOUBLE_EQ(sum, 110.0);
 	EXPECT_DOUBLE_EQ(mean, 5.5);
 	EXPECT_DOUBLE_EQ(stddev, 2.9468984587725089);
+
+	//! test for normal array of data
+	int kArray[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+
+	sum = s.sum<int, double>(kArray, 20);
+	double sumAbs = s.sumAbs<int, double>(kArray, 20);
+
+	EXPECT_DOUBLE_EQ(sum, 0.0);
+	EXPECT_DOUBLE_EQ(sumAbs, 110.);
 }
 
 /*!
@@ -376,49 +385,48 @@ TEST(stats_test, HandlesCovariance)
  */
 TEST(stats_test, HandlesunUniqueMemberFunctionality)
 {
-    //! Vector of data which has some repetitive rows
-    double p[] = {5, 12, 24,
-                  12, 30, 59,
-                  1, 4, 0,
-                  0, -10, 1,
-                  1, 2, 4,
-                  2, 5, 10,
-                  0, -1, -1,
-                  1, 4, 0,
-                  4, 25, -10,
-                  0, -10, 1,
-                  2, 5, 10,
-                  1, 4, 0};
+	//! Vector of data which has some repetitive rows
+	double p[] = {5, 12, 24,
+				  12, 30, 59,
+				  1, 4, 0,
+				  0, -10, 1,
+				  1, 2, 4,
+				  2, 5, 10,
+				  0, -1, -1,
+				  1, 4, 0,
+				  4, 25, -10,
+				  0, -10, 1,
+				  2, 5, 10,
+				  1, 4, 0};
 
-    //! Array of unique row data (each row is unique)
-    double pu[] = {5, 12, 24,
-                   12, 30, 59,
-                   1, 4, 0,
-                   0, -10, 1,
-                   1, 2, 4,
-                   2, 5, 10,
-                   0, -1, -1,
-                   4, 25, -10};
+	//! Array of unique row data (each row is unique)
+	double pu[] = {5, 12, 24,
+				   12, 30, 59,
+				   1, 4, 0,
+				   0, -10, 1,
+				   1, 2, 4,
+				   2, 5, 10,
+				   0, -1, -1,
+				   4, 25, -10};
 
 	//! Create an instane of stats object
 	umuq::stats s;
 
-    //! vector
-    std::vector<double> u;
+	//! vector
+	std::vector<double> u;
 
-    //! Create a unique rows of data from p array
-    s.unique<double>(p, 12, 3, u);
+	//! Create a unique rows of data from p array
+	s.unique<double>(p, 12, 3, u);
 
 	//! Check the size of unique data
-    EXPECT_TRUE(u.size() == 24);
+	EXPECT_TRUE(u.size() == 24);
 
 	//! compare the elements
-    for (std::size_t i = 0; i < u.size(); i++)
-    {
-        EXPECT_DOUBLE_EQ(u[i], pu[i]);
-    }
+	for (std::size_t i = 0; i < u.size(); i++)
+	{
+		EXPECT_DOUBLE_EQ(u[i], pu[i]);
+	}
 }
-
 
 int main(int argc, char **argv)
 {
