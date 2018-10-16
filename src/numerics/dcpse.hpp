@@ -14,12 +14,17 @@ namespace umuq
  * This is the numerics module of UMUQ providing all necessary classes of numerical computation.
  */
 
+/*! 
+ * \defgroup DCPSE Discretization-Corrected PSE Operators
+ * \ingroup Numerics_Module 
+ */
+
 /*! \class dcpse
- * \ingroup Numerics_Module
+ * \ingroup DCPSE
  * 
- * \brief General class for (DC-PSE)
+ * \brief General class for (DC-PSE) \link DCPSE Discretization-Corrected PSE Operators \endlink
  * 
- * It creates a discretized differential operator and interpolators
+ * It creates a discretized differential operator and interpolators \ref 
  * 
  * \tparam T         Data type
  * \tparam Distance  Distance type for computing the distances to the nearest neighbors
