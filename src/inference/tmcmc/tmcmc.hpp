@@ -365,6 +365,10 @@ private:
 template <typename T, class F>
 tmcmc<T, F>::tmcmc() : inputFilename("input.par")
 {
+  if (!std::is_floating_point<T>::value)
+  {
+    UMUQFAIL("This type is not supported in this class!");
+  }
   torc<T>.reset(nullptr);
 }
 
