@@ -8,9 +8,9 @@ rm m4/ltsugar.m4
 rm m4/ltversion.m4
 rm m4/lt\~obsolete.m4
 
-aclocal
 # Create the configuration script
-autoreconf -i
+bash ./bootstrap.sh 
+
 #configure and make
 ./configure --with-googletest
 make
