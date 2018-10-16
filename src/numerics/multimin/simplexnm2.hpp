@@ -12,12 +12,12 @@ inline namespace multimin
  * 
  * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
  * It uses fixed coordinate axes around the starting point x to initialize the simplex.
- * The size of simplex is calculated as the RMS distance of each vertex from the center
+ * The size of simplex is calculated as the RMS distance of each vertex from the center.
  *   
- * Ref: 
+ * Reference: <br>
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
- * This implementation uses n+1 corner points in the simplex.
+ * This implementation uses \f$ n+1 \f$ corner points in the simplex.
  * 
  * \tparam T Data type
  */
@@ -43,15 +43,14 @@ class simplexNM2 : public functionMinimizer<T>
      *
      * \param nDim  New size of the minimizer vectors
      *
-     * \returns true
+     * \returns false If it encounters an unexpected problem
      */
     bool reset(int const nDim) noexcept;
 
     /*!
      * \brief Initialize the minimizer
      * 
-     * \return true 
-     * \return false 
+     * \returns false If it encounters an unexpected problem
      */
     bool init();
 
@@ -60,8 +59,7 @@ class simplexNM2 : public functionMinimizer<T>
      *
      * It performs one iteration to update the state of the minimizer.
      *
-     * \return true
-     * \return false If the iteration encounters an unexpected problem
+     * \returns false If the iteration encounters an unexpected problem
      */
     bool iterate();
 
@@ -75,14 +73,14 @@ class simplexNM2 : public functionMinimizer<T>
      * \param corner  Corner point
      * \param X       Input point
      * 
-     * \return Function value at X
+     * \returns Function value at X
      */
     T tryCornerMove(T const coeff, int const corner, std::vector<T> &X);
 
     /*!
-     * \brief 
+     * \brief Update the point
      * 
-     * \param i 
+     * \param i    Point index
      * \param X    Input point 
      * \param val  
      */
@@ -95,19 +93,17 @@ class simplexNM2 : public functionMinimizer<T>
      * (This function is rarely called in practice, since it is the last choice, hence not optimized)
      * 
      * 
-     * \param best   best corner
+     * \param best   The best corner
      * \param X      Input point
      * 
-     * \return true 
-     * \return false 
+     * \returns false If it encounters an unexpected problem
      */
     bool contractByBest(int const best, std::vector<T> &X);
 
     /*!
-     * \brief 
+     * \brief Calculates the center of the simplex
      * 
-     * \return true 
-     * \return false 
+     * \returns false If it encounters an unexpected problem
      */
     bool computeCenter();
 
@@ -117,15 +113,15 @@ class simplexNM2 : public functionMinimizer<T>
      * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
      * the mean distance, allowing a linear update of this quantity on each step. 
      * 
-     * \return Computed characteristic size
+     * \returns T Computed characteristic size
      */
     T computeSize();
 
   private:
     /*!
-     * \return a (pointer to a) row of the data.
+     * \returns a (pointer to a) row of the data.
      */
-    inline T *operator[](std::size_t index) const;
+    inline T *operator[](std::size_t const index) const;
 
   private:
     //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
@@ -143,15 +139,12 @@ class simplexNM2 : public functionMinimizer<T>
     //! x - center (workspace)
     std::vector<T> xmc;
 
-    //!
+    //! Simplex characteristic size
     T S2;
-
-    //!
-    unsigned long count;
 };
 
 template <typename T>
-simplexNM2<T>::simplexNM2(const char *Name) : functionMinimizer<T>(Name) {}
+simplexNM2<T>::simplexNM2(const char *Name) : functionMinimizer<T>(Name), S2(T{}) {}
 
 template <typename T>
 simplexNM2<T>::~simplexNM2() {}
@@ -174,8 +167,6 @@ bool simplexNM2<T>::reset(int const nDim) noexcept
     center.resize(nDim);
     delta.resize(nDim);
     xmc.resize(nDim);
-
-    count = 0;
 
     return true;
 }
@@ -204,6 +195,7 @@ bool simplexNM2<T>::init()
         // Copy the elements of the x to xtemp
         std::copy(this->x.begin(), this->x.end(), this->ws1.begin());
 
+        // Currently ws2 contains stepSize from set
         this->ws1[i] += this->ws2[i];
 
         this->fval = this->fun.f(this->ws1.data());
@@ -225,8 +217,6 @@ bool simplexNM2<T>::init()
 
     // Initialize simplex size
     this->characteristicSize = computeSize();
-
-    count++;
 
     return true;
 }
@@ -553,7 +543,7 @@ T simplexNM2<T>::computeSize()
 }
 
 template <typename T>
-inline T *simplexNM2<T>::operator[](std::size_t index) const
+inline T *simplexNM2<T>::operator[](std::size_t const index) const
 {
     int const n = this->getDimension();
     return x1.data() + index * n;

@@ -14,13 +14,13 @@ inline namespace multimin
  * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
  * around the starting point x to initialize the simplex.
  *  
- * Ref: 
+ * Reference:<br> 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
- * This implementation uses n+1 corner points in the simplex.
+ * This implementation uses \f$ n+1 \f$ corner points in the simplex.
  * 
- * \tparam T   data type
- * \tparam TMF multimin function type
+ * \tparam T   Data type
+ * \tparam TMF Multimin function type
  */
 template <typename T>
 class simplexNM2Rnd : public functionMinimizer<T>
@@ -34,7 +34,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
     explicit simplexNM2Rnd(const char *Name = "simplexNM2Rnd");
 
     /*!
-     * \brief Destroy the simplex N M2 Rnd object
+     * \brief Destroy the simplexNM2Rnd object
      * 
      */
     ~simplexNM2Rnd();
@@ -44,7 +44,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
      *
      * \param nDim  New size of the minimizer vectors
      *
-     * \returns true
+     * \returns false If it encounters an unexpected problem
      */
     bool reset(int const nDim) noexcept;
 
@@ -52,9 +52,9 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * \brief Initialize the minimizer
      * 
      * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
-     * around the starting point x to initialize the simplex.
+     * around the starting point x to initialize the simplex.<br>
      * The final dimensions of the simplex are scaled along the coordinate axes by the 
-     * vector step_size. 
+     * vector step_size. <br>
      * The randomization uses a simple deterministic generator so that repeated calls to 
      * functionMinimizer set for a given solver object will vary the orientation in a 
      * well-defined way.
@@ -62,8 +62,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * Reference:<br>
      * https://www.gnu.org/software/gsl/doc/html/multimin.html
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns false If it encounters an unexpected problem
      */
     bool init();
 
@@ -72,8 +71,8 @@ class simplexNM2Rnd : public functionMinimizer<T>
      *
      * It performs one iteration to update the state of the minimizer.
      *
-     * \return true
-     * \return false If the iteration encounters an unexpected problem
+     * \returns true
+     * \returns false If the iteration encounters an unexpected problem
      */
     bool iterate();
 
@@ -87,14 +86,14 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * \param corner  Corner point
      * \param X       Input point
      * 
-     * \return Function value at X
+     * \returns T Function value at X
      */
     T tryCornerMove(T const coeff, int const corner, std::vector<T> &X);
 
     /*!
      * \brief 
      * 
-     * \param i 
+     * \param i    Index number
      * \param X    Input point 
      * \param val  
      */
@@ -107,19 +106,18 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * (This function is rarely called in practice, since it is the last choice, hence not optimized)
      * 
      * 
-     * \param best   best corner
+     * \param best   Best corner
      * \param X      Input point
      * 
-     * \return true 
-     * \return false 
+     * \returns true 
+     * \returns false If the iteration encounters an unexpected problem
      */
     bool contractByBest(int const best, std::vector<T> &X);
 
     /*!
-     * \brief 
+     * \brief Compute the center of the simplex
      * 
-     * \return true 
-     * \return false 
+     * \returns false If the iteration encounters an unexpected problem
      */
     bool computeCenter();
 
@@ -129,19 +127,20 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
      * the mean distance, allowing a linear update of this quantity on each step. 
      * 
-     * \return Computed characteristic size
+     * \returns Computed characteristic size
      */
     T computeSize();
 
   private:
-    /*! \class submatrix
+    /*! 
+     * \class submatrix
      * 
      * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
      * The upper-left element of the submatrix is the element (k1,k2) of the original 
      * matrix. The submatrix has n1 rows and n2 columns.
      * The physical number of columns in memory given by NC is unchanged.
-     * Mathematically, the (i,j)-th element of the new matrix is given by,
-     * \f$ ID(i, j)_{(NC, k1, k2, n1, n2)} = [(k1 * NC + k2) + i*NC + j ]   \f$
+     * Mathematically, the (i,j)-th element of the new matrix is given by,<br>
+     * \f$ ID(i, j)_{(NC, k1, k2, n1, n2)} = [(k1 * NC + k2) + i*NC + j ] \f$
      * 
      */
     class submatrix
@@ -180,14 +179,14 @@ class simplexNM2Rnd : public functionMinimizer<T>
      * 
      * \param seed Seed to initialize the PRNG 
      * 
-     * \return Uniform random number
+     * \returns T Uniform random number
      */
     inline T ran_unif(unsigned long *seed);
 
     /*!
-     * \return a (pointer to a) row of the data.
+     * \returns A (pointer to a) row of the data.
      */
-    inline T *operator[](std::size_t index) const;
+    inline T *operator[](std::size_t const index) const;
 
   private:
     //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
@@ -205,7 +204,7 @@ class simplexNM2Rnd : public functionMinimizer<T>
     //! x - center (workspace)
     std::vector<T> xmc;
 
-    //! Store squared size
+    //! Stored squared size
     T S2;
 
     //! counter
@@ -691,7 +690,7 @@ T simplexNM2Rnd<T>::computeSize()
 }
 
 template <typename T>
-inline T *simplexNM2Rnd<T>::operator[](std::size_t index) const
+inline T *simplexNM2Rnd<T>::operator[](std::size_t const index) const
 {
     int const n = this->getDimension();
     return x1.data() + index * n;

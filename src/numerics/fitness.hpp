@@ -8,17 +8,21 @@
 namespace umuq
 {
 
-/*!
+/*! \enum ErrorFitnessTypes
  * \ingroup Numerics_Module
  * 
- * \brief Available Error Fitness type
+ * \brief Available Error Fitness type, currently available in %UMUQ
  * 
  */
 enum ErrorFitnessTypes
 {
+    /*! Sum of the absolute difference between observed and predicted data. */
     errorFitSum = -1,
+    /*! Average of the absolute difference between observed and predicted data. */
     errorFitMean = -2,
+    /*! Squared root of the average of the absolute difference between observed and predicted data. */
     errorFitRootMean = -3,
+    /*! Maximum value of the absolute difference between observed and predicted data. */
     errorFitMax = -4
 };
 
@@ -28,10 +32,10 @@ enum ErrorFitnessTypes
  * \brief This class evalutes the model fitness 
  *
  * List of available Fitness type:
- *  - \b errorFitSum      Sum of the absolute difference between observed and predicted data
- *  - \b errorFitMean     Average of the absolute difference between observed and predicted data
- *  - \b errorFitRootMean Squared root of the average of the absolute difference between observed and predicted data
- *  - \b errorFitMax      Maximum value of the absolute difference between observed and predicted data
+ *  - \b errorFitSum      Sum of the absolute difference between observed and predicted data.
+ *  - \b errorFitMean     Average of the absolute difference between observed and predicted data.
+ *  - \b errorFitRootMean Squared root of the average of the absolute difference between observed and predicted data.
+ *  - \b errorFitMax      Maximum value of the absolute difference between observed and predicted data.
  */
 template <typename T>
 class fitness

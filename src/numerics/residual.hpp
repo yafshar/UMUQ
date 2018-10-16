@@ -4,16 +4,19 @@
 namespace umuq
 {
 
-/*!
+/*! \enum ErrorTypes
  * \ingroup Numerics_Module
  * 
- * \brief Different residuals Error type
+ * \brief Different residuals Error types, currently available in %UMUQ
  * 
  */
 enum ErrorTypes
 {
+    /*! Absolute difference between observed and predicted data. */
     AbsoluteError = -1,
+    /*! A ratio of absolute difference between observed and predicted data to the absolute value of observed data. */
     ScaledError = -2,
+    /*! Squred value of the difference between observed and predicted data. */
     SquredError = -3
 };
 

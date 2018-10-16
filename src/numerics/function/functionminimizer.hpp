@@ -29,13 +29,16 @@ inline namespace multimin
 /*!
  * \ingroup Multimin_Module
  * 
- * \brief Different available Function Minimizer available in UMUQ
+ * \brief Different Function Minimizer, currently available in %UMUQ
  * 
  */
 enum FunctionMinimizerTypes
 {
+  /*! \link umuq::multimin::simplexNM The Simplex method of Nelder and Mead. \endlink  */
   SIMPLEXNM = 1,
+  /*! \link umuq::multimin::simplexNM2 The Simplex method of Nelder and Mead (order N operations). \endlink  */
   SIMPLEXNM2 = 2,
+  /*! \link umuq::multimin::simplexNM2Rnd The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors).  \endlink */
   SIMPLEXNM2RND = 3
 };
 
@@ -221,7 +224,7 @@ public:
   /*!
    * \brief Get the N-dimensional x vector
    * 
-   * \return T* 
+   * \return T* Get the N-dimensional x vector
    */
   inline T *getX();
 
@@ -240,10 +243,17 @@ public:
   inline int getDimension();
 
 protected:
-  // Make it noncopyable
+  /*!
+   * \brief Make a noncopyable constructor of function Minimizer object
+   * 
+   */
   functionMinimizer(functionMinimizer<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Make a not assignable copy operator
+   * 
+   * \returns functionMinimizer<T>& 
+   */
   functionMinimizer<T> &operator=(functionMinimizer<T> const &) = delete;
 
 public:
@@ -256,10 +266,10 @@ public:
   //! N-dimensional x vector
   std::vector<T> x;
 
-  //! Workspace 1 for algorithm
+  //! Workspace 1 for the algorithm
   std::vector<T> ws1;
 
-  //! Workspace 2 for algorithm
+  //! Workspace 2 for the algorithm
   std::vector<T> ws2;
 
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)

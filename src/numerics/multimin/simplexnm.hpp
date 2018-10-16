@@ -166,7 +166,7 @@ bool simplexNM<T>::init()
         // Copy the elements of the x to ws1
         std::copy(this->x.begin(), this->x.end(), this->ws1.begin());
 
-        // Currently ws2 contains stepSize
+        // Currently ws2 contains stepSize from set
         this->ws1[i] += this->ws2[i];
 
         this->fval = this->fun.f(this->ws1.data());
