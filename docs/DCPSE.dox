@@ -1,125 +1,158 @@
 namespace umuq {
 
-/*! 
- * \file DCPSE.dox
- * \ingroup Numerics_Module 
- *
+/*! \file DCPSE.dox
+ * \ingroup DCPSE
+ * 
  * \brief DCPSE %UMUQ object
  *
  * <!-- <span style="font-size:300%; color:red; font-weight: 900;">!WORK IN PROGRESS!</span> -->
  *
  * The goal of this page is to explain "DCPSE" algorithm.
  *
- * \section{Meshless Interpolation Schemes}
+ * \section MeshlessInterpolationSchemes_summary Meshless Interpolation Schemes
  * There are a handful of meshless approximating/interpolating methods, like moving least squares (MLS) (Lancaster and Salkauskas, 1981), interpolating moving least squares (Netuzhylov and Zilian, 2009), radial basis functions (RBFs) (Fasshauer, 2007), GFDs (Liszka and Orkisz, 1980), radial basis function finite differences (Fornberg et al., 2013), and discretization corrected particle strength exchange (DC PSE) (Bourantas et al., 2016).  
  * MLS and RBF are the main choices in many applications, because of their interpolating properties and flexibility in facilitating the operation for any nodal distribution (in technical terms, the Vandermonde matrix involved in the shape functions computation is always invertible, with low condition number).
  *
  * We only describe a newly developed meshless scheme that is used in both weak and strong formulations: the DC-PSE method.
  * 
  * 
- * \subsection{Background}
+ * \subsection MeshlessInterpolationSchemes_background Background
  * We briefly recapitulate the basics of smooth particle methods, PSE, and DC-PSE operators. For more details, we refer to the original publications.
- * It is convenient to use the multi-dimensional notation $\beta=\left(\beta_1, \cdots, \beta_d \right)$, where $d \geq 0$ is the dimension of space. We consider:
+ * It is convenient to use the multi-dimensional notation \f$\beta=\left(\beta_1, \cdots, \beta_d \right)\f$, where \f$d \geq 0\f$ is the dimension of space. We consider:<br>
+ *
+ * \f$
  * \begin{align}
  * \nonumber &|\beta|=\sum_{i=1}^{d}\beta_i=\beta_1+\cdots+\beta_d\\
  * \nonumber &\beta!=\beta_1!\cdots\beta_d!\\
  * \nonumber &{\mathbf x}^\beta=x_1^{\beta_1}\cdots x_d^{\beta_d},
  * \end{align}
- * where the quantity $|\beta|$ is the length of $\beta$. This allows a simple notation for partial derivatives:
+ * \f$
+ *
+ * where the quantity \f$|\beta|\f$ is the length of \f$\beta\f$. This allows a simple notation for partial derivatives:<br>
+ *
+ * \f$ 
  * \begin{align}
  * D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}.
  * \label{eq:1}
  * \end{align}
+ * \f$
+ *
+ * For example, \f$d=1\f$ and \f$\beta=(1)\f$ is the first-order derivative \f$\frac{\partial}{\partial x}\f$ and \f$d=1\f$ and \f$\beta=(2)\f$ is the second-order derivative \f$\frac{\partial^2}{\partial x^2}\f$.
  * 
- * For example, $d=1$ and $\beta=(1)$ is the first-order derivative $\frac{\partial}{\partial x}$ and $d=1$ and $\beta=(2)$ is the second-order derivative $\frac{\partial^2}{\partial x^2}$.
- * 
- * Any function $f({\mathbf x})$ can be represented as a convolution of the function with the Dirac delta distribution:
+ * Any function \f$f({\mathbf x})\f$ can be represented as a convolution of the function with the Dirac delta distribution:<br>
+ *
+ * \f$
  * \begin{align}
  * f({\mathbf x})=\int_{\Omega} {f({\mathbf y})\delta({\mathbf x}-{\mathbf y})d{\mathbf y}},
  * \label{eq:2}
  * \end{align}
- * where $\Omega$ represents the complete domain of $f(.)$. In practical computation, the Dirac delta function is replaced by a smooth function with a
- * smoothing length $\epsilon$, and the function $f({\mathbf x})$ can be approximated by $f_\epsilon({\mathbf x})$ where:
+ * \f$
+ *
+ * where \f$\Omega\f$ represents the complete domain of \f$f(.)\f$. In practical computation, the Dirac delta function is replaced by a smooth function with a
+ * smoothing length \f$\epsilon\f$, and the function \f$f({\mathbf x})\f$ can be approximated by \f$f_\epsilon({\mathbf x})\f$ where:<br>
+ *
+ * \f$
  * \begin{align}
  *  f({\mathbf x}) \approx f_\epsilon({\mathbf x}) = \int_{\Omega} {f({\mathbf y}){\mathbf W}_\epsilon({\mathbf x}-{\mathbf y})d{\mathbf y}},
  *  \label{eq:3}
  * \end{align}
- * where ${\mathbf W}_\epsilon$ is referred to as the smoothing function, or simply kernel.
- * The variable $\epsilon$ is the smoothing length, and $f_\epsilon$ is referred to as approximation of function $f(.)$. 
- * For the approximation $f_\epsilon$ to be a proper approximation of the function $f({\mathbf x})$, the kernel function must fulfill the following properties:
- * \begin{itemize}
- * 	\item The kernel must be even: ${\mathbf W}_\epsilon({\mathbf x})={\mathbf W}_\epsilon(-{\mathbf x}).$
- * 	\item The kernel must be normalized: $\int_{\Omega} {\mathbf W}_\epsilon({\mathbf x})d{\mathbf x}=1.$
- * 	\item The kernel must converge to the Dirac delta: $\underset{\epsilon \rightarrow 0}{lim}{\mathbf W}_\epsilon({\mathbf x})=\delta({\mathbf x}).$ 
- * \end{itemize}
+ * \f$
  * 
- * The standard choice that satisfies these properties is ${\mathbf W}_\epsilon({\mathbf x})=\frac{1}{\epsilon^d}{\mathbf W}\left(\frac{{\mathbf x}}{\epsilon}\right)$, where ${\mathbf W}$ is an even, normalized, and local function.
+ * where \f${\mathbf W}_\epsilon\f$ is referred to as the smoothing function, or simply kernel.
+ * The variable \f$\epsilon\f$ is the smoothing length, and \f$f_\epsilon\f$ is referred to as approximation of function \f$f(.)\f$. 
+ * For the approximation \f$f_\epsilon\f$ to be a proper approximation of the function \f$f({\mathbf x})\f$, the kernel function must fulfill the following properties:
+ *
+ * - The kernel must be even: \f${\mathbf W}_\epsilon({\mathbf x})={\mathbf W}_\epsilon(-{\mathbf x}).\f$
+ * - The kernel must be normalized: \f$\int_{\Omega} {\mathbf W}_\epsilon({\mathbf x})d{\mathbf x}=1.\f$
+ * - The kernel must converge to the Dirac delta: \f$\underset{\epsilon \rightarrow 0}{lim}{\mathbf W}_\epsilon({\mathbf x})=\delta({\mathbf x}).\f$ 
+ *
+ * The standard choice that satisfies these properties is \f${\mathbf W}_\epsilon({\mathbf x})=\frac{1}{\epsilon^d}{\mathbf W}\left(\frac{{\mathbf x}}{\epsilon}\right)\f$, where \f${\mathbf W}\f$ is an even, normalized, and local function.
  * 
- * Discretizing this approximation over the points, where the integral is replaced by a sum amounts to using quadrature (numerical integration):
+ * Discretizing this approximation over the points, where the integral is replaced by a sum amounts to using quadrature (numerical integration):<br>
+
+ * \f$
  * \begin{align}
  * f({\mathbf x}) \approx f_\epsilon({\mathbf x}) = \int_{\Omega} {f({\mathbf y}){\mathbf W}_\epsilon({\mathbf x}-{\mathbf y})d{\mathbf y}}=\sum_{p} f({\mathbf x}_p) {\mathbf W}_\epsilon({\mathbf x}-{\mathbf x}_p)V_p,
  * \label{eq:4}
  * \end{align}
- * This now only requires knowing the function value at the locations ${\mathbf x}_p$. However, the numerical integration introduced the volume $V_p$, which is the integration element. We have to compute this element which is a limitation in practice. Doing a Voronoi tessellation of the points in space to find
- * the portion of space for which any given point is responsible is a traditional way to compute this element. Mostly, however, points are simply initialized on a regular Cartesian grid, which renders all volumes equal to $h^d$, where $h$ is the grid spacing. 
+ * \f$
+ *
+ * This now only requires knowing the function value at the locations \f${\mathbf x}_p\f$. However, the numerical integration introduced the volume \f$V_p\f$, which is the integration element. We have to compute this element which is a limitation in practice. Doing a Voronoi tessellation of the points in space to find
+ * the portion of space for which any given point is responsible is a traditional way to compute this element. Mostly, however, points are simply initialized on a regular Cartesian grid, which renders all volumes equal to \f$h^d\f$, where \f$h\f$ is the grid spacing. 
  * 
  * This discretization introduces another error, the quadrature error, which depends on the quadrature scheme
- * used. For midpoint quadrature (the rectangular rule), we have: $f_\epsilon^h({\mathbf x})=f_\epsilon({\mathbf x})+\mathcal{O}\left(\frac{h}{\epsilon}\right)^s$, where $h$ is the distance between nearest-neighbor points and $s$ is the number of continuous derivatives of ${\mathbf W}_\epsilon$. From this expression,
+ * used. For midpoint quadrature (the rectangular rule), we have: \f$f_\epsilon^h({\mathbf x})=f_\epsilon({\mathbf x})+\mathcal{O}\left(\frac{h}{\epsilon}\right)^s\f$, where \f$h\f$ is the distance between nearest-neighbor points and \f$s\f$ is the number of continuous derivatives of \f${\mathbf W}_\epsilon\f$. From this expression,
  * we see that in order for the overall error to be bounded, we have to require that
+ *
+ * \f$
  * \begin{align}
  * 	\frac{h}{\epsilon} < 1.
  * 	\label{eq:5}
  * \end{align}
+ * \f$
  * 
  * This condition means that the kernel widths must be greater than the distance between neighbor points. The condition is thus frequently called ``overlap condition'' because it states that points must overlap.
- * The overlap condition makes sense because otherwise the value of the function $f$ at off-point locations could not be computed any more as all the information is missing there.
+ * The overlap condition makes sense because otherwise the value of the function \f$f\f$ at off-point locations could not be computed any more as all the information is missing there.
  * 
- * Evaluating a differential operator is then done by exploiting its linearity:
+ * Evaluating a differential operator is then done by exploiting its linearity:<br>
+ *
+ * \f$
  * \begin{align}
  * D^\beta f({\mathbf x}) \approx D^\beta f_\epsilon^h({\mathbf x}) \approx \sum_{p} f({\mathbf x}_p) D^\beta {\mathbf W}_\epsilon({\mathbf x}-{\mathbf x}_p)V_p,
  * \label{eq:6}
  * \end{align}
- * since $f({\mathbf x}_p)$ and $V_p$ are constant with respect to ${\mathbf x}$. This of course only works for linear differential operators. There are solutions for non-linear operators as well. 
+ * \f$
+ *
+ * since \f$f({\mathbf x}_p)\f$ and \f$V_p\f$ are constant with respect to \f${\mathbf x}\f$. This of course only works for linear differential operators. There are solutions for non-linear operators as well. 
  * 
- * There are two drawbacks with this way of approximating differential operators: 
- * \begin{itemize}
- * 	\item[(1)] As it can be seen in Eq.~\ref{eq:6}, the interactions are not symmetric.
- * 	\item[(2)] The approximation loses one order of accuracy with every degree of derivative. This is easily seen. If the kernel ${\mathbf W}_\epsilon$ fulfills the moment conditions to order $r$, the $|\beta|$th derivative of ${\mathbf W}_\epsilon$ will only fulfill them
- * to the order $r-|\beta|$.
- * \end{itemize}
+ * There are two drawbacks with this way of approximating differential operators: <br>
+ *
+ * -# As it can be seen in Eq.~\ref{eq:6}, the interactions are not symmetric.
+ * -# The approximation loses one order of accuracy with every degree of derivative. This is easily seen. If the kernel \f${\mathbf W}_\epsilon\f$ fulfills the moment conditions to order \f$r\f$, the \f$|\beta|\f$th derivative of \f${\mathbf W}_\epsilon\f$ will only fulfill them
+ * to the order \f$r-|\beta|\f$.
  *  
  * An obvious remedy for point (2) above is to independently derive different kernels for the different derivatives, instead of using the derivatives of the same kernel. This then allows to impose the moment conditions independently for each kernel, engineering all of them to the same order of accuracy. 
  * 
  * Particle Strength Exchange (PSE) is such a method, which has originally been developed as a deterministic pure particle method to simulate diffusion in the continuum (macroscopic) description. In this method PSE operators approximate any spatial derivative
+ *
+ * \f$ 
  * \begin{align}
  * D^\beta f({\mathbf x}) = \frac{\partial^{|\beta|} f({\mathbf x})} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}},
  * \label{eq:7}
  * \end{align}
- * of a (sufficiently smooth) field $f$ by an integral operator over scattered points:
+ * \f$
+ *
+ * of a (sufficiently smooth) field \f$f\f$ by an integral operator over scattered points:
+ * 
+ * \f$
  * \begin{align}
  * Q^\beta f({\mathbf x}) = \frac{1}{\epsilon^{|\beta|}} \int_{\Omega} (f({\mathbf y}) \pm f({\mathbf x})){\mathbf W}_\epsilon^\beta \left({\mathbf x}-{\mathbf y}\right) d{\mathbf y} = D^\beta f({\mathbf x}) + \mathcal{O}\left(\epsilon^r\right).
  * \label{eq:8}
  * \end{align}
+ * \f$
  * 
- * The operator kernel is chosen such as to fulfill continuous moment conditions (the $n$th moment of a function $f(x)$ is $\int_{\Omega} x^n f(x) dx$). The sign is chosen positive for odd $|\beta|$ and negative for even $|\beta|$. The integral operator in Eq.~\ref{eq:8} is discretized by midpoint quadrature over points, thus,
+ * The operator kernel is chosen such as to fulfill continuous moment conditions (the \f$n\f$th moment of a function \f$f(x)\f$ is \f$\int_{\Omega} x^n f(x) dx\f$). The sign is chosen positive for odd \f$|\beta|\f$ and negative for even \f$|\beta|\f$. The integral operator in Eq.~\ref{eq:8} is discretized by midpoint quadrature over points, thus,
+ * 
+ * \f$
  * \begin{align}
  * Q_h^\beta f({\mathbf x}) = \frac{1}{\epsilon^{|\beta|}} \sum_{p} (f({\mathbf x}_p) \pm f({\mathbf x})){\mathbf W}_\epsilon^\beta \left({\mathbf x}-{\mathbf x}_p\right) V_p,
  * \label{eq:9}
  * \end{align}
- * where ${\mathbf x}_p$ and $V_p$ are the position and volume at point $p$, respectively, and the sum over p is over the set of all points in an $r_c$-neighborhood around ${\mathbf x}_p$. The cutoff radius $r_c$ of the operator is defined such that it approximates the support
- * of ${\mathbf W}_\epsilon^\beta$ with a certain accuracy. The resolution of the discretization is given by
- * the characteristic spacing $h$, defined as the $d$th root of the average volume at each point.
- * The resulting
- * scheme is symmetric and hence conservative, and it has the same order of convergence for all degrees of derivatives.
+ * \f$
+ *
+ * where \f${\mathbf x}_p\f$ and \f$V_p\f$ are the position and volume at point \f$p\f$, respectively, and the sum over p is over the set of all points in an \f$r_c\f$-neighborhood around \f${\mathbf x}_p\f$. The cutoff radius \f$r_c\f$ of the operator is defined such that it approximates the support
+ * of \f${\mathbf W}_\epsilon^\beta\f$ with a certain accuracy. The resolution of the discretization is given by
+ * the characteristic spacing \f$h\f$, defined as the \f$d\f$th root of the average volume at each point.<br>
+ * The resulting scheme is symmetric and hence conservative, and it has the same order of convergence for all degrees of derivatives.
  * The first drawback is difficulty in imposing the boundary conditions. For the points near the boundary some of the neighbors are missing. There are remedies for this problem like one-sided kernel or ghost points. 
  * Another difficulty is the inconsistency of the method on irregular point distributions. This is
- * because the overlap condition requires that $h$ and $\epsilon$ are proportional. Hence, $\frac{h}{\epsilon}$ is a constant, and the quadrature error of $\left(\frac{h}{\epsilon}\right)^s$ is also a constant for any kernel with finite $s$ (like the polynomial kernels). This means that even when increasing the resolution of a simulation (i.e., decreasing h), the quadrature
+ * because the overlap condition requires that \f$h\f$ and \f$\epsilon\f$ are proportional. Hence, \f$\frac{h}{\epsilon}\f$ is a constant, and the quadrature error of \f$\left(\frac{h}{\epsilon}\right)^s\f$ is also a constant for any kernel with finite \f$s\f$ (like the polynomial kernels). This means that even when increasing the resolution of a simulation (i.e., decreasing h), the quadrature
  * error remains constant. Sooner or later in a convergence plot, the error hits
  * this plateau and does not decrease any further. The method is hence, strictly
  * speaking, inconsistent. The only way around this is to simultaneously increase
- * the number of points in the support of the kernel, as $h$ decreases. This
- * means that $h$ decreases faster than $\epsilon$ and the computational cost of the method
- * increases over-proportional with $N$.
+ * the number of points in the support of the kernel, as \f$h\f$ decreases. This
+ * means that \f$h\f$ decreases faster than \f$\epsilon\f$ and the computational cost of the method
+ * increases over-proportional with \f$N\f$.
  * 
  * \subsection{DC-PSE}
  * DC-PSE was introduced as a discretization correction to PSE in order to address its limitations. 
@@ -137,25 +170,33 @@ namespace umuq {
  * 	\item The method is not symmetric, and hence also not conservative.
  * \end{itemize}
  * 
- * The operators looks like the PSE operators in Eq.~\ref{eq:9}: 
+ * The operators looks like the PSE operators in Eq.~\ref{eq:9}: <br>
+ *
+ * \f$
  * \begin{align}
  * Q^\beta f({\mathbf x}) = \frac{1}{{\epsilon({\mathbf x})}^{|\beta|}} \sum_{p} (f({\mathbf x}_p) \pm f({\mathbf x})){\mathbf W} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right),
  * \label{eq:10}
  * \end{align}
+ * \f$
  * 
- * The difference is that the kernel ${\mathbf W}$ now satisfies discrete moment conditions and that $\epsilon(x)$ is a function of space, especially for irregular points distributions where $h$ is different for different points. The original weak-form
- * PSE formulation also includes a volume $V_p$ and a dimension-dependent normalization factor for the volume $\epsilon^{-d}$, where $d$ is the spatial dimension, providing a normalization of the integration length, area, or volume for each point. In this strong-form formulations both are omitted here. The sign in Eq.~\ref{eq:10} is positive for $|\beta|$ odd, and negative if even.
+ * The difference is that the kernel \f${\mathbf W}\f$ now satisfies discrete moment conditions and that \f$\epsilon(x)\f$ is a function of space, especially for irregular points distributions where \f$h\f$ is different for different points. The original weak-form
+ * PSE formulation also includes a volume \f$V_p\f$ and a dimension-dependent normalization factor for the volume \f$\epsilon^{-d}\f$, where \f$d\f$ is the spatial dimension, providing a normalization of the integration length, area, or volume for each point. In this strong-form formulations both are omitted here. The sign in Eq.~\ref{eq:10} is positive for \f$|\beta|\f$ odd, and negative if even.
  * 
- * The goal is to construct the DC-PSE operators so that with a decrease in the spacing between points, $h \rightarrow 0$, the operator converges to the derivative $D^\beta f(x)$ with an asymptotic rate $r$ for all positions ${\mathbf x}$:
+ * The goal is to construct the DC-PSE operators so that with a decrease in the spacing between points, \f$h \rightarrow 0\f$, the operator converges to the derivative \f$D^\beta f(x)\f$ with an asymptotic rate \f$r\f$ for all positions \f${\mathbf x}\f$:
+ * 
+ * \f$
  * \begin{align}
  * Q^\beta f({\mathbf x}) = D^\beta f({\mathbf x}) + \mathcal{O} \left({h({\mathbf x})}^r\right)
  * \label{eq:11}
  * \end{align}
+ * \f$
+ *
  * where it is convenient to explicitly define the component-wise average neighbor
- * spacing as $h(x)=\frac{1}{N} \sum_p \left(|x_1-x_{1p}| + |x_2-x_{2p}| + \cdots |x_d-x_{dp}| \right) $, where $N$ is the number of points in the support of ${\mathbf x}$.
+ * spacing as \f$h(x)=\frac{1}{N} \sum_p \left(|x_1-x_{1p}| + |x_2-x_{2p}| + \cdots |x_d-x_{dp}| \right) \f$, where \f$N\f$ is the number of points in the support of \f${\mathbf x}\f$.
  * 
- * To find a kernel function ${\mathbf W}({\mathbf x})$ and a scaling relation $\epsilon({\mathbf x})$ that satisfy Eq.~\ref{eq:11}, we replace the term $f({\mathbf x}_p)$ in Eq.~\ref{eq:10} with its Taylor expansion around ${\mathbf x}$:
+ * To find a kernel function \f${\mathbf W}({\mathbf x})\f$ and a scaling relation \f$\epsilon({\mathbf x})\f$ that satisfy Eq.~\ref{eq:11}, we replace the term \f$f({\mathbf x}_p)\f$ in Eq.~\ref{eq:10} with its Taylor expansion around \f${\mathbf x}\f$:
  * 
+ * \f$
  * \begin{align}
  * \nonumber &Q^\beta f({\mathbf x})= \\
  * \nonumber &\frac{1}{{\epsilon({\mathbf x})}^{|\beta|}} \sum_{p} (f({\mathbf x}_p) \pm f({\mathbf x})){\mathbf W} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right)=\\
@@ -171,26 +212,35 @@ namespace umuq {
  * &\sum_{|\alpha|=0}^{\infty} {\frac{{\epsilon({\mathbf x})}^{|\alpha|-|\beta|} (-1)^{|\alpha|}}{\alpha!} D^\alpha f({\mathbf x}) {\mathbf Z}^\alpha({\mathbf x})} \pm {\mathbf Z}^0(x) {\epsilon({\mathbf x})}^{-|\beta|}f({\mathbf x}),
  * \label{eq:12}
  * \end{align}
- * where $ {\mathbf Z}^\alpha({\mathbf x})$ is defined as:
+ * \f$
+ *
+ * where \f$ {\mathbf Z}^\alpha({\mathbf x})\f$ is defined as:<br>
+ *
+ * \f$
  * \begin{align}
  * \label{eq:13}
  * &{\mathbf Z}^\alpha({\mathbf x})=\sum_{p} {\left( \frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})} \right)^\alpha {\mathbf W} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right) }, \\
  * \nonumber &\left( \frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})} \right)^\alpha = \frac{\left(x_1-x_{1p}\right)^{\alpha_1} \cdots \left(x_d-x_{dp}\right)^{\alpha_d}}{{\epsilon({\mathbf x})}^{|\alpha|}}.
  * \end{align}
+ * \f$
  * 
  * To keep the number of neighbors of each point bounded by a constant (for computational efficiency), we require
- * the scaling parameter $\epsilon({\mathbf x})$ to converge at the same rate as the average spacing
- * between points $h({\mathbf x})$, that is:
+ * the scaling parameter \f$\epsilon({\mathbf x})\f$ to converge at the same rate as the average spacing
+ * between points \f$h({\mathbf x})\f$, that is:<br>
+ *
+ * \f$
  * \begin{align}
  * \frac{h({\mathbf x})}{\epsilon({\mathbf x})} \sim \mathcal{O}(1).
  * \label{eq:14}
  * \end{align}
+ * \f$
  * 
- * From scaling relation and definition of $h({\mathbf x})$, we find that the moments ${\mathbf Z}^\alpha$ are $\mathcal{O}(1)$ as $h({\mathbf x}) \rightarrow 0$ and $\epsilon({\mathbf x}) \rightarrow 0$, also the $ {\mathbf W} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right)$ term is $\mathcal{O}(1)$ through normalization of the function argument. 
+ * From scaling relation and definition of \f$h({\mathbf x})\f$, we find that the moments \f${\mathbf Z}^\alpha\f$ are \f$\mathcal{O}(1)\f$ as \f$h({\mathbf x}) \rightarrow 0\f$ and \f$\epsilon({\mathbf x}) \rightarrow 0\f$, also the \f$ {\mathbf W} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right)\f$ term is \f$\mathcal{O}(1)\f$ through normalization of the function argument. 
  * 
- * The scaling behavior of Eq.~\ref{eq:12} is determined solely by the ${\epsilon({\mathbf x})}^{|\alpha|-|\beta|}$ term of the smallest power
- * with non-zero coefficient. Eq.~\ref{eq:14} is a much looser constraint on the average spacing between points when compared with the overlap condition in the other methods. It is no need to have the $\frac{h}{\epsilon}<1$, and it can be bounded by any other constant, also any number $>1$. The convergence rate $r$ of the DC-PSE operator $Q^\beta$ is determined by the coefficients of the terms ${\epsilon({\mathbf x})}^{|\alpha|-|\beta|}$ in Eq.~\ref{eq:12}. The coefficients are required to be $1$ when $\alpha = \beta$, and $0$ when $|\alpha|-|\beta| < r$. This setting results in the following set of conditions for the moments,
+ * The scaling behavior of Eq.~\ref{eq:12} is determined solely by the \f${\epsilon({\mathbf x})}^{|\alpha|-|\beta|}\f$ term of the smallest power
+ * with non-zero coefficient. Eq.~\ref{eq:14} is a much looser constraint on the average spacing between points when compared with the overlap condition in the other methods. It is no need to have the \f$\frac{h}{\epsilon}<1\f$, and it can be bounded by any other constant, also any number \f$>1\f$. The convergence rate \f$r\f$ of the DC-PSE operator \f$Q^\beta\f$ is determined by the coefficients of the terms \f${\epsilon({\mathbf x})}^{|\alpha|-|\beta|}\f$ in Eq.~\ref{eq:12}. The coefficients are required to be \f$1\f$ when \f$\alpha = \beta\f$, and \f$0\f$ when \f$|\alpha|-|\beta| < r\f$. This setting results in the following set of conditions for the moments,
  * 
+ * \f$
  * \begin{align}
  * {\mathbf Z}^\alpha({\mathbf x})=
  * \left\{
@@ -202,7 +252,7 @@ namespace umuq {
  * \right.
  * \label{eq:15}
  * \end{align}
- * where $\alpha_{\min}$ is
+ * where \f$\alpha_{\min}\f$ is
  * \begin{align}
  * \alpha_{\min}=
  * \left\{
@@ -213,10 +263,14 @@ namespace umuq {
  * \right.
  * \label{eq:16}
  * \end{align}
+ * \f$
+ *
  * Which is due to the zeroth moment
- * ${\mathbf Z}^0$ canceling out for odd $|\beta|$. The factor $ {\epsilon({\mathbf x})}^{-|\beta|}$ in Eq.~\ref{eq:12} simplifies the expression of the moment conditions.
+ * \f${\mathbf Z}^0\f$ canceling out for odd \f$|\beta|\f$. The factor \f$ {\epsilon({\mathbf x})}^{-|\beta|}\f$ in Eq.~\ref{eq:12} simplifies the expression of the moment conditions.
  * 
- * For the kernel function ${\mathbf W}({\mathbf x})$ to be able to satisfy the conditions in Eq.~\ref{eq:15} for arbitrary points distributions, the operator must have $l$ degrees of freedom. This leads to the requirement that the support of the kernel function has to include at least $l$ neighboring points. One can explore general kernel choices, but it is common to use kernel functions of the form:
+ * For the kernel function \f${\mathbf W}({\mathbf x})\f$ to be able to satisfy the conditions in Eq.~\ref{eq:15} for arbitrary points distributions, the operator must have \f$l\f$ degrees of freedom. This leads to the requirement that the support of the kernel function has to include at least \f$l\f$ neighboring points. One can explore general kernel choices, but it is common to use kernel functions of the form:
+ * 
+ * \f$
  * \begin{align}
  * \label{eq:17}
  * &{\mathbf W}({\mathbf x})=\left\{
@@ -227,24 +281,34 @@ namespace umuq {
  * \right.\\
  * \nonumber &{\mathbf x}^\alpha=x_1^{\alpha_1} x_2^{\alpha_2} \cdots x_d^{\alpha_d}
  * \end{align}
+ * \f$
  * 
- * This is a monomial basis multiplied by an exponential window function, in the kernel support and the $a_\alpha$ are scalars to be determined to satisfy the
+ * This is a monomial basis multiplied by an exponential window function, in the kernel support and the \f$a_\alpha\f$ are scalars to be determined to satisfy the
  * moment conditions in Eq.~\ref{eq:15}. 
- * The kernel support should be set to include at least $l$ points. If $\alpha_{\min}=1$, the $a_0$ coefficient is a free parameter and can be used to increase the numerical robustness of solving the linear system of equations for the remaining $a_\alpha$. The kernels are determined numerically at runtime. This means that the coefficients $a_\alpha$ are found by solving a linear system of equations resulting from the moment conditions. With the above choice of kernel function we have,
+ * The kernel support should be set to include at least \f$l\f$ points. If \f$\alpha_{\min}=1\f$, the \f$a_0\f$ coefficient is a free parameter and can be used to increase the numerical robustness of solving the linear system of equations for the remaining \f$a_\alpha\f$. The kernels are determined numerically at runtime. This means that the coefficients \f$a_\alpha\f$ are found by solving a linear system of equations resulting from the moment conditions. With the above choice of kernel function we have,
+ * 
+ * \f$
  * \begin{align}
  * Q^\beta f({\mathbf x})=\frac{1}{{\epsilon({\mathbf x})}^{|\beta|}} \sum_{p} (f({\mathbf x}_p) \pm f({\mathbf x})) {\mathbf P} \left(\frac{{\mathbf x}-{\mathbf x}_p}{{\epsilon({\mathbf x})}} \right) {\mathbf a}^T({\mathbf x}) {\exp}^{\frac{-|{\mathbf x}-{\mathbf x}_p|^2}{\epsilon^2({\mathbf x})}},
  * \label{eq:18}
  * \end{align}
- * where ${\mathbf P}({\mathbf x})=\left\{P_1({\mathbf x}), P_2({\mathbf x}), \cdots, P_l({\mathbf x}) \right\}$ is the vector of monomial basis and ${\mathbf a}^T({\mathbf x})$ is the column vector of their coefficients.
+ * \f$
+ *
+ * where \f${\mathbf P}({\mathbf x})=\left\{P_1({\mathbf x}), P_2({\mathbf x}), \cdots, P_l({\mathbf x}) \right\}\f$ is the vector of monomial basis and \f${\mathbf a}^T({\mathbf x})\f$ is the column vector of their coefficients.
  * 
- * For example, $d=3$ and $\beta=(1,0,0)$ is the first-order derivative $\frac{\partial}{\partial x}$. Setting $r=2$, results in $l=\left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} = \left(\begin{matrix} r + d \\ d \end{matrix}\right) =   \frac{(r+d)!}{r!d!}=10$ moment conditions (since, $|\beta|=1 \rightarrow \alpha_{\min}=0$).
- * The monomial basis is ${\mathbf P}(x,y,z)=\left\{1,x,y,z,x^2,xy,xz,y^2,yz,z^2\right\}$. The linear system for the kernel coefficients then is:
+ * For example, \f$d=3\f$ and \f$\beta=(1,0,0)\f$ is the first-order derivative \f$\frac{\partial}{\partial x}\f$. Setting \f$r=2\f$, results in \f$l=\left(\begin{matrix} |\beta| + r + d -1 \\ d \end{matrix}\right) - \alpha_{\min} = \left(\begin{matrix} r + d \\ d \end{matrix}\right) =   \frac{(r+d)!}{r!d!}=10\f$ moment conditions (since, \f$|\beta|=1 \rightarrow \alpha_{\min}=0\f$).
+ * The monomial basis is \f${\mathbf P}(x,y,z)=\left\{1,x,y,z,x^2,xy,xz,y^2,yz,z^2\right\}\f$. The linear system for the kernel coefficients then is:
  * 
+ * \f$
  * \begin{align}
  * {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b},	
  * \label{eq:19}
  * \end{align}
+ * \f$
+ *
  * where
+ *
+ * \f$
  * \begin{align}
  * \begin{matrix}
  * {\mathbf A} ({\mathbf x}) = {\mathbf B}^T ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l}\\
@@ -253,11 +317,14 @@ namespace umuq {
  * \end{matrix}
  * \label{eq:20}
  * \end{align}
+ * \f$
  * 
- * The scalar number $k \ge l$ is the number of points in the neighborhood of the operator, $l$ is the number of moment conditions to be satisfied, and ${\mathbf V}({\mathbf x})$ is the Vandermonde matrix constructed from the monomial basis ${\mathbf P}({\mathbf x})$. 
- * ${\mathbf E}({\mathbf x})$ is a diagonal matrix containing the square roots of the values of the exponential window function at the neighboring points in the operator support. 
- * For point ${\mathbf x}$ we define $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\}$, as the set of vectors pointing from all points ${\mathbf x}_p$ within the neighbourhood of ${\mathbf x}$ to ${\mathbf x}$. 
- * It results to:
+ * The scalar number \f$k \ge l\f$ is the number of points in the neighborhood of the operator, \f$l\f$ is the number of moment conditions to be satisfied, and \f${\mathbf V}({\mathbf x})\f$ is the Vandermonde matrix constructed from the monomial basis \f${\mathbf P}({\mathbf x})\f$. 
+ * \f${\mathbf E}({\mathbf x})\f$ is a diagonal matrix containing the square roots of the values of the exponential window function at the neighboring points in the operator support. 
+ * For point \f${\mathbf x}\f$ we define \f$\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\}\f$, as the set of vectors pointing from all points \f${\mathbf x}_p\f$ within the neighbourhood of \f${\mathbf x}\f$ to \f${\mathbf x}\f$. 
+ * It results to:<br>
+ *
+ * \f$
  * \begin{align}
  * {\mathbf V}({\mathbf x})=\left( 
  * \begin{matrix}
@@ -269,6 +336,9 @@ namespace umuq {
  * \right) \in \mathbb{R}^{k\times l}
  * \label{eq:21}
  * \end{align}
+ * \f$
+ *
+ * \f$
  * \begin{align}
  * {\mathbf E}({\mathbf x})=\left(
  * \begin{matrix}
@@ -280,22 +350,29 @@ namespace umuq {
  * \right) \in \mathbb{R}^{k\times k}
  * \label{eq:22}
  * \end{align}
+ * \f$
  * 
- * Once the matrix ${\mathbf A}({\mathbf x})$ is constructed at each point ${\mathbf x}$, the linear systems can be solved for the coefficients ${\mathbf a}({\mathbf x})$ used in the DC-PSE operators at each point as in Eq.~\ref{eq:18}. The matrix ${\mathbf A}({\mathbf x})$ only depends on the number of moment conditions $l$ and the local distribution of points in the vicinity of ${\mathbf x}$. It contains information about the spatial distribution of the points around the center point ${\mathbf x}$. The invertibility of ${\mathbf A}$ depends entirely on that of the
- * Vandermonde matrix ${\mathbf V}$, due to ${\mathbf E}$ being a diagonal matrix with non-zero entries. The condition number of ${\mathbf A}$ depends on both ${\mathbf V}$ and ${\mathbf E}$ and determines the robustness of the numerical inversion.
+ * Once the matrix \f${\mathbf A}({\mathbf x})\f$ is constructed at each point \f${\mathbf x}\f$, the linear systems can be solved for the coefficients \f${\mathbf a}({\mathbf x})\f$ used in the DC-PSE operators at each point as in Eq.~\ref{eq:18}. The matrix \f${\mathbf A}({\mathbf x})\f$ only depends on the number of moment conditions \f$l\f$ and the local distribution of points in the vicinity of \f${\mathbf x}\f$. It contains information about the spatial distribution of the points around the center point \f${\mathbf x}\f$. The invertibility of \f${\mathbf A}\f$ depends entirely on that of the
+ * Vandermonde matrix \f${\mathbf V}\f$, due to \f${\mathbf E}\f$ being a diagonal matrix with non-zero entries. The condition number of \f${\mathbf A}\f$ depends on both \f${\mathbf V}\f$ and \f${\mathbf E}\f$ and determines the robustness of the numerical inversion.
  * 
- * For approximating the function $f$ at arbitrary locations between points, we use the same left-hand side as the one for the derivative approximations. It requires the zeroth-order moment of the kernels to vanish, and this is possible since the zeroth-order moment is a free parameter that can be used to tune the stability properties of the operators. This setting makes DC-PSE analog of derivative-reproducing kernel (DRK) Galerkin collocation methods, which are conceptually related to moving least-squares (MLS) schemes. 
- * For constructing the interpolation scheme we choose $\alpha=0$ in Eq.~\ref{eq:19}, which yields operators that approximate the function itself at any point ${\mathbf x}$ given the function values at $f_p$ at scattered neighboring points ${\mathbf x}_p$. But interpolating from a set of irregularly distributed points requires the kernel to satisfy the Kronecker delta property at points; otherwise, the interpolated field $f$ is a smoothed version of the original one. Not having the Kronecker delta property may lead to undesired interpolation errors.
+ * For approximating the function \f$f\f$ at arbitrary locations between points, we use the same left-hand side as the one for the derivative approximations. It requires the zeroth-order moment of the kernels to vanish, and this is possible since the zeroth-order moment is a free parameter that can be used to tune the stability properties of the operators. This setting makes DC-PSE analog of derivative-reproducing kernel (DRK) Galerkin collocation methods, which are conceptually related to moving least-squares (MLS) schemes. 
+ * For constructing the interpolation scheme we choose \f$\alpha=0\f$ in Eq.~\ref{eq:19}, which yields operators that approximate the function itself at any point \f${\mathbf x}\f$ given the function values at \f$f_p\f$ at scattered neighboring points \f${\mathbf x}_p\f$. But interpolating from a set of irregularly distributed points requires the kernel to satisfy the Kronecker delta property at points; otherwise, the interpolated field \f$f\f$ is a smoothed version of the original one. Not having the Kronecker delta property may lead to undesired interpolation errors.
  * 
  * Following Chen et al. %~\cite{chen2003}, 
  * interpolating kernels are obtained by expressing it as the sum of the non-interpolating kernel and a correction function. Thus, the non-interpolating kernels are obtained by solving Eq.~\ref{eq:19} with right hand side of:
+ * 
+ * \f$
  * \begin{align}
  * {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right), 
  * \label{eq:23}
  * \end{align}
- * where ${\mathbf C}$ is a smooth correction function that satisfies ${\mathbf C} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq}$, where $\delta$ is the Kronecker delta. This setting ensures that the approximation is consistent, and interpolating. 
- * A simple choice for the correction function ${\mathbf C}$ is a smooth function of finite support in the unit ball. Following Wang et al. %~\cite{wang2010},
- * we choose ${\mathbf C}$ to be the quartic spline: 
+ * \f$
+ *
+ * where \f${\mathbf C}\f$ is a smooth correction function that satisfies \f${\mathbf C} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq}\f$, where \f$\delta\f$ is the Kronecker delta. This setting ensures that the approximation is consistent, and interpolating. 
+ * A simple choice for the correction function \f${\mathbf C}\f$ is a smooth function of finite support in the unit ball. Following Wang et al. %~\cite{wang2010},
+ * we choose \f${\mathbf C}\f$ to be the quartic spline: <br>
+ *
+ * \f$
  * \begin{align}
  * {\mathbf C}(s)=\left\{
  * \begin{matrix}
@@ -305,12 +382,16 @@ namespace umuq {
  * \right.
  * \label{eq:24}
  * \end{align}
- * and choose $c({\mathbf x})$ such that it is smaller than the distance between the point and its nearest neighbors.
+ * \f$
+ *
+ * and choose \f$c({\mathbf x})\f$ such that it is smaller than the distance between the point and its nearest neighbors.
  * 
+ * \f$
  * \begin{align}
  * c({\mathbf x}) < {\min}_p |{\mathbf x} - {\mathbf x}_p|.
  * \label{eq:25}
  * \end{align}
+ * \f$
  */
 
 } // namespace umuq
