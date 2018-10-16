@@ -718,12 +718,22 @@ MahalanobisNearestNeighbor<T>::MahalanobisNearestNeighbor(int const ndataPoints,
                                                                                                                          covariance(EMatrixX<T>::Identity(nDim, nDim)),
                                                                                                                          matrixL(EMatrixX<T>::Identity(nDim, nDim))
 {
+    if (!(unrolledIncrement == 0 || unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
+    {
+        UMUQFAIL("The unrolled increment value of unrolledIncrement is not correctly set!");
+    }
 }
 
 template <typename T>
 MahalanobisNearestNeighbor<T>::MahalanobisNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighbor<T, flann::L2<T>>(ndataPoints, nqueryPoints, nDim, kNeighbors),
                                                                                                                                                  covariance(EMatrixX<T>::Identity(nDim, nDim)),
-                                                                                                                                                 matrixL(EMatrixX<T>::Identity(nDim, nDim)) {}
+                                                                                                                                                 matrixL(EMatrixX<T>::Identity(nDim, nDim))
+{
+    if (!(unrolledIncrement == 0 || unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
+    {
+        UMUQFAIL("The unrolled increment value of unrolledIncrement is not correctly set!");
+    }
+}
 
 template <typename T>
 MahalanobisNearestNeighbor<T>::MahalanobisNearestNeighbor(MahalanobisNearestNeighbor<T> &&other) : kNearestNeighbor<T, flann::L2<T>>(std::move(other))
