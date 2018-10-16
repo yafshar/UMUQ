@@ -11,22 +11,20 @@ namespace umuq
 /*! \enum priorTypes
  * \ingroup Inference_Module
  * 
- * \brief Prior distribution types
+ * \brief Prior distribution types currently supported in %UMUQ
  * 
- * Currently we have these types:
- * 
- * - \b UNIFORM \sa umuq::density::uniformDistribution
- * - \b GAUSSIAN \sa umuq::density::gaussianDistribution
- * - \b EXPONENTIAL \sa umuq::density::exponentialDistribution
- * - \b GAMMA \sa umuq::density::gammaDistribution
- * - \b COMPOSITE
  */
 enum priorTypes
 {
+    /*! \link umuq::density::uniformDistribution UNIFORM \endlink */
     UNIFORM = 0, 
+    /*! \link umuq::density::gaussianDistribution GAUSSIAN \endlink */
     GAUSSIAN = 1,
+    /*! \link umuq::density::exponentialDistribution EXPONENTIAL \endlink */
     EXPONENTIAL = 2,
+    /*! \link umuq::density::gammaDistribution GAMMA \endlink */
     GAMMA = 3,
+    /*! COMPOSITE  */
     COMPOSITE = 4
 };
 
