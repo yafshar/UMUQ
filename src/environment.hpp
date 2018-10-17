@@ -236,8 +236,7 @@ class UMUQEventListener : public ::testing::EmptyTestEventListener
 			::testing::TestPartResult const test_part_result = result_vector.at(i);
 			if (test_part_result.failed())
 			{
-				std::string UMUQ_message = "Error: " + std::string(test_part_result.file_name()) + ":" + std::to_string(test_part_result.line_number());
-				UMUQFAIL(UMUQ_message);
+				UMUQFAIL(test_part_result.file_name(), ":", test_part_result.line_number());
 			}
 		}
 		result_vector.clear();
