@@ -11,7 +11,7 @@ namespace umuq
 {
 
 /*! \defgroup Numerics_Module Numerics module
- * This is the numerics module of UMUQ providing all necessary classes of numerical computation.
+ * This is the numerics module of %UMUQ providing all necessary classes of numerical computation.
  */
 
 /*! 
@@ -495,6 +495,9 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
 
     std::vector<int> IndexId(dcMonomialSize);
 
+    // Number of points with singular Vandermonde matrix
+    int nPointsWithSingularVandermondeMatrix(0);
+
     // Loop over all points
     for (int i = 0; i < nPoints; i++)
     {
@@ -594,7 +597,8 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
 
         if (dcrank < dcMonomialSize)
         {
-            UMUQWARNING("There are some singularities! we use a least-squares solution!");
+            // We have a singular Vandermonde matrix
+            nPointsWithSingularVandermondeMatrix++;
 
             // If necessary, remove redundant equations/coefficients
 
@@ -826,6 +830,11 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
 
     delete[] column;
 
+    if (nPointsWithSingularVandermondeMatrix > 0)
+    {
+        UMUQWARNING("There are ", std::to_string(nPointsWithSingularVandermondeMatrix), " query points with singular Vandermonde matrix! (a least-squares solution is used!)");
+    }
+
     return true;
 }
 
@@ -1006,6 +1015,9 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
 
     std::vector<int> IndexId(dcMonomialSize);
 
+    // Number of points with singular Vandermonde matrix
+    int nPointsWithSingularVandermondeMatrix(0);
+
     // Loop over all query points
     for (int i = 0; i < nqPoints; i++)
     {
@@ -1099,7 +1111,8 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
 
         if (dcrank < dcMonomialSize)
         {
-            UMUQWARNING("There are some singularities! we use a least-squares solution!");
+            // We have a singular Vandermonde matrix
+            nPointsWithSingularVandermondeMatrix++;
 
             // if necessary, remove redundant equations/coefficients
 
@@ -1332,6 +1345,11 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
 
     delete[] column;
 
+    if (nPointsWithSingularVandermondeMatrix > 0)
+    {
+        UMUQWARNING("There are ", std::to_string(nPointsWithSingularVandermondeMatrix), " query points with singular Vandermonde matrix! (a least-squares solution is used!)");
+    }
+
     return true;
 }
 
@@ -1467,6 +1485,9 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     // Array to kepp indexing
     std::vector<int> IndexId(dcMonomialSize);
 
+    // Number of points with singular Vandermonde matrix
+    int nPointsWithSingularVandermondeMatrix(0);
+
     // Loop over all query points
     for (int i = 0; i < nPoints; i++)
     {
@@ -1567,7 +1588,8 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
 
         if (dcrank < dcMonomialSize)
         {
-            UMUQWARNING("There are some singularities! we use a least-squares solution!");
+            // We have a singular Vandermonde matrix
+            nPointsWithSingularVandermondeMatrix++;
 
             // if necessary, remove redundant equations/coefficients
 
@@ -1804,6 +1826,11 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
 
     delete[] column;
 
+    if (nPointsWithSingularVandermondeMatrix > 0)
+    {
+        UMUQWARNING("There are ", std::to_string(nPointsWithSingularVandermondeMatrix), " query points with singular Vandermonde matrix! (a least-squares solution is used!)");
+    }
+
     return true;
 }
 
@@ -1965,6 +1992,9 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     // Primitive (quartic spline) object
     quartic_spline<T> q;
 
+    // Number of points with singular Vandermonde matrix
+    int nPointsWithSingularVandermondeMatrix(0);
+
     // Loop over all query points
     for (int i = 0; i < nqPoints; i++)
     {
@@ -2095,7 +2125,8 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
 
         if (dcrank < dcMonomialSize)
         {
-            UMUQWARNING("There are some singularities! we use a least-squares solution!");
+            // We have a singular Vandermonde matrix
+            nPointsWithSingularVandermondeMatrix++;
 
             // if necessary, remove redundant equations/coefficients
 
@@ -2393,6 +2424,11 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     delete[] column;
     delete[] idataminDist;
 
+    if (nPointsWithSingularVandermondeMatrix > 0)
+    {
+        UMUQWARNING("There are ", std::to_string(nPointsWithSingularVandermondeMatrix), " query points with singular Vandermonde matrix! (a least-squares solution is used!)");
+    }
+
     return true;
 }
 
@@ -2463,16 +2499,16 @@ bool dcpse<T, Distance>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue,
 
         T sum(0);
 
-        std::cout << "For point i=" << i << " dcKernel=";
+        // std::cout << "For point i=" << i << " dcKernel=";
         // Loop through the neighbors
         for (int j = 0; j < dcMonomialSize; j++, IdI++)
         {
             int const IdJ = NearestNeighbors[j];
             sum += dcKernel[IdI] * iFvalue[IdJ];
 
-            std::cout << dcKernel[IdI] << " ";
+            // std::cout << dcKernel[IdI] << " ";
         }
-        std::cout << "Fvalue=" << sum << " h_average=" << h_average[i] << std::endl;
+        // std::cout << "Fvalue=" << sum << " h_average=" << h_average[i] << std::endl;
         qFvalue[i] = sum;
     }
 
