@@ -157,12 +157,12 @@ polynomial<T>::polynomial(int const dim, int const ord) : nDim(dim), Order(ord)
 {
     if (nDim <= 0)
     {
-        UMUQFAIL("Can not have dimension <= 0!");
+        UMUQFAIL("Can not have dimension ", nDim, " <= 0!");
     }
 
     if (Order < 0)
     {
-        UMUQFAIL("Maximum accuracy order < 0!");
+        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
     }
 
     monomialSize = binomialCoefficient(nDim + Order, Order);
@@ -178,19 +178,19 @@ void polynomial<T>::reset(int const dim, int const ord)
     nDim = dim;
     if (nDim <= 0)
     {
-        UMUQFAIL("Can not have dimension <= 0!");
+        UMUQFAIL("Can not have dimension ", nDim, " <= 0!");
     }
 
     Order = ord;
     if (Order < 0)
     {
-        UMUQFAIL("Maximum accuracy order < 0!");
+        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
     }
 
     monomialSize = binomialCoefficient(nDim + Order, Order);
     if (monomialSize == 0)
     {
-        UMUQFAIL("Monomial size of zero degree is requested!");
+        UMUQFAIL("The requested monomial size of zero is wrong!");
     }
 
     alpha.reset(nullptr);
@@ -201,7 +201,7 @@ int polynomial<T>::binomialCoefficient(int const n, int const k)
 {
     if ((k < 0) || (n < 0))
     {
-        UMUQFAIL("Fatal error! k or n < 0!");
+        UMUQFAIL("Fatal error! k=", k, " or n=", n, " < 0!");
     }
     if (k < n)
     {
@@ -229,7 +229,7 @@ int polynomial<T>::binomialCoefficient(int const n, int const k)
         return 1;
     }
 
-    UMUQWARNING("The binomial coefficient is undefined for k > n!");
+    UMUQWARNING("The binomial coefficient is undefined for k=", k, " > n=", n, " !");
     return 0;
 }
 

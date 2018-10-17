@@ -701,11 +701,11 @@ simplexNM2Rnd<T>::submatrix::submatrix(int NR, int NC_, int k1_, int k2_, int n1
 {
     if (k1_ > NR || k2_ > NC_ || n1_ > NR || n2_ > NC_)
     {
-        std::cerr << "submatrix of size " << n1_ << " " << n2_ << std::endl;
-        std::cerr << "from matrix of size " << NR << " " << NC_ << std::endl;
-        std::cerr << "start index of " << k1_ << " " << k2_ << std::endl;
+        std::cerr << "Submatrix of size   : " << n1_ << " x " << n2_ << std::endl;
+        std::cerr << "From matrix of size : " << NR << " x " << NC_ << std::endl;
+        std::cerr << "Start index of      : " << k1_ << ", " << k2_ << std::endl;
         std::cerr << "  " << std::endl;
-        UMUQFAIL("Input data overrun the ends of the original matrix!");
+        UMUQFAIL("Input data overruns the end of the original matrix!");
     }
     NC = NC_;
     k1 = k1_;

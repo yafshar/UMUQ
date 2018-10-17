@@ -121,7 +121,7 @@ exponentialDistribution<T>::exponentialDistribution() : d(T{1})
 }
 
 template <typename T>
-exponentialDistribution<T>::exponentialDistribution(T const mu) : d(1./mu)
+exponentialDistribution<T>::exponentialDistribution(T const mu) : d(1. / mu)
 {
     if (!PRNG_initialized)
     {
@@ -129,7 +129,7 @@ exponentialDistribution<T>::exponentialDistribution(T const mu) : d(1./mu)
     }
     if (mu <= 0)
     {
-        UMUQFAIL("It requires that mu > 0.!");
+        UMUQFAIL("It requires that ", mu, "> 0.!");
     }
 }
 
