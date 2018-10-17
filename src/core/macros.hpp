@@ -4,13 +4,12 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Given a version number MAJOR.MINOR.PATCH, increment the:
- * 
+ * \brief Given a version number MAJOR.MINOR.PATCH, increment the:<br>
  * - \b MAJOR version when you make incompatible changes,
  * - \b MINOR version when you add functionality in a backwards-compatible manner, and
  * - \b PATCH version when you make backwards-compatible bug fixes. 
  * 
- * Ref:
+ * Reference:<br>
  * https://semver.org
  */
 #define UMUQ_MAJOR_VERSION 1
@@ -21,8 +20,9 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- * UMUQ_OS_UNIX set to 1 if the OS is a unix variant
+ * \brief Operating system identification, \c UMUQ_OS_*
+ * 
+ * \c UMUQ_OS_UNIX set to 1 if the OS is a unix variant
  */
 #if defined(__unix__) || defined(__unix)
 #define UMUQ_OS_UNIX 1
@@ -33,8 +33,9 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- * UMUQ_OS_LINUX set to 1 if the OS is based on Linux kernel
+ * \brief Operating system identification, \c UMUQ_OS_*
+ * 
+ * \c UMUQ_OS_LINUX set to 1 if the OS is based on Linux kernel
  */
 #if defined(__linux__)
 #define UMUQ_OS_LINUX 1
@@ -45,11 +46,10 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- * UMUQ_OS_ANDROID set to 1 if the OS is Android
+ * \brief Operating system identification, \c UMUQ_OS_*
  * 
- * \note
- * - ANDROID is defined when using ndk_build, __ANDROID__ is defined when using a standalone toolchain.
+ * \c UMUQ_OS_ANDROID set to 1 if the OS is Android
+ * 
  */
 #if defined(__ANDROID__) || defined(ANDROID)
 #define UMUQ_OS_ANDROID 1
@@ -60,8 +60,9 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- *  UMUQ_OS_GNULINUX set to 1 if the OS is GNU Linux and not Linux-based OS (e.g., not android)
+ * \brief Operating system identification, \c UMUQ_OS_*
+ * 
+ * \c UMUQ_OS_GNULINUX set to 1 if the OS is GNU Linux and not Linux-based OS (e.g., not android)
  */
 #if defined(__gnu_linux__) && !(UMUQ_OS_ANDROID)
 #define UMUQ_OS_GNULINUX 1
@@ -72,8 +73,9 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- *  UMUQ_OS_BSD set to 1 if the OS is a BSD variant
+ * \brief Operating system identification, \c UMUQ_OS_*
+ * 
+ * \c UMUQ_OS_BSD set to 1 if the OS is a BSD variant
  */
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__)
 #define UMUQ_OS_BSD 1
@@ -84,8 +86,9 @@
 /*!
  * \ingroup Core_Module
  * 
- * \brief Operating system identification, UMUQ_OS_*
- *  UMUQ_OS_MAC set to 1 if the OS is MacOS
+ * \brief Operating system identification, \c UMUQ_OS_*
+ * 
+ * \c UMUQ_OS_MAC set to 1 if the OS is MacOS
  */
 #if defined(__APPLE__)
 #define UMUQ_OS_MAC 1
@@ -96,8 +99,8 @@
 /*!
  * \ingroup Core_Module
  * 
- * A Clang feature extension to determine compiler features.
- *  We use it to determine 'cxx_rvalue_references'
+ * A Clang feature extension to determine compiler features.<br>
+ * We use it to determine 'cxx_rvalue_references'
  */
 #ifndef __has_feature
 #define __has_feature(x) 0
@@ -106,10 +109,10 @@
 /*! 
  * \ingroup Core_Module
  * 
- * Allows to disable some optimizations which might affect the accuracy of the result.
- * Such optimization are enabled by default, and set UMUQ_FAST_MATH to 0 to disable them.
- * They currently include:
- *  - single precision sin() and cos() for SSE and AVX vectorization.
+ * Allows to disable some optimizations which might affect the accuracy of the result.<br>
+ * Such optimization are enabled by default, and set UMUQ_FAST_MATH to 0 to disable them.<br>
+ * They currently include:<br>
+ * - single precision \c sin() and \c cos() for SSE and AVX vectorization.
  */
 #ifndef UMUQ_FAST_MATH
 #define UMUQ_FAST_MATH 1
@@ -126,7 +129,27 @@
  * Concatenate two tokens
  */
 #define UMUQ_CAT2(a, b) a##b
-#define UMUQ_CAT(a, b) UMUQ_CAT2(a, b)
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * Concatenate three tokens
+ */
+#define UMUQ_CAT3(a, b, c) a##b##c
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * Concatenate four tokens
+ */
+#define UMUQ_CAT4(a, b, c, d) a##b##c##d
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * Concatenate five tokens
+ */
+#define UMUQ_CAT5(a, b, c, d, e) a##b##c##d##e
 
 /*! 
  * \ingroup Core_Module
@@ -134,7 +157,33 @@
  * Convert a token to a string
  */
 #define UMUQ_MAKESTRING2(a) #a
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * Convert a token to a string
+ */
 #define UMUQ_MAKESTRING(a) UMUQ_MAKESTRING2(a)
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * \brief A macro to select the appropriate override.
+ * 
+ * A macro that uses the [paired, sliding arg list](https://gist.github.com/dhh1128/0cf088f4f681f619b051) technique to select the appropriate override.
+ */
+#define UMUQ_OVERRIDE(_1, _2, _3, _4, _5, NAME, ...) NAME
+
+/*! 
+ * \ingroup Core_Module
+ * 
+ * \brief A macro that concatenates strings
+ * 
+ * It is macro that concatenates either 5, 4, 3 or 2 strings together.
+ */
+#define UMUQ_CAT(...)                                                      \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQ_CAT5, UMUQ_CAT4, UMUQ_CAT3, UMUQ_CAT2) \
+    (__VA_ARGS__)
 
 /*! 
  * \ingroup Core_Module
@@ -192,7 +241,6 @@ bool copy_bool(bool b) { return b; }
 
 } //namespace umuq
 
-
 /*!
  * \ingroup Core_Module
  * 
@@ -207,7 +255,13 @@ bool copy_bool(bool b) { return b; }
     } while (false)
 #endif
 
-// UMUQ_assert can be overridden
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Assertion macro
+ * 
+ * \c UMUQ_assert can be overridden
+ */
 #ifndef UMUQ_assert
 #define UMUQ_assert(x) UMUQ_plain_assert(x)
 #endif
@@ -217,7 +271,7 @@ namespace umuq
 {
 
 namespace internal
-{ 
+{
 /*!
  * \ingroup Core_Module
  * 
@@ -319,111 +373,232 @@ std::string MPIErrorMessage(int const errorCode)
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the failing message and terminates the execution environment
+ * \brief Helper macro for printing one error message 
  * 
+ * \warning
+ * - This is not a stand alone macro to use! 
+ * - Use \c UMUQFAIL \sa UMUQFAIL
  */
-#define UMUQFAIL(msg)                                                                                                                   \
-    std::ostringstream ssf;                                                                                                             \
-    ssf << msg;                                                                                                                         \
-    std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssf.str())); \
-    std::cerr << _Messagef_;                                                                                                            \
-    UMUQABORT(ssf)
+#define UMUQFAIL_1MSG(msg1)                                                                                                                \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1;                                                                                                                        \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the failing message and return back as false
+ * \brief Helper macro for printing two combined error messages 
  * 
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQFAIL \sa UMUQFAIL
  */
-#define UMUQFAILRETURN(msg)                                                                                                               \
-    std::ostringstream ssfr;                                                                                                              \
-    ssfr << msg;                                                                                                                          \
-    std::string _Messagefr_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfr.str())); \
-    std::cerr << _Messagefr_;                                                                                                             \
-    return false;
+#define UMUQFAIL_2MSG(msg1, msg2)                                                                                                          \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1 << msg2;                                                                                                                \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the failing message and return back as nullptr
+ * \brief Helper macro for printing three combined error messages 
  * 
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQFAIL \sa UMUQFAIL
  */
-#define UMUQFAILRETURNNULL(msg)                                                                                                             \
-    std::ostringstream ssfrn;                                                                                                               \
-    ssfrn << msg;                                                                                                                           \
-    std::string _Messagefrn_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfrn.str())); \
-    std::cerr << _Messagefrn_;                                                                                                              \
-    return nullptr;
+#define UMUQFAIL_3MSG(msg1, msg2, msg3)                                                                                                    \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1 << msg2 << msg3;                                                                                                        \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the failing message and return back the failing message string
+ * \brief Helper macro for printing four combined error messages 
  * 
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQFAIL \sa UMUQFAIL
  */
-#define UMUQFAILRETURNSTRING(msg)                                                                                                        \
-    std::ostringstream ssfrs;                                                                                                            \
-    ssfrs << msg;                                                                                                                        \
-    std::string _Message_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ssfrs.str())); \
-    std::cerr << _Message_;                                                                                                              \
-    return ssfrs.str();
+#define UMUQFAIL_4MSG(msg1, msg2, msg3, msg4)                                                                                              \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1 << msg2 << msg3 << msg4;                                                                                                \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the failing message with the index number and terminates the execution environment
+ * \brief Helper macro for printing five combined error messages 
  * 
+ * \warning
+ * - This is not a stand alone macro to use! 
+ * - Use \c UMUQFAIL \sa UMUQFAIL
  */
-#define UMUQFAILS(msg, index)                                                                                                                       \
-    std::ostringstream ss##index;                                                                                                                   \
-    ss##index << msg;                                                                                                                               \
-    std::string _Message_##index(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss##index.str())); \
-    std::cerr << _Message_##index;                                                                                                                  \
-    UMUQABORT(ss##index)
+#define UMUQFAIL_5MSG(msg1, msg2, msg3, msg4, msg5)                                                                                        \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5;                                                                                        \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the warning message
+ * \brief Helper macro for printing one warning message 
  * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
  */
-#define UMUQWARNING(msg)                                                                                                                  \
-    std::ostringstream ssw;                                                                                                               \
-    ssw << msg;                                                                                                                           \
-    std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ssw.str())); \
-    std::cerr << _Messagew_;
+#define UMUQWARNING_1MSG(msg1)                                                                                                               \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1;                                                                                                                          \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
+    }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints the warning message with the index number 
+ * \brief Helper macro for printing two combined warning messages 
  * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
  */
-#define UMUQWARNINGS(msg, index)                                                                                                                       \
-    std::ostringstream ssw##index;                                                                                                                     \
-    ssw##index << msg;                                                                                                                                 \
-    std::string _Message_##index(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ssw##index.str())); \
-    std::cerr << _Message_##index;
+#define UMUQWARNING_2MSG(msg1, msg2)                                                                                                         \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1 << msg2;                                                                                                                  \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
+    }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Asserts the condition and in case of failure prints the failing message and terminates the execution environment
+ * \brief Helper macro for printing three combined warning messages 
  * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
  */
-#define UMUQASSERT(condition, msg) \
-    if (!(condition))              \
-    UMUQFAIL(msg)
+#define UMUQWARNING_3MSG(msg1, msg2, msg3)                                                                                                   \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1 << msg2 << msg3;                                                                                                          \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
+    }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Asserts the condition and in case of failure prints the failing message with the index number and terminates the execution environment
+ * \brief Helper macro for printing four combined warning messages 
+ * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
+ */
+#define UMUQWARNING_4MSG(msg1, msg2, msg3, msg4)                                                                                             \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1 << msg2 << msg3 << msg4;                                                                                                  \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Helper macro for printing five combined warning messages 
+ * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
+ */
+#define UMUQWARNING_5MSG(msg1, msg2, msg3, msg4, msg5)                                                                                       \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5;                                                                                          \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 5 combined) message(s) and terminates the execution environment
  * 
  */
-#define UMUQASSERTS(condition, msg, index) \
-    if (!(condition))                      \
-    UMUQFAILS(msg, index)
+#define UMUQFAIL(...)                                                                                     \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__)                                                                                         \
+        UMUQABORT(ss)                                                                                     \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 5 combined) message(s) and return back as false
+ * 
+ */
+#define UMUQFAILRETURN(...)                                                                               \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return false;                                                                           \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 5 combined) message(s) and return back as nullptr
+ * 
+ */
+#define UMUQFAILRETURNNULL(...)                                                                           \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return nullptr;                                                                         \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 5 combined) message(s) and return back the failing string
+ * 
+ */
+#define UMUQFAILRETURNSTRING(...)                                                                         \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return ss.str();                                                                        \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 5 combined) warning-message(s)
+ * 
+ */
+#define UMUQWARNING(...)                                                                                                 \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQWARNING_5MSG, UMUQWARNING_4MSG, UMUQWARNING_3MSG, UMUQWARNING_2MSG, UMUQWARNING_1MSG) \
+    (__VA_ARGS__)
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Asserts the condition and in case of failure prints one (or up to 5 combined) message(s) and terminates the execution environment
+ * 
+ */
+#define UMUQASSERT(condition, ...)                                                                            \
+    if (!(condition))                                                                                         \
+    {                                                                                                         \
+        UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+        (__VA_ARGS__)                                                                                         \
+            UMUQABORT(ss)                                                                                     \
+    }                                                                                                         \
+    }
 
 #if HAVE_MPI == 1
 /*!
