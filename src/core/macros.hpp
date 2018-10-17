@@ -154,6 +154,13 @@
 /*! 
  * \ingroup Core_Module
  * 
+ * Concatenate six tokens
+ */
+#define UMUQ_CAT6(a, b, c, d, e, f) a##b##c##d##e##f
+
+/*! 
+ * \ingroup Core_Module
+ * 
  * Convert a token to a string
  */
 #define UMUQ_MAKESTRING2(a) #a
@@ -168,11 +175,12 @@
 /*! 
  * \ingroup Core_Module
  * 
- * \brief A macro to select the appropriate override.
+ * \brief A macro to select the appropriate override .
  * 
  * A macro that uses the [paired, sliding arg list](https://gist.github.com/dhh1128/0cf088f4f681f619b051) technique to select the appropriate override.
+ * It supports the set of 1 to 6 args.
  */
-#define UMUQ_OVERRIDE(_1, _2, _3, _4, _5, NAME, ...) NAME
+#define UMUQ_OVERRIDE(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
 
 /*! 
  * \ingroup Core_Module
@@ -181,8 +189,8 @@
  * 
  * It is macro that concatenates either 5, 4, 3 or 2 strings together.
  */
-#define UMUQ_CAT(...)                                                      \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQ_CAT5, UMUQ_CAT4, UMUQ_CAT3, UMUQ_CAT2) \
+#define UMUQ_CAT(...)                                                                 \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQ_CAT6, UMUQ_CAT5, UMUQ_CAT4, UMUQ_CAT3, UMUQ_CAT2) \
     (__VA_ARGS__)
 
 /*! 
@@ -453,6 +461,22 @@ std::string MPIErrorMessage(int const errorCode)
 /*!
  * \ingroup Core_Module
  * 
+ * \brief Helper macro for printing six combined error messages 
+ * 
+ * \warning
+ * - This is not a stand alone macro to use! 
+ * - Use \c UMUQFAIL \sa UMUQFAIL
+ */
+#define UMUQFAIL_6MSG(msg1, msg2, msg3, msg4, msg5, msg6)                                                                                  \
+    {                                                                                                                                      \
+        std::ostringstream ss;                                                                                                             \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5 << msg6;                                                                                \
+        std::string _Messagef_(umuq::internal::FormatMessageFileLineFunctionMessage("Error", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagef_;
+
+/*!
+ * \ingroup Core_Module
+ * 
  * \brief Helper macro for printing one warning message 
  * 
  * \warning
@@ -533,71 +557,87 @@ std::string MPIErrorMessage(int const errorCode)
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints one (or up to 5 combined) message(s) and terminates the execution environment
+ * \brief Helper macro for printing six combined warning messages 
  * 
+ * \warning
+ * - Use \c UMUQWARNING \sa UMUQWARNING
  */
-#define UMUQFAIL(...)                                                                                     \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
-    (__VA_ARGS__)                                                                                         \
-        UMUQABORT(ss)                                                                                     \
+#define UMUQWARNING_6MSG(msg1, msg2, msg3, msg4, msg5, msg6)                                                                                 \
+    {                                                                                                                                        \
+        std::ostringstream ss;                                                                                                               \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5 << msg6;                                                                                  \
+        std::string _Messagew_(umuq::internal::FormatMessageFileLineFunctionMessage("Warning", __FILE__, __LINE__, __FUNCTION__, ss.str())); \
+        std::cerr << _Messagew_;                                                                                                             \
     }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints one (or up to 5 combined) message(s) and return back as false
+ * \brief Prints one (or up to 6 combined) message(s) and terminates the execution environment
  * 
  */
-#define UMUQFAILRETURN(...)                                                                               \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
-    (__VA_ARGS__) return false;                                                                           \
+#define UMUQFAIL(...)                                                                                                    \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__)                                                                                                        \
+        UMUQABORT(ss)                                                                                                    \
     }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints one (or up to 5 combined) message(s) and return back as nullptr
+ * \brief Prints one (or up to 6 combined) message(s) and return back as false
  * 
  */
-#define UMUQFAILRETURNNULL(...)                                                                           \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
-    (__VA_ARGS__) return nullptr;                                                                         \
+#define UMUQFAILRETURN(...)                                                                                              \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return false;                                                                                          \
     }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints one (or up to 5 combined) message(s) and return back the failing string
+ * \brief Prints one (or up to 6 combined) message(s) and return back as nullptr
  * 
  */
-#define UMUQFAILRETURNSTRING(...)                                                                         \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
-    (__VA_ARGS__) return ss.str();                                                                        \
+#define UMUQFAILRETURNNULL(...)                                                                                          \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return nullptr;                                                                                        \
     }
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Prints one (or up to 5 combined) warning-message(s)
+ * \brief Prints one (or up to 6 combined) message(s) and return back the failing string
  * 
  */
-#define UMUQWARNING(...)                                                                                                 \
-    UMUQ_OVERRIDE(__VA_ARGS__, UMUQWARNING_5MSG, UMUQWARNING_4MSG, UMUQWARNING_3MSG, UMUQWARNING_2MSG, UMUQWARNING_1MSG) \
+#define UMUQFAILRETURNSTRING(...)                                                                                        \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+    (__VA_ARGS__) return ss.str();                                                                                       \
+    }
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief Prints one (or up to 6 combined) warning-message(s)
+ * 
+ */
+#define UMUQWARNING(...)                                                                                                                   \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQWARNING_6MSG, UMUQWARNING_5MSG, UMUQWARNING_4MSG, UMUQWARNING_3MSG, UMUQWARNING_2MSG, UMUQWARNING_1MSG) \
     (__VA_ARGS__)
 
 /*!
  * \ingroup Core_Module
  * 
- * \brief Asserts the condition and in case of failure prints one (or up to 5 combined) message(s) and terminates the execution environment
+ * \brief Asserts the condition and in case of failure prints one (or up to 6 combined) message(s) and terminates the execution environment
  * 
  */
-#define UMUQASSERT(condition, ...)                                                                            \
-    if (!(condition))                                                                                         \
-    {                                                                                                         \
-        UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
-        (__VA_ARGS__)                                                                                         \
-            UMUQABORT(ss)                                                                                     \
-    }                                                                                                         \
+#define UMUQASSERT(condition, ...)                                                                                           \
+    if (!(condition))                                                                                                        \
+    {                                                                                                                        \
+        UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
+        (__VA_ARGS__)                                                                                                        \
+            UMUQABORT(ss)                                                                                                    \
+    }                                                                                                                        \
     }
 
 #if HAVE_MPI == 1
