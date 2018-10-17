@@ -169,10 +169,20 @@ class runinfo
 	void printSampleStatistics();
 
   private:
-	// Make it noncopyable
+    /*!
+     * \brief Delete a runinfo object copy construction
+     * 
+     * Make it noncopyable.
+     */
 	runinfo(runinfo<T> const &) = delete;
 
-	// Make it nonassignable
+    /*!
+     * \brief Delete a runinfo object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns runinfo<T>& 
+     */
 	runinfo<T> &operator=(runinfo<T> const &) = delete;
 
   public:

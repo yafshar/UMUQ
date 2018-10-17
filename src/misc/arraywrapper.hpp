@@ -254,15 +254,18 @@ class arrayWrapper
      */
     inline T operator[](int const id) const;
 
-  private:
+  protected:
     /*!
-     * \brief Make a noncopyable construct array Wrapper object
+     * \brief Delete a arrayWrapper object copy construction
      * 
+     * Make it noncopyable.
      */
     arrayWrapper(arrayWrapper const &) = delete;
 
     /*!
-     * \brief Make it not assignable
+     * \brief Delete a arrayWrapper object assignment
+     * 
+     * Make it nonassignable
      * 
      * \returns arrayWrapper& 
      */

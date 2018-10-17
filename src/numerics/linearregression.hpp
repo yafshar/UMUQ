@@ -98,13 +98,16 @@ class linearRegression
 
   private:
     /*!
-     * \brief Make a noncopyable construct of new linear Regression object
+     * \brief Delete a linearRegression object copy construction
      * 
+     * Make it noncopyable.
      */
     linearRegression(linearRegression<T> const &) = delete;
 
     /*!
-     * \brief Make it not assignable
+     * \brief Delete a linearRegression object assignment
+     * 
+     * Make it nonassignable
      * 
      * \returns linearRegression<T>& 
      */

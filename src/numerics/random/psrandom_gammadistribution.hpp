@@ -75,10 +75,20 @@ class gammaDistribution
     inline T dist();
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a gammaDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
     gammaDistribution(gammaDistribution<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a gammaDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns gammaDistribution<T>& 
+     */
     gammaDistribution<T> &operator=(gammaDistribution<T> const &) = delete;
 
   private:

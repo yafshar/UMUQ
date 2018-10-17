@@ -65,10 +65,20 @@ class lognormalDistribution
     inline T dist();
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a lognormalDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
     lognormalDistribution(lognormalDistribution<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a lognormalDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns lognormalDistribution<T>& 
+     */
     lognormalDistribution<T> &operator=(lognormalDistribution<T> const &) = delete;
 
   private:
@@ -132,10 +142,21 @@ class logNormalDistribution
     inline T dist();
 
   private:
-    // Make it noncopyable
+
+    /*!
+     * \brief Delete a logNormalDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
     logNormalDistribution(logNormalDistribution<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a logNormalDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns logNormalDistribution<T>& 
+     */
     logNormalDistribution<T> &operator=(logNormalDistribution<T> const &) = delete;
 
   private:

@@ -197,11 +197,21 @@ class priorDistribution
     bool sample(T *x);
     bool sample(std::vector<T> &x);
 
-  private:
-    // Make it noncopyable
+  protected:
+    /*!
+     * \brief Delete a priorDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
     priorDistribution(priorDistribution<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a priorDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns priorDistribution<T>& 
+     */
     priorDistribution<T> &operator=(priorDistribution<T> const &) = delete;
 
   private:

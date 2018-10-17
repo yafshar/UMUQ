@@ -235,13 +235,16 @@ class dcpse
 
   private:
     /*!
-     * \brief Make it noncopyable construct of a new dcpse object
+     * \brief Delete a dcpse object copy construction
      * 
+     * Make it noncopyable.
      */
     dcpse(dcpse<T, Distance> const &) = delete;
 
     /*!
-     * \brief  Make it not assignable
+     * \brief Delete a dcpse object assignment
+     * 
+     * Make it nonassignable
      * 
      * \returns dcpse<T, Distance>& 
      */
@@ -255,9 +258,7 @@ class dcpse
     int nTerms;
 
     //! The monomial size
-    /* 
-     * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
-     */
+    /*! \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$ */
     int dcMonomialSize;
 
     //! Size of the kernel

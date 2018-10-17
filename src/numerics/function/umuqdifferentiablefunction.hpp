@@ -77,11 +77,21 @@ public:
    */
   explicit operator bool() const noexcept;
 
-private:
-  //! Make it noncopyable
+protected:
+  /*!
+   * \brief Delete an umuqDifferentiableFunction object copy construction
+   * 
+   * Make it noncopyable.
+   */
   umuqDifferentiableFunction(umuqDifferentiableFunction<T, F, D, FD> const &) = delete;
 
-  //! Make it not assignable
+  /*!
+   * \brief Delete a umuqDifferentiableFunction object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns umuqDifferentiableFunction<T, F, D, FD>& 
+   */  
   umuqDifferentiableFunction<T, F, D, FD> &operator=(umuqDifferentiableFunction<T, F, D, FD> const &) = delete;
 
 public:

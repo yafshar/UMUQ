@@ -96,10 +96,20 @@ class fitFunction : public umuqFunction<T, F>
     virtual bool init();
 
   protected:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a fitFunction object copy construction
+     * 
+     * Make it noncopyable.
+     */
     fitFunction(fitFunction<T, F> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a fitFunction object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns fitFunction<T, F>& 
+     */
     fitFunction<T, F> &operator=(fitFunction<T, F> const &) = delete;
 
   public:

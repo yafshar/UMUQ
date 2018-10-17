@@ -15,9 +15,16 @@
 namespace umuq
 {
 
-/*!
- * \brief torcEnvironment class
+/*! \class torcEnvironment
+ * \ingroup Core_Module
  * 
+ * \brief Create a new torc Environment object.
+ * 
+ * An Environment object is capable of setting up and tearing down an
+ * environment. It does the set-up and tear-down in virtual methods 
+ * SetUp() and TearDown() instead of the constructor and the destructor.
+ * 
+ * \tparam T Data type (default is double) 
  */
 template <typename T = double>
 class torcEnvironment
@@ -145,11 +152,21 @@ class torcEnvironment
      */
 	virtual ~torcEnvironment() {}
 
-  private:
-	// Make it noncopyable
+  protected:
+	/*!
+     * \brief Delete a torcEnvironment object copy construction
+     * 
+     * Make it noncopyable.
+     */
 	torcEnvironment(torcEnvironment<T> const &) = delete;
 
-	// Make it not assignable
+	/*!
+     * \brief Delete a torcEnvironment object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns torcEnvironment<T>& 
+     */
 	torcEnvironment<T> &operator=(torcEnvironment<T> const &) = delete;
 
 #if HAVE_MPI == 1
@@ -164,30 +181,54 @@ class torcEnvironment
 };
 
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
-/*!
+/*! \class UMUQEventListener
+ * \ingroup Test_Module
+ * 
  * \brief New event listener to make sure of Abort in case of failure
  * 
+ * An interface to %UMUQ for tracing execution of tests from [Google Test](https://github.com/google/googletest).<br>
+ * The methods are organized in the order the corresponding events are fired.
  */
 class UMUQEventListener : public ::testing::EmptyTestEventListener
 {
   public:
+	/*!
+     * \brief Construct a new UMUQEventListener object
+     * 
+     */
 	UMUQEventListener() : ::testing::EmptyTestEventListener(),
 						  result_vector() {}
 
+	/*!
+	 * \brief Destroy the UMUQEventListener object
+	 * 
+	 */
 	~UMUQEventListener() {}
 
-	// Called before a test starts.
+	/*!
+	 * \brief It is called before a test starts.
+	 * 
+	 * \param test_info 
+	 */
 	virtual void OnTestStart(::testing::TestInfo const &test_info)
 	{
 	}
 
-	// Called after an assertion failure or an explicit SUCCESS() macro.
+	/*!
+	 * \brief Called after an assertion failure or an explicit \c SUCCESS() macro.
+	 * 
+	 * \param test_part_result 
+	 */
 	virtual void OnTestPartResult(::testing::TestPartResult const &test_part_result)
 	{
 		result_vector.push_back(test_part_result);
 	}
 
-	// Called after a test ends.
+	/*!
+	 * \brief Called after a test ends.
+	 * 
+	 * \param test_info 
+	 */
 	virtual void OnTestEnd(::testing::TestInfo const &test_info)
 	{
 		for (std::size_t i = 0; i < result_vector.size(); i++)

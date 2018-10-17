@@ -91,10 +91,20 @@ public:
   EVectorX<T> dist();
 
 private:
-  // Make it noncopyable
+  /*!
+   * \brief Delete a multivariatenormalDistribution object copy construction
+   * 
+   * Make it noncopyable.
+   */
   multivariatenormalDistribution(multivariatenormalDistribution<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a multivariatenormalDistribution object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns multivariatenormalDistribution<T>& 
+   */
   multivariatenormalDistribution<T> &operator=(multivariatenormalDistribution<T> const &) = delete;
 
 public:
@@ -199,10 +209,21 @@ public:
   EVectorX<T> dist();
 
 private:
-  // Make it noncopyable
+
+  /*!
+   * \brief Delete a multivariateNormalDistribution object copy construction
+   * 
+   * Make it noncopyable.
+   */
   multivariateNormalDistribution(multivariateNormalDistribution<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a multivariateNormalDistribution object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns multivariateNormalDistribution<T>& 
+   */
   multivariateNormalDistribution<T> &operator=(multivariateNormalDistribution<T> const &) = delete;
 
 public:

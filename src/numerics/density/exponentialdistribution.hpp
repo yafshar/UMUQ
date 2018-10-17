@@ -102,11 +102,10 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
     bool sample(T *x);
     bool sample(std::vector<T> &x);
 
-  private:
+  private:  
     /*!
-     * \brief Construct a new exponential Distribution object
-     * 
-     */
+     * \brief Delete an empty exponentialDistribution object construction
+     */    
     exponentialDistribution() = delete;
 };
 

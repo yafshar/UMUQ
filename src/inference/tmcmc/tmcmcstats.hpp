@@ -190,11 +190,21 @@ class tmcmcStats
      */
     bool selectNewGeneration(stdata<T> &StreamData, database<T> &CurrentData, runinfo<T> &RunData, database<T> &Leaders);
 
-  private:
-    //! Make it noncopyable
+  protected:
+    /*!
+     * \brief Delete a tmcmcStats object copy construction
+     * 
+     * Make it noncopyable.
+     */
     tmcmcStats(tmcmcStats<T> const &) = delete;
 
-    //! Make it not assignable
+    /*!
+     * \brief Delete a tmcmcStats object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns tmcmcStats<T>& 
+     */
     tmcmcStats<T> &operator=(tmcmcStats<T> const &) = delete;
 
   private:

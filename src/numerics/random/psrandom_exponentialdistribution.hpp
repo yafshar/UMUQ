@@ -87,10 +87,20 @@ class exponentialDistribution
     inline T dist();
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a exponentialDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
     exponentialDistribution(exponentialDistribution<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a exponentialDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns exponentialDistribution<T>& 
+     */
     exponentialDistribution<T> &operator=(exponentialDistribution<T> const &) = delete;
 
   private:

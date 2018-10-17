@@ -77,7 +77,7 @@ public:
   /*!
    * \brief Move assignment operator
    * 
-   * \param other  densityFunction object 
+   * \param other densityFunction object 
    */
   densityFunction<T, F> &operator=(densityFunction<T, F> &&other);
 

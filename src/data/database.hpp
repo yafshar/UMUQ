@@ -270,10 +270,20 @@ class database
     inline bool sort();
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a database object copy construction
+     * 
+     * Make it noncopyable.
+     */
     database(database<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a database object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns database<T>& 
+     */
     database<T> &operator=(database<T> const &) = delete;
 
   private:

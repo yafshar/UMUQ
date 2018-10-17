@@ -79,11 +79,21 @@ class residual
      */
     inline T operator()(T const &observed, T const &predicted);
 
-  private:
-    // Make it noncopyable
+  protected:
+    /*!
+     * \brief Delete a residual object copy construction
+     * 
+     * Make it noncopyable.
+     */
     residual(residual<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a residual object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns residual<T>& 
+     */
     residual<T> &operator=(residual<T> const &) = delete;
 
   private:

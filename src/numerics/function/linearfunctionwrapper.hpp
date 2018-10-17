@@ -118,12 +118,22 @@ class linearFunctionWrapper
     inline T slope();
 
   private:
-  // Make it noncopyable
-  linearFunctionWrapper(linearFunctionWrapper<T> const &) = delete;
+    /*!
+     * \brief Delete a linearFunctionWrapper object copy construction
+     * 
+     * Make it noncopyable.
+     */
+    linearFunctionWrapper(linearFunctionWrapper<T> const &) = delete;
 
-  // Make it not assignable
-  linearFunctionWrapper<T> &operator=(linearFunctionWrapper<T> const &) = delete;
-  
+    /*!
+     * \brief Delete a linearFunctionWrapper object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns linearFunctionWrapper<T>& 
+     */
+    linearFunctionWrapper<T> &operator=(linearFunctionWrapper<T> const &) = delete;
+
   private:
     //! Multidimensional function
     umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> fun;

@@ -100,16 +100,25 @@ public:
   /*!
    * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
    * 
-   * \return true   If it stores a callable function target at f
-   * \return false 
+   * \return true If it stores a callable function target at f
    */
   explicit operator bool() const noexcept;
 
-private:
-  // Make it noncopyable
+protected:
+  /*!
+   * \brief Delete a umuqFunction object copy construction
+   * 
+   * Make it noncopyable.
+   */
   umuqFunction(umuqFunction<T, F> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a umuqFunction object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns umuqFunction<T, F>& 
+   */
   umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
 
 public:

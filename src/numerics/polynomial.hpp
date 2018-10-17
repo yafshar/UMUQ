@@ -122,10 +122,20 @@ class polynomial
     bool graded_reverse_lexicographic_order(int *x);
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a polynomial object copy construction
+     * 
+     * Make it noncopyable.
+     */
     polynomial(polynomial<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a polynomial object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns polynomial<T>& 
+     */
     polynomial<T> &operator=(polynomial<T> const &) = delete;
 
   private:

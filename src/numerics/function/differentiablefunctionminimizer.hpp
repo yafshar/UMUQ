@@ -394,17 +394,27 @@ public:
                 T &Fval, T &Gnorm);
 
 protected:
-  // Make it noncopyable
+  /*!
+   * \brief Delete a differentiableFunctionMinimizer object copy construction
+   * 
+   * Make it noncopyable.
+   */
   differentiableFunctionMinimizer(differentiableFunctionMinimizer<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a differentiableFunctionMinimizer object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns differentiableFunctionMinimizer<T, F>& 
+   */
   differentiableFunctionMinimizer<T> &operator=(differentiableFunctionMinimizer<T> const &) = delete;
 
 public:
   //! Name of the differentiableFunctionMinimizer
   std::string name;
 
-  // multi dimensional part
+  //! Multi dimensional differentiable function
   umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> fun;
 
   //! N-dimensional x vector
@@ -416,10 +426,10 @@ public:
   //! N-dimensional gradient vector
   std::vector<T> gradient;
 
-  //!
+  //! 
   T step;
 
-  //!
+  //! 
   T maxStep;
 
   //! Tolerance

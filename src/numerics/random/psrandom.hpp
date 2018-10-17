@@ -162,12 +162,22 @@ class psrandom
      */
     inline bool setSeed(long const inSeed);
 
-  private:
-    // Make it noncopyable
-    psrandom(psrandom const &) = delete;
+  protected:
+    /*!
+     * \brief Delete a psrandom object copy construction
+     * 
+     * Make it noncopyable.
+     */
+    psrandom(psrandom<T> const &) = delete;
 
-    // Make it not assignable
-    psrandom &operator=(psrandom const &) = delete;
+    /*!
+     * \brief Delete a psrandom object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns psrandom<T>& 
+     */
+    psrandom<T> &operator=(psrandom<T> const &) = delete;
 
   public:
     /*!
@@ -465,7 +475,7 @@ class psrandom
     inline bool set_gammas(T const *alpha, T const *beta, int const N);
     inline bool set_gammas(T const *alphabeta, int const N);
 
-  public:  
+  public:
     /*!
      * \brief Normal (or Gaussian) random number distribution
      * 
@@ -484,8 +494,8 @@ class psrandom
      * \note 
      * - This can be used without setting the State of psrandom object
      */
-    std::unique_ptr<randomdist::NormalDistribution<T>> Normal;  
-    
+    std::unique_ptr<randomdist::NormalDistribution<T>> Normal;
+
     /*!
      * \brief lognormal_distribution random number distribution
      * 
@@ -493,7 +503,7 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::lognormalDistribution<T>> lnormal;
-   
+
     /*!
      * \brief lognormal_distribution random number distribution
      * 
@@ -509,7 +519,7 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::multivariatenormalDistribution<T>> mvnormal;
-   
+
     /*!
      * \brief Multivariate random number distribution
      * 
@@ -517,7 +527,7 @@ class psrandom
      * -  This can be used without setting the State of psrandom object
      */
     std::unique_ptr<randomdist::multivariateNormalDistribution<T>> mvNormal;
-    
+
     /*!
      * \brief Exponential random number distribution
      * 
@@ -529,7 +539,7 @@ class psrandom
 
     //! Number of Exponential distributions
     int nexpns;
-   
+
     /*!
      * \brief Gamma random number distribution
      * 

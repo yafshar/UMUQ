@@ -244,13 +244,16 @@ public:
 
 protected:
   /*!
-   * \brief Make a noncopyable constructor of function Minimizer object
+   * \brief Delete a functionMinimizer object copy construction
    * 
+   * Make it noncopyable.
    */
   functionMinimizer(functionMinimizer<T> const &) = delete;
 
   /*!
-   * \brief Make a not assignable copy operator
+   * \brief Delete a functionMinimizer object assignment
+   * 
+   * Make it nonassignable
    * 
    * \returns functionMinimizer<T>& 
    */

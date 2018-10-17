@@ -70,10 +70,20 @@ public:
   inline T dist();
 
 private:
-  // Make it noncopyable
+  /*!
+   * \brief Delete a normalDistribution object copy construction
+   * 
+   * Make it noncopyable.
+   */
   normalDistribution(normalDistribution<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a normalDistribution object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns normalDistribution<T>& 
+   */
   normalDistribution<T> &operator=(normalDistribution<T> const &) = delete;
 
 private:
@@ -137,10 +147,20 @@ public:
   inline T dist();
 
 private:
-  // Make it noncopyable
+  /*!
+   * \brief Delete a NormalDistribution object copy construction
+   * 
+   * Make it noncopyable.
+   */
   NormalDistribution(NormalDistribution<T> const &) = delete;
 
-  // Make it not assignable
+  /*!
+   * \brief Delete a NormalDistribution object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns NormalDistribution<T>& 
+   */
   NormalDistribution<T> &operator=(NormalDistribution<T> const &) = delete;
 
 private:

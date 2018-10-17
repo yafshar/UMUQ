@@ -189,10 +189,20 @@ class stdata
     void swap(stdata<T> &other);
 
   private:
-    // Make it noncopyable
+    /*!
+     * \brief Delete a stdata object copy construction
+     * 
+     * Make it noncopyable.
+     */
     stdata(stdata<T> const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a stdata object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns stdata<T>& 
+     */
     stdata<T> &operator=(stdata<T> const &) = delete;
 
   public:

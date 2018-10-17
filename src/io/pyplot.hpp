@@ -1417,15 +1417,18 @@ class pyplot
      */
     bool ylabel(std::string const &label);
 
-  private:
+  protected:
     /*!
-     * \brief Make construct noncopyable
+     * \brief Delete a pyplot object copy construction
      * 
+     * Make it noncopyable.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
-     * \brief Make it not assignable
+     * \brief Delete a pyplot object assignment
+     * 
+     * Make it nonassignable
      * 
      * \returns pyplot& 
      */
@@ -1472,10 +1475,20 @@ class pyplot
         }
 
       public:
-        // Make it noncopyable
+        /*!
+         * \brief Delete a matplotlib object copy construction
+         * 
+         * Make it noncopyable.
+         */
         matplotlib(matplotlib const &) = delete;
 
-        // Make it not assignable
+        /*!
+         * \brief Delete a matplotlib object assignment
+         * 
+         * Make it nonassignable
+         * 
+         * \returns matplotlib& 
+         */
         matplotlib &operator=(matplotlib const &) = delete;
 
       public:
@@ -2300,7 +2313,7 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
     {
         // Construct keyword args
         if (density)
-        {          
+        {
             /*!
              * \note 
              * - In some cases density keyword does not work and one has to use normed instead
@@ -4714,16 +4727,25 @@ class pyplot
 
     /*!
      * \brief Destroy the pyplot object
-            std::vector<double> vd{idata, idata + nRows * nCols};
      * 
      */
     ~pyplot() {}
 
-  private:
-    // Make it noncopyable
+  protected:
+    /*!
+     * \brief Delete a pyplot object copy construction
+     * 
+     * Make it noncopyable.
+     */
     pyplot(pyplot const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a pyplot object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns pyplot& 
+     */
     pyplot &operator=(pyplot const &) = delete;
 };
 
