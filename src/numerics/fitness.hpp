@@ -44,11 +44,11 @@ class fitness
     /*!
      * \brief Construct a new fitness object
      * 
-     * \param metric         Metric name for evaluating the model fitness
-     * \param inum_metrics   Input number of metrics (default  0)
-     * \param imetric_names  Input names of different metrics (default )
+     * \param MetricName   Metric name for evaluating the model fitness
+     * \param NumMetrics   Number of metrics (default  0)
+     * \param MetricNames  Names of different metrics (default )
      * 
-     * List of available metrics:
+     * List of available metrics:<br>
      *  - \b sum_squared
      *  - \b mean_squared     
      *  - \b root_mean_squared     
@@ -65,43 +65,65 @@ class fitness
      *  - \b cv
      *  - \b rsquared
      */
-    fitness(std::string const &metric = "sum_squared", int const inum_metrics = 0, std::vector<std::string> const imetric_names = {""});
+    fitness(std::string const &MetricName = "sum_squared", int const NumMetrics = 0, std::vector<std::string> const MetricNames = {""});
 
     /*!
      * \brief Set the Metric object name
      * 
-     * \param metric  Metric name to set for evaluating the model fitness
+     * \param MetricName  Metric name to set for evaluating the model fitness
      */
-    bool setMetricName(std::string const &metric);
+    bool setMetricName(std::string const &MetricName);
 
     /*!
      * \brief Compute residuals  
      * 
-     * \param observations array of observations data
-     * \param predictions  array of predicted data
-     * \param nSize        Size of the array
-     * \param results      Array of results
-     * \return true        
-     * \return false       If there is not enoug hmemory to continue
+     * \param observations  Array of observations data
+     * \param predictions   Array of predicted data
+     * \param nSize         Size of the array
+     * \param results       Array of the results
+     *
+     * \return false If there is not enough memory to continue
      */
     bool computeResiduals(T *observations, T *predictions, int const nSize, T *&results);
+
+    /*!
+     * \brief Compute residuals  
+     * 
+     * \param observationspredictions  Array of observations & prediction data
+     * \param nSize                    Size of the array
+     * \param results                  Array of the results
+     * 
+     * \returns false If there is not enough memory to continue
+     */
     bool computeResiduals(T *observationspredictions, int const nSize, T *&results);
+
+    /*!
+     * \brief Compute residuals
+     * 
+     * \param observations  Array of observations data
+     * \param prediction    A predicted data
+     * \param nSize         Size of the array
+     * \param results       Array of the results
+     * 
+     * \returns false If there is not enough memory to continue
+     */
     bool computeResiduals(T *observations, T const prediction, int const nSize, T *&results);
 
     /*!
      * \brief Get the Fitness value
      * 
-     * \param observations Array of observed data
-     * \param predictions  Array of predicted data 
-     * \param nSize        Size of the array
-     * \return             The Fitness value
+     * \param observations  Array of observed data
+     * \param predictions   Array of predicted data 
+     * \param nSize         Size of the array
+     * 
+     * \returns The Fitness value
      */
     T getFitness(T *observations, T *predictions, int const nSize);
 
     /*!
      * \brief Get the Metric object name
      * 
-     * \return std::string 
+     * \return std::string The name of the Metric object
      */
     inline std::string getMetricName();
 
@@ -127,107 +149,107 @@ class fitness
     std::string fitnessMetricName;
 
     //! Number of metrics
-    int num_metrics;
+    int numMetrics;
 
-    //! Rediual type for computing the fitness
+    //! Residual type for computing the fitness
     residual<T> fitnessResidual;
 
     //! Type of error fitness
     int errorFit;
 
     //! Names of metrics
-    std::vector<std::string> metric_names;
+    std::vector<std::string> metricNames;
 
     //! Computed fitness values for each metric
-    std::unique_ptr<T[]> metric_values;
+    std::unique_ptr<T[]> metricValues;
 };
 
 template <typename T>
-fitness<T>::fitness(std::string const &metric, int const inum_metrics, std::vector<std::string> const imetric_names) : num_metrics(inum_metrics)
+fitness<T>::fitness(std::string const &MetricName, int const NumMetrics, std::vector<std::string> const MetricNames) : numMetrics(NumMetrics)
 {
-    if (!this->setMetricName(metric))
+    if (!setMetricName(MetricName))
     {
         UMUQWARNING("Fitness is unknown : By default it is set to sum_squared!");
 
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitSum;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitSum;
     }
 }
 
 template <typename T>
-bool fitness<T>::setMetricName(std::string const &metric)
+bool fitness<T>::setMetricName(std::string const &MetricName)
 {
-    this->fitnessMetricName = metric;
-    if (this->fitnessMetricName == "sum_squared")
+    fitnessMetricName = MetricName;
+    if (fitnessMetricName == "sum_squared")
     {
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitSum;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (this->fitnessMetricName == "mean_squared")
+    else if (fitnessMetricName == "mean_squared")
     {
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitMean;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (this->fitnessMetricName == "root_mean_squared")
+    else if (fitnessMetricName == "root_mean_squared")
     {
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitRootMean;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitRootMean;
     }
-    else if (this->fitnessMetricName == "max_squared")
+    else if (fitnessMetricName == "max_squared")
     {
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitMax;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (this->fitnessMetricName == "sum_scaled")
+    else if (fitnessMetricName == "sum_scaled")
     {
-        this->fitnessResidual.set(ErrorTypes::ScaledError);
-        this->errorFit = ErrorFitnessTypes::errorFitSum;
+        fitnessResidual.set(ErrorTypes::ScaledError);
+        errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (this->fitnessMetricName == "mean_scaled")
+    else if (fitnessMetricName == "mean_scaled")
     {
-        this->fitnessResidual.set(ErrorTypes::ScaledError);
-        this->errorFit = ErrorFitnessTypes::errorFitMean;
+        fitnessResidual.set(ErrorTypes::ScaledError);
+        errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (this->fitnessMetricName == "max_scaled")
+    else if (fitnessMetricName == "max_scaled")
     {
-        this->fitnessResidual.set(ErrorTypes::ScaledError);
-        this->errorFit = ErrorFitnessTypes::errorFitMax;
+        fitnessResidual.set(ErrorTypes::ScaledError);
+        errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (this->fitnessMetricName == "sum_abs")
+    else if (fitnessMetricName == "sum_abs")
     {
-        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-        this->errorFit = ErrorFitnessTypes::errorFitSum;
+        fitnessResidual.set(ErrorTypes::AbsoluteError);
+        errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (this->fitnessMetricName == "mean_abs")
+    else if (fitnessMetricName == "mean_abs")
     {
-        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-        this->errorFit = ErrorFitnessTypes::errorFitMean;
+        fitnessResidual.set(ErrorTypes::AbsoluteError);
+        errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (this->fitnessMetricName == "max_abs")
+    else if (fitnessMetricName == "max_abs")
     {
-        this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-        this->errorFit = ErrorFitnessTypes::errorFitMax;
+        fitnessResidual.set(ErrorTypes::AbsoluteError);
+        errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (this->fitnessMetricName == "press")
+    else if (fitnessMetricName == "press")
     {
         // return new PRESSFitness();
     }
-    else if (this->fitnessMetricName == "cv")
+    else if (fitnessMetricName == "cv")
     {
-        // this->fitnessResidual.set(ErrorTypes::SquredError);
-        // this->errorFit = errorFitMean;
+        // fitnessResidual.set(ErrorTypes::SquaredError);
+        // errorFit = errorFitMean;
 
-        // if (this->num_metrics > 0)
+        // if (numMetrics > 0)
         // {
-        //     this->metric_names.resize(this->num_metrics);
-        //     std::copy(imetric_names.begin(), imetric_names.end(), this->metric_names.begin());
-        //     this->metric_values.reset(new T[this->num_metrics]);
+        //     metricNames.resize(numMetrics);
+        //     std::copy(MetricNames.begin(), MetricNames.end(), metricNames.begin());
+        //     metricValues.reset(new T[numMetrics]);
         // }
     }
-    else if (this->fitnessMetricName == "rsquared")
+    else if (fitnessMetricName == "rsquared")
     {
-        this->fitnessResidual.set(ErrorTypes::SquredError);
-        this->errorFit = ErrorFitnessTypes::errorFitSum;
+        fitnessResidual.set(ErrorTypes::SquaredError);
+        errorFit = ErrorFitnessTypes::errorFitSum;
     }
     else
     {
@@ -253,7 +275,7 @@ bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSi
 
     T *o = observations;
     T *p = predictions;
-    std::for_each(results, results + nSize, [&](T &r_i) { r_i = this->fitnessResidual(*o++, *p++); });
+    std::for_each(results, results + nSize, [&](T &r_i) { r_i = fitnessResidual(*o++, *p++); });
 
     return true;
 }
@@ -279,7 +301,7 @@ bool fitness<T>::computeResiduals(T *observationspredictions, int const nSize, T
     }
 
     T *o = observationspredictions;
-    std::for_each(results, results + nSize / 2, [&](T &r_i) { r_i = this->fitnessResidual(*o, *(o + 1)); o += 2; });
+    std::for_each(results, results + nSize / 2, [&](T &r_i) { r_i = fitnessResidual(*o, *(o + 1)); o += 2; });
 
     return true;
 }
@@ -300,7 +322,7 @@ bool fitness<T>::computeResiduals(T *observations, T const prediction, int const
     }
 
     T *o = observations;
-    std::for_each(results, results + nSize, [&](T &r_i) { r_i = this->fitnessResidual(*o++, prediction); });
+    std::for_each(results, results + nSize, [&](T &r_i) { r_i = fitnessResidual(*o++, prediction); });
 
     return true;
 }
@@ -310,7 +332,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 {
     std::vector<T> r(nSize);
 
-    if (this->fitnessMetricName == "rsquared")
+    if (fitnessMetricName == "rsquared")
     {
         T *results = r.data();
 
@@ -325,59 +347,59 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
         return nomin / denom;
     }
 
-    if (this->num_metrics > 0)
+    if (numMetrics > 0)
     {
-        for (int i = 0; i < this->num_metrics; i++)
+        for (int i = 0; i < numMetrics; i++)
         {
-            if (this->metric_names[i] == "sum_squared")
+            if (metricNames[i] == "sum_squared")
             {
-                this->fitnessResidual.set(ErrorTypes::SquredError);
-                this->errorFit = ErrorFitnessTypes::errorFitSum;
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (this->metric_names[i] == "mean_squared")
+            else if (metricNames[i] == "mean_squared")
             {
-                this->fitnessResidual.set(ErrorTypes::SquredError);
-                this->errorFit = ErrorFitnessTypes::errorFitMean;
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (this->metric_names[i] == "root_mean_squared")
+            else if (metricNames[i] == "root_mean_squared")
             {
-                this->fitnessResidual.set(ErrorTypes::SquredError);
-                this->errorFit = ErrorFitnessTypes::errorFitRootMean;
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitRootMean;
             }
-            else if (this->metric_names[i] == "max_squared")
+            else if (metricNames[i] == "max_squared")
             {
-                this->fitnessResidual.set(ErrorTypes::SquredError);
-                this->errorFit = ErrorFitnessTypes::errorFitMax;
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
             }
-            else if (this->metric_names[i] == "sum_scaled")
+            else if (metricNames[i] == "sum_scaled")
             {
-                this->fitnessResidual.set(ErrorTypes::ScaledError);
-                this->errorFit = ErrorFitnessTypes::errorFitSum;
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (this->metric_names[i] == "mean_scaled")
+            else if (metricNames[i] == "mean_scaled")
             {
-                this->fitnessResidual.set(ErrorTypes::ScaledError);
-                this->errorFit = ErrorFitnessTypes::errorFitMean;
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (this->metric_names[i] == "max_scaled")
+            else if (metricNames[i] == "max_scaled")
             {
-                this->fitnessResidual.set(ErrorTypes::ScaledError);
-                this->errorFit = ErrorFitnessTypes::errorFitMax;
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
             }
-            else if (this->metric_names[i] == "sum_abs")
+            else if (metricNames[i] == "sum_abs")
             {
-                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-                this->errorFit = ErrorFitnessTypes::errorFitSum;
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (this->metric_names[i] == "mean_abs")
+            else if (metricNames[i] == "mean_abs")
             {
-                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-                this->errorFit = ErrorFitnessTypes::errorFitMean;
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (this->metric_names[i] == "max_abs")
+            else if (metricNames[i] == "max_abs")
             {
-                this->fitnessResidual.set(ErrorTypes::AbsoluteError);
-                this->errorFit = ErrorFitnessTypes::errorFitMax;
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
             }
             else
             {
@@ -388,25 +410,25 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
             if (computeResiduals(observations, predictions, nSize, results))
             {
                 umuq::stats s;
-                switch (this->errorFit)
+                switch (errorFit)
                 {
                 case ErrorFitnessTypes::errorFitSum:
-                    this->metric_values[i] = s.sum<T, T>(results, nSize);
+                    metricValues[i] = s.sum<T, T>(results, nSize);
                     break;
                 case ErrorFitnessTypes::errorFitMean:
-                    this->metric_values[i] = s.mean<T, T>(results, nSize);
+                    metricValues[i] = s.mean<T, T>(results, nSize);
                     break;
                 case ErrorFitnessTypes::errorFitRootMean:
-                    this->metric_values[i] = std::sqrt(s.mean<T, T>(results, nSize));
+                    metricValues[i] = std::sqrt(s.mean<T, T>(results, nSize));
                     break;
                 case ErrorFitnessTypes::errorFitMax:
-                    this->metric_values[i] = s.maxelement<T>(results, nSize);
+                    metricValues[i] = s.maxelement<T>(results, nSize);
                     break;
                 }
             }
             else
             {
-                this->metric_values[i] = std::numeric_limits<T>::max();
+                metricValues[i] = std::numeric_limits<T>::max();
             }
         }
         return T{};
@@ -418,7 +440,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
         {
             umuq::stats s;
 
-            switch (this->errorFit)
+            switch (errorFit)
             {
             case ErrorFitnessTypes::errorFitSum:
                 return s.sum<T, T>(results, nSize);
@@ -435,8 +457,8 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 }
 
 template <typename T>
-inline std::string fitness<T>::getMetricName() { return this->fitnessMetricName; }
+inline std::string fitness<T>::getMetricName() { return fitnessMetricName; }
 
 } // namespace umuq
 
-#endif //UMUQ_FITNESS
+#endif // UMUQ_FITNESS
