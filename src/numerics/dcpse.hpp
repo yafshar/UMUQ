@@ -1,7 +1,7 @@
 #ifndef UMUQ_DCPSE_H
 #define UMUQ_DCPSE_H
 
-#include "polynomial.hpp"
+#include "./polynomials/polynomial.hpp"
 #include "factorial.hpp"
 #include "eigenlib.hpp"
 #include "knearestneighbors.hpp"
