@@ -1,7 +1,7 @@
 #ifndef UMUQ_LINEARREGRESSION_H
 #define UMUQ_LINEARREGRESSION_H
 
-#include "polynomial.hpp"
+#include "./polynomials/polynomial.hpp"
 #include "eigenlib.hpp"
 
 namespace umuq
