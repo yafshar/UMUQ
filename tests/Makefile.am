@@ -9,7 +9,11 @@ LIBS = $(GTEST_LIBS)
 #numerics
 TESTS += polynomial_test
 check_PROGRAMS += polynomial_test
-polynomial_test_SOURCES = numerics/polynomial_test.cpp 
+polynomial_test_SOURCES = numerics/polynomials/polynomial_test.cpp 
+
+TESTS += legendrepolynomial_test 
+check_PROGRAMS += legendrepolynomial_test
+legendrepolynomial_test_SOURCES = numerics/polynomials/legendrepolynomial_test.cpp 
 
 TESTS += eigen_test
 check_PROGRAMS += eigen_test

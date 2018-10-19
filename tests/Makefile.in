@@ -88,25 +88,26 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-TESTS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
-	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
-	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
-	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
-	fitness_test$(EXEEXT) linearregression_test$(EXEEXT) \
-	function_test$(EXEEXT) fitfunction_test$(EXEEXT) \
-	functionminimizer_test$(EXEEXT) densityfunction_test$(EXEEXT) \
-	conjugatefr_test$(EXEEXT) conjugatepr_test$(EXEEXT) \
-	simplexnm_test$(EXEEXT) simplexnm2_test$(EXEEXT) \
-	simplexnm2rnd_test$(EXEEXT) steepestdescent_test$(EXEEXT) \
-	bfgs_test$(EXEEXT) bfgs2_test$(EXEEXT) utility_test$(EXEEXT) \
-	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
-	funcallcounter_test$(EXEEXT) timer_test$(EXEEXT) \
-	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
-	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
-	database_test$(EXEEXT) datatype_test$(EXEEXT) \
-	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
-	torc_test$(EXEEXT)
-check_PROGRAMS = polynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
+TESTS = polynomial_test$(EXEEXT) legendrepolynomial_test$(EXEEXT) \
+	eigen_test$(EXEEXT) stats_test$(EXEEXT) \
+	factorial_test$(EXEEXT) psrandom_test$(EXEEXT) \
+	multimin_test$(EXEEXT) knearestneighbors_test$(EXEEXT) \
+	dcpse_test$(EXEEXT) fitness_test$(EXEEXT) \
+	linearregression_test$(EXEEXT) function_test$(EXEEXT) \
+	fitfunction_test$(EXEEXT) functionminimizer_test$(EXEEXT) \
+	densityfunction_test$(EXEEXT) conjugatefr_test$(EXEEXT) \
+	conjugatepr_test$(EXEEXT) simplexnm_test$(EXEEXT) \
+	simplexnm2_test$(EXEEXT) simplexnm2rnd_test$(EXEEXT) \
+	steepestdescent_test$(EXEEXT) bfgs_test$(EXEEXT) \
+	bfgs2_test$(EXEEXT) utility_test$(EXEEXT) parser_test$(EXEEXT) \
+	arraywrapper_test$(EXEEXT) funcallcounter_test$(EXEEXT) \
+	timer_test$(EXEEXT) io_test$(EXEEXT) eigen_io_test$(EXEEXT) \
+	pyplot_test$(EXEEXT) stdata_test$(EXEEXT) \
+	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
+	datatype_test$(EXEEXT) priordistribution_test$(EXEEXT) \
+	tmcmc_test$(EXEEXT) torc_test$(EXEEXT)
+check_PROGRAMS = polynomial_test$(EXEEXT) \
+	legendrepolynomial_test$(EXEEXT) eigen_test$(EXEEXT) \
 	stats_test$(EXEEXT) factorial_test$(EXEEXT) \
 	psrandom_test$(EXEEXT) multimin_test$(EXEEXT) \
 	knearestneighbors_test$(EXEEXT) dcpse_test$(EXEEXT) \
@@ -214,6 +215,11 @@ am_knearestneighbors_test_OBJECTS =  \
 	numerics/knearestneighbors_test.$(OBJEXT)
 knearestneighbors_test_OBJECTS = $(am_knearestneighbors_test_OBJECTS)
 knearestneighbors_test_LDADD = $(LDADD)
+am_legendrepolynomial_test_OBJECTS =  \
+	numerics/polynomials/legendrepolynomial_test.$(OBJEXT)
+legendrepolynomial_test_OBJECTS =  \
+	$(am_legendrepolynomial_test_OBJECTS)
+legendrepolynomial_test_LDADD = $(LDADD)
 am_linearregression_test_OBJECTS =  \
 	numerics/linearregression_test.$(OBJEXT)
 linearregression_test_OBJECTS = $(am_linearregression_test_OBJECTS)
@@ -224,7 +230,8 @@ multimin_test_LDADD = $(LDADD)
 am_parser_test_OBJECTS = misc/parser_test.$(OBJEXT)
 parser_test_OBJECTS = $(am_parser_test_OBJECTS)
 parser_test_LDADD = $(LDADD)
-am_polynomial_test_OBJECTS = numerics/polynomial_test.$(OBJEXT)
+am_polynomial_test_OBJECTS =  \
+	numerics/polynomials/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
 am_priordistribution_test_OBJECTS =  \
@@ -318,6 +325,7 @@ SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(function_test_SOURCES) \
 	$(functionminimizer_test_SOURCES) $(io_test_SOURCES) \
 	$(knearestneighbors_test_SOURCES) \
+	$(legendrepolynomial_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
@@ -337,6 +345,7 @@ DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(funcallcounter_test_SOURCES) $(function_test_SOURCES) \
 	$(functionminimizer_test_SOURCES) $(io_test_SOURCES) \
 	$(knearestneighbors_test_SOURCES) \
+	$(legendrepolynomial_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
@@ -730,7 +739,8 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/src $(GTEST_CPPFLAGS)
 AM_CXXFLAGS = -DUMUQ_UNITTEST $(GTEST_CXXFLAGS)
 AM_LDFLAGS = $(GTEST_LDFLAGS)
-polynomial_test_SOURCES = numerics/polynomial_test.cpp 
+polynomial_test_SOURCES = numerics/polynomials/polynomial_test.cpp 
+legendrepolynomial_test_SOURCES = numerics/polynomials/legendrepolynomial_test.cpp 
 eigen_test_SOURCES = numerics/eigen_test.cpp 
 stats_test_SOURCES = numerics/stats_test.cpp 
 factorial_test_SOURCES = numerics/factorial_test.cpp 
@@ -972,6 +982,19 @@ numerics/knearestneighbors_test.$(OBJEXT): numerics/$(am__dirstamp) \
 knearestneighbors_test$(EXEEXT): $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_DEPENDENCIES) $(EXTRA_knearestneighbors_test_DEPENDENCIES) 
 	@rm -f knearestneighbors_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(knearestneighbors_test_OBJECTS) $(knearestneighbors_test_LDADD) $(LIBS)
+numerics/polynomials/$(am__dirstamp):
+	@$(MKDIR_P) numerics/polynomials
+	@: > numerics/polynomials/$(am__dirstamp)
+numerics/polynomials/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) numerics/polynomials/$(DEPDIR)
+	@: > numerics/polynomials/$(DEPDIR)/$(am__dirstamp)
+numerics/polynomials/legendrepolynomial_test.$(OBJEXT):  \
+	numerics/polynomials/$(am__dirstamp) \
+	numerics/polynomials/$(DEPDIR)/$(am__dirstamp)
+
+legendrepolynomial_test$(EXEEXT): $(legendrepolynomial_test_OBJECTS) $(legendrepolynomial_test_DEPENDENCIES) $(EXTRA_legendrepolynomial_test_DEPENDENCIES) 
+	@rm -f legendrepolynomial_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(legendrepolynomial_test_OBJECTS) $(legendrepolynomial_test_LDADD) $(LIBS)
 numerics/linearregression_test.$(OBJEXT): numerics/$(am__dirstamp) \
 	numerics/$(DEPDIR)/$(am__dirstamp)
 
@@ -990,8 +1013,9 @@ misc/parser_test.$(OBJEXT): misc/$(am__dirstamp) \
 parser_test$(EXEEXT): $(parser_test_OBJECTS) $(parser_test_DEPENDENCIES) $(EXTRA_parser_test_DEPENDENCIES) 
 	@rm -f parser_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(parser_test_OBJECTS) $(parser_test_LDADD) $(LIBS)
-numerics/polynomial_test.$(OBJEXT): numerics/$(am__dirstamp) \
-	numerics/$(DEPDIR)/$(am__dirstamp)
+numerics/polynomials/polynomial_test.$(OBJEXT):  \
+	numerics/polynomials/$(am__dirstamp) \
+	numerics/polynomials/$(DEPDIR)/$(am__dirstamp)
 
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
@@ -1122,6 +1146,7 @@ mostlyclean-compile:
 	-rm -f numerics/density/*.$(OBJEXT)
 	-rm -f numerics/function/*.$(OBJEXT)
 	-rm -f numerics/multimin/*.$(OBJEXT)
+	-rm -f numerics/polynomials/*.$(OBJEXT)
 	-rm -f numerics/random/*.$(OBJEXT)
 	-rm -f torc/*.$(OBJEXT)
 
@@ -1149,7 +1174,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/knearestneighbors_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/linearregression_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/multimin_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/stats_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/density/$(DEPDIR)/densityfunction_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/function/$(DEPDIR)/fitfunction_test.Po@am__quote@
@@ -1163,6 +1187,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm2rnd_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/simplexnm_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/multimin/$(DEPDIR)/steepestdescent_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/polynomials/$(DEPDIR)/legendrepolynomial_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@numerics/polynomials/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@torc/$(DEPDIR)/torc_test.Po@am__quote@
 
@@ -1392,6 +1418,13 @@ recheck: all $(check_PROGRAMS)
 polynomial_test.log: polynomial_test$(EXEEXT)
 	@p='polynomial_test$(EXEEXT)'; \
 	b='polynomial_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+legendrepolynomial_test.log: legendrepolynomial_test$(EXEEXT)
+	@p='legendrepolynomial_test$(EXEEXT)'; \
+	b='legendrepolynomial_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1746,6 +1779,8 @@ distclean-generic:
 	-rm -f numerics/function/$(am__dirstamp)
 	-rm -f numerics/multimin/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/multimin/$(am__dirstamp)
+	-rm -f numerics/polynomials/$(DEPDIR)/$(am__dirstamp)
+	-rm -f numerics/polynomials/$(am__dirstamp)
 	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/random/$(am__dirstamp)
 	-rm -f torc/$(DEPDIR)/$(am__dirstamp)
@@ -1760,7 +1795,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1806,7 +1841,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

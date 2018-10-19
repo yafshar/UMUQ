@@ -1,6 +1,6 @@
 #include "core/core.hpp"
 #include "environment.hpp"
-#include "numerics/polynomial.hpp"
+#include "numerics/polynomials/polynomial.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/knearestneighbors.hpp"
 #include "misc/timer.hpp"
