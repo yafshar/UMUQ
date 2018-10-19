@@ -19,7 +19,6 @@ It should contain the following files:
     |-- latinhypercube.hpp
     |-- linearregression.hpp
     |-- multimin.hpp
-    |-- polynomial.hpp
     |-- primitive.hpp
     |-- README.md
     |-- residual.hpp
@@ -33,6 +32,7 @@ and the following directories:
     |-- density
     |-- function
     |-- multimin
+    |-- polynomials
     |-- random
     `-- testfunctions
 ````

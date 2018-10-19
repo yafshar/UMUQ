@@ -1,5 +1,5 @@
 #include "core/core.hpp"
-#include "numerics/polynomial.hpp"
+#include "numerics/polynomials/polynomial.hpp"
 #include "gtest/gtest.h"
 
 /*!
