@@ -9,7 +9,7 @@ rm -fr m4/ltversion.m4
 rm -fr m4/lt\~obsolete.m4
 
 # Create the configuration script
-bash ./bootstrap.sh 
+bash ./scripts/bootstrap.sh 
 
 #configure and make
 ./configure --with-googletest
