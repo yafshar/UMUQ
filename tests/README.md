@@ -32,7 +32,9 @@ and the following files:
     |   `-- test.txt
     |-- inference
     |   |-- prior
+    |   |   `-- priordistribution_test.cpp
     |   `-- tmcmc
+    |       `-- tmcmc_test.cpp
     |-- io
     |   |-- eigen_io_test.cpp
     |   |-- io_test.cpp
@@ -46,17 +48,34 @@ and the following files:
     |-- numerics
     |   |-- dcpse_test.cpp
     |   |-- density
+    |   |   `-- densityfunction_test.cpp
     |   |-- eigen_test.cpp
     |   |-- factorial_test.cpp
     |   |-- fitness_test.cpp
     |   |-- function
+    |   |   |-- data.txt
+    |   |   |-- fitfunction_test.cpp
+    |   |   |-- functionminimizer_test.cpp
+    |   |   `-- function_test.cpp
     |   |-- knearestneighbors_test.cpp
     |   |-- knearestneighbors_test.txt
     |   |-- linearregression_test.cpp
     |   |-- multimin
+    |   |   |-- bfgs2_test.cpp
+    |   |   |-- bfgs_test.cpp
+    |   |   |-- conjugatefr_test.cpp
+    |   |   |-- conjugatepr_test.cpp
+    |   |   |-- multimin_test.cpp
+    |   |   |-- simplexnm2rnd_test.cpp
+    |   |   |-- simplexnm2_test.cpp
+    |   |   |-- simplexnm_test.cpp
+    |   |   `-- steepestdescent_test.cpp
     |   |-- multimin_test.cpp
-    |   |-- polynomial_test.cpp
+    |   |-- polynomials
+    |   |   |-- legendrepolynomial_test.cpp
+    |   |   `-- polynomial_test.cpp
     |   |-- random
+    |   |   `-- psrandom_test.cpp
     |   `-- stats_test.cpp
     `-- torc
         `-- torc_test.cpp
