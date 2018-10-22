@@ -72,6 +72,8 @@ and the following files:
     |   |   `-- steepestdescent_test.cpp
     |   |-- multimin_test.cpp
     |   |-- polynomials
+    |   |   |-- chebyshevpolynomial_test.cpp
+    |   |   |-- hermitepolynomial_test.cpp
     |   |   |-- legendrepolynomial_test.cpp
     |   |   `-- polynomial_test.cpp
     |   |-- random
