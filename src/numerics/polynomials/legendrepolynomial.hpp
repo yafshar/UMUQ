@@ -61,12 +61,12 @@ inline namespace polynomials
  * <table>
  * <caption id="multi_row">Legendre polynomials</caption>
  * <tr><th> n <th> \f$ ~~~~~P_n(x) \f$        
- * <tr><td> 0 <td> \f$ (~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
- * <tr><td> 1 <td> \f$ (~~1~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
- * <tr><td> 2 <td> \f$ (~~3~x^2~-~~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
- * <tr><td> 3 <td> \f$ (~~5~x^3~-~~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
- * <tr><td> 4 <td> \f$ (~~35~x^4~-~~~~30~x^2~+~~~~3~~~~~~~~~~~~~~~~)/8 \f$ 
- * <tr><td> 5 <td> \f$ (~~63~x^5~-~~~~70~x^3~+~~~~15~x~~~~~~~~~~~~~)/8 \f$ 
+ * <tr><td> 0 <td> \f$ (~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~)~~~ \f$ 
+ * <tr><td> 1 <td> \f$ (~~1~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~)~~~ \f$ 
+ * <tr><td> 2 <td> \f$ (~~3~x^2~-~~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~)/2~ \f$ 
+ * <tr><td> 3 <td> \f$ (~~5~x^3~-~~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~~~)/2~ \f$ 
+ * <tr><td> 4 <td> \f$ (~~35~x^4~-~~~~30~x^2~+~~~~3~~~~~~~~~~~~~~~~)/8~ \f$ 
+ * <tr><td> 5 <td> \f$ (~~63~x^5~-~~~~70~x^3~+~~~~15~x~~~~~~~~~~~~~)/8~ \f$ 
  * <tr><td> 6 <td> \f$ (~~231~x^6~-~~~315~x^4~+~~~105~x^2~-~~~~~5~~)/16 \f$ 
  * <tr><td> 7 <td> \f$ (~~429~x^7~-~~~693~x^5~+~~~315~x^3~-~~~~35~x)/16 \f$ 
  * </table>
@@ -83,8 +83,7 @@ inline namespace polynomials
  * 
  * \Refernce:<br>
  * https://en.wikipedia.org/wiki/Legendre_polynomials
- * 
- * 
+ *
  * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomial
  *
  * A Legendre monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ P_n(x) \f$:<br>
