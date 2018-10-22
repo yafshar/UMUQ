@@ -1,7 +1,7 @@
 #ifndef UMUQ_DCPSE_H
 #define UMUQ_DCPSE_H
 
-#include "./polynomials/polynomial.hpp"
+#include "polynomials.hpp"
 #include "factorial.hpp"
 #include "eigenlib.hpp"
 #include "knearestneighbors.hpp"
@@ -26,18 +26,21 @@ namespace umuq
  * 
  * It creates a discretized differential operator and interpolators \ref 
  * 
- * \tparam T         Data type
- * \tparam Distance  Distance type for computing the distances to the nearest neighbors
- *                   (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)<br>
- *                   \sa umuq::kNearestNeighbor.<br>
- *                   \sa umuq::L2NearestNeighbor.<br>
- *                   \sa umuq::MahalanobisNearestNeighbor.
+ * \tparam T           Data type
+ * \tparam Distance    Distance type for computing the distances to the nearest neighbors
+ *                     (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)<br>
+ *                     \sa umuq::kNearestNeighbor.<br>
+ *                     \sa umuq::L2NearestNeighbor.<br>
+ *                     \sa umuq::MahalanobisNearestNeighbor.<br>
+ * \tparam Polynomial  Polynomial type used in building the vandermonde & vandermonde-like matrix
+ *                     (Default is - \b polynomial<T> with monomials)<br>br>
+ *                     \sa umuq::polynomials::PolynomialTypes.<br>
  */
 /*!
  * \todo
  * Currently the class works only for one term and it should be extended to multi terms
  */
-template <typename T, class Distance = L2NearestNeighbor<T>>
+template <typename T, class Distance = L2NearestNeighbor<T>, class Polynomial = polynomial<T>>
 class dcpse
 {
   public:
@@ -54,16 +57,16 @@ class dcpse
      * 
      * \param other dcpse object
      */
-    explicit dcpse(dcpse<T, Distance> &&other);
+    explicit dcpse(dcpse<T, Distance, Polynomial> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other dcpse object
      * 
-     * \returns dcpse<T, Distance>& dcpse object
+     * \returns dcpse<T, Distance, Polynomial>& dcpse object
      */
-    dcpse<T, Distance> &operator=(dcpse<T, Distance> &&other);
+    dcpse<T, Distance, Polynomial> &operator=(dcpse<T, Distance, Polynomial> &&other);
 
     /*!
      * \brief Destroy the dcpse object
@@ -239,16 +242,16 @@ class dcpse
      * 
      * Make it noncopyable.
      */
-    dcpse(dcpse<T, Distance> const &) = delete;
+    dcpse(dcpse<T, Distance, Polynomial> const &) = delete;
 
     /*!
      * \brief Delete a dcpse object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns dcpse<T, Distance>& 
+     * \returns dcpse<T, Distance, Polynomial>& 
      */
-    dcpse<T, Distance> &operator=(dcpse<T, Distance> const &) = delete;
+    dcpse<T, Distance, Polynomial> &operator=(dcpse<T, Distance, Polynomial> const &) = delete;
 
   private:
     //! Dimension of space
@@ -280,15 +283,15 @@ class dcpse
     T rhscoeff;
 };
 
-template <typename T, class Distance>
-dcpse<T, Distance>::dcpse(int ndim, int nterms) : nDim(ndim),
+template <typename T, class Distance, class Polynomial>
+dcpse<T, Distance, Polynomial>::dcpse(int ndim, int nterms) : nDim(ndim),
                                                   nTerms(nterms),
                                                   dcMonomialSize(0),
                                                   dcKernelSize(0),
                                                   Order(nterms) {}
 
-template <typename T, class Distance>
-dcpse<T, Distance>::dcpse(dcpse<T, Distance> &&other)
+template <typename T, class Distance, class Polynomial>
+dcpse<T, Distance, Polynomial>::dcpse(dcpse<T, Distance, Polynomial> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -301,8 +304,8 @@ dcpse<T, Distance>::dcpse(dcpse<T, Distance> &&other)
     rhscoeff = other.rhscoeff;
 }
 
-template <typename T, class Distance>
-dcpse<T, Distance> &dcpse<T, Distance>::operator=(dcpse<T, Distance> &&other)
+template <typename T, class Distance, class Polynomial>
+dcpse<T, Distance, Polynomial> &dcpse<T, Distance, Polynomial>::operator=(dcpse<T, Distance, Polynomial> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -317,8 +320,8 @@ dcpse<T, Distance> &dcpse<T, Distance>::operator=(dcpse<T, Distance> &&other)
     return *this;
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -351,7 +354,7 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
     // Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
-    polynomial<T> poly(nDim, order + Beta - 1);
+    Polynomial poly(nDim, order + Beta - 1);
 
     /*
      * Get the monomials size
@@ -838,8 +841,8 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, int *beta, 
     return true;
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -877,7 +880,7 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
     // Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
-    polynomial<T> poly(nDim, order + Beta - 1);
+    Polynomial poly(nDim, order + Beta - 1);
 
     /*
      * Get the monomials size
@@ -1353,8 +1356,8 @@ bool dcpse<T, Distance>::computeWeights(T *idata, int const nPoints, T *qdata, i
     return true;
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -1375,7 +1378,7 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     ratio = (ratio > 0) ? ratio : static_cast<T>(1);
 
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
-    polynomial<T> poly(nDim, order - 1);
+    Polynomial poly(nDim, order - 1);
 
     /* 
      * Get the monomials size
@@ -1834,8 +1837,8 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     return true;
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
     {
@@ -1861,7 +1864,7 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     ratio = (ratio > 0) ? ratio : static_cast<T>(1);
 
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
-    polynomial<T> poly(nDim, order - 1);
+    Polynomial poly(nDim, order - 1);
 
     /* 
      * Get the monomials size
@@ -2432,8 +2435,8 @@ bool dcpse<T, Distance>::computeInterpolatorWeights(T *idata, int const nPoints,
     return true;
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
 {
     if (KNN->numInputdata() != nPoints)
     {
@@ -2461,8 +2464,8 @@ bool dcpse<T, Distance>::compute(T *iFvalue, int const nPoints, T *qFvalue, int 
     }
 }
 
-template <typename T, class Distance>
-bool dcpse<T, Distance>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
+template <typename T, class Distance, class Polynomial>
+bool dcpse<T, Distance, Polynomial>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
 {
     if (KNN->numInputdata() != nPoints)
     {
@@ -2515,32 +2518,32 @@ bool dcpse<T, Distance>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue,
     return true;
 }
 
-template <typename T, class Distance>
-inline T *dcpse<T, Distance>::neighborhoodKernel(int const index) const
+template <typename T, class Distance, class Polynomial>
+inline T *dcpse<T, Distance, Polynomial>::neighborhoodKernel(int const index) const
 {
     return dcKernel.data() + index * dcMonomialSize;
 }
 
-template <typename T, class Distance>
-inline T *dcpse<T, Distance>::neighborhoodKernel() const
+template <typename T, class Distance, class Polynomial>
+inline T *dcpse<T, Distance, Polynomial>::neighborhoodKernel() const
 {
     return dcKernel.data();
 }
 
-template <typename T, class Distance>
-inline int dcpse<T, Distance>::neighborhoodKernelSize() const
+template <typename T, class Distance, class Polynomial>
+inline int dcpse<T, Distance, Polynomial>::neighborhoodKernelSize() const
 {
     return dcMonomialSize;
 }
 
-template <typename T, class Distance>
-inline int dcpse<T, Distance>::orderofAccuracy(int const index) const
+template <typename T, class Distance, class Polynomial>
+inline int dcpse<T, Distance, Polynomial>::orderofAccuracy(int const index) const
 {
     return Order[index];
 }
 
-template <typename T, class Distance>
-inline void dcpse<T, Distance>::printInfo() const
+template <typename T, class Distance, class Polynomial>
+inline void dcpse<T, Distance, Polynomial>::printInfo() const
 {
     for (int i = 0; i < nTerms; i++)
     {
@@ -2549,14 +2552,14 @@ inline void dcpse<T, Distance>::printInfo() const
     }
 }
 
-template <typename T, class Distance>
-inline T dcpse<T, Distance>::averageSpace(int const index) const
+template <typename T, class Distance, class Polynomial>
+inline T dcpse<T, Distance, Polynomial>::averageSpace(int const index) const
 {
     return h_average[index];
 }
 
-template <typename T, class Distance>
-inline T *dcpse<T, Distance>::averageSpace() const
+template <typename T, class Distance, class Polynomial>
+inline T *dcpse<T, Distance, Polynomial>::averageSpace() const
 {
     return h_average.data();
 }
