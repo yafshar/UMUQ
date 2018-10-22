@@ -19,6 +19,7 @@ It should contain the following files:
     |-- latinhypercube.hpp
     |-- linearregression.hpp
     |-- multimin.hpp
+    |-- polynomials.hpp
     |-- primitive.hpp
     |-- README.md
     |-- residual.hpp
