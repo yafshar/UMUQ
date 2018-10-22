@@ -1,60 +1,41 @@
-#ifndef UMUQ_POLYNOMIAL_H
-#define UMUQ_POLYNOMIAL_H
+#ifndef UMUQ_MONOMIAL_H
+#define UMUQ_MONOMIAL_H
+
+#include "./polynomialbase.hpp"
 
 namespace umuq
 {
 
+inline namespace polynomials
+{
+
 /*! \class polynomial
- * \ingroup Numerics_Module
+ * \ingroup Polynomials_Module
  *
  * \brief Multivariate monomials with the degree of \b r in a space of \b d dimensions.
  *
- *  A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) power of \f$ x \f$:<br>
- *  \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
- *  The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.
+ * A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) 
+ * power of \f$ x \f$:<br>
+ * \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
+ * The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.
+ * If several variables are considered, say, \f$ x,~y,~\text{and}~z \f$ then each can be given an exponent, 
+ * so that any monomial is of the form \f$ x^ay^bz^c\f$ with \f$ a,~b,~\text{and}~c \f$ non-negative integers 
+ * (taking note that any exponent 0 makes the corresponding factor equal to 1).
  */
 template <typename T>
-class polynomial
+class polynomial : public polynomialBase<T>
 {
   public:
-    /*! 
-     * \brief constructor
-     * 
-     * \param dim  Dimension
-     * \param ord  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
-     */
-    polynomial(int const dim, int const ord = 2);
+	/*!
+	 * \brief Construct a new polynomial object
+	 * 
+     * \param dim              Dimension
+     * \param PolynomialOrder  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
+	 */
+	polynomial(int const dim, int const PolynomialOrder = 2);
 
-    /*! 
-     * \brief reset
-     * 
-     * Reset the values to the new ones
-     * 
-     * \param dim new Dimension
-     * \param ord new Order (the default order or degree of r in a space of dm dimensions is 2)
-     */
-    void reset(int const dim, int const ord = 2);
-
-    /*! 
-     * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) \f$ C(n, k) \f$.
-     *
-     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ X ^ k \f$ in the expansion of \f$ (1 + X) ^ n. \f$ <br>
-     * -# A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order, that k objects can be 
-     * chosen from among n objects; <br>
-     * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
-     * 
-     * The formula used is: <br>
-     * \f$ C(n, k) = \frac{n!}{ n! * (n-k)! } \f$ 
-     * 
-     * \param n  Input parameter
-     * \param k  Input parameter
-     * 
-     * \returns The binomial coefficient \f$ C(n, k) \f$
-     */
-    int binomialCoefficient(int const n, int const k);
-
-    /*! 
-     * \brief Here, \f$\alpha=\f$ all the monomials in a d dimensional space, with total degree r.
+	/*! 
+     * \brief Here, \f$\alpha=\f$ all the monomials in a \b d dimensional space, with total degree \b r.
      *   
      * For example: <br>
      * \verbatim
@@ -79,330 +60,125 @@ class polynomial
      *
      * \returns A pointer to monomial sequence
      */
-    int *monomialBasis();
+	int *monomialBasis();
 
-    /*! 
+	/*! 
      * \brief Evaluates a monomial at a point x.
      * 
-     * \param  x       The coordinates of the evaluation points
-     * \param  value   The (monomial value) array value of the monomial at point x
+     * \param  x      The coordinates of the evaluation points
+     * \param  value  The (monomial value) array value of the monomial at point x
      * 
      * \returns The size of the monomial array
      */
-    int monomialValue(T const *x, T *&value);
-
-    /*!
-     * \brief Get the monomial size
-     * 
-     * \return Monomial size
-     */
-    inline int monomialsize() const;
-
-    /*!
-     * \brief get the dimension
-     * 
-     * \return Dimension
-     */
-    inline int dim() const;
-
-    /*!
-     * \brief Polynomial order 
-     * 
-     * \return Polynomial order
-     */
-    inline int order() const;
+	int monomialValue(T const *x, T *&value);
 
   private:
-    /*! 
-     * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and r
-     *  all monomials in a d dimensional space, with order of accuracy r.
-     *
-     * \param x  Current monomial on input and next monomial on the output (last value in the sequence is r).
-     */
-    bool graded_reverse_lexicographic_order(int *x);
-
-  private:
-    /*!
+	/*!
      * \brief Delete a polynomial object copy construction
      * 
      * Make it noncopyable.
      */
-    polynomial(polynomial<T> const &) = delete;
+	polynomial(polynomial<T> const &) = delete;
 
-    /*!
+	/*!
      * \brief Delete a polynomial object assignment
      * 
      * Make it nonassignable
      * 
      * \returns polynomial<T>& 
      */
-    polynomial<T> &operator=(polynomial<T> const &) = delete;
-
-  private:
-    //! Dimension
-    int nDim;
-
-    //! Order of accuracy
-    int Order;
-
-    //! The size of the monomial array
-    int monomialSize;
-
-    //! Array of monomial sequence
-    std::unique_ptr<int[]> alpha;
+	polynomial<T> &operator=(polynomial<T> const &) = delete;
 };
 
 template <typename T>
-polynomial<T>::polynomial(int const dim, int const ord) : nDim(dim), Order(ord)
-{
-    if (nDim <= 0)
-    {
-        UMUQFAIL("Can not have dimension ", nDim, " <= 0!");
-    }
-
-    if (Order < 0)
-    {
-        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
-    }
-
-    monomialSize = binomialCoefficient(nDim + Order, Order);
-    if (monomialSize == 0)
-    {
-        UMUQFAIL("Monomial size of zero degree is requested!");
-    }
-}
-
-template <typename T>
-void polynomial<T>::reset(int const dim, int const ord)
-{
-    nDim = dim;
-    if (nDim <= 0)
-    {
-        UMUQFAIL("Can not have dimension ", nDim, " <= 0!");
-    }
-
-    Order = ord;
-    if (Order < 0)
-    {
-        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
-    }
-
-    monomialSize = binomialCoefficient(nDim + Order, Order);
-    if (monomialSize == 0)
-    {
-        UMUQFAIL("The requested monomial size of zero is wrong!");
-    }
-
-    alpha.reset(nullptr);
-}
-
-template <typename T>
-int polynomial<T>::binomialCoefficient(int const n, int const k)
-{
-    if ((k < 0) || (n < 0))
-    {
-        UMUQFAIL("Fatal error! k=", k, " or n=", n, " < 0!");
-    }
-    if (k < n)
-    {
-        if (k == 0)
-        {
-            return 1;
-        }
-        if ((k == 1) || (k == n - 1))
-        {
-            return n;
-        }
-
-        int mn = std::min(k, n - k);
-        int mx = std::max(k, n - k);
-        int value = mx + 1;
-        for (int i = 2; i <= mn; i++)
-        {
-            value = (value * (mx + i)) / i;
-        }
-
-        return value;
-    }
-    else if (k == n)
-    {
-        return 1;
-    }
-
-    UMUQWARNING("The binomial coefficient is undefined for k=", k, " > n=", n, " !");
-    return 0;
-}
+polynomial<T>::polynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder) {}
 
 template <typename T>
 int *polynomial<T>::monomialBasis()
 {
-    if (alpha)
-    {
-        return alpha.get();
-    }
-    else
-    {
-        int const N = nDim * monomialSize;
+	if (this->alpha)
+	{
+		return this->alpha.get();
+	}
+	else
+	{
+		int const N = this->nDim * this->monomialSize;
 
-        std::vector<int> x(nDim, 0);
+		std::vector<int> x(this->nDim, 0);
 
-        try
-        {
-            alpha.reset(new int[N]);
-        }
-        catch (std::bad_alloc &e)
-        {
-            UMUQFAILRETURNNULL("Failed to allocate memory!");
-        }
+		try
+		{
+			this->alpha.reset(new int[N]);
+		}
+		catch (...)
+		{
+			UMUQFAILRETURNNULL("Failed to allocate memory!");
+		}
 
-        int n(0);
+		int n(0);
 
-        for (;;)
-        {
-            for (int j = nDim - 1; j >= 0; j--, n++)
-            {
-                alpha[n] = x[j];
-            }
+		for (;;)
+		{
+			for (int j = this->nDim - 1; j >= 0; j--, n++)
+			{
+				this->alpha[n] = x[j];
+			}
 
-            if (x[0] == Order)
-            {
-                return alpha.get();
-            }
+			if (x[0] == this->Order)
+			{
+				return this->alpha.get();
+			}
 
-            if (!graded_reverse_lexicographic_order(x.data()))
-            {
-                return nullptr;
-            }
-        }
+			if (!this->graded_reverse_lexicographic_order(x.data()))
+			{
+				return nullptr;
+			}
+		}
 
-        return alpha.get();
-    }
+		return this->alpha.get();
+	}
 }
 
 template <typename T>
 int polynomial<T>::monomialValue(T const *x, T *&value)
 {
-    if (!alpha)
-    {
-        //Have to create monomial sequence
-        int *tmp = monomialBasis();
+	if (!this->alpha)
+	{
+		// Have to create monomial sequence
+		int *tmp = monomialBasis();
 
-        if (tmp == nullptr)
-        {
-            UMUQWARNING("Something went wrong in creating monomial sequence!");
-            return 0;
-        }
-    }
+		if (tmp == nullptr)
+		{
+			UMUQFAIL("Something went wrong in creating monomial sequence!");
+		}
+	}
 
-    if (value == nullptr)
-    {
-        try
-        {
-            value = new T[monomialSize];
-        }
-        catch (std::bad_alloc &e)
-        {
-            UMUQWARNING("Failed to allocate memory!");
-            return 0;
-        }
-    }
+	if (value == nullptr)
+	{
+		try
+		{
+			value = new T[this->monomialSize];
+		}
+		catch (...)
+		{
+			UMUQFAIL("Failed to allocate memory!");
+		}
+	}
 
-    for (int i = 0, k = 0; i < monomialSize; i++)
-    {
-        T v = static_cast<T>(1);
-        for (int j = 0; j < nDim; j++, k++)
-        {
-            v *= std::pow(x[j], alpha[k]);
-        }
-        value[i] = v;
-    }
+	for (int i = 0, k = 0; i < this->monomialSize; i++)
+	{
+		T v = static_cast<T>(1);
+		for (int j = 0; j < this->nDim; j++, k++)
+		{
+			v *= std::pow(x[j], this->alpha[k]);
+		}
+		value[i] = v;
+	}
 
-    return monomialSize;
+	return this->monomialSize;
 }
 
-template <typename T>
-inline int polynomial<T>::monomialsize() const
-{
-    return monomialSize;
-}
-
-template <typename T>
-inline int polynomial<T>::dim() const
-{
-    return nDim;
-}
-
-template <typename T>
-inline int polynomial<T>::order() const
-{
-    return Order;
-}
-
-template <typename T>
-bool polynomial<T>::graded_reverse_lexicographic_order(int *x)
-{
-    if (Order == 0)
-    {
-        return true;
-    }
-
-    int asum = std::accumulate(x, x + nDim, 0);
-
-    if (asum < 0)
-    {
-        UMUQFAILRETURN("Input sums < 0!");
-    }
-
-    if (Order < asum)
-    {
-        UMUQFAILRETURN("Input sums > maximum degree r!");
-    }
-
-    if (x[0] == Order)
-    {
-        x[0] = 0;
-        x[nDim - 1] = 0;
-    }
-    else
-    {
-        int i;
-        int tmp;
-
-        //Seeking the first index in which x > 0.
-        int j = 0;
-        for (i = 1; i < nDim; i++)
-        {
-            if (x[i] > 0)
-            {
-                j = i;
-                break;
-            }
-        }
-
-        if (j == 0)
-        {
-            tmp = x[0];
-            x[0] = 0;
-            x[nDim - 1] = tmp + 1;
-        }
-        else if (j < nDim - 1)
-        {
-            x[j] = x[j] - 1;
-            tmp = x[0] + 1;
-            x[0] = 0;
-            x[j - 1] = x[j - 1] + tmp;
-        }
-        else
-        {
-            tmp = x[0];
-            x[0] = 0;
-            x[j - 1] = tmp + 1;
-            x[j] = x[j] - 1;
-        }
-    }
-    return true;
-}
-
+} // namespace polynomials
 } // namespace umuq
 
 #endif // UMUQ_POLYNOMIAL
