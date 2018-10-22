@@ -15,6 +15,14 @@ TESTS += legendrepolynomial_test
 check_PROGRAMS += legendrepolynomial_test
 legendrepolynomial_test_SOURCES = numerics/polynomials/legendrepolynomial_test.cpp 
 
+TESTS += hermitepolynomial_test 
+check_PROGRAMS += hermitepolynomial_test
+hermitepolynomial_test_SOURCES = numerics/polynomials/hermitepolynomial_test.cpp 
+
+TESTS += chebyshevpolynomial_test 
+check_PROGRAMS += chebyshevpolynomial_test
+chebyshevpolynomial_test_SOURCES = numerics/polynomials/chebyshevpolynomial_test.cpp 
+
 TESTS += eigen_test
 check_PROGRAMS += eigen_test
 eigen_test_SOURCES = numerics/eigen_test.cpp 
