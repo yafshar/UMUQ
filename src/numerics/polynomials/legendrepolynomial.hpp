@@ -1,11 +1,14 @@
-#ifndef UMUQ_POLYNOMIAL_H
-#define UMUQ_POLYNOMIAL_H
+#ifndef UMUQ_LEGENDREPOLYNOMIAL_H
+#define UMUQ_LEGENDREPOLYNOMIAL_H
 
 namespace umuq
 {
 
+inline namespace polynomials
+{
+
 /*! \class LegendrePolynomial
- * \ingroup Numerics_Module
+ * \ingroup Polynomials_Module
  *
  * \brief Legendre Polynomials 
  * 
@@ -53,15 +56,17 @@ namespace umuq
  * 
  * \f$ (1-x \times x) {P_n(x)}'' - 2x \times \acute{P_n(x)} + n(n+1) = 0 \f$
  * 
+ * The first few Legendre polynomials are:
+ * 
  * <table>
- * <caption id="multi_row">The first few Legendre polynomials</caption>
+ * <caption id="multi_row">Legendre polynomials</caption>
  * <tr><th> n <th> \f$ ~~~~~P_n(x) \f$        
- * <tr><td> 0 <td> \f$ (~~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
- * <tr><td> 1 <td> \f$ (~~~~~1~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
- * <tr><td> 2 <td> \f$ (~~~~3~x^2~-~~~~~~~1~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
- * <tr><td> 3 <td> \f$ (~~~~5~x^3~-~~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
- * <tr><td> 4 <td> \f$ (~~~35~x^4~-~~~~30~x^2~+~~~~~3~~~~~~~~~~~~~~)/8 \f$ 
- * <tr><td> 5 <td> \f$ (~~~63~x^5~-~~~~70~x^3~+~~~~15~x~~~~~~~~~~~~)/8 \f$ 
+ * <tr><td> 0 <td> \f$ (~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
+ * <tr><td> 1 <td> \f$ (~~1~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~) \f$ 
+ * <tr><td> 2 <td> \f$ (~~3~x^2~-~~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
+ * <tr><td> 3 <td> \f$ (~~5~x^3~-~~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~~~)/2 \f$ 
+ * <tr><td> 4 <td> \f$ (~~35~x^4~-~~~~30~x^2~+~~~~3~~~~~~~~~~~~~~~~)/8 \f$ 
+ * <tr><td> 5 <td> \f$ (~~63~x^5~-~~~~70~x^3~+~~~~15~x~~~~~~~~~~~~~)/8 \f$ 
  * <tr><td> 6 <td> \f$ (~~231~x^6~-~~~315~x^4~+~~~105~x^2~-~~~~~5~~)/16 \f$ 
  * <tr><td> 7 <td> \f$ (~~429~x^7~-~~~693~x^5~+~~~315~x^3~-~~~~35~x)/16 \f$ 
  * </table>
@@ -87,47 +92,19 @@ namespace umuq
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Legendre monomial.
  */
 template <typename T>
-class LegendrePolynomial
+class LegendrePolynomial : public polynomialBase<T>
 {
   public:
-    /*! 
-     * \brief constructor
-     * 
-     * \param dim  Dimension
-     * \param ord  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
-     */
-    LegendrePolynomial(int const dim, int const ord = 2);
+	/*!
+	 * \brief Construct a new Legendre Polynomial object
+	 * 
+     * \param dim              Dimension
+     * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
+	 */
+	LegendrePolynomial(int const dim, int const PolynomialOrder = 2);
 
-    /*! 
-     * \brief reset
-     * 
-     * Reset the values to the new ones
-     * 
-     * \param dim new Dimension
-     * \param ord new Order (the default order or degree of r in a space of dm dimensions is 2)
-     */
-    void reset(int const dim, int const ord = 2);
-
-    /*! 
-     * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) \f$ C(n, k) \f$.
-     *
-     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ x ^ k \f$ in the expansion of \f$ (1 + x) ^ n. \f$ <br>
-     * -# A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order, that k objects can be 
-     * chosen from among n objects; <br>
-     * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
-     * 
-     * The formula used is: <br>
-     * \f$ C(n, k) = \frac{n!}{ n! * (n-k)! } \f$ 
-     * 
-     * \param n  Input parameter
-     * \param k  Input parameter
-     * 
-     * \returns The binomial coefficient \f$ C(n, k) \f$
-     */
-    int binomialCoefficient(int const n, int const k);
-
-    /*! 
-     * \brief Here, \f$\alpha=\f$ all of the Legendre monomials in a d dimensional space, with total degree r.
+	/*! 
+     * \brief Here, \f$\alpha=\f$ all of the Legendre monomials in a d dimensional space, with total degree \b r.
      *   
      * For example: <br>
      * \verbatim
@@ -163,9 +140,9 @@ class LegendrePolynomial
      *
      * \returns A pointer to monomial sequence
      */
-    int *monomialBasis();
+	int *monomialBasis();
 
-    /*! 
+	/*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x       The coordinates of the evaluation points
@@ -173,68 +150,9 @@ class LegendrePolynomial
      * 
      * \returns The size of the monomial array
      */
-    int monomialValue(T const *x, T *&value);
+	int monomialValue(T const *x, T *&value);
 
-    /*!
-     * \brief Get the monomial size
-     * 
-     * \return Monomial size
-     */
-    inline int monomialsize() const;
-
-    /*!
-     * \brief get the dimension
-     * 
-     * \return Dimension
-     */
-    inline int dim() const;
-
-    /*!
-     * \brief Polynomial order 
-     * 
-     * \return Polynomial order
-     */
-    inline int order() const;
-
-  private:
-    /*! 
-     * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and r
-     *  all monomials in a d dimensional space, with order of accuracy r.
-     *
-     * \param x  Current monomial on input and next monomial on the output (last value in the sequence is r).
-     */
-    bool graded_reverse_lexicographic_order(int *x);
-
-  public:
-    /*!
-     * \brief First coefficient (\f$ \frac{(2n+1)~x}{n+1} \f$) in the Legendre recursion formula.
-     * 
-     * Legendre recursion formula:<br>
-     * 
-     * \f$ P_{n+1}(x) =& \frac{(2n+1)~x}{n+1} P_{n}(x)-\frac{(n)}{n+1} P_{n-1}(x). \f$
-     *  
-     * \param n  The degree of the Legendre polynomial \f$ P_n(x).\f$ 
-     * \param x  The abscissa value.
-     * 
-     * \returns constexpr T Coefficient value \f$ .
-     */
-    inline constexpr T Coefficient1(int const n, T const x);
-
-    /*!
-     * \brief Second coefficient (\f$ \frac{(n)}{n+1} \f$) in the Legendre recursion formula.
-     * 
-     * Legendre recursion formula:<br>
-     * 
-     * \f$ P_{n+1}(x) =& \frac{(2n+1)~x}{n+1} P_{n}(x)-\frac{(n)}{n+1} P_{n-1}(x). \f$
-     *  
-     * \param n  The degree of the Legendre polynomial \f$ P_n(x).\f$ 
-     * \param x  The abscissa value.
-     * 
-     * \returns constexpr T Coefficient value \f$ .
-     */
-    inline constexpr T Coefficient2(int const n, T const x);
-
-    /*!
+	/*!
      * \brief Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
      * 
      * Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
@@ -247,9 +165,9 @@ class LegendrePolynomial
      * 
      * \returns T The computed Legendre Polynomial
      */
-    inline T legendre_next(int const n, T const x, T const Pn, T const Pnm1);
+	inline T legendre_next(int const n, T const x, T const Pn, T const Pnm1);
 
-    /*!
+	/*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -268,9 +186,9 @@ class LegendrePolynomial
      * 
      * \returns T The Legendre polynomial of the degree n \f$ P_n(x)~\text{or}~Q_n(x).\f$ 
      */
-    T legendre_p(int const n, T const x, bool const second = false);
+	T legendre(int const n, T const x, bool const second = false);
 
-    /*!
+	/*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -289,417 +207,235 @@ class LegendrePolynomial
      * 
      * \returns T* All the Legendre polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-    T *legendre_p_array(int const n, T const x, bool const second = false);
+	T *legendre_array(int const n, T const x, bool const second = false);
 
   private:
-    /*!
+	/*!
      * \brief Delete a LegendrePolynomial object copy construction
      * 
      * Make it noncopyable.
      */
-    LegendrePolynomial(LegendrePolynomial<T> const &) = delete;
+	LegendrePolynomial(LegendrePolynomial<T> const &) = delete;
 
-    /*!
+	/*!
      * \brief Delete a LegendrePolynomial object assignment
      * 
      * Make it nonassignable
      * 
      * \returns LegendrePolynomial<T>& 
      */
-    LegendrePolynomial<T> &operator=(LegendrePolynomial<T> const &) = delete;
-
-  private:
-    //! Dimension
-    int nDim;
-
-    //! Order of accuracy
-    int Order;
-
-    //! The size of the monomial array
-    int monomialSize;
-
-    //! Array of monomial sequence
-    std::unique_ptr<int[]> alpha;
+	LegendrePolynomial<T> &operator=(LegendrePolynomial<T> const &) = delete;
 };
 
 template <typename T>
-LegendrePolynomial<T>::LegendrePolynomial(int const dim, int const ord) : nDim(dim), Order(ord)
+LegendrePolynomial<T>::LegendrePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
 {
-    if (nDim <= 0)
-    {
-        UMUQFAIL("Can not have dimension = ", nDim, " <= 0!");
-    }
-
-    if (Order < 0)
-    {
-        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
-    }
-
-    monomialSize = binomialCoefficient(nDim + Order, Order);
-    if (monomialSize == 0)
-    {
-        UMUQFAIL("Monomial size of zero degree is requested!");
-    }
-}
-
-template <typename T>
-void LegendrePolynomial<T>::reset(int const dim, int const ord)
-{
-    nDim = dim;
-    if (nDim <= 0)
-    {
-        UMUQFAIL("Can not have dimension ", nDim, " <= 0!");
-    }
-
-    Order = ord;
-    if (Order < 0)
-    {
-        UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
-    }
-
-    monomialSize = binomialCoefficient(nDim + Order, Order);
-    if (monomialSize == 0)
-    {
-        UMUQFAIL("The requested monomial size of zero is wrong!");
-    }
-
-    alpha.reset(nullptr);
-}
-
-template <typename T>
-int LegendrePolynomial<T>::binomialCoefficient(int const n, int const k)
-{
-    if ((k < 0) || (n < 0))
-    {
-        UMUQFAIL("Fatal error! k=", k, " or n=", n, " < 0!");
-    }
-    if (k < n)
-    {
-        if (k == 0)
-        {
-            return 1;
-        }
-        if ((k == 1) || (k == n - 1))
-        {
-            return n;
-        }
-
-        int mn = std::min(k, n - k);
-        int mx = std::max(k, n - k);
-        int value = mx + 1;
-        for (int i = 2; i <= mn; i++)
-        {
-            value = (value * (mx + i)) / i;
-        }
-
-        return value;
-    }
-    else if (k == n)
-    {
-        return 1;
-    }
-
-    UMUQWARNING("The binomial coefficient is undefined for k=", k, " > n=", n, " !");
-    return 0;
-}
-
-template <typename T>
-inline constexpr T LegendrePolynomial<T>::Coefficient1(int const n, T const x)
-{
-    return (static_cast<T>(2) * static_cast<T>(n) + static_cast<T>(1)) * x / static_cast<T>(n + 1);
-}
-
-template <typename T>
-inline constexpr T LegendrePolynomial<T>::Coefficient2(int const n, T const x)
-{
-    return static_cast<T>(n) / static_cast<T>(n + 1);
-}
-
-template <typename T>
-inline T LegendrePolynomial<T>::legendre_next(int const n, T const x, T const Pn, T const Pnm1)
-{
-    return ((static_cast<T>(2) * static_cast<T>(n) + static_cast<T>(1)) * x * Pn - static_cast<T>(n) * Pnm1) / static_cast<T>(n + 1);
-    //Coefficient1(n, x) * Pn - Coefficient2(n, x) * Pnm1;
-}
-
-template <typename T>
-T LegendrePolynomial<T>::legendre_p(int const n, T const x, bool const second)
-{
-    // Error handling:
-    if ((x < -1) || (x > 1))
-    {
-        UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
-    }
-
-    T P0;
-    T P1;
-    if (second)
-    {
-        // A solution of the second kind (Q):
-        P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
-        P1 = x * P0 - static_cast<T>(1);
-    }
-    else
-    {
-        // A solution of the first kind (P):
-        P0 = static_cast<T>(1);
-        P1 = x;
-    }
-    if (n == 0)
-    {
-        return P0;
-    }
-
-    int i(1);
-    while (i < n)
-    {
-        std::swap(P0, P1);
-        P1 = this->legendre_next(i, x, P0, P1);
-        ++i;
-    }
-    return P1;
-}
-
-template <typename T>
-T *LegendrePolynomial<T>::legendre_p_array(int const n, T const x, bool const second)
-{
-    // Error handling:
-    if ((x < -1) || (x > 1))
-    {
-        UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
-    }
-
-    T *results = nullptr;
-
-    try
-    {
-        results = new T[n + 1];
-    }
-    catch (...)
-    {
-        UMUQFAIL("Failed to allocate memory!");
-    }
-
-    T P0;
-    T P1;
-    if (second)
-    {
-        // A solution of the second kind (Q):
-        P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
-        P1 = x * P0 - static_cast<T>(1);
-    }
-    else
-    {
-        // A solution of the first kind (P):
-        P0 = static_cast<T>(1);
-        P1 = x;
-    }
-
-    results[0] = P0;
-    if (n == 0)
-    {
-        return results;
-    }
-
-    results[1] = P1;
-
-    int i(1);
-    while (i < n)
-    {
-        std::swap(P0, P1);
-        P1 = this->legendre_next(i, x, P0, P1);
-        ++i;
-        results[i] = P1;
-    }
-    return results;
+	if (!std::is_floating_point<T>::value)
+	{
+		UMUQFAIL("This type is not supported in this class!");
+	}
 }
 
 template <typename T>
 int *LegendrePolynomial<T>::monomialBasis()
 {
-    if (alpha)
-    {
-        return alpha.get();
-    }
-    else
-    {
-        int const N = nDim * monomialSize;
+	if (this->alpha)
+	{
+		return this->alpha.get();
+	}
+	else
+	{
+		int const N = this->nDim * this->monomialSize;
 
-        std::vector<int> x(nDim, 0);
+		std::vector<int> x(this->nDim, 0);
 
-        try
-        {
-            alpha.reset(new int[N]);
-        }
-        catch (std::bad_alloc &e)
-        {
-            UMUQFAILRETURNNULL("Failed to allocate memory!");
-        }
+		try
+		{
+			this->alpha.reset(new int[N]);
+		}
+		catch (...)
+		{
+			UMUQFAILRETURNNULL("Failed to allocate memory!");
+		}
 
-        int n(0);
+		int n(0);
 
-        for (;;)
-        {
-            for (int j = nDim - 1; j >= 0; j--, n++)
-            {
-                alpha[n] = x[j];
-            }
+		for (;;)
+		{
+			for (int j = this->nDim - 1; j >= 0; j--, n++)
+			{
+				this->alpha[n] = x[j];
+			}
 
-            if (x[0] == Order)
-            {
-                return alpha.get();
-            }
+			if (x[0] == this->Order)
+			{
+				return this->alpha.get();
+			}
 
-            if (!graded_reverse_lexicographic_order(x.data()))
-            {
-                return nullptr;
-            }
-        }
+			if (!this->graded_reverse_lexicographic_order(x.data()))
+			{
+				return nullptr;
+			}
+		}
 
-        return alpha.get();
-    }
+		return this->alpha.get();
+	}
 }
 
 template <typename T>
 int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 {
-    if (!alpha)
-    {
-        //Have to create monomial sequence
-        int *tmp = monomialBasis();
+	if (!this->alpha)
+	{
+		//Have to create monomial sequence
+		int *tmp = this->monomialBasis();
 
-        if (tmp == nullptr)
-        {
-            UMUQWARNING("Something went wrong in creating monomial sequence!");
-            return 0;
-        }
-    }
+		if (tmp == nullptr)
+		{
+			UMUQFAIL("Something went wrong in creating monomial sequence!");
+		}
+	}
 
-    if (value == nullptr)
-    {
-        try
-        {
-            value = new T[monomialSize];
-        }
-        catch (std::bad_alloc &Exponents)
-        {
-            UMUQWARNING("Failed to allocate memory!");
-            return 0;
-        }
-    }
+	if (value == nullptr)
+	{
+		try
+		{
+			value = new T[this->monomialSize];
+		}
+		catch (...)
+		{
+			UMUQFAIL("Failed to allocate memory!");
+		}
+	}
 
-    std::vector<T *> legendrePolynomialsValues(nDim);
+	std::vector<T *> legendrePolynomialsValues(this->nDim);
 
-    for (int j = 0; j < nDim; j++)
-    {
-        legendrePolynomialsValues[j] = this->legendre_p_array(Order, x[j]);
-    }
+	for (int j = 0; j < this->nDim; j++)
+	{
+		legendrePolynomialsValues[j] = this->legendre_array(this->Order, x[j]);
+	}
 
-    for (int i = 0, k = 0; i < monomialSize; i++)
-    {
-        T v = static_cast<T>(1);
-        for (int j = 0; j < nDim; j++, k++)
-        {
-            int const l = alpha[k];
-            v *= legendrePolynomialsValues[j][l];
-        }
-        value[i] = v;
-    }
+	for (int i = 0, k = 0; i < this->monomialSize; i++)
+	{
+		T v = static_cast<T>(1);
+		for (int j = 0; j < this->nDim; j++, k++)
+		{
+			int const l = this->alpha[k];
+			v *= legendrePolynomialsValues[j][l];
+		}
+		value[i] = v;
+	}
 
-    for (int j = 0; j < nDim; j++)
-    {
-        delete[] legendrePolynomialsValues[j];
-    }
+	for (int j = 0; j < this->nDim; j++)
+	{
+		delete[] legendrePolynomialsValues[j];
+	}
 
-    return monomialSize;
+	return this->monomialSize;
 }
 
 template <typename T>
-inline int LegendrePolynomial<T>::monomialsize() const
+inline T LegendrePolynomial<T>::legendre_next(int const n, T const x, T const Pn, T const Pnm1)
 {
-    return monomialSize;
+	return ((static_cast<T>(2) * static_cast<T>(n) + static_cast<T>(1)) * x * Pn - static_cast<T>(n) * Pnm1) / static_cast<T>(n + 1);
 }
 
 template <typename T>
-inline int LegendrePolynomial<T>::dim() const
+T LegendrePolynomial<T>::legendre(int const n, T const x, bool const second)
 {
-    return nDim;
+	// Error handling:
+	if ((x < -1) || (x > 1))
+	{
+		UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
+	}
+
+	T P0;
+	T P1;
+	if (second)
+	{
+		// A solution of the second kind (Q):
+		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
+		P1 = x * P0 - static_cast<T>(1);
+	}
+	else
+	{
+		// A solution of the first kind (P):
+		P0 = static_cast<T>(1);
+		P1 = x;
+	}
+	if (n == 0)
+	{
+		return P0;
+	}
+
+	int i(1);
+	while (i < n)
+	{
+		std::swap(P0, P1);
+		P1 = this->legendre_next(i, x, P0, P1);
+		++i;
+	}
+	return P1;
 }
 
 template <typename T>
-inline int LegendrePolynomial<T>::order() const
+T *LegendrePolynomial<T>::legendre_array(int const n, T const x, bool const second)
 {
-    return Order;
+	// Error handling:
+	if ((x < -1) || (x > 1))
+	{
+		UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
+	}
+
+	T *results = nullptr;
+
+	try
+	{
+		results = new T[n + 1];
+	}
+	catch (...)
+	{
+		UMUQFAIL("Failed to allocate memory!");
+	}
+
+	T P0;
+	T P1;
+	if (second)
+	{
+		// A solution of the second kind (Q):
+		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
+		P1 = x * P0 - static_cast<T>(1);
+	}
+	else
+	{
+		// A solution of the first kind (P):
+		P0 = static_cast<T>(1);
+		P1 = x;
+	}
+
+	results[0] = P0;
+	if (n == 0)
+	{
+		return results;
+	}
+
+	results[1] = P1;
+
+	int i(1);
+	while (i < n)
+	{
+		std::swap(P0, P1);
+		P1 = this->legendre_next(i, x, P0, P1);
+		++i;
+		results[i] = P1;
+	}
+	return results;
 }
 
-template <typename T>
-bool LegendrePolynomial<T>::graded_reverse_lexicographic_order(int *x)
-{
-    if (Order == 0)
-    {
-        return true;
-    }
-
-    int asum = std::accumulate(x, x + nDim, 0);
-
-    if (asum < 0)
-    {
-        UMUQFAILRETURN("Input sums < 0!");
-    }
-
-    if (Order < asum)
-    {
-        UMUQFAILRETURN("Input sums > maximum degree r!");
-    }
-
-    if (x[0] == Order)
-    {
-        x[0] = 0;
-        x[nDim - 1] = 0;
-    }
-    else
-    {
-        int i;
-        int tmp;
-
-        // Seeking the first index in which x > 0.
-        int j = 0;
-        for (i = 1; i < nDim; i++)
-        {
-            if (x[i] > 0)
-            {
-                j = i;
-                break;
-            }
-        }
-
-        if (j == 0)
-        {
-            tmp = x[0];
-            x[0] = 0;
-            x[nDim - 1] = tmp + 1;
-        }
-        else if (j < nDim - 1)
-        {
-            x[j] = x[j] - 1;
-            tmp = x[0] + 1;
-            x[0] = 0;
-            x[j - 1] = x[j - 1] + tmp;
-        }
-        else
-        {
-            tmp = x[0];
-            x[0] = 0;
-            x[j - 1] = tmp + 1;
-            x[j] = x[j] - 1;
-        }
-    }
-    return true;
-}
-
+} // namespace polynomials
 } // namespace umuq
 
-#endif // UMUQ_POLYNOMIAL
+#endif // UMUQ_LEGENDREPOLYNOMIAL
 
 // template <class T>
 // void uncheckedNonZeroLegendrePolynomialsCoefficientsExponents(unsigned int const n, T *Coefficients, int *Exponents)
