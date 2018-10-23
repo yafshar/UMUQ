@@ -33,7 +33,7 @@ namespace umuq
  *                     \sa umuq::L2NearestNeighbor.<br>
  *                     \sa umuq::MahalanobisNearestNeighbor.<br>
  * \tparam Polynomial  Polynomial type used in building the vandermonde & vandermonde-like matrix
- *                     (Default is - \b polynomial<T> with monomials)<br>br>
+ *                     (Default is - \b polynomial<T> with monomials)<br>
  *                     \sa umuq::polynomials::PolynomialTypes.<br>
  */
 /*!
