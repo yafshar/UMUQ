@@ -29,14 +29,16 @@ inline namespace polynomials
  * </table>
  * 
  * 
- * \Refernce:<br>
+ * Reference:<br>
  * https://en.wikipedia.org/wiki/Hermite_polynomials
  * 
  * 
- * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomial
+ * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomials::polynomial
  *
  * A Hermite monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ H_n(x) \f$:<br>
+ * 
  * \f$  H_0(x), H_1(x), H_2(x), H_3(x), \cdots, H_r(x) \f$<br>
+ * 
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Hermite monomial.
  */
 template <typename T>
@@ -122,16 +124,14 @@ class HermitePolynomial : public polynomialBase<T>
      * source code made available under the following license: <br>
      * 
      * \copyright
-     * \verbatim
-     * Boost Software License, Version 1.0. (See accompanying file
-     * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-     * \endverbatim
+     * Boost Software License, Version 1.0. <br>
+	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
      * \param x  The abscissa value.
      * 
-     * \returns T The Hermite polynomial of the degree n of x, that is: \f$ H_n(x) = (-1)^n e^{x^2} \frac{d^n}{dx^n}e^{-x^2}.\f$ 
+     * \returns T The Hermite polynomial of the degree n of x. 
      */
 	T hermite(int const n, T const x);
 
@@ -142,10 +142,8 @@ class HermitePolynomial : public polynomialBase<T>
      * source code made available under the following license: <br>
      * 
      * \copyright
-     * \verbatim
-     * Boost Software License, Version 1.0. (See accompanying file
-     * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-     * \endverbatim
+     * Boost Software License, Version 1.0. <br>
+	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
