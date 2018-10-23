@@ -18,8 +18,10 @@ inline namespace polynomials
  * 
  * A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) 
  * power of \f$ x \f$:<br>
+ * 
  * \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
- * The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.
+ * 
+ * The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.<br>
  * If several variables are considered, say, \f$ x,~y,~\text{and}~z \f$ then each can be given an exponent, 
  * so that any monomial is of the form \f$ x^ay^bz^c\f$ with \f$ a,~b,~\text{and}~c \f$ non-negative integers 
  * (taking note that any exponent 0 makes the corresponding factor equal to 1). 
@@ -29,8 +31,9 @@ inline namespace polynomials
  * satisfies a recurrence relation. \sa umuq::polynomials::PolynomialTypes.
  * 
  * This way, a (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ can simply be replacd by a 
- * (univariate) polynomial of \f$ P_n(x) \f$:<br>
- * \f$ P_0(x), P_1(x), P_2(x), P_3(x), \cdots, P_r(x) \f$<br>
+ * (univariate) polynomial of \f$ P_n(x) \f$:
+ * 
+ * \f$ P_0(x), P_1(x), P_2(x), P_3(x), \cdots, P_r(x) \f$
  * 
  * If we replace the monomials in the Vandermonde matrix by different polynomials, the resulting matrix is a
  * Vandermonde-like matrix.
@@ -62,14 +65,15 @@ class polynomialBase
      * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) 
 	 * \f$ C(n, k) \f$.
      *
-     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ X ^ k \f$ in 
-	 * the expansion of \f$ (1 + X) ^ n. \f$ <br>
+     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ x ^ k \f$ in 
+	 * the expansion of \f$ (1 + x) ^ n. \f$ <br>
      * -# A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order, 
 	 * that k objects can be chosen from among n objects; <br>
      * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
      * 
-     * The formula used is: <br>
-     * \f$ C(n, k) = \frac{n!}{ n! * (n-k)! } \f$ 
+     * The formula used is:
+	 * 
+     * \f$ C(n, k) = \frac{n!}{ n! (n-k)! } \f$ 
      * 
      * \param n  Input parameter
      * \param k  Input parameter
@@ -103,7 +107,7 @@ class polynomialBase
 	inline int monomialsize() const;
 
 	/*!
-     * \brief get the dimension
+     * \brief Get the dimension
      * 
      * \return Dimension
      */
