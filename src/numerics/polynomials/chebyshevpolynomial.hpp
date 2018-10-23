@@ -52,14 +52,16 @@ inline namespace polynomials
  * </table>
  * 
  * 
- * \Refernce:<br>
+ * Reference:<br>
  * https://en.wikipedia.org/wiki/Chebyshev_polynomials
  * 
  * 
- * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomial
+ * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomials::polynomial
  *
  * A Chebyshev monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ T_n(x) \f$:<br>
+ * 
  * \f$  T_0(x), T_1(x), T_2(x), T_3(x), \cdots, T_r(x) \f$<br>
+ * 
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Chebyshev monomial.
  */
 template <typename T>
@@ -144,10 +146,8 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * source code made available under the following license: <br>
      * 
      * \copyright
-     * \verbatim
-     * Boost Software License, Version 1.0. (See accompanying file
-     * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-     * \endverbatim
+     * Boost Software License, Version 1.0. <br>
+	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$ 
@@ -164,10 +164,8 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * source code made available under the following license: <br>
      * 
      * \copyright
-     * \verbatim
-     * Boost Software License, Version 1.0. (See accompanying file
-     * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-     * \endverbatim
+     * Boost Software License, Version 1.0. <br>
+	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$ 
