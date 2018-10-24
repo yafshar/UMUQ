@@ -166,7 +166,7 @@ umuqFunction<T, F>::umuqFunction(T const *Params1, T const *Params2, int const N
                                                                                                               numParams(NumParams > 0 ? NumParams : 0),
                                                                                                               f(nullptr)
 {
-  if (numParams % 2 != 0)
+  if (numParams & 1)
   {
     UMUQFAIL("Wrong input size!");
   }
