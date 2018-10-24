@@ -283,7 +283,7 @@ bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSi
 template <typename T>
 bool fitness<T>::computeResiduals(T *observationspredictions, int const nSize, T *&results)
 {
-    if (nSize % 2 != 0)
+    if (nSize & 1)
     {
         UMUQFAILRETURN("Wrong input size!");
     }
