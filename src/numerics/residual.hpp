@@ -1,6 +1,8 @@
 #ifndef UMUQ_RESIDUAL_H
 #define UMUQ_RESIDUAL_H
 
+#include "../misc/parser.hpp"
+
 namespace umuq
 {
 
@@ -65,7 +67,7 @@ class residual
      * 
      * \return false  if the error type is unknown 
      */
-    bool set(int ErrorType);
+    bool set(int const ErrorType);
 
     /*!
      * \brief Compute the residual based on error type
@@ -105,21 +107,27 @@ residual<T>::residual(int const ErrorType) : errorType(ErrorType) {}
 template <typename T>
 residual<T>::residual(std::string const &ErrorType)
 {
-    if (ErrorType == "absolute" || ErrorType == "Absolute" || ErrorType == "AbsoluteError")
+    std::string upErrorType(ErrorType);
+    {
+        umuq::parser p;
+        upErrorType = p.toupper(upErrorType);
+    }
+
+    if (upErrorType == "ABSOLUTE" || upErrorType == "ABSOLUTEERROR")
     {
         errorType = ErrorTypes::AbsoluteError;
     }
-    else if (ErrorType == "scaled" || ErrorType == "Scaled" || ErrorType == "ScaledError")
+    else if (upErrorType == "SCALED" || upErrorType == "SCALEDERROR")
     {
         errorType = ErrorTypes::ScaledError;
     }
-    else if (ErrorType == "squared" || ErrorType == "Squared" || ErrorType == "SquaredError")
+    else if (upErrorType == "SQUARED" || upErrorType == "SQUAREDERROR")
     {
         errorType = ErrorTypes::SquaredError;
     }
     else
     {
-        UMUQWARNING("Error type is unknown : Change to the default absolute Error!");
+        UMUQWARNING("Error type = ", ErrorType, " is unknown : Change to the default absolute Error!");
 
         errorType = ErrorTypes::AbsoluteError;
     }
@@ -128,27 +136,33 @@ residual<T>::residual(std::string const &ErrorType)
 template <typename T>
 bool residual<T>::set(std::string const &ErrorType)
 {
-    if (ErrorType == "absolute" || ErrorType == "Absolute" || ErrorType == "AbsoluteError")
+    std::string upErrorType(ErrorType);
+    {
+        umuq::parser p;
+        upErrorType = p.toupper(upErrorType);
+    }
+
+    if (upErrorType == "ABSOLUTE" || upErrorType == "ABSOLUTEERROR")
     {
         errorType = ErrorTypes::AbsoluteError;
     }
-    else if (ErrorType == "scaled" || ErrorType == "Scaled" || ErrorType == "ScaledError")
+    else if (upErrorType == "SCALED" || upErrorType == "SCALEDERROR")
     {
         errorType = ErrorTypes::ScaledError;
     }
-    else if (ErrorType == "squared" || ErrorType == "Squared" || ErrorType == "SquaredError")
+    else if (upErrorType == "SQUARED" || upErrorType == "SQUAREDERROR")
     {
         errorType = ErrorTypes::SquaredError;
     }
     else
     {
-        UMUQFAILRETURN("Error type is unknown!");
+        UMUQFAILRETURN("Error type = ", ErrorType, " is unknown");
     }
     return true;
 }
 
 template <typename T>
-bool residual<T>::set(int ErrorType)
+bool residual<T>::set(int const ErrorType)
 {
     if (ErrorType == ErrorTypes::AbsoluteError || ErrorType == ErrorTypes::ScaledError || ErrorType == ErrorTypes::SquaredError)
     {
@@ -157,7 +171,7 @@ bool residual<T>::set(int ErrorType)
     }
     else
     {
-        UMUQFAILRETURN("Error type is unknown!");
+        UMUQFAILRETURN("Error type = ", ErrorType, " is unknown");
     }
 }
 
