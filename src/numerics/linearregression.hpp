@@ -1,7 +1,7 @@
 #ifndef UMUQ_LINEARREGRESSION_H
 #define UMUQ_LINEARREGRESSION_H
 
-#include "./polynomials/polynomial.hpp"
+#include "polynomials.hpp"
 #include "eigenlib.hpp"
 
 namespace umuq
@@ -15,8 +15,10 @@ namespace umuq
  * independent variables).
  * 
  * \tparam T Data type
+ * \tparam Polynomial  Polynomial type (Default is - \b polynomial<T> with monomials)<br>
+ *                     \sa umuq::polynomials::PolynomialTypes.<br>
  */
-template <typename T>
+template <typename T, class Polynomial = polynomial<T>>
 class linearRegression
 {
   public:
@@ -33,16 +35,16 @@ class linearRegression
      * 
      * \param other linearRegression object
      */
-    linearRegression(linearRegression<T> &&other);
+    linearRegression(linearRegression<T, Polynomial> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other  linearRegression object
      * 
-     * \return linearRegression<T>& 
+     * \return linearRegression<T, Polynomial>& 
      */
-    linearRegression<T> &operator=(linearRegression<T> &&other);
+    linearRegression<T, Polynomial> &operator=(linearRegression<T, Polynomial> &&other);
 
     /*!
      * \brief Destroy the linearRegression object
@@ -94,7 +96,7 @@ class linearRegression
      * 
      * \param polynomialorder new polynomial order
      */
-    void resetPolynomialOrder(int polynomialorder);
+    void resetPolynomialOrder(int const polynomialorder);
 
   private:
     /*!
@@ -102,16 +104,16 @@ class linearRegression
      * 
      * Make it noncopyable.
      */
-    linearRegression(linearRegression<T> const &) = delete;
+    linearRegression(linearRegression<T, Polynomial> const &) = delete;
 
     /*!
      * \brief Delete a linearRegression object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns linearRegression<T>& 
+     * \returns linearRegression<T, Polynomial>& 
      */
-    linearRegression<T> &operator=(linearRegression<T> const &) = delete;
+    linearRegression<T, Polynomial> &operator=(linearRegression<T, Polynomial> const &) = delete;
 
   private:
     //! Dimensionality
@@ -130,14 +132,14 @@ class linearRegression
     std::vector<T> linearRegressionkernel;
 };
 
-template <typename T>
-linearRegression<T>::linearRegression(int ndim, int polynomialorder) : nDim(ndim),
-                                                                       polynomialOrder(polynomialorder),
-                                                                       linearRegressionMonomialSize(0),
-                                                                       linearRegressionkernelSize(0) {}
+template <typename T, class Polynomial>
+linearRegression<T, Polynomial>::linearRegression(int ndim, int polynomialorder) : nDim(ndim),
+                                                                                   polynomialOrder(polynomialorder),
+                                                                                   linearRegressionMonomialSize(0),
+                                                                                   linearRegressionkernelSize(0) {}
 
-template <typename T>
-linearRegression<T>::linearRegression(linearRegression<T> &&other)
+template <typename T, class Polynomial>
+linearRegression<T, Polynomial>::linearRegression(linearRegression<T, Polynomial> &&other)
 {
     nDim = other.nDim;
     polynomialOrder = other.polynomialOrder;
@@ -146,8 +148,8 @@ linearRegression<T>::linearRegression(linearRegression<T> &&other)
     linearRegressionkernel = std::move(other.linearRegressionkernel);
 }
 
-template <typename T>
-linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&other)
+template <typename T, class Polynomial>
+linearRegression<T, Polynomial> &linearRegression<T, Polynomial>::operator=(linearRegression<T, Polynomial> &&other)
 {
     nDim = other.nDim;
     polynomialOrder = other.polynomialOrder;
@@ -158,19 +160,19 @@ linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&other)
     return *this;
 }
 
-template <typename T>
-linearRegression<T>::~linearRegression() {}
+template <typename T, class Polynomial>
+linearRegression<T, Polynomial>::~linearRegression() {}
 
-template <typename T>
-bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints)
+template <typename T, class Polynomial>
+bool linearRegression<T, Polynomial>::computeWeights(T *idata, T *iFvalue, int const nPoints)
 {
     if (nPoints < 1 || nPoints < minPointsRequired())
     {
-        UMUQFAILRETURN("Number of input data points are not enough!");
+        UMUQFAILRETURN("Number of input data points =", nPoints, " are not enough!");
     }
 
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
+    Polynomial poly(nDim, polynomialOrder);
 
     // Get the monomials size
     linearRegressionMonomialSize = poly.monomialsize();
@@ -242,11 +244,11 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
     return true;
 }
 
-template <typename T>
-bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
+template <typename T, class Polynomial>
+bool linearRegression<T, Polynomial>::solve(T *qdata, T *qFvalue, int const nqPoints)
 {
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
+    Polynomial poly(nDim, polynomialOrder);
 
     if (poly.monomialsize() != linearRegressionkernelSize)
     {
@@ -292,26 +294,23 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
     return true;
 }
 
-template <typename T>
-inline int linearRegression<T>::minPointsRequired()
+template <typename T, class Polynomial>
+inline int linearRegression<T, Polynomial>::minPointsRequired()
 {
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
-    /* 
-         * Get the monomials size
-         * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
-         */
+    Polynomial poly(nDim, polynomialOrder);
+    /* Get the monomials size \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$ */
     return poly.monomialsize();
 }
 
-template <typename T>
-inline int linearRegression<T>::recommendedNumPoints()
+template <typename T, class Polynomial>
+inline int linearRegression<T, Polynomial>::recommendedNumPoints()
 {
     return minPointsRequired();
 }
 
-template <typename T>
-void linearRegression<T>::resetPolynomialOrder(int polynomialorder)
+template <typename T, class Polynomial>
+void linearRegression<T, Polynomial>::resetPolynomialOrder(int const polynomialorder)
 {
     polynomialOrder = polynomialorder;
     //
