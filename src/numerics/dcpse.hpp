@@ -72,7 +72,7 @@ class dcpse
      * \brief Destroy the dcpse object
      * 
      */
-    ~dcpse() {}
+    ~dcpse();
 
     /*!
      * \brief Computes generalized DC-PSE differential operators on set of input points
@@ -285,10 +285,16 @@ class dcpse
 
 template <typename T, class Distance, class Polynomial>
 dcpse<T, Distance, Polynomial>::dcpse(int ndim, int nterms) : nDim(ndim),
-                                                  nTerms(nterms),
-                                                  dcMonomialSize(0),
-                                                  dcKernelSize(0),
-                                                  Order(nterms) {}
+                                                              nTerms(nterms),
+                                                              dcMonomialSize(0),
+                                                              dcKernelSize(0),
+                                                              Order(nterms)
+{
+    if (!std::is_floating_point<T>::value)
+    {
+        UMUQFAIL("This type is not supported in this class!");
+    }
+}
 
 template <typename T, class Distance, class Polynomial>
 dcpse<T, Distance, Polynomial>::dcpse(dcpse<T, Distance, Polynomial> &&other)
@@ -321,6 +327,9 @@ dcpse<T, Distance, Polynomial> &dcpse<T, Distance, Polynomial>::operator=(dcpse<
 }
 
 template <typename T, class Distance, class Polynomial>
+dcpse<T, Distance, Polynomial>::~dcpse() {}
+
+template <typename T, class Distance, class Polynomial>
 bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
 {
     if (nPoints < 1)
@@ -348,7 +357,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
         UMUQWARNING("Zero order degree derivative gives an approximation! \n If this is an interpolation use the interpolation function!");
     }
 
-    int alphamin = (Beta % 2 == 0);
+    int alphamin = !(Beta & 1);
 
     // \f$ (-1)^{|\beta|} \f$
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
@@ -608,8 +617,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             // Number of neighbor points are not enough
             if (dcrank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank =");
-                std::cerr << dcrank << " < " << dcMonomialSize - nENN << std::endl;
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
@@ -874,7 +882,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
         UMUQWARNING("Zero order degree derivative gives an approximation! \n If this is an interpolation use the interpolation function!");
     }
 
-    int alphamin = (Beta % 2 == 0);
+    int alphamin = !(Beta & 1);
 
     // \f$ (-1)^{|\beta|} \f$
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
@@ -1122,8 +1130,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             // Number of neighbor points are not enough
             if (dcrank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ");
-                std::cerr << dcrank << " < " << dcMonomialSize - nENN << std::endl;
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
@@ -1445,15 +1452,20 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     // Construct a kd-tree index & do nearest neighbors search
     KNN->buildIndex(idata);
 
+    // Evaluates a monomial at a point \f$ {\mathbf x} \f$
+    T *column = new T[dcMonomialSize];
+
+    // Evaluates a monomial at a point \f$ {\mathbf x} = 0. \f$
+    poly.monomialValue(std::vector<T>(nDim, T{}).data(), column);
+
     /*
      * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
      * \f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
      */
-    EVectorX<T> RHSB0 = EVectorX<T>::Zero(dcMonomialSize);
-    RHSB0(0) = static_cast<T>(1);
+    EVectorX<T> RHSB0 = EVectorMapType<T>(column, dcMonomialSize);
     EVectorX<T> RHSB(dcMonomialSize);
 
-    // Total number of nearest neighbours for each point
+    // Total number of nearest neighbors for each point
     int nNN = KNN->numNearestNeighbors();
 
     /*
@@ -1481,9 +1493,6 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
     // Array for keeping the component-wise L1 distances
     std::vector<T> L1Dist(nNN * nDim);
-
-    // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-    T *column = new T[dcMonomialSize];
 
     // Array to kepp indexing
     std::vector<int> IndexId(dcMonomialSize);
@@ -1599,8 +1608,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             // Number of neighbor points are not enough
             if (dcrank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ");
-                std::cerr << dcrank << " < " << dcMonomialSize - nENN << std::endl;
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
@@ -1945,19 +1953,27 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
         if (idataminDist == nullptr)
         {
-            return false;
+            UMUQFAILRETURN("Failed to find any neighbor!");
         }
     }
+
+    // Evaluates a monomial at a point \f$ {\mathbf x} \f$
+    T *column = new T[dcMonomialSize];
+
+    // Evaluates a monomial at a point \f$ {\mathbf x} = 0. \f$
+    poly.monomialValue(std::vector<T>(nDim, T{}).data(), column);
 
     /*
      * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
      * \f$  {\mathbf A} ({\mathbf x}) {\mathbf a}^T({\mathbf x})={\mathbf b}  \f$
      */
-    EVectorX<T> RHSB0 = EVectorX<T>::Zero(dcMonomialSize);
-    RHSB0(0) = static_cast<T>(1);
+    EVectorX<T> RHSB0 = EVectorMapType<T>(column, dcMonomialSize);
     EVectorX<T> RHSB(dcMonomialSize);
 
-    // Total number of nearest neighbours for each point
+    std::cout << "RHSB0=\n" ;
+    std::cout <<  RHSB0 << "\n";
+
+    // Total number of nearest neighbors for each point
     int nNN = KNN->numNearestNeighbors();
 
     /*
@@ -1986,10 +2002,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     // Array for keeping the component-wise L1 distances
     std::vector<T> L1Dist(nNN * nDim);
 
-    // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-    T *column = new T[dcMonomialSize];
-
-    // Array to kepp indexing
+    // Array to keep indexing
     std::vector<int> IndexId(dcMonomialSize);
 
     // Primitive (quartic spline) object
@@ -2085,7 +2098,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             T s = std::sqrt(nnDist[j]) / (0.9 * std::sqrt(idataminDist[IdJ]));
 
             // Compute the kernel value at the point
-            T dckernelV = q.f(&s);
+            T const dckernelV = q.f(&s);
 
             /* 
              * Assemble the right hand side
@@ -2136,8 +2149,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             // Number of neighbor points are not enough
             if (dcrank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ");
-                std::cerr << dcrank << " < " << dcMonomialSize - nENN << std::endl;
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
@@ -2170,7 +2182,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                         T s = std::sqrt(nnDist[j]) / (0.9 * std::sqrt(idataminDist[IdJ]));
 
                         // Compute the kernel value at the point
-                        T dckernelV = q.f(&s);
+                        T const dckernelV = q.f(&s);
 
                         /*
                          * Assemble the right hand side<br>
