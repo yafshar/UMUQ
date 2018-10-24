@@ -17,7 +17,7 @@ namespace umuq
 enum priorTypes
 {
     /*! \link umuq::density::uniformDistribution UNIFORM \endlink */
-    UNIFORM = 0, 
+    UNIFORM = 0,
     /*! \link umuq::density::gaussianDistribution GAUSSIAN \endlink */
     GAUSSIAN = 1,
     /*! \link umuq::density::exponentialDistribution EXPONENTIAL \endlink */
@@ -133,6 +133,17 @@ class priorDistribution
      * \returns false If it encounters an unexpected problem
      */
     bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
+    
+    /*!
+     * \brief Set the priorDistribution parameters
+     * 
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
+     * 
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
+     */
     bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
 
     /*!
@@ -174,6 +185,14 @@ class priorDistribution
      * \returns T Returns the probability density function (pdf) evaluated in x
      */
     T pdf(T const *x);
+
+    /*!
+     * \brief Probability density function (pdf)
+     * 
+     * \param x  Input point
+     *  
+     * \returns T Returns the probability density function (pdf) evaluated in x
+     */
     T pdf(std::vector<T> const &x);
 
     /*!
@@ -184,6 +203,14 @@ class priorDistribution
      * \returns T Returns the logarithm probability density function (pdf) evaluated in x
      */
     T logpdf(T const *x);
+    
+    /*!
+     * \brief Logarithm of the probability density function
+     * 
+     * \param x  Input point
+     * 
+     * \returns T Returns the logarithm probability density function (pdf) evaluated in x
+     */
     T logpdf(std::vector<T> const &x);
 
     /*!
@@ -191,10 +218,17 @@ class priorDistribution
      * 
      * \param x Samples 
      * 
-     * \returns true 
      * \returns false If it encounters an unexpected problem
      */
     bool sample(T *x);
+
+    /*!
+     * \brief Create samples based on the prior distribution type
+     * 
+     * \param x Samples 
+     * 
+     * \returns false If it encounters an unexpected problem
+     */
     bool sample(std::vector<T> &x);
 
   protected:
@@ -217,7 +251,7 @@ class priorDistribution
   private:
     //! Problem Dimension
     int nDim;
-  
+
     /*!
      * Prior type which is one of : <br>
      * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
