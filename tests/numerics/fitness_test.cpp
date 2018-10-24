@@ -10,7 +10,7 @@
 TEST(fitness_test, HandlesFitness)
 {
     umuq::fitness<double> f;
-    EXPECT_EQ(f.getMetricName(), "sum_squared");
+    EXPECT_EQ(f.getMetricName(), "SUM_SQUARED");
 }
 
 /*!
