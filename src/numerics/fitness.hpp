@@ -2,6 +2,7 @@
 #ifndef UMUQ_FITNESS_H
 #define UMUQ_FITNESS_H
 
+#include "../misc/parser.hpp"
 #include "residual.hpp"
 #include "stats.hpp"
 
@@ -179,62 +180,65 @@ fitness<T>::fitness(std::string const &MetricName, int const NumMetrics, std::ve
 template <typename T>
 bool fitness<T>::setMetricName(std::string const &MetricName)
 {
-    fitnessMetricName = MetricName;
-    if (fitnessMetricName == "sum_squared")
+    {
+        umuq::parser p;
+        fitnessMetricName = p.toupper(MetricName);
+    }
+    if (fitnessMetricName == "SUM_SQUARED")
     {
         fitnessResidual.set(ErrorTypes::SquaredError);
         errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (fitnessMetricName == "mean_squared")
+    else if (fitnessMetricName == "MEAN_SQUARED")
     {
         fitnessResidual.set(ErrorTypes::SquaredError);
         errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (fitnessMetricName == "root_mean_squared")
+    else if (fitnessMetricName == "ROOT_MEAN_SQUARED")
     {
         fitnessResidual.set(ErrorTypes::SquaredError);
         errorFit = ErrorFitnessTypes::errorFitRootMean;
     }
-    else if (fitnessMetricName == "max_squared")
+    else if (fitnessMetricName == "MAX_SQUARED")
     {
         fitnessResidual.set(ErrorTypes::SquaredError);
         errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (fitnessMetricName == "sum_scaled")
+    else if (fitnessMetricName == "SUM_SCALED")
     {
         fitnessResidual.set(ErrorTypes::ScaledError);
         errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (fitnessMetricName == "mean_scaled")
+    else if (fitnessMetricName == "MEAN_SCALED")
     {
         fitnessResidual.set(ErrorTypes::ScaledError);
         errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (fitnessMetricName == "max_scaled")
+    else if (fitnessMetricName == "MAX_SCALED")
     {
         fitnessResidual.set(ErrorTypes::ScaledError);
         errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (fitnessMetricName == "sum_abs")
+    else if (fitnessMetricName == "SUM_ABS")
     {
         fitnessResidual.set(ErrorTypes::AbsoluteError);
         errorFit = ErrorFitnessTypes::errorFitSum;
     }
-    else if (fitnessMetricName == "mean_abs")
+    else if (fitnessMetricName == "MEAN_ABS")
     {
         fitnessResidual.set(ErrorTypes::AbsoluteError);
         errorFit = ErrorFitnessTypes::errorFitMean;
     }
-    else if (fitnessMetricName == "max_abs")
+    else if (fitnessMetricName == "MAX_ABS")
     {
         fitnessResidual.set(ErrorTypes::AbsoluteError);
         errorFit = ErrorFitnessTypes::errorFitMax;
     }
-    else if (fitnessMetricName == "press")
+    else if (fitnessMetricName == "PRESS")
     {
         // return new PRESSFitness();
     }
-    else if (fitnessMetricName == "cv")
+    else if (fitnessMetricName == "CV")
     {
         // fitnessResidual.set(ErrorTypes::SquaredError);
         // errorFit = errorFitMean;
@@ -246,7 +250,7 @@ bool fitness<T>::setMetricName(std::string const &MetricName)
         //     metricValues.reset(new T[numMetrics]);
         // }
     }
-    else if (fitnessMetricName == "rsquared")
+    else if (fitnessMetricName == "RSQUARED")
     {
         fitnessResidual.set(ErrorTypes::SquaredError);
         errorFit = ErrorFitnessTypes::errorFitSum;
@@ -332,7 +336,7 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 {
     std::vector<T> r(nSize);
 
-    if (fitnessMetricName == "rsquared")
+    if (fitnessMetricName == "RSQUARED")
     {
         T *results = r.data();
 
@@ -349,54 +353,61 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
 
     if (numMetrics > 0)
     {
+        {
+            umuq::parser p;
+            for (int i = 0; i < numMetrics; i++)
+            {
+                metricNames[i] = p.toupper(metricNames[i]);
+            }
+        }
         for (int i = 0; i < numMetrics; i++)
         {
-            if (metricNames[i] == "sum_squared")
+            if (metricNames[i] == "SUM_SQUARED")
             {
                 fitnessResidual.set(ErrorTypes::SquaredError);
                 errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (metricNames[i] == "mean_squared")
+            else if (metricNames[i] == "MEAN_SQUARED")
             {
                 fitnessResidual.set(ErrorTypes::SquaredError);
                 errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (metricNames[i] == "root_mean_squared")
+            else if (metricNames[i] == "ROOT_MEAN_SQUARED")
             {
                 fitnessResidual.set(ErrorTypes::SquaredError);
                 errorFit = ErrorFitnessTypes::errorFitRootMean;
             }
-            else if (metricNames[i] == "max_squared")
+            else if (metricNames[i] == "MAX_SQUARED")
             {
                 fitnessResidual.set(ErrorTypes::SquaredError);
                 errorFit = ErrorFitnessTypes::errorFitMax;
             }
-            else if (metricNames[i] == "sum_scaled")
+            else if (metricNames[i] == "SUM_SCALED")
             {
                 fitnessResidual.set(ErrorTypes::ScaledError);
                 errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (metricNames[i] == "mean_scaled")
+            else if (metricNames[i] == "MEAN_SCALED")
             {
                 fitnessResidual.set(ErrorTypes::ScaledError);
                 errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (metricNames[i] == "max_scaled")
+            else if (metricNames[i] == "MAX_SCALED")
             {
                 fitnessResidual.set(ErrorTypes::ScaledError);
                 errorFit = ErrorFitnessTypes::errorFitMax;
             }
-            else if (metricNames[i] == "sum_abs")
+            else if (metricNames[i] == "SUM_ABS")
             {
                 fitnessResidual.set(ErrorTypes::AbsoluteError);
                 errorFit = ErrorFitnessTypes::errorFitSum;
             }
-            else if (metricNames[i] == "mean_abs")
+            else if (metricNames[i] == "MEAN_ABS")
             {
                 fitnessResidual.set(ErrorTypes::AbsoluteError);
                 errorFit = ErrorFitnessTypes::errorFitMean;
             }
-            else if (metricNames[i] == "max_abs")
+            else if (metricNames[i] == "MAX_ABS")
             {
                 fitnessResidual.set(ErrorTypes::AbsoluteError);
                 errorFit = ErrorFitnessTypes::errorFitMax;
