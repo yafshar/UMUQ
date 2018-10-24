@@ -301,11 +301,29 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_normal(T const inMean, T const inStddev);
+
+    /*!
+     * \brief Replaces the normal object 
+     * 
+     * \param inMean    Input Mean
+     * \param inStddev  Input standard deviation
+     * \param N         Size of the means & standard deviation arrays
+     * 
+     * \returns false If it fails to allocate storage
+     */
     inline bool set_normals(T const *inMean, T const *inStddev, int const N);
+
+    /*!
+     * \brief Replaces the normal object 
+     * 
+     * \param inMeanInStddev  Pair of input Mean & standard deviation
+     * \param N               Number of pairs of the means & standard deviation
+     * 
+     * \returns false If it fails to allocate storage
+     */
     inline bool set_normals(T const *inMeanInStddev, int const N);
 
     /*!
@@ -314,8 +332,7 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_Normal(T const inMean, T const inStddev);
 
@@ -325,8 +342,7 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_lnormal(T const inMean, T const inStddev);
 
@@ -336,8 +352,7 @@ class psrandom
      * \param inMean    Input Mean
      * \param inStddev  Input standard deviation
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_lNormal(T const inMean, T const inStddev);
 
@@ -347,8 +362,7 @@ class psrandom
      * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
@@ -359,8 +373,7 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
 
     inline bool set_mvnormal(T const *inMean, T const *icovariance, int const n);
@@ -370,8 +383,7 @@ class psrandom
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvnormal(EMatrixX<T> const &icovariance);
 
@@ -381,8 +393,7 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
 
     inline bool set_mvnormal(T const *icovariance, int const n);
@@ -392,8 +403,7 @@ class psrandom
      *
      * \param n vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvnormal(int const n);
 
@@ -403,8 +413,7 @@ class psrandom
      * \param inMean        Mean vector of size \f$n\f$
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
 
@@ -415,8 +424,7 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvNormal(T const *inMean, T const *icovariance, int const n);
 
@@ -425,8 +433,7 @@ class psrandom
      *
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvNormal(EMatrixX<T> const &icovariance);
 
@@ -436,8 +443,7 @@ class psrandom
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param n            Vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvNormal(T const *icovariance, int const n);
 
@@ -446,8 +452,7 @@ class psrandom
      *
      * \param n vector size
      *
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_mvNormal(int const n);
 
@@ -456,23 +461,48 @@ class psrandom
      * 
      * \param mu Mean, \f$ \mu \f$
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_expn(T const mu);
+
+    /*!
+     * \brief Replaces the exponential object 
+     * 
+     * \param mu Mean, \f$ \mu \f$
+     * \param N  Number of means 
+     * 
+     * \returns false If it fails to allocate storage
+     */
     inline bool set_expns(T const *mu, int const N);
 
     /*!
      * \brief Replaces the Gamma object 
      * 
-     * \param alpha  Shape parameter \f$\alpha\f$
-     * \param beta   Scale parameter \f$ beta\f$
+     * \param alpha  Shape parameter \f$ \alpha \f$
+     * \param beta   Scale parameter \f$ \beta \f$
      * 
-     * \returns true 
-     * \returns false in failure to allocate storage
+     * \returns false If it fails to allocate storage
      */
     inline bool set_gamma(T const alpha, T const beta);
+    /*!
+     * \brief Replaces the Gamma object 
+     * 
+     * \param alpha  Shape parameter \f$\alpha \f$
+     * \param beta   Scale parameter \f$ \beta \f$
+     * \param N      Number of alphas and betas
+     * 
+     * \returns false If it fails to allocate storage
+     */
     inline bool set_gammas(T const *alpha, T const *beta, int const N);
+
+    /*!
+     * \brief Replaces the Gamma object 
+     * 
+     * \param alphabeta  Pair of Shape & Scale parameters \f$\alpha, \beta \f$
+     * \param N          Number of pairs of Shape & Scale parameter
+     * 
+     * \returns false If it fails to allocate storage
+     */
     inline bool set_gammas(T const *alphabeta, int const N);
 
   public:
@@ -483,9 +513,13 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::normalDistribution<T>> normal;
+
+    /*!
+     * \brief Normals (or Gaussian) random number distribution
+     */
     std::unique_ptr<randomdist::normalDistribution<T>[]> normals;
 
-    //! Number of normal distributions
+    //! Number of normal distributions. \sa normals
     int nnormals;
 
     /*!
@@ -535,9 +569,13 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::exponentialDistribution<T>> expn;
+    
+    /*!
+     * \brief Exponential random number distributions
+     */
     std::unique_ptr<randomdist::exponentialDistribution<T>[]> expns;
 
-    //! Number of Exponential distributions
+    //! Number of Exponential distributions \sa expns
     int nexpns;
 
     /*!
@@ -547,9 +585,13 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::gammaDistribution<T>> gamma;
+
+    /*!
+     * \brief Gamma random number distributions
+     */
     std::unique_ptr<randomdist::gammaDistribution<T>[]> gammas;
 
-    //! Number of Gamma distributions
+    //! Number of Gamma distributions \sa gammas
     int ngammas;
 };
 

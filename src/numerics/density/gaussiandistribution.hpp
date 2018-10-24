@@ -76,7 +76,6 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
-     * \return true 
      * \return false If it encounters an unexpected problem
      */
     inline bool setRandomGenerator(psrandom<T> *PRNG);
@@ -86,11 +85,38 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \param x  Vector of samples
      *
-     * \return true
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(T *x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
     bool sample(std::vector<T> &x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(std::vector<T> &x, int const nSamples);
 };
 
 template <typename T, class V>
@@ -173,7 +199,7 @@ bool gaussianDistribution<T, V>::sample(T *x)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
 
@@ -196,11 +222,89 @@ bool gaussianDistribution<T, V>::sample(std::vector<T> &x)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
+
+template <typename T, class V>
+bool gaussianDistribution<T, V>::sample(T *x, int const nSamples)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            int const Stride = this->numParams / 2;
+            int const nSizeArray = Stride * nSamples;
+
+            for (int i = 0; i < Stride; i++)
+            {
+                for (int l = i; l < nSizeArray; l += Stride)
+                {
+                    x[l] = this->prng->normals[i].dist();
+                }
+            }
+            return true;
+        }
+        for (int i = 0; i < nSamples; i++)
+        {
+            x[i] = this->prng->normal->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool gaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            int const Stride = this->numParams / 2;
+            int const nSizeArray = Stride * nSamples;
+
+#ifdef DEBUG
+            if (static_cast<std::size_t>(nSizeArray) > x.size())
+            {
+                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
+            }
+#endif
+            for (int i = 0; i < Stride; i++)
+            {
+                for (int l = i; l < nSizeArray; l += Stride)
+                {
+                    x[l] = this->prng->normals[i].dist();
+                }
+            }
+            return true;
+        }
+#ifdef DEBUG
+        if (static_cast<std::size_t>(nSamples) > x.size())
+        {
+            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples, " !");
+        }
+#endif
+        for (int i = 0; i < nSamples; i++)
+        {
+            x[i] = this->prng->normal->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+
 
 } // namespace density
 } // namespace umuq
 
-#endif //UMUQ_GAUSSIANDISTRIBUTION_H
+#endif //UMUQ_GAUSSIANDISTRIBUTION

@@ -54,6 +54,14 @@ public:
    * \param Name       Distribution name
    */
   densityFunction(T const *Params, int const NumParams, char const *Name = "");
+
+  /*!
+   * \brief Construct a new density Function object
+   * 
+   * \param Params     Parameters of density Function object
+   * \param NumParams  Number of parameters
+   * \param Name       Distribution name
+   */
   densityFunction(std::vector<T> const &Params, char const *Name = "");
 
   /*!
@@ -65,6 +73,15 @@ public:
    * \param Name        Distribution name
    */
   densityFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
+
+  /*!
+   * \brief Construct a new density Function object
+   * 
+   * \param Params1     Parameters of density Function object
+   * \param Params2     Parameters of density Function object
+   * \param NumParams   Number of parameters
+   * \param Name        Distribution name
+   */
   densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
 
   /*!
@@ -100,18 +117,44 @@ public:
    * 
    * \param x Vector of random samples 
    * 
-   * \return true 
    * \return false If Random Number Generator object is not assigned
    */
   virtual bool sample(T *x);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x Vector of random samples 
+   *  
+   * \return false If Random Number Generator object is not assigned
+   */
   virtual bool sample(std::vector<T> &x);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x         Vector of random samples 
+   * \param nSamples  Number of sample vectors
+   *
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(T *x, int const nSamples);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x Vector of random samples 
+   * \param nSamples  Number of sample vectors
+   * 
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(std::vector<T> &x, int const nSamples);
 
   /*!
    * \brief Set the Random Number Generator object 
    * 
    * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
   virtual inline bool setRandomGenerator(psrandom<T> *PRNG);
@@ -164,6 +207,18 @@ bool densityFunction<T, F>::sample(T *x)
 
 template <typename T, class F>
 bool densityFunction<T, F>::sample(std::vector<T> &x)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+bool densityFunction<T, F>::sample(T *x, int const nSamples)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+bool densityFunction<T, F>::sample(std::vector<T> &x, int const nSamples)
 {
   UMUQFAILRETURN("Not implemented!");
 }

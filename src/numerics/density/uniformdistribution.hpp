@@ -77,7 +77,6 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
      * 
-     * \return true 
      * \return false If it encounters an unexpected problem
      */
     inline bool setRandomGenerator(psrandom<T> *PRNG);
@@ -87,11 +86,38 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \param x  Vector of samples
      * 
-     * \return true 
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(T *x);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x  Vector of samples
+     * 
+     * \return false If Random Number Generator object is not assigned
+     */
     bool sample(std::vector<T> &x);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     * 
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(T *x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     * 
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(std::vector<T> &x, int const nSamples);
 
   private:
     //! Const value for uniform distribution function
@@ -221,6 +247,67 @@ bool uniformDistribution<T, V>::sample(std::vector<T> &x)
         for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
         {
             x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool uniformDistribution<T, V>::sample(T *x, int const nSamples)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        int const Stride = this->numParams / 2;
+        int const nSizeArray = Stride * nSamples;
+
+        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        {
+            T const P1 = this->params[k];
+            T const P2 = this->params[k + 1];
+
+            for (int l = i; l < nSizeArray; l += Stride)
+            {
+                x[l] = this->prng->unirnd(P1, P2);
+            }
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+#endif
+}
+
+template <typename T, class V>
+bool uniformDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        int const Stride = this->numParams / 2;
+        int const nSizeArray = Stride * nSamples;
+
+#ifdef DEBUG
+        if (static_cast<std::size_t>(nSizeArray) > x.size())
+        {
+            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
+        }
+#endif
+
+        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        {
+            T const P1 = this->params[k];
+            T const P2 = this->params[k + 1];
+
+            for (int l = i; l < nSizeArray; l += Stride)
+            {
+                x[l] = this->prng->unirnd(P1, P2);
+            }
         }
         return true;
 #ifdef DEBUG
