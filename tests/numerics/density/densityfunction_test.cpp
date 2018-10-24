@@ -38,13 +38,13 @@ umuq::psrandom<float> prngf(123);
  */
 TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
-    //! Uniform distribution between 1 and 2
+    // Uniform distribution between 1 and 2
     umuq::uniformDistribution<double> u(1, 2);
 
     double X1 = 1.5;
     double X2 = 3.;
 
-    //!
+    //
     EXPECT_DOUBLE_EQ(u.f(&X1), 1.);
     EXPECT_DOUBLE_EQ(u.f(&X2), 0.);
     EXPECT_DOUBLE_EQ(u.lf(&X1), 0.);
@@ -52,10 +52,10 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    //! Set the PRNG
+    // Set the PRNG
     EXPECT_TRUE(u.setRandomGenerator(&prng));
 
-    //! Produce samples with uniform distribution density
+    // Produce samples with uniform distribution density
     EXPECT_TRUE(u.sample(&X1));
 
     std::vector<double> X(10, -1);
@@ -64,6 +64,15 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     {
         EXPECT_TRUE(u.sample(p++));
         EXPECT_TRUE(X[i] >= 1.0 && X[i] <= 2.0);
+    }
+
+    // Check for sampling vector
+    std::vector<double> Y(10, -1);
+    EXPECT_TRUE(u.sample(Y, 10));
+
+    for (int i = 0; i < 10; i++)
+    {
+        EXPECT_TRUE(Y[i] >= 1.0 && Y[i] <= 2.0);
     }
 }
 
@@ -74,7 +83,7 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
  */
 TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 {
-    //! Exponential distribution with mean 1
+    // Exponential distribution with mean 1
     umuq::exponentialDistribution<float> e(1);
     float X1 = 1.5f;
     float X2 = 3.f;
@@ -86,11 +95,16 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prngf.setState());
 
-    //! Set the PRNG
+    // Set the PRNG
     EXPECT_TRUE(e.setRandomGenerator(&prngf));
 
-    //! Produce samples with Exponential distribution density
+    // Produce samples with Exponential distribution density
     EXPECT_TRUE(e.sample(&X1));
+
+    // Check for sampling vector
+    std::vector<float> Y(10, -1);
+
+    EXPECT_TRUE(e.sample(Y, 10));
 }
 
 /*! 
@@ -100,25 +114,30 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
  */
 TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 {
-    //! Gamma distribution with Shape parameter of 0.5
+    // Gamma distribution with Shape parameter of 0.5
     umuq::gammaDistribution<double> g(0.5);
     double X1 = 1.5;
     double X2 = 3.;
 
-    //! From MATLAB gampdf(X1, 0.5, 1)
+    // From MATLAB gampdf(X1, 0.5, 1)
     EXPECT_DOUBLE_EQ(g.f(&X1), 0.10278688653584618);
-    //! From MATLAB gampdf(X2, 0.5, 1)
+    // From MATLAB gampdf(X2, 0.5, 1)
     EXPECT_DOUBLE_EQ(g.f(&X2), 0.01621739110988048);
     EXPECT_DOUBLE_EQ(g.lf(&X2), std::log(g.f(&X2)));
 
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    //! Set the PRNG
+    // Set the PRNG
     EXPECT_TRUE(g.setRandomGenerator(&prng));
 
-    //! Produce samples with Exponential distribution density
+    // Produce samples with Exponential distribution density
     EXPECT_TRUE(g.sample(&X1));
+
+    // Check for sampling vector
+    std::vector<double> Y(10, -1);
+
+    EXPECT_TRUE(g.sample(Y, 10));
 }
 
 /*! 
@@ -128,26 +147,31 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
  */
 TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 {
-    //! Gaussian distribution with mean 2 and standard deviation of 5
+    // Gaussian distribution with mean 2 and standard deviation of 5
     umuq::gaussianDistribution<double> gu(2, 5);
     double X1 = 1.5;
     double X2 = 3.;
 
-    //! From MATLAB normpdf(X1,2,5)
+    // From MATLAB normpdf(X1,2,5)
     EXPECT_DOUBLE_EQ(gu.f(&X1), 0.079390509495402356);
-    //! From MATLAB normpdf(X2, 2, 5)
+    // From MATLAB normpdf(X2, 2, 5)
     EXPECT_DOUBLE_EQ(gu.f(&X2), 0.078208538795091168);
-    //! From scipy logpdf(X1,2,25)
+    // From scipy logpdf(X1,2,25)
     EXPECT_DOUBLE_EQ(gu.lf(&X1), -2.5333764456387726);
 
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    //! Set the PRNG
+    // Set the PRNG
     EXPECT_TRUE(gu.setRandomGenerator(&prng));
 
-    //! Produce samples with Exponential distribution density
+    // Produce samples with Exponential distribution density
     EXPECT_TRUE(gu.sample(&X1));
+
+    // Check for sampling vector
+    std::vector<double> Y(15, -1);
+
+    EXPECT_TRUE(gu.sample(Y, 15));
 }
 
 /*! 
@@ -157,39 +181,39 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
  */
 TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 {
-    //! A multivariate Gaussian distribution with mean zero and unit covariance matrix of size (2*2)
+    // A multivariate Gaussian distribution with mean zero and unit covariance matrix of size (2*2)
     umuq::multivariateGaussianDistribution<double> m(2);
 
-    //! From MATLAB mvnpdf([1.5,2])
+    // From MATLAB mvnpdf([1.5,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{1.5, 2}.data()), 0.0069927801704657913);
-    //! From MATLAB mvnpdf([3,2])
+    // From MATLAB mvnpdf([3,2])
     EXPECT_DOUBLE_EQ(m.f(std::vector<double>{3, 2}.data()), 0.0002392797792004706);
 
-    //! Create a covariance matrix
+    // Create a covariance matrix
     double M2d[4] = {1, 3. / 5., 3. / 5., 2.};
 
-    //! A multivariate Gaussian distribution with mean zero and covariance matrix of M2d
+    // A multivariate Gaussian distribution with mean zero and covariance matrix of M2d
     umuq::multivariateGaussianDistribution<double> mvn(M2d, 2);
 
-    //! Prepare data.
+    // Prepare data.
     int n = 11;
 
-    //! Coordinates
+    // Coordinates
     std::vector<double> x(n * n);
     std::vector<double> x2(n);
     std::vector<double> y(n * n);
     std::vector<double> y2(n);
 
-    //! PDF at coordinates
+    // PDF at coordinates
     std::vector<double> pdf(n * n);
 
-    //! Log of PDF at coordinates
+    // Log of PDF at coordinates
     std::vector<double> lpdf(n * n);
 
     {
         double dx = 8. / 10.;
 
-        //! Create sample points from Multivariate normal distribution
+        // Create sample points from Multivariate normal distribution
         for (int i = 0, l = 0; i < n; ++i)
         {
             for (int j = 0; j < n; ++j)
@@ -210,7 +234,7 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
         }
     }
 
-    //! Compute PDF at (x,y)
+    // Compute PDF at (x,y)
     {
         for (int i = 0; i < n * n; ++i)
         {
@@ -224,90 +248,96 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     std::string fileName = "./multivariatescatterpdf.svg";
     std::remove(fileName.c_str());
 
-    //! Prepare keywords to pass to PolyCollection. See
+    // Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
     keywords["marker"] = "s";
 
-    //! Size
+    // Size
     std::vector<int> s(n * n, 1000);
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.scatter<double>(x, y, s, pdf, keywords));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("multivariate normal distribution PDF"));
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatecontourpdf.svg";
     std::remove(fileName.c_str());
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.contourf<double>(x2, y2, pdf));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("multivariate normal distribution PDF contour"));
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatescatterlogpdf.svg";
     std::remove(fileName.c_str());
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.scatter<double>(x, y, s, lpdf, keywords));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF"));
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatecontourlogpdf.svg";
     std::remove(fileName.c_str());
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.contourf<double>(x2, y2, lpdf));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF contour"));
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 #endif
 
-    //! Set the PRNG
+    // Set the PRNG
     EXPECT_TRUE(mvn.setRandomGenerator(&prng));
 
     {
         double X[2];
-        //! Produce samples with  Multivariate normal distribution density
+        // Produce samples with  Multivariate normal distribution density
         EXPECT_TRUE(mvn.sample(X));
+    }
+
+    {
+        // Check for sampling vector
+        std::vector<double> Y(30, -1);
+        EXPECT_TRUE(mvn.sample(Y, 15));
     }
 }
 
@@ -329,13 +359,13 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
      */
 
     {
-        //! multinomialDistribution distribution where the vector size or types of outputs is 4
+        // multinomialDistribution distribution where the vector size or types of outputs is 4
         umuq::multinomialDistribution<double> m(4);
 
-        //! A random sample (with size of K) from the multinomial distribution
+        // A random sample (with size of K) from the multinomial distribution
         unsigned int X[] = {2, 3, 3, 2};
 
-        //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+        // Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {25, 25, 25, 25};
 
         EXPECT_NEAR(m.f(P, X), 0.024032592773437545, 1e-14);
@@ -353,13 +383,13 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
      */
 
     {
-        //! multinomialDistribution distribution where the vector size or types of outputs is 4
+        // multinomialDistribution distribution where the vector size or types of outputs is 4
         umuq::multinomialDistribution<double> m(4);
 
-        //! A random sample (with size of K) from the multinomial distribution
+        // A random sample (with size of K) from the multinomial distribution
         unsigned int X[] = {5, 2, 2, 1};
 
-        //! Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
+        // Vector of probabilities \f$ p_1, \cdots, p_k \f$ (with size of K)
         double P[] = {40., 20., 5., 1.};
 
         EXPECT_NEAR(m.f(P, X), 0.0049360823520927834, 1e-14);
