@@ -114,7 +114,7 @@ gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densit
 template <typename T, class V>
 gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int const n) : densityFunction<T, std::function<T(V)>>(alpha, beta, n, "gamma")
 {
-    if (n % 2 != 0)
+    if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!")
     }

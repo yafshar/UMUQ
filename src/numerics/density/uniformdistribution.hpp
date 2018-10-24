@@ -117,7 +117,7 @@ uniformDistribution<T, V>::uniformDistribution(T const a, T const b) : densityFu
 template <typename T, class V>
 uniformDistribution<T, V>::uniformDistribution(T const *a, T const *b, int const n) : densityFunction<T, std::function<T(V)>>(a, b, n, "uniform")
 {
-    if (n % 2 != 0)
+    if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }

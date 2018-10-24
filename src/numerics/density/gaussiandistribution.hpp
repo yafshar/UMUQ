@@ -103,7 +103,7 @@ gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : de
 template <typename T, class V>
 gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, int const n) : densityFunction<T, std::function<T(V)>>(mu, sigma, n, "gaussian")
 {
-    if (n % 2 != 0)
+    if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }
