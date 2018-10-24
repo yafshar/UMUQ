@@ -68,15 +68,15 @@ template <typename T>
 class ChebyshevPolynomial : public polynomialBase<T>
 {
   public:
-	/*!
+    /*!
 	 * \brief Construct a new Chebyshev Polynomial object
 	 * 
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
 	 */
-	ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
+    ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
 
-	/*! 
+    /*! 
      * \brief Here, \f$\alpha=\f$ all of the Chebyshev monomials in a d dimensional space, with total degree \b r.
      *   
      * For example: <br>
@@ -113,9 +113,9 @@ class ChebyshevPolynomial : public polynomialBase<T>
      *
      * \returns A pointer to monomial sequence
      */
-	int *monomialBasis();
+    int *monomialBasis();
 
-	/*! 
+    /*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x      The coordinates of the evaluation points
@@ -123,9 +123,19 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns int The size of the monomial array
      */
-	int monomialValue(T const *x, T *&value);
+    int monomialValue(T const *x, T *&value);
 
-	/*!
+    /*! 
+     * \brief Evaluates a monomial at a point x.
+     * 
+     * \param  x      The coordinates of the evaluation points
+     * \param  value  The (monomial value) array value of the monomial at point x
+     * 
+     * \returns int The size of the monomial array
+     */
+    int monomialValue(T const *x, std::vector<T> &value);
+
+    /*!
      * \brief Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
      * 
      * Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
@@ -137,9 +147,9 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns T The computed Chebyshev Polynomial 
      */
-	inline T chebyshev_next(T const x, T const Pn, T const Pnm1);
+    inline T chebyshev_next(T const x, T const Pn, T const Pnm1);
 
-	/*!
+    /*!
      * \brief Implement Chebyshev polynomials.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -155,9 +165,9 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns T The Chebyshev polynomial of the degree n of x.
      */
-	T chebyshev(int const n, T const x, bool const second = false);
+    T chebyshev(int const n, T const x, bool const second = false);
 
-	/*!
+    /*!
      * \brief Implement Chebyshev polynomials.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -173,257 +183,302 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns T* All the Chebyshev polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-	T *chebyshev_array(int const n, T const x, bool const second = false);
+    T *chebyshev_array(int const n, T const x, bool const second = false);
 
   private:
-	/*!
+    /*!
      * \brief Delete a ChebyshevPolynomial object copy construction
      * 
      * Make it noncopyable.
      */
-	ChebyshevPolynomial(ChebyshevPolynomial<T> const &) = delete;
+    ChebyshevPolynomial(ChebyshevPolynomial<T> const &) = delete;
 
-	/*!
+    /*!
      * \brief Delete a ChebyshevPolynomial object assignment
      * 
      * Make it nonassignable
      * 
      * \returns ChebyshevPolynomial<T>& 
      */
-	ChebyshevPolynomial<T> &operator=(ChebyshevPolynomial<T> const &) = delete;
+    ChebyshevPolynomial<T> &operator=(ChebyshevPolynomial<T> const &) = delete;
 };
 
 template <typename T>
 ChebyshevPolynomial<T>::ChebyshevPolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
 {
-	if (!std::is_floating_point<T>::value)
-	{
-		UMUQFAIL("This type is not supported in this class!");
-	}
+    if (!std::is_floating_point<T>::value)
+    {
+        UMUQFAIL("This type is not supported in this class!");
+    }
 }
 
 template <typename T>
 int *ChebyshevPolynomial<T>::monomialBasis()
 {
-	if (this->alpha)
-	{
-		return this->alpha.get();
-	}
-	else
-	{
-		int const N = this->nDim * this->monomialSize;
+    if (this->alpha)
+    {
+        return this->alpha.get();
+    }
+    else
+    {
+        int const N = this->nDim * this->monomialSize;
 
-		std::vector<int> x(this->nDim, 0);
+        std::vector<int> x(this->nDim, 0);
 
-		try
-		{
-			this->alpha.reset(new int[N]);
-		}
-		catch (...)
-		{
-			UMUQFAILRETURNNULL("Failed to allocate memory!");
-		}
+        try
+        {
+            this->alpha.reset(new int[N]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
+        }
 
-		int n(0);
+        int n(0);
 
-		for (;;)
-		{
-			for (int j = this->nDim - 1; j >= 0; j--, n++)
-			{
-				this->alpha[n] = x[j];
-			}
+        for (;;)
+        {
+            for (int j = this->nDim - 1; j >= 0; j--, n++)
+            {
+                this->alpha[n] = x[j];
+            }
 
-			if (x[0] == this->Order)
-			{
-				return this->alpha.get();
-			}
+            if (x[0] == this->Order)
+            {
+                return this->alpha.get();
+            }
 
-			if (!this->graded_reverse_lexicographic_order(x.data()))
-			{
-				return nullptr;
-			}
-		}
+            if (!this->graded_reverse_lexicographic_order(x.data()))
+            {
+                return nullptr;
+            }
+        }
 
-		return this->alpha.get();
-	}
+        return this->alpha.get();
+    }
 }
 
 template <typename T>
 int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
 {
-	if (!this->alpha)
-	{
-		//H ave to create monomial sequence
-		int *tmp = this->monomialBasis();
+    if (!this->alpha)
+    {
+        //H ave to create monomial sequence
+        int *tmp = this->monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value == nullptr)
-	{
-		try
-		{
-			value = new T[this->monomialSize];
-		}
-		catch (...)
-		{
-			UMUQFAIL("Failed to allocate memory!");
-		}
-	}
+    if (value == nullptr)
+    {
+        try
+        {
+            value = new T[this->monomialSize];
+        }
+        catch (...)
+        {
+            UMUQFAIL("Failed to allocate memory!");
+        }
+    }
 
-	std::vector<T *> ChebyshevPolynomialsValues(this->nDim);
+    std::vector<T *> ChebyshevPolynomialsValues(this->nDim);
 
-	for (int j = 0; j < this->nDim; j++)
-	{
-		ChebyshevPolynomialsValues[j] = this->chebyshev_array(this->Order, x[j]);
-	}
+    for (int j = 0; j < this->nDim; j++)
+    {
+        ChebyshevPolynomialsValues[j] = this->chebyshev_array(this->Order, x[j]);
+    }
 
-	for (int i = 0, k = 0; i < this->monomialSize; i++)
-	{
-		T v = static_cast<T>(1);
-		for (int j = 0; j < this->nDim; j++, k++)
-		{
-			int const l = this->alpha[k];
-			v *= ChebyshevPolynomialsValues[j][l];
-		}
-		value[i] = v;
-	}
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        T v = static_cast<T>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            int const l = this->alpha[k];
+            v *= ChebyshevPolynomialsValues[j][l];
+        }
+        value[i] = v;
+    }
 
-	for (int j = 0; j < this->nDim; j++)
-	{
-		delete[] ChebyshevPolynomialsValues[j];
-	}
+    for (int j = 0; j < this->nDim; j++)
+    {
+        delete[] ChebyshevPolynomialsValues[j];
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
+}
+
+template <typename T>
+int ChebyshevPolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+{
+    if (!this->alpha)
+    {
+        //H ave to create monomial sequence
+        int *tmp = this->monomialBasis();
+
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
+
+    if (value.size() < static_cast<std::size_t>(this->monomialSize))
+    {
+        value.resize(this->monomialSize);
+    }
+
+    std::vector<T *> ChebyshevPolynomialsValues(this->nDim);
+
+    for (int j = 0; j < this->nDim; j++)
+    {
+        ChebyshevPolynomialsValues[j] = this->chebyshev_array(this->Order, x[j]);
+    }
+
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        T v = static_cast<T>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            int const l = this->alpha[k];
+            v *= ChebyshevPolynomialsValues[j][l];
+        }
+        value[i] = v;
+    }
+
+    for (int j = 0; j < this->nDim; j++)
+    {
+        delete[] ChebyshevPolynomialsValues[j];
+    }
+
+    return this->monomialSize;
 }
 
 template <typename T>
 inline T ChebyshevPolynomial<T>::chebyshev_next(T const x, T const Pn, T const Pnm1)
 {
-	return (static_cast<T>(2) * x * Pn - Pnm1);
+    return (static_cast<T>(2) * x * Pn - Pnm1);
 }
 
 template <typename T>
 T ChebyshevPolynomial<T>::chebyshev(int const n, T const x, bool const second)
 {
-	T P0(1);
-	T P1;
-	if (second)
-	{
-		if (x > 1 || x < -1)
-		{
-			T const tmp = std::sqrt(x * x - static_cast<T>(1));
-			return (std::pow(x + tmp, n + 1) - std::pow(x - tmp, n + 1)) / (static_cast<T>(2) * tmp);
-		}
-		P1 = static_cast<T>(2) * x;
-	}
-	else
-	{
-		if (x > 1)
-		{
-			return std::cosh(static_cast<T>(n) * std::acosh(x));
-		}
-		if (x < -1)
-		{
-			if (n & 1)
-			{
-				return -std::cosh(static_cast<T>(n) * std::acosh(-x));
-			}
-			else
-			{
-				return std::cosh(static_cast<T>(n) * acosh(-x));
-			}
-		}
-		P1 = x;
-	}
-	if (n == 0)
-	{
-		return P0;
-	}
+    T P0(1);
+    T P1;
+    if (second)
+    {
+        if (x > 1 || x < -1)
+        {
+            T const tmp = std::sqrt(x * x - static_cast<T>(1));
+            return (std::pow(x + tmp, n + 1) - std::pow(x - tmp, n + 1)) / (static_cast<T>(2) * tmp);
+        }
+        P1 = static_cast<T>(2) * x;
+    }
+    else
+    {
+        if (x > 1)
+        {
+            return std::cosh(static_cast<T>(n) * std::acosh(x));
+        }
+        if (x < -1)
+        {
+            if (n & 1)
+            {
+                return -std::cosh(static_cast<T>(n) * std::acosh(-x));
+            }
+            else
+            {
+                return std::cosh(static_cast<T>(n) * acosh(-x));
+            }
+        }
+        P1 = x;
+    }
+    if (n == 0)
+    {
+        return P0;
+    }
 
-	int i(1);
-	while (i < n)
-	{
-		std::swap(P0, P1);
-		P1 = this->chebyshev_next(x, P0, P1);
-		++i;
-	}
-	return P1;
+    int i(1);
+    while (i < n)
+    {
+        std::swap(P0, P1);
+        P1 = this->chebyshev_next(x, P0, P1);
+        ++i;
+    }
+    return P1;
 }
 
 template <typename T>
 T *ChebyshevPolynomial<T>::chebyshev_array(int const n, T const x, bool const second)
 {
-	T *results = nullptr;
+    T *results = nullptr;
 
-	try
-	{
-		results = new T[n + 1];
-	}
-	catch (...)
-	{
-		UMUQFAILRETURNNULL("Failed to allocate memory!");
-	}
+    try
+    {
+        results = new T[n + 1];
+    }
+    catch (...)
+    {
+        UMUQFAILRETURNNULL("Failed to allocate memory!");
+    }
 
-	T P0(1);
-	T P1;
-	if (second)
-	{
-		if (x > 1 || x < -1)
-		{
-			T const tmp = std::sqrt(x * x - static_cast<T>(1));
-			int j(0);
-			std::for_each(results, results + n + 1, [&](T &r_i) { j++; r_i = (std::pow(x + tmp, j) - std::pow(x - tmp, j)) / (static_cast<T>(2) * tmp); });
-			return results;
-		}
-		P1 = static_cast<T>(2) * x;
-	}
-	else
-	{
-		if (x > 1)
-		{
-			int j(0);
-			std::for_each(results, results + n + 1, [&](T &r_i) {r_i = std::cosh(static_cast<T>(j) * std::acosh(x)); j++; });
-			return results;
-		}
-		if (x < -1)
-		{
-			for (int j = 0; j < n + 1; j++)
-			{
-				if (j & 1)
-				{
-					results[j] = -std::cosh(static_cast<T>(j) * std::acosh(-x));
-				}
-				else
-				{
-					results[j] = std::cosh(static_cast<T>(j) * acosh(-x));
-				}
-			}
-			return results;
-		}
-		P1 = x;
-	}
+    T P0(1);
+    T P1;
+    if (second)
+    {
+        if (x > 1 || x < -1)
+        {
+            T const tmp = std::sqrt(x * x - static_cast<T>(1));
+            int j(0);
+            std::for_each(results, results + n + 1, [&](T &r_i) { j++; r_i = (std::pow(x + tmp, j) - std::pow(x - tmp, j)) / (static_cast<T>(2) * tmp); });
+            return results;
+        }
+        P1 = static_cast<T>(2) * x;
+    }
+    else
+    {
+        if (x > 1)
+        {
+            int j(0);
+            std::for_each(results, results + n + 1, [&](T &r_i) {r_i = std::cosh(static_cast<T>(j) * std::acosh(x)); j++; });
+            return results;
+        }
+        if (x < -1)
+        {
+            for (int j = 0; j < n + 1; j++)
+            {
+                if (j & 1)
+                {
+                    results[j] = -std::cosh(static_cast<T>(j) * std::acosh(-x));
+                }
+                else
+                {
+                    results[j] = std::cosh(static_cast<T>(j) * acosh(-x));
+                }
+            }
+            return results;
+        }
+        P1 = x;
+    }
 
-	results[0] = P0;
-	if (n == 0)
-	{
-		return results;
-	}
+    results[0] = P0;
+    if (n == 0)
+    {
+        return results;
+    }
 
-	results[1] = P1;
+    results[1] = P1;
 
-	int i(1);
-	while (i < n)
-	{
-		std::swap(P0, P1);
-		P1 = this->chebyshev_next(x, P0, P1);
-		++i;
-		results[i] = P1;
-	}
-	return results;
+    int i(1);
+    while (i < n)
+    {
+        std::swap(P0, P1);
+        P1 = this->chebyshev_next(x, P0, P1);
+        ++i;
+        results[i] = P1;
+    }
+    return results;
 }
 
 } // namespace polynomials

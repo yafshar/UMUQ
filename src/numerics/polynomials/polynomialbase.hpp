@@ -1,6 +1,8 @@
 #ifndef UMUQ_POLYNOMIALBASE_H
 #define UMUQ_POLYNOMIALBASE_H
 
+#include "../factorial.hpp"
+
 namespace umuq
 {
 
@@ -92,12 +94,46 @@ class polynomialBase
 	/*! 
      * \brief Evaluates a monomial at a point x.
      * 
-     * \param  x      The coordinates of the evaluation points
+     * \param  x      The abscissa values. (The coordinates of the evaluation points)
      * \param  value  The (monomial value) array value of the monomial at point x
      * 
      * \returns The size of the monomial array
      */
 	virtual int monomialValue(T const *x, T *&value);
+
+	/*! 
+     * \brief Evaluates a monomial at a point x.
+     * 
+     * \param  x      The abscissa values. (The coordinates of the evaluation points)
+     * \param  value  The (monomial value) array value of the monomial at point x
+     * 
+     * \returns The size of the monomial array
+     */
+	virtual int monomialValue(T const *x, std::vector<T> &value);
+
+	/*!
+	 * \brief Evaluates monomial derivatives at origin.
+	 * 
+	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+	 *               Notation for partial derivatives:<br>
+	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
+	 * 
+	 * \returns int The size of the monomial array
+	 */
+	virtual int monomialDerivative(int const *beta, T *&value);
+
+	/*!
+	 * \brief Evaluates monomial derivatives at origin.
+	 * 
+	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+	 *               Notation for partial derivatives:<br>
+	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
+	 * 
+	 * \returns int The size of the monomial array
+	 */
+	virtual int monomialDerivative(int const *beta, std::vector<T> &value);
 
 	/*!
      * \brief Get the monomial size
@@ -250,6 +286,27 @@ int *polynomialBase<T>::monomialBasis()
 
 template <typename T>
 int polynomialBase<T>::monomialValue(T const *x, T *&value)
+{
+	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
+	return -1;
+}
+
+template <typename T>
+int polynomialBase<T>::monomialValue(T const *x, std::vector<T> &value)
+{
+	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
+	return -1;
+}
+
+template <typename T>
+int polynomialBase<T>::monomialDerivative(int const *beta, T *&value)
+{
+	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
+	return -1;
+}
+
+template <typename T>
+int polynomialBase<T>::monomialDerivative(int const *beta, std::vector<T> &value)
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return -1;

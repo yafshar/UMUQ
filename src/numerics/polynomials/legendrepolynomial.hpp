@@ -153,6 +153,16 @@ class LegendrePolynomial : public polynomialBase<T>
      */
 	int monomialValue(T const *x, T *&value);
 
+	/*! 
+     * \brief Evaluates a monomial at a point x.
+     * 
+     * \param  x       The coordinates of the evaluation points
+     * \param  value   The (monomial value) array value of the monomial at point x
+     * 
+     * \returns The size of the monomial array
+     */
+	int monomialValue(T const *x, std::vector<T> &value);
+
 	/*!
      * \brief Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
      * 
@@ -303,6 +313,51 @@ int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 		{
 			UMUQFAIL("Failed to allocate memory!");
 		}
+	}
+
+	std::vector<T *> legendrePolynomialsValues(this->nDim);
+
+	for (int j = 0; j < this->nDim; j++)
+	{
+		legendrePolynomialsValues[j] = this->legendre_array(this->Order, x[j]);
+	}
+
+	for (int i = 0, k = 0; i < this->monomialSize; i++)
+	{
+		T v = static_cast<T>(1);
+		for (int j = 0; j < this->nDim; j++, k++)
+		{
+			int const l = this->alpha[k];
+			v *= legendrePolynomialsValues[j][l];
+		}
+		value[i] = v;
+	}
+
+	for (int j = 0; j < this->nDim; j++)
+	{
+		delete[] legendrePolynomialsValues[j];
+	}
+
+	return this->monomialSize;
+}
+
+template <typename T>
+int LegendrePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+{
+	if (!this->alpha)
+	{
+		//Have to create monomial sequence
+		int *tmp = this->monomialBasis();
+
+		if (tmp == nullptr)
+		{
+			UMUQFAIL("Something went wrong in creating monomial sequence!");
+		}
+	}
+
+	if (value.size() < static_cast<std::size_t>(this->monomialSize))
+	{
+		value.resize(this->monomialSize);
 	}
 
 	std::vector<T *> legendrePolynomialsValues(this->nDim);

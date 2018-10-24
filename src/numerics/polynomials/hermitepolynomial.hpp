@@ -45,15 +45,15 @@ template <typename T>
 class HermitePolynomial : public polynomialBase<T>
 {
   public:
-	/*!
-	 * \brief Construct a new Hermite Polynomial object
-	 * 
+    /*!
+     * \brief Construct a new Hermite Polynomial object
+     * 
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
-	 */
-	HermitePolynomial(int const dim, int const PolynomialOrder = 2);
+     */
+    HermitePolynomial(int const dim, int const PolynomialOrder = 2);
 
-	/*! 
+    /*! 
      * \brief Here, \f$\alpha=\f$ all of the Hermite monomials in a d dimensional space, with total degree \b r.
      *   
      * For example: <br>
@@ -90,9 +90,9 @@ class HermitePolynomial : public polynomialBase<T>
      *
      * \returns A pointer to monomial sequence
      */
-	int *monomialBasis();
+    int *monomialBasis();
 
-	/*! 
+    /*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x       The coordinates of the evaluation points
@@ -100,9 +100,19 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-	int monomialValue(T const *x, T *&value);
+    int monomialValue(T const *x, T *&value);
 
-	/*!
+    /*! 
+     * \brief Evaluates a monomial at a point x.
+     * 
+     * \param  x       The coordinates of the evaluation points
+     * \param  value   The (monomial value) array value of the monomial at point x
+     * 
+     * \returns The size of the monomial array
+     */
+    int monomialValue(T const *x, std::vector<T> &value);
+
+    /*!
      * \brief Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated. 
      * 
      * Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated. 
@@ -115,9 +125,9 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns T The computed Hermite Polynomial 
      */
-	inline T hermite_next(int const n, T const x, T const Pn, T const Pnm1);
+    inline T hermite_next(int const n, T const x, T const Pn, T const Pnm1);
 
-	/*!
+    /*!
      * \brief Implement Hermite polynomials.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -125,7 +135,7 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
@@ -133,9 +143,9 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns T The Hermite polynomial of the degree n of x. 
      */
-	T hermite(int const n, T const x);
+    T hermite(int const n, T const x);
 
-	/*!
+    /*!
      * \brief Implement Hermite polynomials.
      * 
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
@@ -143,7 +153,7 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
@@ -151,191 +161,236 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns T* All the Hermite polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-	T *hermite_array(int const n, T const x);
+    T *hermite_array(int const n, T const x);
 
   private:
-	/*!
+    /*!
      * \brief Delete a HermitePolynomial object copy construction
      * 
      * Make it noncopyable.
      */
-	HermitePolynomial(HermitePolynomial<T> const &) = delete;
+    HermitePolynomial(HermitePolynomial<T> const &) = delete;
 
-	/*!
+    /*!
      * \brief Delete a HermitePolynomial object assignment
      * 
      * Make it nonassignable
      * 
      * \returns HermitePolynomial<T>& 
      */
-	HermitePolynomial<T> &operator=(HermitePolynomial<T> const &) = delete;
+    HermitePolynomial<T> &operator=(HermitePolynomial<T> const &) = delete;
 };
 
 template <typename T>
 HermitePolynomial<T>::HermitePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
 {
-	if (!std::is_floating_point<T>::value)
-	{
-		UMUQFAIL("This type is not supported in this class!");
-	}
+    if (!std::is_floating_point<T>::value)
+    {
+        UMUQFAIL("This type is not supported in this class!");
+    }
 }
 
 template <typename T>
 int *HermitePolynomial<T>::monomialBasis()
 {
-	if (this->alpha)
-	{
-		return this->alpha.get();
-	}
-	else
-	{
-		int const N = this->nDim * this->monomialSize;
+    if (this->alpha)
+    {
+        return this->alpha.get();
+    }
+    else
+    {
+        int const N = this->nDim * this->monomialSize;
 
-		std::vector<int> x(this->nDim, 0);
+        std::vector<int> x(this->nDim, 0);
 
-		try
-		{
-			this->alpha.reset(new int[N]);
-		}
-		catch (...)
-		{
-			UMUQFAILRETURNNULL("Failed to allocate memory!");
-		}
+        try
+        {
+            this->alpha.reset(new int[N]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
+        }
 
-		int n(0);
+        int n(0);
 
-		for (;;)
-		{
-			for (int j = this->nDim - 1; j >= 0; j--, n++)
-			{
-				this->alpha[n] = x[j];
-			}
+        for (;;)
+        {
+            for (int j = this->nDim - 1; j >= 0; j--, n++)
+            {
+                this->alpha[n] = x[j];
+            }
 
-			if (x[0] == this->Order)
-			{
-				return this->alpha.get();
-			}
+            if (x[0] == this->Order)
+            {
+                return this->alpha.get();
+            }
 
-			if (!this->graded_reverse_lexicographic_order(x.data()))
-			{
-				return nullptr;
-			}
-		}
+            if (!this->graded_reverse_lexicographic_order(x.data()))
+            {
+                return nullptr;
+            }
+        }
 
-		return this->alpha.get();
-	}
+        return this->alpha.get();
+    }
 }
 
 template <typename T>
 int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
 {
-	if (!this->alpha)
-	{
-		//H ave to create monomial sequence
-		int *tmp = this->monomialBasis();
+    if (!this->alpha)
+    {
+        //H ave to create monomial sequence
+        int *tmp = this->monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value == nullptr)
-	{
-		try
-		{
-			value = new T[this->monomialSize];
-		}
-		catch (...)
-		{
-			UMUQFAIL("Failed to allocate memory!");
-		}
-	}
+    if (value == nullptr)
+    {
+        try
+        {
+            value = new T[this->monomialSize];
+        }
+        catch (...)
+        {
+            UMUQFAIL("Failed to allocate memory!");
+        }
+    }
 
-	std::vector<T *> HermitePolynomialsValues(this->nDim);
+    std::vector<T *> HermitePolynomialsValues(this->nDim);
 
-	for (int j = 0; j < this->nDim; j++)
-	{
-		HermitePolynomialsValues[j] = this->hermite_array(this->Order, x[j]);
-	}
+    for (int j = 0; j < this->nDim; j++)
+    {
+        HermitePolynomialsValues[j] = this->hermite_array(this->Order, x[j]);
+    }
 
-	for (int i = 0, k = 0; i < this->monomialSize; i++)
-	{
-		T v = static_cast<T>(1);
-		for (int j = 0; j < this->nDim; j++, k++)
-		{
-			int const l = this->alpha[k];
-			v *= HermitePolynomialsValues[j][l];
-		}
-		value[i] = v;
-	}
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        T v = static_cast<T>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            int const l = this->alpha[k];
+            v *= HermitePolynomialsValues[j][l];
+        }
+        value[i] = v;
+    }
 
-	for (int j = 0; j < this->nDim; j++)
-	{
-		delete[] HermitePolynomialsValues[j];
-	}
+    for (int j = 0; j < this->nDim; j++)
+    {
+        delete[] HermitePolynomialsValues[j];
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
+}
+
+template <typename T>
+int HermitePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+{
+    if (!this->alpha)
+    {
+        //H ave to create monomial sequence
+        int *tmp = this->monomialBasis();
+
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
+
+    if (value.size() < static_cast<std::size_t>(this->monomialSize))
+    {
+        value.resize(this->monomialSize);
+    }
+
+    std::vector<T *> HermitePolynomialsValues(this->nDim);
+
+    for (int j = 0; j < this->nDim; j++)
+    {
+        HermitePolynomialsValues[j] = this->hermite_array(this->Order, x[j]);
+    }
+
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        T v = static_cast<T>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            int const l = this->alpha[k];
+            v *= HermitePolynomialsValues[j][l];
+        }
+        value[i] = v;
+    }
+
+    for (int j = 0; j < this->nDim; j++)
+    {
+        delete[] HermitePolynomialsValues[j];
+    }
+
+    return this->monomialSize;
 }
 
 template <typename T>
 inline T HermitePolynomial<T>::hermite_next(int const n, T const x, T const Pn, T const Pnm1)
 {
-	return (static_cast<T>(2) * x * Pn - static_cast<T>(2) * static_cast<T>(n) * Pnm1);
+    return (static_cast<T>(2) * x * Pn - static_cast<T>(2) * static_cast<T>(n) * Pnm1);
 }
 
 template <typename T>
 T HermitePolynomial<T>::hermite(int const n, T const x)
 {
-	if (n == 0)
-	{
-		return static_cast<T>(1);
-	}
-	{
-		T P0(1);
-		T P1(static_cast<T>(2) * x);
-		int i(1);
-		while (i < n)
-		{
-			std::swap(P0, P1);
-			P1 = this->hermite_next(i, x, P0, P1);
-			++i;
-		}
-		return P1;
-	}
+    if (n == 0)
+    {
+        return static_cast<T>(1);
+    }
+    {
+        T P0(1);
+        T P1(static_cast<T>(2) * x);
+        int i(1);
+        while (i < n)
+        {
+            std::swap(P0, P1);
+            P1 = this->hermite_next(i, x, P0, P1);
+            ++i;
+        }
+        return P1;
+    }
 }
 
 template <typename T>
 T *HermitePolynomial<T>::hermite_array(int const n, T const x)
 {
-	T *results = nullptr;
-	try
-	{
-		results = new T[n + 1];
-	}
-	catch (...)
-	{
-		UMUQFAIL("Failed to allocate memory!");
-	}
-	T P0 = static_cast<T>(1);
-	results[0] = P0;
-	if (n == 0)
-	{
-		return results;
-	}
-	{
-		T P1 = static_cast<T>(2) * x;
-		results[1] = P1;
-		int i(1);
-		while (i < n)
-		{
-			std::swap(P0, P1);
-			P1 = this->hermite_next(i, x, P0, P1);
-			++i;
-			results[i] = P1;
-		}
-		return results;
-	}
+    T *results = nullptr;
+    try
+    {
+        results = new T[n + 1];
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
+    T P0 = static_cast<T>(1);
+    results[0] = P0;
+    if (n == 0)
+    {
+        return results;
+    }
+    {
+        T P1 = static_cast<T>(2) * x;
+        results[1] = P1;
+        int i(1);
+        while (i < n)
+        {
+            std::swap(P0, P1);
+            P1 = this->hermite_next(i, x, P0, P1);
+            ++i;
+            results[i] = P1;
+        }
+        return results;
+    }
 }
 
 } // namespace polynomials
