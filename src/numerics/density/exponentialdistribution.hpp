@@ -111,6 +111,15 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
     /*!
      * \brief Create samples of the exponential distribution object
      *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EVectorX<T> &x);
+
+    /*!
+     * \brief Create samples of the exponential distribution object
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      *
@@ -127,6 +136,15 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(std::vector<T> &x, int const nSamples);
+
+    /*!
+     * \brief  Create samples of the exponential distribution object
+     * 
+     * \param x  Matrix of random samples 
+     * 
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EMatrixX<T> &x);
 
   private:
     /*!
@@ -232,7 +250,7 @@ bool exponentialDistribution<T, V>::sample(T *x)
 #endif
         if (this->numParams > 1)
         {
-            for (int i = 0; i < this->numParams; i++)
+            for (std::size_t i = 0; i < this->numParams; i++)
             {
                 x[i] = this->prng->expns[i].dist();
             }
@@ -255,7 +273,30 @@ bool exponentialDistribution<T, V>::sample(std::vector<T> &x)
 #endif
         if (this->numParams > 1)
         {
-            for (int i = 0; i < this->numParams; i++)
+            for (std::size_t i = 0; i < this->numParams; i++)
+            {
+                x[i] = this->prng->expns[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->expn->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(EVectorX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            for (std::size_t i = 0; i < this->numParams; i++)
             {
                 x[i] = this->prng->expns[i].dist();
             }
@@ -278,10 +319,10 @@ bool exponentialDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
         if (this->numParams > 1)
         {
-            int const nSizeArray = this->numParams * nSamples;
-            for (int i = 0; i < this->numParams; i++)
+            std::size_t const nSizeArray = this->numParams * nSamples;
+            for (std::size_t i = 0; i < this->numParams; i++)
             {
-                for (int l = i; l < nSizeArray; l += this->numParams)
+                for (std::size_t l = i; l < nSizeArray; l += this->numParams)
                 {
                     x[l] = this->prng->expns[i].dist();
                 }
@@ -308,16 +349,16 @@ bool exponentialDistribution<T, V>::sample(std::vector<T> &x, int const nSamples
 #endif
         if (this->numParams > 1)
         {
-            int const nSizeArray = this->numParams * nSamples;
+            std::size_t const nSizeArray = this->numParams * nSamples;
 #ifdef DEBUG
-            if (static_cast<std::size_t>(nSizeArray) > x.size())
+            if (nSizeArray > x.size())
             {
                 UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
             }
 #endif
-            for (int i = 0; i < this->numParams; i++)
+            for (std::size_t i = 0; i < this->numParams; i++)
             {
-                for (int l = i; l < nSizeArray; l += this->numParams)
+                for (std::size_t l = i; l < nSizeArray; l += this->numParams)
                 {
                     x[l] = this->prng->expns[i].dist();
                 }
@@ -333,6 +374,42 @@ bool exponentialDistribution<T, V>::sample(std::vector<T> &x, int const nSamples
         for (int i = 0; i < nSamples; i++)
         {
             x[i] = this->prng->expn->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool exponentialDistribution<T, V>::sample(EMatrixX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 1)
+        {
+            std::size_t const nDim = this->numParams;
+#ifdef DEBUG
+            if (nDim != x.rows())
+            {
+                UMUQFAILRETURN("The input dimension =", x.rows(), " != samples dimension of ", nDim, " !");
+            }
+#endif
+            for (auto l = 0; l < x.cols(); ++l)
+            {
+                for (std::size_t i = 0; i < nDim; i++)
+                {
+                    x(i, l) = this->prng->expns[i].dist();
+                }
+            }
+            return true;
+        }
+        for (auto i = 0; i < x.cols(); i++)
+        {
+            x(0, i) = this->prng->expn->dist();
         }
         return true;
 #ifdef DEBUG

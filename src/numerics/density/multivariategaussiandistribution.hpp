@@ -141,6 +141,15 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
     /*!
      * \brief Create samples of the Gaussian Distribution object
      *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EVectorX<T> &x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      *
@@ -157,6 +166,15 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(std::vector<T> &x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Matrix of random samples 
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EMatrixX<T> &x);
 
   private:
     /*!
@@ -292,6 +310,15 @@ class multivariateGaussianDistribution : public densityFunction<T, std::function
     /*!
      * \brief Create samples of the Gaussian Distribution object
      *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EVectorX<T> &x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      *
@@ -308,6 +335,15 @@ class multivariateGaussianDistribution : public densityFunction<T, std::function
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(std::vector<T> &x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Matrix of random samples 
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EMatrixX<T> &x);
 
   private:
     /*!
@@ -575,6 +611,21 @@ bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x)
 }
 
 template <typename T, class V>
+bool multivariategaussianDistribution<T, V>::sample(EVectorX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        x = this->prng->mvnormal->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
 bool multivariategaussianDistribution<T, V>::sample(T *x, int const nSamples)
 {
 #ifdef DEBUG
@@ -601,7 +652,7 @@ bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x, int const
     {
 #endif
 #ifdef DEBUG
-        if (static_cast<std::size_t>(nSamples * this->numParams) > x.size())
+        if (nSamples * this->numParams > x.size())
         {
             UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples * this->numParams, " !");
         }
@@ -610,6 +661,24 @@ bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x, int const
         for (int i = 0; i < nSamples; i++)
         {
             X.row(i) = this->prng->mvnormal->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool multivariategaussianDistribution<T, V>::sample(EMatrixX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        for (auto i = 0; i < x.cols(); i++)
+        {
+            x.col(i) = this->prng->mvnormal->dist();
         }
         return true;
 #ifdef DEBUG
@@ -847,6 +916,21 @@ bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x)
 }
 
 template <typename T, class V>
+bool multivariateGaussianDistribution<T, V>::sample(EVectorX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        x = this->prng->mvNormal->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
 bool multivariateGaussianDistribution<T, V>::sample(T *x, int const nSamples)
 {
 #ifdef DEBUG
@@ -890,7 +974,25 @@ bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x, int const
 #endif
 }
 
+template <typename T, class V>
+bool multivariateGaussianDistribution<T, V>::sample(EMatrixX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        for (auto i = 0; i < x.cols(); i++)
+        {
+            x.col(i) = this->prng->mvNormal->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
 } // namespace density
 } // namespace umuq
 
-#endif // UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
+#endif // UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION

@@ -133,6 +133,15 @@ public:
   /*!
    * \brief Create random samples based on the distribution
    * 
+   * \param x Vector of random samples 
+   *  
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(EVectorX<T> &x);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
    * \param x         Vector of random samples 
    * \param nSamples  Number of sample vectors
    *
@@ -149,6 +158,15 @@ public:
    * \return false If Random Number Generator object is not assigned
    */
   virtual bool sample(std::vector<T> &x, int const nSamples);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x Matrix of random samples 
+   * 
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(EMatrixX<T> &x);
 
   /*!
    * \brief Set the Random Number Generator object 
@@ -212,6 +230,12 @@ bool densityFunction<T, F>::sample(std::vector<T> &x)
 }
 
 template <typename T, class F>
+bool densityFunction<T, F>::sample(EVectorX<T> &x)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
 bool densityFunction<T, F>::sample(T *x, int const nSamples)
 {
   UMUQFAILRETURN("Not implemented!");
@@ -219,6 +243,12 @@ bool densityFunction<T, F>::sample(T *x, int const nSamples)
 
 template <typename T, class F>
 bool densityFunction<T, F>::sample(std::vector<T> &x, int const nSamples)
+{
+  UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+bool densityFunction<T, F>::sample(EMatrixX<T> &x)
 {
   UMUQFAILRETURN("Not implemented!");
 }

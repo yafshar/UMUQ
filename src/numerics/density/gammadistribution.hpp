@@ -112,6 +112,15 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
     /*!
      * \brief Create samples of the Gamma distribution object
      *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EVectorX<T> &x);
+
+    /*!
+     * \brief Create samples of the Gamma distribution object
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      *
@@ -128,6 +137,15 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \return false If Random Number Generator object is not assigned
      */
     bool sample(std::vector<T> &x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gamma distribution object
+     *
+     * \param x  Matrix of random samples 
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    bool sample(EMatrixX<T> &x);
 };
 
 template <typename T, class V>
@@ -228,7 +246,7 @@ bool gammaDistribution<T, V>::sample(T *x)
 #endif
         if (this->numParams > 2)
         {
-            for (int i = 0; i < this->numParams / 2; i++)
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
             {
                 x[i] = this->prng->gammas[i].dist();
             }
@@ -238,7 +256,7 @@ bool gammaDistribution<T, V>::sample(T *x)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
 
@@ -251,7 +269,7 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x)
 #endif
         if (this->numParams > 2)
         {
-            for (int i = 0; i < this->numParams / 2; i++)
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
             {
                 x[i] = this->prng->gammas[i].dist();
             }
@@ -261,7 +279,30 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(EVectorX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->gammas[i].dist();
+            }
+            return true;
+        }
+        x[0] = this->prng->gamma->dist();
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
 
@@ -274,14 +315,12 @@ bool gammaDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
         if (this->numParams > 2)
         {
-            int const Stride = this->numParams / 2;
-            int const nSizeArray = Stride * nSamples;
-
-            for (int i = 0; i < Stride; i++)
+            std::size_t const nDim = this->numParams / 2;
+            for (std::size_t j = 0, l = 0; j < nSamples; j++)
             {
-                for (int l = i; l < nSizeArray; l += Stride)
+                for (std::size_t i = 0; i < nDim; i++)
                 {
-                    x[l] = this->prng->gammas[i].dist();
+                    x[l++] = this->prng->gammas[i].dist();
                 }
             }
             return true;
@@ -293,7 +332,7 @@ bool gammaDistribution<T, V>::sample(T *x, int const nSamples)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
 
@@ -306,21 +345,19 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
 #endif
         if (this->numParams > 2)
         {
-            int const Stride = this->numParams / 2;
-            int const nSizeArray = Stride * nSamples;
+            std::size_t const nDim = this->numParams / 2;
 
 #ifdef DEBUG
-            if (static_cast<std::size_t>(nSizeArray) > x.size())
+            if (nDim * nSamples > x.size())
             {
-                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
+                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nDim * nSamples, " !");
             }
 #endif
-
-            for (int i = 0; i < Stride; i++)
+            for (std::size_t j = 0, l = 0; j < nSamples; j++)
             {
-                for (int l = i; l < nSizeArray; l += Stride)
+                for (std::size_t i = 0; i < nDim; i++)
                 {
-                    x[l] = this->prng->gammas[i].dist();
+                    x[l++] = this->prng->gammas[i].dist();
                 }
             }
             return true;
@@ -338,7 +375,44 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
         return true;
 #ifdef DEBUG
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+#endif
+}
+
+template <typename T, class V>
+bool gammaDistribution<T, V>::sample(EMatrixX<T> &x)
+{
+#ifdef DEBUG
+    if (this->prng)
+    {
+#endif
+        if (this->numParams > 2)
+        {
+#ifdef DEBUG
+            if (this->numParams / 2 != x.rows())
+            {
+                UMUQFAILRETURN("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
+            }
+#endif
+            std::size_t const nDim = this->numParams / 2;
+
+            for (auto j = 0; j < x.cols(); ++j)
+            {
+                for (std::size_t i = 0; i < nDim; ++i)
+                {
+                    x(i, j) = this->prng->gammas[i].dist();
+                }
+            }
+            return true;
+        }
+        for (auto i = 0; i < x.cols(); ++i)
+        {
+            x(0, i) = this->prng->gamma->dist();
+        }
+        return true;
+#ifdef DEBUG
+    }
+    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
 }
 

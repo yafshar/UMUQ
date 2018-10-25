@@ -74,6 +74,15 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     {
         EXPECT_TRUE(Y[i] >= 1.0 && Y[i] <= 2.0);
     }
+
+    // Check for sampling matrix
+    umuq::EMatrixX<double> Z(1, 25);
+    EXPECT_TRUE(u.sample(Z));
+
+    for (int i = 0; i < 25; i++)
+    {
+        EXPECT_TRUE(Z(0, i) >= 1.0 && Z(0, i) <= 2.0);
+    }
 }
 
 /*! 
@@ -105,6 +114,11 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
     std::vector<float> Y(10, -1);
 
     EXPECT_TRUE(e.sample(Y, 10));
+
+    // Check for sampling matrix
+    umuq::EMatrixX<float> Z(1, 25);
+    
+    EXPECT_TRUE(e.sample(Z));
 }
 
 /*! 
@@ -138,6 +152,11 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     std::vector<double> Y(10, -1);
 
     EXPECT_TRUE(g.sample(Y, 10));
+
+    // Check for sampling matrix
+    umuq::EMatrixX<double> Z(1, 25);
+
+    EXPECT_TRUE(g.sample(Z));
 }
 
 /*! 
@@ -172,6 +191,11 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     std::vector<double> Y(15, -1);
 
     EXPECT_TRUE(gu.sample(Y, 15));
+
+    // Check for sampling matrix
+    umuq::EMatrixX<double> Z(1, 19);
+
+    EXPECT_TRUE(gu.sample(Z));
 }
 
 /*! 
@@ -338,6 +362,12 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
         // Check for sampling vector
         std::vector<double> Y(30, -1);
         EXPECT_TRUE(mvn.sample(Y, 15));
+    }
+
+    {
+        // Check for sampling vector
+        umuq::EMatrixX<double> Z(2, 19);
+        EXPECT_TRUE(mvn.sample(Z));
     }
 }
 
