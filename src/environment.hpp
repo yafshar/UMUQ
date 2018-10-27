@@ -250,4 +250,19 @@ class UMUQEventListener : public ::testing::EmptyTestEventListener
 
 } // namespace umuq
 
+namespace umuq
+{
+
+/*!
+ * \ingroup Core_Module
+ * 
+ * \brief TORC environemnt object
+ * 
+ * \tparam T Data type
+ */
+template <typename T = double>
+std::unique_ptr<torcEnvironment<T>> torc;
+
+} // namespace umuq
+
 #endif // UMUQ_ENVIRONMENT
