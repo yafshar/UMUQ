@@ -506,12 +506,14 @@ struct stats
      * 
      * \tparam T Data type
      * 
-     * \param idata   Array of data
-     * \param nSize   Size of array
-     * \param Stride  Element stride (default is 1)
+     * \param idata     Array of data
+     * \param nSize     Size of array
+     * \param Stride    Element stride (default is 1)
+     * \param MinValue  Input minimum value
+     * \param MaxValue  Input maximum value
      */
     template <typename T>
-    void minmaxNormal(T *idata, int const nSize, int const Stride = 1);
+    void minmaxNormal(T *idata, int const nSize, int const Stride = 1, T const MinValue = UFAIL, T const MaxValue = UFAIL);
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
@@ -522,10 +524,46 @@ struct stats
      * 
      * \tparam T Data type
      * 
-     * \param idata  Array of data
+     * \param idata     Array of data
+     * \param nSize     Size of array
+     * \param MinValue  Output minimum value
+     * \param MaxValue  Output maximum value
+     * \param Stride    Element stride (default is 1)
      */
     template <typename T>
-    void minmaxNormal(std::vector<T> &idata);
+    void minmaxNormal(T *idata, int const nSize, T &MinValue, T &MaxValue, int const Stride = 1);
+
+    /*!
+     * \brief minmaxNormal scales the numeric data using the MinMax normalization method
+     * 
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
+     * Doing so allows to compare values on very different scales to one another by reducing 
+     * the dominance of one dimension over the other.
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata     Array of data
+     * \param MinValue  Input minimum value
+     * \param MaxValue  Input maximum value
+     */
+    template <typename T>
+    void minmaxNormal(std::vector<T> &idata, T const MinValue = UFAIL, T const MaxValue = UFAIL);
+
+    /*!
+     * \brief minmaxNormal scales the numeric data using the MinMax normalization method
+     * 
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
+     * Doing so allows to compare values on very different scales to one another by reducing 
+     * the dominance of one dimension over the other.
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata     Array of data
+     * \param MinValue  Output minimum value
+     * \param MaxValue  Output maximum value
+     */
+    template <typename T>
+    void minmaxNormal(std::vector<T> &idata, T &MinValue, T &MaxValue);
 
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
@@ -1251,95 +1289,95 @@ inline TOut stats::coefvar(arrayWrapper<T> const &iArray, TOut const idataMean) 
 }
 
 template <typename T>
-void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
+void stats::minmaxNormal(T *idata, int const nSize, int const Stride, T const MinValue, T const MaxValue)
 {
-    T const MinValue = minelement<T>(idata, nSize, Stride);
-    T const MaxValue = maxelement<T>(idata, nSize, Stride);
+    T const minValue = (MinValue <= UFAIL) ? minelement<T>(idata, nSize, Stride) : MinValue;
+    T const maxValue = (MaxValue <= UFAIL) ? maxelement<T>(idata, nSize, Stride) : MaxValue;
 
-    T denom = MaxValue - MinValue;
-    if (denom < std::numeric_limits<T>::epsilon())
+    T minmaxDenominator = maxValue - minValue;
+    if (minmaxDenominator < std::numeric_limits<T>::epsilon())
     {
         UMUQWARNING("Maximum and Minimum Value are identical!");
-        denom = std::numeric_limits<T>::epsilon();
+        minmaxDenominator = std::numeric_limits<T>::epsilon();
     }
     if (Stride > 1)
     {
         for (int i = 0; i < nSize; i += Stride)
         {
-            idata[i] -= MinValue;
-            idata[i] /= denom;
+            idata[i] -= minValue;
+            idata[i] /= minmaxDenominator;
         }
         return;
     }
 #if unrolledIncrement == 0
-    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - minValue) / minmaxDenominator; });
 #else
     int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
     if (n)
     {
         for (int i = 0; i < n; i++)
         {
-            idata[i] -= MinValue;
-            idata[i] /= denom;
+            idata[i] -= minValue;
+            idata[i] /= minmaxDenominator;
         }
     }
     for (int i = n; i < nSize; i += unrolledIncrement)
     {
-        idata[i] -= MinValue;
-        idata[i] /= denom;
-        idata[i + 1] -= MinValue;
-        idata[i + 1] /= denom;
-        idata[i + 2] -= MinValue;
-        idata[i + 2] /= denom;
-        idata[i + 3] -= MinValue;
-        idata[i + 3] /= denom;
+        idata[i] -= minValue;
+        idata[i] /= minmaxDenominator;
+        idata[i + 1] -= minValue;
+        idata[i + 1] /= minmaxDenominator;
+        idata[i + 2] -= minValue;
+        idata[i + 2] /= minmaxDenominator;
+        idata[i + 3] -= minValue;
+        idata[i + 3] /= minmaxDenominator;
 #if unrolledIncrement == 6
-        idata[i + 4] -= MinValue;
-        idata[i + 4] /= denom;
-        idata[i + 5] -= MinValue;
-        idata[i + 5] /= denom;
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
 #endif
 #if unrolledIncrement == 8
-        idata[i + 4] -= MinValue;
-        idata[i + 4] /= denom;
-        idata[i + 5] -= MinValue;
-        idata[i + 5] /= denom;
-        idata[i + 6] -= MinValue;
-        idata[i + 6] /= denom;
-        idata[i + 7] -= MinValue;
-        idata[i + 7] /= denom;
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
 #endif
 #if unrolledIncrement == 10
-        idata[i + 4] -= MinValue;
-        idata[i + 4] /= denom;
-        idata[i + 5] -= MinValue;
-        idata[i + 5] /= denom;
-        idata[i + 6] -= MinValue;
-        idata[i + 6] /= denom;
-        idata[i + 7] -= MinValue;
-        idata[i + 7] /= denom;
-        idata[i + 8] -= MinValue;
-        idata[i + 8] /= denom;
-        idata[i + 9] -= MinValue;
-        idata[i + 9] /= denom;
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= minValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= minValue;
+        idata[i + 9] /= minmaxDenominator;
 #endif
 #if unrolledIncrement == 12
-        idata[i + 4] -= MinValue;
-        idata[i + 4] /= denom;
-        idata[i + 5] -= MinValue;
-        idata[i + 5] /= denom;
-        idata[i + 6] -= MinValue;
-        idata[i + 6] /= denom;
-        idata[i + 7] -= MinValue;
-        idata[i + 7] /= denom;
-        idata[i + 8] -= MinValue;
-        idata[i + 8] /= denom;
-        idata[i + 9] -= MinValue;
-        idata[i + 9] /= denom;
-        idata[i + 10] -= MinValue;
-        idata[i + 10] /= denom;
-        idata[i + 11] -= MinValue;
-        idata[i + 11] /= denom;
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= minValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= minValue;
+        idata[i + 9] /= minmaxDenominator;
+        idata[i + 10] -= minValue;
+        idata[i + 10] /= minmaxDenominator;
+        idata[i + 11] -= minValue;
+        idata[i + 11] /= minmaxDenominator;
 #endif
     }
 #endif
@@ -1347,19 +1385,132 @@ void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
 }
 
 template <typename T>
-void stats::minmaxNormal(std::vector<T> &idata)
+void stats::minmaxNormal(T *idata, int const nSize, T &MinValue, T &MaxValue, int const Stride)
 {
-    T const MinValue = minelement<T>(idata);
-    T const MaxValue = maxelement<T>(idata);
+    MinValue = minelement<T>(idata, nSize, Stride);
+    MaxValue = maxelement<T>(idata, nSize, Stride);
 
-    T denom = MaxValue - MinValue;
-    if (denom < std::numeric_limits<T>::epsilon())
+    T minmaxDenominator = MaxValue - MinValue;
+    if (minmaxDenominator < std::numeric_limits<T>::epsilon())
     {
         UMUQWARNING("Maximum and Minimum Value are identical!");
-        denom = std::numeric_limits<T>::epsilon();
+        minmaxDenominator = std::numeric_limits<T>::epsilon();
+    }
+    if (Stride > 1)
+    {
+        for (int i = 0; i < nSize; i += Stride)
+        {
+            idata[i] -= MinValue;
+            idata[i] /= minmaxDenominator;
+        }
+        return;
+    }
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MinValue) / minmaxDenominator; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= MinValue;
+            idata[i] /= minmaxDenominator;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= MinValue;
+        idata[i] /= minmaxDenominator;
+        idata[i + 1] -= MinValue;
+        idata[i + 1] /= minmaxDenominator;
+        idata[i + 2] -= MinValue;
+        idata[i + 2] /= minmaxDenominator;
+        idata[i + 3] -= MinValue;
+        idata[i + 3] /= minmaxDenominator;
+#if unrolledIncrement == 6
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= minmaxDenominator;
+        idata[i + 10] -= MinValue;
+        idata[i + 10] /= minmaxDenominator;
+        idata[i + 11] -= MinValue;
+        idata[i + 11] /= minmaxDenominator;
+#endif
+    }
+#endif
+    return;
+}
+
+template <typename T>
+void stats::minmaxNormal(std::vector<T> &idata, T const MinValue, T const MaxValue)
+{
+    T const minValue = (MinValue <= UFAIL) ? minelement<T>(idata) : MinValue;
+    T const maxValue = (MaxValue <= UFAIL) ? maxelement<T>(idata) : MaxValue;
+
+    T minmaxDenominator = maxValue - minValue;
+    if (minmaxDenominator < std::numeric_limits<T>::epsilon())
+    {
+        UMUQWARNING("Maximum and Minimum Value are identical!");
+        minmaxDenominator = std::numeric_limits<T>::epsilon();
     }
 
-    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - minValue) / minmaxDenominator; });
+    return;
+}
+
+template <typename T>
+void stats::minmaxNormal(std::vector<T> &idata, T &MinValue, T &MaxValue)
+{
+    MinValue = minelement<T>(idata);
+    MaxValue = maxelement<T>(idata);
+
+    T minmaxDenominator = MaxValue - MinValue;
+    if (minmaxDenominator < std::numeric_limits<T>::epsilon())
+    {
+        UMUQWARNING("Maximum and Minimum Value are identical!");
+        minmaxDenominator = std::numeric_limits<T>::epsilon();
+    }
+
+    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MinValue) / minmaxDenominator; });
     return;
 }
 
