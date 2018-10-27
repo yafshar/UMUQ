@@ -15,6 +15,21 @@
 namespace umuq
 {
 
+/*! \enum KNearestNeighborTypes
+ * \ingroup Numerics_Module
+ * 
+ * \brief Different K nearest neighbors types
+ * 
+ * Different K nearest neighbors types, based on the covariance requirement for finding the neighbors 
+ */
+enum KNearestNeighborTypes
+{
+    /* K nearest neighbors from FLANN library which do not require covariance */
+    NoCovarianceKNearestNeighbor = 0,
+    /* MahalanobisNearestNeighbor which requires computing the data covariance */
+    CovarianceKNearestNeighbor = 1
+};
+
 /*! \class kNearestNeighbor
  * \ingroup Numerics_Module
  * 
@@ -191,6 +206,12 @@ class kNearestNeighbor
      */
     inline int numQuerydata() const;
 
+    /*!
+     * \brief Get the KNearestNeighbor Type object
+     * 
+     */
+    inline int getNearestNeighborsType() const;
+
   protected:
     //! Number of data points
     std::size_t drows;
@@ -218,6 +239,9 @@ class kNearestNeighbor
 
     //! Flag to check if the input data and query data are the same
     bool the_same;
+
+    //! K nearest neighbors type
+    int KNearestNeighborType;
 };
 
 template <typename T, class Distance>
@@ -229,7 +253,8 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const
                                                                                                                dists_ptr(new T[ndataPoints * (kNeighbors + 1)]),
                                                                                                                indices(indices_ptr.get(), ndataPoints, (kNeighbors + 1)),
                                                                                                                dists(dists_ptr.get(), ndataPoints, (kNeighbors + 1)),
-                                                                                                               the_same(true)
+                                                                                                               the_same(true),
+                                                                                                               KNearestNeighborType(KNearestNeighborTypes::NoCovarianceKNearestNeighbor)
 {
     if (drows < static_cast<std::size_t>(nn))
     {
@@ -246,7 +271,8 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(int const ndataPoints, int const
                                                                                                                                        dists_ptr(new T[nqueryPoints * kNeighbors]),
                                                                                                                                        indices(indices_ptr.get(), nqueryPoints, kNeighbors),
                                                                                                                                        dists(dists_ptr.get(), nqueryPoints, kNeighbors),
-                                                                                                                                       the_same(false)
+                                                                                                                                       the_same(false),
+                                                                                                                                       KNearestNeighborType(KNearestNeighborTypes::NoCovarianceKNearestNeighbor)
 {
     if (drows < static_cast<std::size_t>(nn))
     {
@@ -263,7 +289,8 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> &&
                                                                                          dists_ptr(std::move(other.dists_ptr)),
                                                                                          indices(std::move(other.indices)),
                                                                                          dists(std::move(other.dists)),
-                                                                                         the_same(other.the_same)
+                                                                                         the_same(other.the_same),
+                                                                                         KNearestNeighborType(other.KNearestNeighborType)
 {
 }
 
@@ -276,7 +303,8 @@ kNearestNeighbor<T, Distance>::kNearestNeighbor(kNearestNeighbor<T, Distance> co
                                                                                               dists_ptr(new T[other.qrows * other.nn]),
                                                                                               indices(indices_ptr.get(), other.qrows, other.nn),
                                                                                               dists(dists_ptr.get(), other.qrows, other.nn),
-                                                                                              the_same(other.the_same)
+                                                                                              the_same(other.the_same),
+                                                                                              KNearestNeighborType(other.KNearestNeighborType)
 {
     {
         int *From = other.indices_ptr.get();
@@ -302,6 +330,7 @@ kNearestNeighbor<T, Distance> &kNearestNeighbor<T, Distance>::operator=(kNearest
     dists_ptr = std::move(other.dists_ptr);
     indices = std::move(other.indices);
     dists = std::move(other.dists);
+    KNearestNeighborType = std::move(other.KNearestNeighborType);
     return *this;
 }
 
@@ -436,6 +465,12 @@ template <typename T, class Distance>
 inline int kNearestNeighbor<T, Distance>::numQuerydata() const
 {
     return qrows;
+}
+
+template <typename T, class Distance>
+inline int kNearestNeighbor<T, Distance>::getNearestNeighborsType() const
+{
+    return KNearestNeighborType;
 }
 
 /*!
@@ -722,6 +757,7 @@ MahalanobisNearestNeighbor<T>::MahalanobisNearestNeighbor(int const ndataPoints,
     {
         UMUQFAIL("The unrolled increment value of unrolledIncrement is not correctly set!");
     }
+    this->KNearestNeighborType = KNearestNeighborTypes::CovarianceKNearestNeighbor;
 }
 
 template <typename T>
@@ -733,6 +769,7 @@ MahalanobisNearestNeighbor<T>::MahalanobisNearestNeighbor(int const ndataPoints,
     {
         UMUQFAIL("The unrolled increment value of unrolledIncrement is not correctly set!");
     }
+    this->KNearestNeighborType = KNearestNeighborTypes::CovarianceKNearestNeighbor;
 }
 
 template <typename T>
