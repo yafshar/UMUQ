@@ -47,16 +47,6 @@ namespace umuq
 namespace tmcmc
 {
 
-/*!
- * \ingroup TMCMC_Module
- * 
- * \brief TORC environemnt object
- * 
- * \tparam T Data type
- */
-template <typename T>
-std::unique_ptr<torcEnvironment<T>> torc;
-
 //! An instance of funcallcounter object
 funcallcounter fc;
 
