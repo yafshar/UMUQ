@@ -85,7 +85,18 @@ class fitness
      *
      * \return false If there is not enough memory to continue
      */
-    bool computeResiduals(T *observations, T *predictions, int const nSize, T *&results);
+    bool computeResiduals(T const *observations, T const *predictions, int const nSize, T *&results);
+
+    /*!
+     * \brief Compute residuals  
+     * 
+     * \param observations  Array of observations data
+     * \param predictions   Array of predicted data
+     * \param results       Array of the results
+     *
+     * \return false If observation and prediction data do not have the same size
+     */
+    bool computeResiduals(std::vector<T> const &observations, std::vector<T> const &predictions, std::vector<T> &results);
 
     /*!
      * \brief Compute residuals  
@@ -96,7 +107,17 @@ class fitness
      * 
      * \returns false If there is not enough memory to continue
      */
-    bool computeResiduals(T *observationspredictions, int const nSize, T *&results);
+    bool computeResiduals(T const *observationspredictions, int const nSize, T *&results);
+
+    /*!
+     * \brief Compute residuals  
+     * 
+     * \param observationspredictions  Array of observations & prediction data
+     * \param results                  Array of the results
+     * 
+     * \returns false If there is not enough memory to continue
+     */
+    bool computeResiduals(std::vector<T> const &observationspredictions, std::vector<T> &results);
 
     /*!
      * \brief Compute residuals
@@ -108,7 +129,18 @@ class fitness
      * 
      * \returns false If there is not enough memory to continue
      */
-    bool computeResiduals(T *observations, T const prediction, int const nSize, T *&results);
+    bool computeResiduals(T const *observations, T const prediction, int const nSize, T *&results);
+
+    /*!
+     * \brief Compute residuals
+     * 
+     * \param observations  Array of observations data
+     * \param prediction    A predicted data
+     * \param results       Array of the results
+     * 
+     * \returns false If there is not enough memory to continue
+     */
+    bool computeResiduals(std::vector<T> const &observations, T const prediction, std::vector<T> &results);
 
     /*!
      * \brief Get the Fitness value
@@ -119,7 +151,17 @@ class fitness
      * 
      * \returns The Fitness value
      */
-    T getFitness(T *observations, T *predictions, int const nSize);
+    T getFitness(T const *observations, T const *predictions, int const nSize);
+
+    /*!
+     * \brief Get the Fitness value
+     * 
+     * \param observations  Array of observed data
+     * \param predictions   Array of predicted data 
+     * 
+     * \returns The Fitness value
+     */
+    T getFitness(std::vector<T> const &observations, std::vector<T> const &predictions);
 
     /*!
      * \brief Get the Metric object name
@@ -263,7 +305,7 @@ bool fitness<T>::setMetricName(std::string const &MetricName)
 }
 
 template <typename T>
-bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSize, T *&results)
+bool fitness<T>::computeResiduals(T const *observations, T const *predictions, int const nSize, T *&results)
 {
     if (results == nullptr)
     {
@@ -277,15 +319,35 @@ bool fitness<T>::computeResiduals(T *observations, T *predictions, int const nSi
         }
     }
 
-    T *o = observations;
-    T *p = predictions;
+    T *o = const_cast<T *>(observations);
+    T *p = const_cast<T *>(predictions);
     std::for_each(results, results + nSize, [&](T &r_i) { r_i = fitnessResidual(*o++, *p++); });
 
     return true;
 }
 
 template <typename T>
-bool fitness<T>::computeResiduals(T *observationspredictions, int const nSize, T *&results)
+bool fitness<T>::computeResiduals(std::vector<T> const &observations, std::vector<T> const &predictions, std::vector<T> &results)
+{
+    if (observations.size() != predictions.size())
+    {
+        UMUQFAILRETURN("Observation and prediction data does not have the same size!");
+    }
+
+    if (results.size() != observations.size())
+    {
+        results.resize(observations.size());
+    }
+
+    auto o = observations.begin();
+    auto p = predictions.begin();
+    std::for_each(results.begin(), results.end(), [&](T &r_i) { r_i = fitnessResidual(*o++, *p++); });
+
+    return true;
+}
+
+template <typename T>
+bool fitness<T>::computeResiduals(T const *observationspredictions, int const nSize, T *&results)
 {
     if (nSize & 1)
     {
@@ -304,14 +366,33 @@ bool fitness<T>::computeResiduals(T *observationspredictions, int const nSize, T
         }
     }
 
-    T *o = observationspredictions;
+    T *o = const_cast<T *>(observationspredictions);
     std::for_each(results, results + nSize / 2, [&](T &r_i) { r_i = fitnessResidual(*o, *(o + 1)); o += 2; });
 
     return true;
 }
 
 template <typename T>
-bool fitness<T>::computeResiduals(T *observations, T const prediction, int const nSize, T *&results)
+bool fitness<T>::computeResiduals(std::vector<T> const &observationspredictions, std::vector<T> &results)
+{
+    if (observationspredictions.size() & 1)
+    {
+        UMUQFAILRETURN("Wrong input size!");
+    }
+
+    if (results.size() != observationspredictions.size() / 2)
+    {
+        results.resize(observationspredictions.size() / 2);
+    }
+
+    auto o = observationspredictions.begin();
+    std::for_each(results.begin(), results.end(), [&](T &r_i) { r_i = fitnessResidual(*o, *(o + 1)); o += 2; });
+
+    return true;
+}
+
+template <typename T>
+bool fitness<T>::computeResiduals(T const *observations, T const prediction, int const nSize, T *&results)
 {
     if (results == nullptr)
     {
@@ -325,30 +406,39 @@ bool fitness<T>::computeResiduals(T *observations, T const prediction, int const
         }
     }
 
-    T *o = observations;
+    T *o = const_cast<T *>(observations);
     std::for_each(results, results + nSize, [&](T &r_i) { r_i = fitnessResidual(*o++, prediction); });
 
     return true;
 }
 
 template <typename T>
-T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
+bool fitness<T>::computeResiduals(std::vector<T> const &observations, T const prediction, std::vector<T> &results)
+{
+    if (results.size() != observations.size())
+    {
+        results.resize(observations.size());
+    }
+
+    auto o = observations.begin();
+    std::for_each(results.begin(), results.end(), [&](T &r_i) { r_i = fitnessResidual(*o++, prediction); });
+
+    return true;
+}
+
+template <typename T>
+T fitness<T>::getFitness(T const *observations, T const *predictions, int const nSize)
 {
     std::vector<T> r(nSize);
 
     if (fitnessMetricName == "RSQUARED")
     {
         T *results = r.data();
-
         umuq::stats s;
-
-        T favg = s.mean<T, T>(observations, nSize);
-
-        T nomin = computeResiduals(predictions, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
-
-        T denom = computeResiduals(observations, favg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
-
-        return nomin / denom;
+        T observationsAvg = s.mean<T, T>(observations, nSize);
+        T rsqNominator = computeResiduals(predictions, observationsAvg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
+        T rsqDenominator = computeResiduals(observations, observationsAvg, nSize, results) ? s.sum<T, T>(results, nSize) : throw(std::runtime_error("Error!"));
+        return rsqNominator / rsqDenominator;
     }
 
     if (numMetrics > 0)
@@ -461,6 +551,139 @@ T fitness<T>::getFitness(T *observations, T *predictions, int const nSize)
                 return std::sqrt(s.mean<T, T>(results, nSize));
             case ErrorFitnessTypes::errorFitMax:
                 return s.maxelement<T>(results, nSize);
+            }
+        }
+    }
+    return std::numeric_limits<T>::max();
+}
+
+template <typename T>
+T fitness<T>::getFitness(std::vector<T> const &observations, std::vector<T> const &predictions)
+{
+    if (observations.size() != predictions.size())
+    {
+        UMUQFAIL("Observation and prediction data does not have the same size!");
+    }
+
+    std::vector<T> results(observations.size());
+
+    if (fitnessMetricName == "RSQUARED")
+    {
+        umuq::stats s;
+        T const observationsAvg = s.mean<T, T>(observations);
+        T const rsqNominator = computeResiduals(predictions, observationsAvg, results) ? s.sum<T, T>(results) : throw(std::runtime_error("Error!"));
+        T const rsqDenominator = computeResiduals(observations, observationsAvg, results) ? s.sum<T, T>(results) : throw(std::runtime_error("Error!"));
+        return rsqNominator / rsqDenominator;
+    }
+
+    if (numMetrics > 0)
+    {
+        {
+            umuq::parser p;
+            for (int i = 0; i < numMetrics; i++)
+            {
+                metricNames[i] = p.toupper(metricNames[i]);
+            }
+        }
+        for (int i = 0; i < numMetrics; i++)
+        {
+            if (metricNames[i] == "SUM_SQUARED")
+            {
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
+            }
+            else if (metricNames[i] == "MEAN_SQUARED")
+            {
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
+            }
+            else if (metricNames[i] == "ROOT_MEAN_SQUARED")
+            {
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitRootMean;
+            }
+            else if (metricNames[i] == "MAX_SQUARED")
+            {
+                fitnessResidual.set(ErrorTypes::SquaredError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
+            }
+            else if (metricNames[i] == "SUM_SCALED")
+            {
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
+            }
+            else if (metricNames[i] == "MEAN_SCALED")
+            {
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
+            }
+            else if (metricNames[i] == "MAX_SCALED")
+            {
+                fitnessResidual.set(ErrorTypes::ScaledError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
+            }
+            else if (metricNames[i] == "SUM_ABS")
+            {
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitSum;
+            }
+            else if (metricNames[i] == "MEAN_ABS")
+            {
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitMean;
+            }
+            else if (metricNames[i] == "MAX_ABS")
+            {
+                fitnessResidual.set(ErrorTypes::AbsoluteError);
+                errorFit = ErrorFitnessTypes::errorFitMax;
+            }
+            else
+            {
+                UMUQFAILRETURN("Unknown fitness type!");
+            }
+
+            if (computeResiduals(observations, predictions, results))
+            {
+                umuq::stats s;
+                switch (errorFit)
+                {
+                case ErrorFitnessTypes::errorFitSum:
+                    metricValues[i] = s.sum<T, T>(results);
+                    break;
+                case ErrorFitnessTypes::errorFitMean:
+                    metricValues[i] = s.mean<T, T>(results);
+                    break;
+                case ErrorFitnessTypes::errorFitRootMean:
+                    metricValues[i] = std::sqrt(s.mean<T, T>(results));
+                    break;
+                case ErrorFitnessTypes::errorFitMax:
+                    metricValues[i] = s.maxelement<T>(results);
+                    break;
+                }
+            }
+            else
+            {
+                metricValues[i] = std::numeric_limits<T>::max();
+            }
+        }
+        return T{};
+    }
+    else
+    {
+        if (computeResiduals(observations, predictions, results))
+        {
+            umuq::stats s;
+
+            switch (errorFit)
+            {
+            case ErrorFitnessTypes::errorFitSum:
+                return s.sum<T, T>(results);
+            case ErrorFitnessTypes::errorFitMean:
+                return s.mean<T, T>(results);
+            case ErrorFitnessTypes::errorFitRootMean:
+                return std::sqrt(s.mean<T, T>(results));
+            case ErrorFitnessTypes::errorFitMax:
+                return s.maxelement<T>(results);
             }
         }
     }
