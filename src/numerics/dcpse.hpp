@@ -6,6 +6,7 @@
 #include "eigenlib.hpp"
 #include "knearestneighbors.hpp"
 #include "primitive.hpp"
+#include "stats.hpp"
 
 namespace umuq
 {
@@ -26,21 +27,20 @@ namespace umuq
  * 
  * It creates a discretized differential operator and interpolators \ref 
  * 
- * \tparam T           Data type
- * \tparam Distance    Distance type for computing the distances to the nearest neighbors
- *                     (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)<br>
- *                     \sa umuq::kNearestNeighbor.<br>
- *                     \sa umuq::L2NearestNeighbor.<br>
- *                     \sa umuq::MahalanobisNearestNeighbor.<br>
- * \tparam Polynomial  Polynomial type used in building the vandermonde & vandermonde-like matrix
- *                     (Default is - \b polynomial<T> with monomials)<br>
- *                     \sa umuq::polynomials::PolynomialTypes.<br>
+ * \tparam T                     Data type
+ * \tparam DistanceType          Distance type for finding k nearest neighbors. 
+ *                               (Default is a specialized class - \b kNearestNeighbor<T> with L2 distance)<br>
+ *                               \sa umuq::NeighborDistance
+ *                               \sa umuq::kNearestNeighbor.<br>
+ * \tparam PolynomialType        Polynomial type used in building the vandermonde & vandermonde-like matrix
+ *                               (Default is - \b polynomial<T> with monomials)<br>
+ *                               \sa umuq::polynomials::PolynomialTypes.<br>
  */
 /*!
  * \todo
  * Currently the class works only for one term and it should be extended to multi terms
  */
-template <typename T, class Distance = L2NearestNeighbor<T>, class Polynomial = polynomial<T>>
+template <typename T, NeighborDistance DistanceType = NeighborDistance::L2, class PolynomialType = polynomial<T>>
 class dcpse
 {
   public:
@@ -57,16 +57,16 @@ class dcpse
      * 
      * \param other dcpse object
      */
-    explicit dcpse(dcpse<T, Distance, Polynomial> &&other);
+    explicit dcpse(dcpse<T, DistanceType, PolynomialType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other dcpse object
      * 
-     * \returns dcpse<T, Distance, Polynomial>& dcpse object
+     * \returns dcpse<T, DistanceType, PolynomialType>& dcpse object
      */
-    dcpse<T, Distance, Polynomial> &operator=(dcpse<T, Distance, Polynomial> &&other);
+    dcpse<T, DistanceType, PolynomialType> &operator=(dcpse<T, DistanceType, PolynomialType> &&other);
 
     /*!
      * \brief Destroy the dcpse object
@@ -82,17 +82,18 @@ class dcpse
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
      * should use the interpolator function not this one. 
      * 
-     * \param idata    A pointer to input data
-     * \param nPoints  Number of data points
-     * \param beta     In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
-     *                 Notation for partial derivatives:<br>
-     *                 \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
-     * \param order    Order of accuracy (default is 2nd order accurate)
-     * \param nENN     Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param dataPoints   Input data points
+     * \param nDataPoints  Number of data points
+     * \param beta         In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+     *                     Notation for partial derivatives:<br>
+     *                     \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+     * \param order        Order of accuracy (default is 2nd order accurate)
+     * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
+     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      * 
      */
-    bool computeWeights(T *idata, int const nPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
+    bool computeWeights(T *dataPoints, int const nDataPoints,
+                        int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
     /*!
      * \brief Computes generalized DC-PSE differential operators on the set of query points.
@@ -102,18 +103,19 @@ class dcpse
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
      * use the interpolator function not this one. 
      * 
-     * \param idata     A pointer to input data
-     * \param nPoints   Number of data points
-     * \param qdata     A pointer to query data
-     * \param nqPoints  Number of query data points
-     * \param beta      In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
-     *                  Notation for partial derivatives:<br>
-     *                  \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
-     * \param order     Order of accuracy (default is 2nd order accurate)
-     * \param nENN      Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param dataPoints        A pointer to input data
+     * \param nDataPoints       Number of data points
+     * \param queryDataPoints   A pointer to query data
+     * \param nQueryDataPoints  Number of query data points
+     * \param beta              In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+     *                          Notation for partial derivatives:<br>
+     *                          \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+     * \param order             Order of accuracy (default is 2nd order accurate)
+     * \param nENN              Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
+     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
-    bool computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
+    bool computeWeights(T *dataPoints, int const nDataPoints, T *queryDataPoints, int const nQueryDataPoints,
+                        int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
     /*! \fn computeInterpolatorWeights
      * \brief Computes generalized DC-PSE interpolator operators on the set of points.
@@ -121,13 +123,14 @@ class dcpse
      * This function uses one set of points as input data to compute the generalized DC-PSE 
      * interpolator operators on them.
      * 
-     * \param idata    A pointer to input data 
-     * \param nPoints  Number of data points
-     * \param order    Order of accuracy (default is 2nd order accurate)
-     * \param nENN     Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio    The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param dataPoints   A pointer to input data 
+     * \param nDataPoints  Number of data points
+     * \param order        Order of accuracy (default is 2nd order accurate)
+     * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
+     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
-    bool computeInterpolatorWeights(T *idata, int const nPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
+    bool computeInterpolatorWeights(T *dataPoints, int const nDataPoints,
+                                    int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
     /*!
      * \brief Computes generalized DC-PSE interpolator operators on the set of query points.
@@ -135,15 +138,16 @@ class dcpse
      * This function uses one set of points as input data to compute the generalized DC-PSE 
      * interpolator operators on the set of query points.
      * 
-     * \param idata     A pointer to input data 
-     * \param nPoints   Number of data points
-     * \param qdata     A pointer to query data 
-     * \param nqPoints  Number of query data points
-     * \param order     Order of accuracy (default is 2nd order accurate)
-     * \param nENN      Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio     The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param dataPoints        A pointer to input data 
+     * \param nDataPoints       Number of data points
+     * \param queryDataPoints   A pointer to query data 
+     * \param nQueryDataPoints  Number of query data points
+     * \param order             Order of accuracy (default is 2nd order accurate)
+     * \param nENN              Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
+     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default vale is one
      */
-    bool computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
+    bool computeInterpolatorWeights(T *dataPoints, int const nDataPoints, T *queryDataPoints, int const nQueryDataPoints,
+                                    int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
     /*!
      * \brief Evaluate a discretized DC-PSE operator from function values of input data and put the results as the query data function values
@@ -154,12 +158,12 @@ class dcpse
      * At first it checks the computed kernel size to be equal to the number of query points times the 
      * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
      * 
-     * \param iFvalue   A pointer to input data function value
-     * \param nPoints   Number of data points
-     * \param qFvalue   A pointer to query data function value
-     * \param nqPoints  Number of query data points
+     * \param dataFunctionValues   Input data function values
+     * \param nDataPoints          Number of data points
+     * \param queryFunctionValues  Query data function value
+     * \param nQueryDataPoints     Number of query data points
      */
-    bool compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints);
+    bool compute(T *dataFunctionValues, int const nDataPoints, T *queryFunctionValues, int const nQueryDataPoints);
 
     /*!
      * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the 
@@ -172,12 +176,12 @@ class dcpse
      * size of monomials which has been previously computed for the required degree of DC-PSE operator
      * or interpolator.
      * 
-     * \param iFvalue   A pointer to input data function value
-     * \param nPoints   Number of data points
-     * \param qFvalue   A pointer to query data function value
-     * \param nqPoints  Number of query data points
+     * \param dataFunctionValues   Input data function values
+     * \param nDataPoints          Number of data points
+     * \param queryFunctionValues  Query data function values
+     * \param nQueryDataPoints     Number of query data points
      */
-    bool interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints);
+    bool interpolate(T const *dataFunctionValues, int const nDataPoints, T *queryFunctionValues, int const nQueryDataPoints);
 
     /*!
      * \brief A pointer to neighborhood kernel at index
@@ -242,16 +246,16 @@ class dcpse
      * 
      * Make it noncopyable.
      */
-    dcpse(dcpse<T, Distance, Polynomial> const &) = delete;
+    dcpse(dcpse<T, DistanceType, PolynomialType> const &) = delete;
 
     /*!
      * \brief Delete a dcpse object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns dcpse<T, Distance, Polynomial>& 
+     * \returns dcpse<T, DistanceType, PolynomialType>& 
      */
-    dcpse<T, Distance, Polynomial> &operator=(dcpse<T, Distance, Polynomial> const &) = delete;
+    dcpse<T, DistanceType, PolynomialType> &operator=(dcpse<T, DistanceType, PolynomialType> const &) = delete;
 
   private:
     //! Dimension of space
@@ -274,7 +278,7 @@ class dcpse
     std::vector<T> dcKernel;
 
     //! k-NearestNeighbor Object
-    std::unique_ptr<Distance> KNN;
+    std::unique_ptr<kNearestNeighbor<T, DistanceType>> KNN;
 
     //! Component-wise average neighbor spacing \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
     std::vector<T> h_average;
@@ -283,12 +287,12 @@ class dcpse
     T rhscoeff;
 };
 
-template <typename T, class Distance, class Polynomial>
-dcpse<T, Distance, Polynomial>::dcpse(int ndim, int nterms) : nDim(ndim),
-                                                              nTerms(nterms),
-                                                              dcMonomialSize(0),
-                                                              dcKernelSize(0),
-                                                              Order(nterms)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+dcpse<T, DistanceType, PolynomialType>::dcpse(int ndim, int nterms) : nDim(ndim),
+                                                                      nTerms(nterms),
+                                                                      dcMonomialSize(0),
+                                                                      dcKernelSize(0),
+                                                                      Order(nterms)
 {
     if (!std::is_floating_point<T>::value)
     {
@@ -296,8 +300,8 @@ dcpse<T, Distance, Polynomial>::dcpse(int ndim, int nterms) : nDim(ndim),
     }
 }
 
-template <typename T, class Distance, class Polynomial>
-dcpse<T, Distance, Polynomial>::dcpse(dcpse<T, Distance, Polynomial> &&other)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+dcpse<T, DistanceType, PolynomialType>::dcpse(dcpse<T, DistanceType, PolynomialType> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -310,8 +314,8 @@ dcpse<T, Distance, Polynomial>::dcpse(dcpse<T, Distance, Polynomial> &&other)
     rhscoeff = other.rhscoeff;
 }
 
-template <typename T, class Distance, class Polynomial>
-dcpse<T, Distance, Polynomial> &dcpse<T, Distance, Polynomial>::operator=(dcpse<T, Distance, Polynomial> &&other)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+dcpse<T, DistanceType, PolynomialType> &dcpse<T, DistanceType, PolynomialType>::operator=(dcpse<T, DistanceType, PolynomialType> &&other)
 {
     nDim = other.nDim;
     nTerms = other.nTerms;
@@ -326,13 +330,13 @@ dcpse<T, Distance, Polynomial> &dcpse<T, Distance, Polynomial>::operator=(dcpse<
     return *this;
 }
 
-template <typename T, class Distance, class Polynomial>
-dcpse<T, Distance, Polynomial>::~dcpse() {}
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+dcpse<T, DistanceType, PolynomialType>::~dcpse() {}
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::computeWeights(T *dataPoints, int const nDataPoints, int *beta, int order, int nENN, T ratio)
 {
-    if (nPoints < 1)
+    if (nDataPoints < 1)
     {
         UMUQFAILRETURN("Number of input data points are negative!");
     }
@@ -363,7 +367,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
     // Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
-    Polynomial poly(nDim, order + Beta - 1);
+    PolynomialType poly(nDim, order + Beta - 1);
 
     /*
      * Get the monomials size
@@ -371,15 +375,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
      */
     dcMonomialSize = poly.monomialsize() - alphamin;
 
-    if (nPoints * dcMonomialSize > dcKernelSize)
+    if (nDataPoints * dcMonomialSize > dcKernelSize)
     {
-        dcKernelSize = nPoints * dcMonomialSize;
+        dcKernelSize = nDataPoints * dcMonomialSize;
         try
         {
             // Make sure of the correct kernel size
             dcKernel.resize(dcKernelSize);
 
-            h_average.resize(nPoints);
+            h_average.resize(nDataPoints);
         }
         catch (...)
         {
@@ -388,12 +392,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     }
     else
     {
-        dcKernelSize = nPoints * dcMonomialSize;
+        dcKernelSize = nDataPoints * dcMonomialSize;
     }
 
     if (KNN)
     {
-        if (nPoints != KNN->numInputdata() || nPoints != KNN->numQuerydata())
+        if (nDataPoints != KNN->numInputdata() || nDataPoints != KNN->numQuerydata())
         {
             try
             {
@@ -402,7 +406,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new Distance(nPoints, nDim, dcMonomialSize + nENN));
+                KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nDim, dcMonomialSize + nENN));
             }
             catch (...)
             {
@@ -419,7 +423,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new Distance(nPoints, nDim, dcMonomialSize + nENN));
+            KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nDim, dcMonomialSize + nENN));
         }
         catch (...)
         {
@@ -427,8 +431,17 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
         }
     }
 
+    // If KNN requires covariance
+    if (KNN->needsCovariance())
+    {
+        stats s;
+        T *Covariance = s.covariance<T, T>(dataPoints, nDataPoints * nDim, nDim);
+        KNN->setCovariance(Covariance);
+        delete[] Covariance;
+    }
+
     // Construct a kd-tree index & do nearest neighbors search
-    KNN->buildIndex(idata);
+    KNN->buildIndex(dataPoints);
 
     /*
      * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
@@ -482,12 +495,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
      * Creating a transpose of the Vandermonde matrix
      * with the size of monomials * monomials \f$  = l \times l \f$
      */
-    EMatrixX<T> VMT(dcMonomialSize, dcMonomialSize);
-    EMatrixX<T> VMTimage(dcMonomialSize, nNN);
+    EMatrixX<T> VandermondeMatrixTranspose(dcMonomialSize, dcMonomialSize);
+    EMatrixX<T> VandermondeMatrixTransposeImage(dcMonomialSize, nNN);
 
     // Matrix of exponential window function
-    EVectorX<T> EM(dcMonomialSize);
-    EVectorX<T> EMimage(nNN);
+    EVectorX<T> ExponentialWindowMatrix(dcMonomialSize);
+    EVectorX<T> ExponentialWindowMatrixImage(nNN);
 
     // Matrix A of a linear system for the kernel coefficients
     EMatrixX<T> AM(dcMonomialSize, dcMonomialSize);
@@ -511,7 +524,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     int nPointsWithSingularVandermondeMatrix(0);
 
     // Loop over all points
-    for (int i = 0; i < nPoints; i++)
+    for (int i = 0; i < nDataPoints; i++)
     {
         std::ptrdiff_t const IdM = i * dcMonomialSize;
         std::ptrdiff_t const IdI = i * nDim;
@@ -535,15 +548,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
          */
         {
             // pointer to query data
-            T *Idata = idata + IdI;
+            T *Idata = dataPoints + IdI;
 
             // \f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
             for (int j = 0, n = 0; j < nNN; j++)
             {
                 std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
-                // pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
+                // pointer to dataPoints (neighbors of i)
+                T *Jdata = dataPoints + IdJ;
 
                 for (int d = 0; d < nDim; d++, n++)
                 {
@@ -563,8 +576,8 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
         // Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
         T const byEpsilon = ratio / h_avg;
-        T const byEpsilonsq = byEpsilon * byEpsilon;
-        T const byEpsilonsq2 = 0.5 * byEpsilonsq;
+        T const byEpsilonSq = byEpsilon * byEpsilon;
+        T const byEpsilonSqHalf = 0.5 * byEpsilonSq;
         T const byEpsilonPowerBeta = std::pow(byEpsilon, Beta);
 
         // Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
@@ -582,23 +595,23 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
             // Fill the Vandermonde matrix column by column
-            VMT.block(0, j, dcMonomialSize, 1) << columnV;
+            VandermondeMatrixTranspose.block(0, j, dcMonomialSize, 1) << columnV;
         }
 
         for (int j = 0; j < dcMonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+            ExponentialWindowMatrix(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
         }
 
-        int dcrank;
+        int dcVandermondeMatrixRank;
 
         {
             // LU decomposition of a matrix with complete pivoting, and related features.
-            Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+            Eigen::FullPivLU<EMatrixX<T>> lu(VandermondeMatrixTranspose);
 
-            dcrank = lu.rank();
+            dcVandermondeMatrixRank = lu.rank();
 
-            if (dcrank < dcMonomialSize && dcrank >= dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize && dcVandermondeMatrixRank >= dcMonomialSize - nENN)
             {
                 for (int j = 0; j < dcMonomialSize; j++)
                 {
@@ -607,7 +620,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             }
         }
 
-        if (dcrank < dcMonomialSize)
+        if (dcVandermondeMatrixRank < dcMonomialSize)
         {
             // We have a singular Vandermonde matrix
             nPointsWithSingularVandermondeMatrix++;
@@ -615,14 +628,14 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             // If necessary, remove redundant equations/coefficients
 
             // Number of neighbor points are not enough
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcVandermondeMatrixRank, " < ", dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
-                    VMTimage.block(0, 0, dcMonomialSize, dcMonomialSize) << VMT;
-                    EMimage.head(dcMonomialSize) << EM;
+                    VandermondeMatrixTransposeImage.block(0, 0, dcMonomialSize, dcMonomialSize) << VandermondeMatrixTranspose;
+                    ExponentialWindowMatrixImage.head(dcMonomialSize) << ExponentialWindowMatrix;
 
                     // Loop through the rest of nearest neighbors
                     for (int j = dcMonomialSize; j < nNN; j++)
@@ -636,12 +649,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                         EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
                         // Fill the Vandermonde matrix column by column
-                        VMTimage.block(0, j, dcMonomialSize, 1) << columnV;
+                        VandermondeMatrixTransposeImage.block(0, j, dcMonomialSize, 1) << columnV;
                     }
 
                     for (int j = dcMonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+                        ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
                     /* 
@@ -653,7 +666,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                      * \end{matrix}
                      * \f$
                      */
-                    BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                    BMTimage = VandermondeMatrixTransposeImage * EMatrixX<T>(ExponentialWindowMatrixImage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
                 }
                 else
@@ -667,7 +680,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                      * \end{matrix}
                      * \f$
                      */
-                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                     AM = BMT * BMT.transpose();
                 }
             }
@@ -680,7 +693,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  */
 
                 // Loop through the neighbors
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
@@ -694,15 +707,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                     EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
                     // Fill the Vandermonde matrix by the new column
-                    VMT.block(0, l, dcMonomialSize, 1) << columnV;
+                    VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1) << columnV;
                 }
 
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
+                    ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
                 /*
@@ -711,7 +724,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  *  {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
                  * \f}
                  */
-                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                 AM = BMT * BMT.transpose();
             }
 
@@ -738,7 +751,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * Later I should check on SVD solution and to find out which columns are the
              * Most important one, then I can correct the IndexId order
              */
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
                 // Loop through the neighbors
                 for (int j = 0; j < dcMonomialSize; j++)
@@ -751,7 +764,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
                     EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -770,17 +783,17 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                     std::ptrdiff_t Id;
                     T expo;
 
-                    if (j >= dcrank)
+                    if (j >= dcVandermondeMatrixRank)
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonSq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonSq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -794,7 +807,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                 }
 
                 // Loop through the neighbors
-                for (int j = dcrank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
+                for (int j = dcVandermondeMatrixRank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
                 {
                     // Get the right index
                     int const l = IndexId[j];
@@ -812,7 +825,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
              * \f}
              */
-            BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+            BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
 
             AM = BMT * BMT.transpose();
 
@@ -830,7 +843,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
                 EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -849,15 +862,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     return true;
 }
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int *beta, int order, int nENN, T ratio)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::computeWeights(T *dataPoints, int const nDataPoints, T *queryDataPoints, int const nQueryDataPoints, int *beta, int order, int nENN, T ratio)
 {
-    if (nPoints < 1)
+    if (nDataPoints < 1)
     {
         UMUQFAILRETURN("Number of input data points are negative!");
     }
 
-    if (nqPoints < 1)
+    if (nQueryDataPoints < 1)
     {
         UMUQFAILRETURN("Number of query data points are negative!");
     }
@@ -888,7 +901,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     rhscoeff = alphamin ? static_cast<T>(1) : -static_cast<T>(1);
 
     // Create an instance of polynomial object with polynomial degree of \f$ |\beta| + r -1 \f$
-    Polynomial poly(nDim, order + Beta - 1);
+    PolynomialType poly(nDim, order + Beta - 1);
 
     /*
      * Get the monomials size
@@ -896,15 +909,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
      */
     dcMonomialSize = poly.monomialsize() - alphamin;
 
-    if (nqPoints * dcMonomialSize > dcKernelSize)
+    if (nQueryDataPoints * dcMonomialSize > dcKernelSize)
     {
-        dcKernelSize = nqPoints * dcMonomialSize;
+        dcKernelSize = nQueryDataPoints * dcMonomialSize;
         try
         {
             // Make sure of the correct kernel size
             dcKernel.resize(dcKernelSize);
 
-            h_average.resize(nqPoints);
+            h_average.resize(nQueryDataPoints);
         }
         catch (...)
         {
@@ -913,12 +926,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     }
     else
     {
-        dcKernelSize = nqPoints * dcMonomialSize;
+        dcKernelSize = nQueryDataPoints * dcMonomialSize;
     }
 
     if (KNN)
     {
-        if (nqPoints != KNN->numInputdata() || nqPoints != KNN->numQuerydata())
+        if (nQueryDataPoints != KNN->numInputdata() || nQueryDataPoints != KNN->numQuerydata())
         {
             try
             {
@@ -927,7 +940,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new Distance(nPoints, nqPoints, nDim, dcMonomialSize + nENN));
+                KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nQueryDataPoints, nDim, dcMonomialSize + nENN));
             }
             catch (...)
             {
@@ -944,7 +957,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new Distance(nPoints, nqPoints, nDim, dcMonomialSize + nENN));
+            KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nQueryDataPoints, nDim, dcMonomialSize + nENN));
         }
         catch (...)
         {
@@ -952,8 +965,17 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
         }
     }
 
+    // If KNN requires covariance
+    if (KNN->needsCovariance())
+    {
+        stats s;
+        T *Covariance = s.covariance<T, T>(dataPoints, nDataPoints * nDim, nDim);
+        KNN->setCovariance(Covariance);
+        delete[] Covariance;
+    }
+
     // Construct a kd-tree index & do nearest neighbors search
-    KNN->buildIndex(idata, qdata);
+    KNN->buildIndex(dataPoints, queryDataPoints);
 
     /*
      * Filling the right hand side \f$ b \f$ of the linear system for the kernel coefficients
@@ -1004,12 +1026,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
      * Creating a transpose of the Vandermonde matrix
      * with the size of monomials * monomials \f$  = l \times l \f$
      */
-    EMatrixX<T> VMT(dcMonomialSize, dcMonomialSize);
-    EMatrixX<T> VMTimage(dcMonomialSize, nNN);
+    EMatrixX<T> VandermondeMatrixTranspose(dcMonomialSize, dcMonomialSize);
+    EMatrixX<T> VandermondeMatrixTransposeImage(dcMonomialSize, nNN);
 
     // Matrix of exponential window function
-    EVectorX<T> EM(dcMonomialSize);
-    EVectorX<T> EMimage(nNN);
+    EVectorX<T> ExponentialWindowMatrix(dcMonomialSize);
+    EVectorX<T> ExponentialWindowMatrixImage(nNN);
 
     // Matrix A of a linear system for the kernel coefficients
     EMatrixX<T> AM(dcMonomialSize, dcMonomialSize);
@@ -1030,16 +1052,16 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     int nPointsWithSingularVandermondeMatrix(0);
 
     // Loop over all query points
-    for (int i = 0; i < nqPoints; i++)
+    for (int iQueryDataPoints = 0; iQueryDataPoints < nQueryDataPoints; iQueryDataPoints++)
     {
-        std::ptrdiff_t const IdM = i * dcMonomialSize;
-        std::ptrdiff_t const IdI = i * nDim;
+        std::ptrdiff_t const IdM = iQueryDataPoints * dcMonomialSize;
+        std::ptrdiff_t const IdI = iQueryDataPoints * nDim;
 
-        // A pointer to nearest neighbors indices of point i
-        int *NearestNeighbors = KNN->NearestNeighbors(i);
+        // A pointer to nearest neighbors indices of point iQueryDataPoints
+        int *NearestNeighbors = KNN->NearestNeighbors(iQueryDataPoints);
 
-        // A pointer to nearest neighbors square distances from the point i
-        T *nnDist = KNN->NearestNeighborsDistances(i);
+        // A pointer to nearest neighbors square distances from the point iQueryDataPoints
+        T *nnDist = KNN->NearestNeighborsDistances(iQueryDataPoints);
 
         /*
          * For each point \f$ {\mathbf x} \f$ we define \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
@@ -1048,15 +1070,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
         {
             // pointer to query data
-            T *Idata = qdata + IdI;
+            T *Idata = queryDataPoints + IdI;
 
             // \f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
             for (int j = 0, n = 0; j < nNN; j++)
             {
                 std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
-                // pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
+                // pointer to dataPoints (neighbors of iQueryDataPoints)
+                T *Jdata = dataPoints + IdJ;
 
                 for (int d = 0; d < nDim; d++, n++)
                 {
@@ -1072,12 +1094,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
         // Component-wise average neighbor spacing \f$ h \f$
         h_avg /= static_cast<T>(nNN);
 
-        h_average[i] = h_avg;
+        h_average[iQueryDataPoints] = h_avg;
 
         // Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
         T const byEpsilon = ratio / h_avg;
-        T const byEpsilonsq = byEpsilon * byEpsilon;
-        T const byEpsilonsq2 = 0.5 * byEpsilonsq;
+        T const byEpsilonSq = byEpsilon * byEpsilon;
+        T const byEpsilonSqHalf = 0.5 * byEpsilonSq;
         T const byEpsilonPowerBeta = std::pow(byEpsilon, Beta);
 
         // Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
@@ -1095,23 +1117,23 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
             // Fill the Vandermonde matrix column by column
-            VMT.block(0, j, dcMonomialSize, 1) << columnV;
+            VandermondeMatrixTranspose.block(0, j, dcMonomialSize, 1) << columnV;
         }
 
         for (int j = 0; j < dcMonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+            ExponentialWindowMatrix(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
         }
 
-        int dcrank;
+        int dcVandermondeMatrixRank;
 
         {
             // LU decomposition of a matrix with complete pivoting, and related features.
-            Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+            Eigen::FullPivLU<EMatrixX<T>> lu(VandermondeMatrixTranspose);
 
-            dcrank = lu.rank();
+            dcVandermondeMatrixRank = lu.rank();
 
-            if (dcrank < dcMonomialSize && dcrank >= dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize && dcVandermondeMatrixRank >= dcMonomialSize - nENN)
             {
                 for (int j = 0; j < dcMonomialSize; j++)
                 {
@@ -1120,7 +1142,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             }
         }
 
-        if (dcrank < dcMonomialSize)
+        if (dcVandermondeMatrixRank < dcMonomialSize)
         {
             // We have a singular Vandermonde matrix
             nPointsWithSingularVandermondeMatrix++;
@@ -1128,14 +1150,14 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
             // if necessary, remove redundant equations/coefficients
 
             // Number of neighbor points are not enough
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcVandermondeMatrixRank, " < ", dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
-                    VMTimage.block(0, 0, dcMonomialSize, dcMonomialSize) << VMT;
-                    EMimage.head(dcMonomialSize) << EM;
+                    VandermondeMatrixTransposeImage.block(0, 0, dcMonomialSize, dcMonomialSize) << VandermondeMatrixTranspose;
+                    ExponentialWindowMatrixImage.head(dcMonomialSize) << ExponentialWindowMatrix;
 
                     // Loop through the rest of nearest neighbors
                     for (int j = dcMonomialSize; j < nNN; j++)
@@ -1149,12 +1171,12 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                         EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
                         // Fill the Vandermonde matrix column by column
-                        VMTimage.block(0, j, dcMonomialSize, 1) << columnV;
+                        VandermondeMatrixTransposeImage.block(0, j, dcMonomialSize, 1) << columnV;
                     }
 
                     for (int j = dcMonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+                        ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
                     /*
@@ -1166,7 +1188,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                      * \end{matrix}
                      * \f$
                      */
-                    BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                    BMTimage = VandermondeMatrixTransposeImage * EMatrixX<T>(ExponentialWindowMatrixImage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
                 }
                 else
@@ -1180,7 +1202,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                      * \end{matrix}
                      * \f$
                      */
-                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                     AM = BMT * BMT.transpose();
                 }
             }
@@ -1193,7 +1215,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  */
 
                 // Loop through the neighbors
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
@@ -1207,15 +1229,15 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                     EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
                     // Fill the Vandermonde matrix by the new column
-                    VMT.block(0, l, dcMonomialSize, 1) << columnV;
+                    VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1) << columnV;
                 }
 
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
+                    ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
                 /* 
@@ -1224,7 +1246,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
                  * \f}
                  */
-                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                 AM = BMT * BMT.transpose();
             }
 
@@ -1252,7 +1274,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * Most important one, then I can correct the IndexId order
              */
 
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
                 // Loop through the neighbors
                 for (int j = 0; j < dcMonomialSize; j++)
@@ -1265,7 +1287,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
                     EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -1284,17 +1306,17 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                     std::ptrdiff_t Id;
                     T expo;
 
-                    if (j >= dcrank)
+                    if (j >= dcVandermondeMatrixRank)
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonSq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonSq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -1308,7 +1330,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
                 }
 
                 // Loop through the neighbors
-                for (int j = dcrank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
+                for (int j = dcVandermondeMatrixRank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
                 {
                     // Get the right index
                     int const l = IndexId[j];
@@ -1326,7 +1348,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
              * \f}
              */
-            BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+            BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
 
             AM = BMT * BMT.transpose();
 
@@ -1344,7 +1366,7 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
 
                 EVectorMapType<T> columnV(column + alphamin, dcMonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -1363,20 +1385,17 @@ bool dcpse<T, Distance, Polynomial>::computeWeights(T *idata, int const nPoints,
     return true;
 }
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int const nPoints, int order, int nENN, T ratio)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::computeInterpolatorWeights(T *dataPoints, int const nDataPoints, int order, int nENN, T ratio)
 {
-    if (nPoints < 1)
+    if (nDataPoints < 1)
     {
         UMUQFAILRETURN("Number of input data points are negative!");
     }
 
     // Extra check on the order
     order = (order > 0) ? order : 2;
-    {
-        int *o = Order.data();
-        std::fill(o, o + nTerms, order);
-    }
+    std::fill(Order.begin(), Order.end(), order);
 
     // Extra check on the number of extra nearest neighbors
     nENN = (nENN > 0) ? nENN : 0;
@@ -1385,7 +1404,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     ratio = (ratio > 0) ? ratio : static_cast<T>(1);
 
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
-    Polynomial poly(nDim, order - 1);
+    PolynomialType poly(nDim, order - 1);
 
     /* 
      * Get the monomials size
@@ -1393,15 +1412,15 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
      */
     dcMonomialSize = poly.monomialsize();
 
-    if (nPoints * dcMonomialSize > dcKernelSize)
+    if (nDataPoints * dcMonomialSize > dcKernelSize)
     {
-        dcKernelSize = nPoints * dcMonomialSize;
+        dcKernelSize = nDataPoints * dcMonomialSize;
         try
         {
             // Make sure of the correct kernel size
             dcKernel.resize(dcKernelSize);
 
-            h_average.resize(nPoints);
+            h_average.resize(nDataPoints);
         }
         catch (...)
         {
@@ -1410,12 +1429,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     }
     else
     {
-        dcKernelSize = nPoints * dcMonomialSize;
+        dcKernelSize = nDataPoints * dcMonomialSize;
     }
 
     if (KNN)
     {
-        if (nPoints != KNN->numInputdata() || nPoints != KNN->numQuerydata())
+        if (nDataPoints != KNN->numInputdata() || nDataPoints != KNN->numQuerydata())
         {
             try
             {
@@ -1424,7 +1443,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new Distance(nPoints, nPoints, nDim, dcMonomialSize + nENN));
+                KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nDataPoints, nDim, dcMonomialSize + nENN));
             }
             catch (...)
             {
@@ -1441,7 +1460,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new Distance(nPoints, nPoints, nDim, dcMonomialSize + nENN));
+            KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nDataPoints, nDim, dcMonomialSize + nENN));
         }
         catch (...)
         {
@@ -1449,8 +1468,17 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
         }
     }
 
+    // If KNN requires covariance
+    if (KNN->needsCovariance())
+    {
+        stats s;
+        T *Covariance = s.covariance<T, T>(dataPoints, nDataPoints * nDim, nDim);
+        KNN->setCovariance(Covariance);
+        delete[] Covariance;
+    }
+
     // Construct a kd-tree index & do nearest neighbors search
-    KNN->buildIndex(idata);
+    KNN->buildIndex(dataPoints);
 
     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
     T *column = new T[dcMonomialSize];
@@ -1472,12 +1500,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
      * Creating a transpose of the Vandermonde matrix
      * with the size of monomials * monomials \f$  = l \times l \f$
      */
-    EMatrixX<T> VMT(dcMonomialSize, dcMonomialSize);
-    EMatrixX<T> VMTimage(dcMonomialSize, nNN);
+    EMatrixX<T> VandermondeMatrixTranspose(dcMonomialSize, dcMonomialSize);
+    EMatrixX<T> VandermondeMatrixTransposeImage(dcMonomialSize, nNN);
 
     // Matrix of exponential window function
-    EVectorX<T> EM(dcMonomialSize);
-    EVectorX<T> EMimage(nNN);
+    EVectorX<T> ExponentialWindowMatrix(dcMonomialSize);
+    EVectorX<T> ExponentialWindowMatrixImage(nNN);
 
     EVectorX<T> columnL(dcMonomialSize);
 
@@ -1501,19 +1529,19 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     int nPointsWithSingularVandermondeMatrix(0);
 
     // Loop over all query points
-    for (int i = 0; i < nPoints; i++)
+    for (int iQueryDataPoints = 0; iQueryDataPoints < nDataPoints; iQueryDataPoints++)
     {
         // Index inside kernel
-        std::ptrdiff_t const IdM = i * dcMonomialSize;
+        std::ptrdiff_t const IdM = iQueryDataPoints * dcMonomialSize;
 
-        // Index in idata array
-        std::ptrdiff_t const IdI = i * nDim;
+        // Index in dataPoints array
+        std::ptrdiff_t const IdI = iQueryDataPoints * nDim;
 
-        // A pointer to nearest neighbors indices of point i
-        int *NearestNeighbors = KNN->NearestNeighbors(i);
+        // A pointer to nearest neighbors indices of point iQueryDataPoints
+        int *NearestNeighbors = KNN->NearestNeighbors(iQueryDataPoints);
 
-        // A pointer to nearest neighbors square distances from the point i
-        T *nnDist = KNN->NearestNeighborsDistances(i);
+        // A pointer to nearest neighbors square distances from the point iQueryDataPoints
+        T *nnDist = KNN->NearestNeighborsDistances(iQueryDataPoints);
 
         /*
          * For each point \f$ {\mathbf x} \f$ we define 
@@ -1523,16 +1551,16 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
          */
         {
             // pointer to query data
-            T *Idata = idata + IdI;
+            T *Idata = dataPoints + IdI;
 
             // \f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
             for (int j = 0, n = 0; j < nNN; j++)
             {
-                // Neighbor index in idata array
+                // Neighbor index in dataPoints array
                 std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
-                // pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
+                // pointer to dataPoints (neighbors of iQueryDataPoints)
+                T *Jdata = dataPoints + IdJ;
 
                 for (int d = 0; d < nDim; d++, n++)
                 {
@@ -1548,12 +1576,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
         // Component-wise average neighbor spacing \f$ h \f$
         h_avg /= static_cast<T>(nNN);
 
-        h_average[i] = h_avg;
+        h_average[iQueryDataPoints] = h_avg;
 
         // Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
         T const byEpsilon = ratio / h_avg;
-        T const byEpsilonsq = byEpsilon * byEpsilon;
-        T const byEpsilonsq2 = 0.5 * byEpsilonsq;
+        T const byEpsilonSq = byEpsilon * byEpsilon;
+        T const byEpsilonSqHalf = 0.5 * byEpsilonSq;
 
         // Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
         std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
@@ -1573,23 +1601,23 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             EVectorMapType<T> columnV(column, dcMonomialSize);
 
             // Fill the Vandermonde matrix column by column
-            VMT.block(0, j, dcMonomialSize, 1) << columnV;
+            VandermondeMatrixTranspose.block(0, j, dcMonomialSize, 1) << columnV;
         }
 
         for (int j = 0; j < dcMonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+            ExponentialWindowMatrix(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
         }
 
-        int dcrank;
+        int dcVandermondeMatrixRank;
 
         {
             // LU decomposition of a matrix with complete pivoting, and related features.
-            Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+            Eigen::FullPivLU<EMatrixX<T>> lu(VandermondeMatrixTranspose);
 
-            dcrank = lu.rank();
+            dcVandermondeMatrixRank = lu.rank();
 
-            if (dcrank < dcMonomialSize && dcrank >= dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize && dcVandermondeMatrixRank >= dcMonomialSize - nENN)
             {
                 for (int j = 0; j < dcMonomialSize; j++)
                 {
@@ -1598,7 +1626,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             }
         }
 
-        if (dcrank < dcMonomialSize)
+        if (dcVandermondeMatrixRank < dcMonomialSize)
         {
             // We have a singular Vandermonde matrix
             nPointsWithSingularVandermondeMatrix++;
@@ -1606,14 +1634,14 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             // if necessary, remove redundant equations/coefficients
 
             // Number of neighbor points are not enough
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcVandermondeMatrixRank, " < ", dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
-                    VMTimage.block(0, 0, dcMonomialSize, dcMonomialSize) << VMT;
-                    EMimage.head(dcMonomialSize) << EM;
+                    VandermondeMatrixTransposeImage.block(0, 0, dcMonomialSize, dcMonomialSize) << VandermondeMatrixTranspose;
+                    ExponentialWindowMatrixImage.head(dcMonomialSize) << ExponentialWindowMatrix;
 
                     // Loop through the rest of nearest neighbors
                     for (int j = dcMonomialSize; j < nNN; j++)
@@ -1627,12 +1655,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                         EVectorMapType<T> columnV(column, dcMonomialSize);
 
                         // Fill the Vandermonde matrix column by column
-                        VMTimage.block(0, j, dcMonomialSize, 1) << columnV;
+                        VandermondeMatrixTransposeImage.block(0, j, dcMonomialSize, 1) << columnV;
                     }
 
                     for (int j = dcMonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+                        ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
                     /* 
@@ -1644,7 +1672,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                      * \end{matrix}
                      * \f$
                      */
-                    BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                    BMTimage = VandermondeMatrixTransposeImage * EMatrixX<T>(ExponentialWindowMatrixImage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
                 }
                 else
@@ -1658,7 +1686,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                      * \end{matrix}
                      * \f$
                      */
-                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                     AM = BMT * BMT.transpose();
                 }
             }
@@ -1671,7 +1699,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  */
 
                 // Loop through the neighbors
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
@@ -1685,18 +1713,18 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                     EVectorMapType<T> columnV(column, dcMonomialSize);
 
                     // Get the column l which causes singularity
-                    columnL << VMT.block(0, l, dcMonomialSize, 1);
+                    columnL << VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1);
 
                     // Fill the Vandermonde matrix by the new column
-                    VMT.block(0, l, dcMonomialSize, 1) << columnV;
+                    VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1) << columnV;
                 }
 
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
+                    ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
                 /* 
@@ -1705,7 +1733,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
                  * \f}
                  */
-                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                 AM = BMT * BMT.transpose();
             }
 
@@ -1733,7 +1761,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * Most important one, then I can correct the IndexId order
              */
 
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
                 // Loop through the neighbors
                 for (int j = 0; j < dcMonomialSize; j++)
@@ -1746,7 +1774,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
                     EVectorMapType<T> columnV(column, dcMonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -1765,17 +1793,17 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                     std::ptrdiff_t Id;
                     T expo;
 
-                    if (j >= dcrank)
+                    if (j >= dcVandermondeMatrixRank)
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonSq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonSq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -1789,7 +1817,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                 }
 
                 // Loop through the neighbors
-                for (int j = dcrank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
+                for (int j = dcVandermondeMatrixRank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
                 {
                     // Get the right index
                     int const l = IndexId[j];
@@ -1807,7 +1835,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
              * \f}
              */
-            BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+            BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
 
             AM = BMT * BMT.transpose();
 
@@ -1825,7 +1853,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
                 EVectorMapType<T> columnV(column, dcMonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -1845,25 +1873,22 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     return true;
 }
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int const nPoints, T *qdata, int const nqPoints, int order, int nENN, T ratio)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::computeInterpolatorWeights(T *dataPoints, int const nDataPoints, T *queryDataPoints, int const nQueryDataPoints, int order, int nENN, T ratio)
 {
-    if (nPoints < 1)
+    if (nDataPoints < 1)
     {
         UMUQFAILRETURN("Number of input data points are negative!");
     }
 
-    if (nqPoints < 1)
+    if (nQueryDataPoints < 1)
     {
         UMUQFAILRETURN("Number of query data points are negative!");
     }
 
     // Extra check on the order
     order = (order > 0) ? order : 2;
-    {
-        int *o = Order.data();
-        std::fill(o, o + nTerms, order);
-    }
+    std::fill(Order.begin(), Order.end(), order);
 
     // Extra check on the number of extra nearest neighbors
     nENN = (nENN > 0) ? nENN : 0;
@@ -1872,7 +1897,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     ratio = (ratio > 0) ? ratio : static_cast<T>(1);
 
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
-    Polynomial poly(nDim, order - 1);
+    PolynomialType poly(nDim, order - 1);
 
     /* 
      * Get the monomials size
@@ -1880,15 +1905,15 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
      */
     dcMonomialSize = poly.monomialsize();
 
-    if (nqPoints * dcMonomialSize > dcKernelSize)
+    if (nQueryDataPoints * dcMonomialSize > dcKernelSize)
     {
-        dcKernelSize = nqPoints * dcMonomialSize;
+        dcKernelSize = nQueryDataPoints * dcMonomialSize;
         try
         {
             // Make sure of the correct kernel size
             dcKernel.resize(dcKernelSize);
 
-            h_average.resize(nqPoints);
+            h_average.resize(nQueryDataPoints);
         }
         catch (...)
         {
@@ -1897,12 +1922,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     }
     else
     {
-        dcKernelSize = nqPoints * dcMonomialSize;
+        dcKernelSize = nQueryDataPoints * dcMonomialSize;
     }
 
     if (KNN)
     {
-        if (nqPoints != KNN->numInputdata() || nqPoints != KNN->numQuerydata())
+        if (nQueryDataPoints != KNN->numInputdata() || nQueryDataPoints != KNN->numQuerydata())
         {
             try
             {
@@ -1911,7 +1936,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
                  */
-                KNN.reset(new Distance(nPoints, nqPoints, nDim, dcMonomialSize + nENN));
+                KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nQueryDataPoints, nDim, dcMonomialSize + nENN));
             }
             catch (...)
             {
@@ -1928,7 +1953,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
              */
-            KNN.reset(new Distance(nPoints, nqPoints, nDim, dcMonomialSize + nENN));
+            KNN.reset(new kNearestNeighbor<T, DistanceType>(nDataPoints, nQueryDataPoints, nDim, dcMonomialSize + nENN));
         }
         catch (...)
         {
@@ -1936,24 +1961,44 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
         }
     }
 
-    // Construct a kd-tree index & do nearest neighbors search
-    KNN->buildIndex(idata, qdata);
-
-    // Vector of all idata points' distances from their closest nearest neighbor
+    // Vector of all dataPoints points' distances from their closest nearest neighbor
     T *idataminDist = nullptr;
 
     {
-        // Finding only one nearest neighbor for the input data points
-        Distance KNN1(nPoints, nDim, 1);
+        T *Covariance = nullptr;
+
+        // If KNN requires covariance
+        if (KNN->needsCovariance())
+        {
+            stats s;
+            Covariance = s.covariance<T, T>(dataPoints, nDataPoints * nDim, nDim);
+            KNN->setCovariance(Covariance);
+        }
 
         // Construct a kd-tree index & do nearest neighbors search
-        KNN1.buildIndex(idata);
+        KNN->buildIndex(dataPoints, queryDataPoints);
 
-        idataminDist = KNN1.minDist();
-
-        if (idataminDist == nullptr)
         {
-            UMUQFAILRETURN("Failed to find any neighbor!");
+            // Finding only one nearest neighbor for the input data points
+            kNearestNeighbor<T, DistanceType> KNN1(nDataPoints, nDim, 1);
+
+            if (KNN1.needsCovariance())
+            {
+                KNN1.setCovariance(Covariance);
+
+                delete[] Covariance;
+                Covariance = nullptr;
+            }
+
+            // Construct a kd-tree index & do nearest neighbors search
+            KNN1.buildIndex(dataPoints);
+
+            idataminDist = KNN1.minDist();
+
+            if (idataminDist == nullptr)
+            {
+                UMUQFAILRETURN("Failed to find any neighbor!");
+            }
         }
     }
 
@@ -1970,9 +2015,6 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     EVectorX<T> RHSB0 = EVectorMapType<T>(column, dcMonomialSize);
     EVectorX<T> RHSB(dcMonomialSize);
 
-    std::cout << "RHSB0=\n" ;
-    std::cout <<  RHSB0 << "\n";
-
     // Total number of nearest neighbors for each point
     int nNN = KNN->numNearestNeighbors();
 
@@ -1980,12 +2022,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
      * Creating a transpose of the Vandermonde matrix
      * with the size of monomials * monomials \f$  = l \times l \f$
      */
-    EMatrixX<T> VMT(dcMonomialSize, dcMonomialSize);
-    EMatrixX<T> VMTimage(dcMonomialSize, nNN);
+    EMatrixX<T> VandermondeMatrixTranspose(dcMonomialSize, dcMonomialSize);
+    EMatrixX<T> VandermondeMatrixTransposeImage(dcMonomialSize, nNN);
 
     // Matrix of exponential window function
-    EVectorX<T> EM(dcMonomialSize);
-    EVectorX<T> EMimage(nNN);
+    EVectorX<T> ExponentialWindowMatrix(dcMonomialSize);
+    EVectorX<T> ExponentialWindowMatrixImage(nNN);
 
     EVectorX<T> columnL(dcMonomialSize);
 
@@ -2012,19 +2054,19 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     int nPointsWithSingularVandermondeMatrix(0);
 
     // Loop over all query points
-    for (int i = 0; i < nqPoints; i++)
+    for (int iQueryDataPoints = 0; iQueryDataPoints < nQueryDataPoints; iQueryDataPoints++)
     {
         // Index inside kernel
-        std::ptrdiff_t const IdM = i * dcMonomialSize;
+        std::ptrdiff_t const IdM = iQueryDataPoints * dcMonomialSize;
 
-        // Index in qdata array
-        std::ptrdiff_t const IdI = i * nDim;
+        // Index in queryDataPoints array
+        std::ptrdiff_t const IdI = iQueryDataPoints * nDim;
 
-        // A pointer to nearest neighbors indices of point i
-        int *NearestNeighbors = KNN->NearestNeighbors(i);
+        // A pointer to nearest neighbors indices of point iQueryDataPoints
+        int *NearestNeighbors = KNN->NearestNeighbors(iQueryDataPoints);
 
-        // A pointer to nearest neighbors square distances from the point i
-        T *nnDist = KNN->NearestNeighborsDistances(i);
+        // A pointer to nearest neighbors square distances from the point iQueryDataPoints
+        T *nnDist = KNN->NearestNeighborsDistances(iQueryDataPoints);
 
         /*
          * For each point \f$ {\mathbf x} \f$ we define 
@@ -2034,16 +2076,16 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
          */
         {
             // pointer to query data
-            T *Idata = qdata + IdI;
+            T *Idata = queryDataPoints + IdI;
 
             // \f$ $\left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x} - {\mathbf x}_p \right\} \f$
             for (int j = 0, n = 0; j < nNN; j++)
             {
-                // Neighbor index in idata array
+                // Neighbor index in dataPoints array
                 std::ptrdiff_t const IdJ = NearestNeighbors[j] * nDim;
 
-                // pointer to idata (neighbors of i)
-                T *Jdata = idata + IdJ;
+                // pointer to dataPoints (neighbors of iQueryDataPoints)
+                T *Jdata = dataPoints + IdJ;
 
                 for (int d = 0; d < nDim; d++, n++)
                 {
@@ -2059,12 +2101,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
         // Component-wise average neighbor spacing \f$ h \f$
         h_avg /= static_cast<T>(nNN);
 
-        h_average[i] = h_avg;
+        h_average[iQueryDataPoints] = h_avg;
 
         // Computing the smoothing length for each point \f$ \frac{h}{\epsilon} \sim ratio \f$
         T const byEpsilon = ratio / h_avg;
-        T const byEpsilonsq = byEpsilon * byEpsilon;
-        T const byEpsilonsq2 = 0.5 * byEpsilonsq;
+        T const byEpsilonSq = byEpsilon * byEpsilon;
+        T const byEpsilonSqHalf = 0.5 * byEpsilonSq;
 
         // Vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
         std::for_each(L1Dist.begin(), L1Dist.end(), [&](T &l_i) { l_i *= byEpsilon; });
@@ -2084,7 +2126,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             EVectorMapType<T> columnV(column, dcMonomialSize);
 
             // Fill the Vandermonde matrix column by column
-            VMT.block(0, j, dcMonomialSize, 1) << columnV;
+            VandermondeMatrixTranspose.block(0, j, dcMonomialSize, 1) << columnV;
 
             // Neighbor point number
             int const IdJ = NearestNeighbors[j];
@@ -2119,18 +2161,18 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
         for (int j = 0; j < dcMonomialSize; j++)
         {
-            EM(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+            ExponentialWindowMatrix(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
         }
 
-        int dcrank;
+        int dcVandermondeMatrixRank;
 
         {
             // LU decomposition of a matrix with complete pivoting, and related features.
-            Eigen::FullPivLU<EMatrixX<T>> lu(VMT);
+            Eigen::FullPivLU<EMatrixX<T>> lu(VandermondeMatrixTranspose);
 
-            dcrank = lu.rank();
+            dcVandermondeMatrixRank = lu.rank();
 
-            if (dcrank < dcMonomialSize && dcrank >= dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize && dcVandermondeMatrixRank >= dcMonomialSize - nENN)
             {
                 for (int j = 0; j < dcMonomialSize; j++)
                 {
@@ -2139,7 +2181,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             }
         }
 
-        if (dcrank < dcMonomialSize)
+        if (dcVandermondeMatrixRank < dcMonomialSize)
         {
             // We have a singular Vandermonde matrix
             nPointsWithSingularVandermondeMatrix++;
@@ -2147,14 +2189,14 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
             // if necessary, remove redundant equations/coefficients
 
             // Number of neighbor points are not enough
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
-                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcrank, " < ",  dcMonomialSize - nENN);
+                UMUQWARNING("Number of neighbor points are not enough! Matrix rank = ", dcVandermondeMatrixRank, " < ", dcMonomialSize - nENN);
 
                 if (nENN > 0)
                 {
-                    VMTimage.block(0, 0, dcMonomialSize, dcMonomialSize) << VMT;
-                    EMimage.head(dcMonomialSize) << EM;
+                    VandermondeMatrixTransposeImage.block(0, 0, dcMonomialSize, dcMonomialSize) << VandermondeMatrixTranspose;
+                    ExponentialWindowMatrixImage.head(dcMonomialSize) << ExponentialWindowMatrix;
 
                     // Loop through the rest of nearest neighbors
                     for (int j = dcMonomialSize; j < nNN; j++)
@@ -2168,7 +2210,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                         EVectorMapType<T> columnV(column, dcMonomialSize);
 
                         // Fill the Vandermonde matrix column by column
-                        VMTimage.block(0, j, dcMonomialSize, 1) << columnV;
+                        VandermondeMatrixTransposeImage.block(0, j, dcMonomialSize, 1) << columnV;
 
                         // Neighbor point number
                         int const IdJ = NearestNeighbors[j];
@@ -2197,7 +2239,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
                     for (int j = dcMonomialSize; j < nNN; j++)
                     {
-                        EMimage(j) = std::exp(-nnDist[j] * byEpsilonsq2);
+                        ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
                     /* 
@@ -2209,7 +2251,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                      * \end{matrix}
                      * \f$
                      */
-                    BMTimage = VMTimage * EMatrixX<T>(EMimage.asDiagonal());
+                    BMTimage = VandermondeMatrixTransposeImage * EMatrixX<T>(ExponentialWindowMatrixImage.asDiagonal());
                     AM = BMTimage * BMTimage.transpose();
                 }
                 else
@@ -2223,7 +2265,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                      * \end{matrix}
                      * \f$
                      */
-                    BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                    BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                     AM = BMT * BMT.transpose();
                 }
             }
@@ -2236,7 +2278,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  */
 
                 // Loop through the neighbors
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
@@ -2250,10 +2292,10 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                     EVectorMapType<T> columnV(column, dcMonomialSize);
 
                     // Get the column l which causes singularity
-                    columnL << VMT.block(0, l, dcMonomialSize, 1);
+                    columnL << VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1);
 
                     // Fill the Vandermonde matrix by the new column
-                    VMT.block(0, l, dcMonomialSize, 1) << columnV;
+                    VandermondeMatrixTranspose.block(0, l, dcMonomialSize, 1) << columnV;
 
                     // Neighbor point number
                     int const IdJ = NearestNeighbors[k];
@@ -2292,12 +2334,12 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                     RHSB += dckernelV * columnL;
                 }
 
-                for (int j = dcrank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
+                for (int j = dcVandermondeMatrixRank, k = dcMonomialSize; j < dcMonomialSize; j++, k++)
                 {
                     // Get the column number which causes a singularity
                     int const l = IndexId[j];
 
-                    EM(l) = std::exp(-nnDist[k] * byEpsilonsq2);
+                    ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
                 /* 
@@ -2306,7 +2348,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
                  * \f}
                  */
-                BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+                BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
                 AM = BMT * BMT.transpose();
             }
 
@@ -2334,7 +2376,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * Most important one, then I can correct the IndexId order
              */
 
-            if (dcrank < dcMonomialSize - nENN)
+            if (dcVandermondeMatrixRank < dcMonomialSize - nENN)
             {
                 // Loop through the neighbors
                 for (int j = 0; j < dcMonomialSize; j++)
@@ -2347,7 +2389,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
                     EVectorMapType<T> columnV(column, dcMonomialSize);
 
-                    T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                    T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                     // Index inside the kernel
                     std::ptrdiff_t const IdK = IdM + j;
@@ -2366,17 +2408,17 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                     std::ptrdiff_t Id;
                     T expo;
 
-                    if (j >= dcrank)
+                    if (j >= dcVandermondeMatrixRank)
                     {
                         // Id in the list
                         Id = m * nDim;
-                        expo = std::exp(-nnDist[m] * byEpsilonsq);
+                        expo = std::exp(-nnDist[m] * byEpsilonSq);
                         m++;
                     }
                     else
                     {
                         Id = l * nDim;
-                        expo = std::exp(-nnDist[l] * byEpsilonsq);
+                        expo = std::exp(-nnDist[l] * byEpsilonSq);
                     }
 
                     // Evaluates a monomial at a point \f$ {\mathbf x} \f$
@@ -2390,7 +2432,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
                 }
 
                 // Loop through the neighbors
-                for (int j = dcrank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
+                for (int j = dcVandermondeMatrixRank, m = dcMonomialSize; j < dcMonomialSize; j++, m++)
                 {
                     // Get the right index
                     int const l = IndexId[j];
@@ -2408,7 +2450,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
              * \f}
              */
-            BMT = VMT * EMatrixX<T>(EM.asDiagonal());
+            BMT = VandermondeMatrixTranspose * EMatrixX<T>(ExponentialWindowMatrix.asDiagonal());
 
             AM = BMT * BMT.transpose();
 
@@ -2426,7 +2468,7 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
 
                 EVectorMapType<T> columnV(column, dcMonomialSize);
 
-                T const expo = std::exp(-nnDist[j] * byEpsilonsq);
+                T const expo = std::exp(-nnDist[j] * byEpsilonSq);
 
                 // Index inside the kernel
                 std::ptrdiff_t const IdK = IdM + j;
@@ -2447,27 +2489,27 @@ bool dcpse<T, Distance, Polynomial>::computeInterpolatorWeights(T *idata, int co
     return true;
 }
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::compute(T *iFvalue, int const nPoints, T *qFvalue, int const nqPoints)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::compute(T *dataFunctionValues, int const nDataPoints, T *queryFunctionValues, int const nQueryDataPoints)
 {
-    if (KNN->numInputdata() != nPoints)
+    if (KNN->numInputdata() != nDataPoints)
     {
         UMUQFAILRETURN("Input data does not match with previously computed weights!");
     }
-    if (KNN->numQuerydata() != nqPoints)
+    if (KNN->numQuerydata() != nQueryDataPoints)
     {
         UMUQFAILRETURN("Query data does not match with previously computed weights!");
     }
-    if (dcKernelSize != nqPoints * dcMonomialSize)
+    if (dcKernelSize != nQueryDataPoints * dcMonomialSize)
     {
         UMUQFAILRETURN("Previously computed weights does not match with this query data!");
     }
 
-    if (qFvalue == nullptr)
+    if (queryFunctionValues == nullptr)
     {
         try
         {
-            qFvalue = new T[nqPoints];
+            queryFunctionValues = new T[nQueryDataPoints];
         }
         catch (...)
         {
@@ -2476,102 +2518,95 @@ bool dcpse<T, Distance, Polynomial>::compute(T *iFvalue, int const nPoints, T *q
     }
 }
 
-template <typename T, class Distance, class Polynomial>
-bool dcpse<T, Distance, Polynomial>::interpolate(T *iFvalue, int const nPoints, T *&qFvalue, int const nqPoints)
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+bool dcpse<T, DistanceType, PolynomialType>::interpolate(T const *dataFunctionValues, int const nDataPoints, T *queryFunctionValues, int const nQueryDataPoints)
 {
-    if (KNN->numInputdata() != nPoints)
+    if (KNN->numInputdata() != nDataPoints)
     {
         UMUQFAILRETURN("Input data does not match with previously computed weights!");
     }
-    if (KNN->numQuerydata() != nqPoints)
+    if (KNN->numQuerydata() != nQueryDataPoints)
     {
         UMUQFAILRETURN("Query data does not match with previously computed weights!");
     }
-    if (dcKernelSize != nqPoints * dcMonomialSize)
+    if (dcKernelSize != nQueryDataPoints * dcMonomialSize)
     {
         UMUQFAILRETURN("Previously computed weights does not match with this query data!");
     }
 
-    if (qFvalue == nullptr)
+    if (queryFunctionValues == nullptr)
     {
-        try
-        {
-            qFvalue = new T[nqPoints];
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
+        UMUQFAILRETURN("Memory is not assigned for pointer to the query function values!");
     }
 
     // Loop over all query points
-    for (int i = 0; i < nqPoints; i++)
+    for (int iQueryDataPoints = 0; iQueryDataPoints < nQueryDataPoints; iQueryDataPoints++)
     {
-        // A pointer to nearest neighbors indices of point i
-        int *NearestNeighbors = KNN->NearestNeighbors(i);
+        // A pointer to nearest neighbors indices of point iQueryDataPoints
+        int *NearestNeighbors = KNN->NearestNeighbors(iQueryDataPoints);
 
-        int IdI = i * dcMonomialSize;
+        int IdI = iQueryDataPoints * dcMonomialSize;
 
         T sum(0);
 
-        // std::cout << "For point i=" << i << " dcKernel=";
+        // std::cout << "For point iQueryDataPoints=" << iQueryDataPoints << " dcKernel=";
         // Loop through the neighbors
         for (int j = 0; j < dcMonomialSize; j++, IdI++)
         {
             int const IdJ = NearestNeighbors[j];
-            sum += dcKernel[IdI] * iFvalue[IdJ];
+            sum += dcKernel[IdI] * dataFunctionValues[IdJ];
 
             // std::cout << dcKernel[IdI] << " ";
         }
-        // std::cout << "Fvalue=" << sum << " h_average=" << h_average[i] << std::endl;
-        qFvalue[i] = sum;
+        // std::cout << "Fvalue=" << sum << " h_average=" << h_average[iQueryDataPoints] << std::endl;
+        queryFunctionValues[iQueryDataPoints] = sum;
     }
 
     return true;
 }
 
-template <typename T, class Distance, class Polynomial>
-inline T *dcpse<T, Distance, Polynomial>::neighborhoodKernel(int const index) const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline T *dcpse<T, DistanceType, PolynomialType>::neighborhoodKernel(int const index) const
 {
     return dcKernel.data() + index * dcMonomialSize;
 }
 
-template <typename T, class Distance, class Polynomial>
-inline T *dcpse<T, Distance, Polynomial>::neighborhoodKernel() const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline T *dcpse<T, DistanceType, PolynomialType>::neighborhoodKernel() const
 {
     return dcKernel.data();
 }
 
-template <typename T, class Distance, class Polynomial>
-inline int dcpse<T, Distance, Polynomial>::neighborhoodKernelSize() const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline int dcpse<T, DistanceType, PolynomialType>::neighborhoodKernelSize() const
 {
     return dcMonomialSize;
 }
 
-template <typename T, class Distance, class Polynomial>
-inline int dcpse<T, Distance, Polynomial>::orderofAccuracy(int const index) const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline int dcpse<T, DistanceType, PolynomialType>::orderofAccuracy(int const index) const
 {
     return Order[index];
 }
 
-template <typename T, class Distance, class Polynomial>
-inline void dcpse<T, Distance, Polynomial>::printInfo() const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline void dcpse<T, DistanceType, PolynomialType>::printInfo() const
 {
     for (int i = 0; i < nTerms; i++)
     {
         std::cout << Order[i] << (Order[i] % 10 == 1 ? "st " : Order[i] % 10 == 2 ? "nd " : Order[i] % 10 == 3 ? "rd " : "th ") << "order DC-PSE kernel uses \n"
-                  << neighborhoodKernelSize() << " points in the neighborhood of each query points." << std::endl;
+                  << neighborhoodKernelSize() << " points in the neighborhood of each query point." << std::endl;
     }
 }
 
-template <typename T, class Distance, class Polynomial>
-inline T dcpse<T, Distance, Polynomial>::averageSpace(int const index) const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline T dcpse<T, DistanceType, PolynomialType>::averageSpace(int const index) const
 {
     return h_average[index];
 }
 
-template <typename T, class Distance, class Polynomial>
-inline T *dcpse<T, Distance, Polynomial>::averageSpace() const
+template <typename T, NeighborDistance DistanceType, class PolynomialType>
+inline T *dcpse<T, DistanceType, PolynomialType>::averageSpace() const
 {
     return h_average.data();
 }
