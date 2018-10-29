@@ -3,6 +3,7 @@
 #include "numerics/dcpse.hpp"
 #include "numerics/fitness.hpp"
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
+#include "numerics/stats.hpp"
 #include "gtest/gtest.h"
 
 #define WRITE_TO_FILE 0
@@ -223,9 +224,9 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
     return true;
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for Qian function
  */
 TEST(dcpse_1d, HandlesQianFunction)
@@ -416,9 +417,9 @@ TEST(dcpse_1d, HandlesQianFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for CFD results
  */
 TEST(dcpse_1d, HandlesCFDResults)
@@ -600,9 +601,9 @@ TEST(dcpse_1d, HandlesCFDResults)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for Matlab Peaks function
  */
 TEST(dcpse_2d, HandlesPeaksFunction)
@@ -796,9 +797,9 @@ TEST(dcpse_2d, HandlesPeaksFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for Matlab Peaks function
  */
 TEST(dcpse_2d, HandlesPeaksRndFunction)
@@ -822,7 +823,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     double Lb[] = {-3, -3};
     double Ub[] = {3, 3};
     //  Number of points in each direction
-    int nDPoints[] = {5, 5};
+    int nDPoints[] = {15, 15};
     //  Total number of training points
     int nPoints = std::accumulate(nDPoints, nDPoints + nDim, 1, std::multiplies<int>());
     //  Number of query points
@@ -914,6 +915,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     {
         // Create an instance of a DC-PSE object
         umuq::dcpse<double> dc(nDim);
+        // umuq::dcpse<double, umuq::MahalanobisNearestNeighbor<double>> dc(nDim);
 
         data = idata.get();
         qdata = iqdata.get();
@@ -1020,9 +1022,9 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for franke2d function
  */
 TEST(dcpse_2d, HandlesFrankFunction)
@@ -1216,9 +1218,9 @@ TEST(dcpse_2d, HandlesFrankFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for franke2d function
  */
 TEST(dcpse_2d, HandlesFrankRndFunction)
@@ -1412,9 +1414,9 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check dcpse functionality for Rastrigin function
  */
 TEST(dcpse_2d, HandlesRastriginFunction)
