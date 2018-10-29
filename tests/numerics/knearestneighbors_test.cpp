@@ -56,8 +56,8 @@ TEST(knearestneighbors_test, HandlesKNN)
 	// Close the file
 	f.closeFile();
 
-	// kNearestNeighbor<double, flann::L2<double>> KNN(n, nDim, nNearestNeighbors);
-	umuq::L2NearestNeighbor<double> KNN(nRows, nDim, nNearestNeighbors);
+	// Create an instance of the kNearestNeighbor object with DistanceType = NeighborDistance::EUCLIDEAN as default
+	umuq::kNearestNeighbor<double> KNN(nRows, nDim, nNearestNeighbors);
 
 	// Check number of neighbors
 	EXPECT_EQ(KNN.numNearestNeighbors(), nNearestNeighbors);
@@ -225,8 +225,8 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 		x += nDim;
 	}
 
-	// MahalanobisNearestNeighbor
-	umuq::MahalanobisNearestNeighbor<double> KNN(nSPoints, nQPoints, nDim, nNearestNeighbors);
+	// Finding K nearest neighbors with the Mahalanobis distance
+	umuq::kNearestNeighbor<double, umuq::NeighborDistance::MAHALANOBIS> KNN(nSPoints, nQPoints, nDim, nNearestNeighbors);
 
 	// set the covariance
 	KNN.setCovariance(M2d);
