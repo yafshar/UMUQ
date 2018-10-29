@@ -15,16 +15,16 @@ namespace umuq
  * \brief Available Error Fitness type, currently available in %UMUQ
  * 
  */
-enum ErrorFitnessTypes
+enum class ErrorFitnessTypes
 {
     /*! Sum of the absolute difference between observed and predicted data. */
-    errorFitSum = -1,
+    errorFitSum,
     /*! Average of the absolute difference between observed and predicted data. */
-    errorFitMean = -2,
+    errorFitMean,
     /*! Squared root of the average of the absolute difference between observed and predicted data. */
-    errorFitRootMean = -3,
+    errorFitRootMean,
     /*! Maximum value of the absolute difference between observed and predicted data. */
-    errorFitMax = -4
+    errorFitMax
 };
 
 /*! \class fitness
@@ -198,7 +198,7 @@ class fitness
     residual<T> fitnessResidual;
 
     //! Type of error fitness
-    int errorFit;
+    ErrorFitnessTypes errorFit;
 
     //! Names of metrics
     std::vector<std::string> metricNames;
