@@ -188,6 +188,48 @@ class kNearestNeighborBase
      */
     inline int numQuerydata() const;
 
+    /*!
+     * \brief Check to see whether it requires the covariance for finding the neighbors. (Default is no)
+     * 
+     * \returns true If the NeighborDistance type is the Mahalanobis distance
+     */
+    inline bool needsCovariance() const;
+
+    /*!
+     * \brief Set the Covariance object
+     *
+     * \param Covariance  The covariance matrix
+     */
+    virtual void setCovariance(EMatrixX<T> const &Covariance);
+
+    /*!
+     * \brief Set the Covariance object
+     *
+     * \param Covariance  The covariance matrix
+     */
+    virtual void setCovariance(T const *Covariance);
+
+    /*!
+     * \brief Set the Covariance object
+     *
+     * \param Covariance  The covariance matrix
+     */
+    virtual void setCovariance(std::vector<T> const &Covariance);
+
+    /*!
+     * \brief Access the covariance matrix.
+     *
+     * \returns Constant reference to the covariance matrix.
+     */
+    virtual EMatrixX<T> const &Covariance() const;
+
+    /*!
+     * \brief Modify the covariance matrix.
+     *
+     * \returns Reference to the covariance matrix.
+     */
+    virtual EMatrixX<T> &Covariance();
+
   protected:
     /*!
      * \brief Explicitly prevent the default construct of a new kNearestNeighborBase object
@@ -439,16 +481,28 @@ inline void kNearestNeighborBase<T, FlannDistanceType>::IndexSwap(int Indx1, int
 }
 
 template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numInputdata() const
-{
-    return drows;
-}
+inline int kNearestNeighborBase<T, FlannDistanceType>::numInputdata() const { return drows; }
 
 template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numQuerydata() const
-{
-    return qrows;
-}
+inline int kNearestNeighborBase<T, FlannDistanceType>::numQuerydata() const { return qrows; }
+
+template <typename T, class FlannDistanceType>
+inline bool kNearestNeighborBase<T, FlannDistanceType>::needsCovariance() const { return withCovariance; }
+
+template <typename T, class FlannDistanceType>
+void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(EMatrixX<T> const &Covariance) {}
+
+template <typename T, class FlannDistanceType>
+void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(T const *Covariance) {}
+
+template <typename T, class FlannDistanceType>
+void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(std::vector<T> const &Covariance) {}
+
+template <typename T, class FlannDistanceType>
+EMatrixX<T> const &kNearestNeighborBase<T, FlannDistanceType>::Covariance() const {}
+
+template <typename T, class FlannDistanceType>
+EMatrixX<T> &kNearestNeighborBase<T, FlannDistanceType>::Covariance() {}
 
 } // namespace umuq
 

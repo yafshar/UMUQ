@@ -1245,7 +1245,7 @@ inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(EM
 template <typename T>
 inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(std::vector<T> const &Covariance)
 {
-    covariance = EMapType<T>(Covariance.data(), this->cols, this->cols);
+    covariance = EMapType<T>(const_cast<T *>(Covariance.data()), this->cols, this->cols);
     // check to see if the input covariance matrix is positive definite, or not
     if (!isSelfAdjointMatrixPositiveDefinite<EMatrixX<T>>(covariance))
     {
@@ -1261,7 +1261,7 @@ inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(st
 template <typename T>
 inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(T const *Covariance)
 {
-    covariance = EMapType<T>(Covariance, this->cols, this->cols);
+    covariance = EMapType<T>(const_cast<T *>(Covariance), this->cols, this->cols);
     // check to see if the input covariance matrix is positive definite, or not
     if (!isSelfAdjointMatrixPositiveDefinite<EMatrixX<T>>(covariance))
     {
