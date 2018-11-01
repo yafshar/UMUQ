@@ -8,7 +8,7 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
-	brew update;
+	# brew update;
 
 	sudo rm -fr /usr/local/include/c++
 
@@ -34,7 +34,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	# tar zxvf mpich-3.2.1.tar.gz
 	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
-	brew update;
+	# brew update;
 fi
 
 	# export HOMEBREW_CC=gcc-${GCC_VERSION}
