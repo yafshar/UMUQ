@@ -59,6 +59,8 @@ before_script:
 
 # after_failure phase to dump the logs
 after_failure:
+  - cat /Users/travis/Library/Logs/Homebrew/grep/01.configure
+  - cat /Users/travis/Library/Logs/Homebrew/grep/config.log
   - cat ./tests/*.log
 
 # For sudo=false builds this section installs the necessary dependencies.
