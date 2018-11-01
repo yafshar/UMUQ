@@ -9,8 +9,20 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
-    brew uninstall --ignore-dependencies pcre && brew install pcre;
 	brew update;
+
+    os=$(sw_vers -productVersion | awk -F. '{print $1 "." $2}')
+    if softwareupdate --history | grep --silent "Command Line Tools.*${os}"; then
+       echo 'Command-line tools already installed.' 
+    else
+       echo 'Installing Command-line tools...'
+       in_progress=/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+       sudo touch ${in_progress}
+       product=$(softwareupdate --list | awk "/\* Command Line.*${os}/ { sub(/^   \* /, \"\"); print }")
+       sudo softwareupdate --verbose --install "${product}" || echo 'Installation failed.' 1>&2 && rm ${in_progress} && exit 1
+       sudo rm ${in_progress}
+       echo 'Installation succeeded.'
+    fi
 
 	sudo rm -fr /usr/local/include/c++
 
