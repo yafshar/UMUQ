@@ -11,19 +11,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
 	brew update;
 
-    os=$(sw_vers -productVersion | awk -F. '{print $1 "." $2}')
-    if softwareupdate --history | grep --silent "Command Line Tools.*${os}"; then
-       echo 'Command-line tools already installed.' 
-    else
-       echo 'Installing Command-line tools...'
-       in_progress=/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
-       sudo touch ${in_progress}
-       product=$(softwareupdate --list | awk "/\* Command Line.*${os}/ { sub(/^   \* /, \"\"); print }")
-       sudo softwareupdate --verbose --install "${product}" || echo 'Installation failed.' 1>&2 && rm ${in_progress} && exit 1
-       sudo rm ${in_progress}
-       echo 'Installation succeeded.'
-    fi
-
 	sudo rm -fr /usr/local/include/c++
 
 	brew install gcc;
@@ -36,6 +23,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
 
+    brew uninstall --ignore-dependencies grep;
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
@@ -50,7 +38,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	# tar zxvf mpich-3.2.1.tar.gz
 	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
-	# brew update;
+	brew update;
 fi
 
 	# export HOMEBREW_CC=gcc-${GCC_VERSION}
