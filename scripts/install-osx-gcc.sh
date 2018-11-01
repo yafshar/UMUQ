@@ -23,8 +23,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
-	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
+	brew reinstall grep --with-default-names;
 
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
