@@ -8,7 +8,7 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
-	# brew update;
+	brew update;
 
 	sudo rm -fr /usr/local/include/c++
 
