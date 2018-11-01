@@ -20,6 +20,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	export HOMEBREW_FC=gfortran-${GCC_VERSION}
 	export HOMEBREW_CPP=cpp-${GCC_VERSION}
 
+	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
+
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
