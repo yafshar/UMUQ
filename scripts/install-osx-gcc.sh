@@ -22,9 +22,9 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	export HOMEBREW_CPP=cpp-${GCC_VERSION}
 
 	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
-
-    brew uninstall --ignore-dependencies grep;
-	brew reinstall grep --with-default-names;
+    
+	brew install coreutils;
+	brew install grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
 	brew outdated cmake || brew upgrade cmake ;
