@@ -9,6 +9,8 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew update;
+    brew uninstall --ignore-dependencies pcre && brew install pcre;
+	brew update;
 
 	sudo rm -fr /usr/local/include/c++
 
@@ -22,7 +24,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
 
-	brew remove pcre && brew install pcre;
 	brew reinstall grep --with-default-names;
 	brew reinstall gnu-sed --with-default-names;
 
