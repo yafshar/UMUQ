@@ -42,7 +42,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
-	export TMPDIR = /tmp
+	export TMPDIR="/tmp"
 
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
