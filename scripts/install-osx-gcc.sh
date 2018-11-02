@@ -42,38 +42,12 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
-	export TMPDIR="/tmp"
-
-	echo PATH=${PATH}
-
-	echo "Compiler configuration:"
-	echo CXX=g++-${GCC_VERSION}
-	echo CC=gcc-${GCC_VERSION} 
-	echo F77=gfortran-${GCC_VERSION}
-	echo FC=gfortran-${GCC_VERSION}
-
-	g++-${GCC_VERSION} --version;
-	gcc-${GCC_VERSION} --version ;
-
-	gcc --version ;
-
-	gcc -v ;
-
-	ls -l /usr/bin/gcc ;
-
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
+	brew install mpich
 	
-	export CC=gcc-${GCC_VERSION}
-	export CXX=g++-${GCC_VERSION}
-	export CPP=cpp-${GCC_VERSION}
-	export LD=gcc-${GCC_VERSION}
-	export FC=gfortran-${GCC_VERSION}
-
-
-
-	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-	tar zxvf mpich-3.2.1.tar.gz
-	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --with-gnu-ld --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+	# tar zxvf mpich-3.2.1.tar.gz
+	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --with-gnu-ld --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
