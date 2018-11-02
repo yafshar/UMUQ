@@ -44,6 +44,23 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	export TMPDIR="/tmp"
 
+	echo PATH=${PATH}
+
+	echo "Compiler configuration:"
+	echo CXX=g++-${GCC_VERSION}
+	echo CC=gcc-${GCC_VERSION} 
+	echo F77=gfortran-${GCC_VERSION}
+	echo FC=gfortran-${GCC_VERSION}
+
+	g++-${GCC_VERSION} --version ;
+	gcc-${GCC_VERSION} --version ;
+
+	gcc --version ;
+
+	gcc -v ;
+
+	ll /usr/bin/gcc ;
+
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
