@@ -54,12 +54,9 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	g++-${GCC_VERSION} --version ;
 	gcc-${GCC_VERSION} --version ;
-
-	gcc --version ;
-
 	gcc -v ;
 
-	ll /usr/bin/gcc ;
+	ls -l /usr/bin/gcc ;
 
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
