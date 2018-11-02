@@ -32,7 +32,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew install gcc;
 	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1` 
 
-	(cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
+	# (cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
 	brew reinstall gnu-sed --with-default-names;
 	brew reinstall grep --with-default-names;
@@ -42,11 +42,13 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
+	export TMPDIR = /tmp
+
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	tar zxvf mpich-3.2.1.tar.gz
-	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --with-gnu-ld --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
