@@ -13,5 +13,6 @@ bash ./scripts/bootstrap.sh
 
 #configure and make
 ./configure --with-googletest
+bash ./scripts/bootstrap.sh 
 make
 make check
