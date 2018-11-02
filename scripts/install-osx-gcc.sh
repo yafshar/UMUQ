@@ -63,6 +63,12 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
+    export CC=gcc-${GCC_VERSION}
+	export CXX=g++-${GCC_VERSION}
+	export CPP=cpp-${GCC_VERSION}
+	export LD=gcc-${GCC_VERSION}
+	export FC=gfortran-${GCC_VERSION}
+
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	tar zxvf mpich-3.2.1.tar.gz
 	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --with-gnu-ld --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
