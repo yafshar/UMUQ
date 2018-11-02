@@ -8,6 +8,22 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
+	# # Create the keychain with a password
+	# security create-keychain -p travis ios-build.keychain
+
+	# # Make the custom keychain default, so xcodebuild will use it for signing
+	# security default-keychain -s ios-build.keychain
+
+	# # Unlock the keychain
+	# security unlock-keychain -p travis ios-build.keychain
+
+	# # Add certificates to keychain and allow codesign to access them
+	# security import ./Provisioning/certs/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
+	# security import ./Provisioning/certs/distribution.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
+	# security import ./Provisioning/certs/distribution.p12 -k ~/Library/Keychains/ios-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
+
+	# security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
+	
 	brew update;
 	brew update;
 
@@ -26,11 +42,11 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
-	brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
+	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	
-	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-	# tar zxvf mpich-3.2.1.tar.gz
-	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+	tar zxvf mpich-3.2.1.tar.gz
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
