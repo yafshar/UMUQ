@@ -25,12 +25,15 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	# security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
 	
 	brew update;
-	brew update;
 
 	sudo rm -fr /usr/local/include/c++
 
-	# brew install gcc;
-	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1` 
+	brew install gcc;
+
+	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
+	export CC=`which gcc-${GCC_VERSION}`
+	export CXX=`which g++-${GCC_VERSION}`
+	export FC=`which gfortran-${GCC_VERSION}`
 
 	# (cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
