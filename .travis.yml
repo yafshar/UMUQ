@@ -9,23 +9,17 @@ language: cpp
 git:
   submodules: false
 
-before_install:
-  - test -n $CC     && unset CC
-  - test -n $CXX    && unset CXX
-  - test -n $FC     && unset FC
-  - test -n $F77    && unset F77
-
 # Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
 # It is more tedious, but grants us far more flexibility.
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      sudo: true
-      install: ./scripts/install-linux-gcc.sh
-      script: ./scripts/build-linux-autotools.sh
-      env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+    # - os: linux
+    #   compiler: gcc
+    #   sudo: true
+    #   install: ./scripts/install-linux-gcc.sh
+    #   script: ./scripts/build-linux-autotools.sh
+    #   env:
+    #     - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
     # - os: linux
     #   compiler: clang
     #   sudo: true
@@ -34,13 +28,13 @@ matrix:
     #   env:
     #     - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
     - os: osx
-      osx_image: xcode8
+      osx_image: 
       compiler: gcc
       sudo: true
       install: ./scripts/install-osx-gcc.sh
       script: ./scripts/build-osx-autotools.sh
       env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+        - MATRIX_EVAL="brew update && brew install gcc && export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1` && CC=gcc-${GCC_VERSION} && CXX=g++-${GCC_VERSION} && FC=gfortran-${GCC_VERSION}"
     # - os: osx
     #   osx_image: xcode8
     #   compiler: gcc
@@ -49,6 +43,14 @@ matrix:
     #   script: ./scripts/build-osx-autotools.sh
     #   env:
     #     - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  # - test -n $CC     && unset CC
+  # - test -n $CXX    && unset CXX
+  # - test -n $FC     && unset FC
+  # - test -n $F77    && unset F77
+
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
