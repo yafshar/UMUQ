@@ -46,7 +46,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated wget || brew upgrade wget ;
 
 	brew update
-	brew doctor
 
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	# brew install mpich
