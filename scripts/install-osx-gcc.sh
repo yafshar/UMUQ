@@ -45,12 +45,15 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
-	brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
+	brew update
+	brew doctor
+
+	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
 	# brew install mpich
 	
-	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-	# tar zxvf mpich-3.2.1.tar.gz
-	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+	tar zxvf mpich-3.2.1.tar.gz
+	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
