@@ -34,7 +34,7 @@ matrix:
       install: ./scripts/install-osx-gcc.sh
       script: ./scripts/build-osx-autotools.sh
       env:
-        - MATRIX_EVAL="brew update && brew install gcc && export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1` && CC=gcc-${GCC_VERSION} && CXX=g++-${GCC_VERSION} && FC=gfortran-${GCC_VERSION}"
+        - MATRIX_EVAL="brew update && brew install gcc@8 && CC=gcc-8 && CXX=g++-8 && FC=gfortran-8"
     # - os: osx
     #   osx_image: xcode8
     #   compiler: gcc
