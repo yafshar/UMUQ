@@ -54,7 +54,7 @@ matrix:
     #   env:
     #     - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
     - os: osx
-      osx_image:
+      osx_image: xcode10
       sudo: true
       install: ./scripts/install-osx-gcc.sh
       script: ./scripts/build-osx-autotools.sh

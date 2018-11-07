@@ -37,8 +37,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated wget || brew upgrade wget ;
 
 	brew update
-	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
-	brew install mpich
+	brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
+	# brew install mpich
 	
 	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	# tar zxvf mpich-3.2.1.tar.gz
