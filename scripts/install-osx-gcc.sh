@@ -27,9 +27,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew install gcc;
 
 	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
-	export CC=`which gcc-${GCC_VERSION}`
-	export CXX=`which g++-${GCC_VERSION}`
-	export FC=`which gfortran-${GCC_VERSION}`
 
 	# (cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
