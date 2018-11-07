@@ -18,15 +18,41 @@ matrix:
     #   sudo: true
     #   install: ./scripts/install-linux-gcc.sh
     #   script: ./scripts/build-linux-autotools.sh
+    #   # For sudo=false builds this section installs the necessary dependencies.
+    #   addons:
+    #     apt:
+    #       # List of whitelisted in travis packages for ubuntu-precise can be found here:
+    #       #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+    #       # List of whitelisted in travis apt-sources:
+    #       #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - cmake
+    #         - g++-5
     #   env:
-    #     - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+    #     - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
     # - os: linux
     #   compiler: clang
     #   sudo: true
     #   install: ./scripts/install-linux-clang.sh
     #   script: ./scripts/build-linux-autotools.sh
+    #   # For sudo=false builds this section installs the necessary dependencies.
+    #   addons:
+    #     apt:
+    #       # List of whitelisted in travis packages for ubuntu-precise can be found here:
+    #       #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+    #       # List of whitelisted in travis apt-sources:
+    #       #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-precise-3.7
+    #       packages:
+    #         - cmake
+    #         - g++-5
+    #         - clang-3.7
     #   env:
-    #     - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
+    #     - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
     - os: osx
       osx_image:
       compiler: gcc
@@ -34,7 +60,7 @@ matrix:
       install: ./scripts/install-osx-gcc.sh
       script: ./scripts/build-osx-autotools.sh
       env:
-        - MATRIX_EVAL="brew update && CC=gcc && CXX=g++ && FC=gfortran"
+        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && brew install gcc@8 && CC=gcc-8 && CXX=g++-8 && FC=gfortran-8"
     # - os: osx
     #   osx_image: xcode8
     #   compiler: gcc
@@ -45,12 +71,11 @@ matrix:
     #     - MATRIX_EVAL="brew update && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
-  - eval "${MATRIX_EVAL}"
   - test -n $CC     && unset CC
   - test -n $CXX    && unset CXX
   - test -n $FC     && unset FC
   - test -n $F77    && unset F77
-
+  - eval "${MATRIX_EVAL}"
 
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
@@ -63,21 +88,6 @@ before_script:
 # after_failure phase to dump the logs
 after_failure:
   - cat ./tests/*.log
-
-# For sudo=false builds this section installs the necessary dependencies.
-addons:
-  apt:
-    # List of whitelisted in travis packages for ubuntu-precise can be found here:
-    #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-    # List of whitelisted in travis apt-sources:
-    #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
-    sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.7
-    packages:
-    - cmake
-    - g++-5
-    - clang-3.7
 
 notifications:
   email: false

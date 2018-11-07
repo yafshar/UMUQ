@@ -20,11 +20,11 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	brew update;
 
-	sudo rm -fr /usr/local/include/c++
+	# sudo rm -fr /usr/local/include/c++
 
-	brew install gcc;
+	# brew install gcc;
 
-	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
+	# export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
 
 	# (cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
