@@ -158,6 +158,12 @@ class io
      * \returns true If the file exists 
      */
     inline bool isFileExist(const char *fileName);
+
+    /*!
+     * \brief Check to see whether the file fileName exists and accessible to read or write!
+     *  
+     * \returns true If the file exists 
+     */
     inline bool isFileExist(std::string const &fileName);
 
     /*!
@@ -178,6 +184,24 @@ class io
      * \returns true If everything goes OK
      */
     bool openFile(const char *fileName, const std::ios_base::openmode mode = in);
+
+    /*!
+     * \brief Opens the file whose name is specified with the parameter filename 
+     *  
+     * Opens the file whose name is specified in the parameter filename and
+     * associates it with a stream that can be identified in future operations 
+     * by the FILE pointer returned.   
+     * 
+     * Available file open flags: <br>
+     * - \b std::fstream::app 	  Seeks to the end of stream before each write
+     * - \b std::fstream::binary  Open in binary mode
+     * - \b std::fstream::in 	  Open for reading
+     * - \b std::fstream::out 	  Open for writing
+     * - \b std::fstream::trunc   Discard the contents of the stream when opening
+     * - \b std::fstream::ate 	  Seeks to the end of stream immediately after open
+     * 
+     * \returns true If everything goes OK
+     */
     bool openFile(std::string const &fileName, const std::ios_base::openmode mode = in);
 
     /*!
@@ -250,9 +274,33 @@ class io
     template <typename T>
     int getWidth(T *idata, int const nRows, int const nCols, std::ostream &streamBuffer);
 
+    /*!
+     * \brief Get the width parameter of the input data and stream for the precision 
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata         Input array of data
+     * \param nRows         Number of Rows
+     * \param nCols         Number of Columns
+     * \param streamBuffer  Stream buffer to use as output sequence 
+     * 
+     * \returns the width
+     */
     template <typename T>
     int getWidth(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer);
 
+    /*!
+     * \brief Get the width parameter of the input data and stream for the precision 
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata         Input array of data
+     * \param nRows         Number of Rows
+     * \param nCols         Number of Columns
+     * \param streamBuffer  Stream buffer to use as output sequence 
+     * 
+     * \returns the width
+     */
     template <typename T>
     int getWidth(std::vector<T> const &idata, int const nRows, int const nCols, std::ostream &streamBuffer);
 
@@ -349,12 +397,42 @@ class io
                     int const nCols = 1,
                     int const options = 0);
 
+    /*!
+     * \brief Helper function to save the matrix or a vector into a file 
+     * 
+     * \tparam T      Data type 
+     * 
+     * \param idata    Array of input data of type T
+     * \param nRows    Number of rows 
+     * \param nCols    Number of columns for each row (default is 1)
+     * \param options  (0 Default) 
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true If no error occurs during writing the matrix
+     */
     template <typename T>
     bool saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
 
+    /*!
+     * \brief Helper function to save the matrix or a vector into a file 
+     * 
+     * \tparam T      Data type 
+     * 
+     * \param idata    Array of input data of type T
+     * \param nRows    Number of rows 
+     * \param nCols    Number of columns for each row (default is 1)
+     * \param options  (0 Default) 
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
+     * 
+     * \returns true If no error occurs during writing the matrix
+     */
     template <typename T>
     bool saveMatrix(std::vector<T> const &idata,
                     int const nRows,
@@ -381,6 +459,19 @@ class io
                     int const ifvalueCols,
                     int const nRows);
 
+    /*!
+     * \brief Helper function to save two arrays of data into a file 
+     * 
+     * \tparam T Data type 
+     * 
+     * \param idata        Array of input data of type T
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type T
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows in each data set
+     * 
+     * \returns true If no error occurs during writing the matrix
+     */
     template <typename T>
     bool saveMatrix(std::unique_ptr<T[]> const &idata,
                     int const idataCols,
@@ -388,6 +479,19 @@ class io
                     int const ifvalueCols,
                     int const nRows);
 
+    /*!
+     * \brief Helper function to save two arrays of data into a file 
+     * 
+     * \tparam T Data type 
+     * 
+     * \param idata        Array of input data of type T
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type T
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows in each data set
+     * 
+     * \returns true If no error occurs during writing the matrix
+     */
     template <typename T>
     bool saveMatrix(std::vector<T> const &idata,
                     int const idataCols,
@@ -452,9 +556,31 @@ class io
     template <typename T>
     bool loadMatrix(T *idata, int const nRows, int const nCols = 1);
 
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam T  Data type 
+     * 
+     * \param idata  Input array of data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns for each row (default is 1)
+     *
+     * \returns true if no error occurs during reading data
+     */
     template <typename T>
     bool loadMatrix(std::unique_ptr<T[]> &idata, int const nRows, int const nCols = 1);
 
+    /*!
+     * \brief Helper function to load the matrix from a file 
+     * 
+     * \tparam T  Data type 
+     * 
+     * \param idata  Input array of data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns for each row (default is 1)
+     *
+     * \returns true if no error occurs during reading data
+     */
     template <typename T>
     bool loadMatrix(std::vector<T> &idata, int const nRows, int const nCols = 1);
 
@@ -474,9 +600,35 @@ class io
     template <typename T>
     bool loadMatrix(T *idata, int const idataCols, T *ifvalue, int const ifvalueCols, int const nRows);
 
+    /*!
+     * \brief Helper function to load two vector of data from a file
+     * 
+     * \tparam T Data type 
+     * 
+     * \param idata        Input array of data of type T
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type T
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows in each data set
+     * 
+     * \returns true If no error occurs during reading data
+     */
     template <typename T>
     bool loadMatrix(std::unique_ptr<T[]> &idata, int const idataCols, std::unique_ptr<T[]> &ifvalue, int const ifvalueCols, int const nRows);
 
+    /*!
+     * \brief Helper function to load two vector of data from a file
+     * 
+     * \tparam T Data type 
+     * 
+     * \param idata        Input array of data of type T
+     * \param idataCols    Number of columns of inpput array data (idata)
+     * \param ifvalue      Array of input value data of type T
+     * \param ifvalueCols  Number of columns of inpput value data (ifvalue)
+     * \param nRows        Number of rows in each data set
+     * 
+     * \returns true If no error occurs during reading data
+     */
     template <typename T>
     bool loadMatrix(std::vector<T> &idata, int const idataCols, std::vector<T> &ifvalue, int const ifvalueCols, int const nRows);
 
@@ -633,12 +785,32 @@ class io
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
 
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata  Array of input data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns (default is 1)
+     * \param form   Print format
+     */
     template <typename T>
     void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &form = ioFormat("NO"));
 
+    /*!
+     * \brief Helper function to print the matrix
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata  Array of input data of type T
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns (default is 1)
+     * \param form   Print format
+     */
     template <typename T>
     void printMatrix(std::vector<T> const &idata,
                      int const nRows,
@@ -678,6 +850,19 @@ class io
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
+    /*!
+     * \brief Helper function to print two vectors of data
+     * 
+     * \tparam T Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
+     */
     template <typename T>
     void printMatrix(const char *title,
                      std::unique_ptr<T[]> const &idata,
@@ -687,6 +872,19 @@ class io
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
+    /*!
+     * \brief Helper function to print two vectors of data
+     * 
+     * \tparam T Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
+     */
     template <typename T>
     void printMatrix(const char *title,
                      std::vector<T> const &idata,
@@ -696,6 +894,19 @@ class io
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
+    /*!
+     * \brief Helper function to print two vectors of data
+     * 
+     * \tparam T Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
+     */
     template <typename T>
     void printMatrix(T const *idata,
                      int const idataCols, T *ifvalue,
@@ -703,6 +914,19 @@ class io
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
+    /*!
+     * \brief Helper function to print two vectors of data
+     * 
+     * \tparam T Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
+     */
     template <typename T>
     void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
@@ -711,6 +935,19 @@ class io
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
 
+    /*!
+     * \brief Helper function to print two vectors of data
+     * 
+     * \tparam T Data type
+     * 
+     * \param title          Title (string) that should be written at the top 
+     * \param idata          Array of input data of type T
+     * \param idataCols      Number of columns of inpput array data (idata)
+     * \param ifvalue        Array of input value data of type T
+     * \param ifvalueCols    Number of columns of inpput value data (ifvalue)
+     * \param nRows          Number of rows
+     * \param printPrefix    Prefix and suffix of the print  
+     */
     template <typename T>
     void printMatrix(std::vector<T> const &idata,
                      int const idataCols,
@@ -741,6 +978,19 @@ class io
                      ioFormat const &formD,
                      ioFormat const &formF);
 
+    /*!
+     * \brief Helper function to print two vectors of data with stream format for each
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata         Array of input data of type T
+     * \param idataCols     Number of columns of inpput array data (idata)
+     * \param ifvalue       Array of input value data of type T
+     * \param ifvalueCols   Number of columns of inpput value data (ifvalue)
+     * \param nRows         Number of rows
+     * \param formD         Print format for input data
+     * \param formF         Print format for input function value 
+     */
     template <typename T>
     void printMatrix(std::unique_ptr<T[]> const &idata,
                      int const idataCols,
@@ -750,6 +1000,19 @@ class io
                      ioFormat const &formD,
                      ioFormat const &formF);
 
+    /*!
+     * \brief Helper function to print two vectors of data with stream format for each
+     * 
+     * \tparam T Data type
+     * 
+     * \param idata         Array of input data of type T
+     * \param idataCols     Number of columns of inpput array data (idata)
+     * \param ifvalue       Array of input value data of type T
+     * \param ifvalueCols   Number of columns of inpput value data (ifvalue)
+     * \param nRows         Number of rows
+     * \param formD         Print format for input data
+     * \param formF         Print format for input function value 
+     */
     template <typename T>
     void printMatrix(std::vector<T> const &idata,
                      int const idataCols,
