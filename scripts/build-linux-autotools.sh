@@ -11,6 +11,11 @@ rm m4/lt\~obsolete.m4
 # Create the configuration script
 bash ./scripts/bootstrap.sh 
 
+export CXX=`which mpic++` 
+export CC=`which mpicc`
+export F77=`which mpifort` 
+export FC=`which mpifort`
+
 #configure and make
 ./configure --with-googletest
 make

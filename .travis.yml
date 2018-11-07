@@ -86,6 +86,7 @@ before_script:
 
 # after_failure phase to dump the logs
 after_failure:
+  - cat ./out
   - cat ./tests/*.log
 
 notifications:
