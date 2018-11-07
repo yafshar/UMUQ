@@ -28,7 +28,7 @@ matrix:
     #   env:
     #     - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
     - os: osx
-      osx_image: xcode8
+      osx_image:
       compiler: gcc
       sudo: true
       install: ./scripts/install-osx-gcc.sh

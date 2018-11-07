@@ -18,13 +18,6 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
     # Set keychain locking timeout to 3600 seconds
     security set-keychain-settings -t 3600 -u $KEY_CHAIN
 
-
-   # Add certificates to keychain and allow codesign to access them
-	# security import ./Provisioning/certs/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
-	# security import ./Provisioning/certs/distribution.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
-	# security import ./Provisioning/certs/distribution.p12 -k ~/Library/Keychains/ios-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
-	# security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
-	
 	brew update;
 
 	sudo rm -fr /usr/local/include/c++
@@ -45,11 +38,11 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 
 	brew update
 	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
-	# brew install mpich
+	brew install mpich
 	
-	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-	tar zxvf mpich-3.2.1.tar.gz
-	(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+	# tar zxvf mpich-3.2.1.tar.gz
+	# (cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
 	
 	brew update;
 fi
