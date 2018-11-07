@@ -4,12 +4,12 @@
 int main(int argc, char **argv)
 {
 
-// 	// Create a torc environment object
-// 	umuq::torc<>.reset(new umuq::torcEnvironment<>);
+	// Create a torc environment object
+	umuq::Torc<>.reset(new umuq::torcEnvironment<>);
 
-// 	umuq::torc<>->SetUp();
+	umuq::Torc<>->SetUp();
 
-// 	umuq::torc<>->TearDown();
+	umuq::Torc<>->TearDown();
 
 	return 0;
 }

@@ -248,11 +248,6 @@ class UMUQEventListener : public ::testing::EmptyTestEventListener
 
 #endif // HAVE_GOOGLETEST == 1
 
-} // namespace umuq
-
-namespace umuq
-{
-
 /*!
  * \ingroup Core_Module
  * 
@@ -261,7 +256,7 @@ namespace umuq
  * \tparam T Data type
  */
 template <typename T = double>
-std::unique_ptr<torcEnvironment<T>> torc;
+std::unique_ptr<torcEnvironment<T>> Torc;
 
 } // namespace umuq
 
