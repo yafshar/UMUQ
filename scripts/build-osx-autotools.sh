@@ -11,8 +11,12 @@ rm -fr m4/lt\~obsolete.m4
 # Create the configuration script
 bash ./scripts/bootstrap.sh 
 
+export UMUQ_CXX=`which mpic++` 
+export UMUQ_CC=`which mpicc`
+export UMUQ_FC=`which mpifort`
+
 #configure and make
-./configure --with-googletest
+./configure CC=${UMUQ_CC} CXX=${UMUQ_CXX} FC=${UMUQ_FC} --with-googletest
 bash ./scripts/bootstrap.sh 
 make
 make check

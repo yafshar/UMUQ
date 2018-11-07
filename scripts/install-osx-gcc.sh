@@ -15,8 +15,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	security default-keychain -s $KEY_CHAIN
 	# Unlock the keychain
 	security unlock-keychain -p travis $KEY_CHAIN
-    # Set keychain locking timeout to 3600 seconds
-    security set-keychain-settings -t 3600 -u $KEY_CHAIN
+    # Set keychain locking timeout to 7200 seconds
+    security set-keychain-settings -t 7200 -u $KEY_CHAIN
 
 	brew update;
 
