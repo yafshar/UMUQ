@@ -59,7 +59,7 @@ matrix:
       install: travis_wait 120 ./scripts/install-osx-gcc.sh
       script: ./scripts/build-osx-autotools.sh
       env:
-        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && brew install gcc@8 && CC=gcc-8 && CXX=g++-8 && FC=gfortran-8"
+        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
     # - os: osx
     #   osx_image: xcode8
     #   compiler: gcc
@@ -68,6 +68,7 @@ matrix:
     #   script: ./scripts/build-osx-autotools.sh
     #   env:
     #     - MATRIX_EVAL="brew update && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+    #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && brew install gcc@8 && CC=gcc-8 && CXX=g++-8 && FC=gfortran-8"
 
 before_install:
   - test -n $CC     && unset CC

@@ -8,23 +8,13 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
-	# Create the keychain with a password
-    KEY_CHAIN=ios-build.keychain
-	security create-keychain -p travis $KEY_CHAIN
-	# Make the custom keychain default, so xcodebuild will use it for signing
-	security default-keychain -s $KEY_CHAIN
-	# Unlock the keychain
-	security unlock-keychain -p travis $KEY_CHAIN
-    # Set keychain locking timeout to 7200 seconds
-    security set-keychain-settings -t 7200 -u $KEY_CHAIN
-
 	brew update;
 
 	# sudo rm -fr /usr/local/include/c++
 
 	# brew install gcc;
 
-	export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
+	# export GCC_VERSION=`gfortran -dumpversion |cut -d. -f1`
 
 	# (cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var opt Cellar Caskroom Frameworks)
     
@@ -36,8 +26,8 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	brew outdated automake || brew upgrade automake ;
 	brew outdated wget || brew upgrade wget ;
 
-	brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
-	# brew install mpich
+	# brew reinstall --cc=gcc-${GCC_VERSION} --build-from-source mpich
+	brew install mpich
 	
 	# wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	# tar zxvf mpich-3.2.1.tar.gz
