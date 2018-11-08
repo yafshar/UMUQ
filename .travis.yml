@@ -13,44 +13,44 @@ git:
 # It is more tedious, but grants us far more flexibility.
 matrix:
   include:
-    # - os: linux
-    #   compiler: gcc
-    #   sudo: true
-    #   install: ./scripts/install-linux-gcc.sh
-    #   # For sudo=false builds this section installs the necessary dependencies.
-    #   addons:
-    #     apt:
-    #       # List of whitelisted in travis packages for ubuntu-precise can be found here:
-    #       #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-    #       # List of whitelisted in travis apt-sources:
-    #       #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #       packages:
-    #         - cmake
-    #         - g++-5
-    #   env:
-    #     - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
-    # - os: linux
-    #   compiler: clang
-    #   sudo: true
-    #   install: ./scripts/install-linux-clang.sh
-    #   # For sudo=false builds this section installs the necessary dependencies.
-    #   addons:
-    #     apt:
-    #       # List of whitelisted in travis packages for ubuntu-precise can be found here:
-    #       #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-    #       # List of whitelisted in travis apt-sources:
-    #       #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #         - llvm-toolchain-precise-3.7
-    #       packages:
-    #         - cmake
-    #         - g++-5
-    #         - clang-3.7
-    #   env:
-    #     - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
+    - os: linux
+      compiler: gcc
+      sudo: true
+      install: ./scripts/install-linux-gcc.sh
+      # For sudo=false builds this section installs the necessary dependencies.
+      addons:
+        apt:
+          # List of whitelisted in travis packages for ubuntu-precise can be found here:
+          #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+          # List of whitelisted in travis apt-sources:
+          #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - g++-5
+      env:
+        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
+    - os: linux
+      compiler: clang
+      sudo: true
+      install: travis_wait 120 ./scripts/install-linux-clang.sh
+      # For sudo=false builds this section installs the necessary dependencies.
+      addons:
+        apt:
+          # List of whitelisted in travis packages for ubuntu-precise can be found here:
+          #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+          # List of whitelisted in travis apt-sources:
+          #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - cmake
+            - g++-5
+            - clang-3.7
+      env:
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
     - os: osx
       osx_image: xcode10
       sudo: true
@@ -61,15 +61,15 @@ matrix:
       osx_image: xcode8.3
       compiler: gcc
       sudo: true
-      install: travis_wait 120 ./scripts/install-osx-gcc6.sh
+      install: travis_wait 120 ./scripts/install-osx.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
-  - test -n $CC     && unset CC
-  - test -n $CXX    && unset CXX
-  - test -n $FC     && unset FC
-  - test -n $F77    && unset F77
+  - test -n $CC   && unset CC
+  - test -n $CXX  && unset CXX
+  - test -n $FC   && unset FC
+  - test -n $F77  && unset F77
   - eval "${MATRIX_EVAL}"
 
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
