@@ -14,7 +14,5 @@ bash ./scripts/bootstrap.sh
 #configure and make
 ./configure --with-googletest
 
-automake --foreign --add-missing
-
 make > out 2>&1 & 
 make check
