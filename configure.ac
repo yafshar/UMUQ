@@ -133,7 +133,7 @@ Configure Information:
     DEFS            :   $DEFS
     CFLAGS          :   $CFLAGS
 
-  C++ Compiler      : $CX
+  C++ Compiler      : $CXX
     DEFS            :   $DEFS
     CXXFLAGS        :   $CXXFLAGS
 
