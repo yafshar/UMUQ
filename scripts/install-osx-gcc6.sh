@@ -31,6 +31,10 @@ if [ "${TRAVIS_OS_NAME}" = osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
+	brew update 
+	
+	brew install gcc@6 
+
 	export GCC_VERSION=`gfortran-6 -dumpversion | cut -d. -f1`  
 
 	brew reinstall grep --with-default-names;
