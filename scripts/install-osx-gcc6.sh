@@ -9,21 +9,30 @@ fi
 
 if [ "${TRAVIS_OS_NAME}" = osx ]; then
 	# Create the keychain with a password
-    export KEY_CHAIN=ios-build.keychain
+    KEY_CHAIN="ios-build.keychain"
+    KEY_CHAIN_PASSWORD="travis"
 
-	security create-keychain -p travis $KEY_CHAIN
+	security create-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
+	
+	# Append temp keychain to the user domain
+	security list-keychains -d user -s "$KEY_CHAIN" $(security list-keychains -d user | sed s/\"//g) 
+
+	# Remove relock timeout
+	security set-keychain-settings "$KEY_CHAIN" 
+
 	# Make the custom keychain default, so xcodebuild will use it for signing
-	security default-keychain -s $KEY_CHAIN
+	security default-keychain -s "$KEY_CHAIN"
+
 	# Unlock the keychain
-	security unlock-keychain -p travis $KEY_CHAIN
+	security unlock-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
 
 	# Add certificates to keychain and allow codesign to access them
 	security import ./scripts/travis/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
 
-	security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
+	security set-key-partition-list -S apple-tool:,apple: -s -k "$KEY_CHAIN_PASSWORD" ios-build.keychain
 
     # Set keychain locking timeout to 7200 seconds
-    security set-keychain-settings -t 7200 -u $KEY_CHAIN	
+    security set-keychain-settings -t 7200 -u "$KEY_CHAIN"
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then

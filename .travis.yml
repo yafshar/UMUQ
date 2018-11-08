@@ -58,7 +58,7 @@ matrix:
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode8.3
       compiler: gcc
       sudo: true
       install: travis_wait 120 ./scripts/install-osx-gcc6.sh
