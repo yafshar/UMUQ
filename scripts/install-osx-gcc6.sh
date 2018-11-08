@@ -14,12 +14,6 @@ if [ "${TRAVIS_OS_NAME}" = osx ]; then
 
 	security create-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
 	
-	# Append temp keychain to the user domain
-	security list-keychains -d user -s "$KEY_CHAIN" $(security list-keychains -d user | sed s/\"//g) 
-
-	# Remove relock timeout
-	security set-keychain-settings "$KEY_CHAIN" 
-
 	# Make the custom keychain default, so xcodebuild will use it for signing
 	security default-keychain -s "$KEY_CHAIN"
 
