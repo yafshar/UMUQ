@@ -20,9 +20,6 @@ if [ "${TRAVIS_OS_NAME}" = osx ]; then
 	# Unlock the keychain
 	security unlock-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
 
-	# Add certificates to keychain and allow codesign to access them
-	security import ./scripts/travis/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
-
 	security set-key-partition-list -S apple-tool:,apple: -s -k "$KEY_CHAIN_PASSWORD" ios-build.keychain
 
     # Set keychain locking timeout to 7200 seconds
