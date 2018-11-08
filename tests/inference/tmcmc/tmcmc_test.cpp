@@ -103,7 +103,7 @@ TEST(tmcmc_test, HandlesConstruction)
 
     std::cout << t.inputFilename << std::endl;
 
-    //! Initilizing the object before setting the fitting function is wrong!
+    //! Initializing the object before setting the fitting function is wrong!
     EXPECT_FALSE(t.init());
 
     //! reset the TMCMC object based on the read data
@@ -112,7 +112,7 @@ TEST(tmcmc_test, HandlesConstruction)
     // //! Set the init and fit function together or individually
     // EXPECT_TRUE(t.setFitFunction(init, fitfun));
 
-    // //! Initilizing the object before setting the fitting function is wrong!
+    // //! Initializing the object before setting the fitting function is wrong!
     // EXPECT_TRUE(t.init());    
 }
 
