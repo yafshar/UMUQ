@@ -63,7 +63,7 @@ matrix:
       sudo: true
       install: travis_wait 120 ./scripts/install-osx-gcc6.sh
       env:
-        - MATRIX_EVAL="sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
   - test -n $CC     && unset CC

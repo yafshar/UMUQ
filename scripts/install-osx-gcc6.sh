@@ -7,29 +7,19 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 	exit 0
 fi
 
-if [ "${TRAVIS_OS_NAME}" = osx ]; then
-	# Create the keychain with a password
-    KEY_CHAIN="ios-build.keychain"
-    KEY_CHAIN_PASSWORD="travis"
-
-	security create-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
-	
-	# Make the custom keychain default, so xcodebuild will use it for signing
-	security default-keychain -s "$KEY_CHAIN"
-
-	# Unlock the keychain
-	security unlock-keychain -p "$KEY_CHAIN_PASSWORD" "$KEY_CHAIN"
-
-	security set-key-partition-list -S apple-tool:,apple: -s -k "$KEY_CHAIN_PASSWORD" ios-build.keychain
-
-    # Set keychain locking timeout to 7200 seconds
-    security set-keychain-settings -t 7200 -u "$KEY_CHAIN"
-fi
-
 if [ "${TRAVIS_SUDO}" = "true" ]; then
-	brew update 
+	brew update;
 	
-	brew install gcc@6 
+	brew install gcc@6 > out 2>&1 &
+ 	brew_install_gcc_id=$!
+ 	
+	while kill -0 "$brew_install_gcc_id" >/dev/null 2>&1; do
+		sleep 300
+		tail ./out
+	done
+
+ 	echo "GCC installation is finished!"
+	rm -fr ./out
 
 	export GCC_VERSION=`gfortran-6 -dumpversion | cut -d. -f1`  
 
