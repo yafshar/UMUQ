@@ -359,15 +359,15 @@ tmcmc<T, F>::tmcmc() : inputFilename("input.par")
   {
     UMUQFAIL("This type is not supported in this class!");
   }
-  torc<T>.reset(nullptr);
+  Torc<T>.reset(nullptr);
 }
 
 template <typename T, class F>
 tmcmc<T, F>::~tmcmc()
 {
-  if (torc<T>)
+  if (Torc<T>)
   {
-    torc<T>->TearDown();
+    Torc<T>->TearDown();
   }
 }
 
@@ -489,7 +489,7 @@ bool tmcmc<T, F>::init(char const *fileName)
       fitfun.init();
 
       // Create a torc environment object
-      torc<T>.reset(new torcEnvironment<T>);
+      Torc<T>.reset(new torcEnvironment<T>);
 
       // Register tasks
       {
@@ -506,7 +506,7 @@ bool tmcmc<T, F>::init(char const *fileName)
       }
 
       // Set up the TORC environemnt
-      torc<T>->SetUp();
+      Torc<T>->SetUp();
 
       // Set the State of pseudo random number generator
       if (prng.setState())
