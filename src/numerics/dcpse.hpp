@@ -2549,16 +2549,12 @@ bool dcpse<T, DistanceType, PolynomialType>::interpolate(T const *dataFunctionVa
 
         T sum(0);
 
-        // std::cout << "For point iQueryDataPoints=" << iQueryDataPoints << " dcKernel=";
         // Loop through the neighbors
         for (int j = 0; j < dcMonomialSize; j++, IdI++)
         {
             int const IdJ = NearestNeighbors[j];
             sum += dcKernel[IdI] * dataFunctionValues[IdJ];
-
-            // std::cout << dcKernel[IdI] << " ";
         }
-        // std::cout << "Fvalue=" << sum << " h_average=" << h_average[iQueryDataPoints] << std::endl;
         queryFunctionValues[iQueryDataPoints] = sum;
     }
 
