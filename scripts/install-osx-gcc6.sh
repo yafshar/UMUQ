@@ -7,17 +7,30 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 	exit 0
 fi
 
-if [ "${TRAVIS_SUDO}" = "true" ]; then
+if [ "${TRAVIS_OS_NAME}" = osx ]; then
+  	export CERTIFICATE_P12=Certificate.p12 ;
+  	echo $CERTIFICATE_OSX_P12 | base64 — decode > $CERTIFICATE_P12;
+
 	# Create the keychain with a password
-    KEY_CHAIN=ios-build.keychain
+    export KEY_CHAIN=ios-build.keychain
+
 	security create-keychain -p travis $KEY_CHAIN
 	# Make the custom keychain default, so xcodebuild will use it for signing
 	security default-keychain -s $KEY_CHAIN
 	# Unlock the keychain
 	security unlock-keychain -p travis $KEY_CHAIN
+
+	# Add certificates to keychain and allow codesign to access them
+	security import ./scripts/travis/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
+	security import $CERTIFICATE_P12 -k ~/Library/Keychains/ios-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
+
+	security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
+
     # Set keychain locking timeout to 7200 seconds
     security set-keychain-settings -t 7200 -u $KEY_CHAIN	
-	
+fi
+
+if [ "${TRAVIS_SUDO}" = "true" ]; then
 	export GCC_VERSION=`gfortran-6 -dumpversion | cut -d. -f1`  
 
 	brew reinstall grep --with-default-names;
