@@ -8,9 +8,6 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_OS_NAME}" = osx ]; then
-  	export CERTIFICATE_P12=Certificate.p12 ;
-  	echo $CERTIFICATE_OSX_P12 | base64 — decode > $CERTIFICATE_P12;
-
 	# Create the keychain with a password
     export KEY_CHAIN=ios-build.keychain
 
@@ -22,7 +19,6 @@ if [ "${TRAVIS_OS_NAME}" = osx ]; then
 
 	# Add certificates to keychain and allow codesign to access them
 	security import ./scripts/travis/apple.cer -k ~/Library/Keychains/ios-build.keychain -T /usr/bin/codesign
-	security import $CERTIFICATE_P12 -k ~/Library/Keychains/ios-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
 
 	security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
 
