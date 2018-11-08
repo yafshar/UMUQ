@@ -8,6 +8,16 @@ if [ "${TRAVIS_OS_NAME}" != osx ]; then
 fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
+	# Create the keychain with a password
+    KEY_CHAIN=ios-build.keychain
+	security create-keychain -p travis $KEY_CHAIN
+	# Make the custom keychain default, so xcodebuild will use it for signing
+	security default-keychain -s $KEY_CHAIN
+	# Unlock the keychain
+	security unlock-keychain -p travis $KEY_CHAIN
+    # Set keychain locking timeout to 7200 seconds
+    security set-keychain-settings -t 7200 -u $KEY_CHAIN	
+	
 	export GCC_VERSION=`gfortran-6 -dumpversion | cut -d. -f1`  
 
 	brew reinstall grep --with-default-names;
@@ -24,9 +34,3 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	
 	brew update;
 fi
-
-	# export HOMEBREW_CC=gcc-${GCC_VERSION}
-	# export HOMEBREW_CXX=g++-${GCC_VERSION}
-	# export HOMEBREW_CPP=cpp-${GCC_VERSION}
-	# export HOMEBREW_LD=gcc-${GCC_VERSION}
-	# export HOMEBREW_FC=gfortran-${GCC_VERSION}

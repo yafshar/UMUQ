@@ -17,7 +17,6 @@ matrix:
     #   compiler: gcc
     #   sudo: true
     #   install: ./scripts/install-linux-gcc.sh
-    #   script: ./scripts/build-linux-autotools.sh
     #   # For sudo=false builds this section installs the necessary dependencies.
     #   addons:
     #     apt:
@@ -36,7 +35,6 @@ matrix:
     #   compiler: clang
     #   sudo: true
     #   install: ./scripts/install-linux-clang.sh
-    #   script: ./scripts/build-linux-autotools.sh
     #   # For sudo=false builds this section installs the necessary dependencies.
     #   addons:
     #     apt:
@@ -56,15 +54,14 @@ matrix:
     - os: osx
       osx_image: xcode10
       sudo: true
-      install: travis_wait 120 ./scripts/install-osx-gcc.sh
-      script: ./scripts/build-osx-autotools.sh
+      install: travis_wait 120 ./scripts/install-osx.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
     - os: osx
       osx_image: xcode8
+      compiler: gcc
       sudo: true
       install: travis_wait 120 ./scripts/install-osx-gcc6.sh
-      script: ./scripts/build-osx-autotools.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && brew install gcc@6 && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
@@ -73,12 +70,13 @@ before_install:
   - test -n $CXX    && unset CXX
   - test -n $FC     && unset FC
   - test -n $F77    && unset F77
-  - echo IMAGE=${TRAVIS_OSX_IMAGE}
   - eval "${MATRIX_EVAL}"
 
 ## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
 ## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
+
+script: ./scripts/build-autotools.sh
 
 before_script:
   - . ./scripts/env.sh
@@ -86,7 +84,6 @@ before_script:
 
 # after_failure phase to dump the logs
 after_failure:
-  - cat ./out
   - cat ./tests/*.log
 
 notifications:
