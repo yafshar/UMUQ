@@ -9,11 +9,22 @@ fi
 
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get update 
+
+	sudo apt-get install -q -y gcc-5 g++-5 gfortran-5
 	
-	sudo apt-get install -y gcc-5 g++-5 gfortran-5
-	sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
-	sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
-	sudo unlink /usr/bin/gfortran && sudo ln -s /usr/bin/gfortran-5 /usr/bin/gfortran
+    if [ -e "/usr/bin/gcc" ]; then
+        sudo unlink /usr/bin/gcc;
+    fi
+    if [ -e "/usr/bin/g++" ]; then
+        sudo unlink /usr/bin/g++;
+    fi
+    if [ -e "/usr/bin/gfortran" ]; then
+        sudo unlink /usr/bin/gfortran;
+    fi
+
+	sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+	sudo ln -s /usr/bin/g++-5 /usr/bin/g++
+	sudo ln -s /usr/bin/gfortran-5 /usr/bin/gfortran
 
 	sudo apt-get install -y mpich 
 	sudo apt-get install -y libmpich-dev

@@ -28,7 +28,10 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - cmake
+            - gcc-5
             - g++-5
+            - gfortran-5
+            - libstdc++-5-dev
       env:
         - MATRIX_EVAL="sudo apt-get update && CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
     - os: linux
@@ -44,13 +47,16 @@ matrix:
           #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-precise-3.8
           packages:
             - cmake
+            - gcc-5
             - g++-5
-            - clang-3.7
+            - gfortran-5
+            - libstdc++-5-dev
+            - clang-3.8
       env:
-        - MATRIX_EVAL="sudo apt-get update && CC=clang-3.7 && CXX=clang++-3.7 && FC=gfortran-5"
+        - MATRIX_EVAL="sudo apt-get update && CC=clang-3.8 && CXX=clang++-3.8 && FC=gfortran-5"
     - os: osx
       osx_image: xcode10
       sudo: true
