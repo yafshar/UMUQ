@@ -3,6 +3,11 @@
 # This file can be validated on:
 # http://lint.travis-ci.org/
 
+# List of whitelisted in travis packages for ubuntu-precise can be found here:
+#   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+# List of whitelisted in travis apt-sources:
+#   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+
 sudo: false
 language: cpp
 
@@ -17,13 +22,9 @@ matrix:
       compiler: gcc
       sudo: true
       install: ./scripts/install-linux-gcc.sh
-      # For sudo=false builds this section installs the necessary dependencies.
+      # This section installs the necessary dependencies.
       addons:
         apt:
-          # List of whitelisted in travis packages for ubuntu-precise can be found here:
-          #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-          # List of whitelisted in travis apt-sources:
-          #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
           sources:
             - ubuntu-toolchain-r-test
           packages:
@@ -38,13 +39,9 @@ matrix:
       compiler: clang
       sudo: true
       install: travis_wait 120 ./scripts/install-linux-clang.sh
-      # For sudo=false builds this section installs the necessary dependencies.
+      # This section installs the necessary dependencies.
       addons:
         apt:
-          # List of whitelisted in travis packages for ubuntu-precise can be found here:
-          #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-          # List of whitelisted in travis apt-sources:
-          #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -78,8 +75,6 @@ before_install:
   - test -n $F77  && unset F77
   - eval "${MATRIX_EVAL}"
 
-## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
-## in each entry in the matrix, but that is just repetitive.
 install: make get-deps
 
 script: ./scripts/build-autotools.sh
@@ -88,7 +83,7 @@ before_script:
   - . ./scripts/env.sh
   - ./scripts/log-config.sh
 
-# after_failure phase to dump the logs
+# After_failure phase to dump the logs
 after_failure:
   - cat ./tests/*.log
 

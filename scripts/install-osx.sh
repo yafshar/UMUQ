@@ -35,8 +35,36 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	
 	if [ "${TRAVIS_OSX_IMAGE}" = "xcode8" ] || [ "${TRAVIS_OSX_IMAGE}" = "xcode8.3" ] ; then
 		wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+		
 		tar zxvf mpich-3.2.1.tar.gz
-		(cd mpich-3.2.1 && ./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > /dev/null && make -j 2 && sudo make install > /dev/null)
+		
+		cd mpich-3.2.1
+
+		./configure CC=gcc-${GCC_VERSION} CXX=g++-${GCC_VERSION} FC=gfortran-${GCC_VERSION} --enable-threads=multiple > out 2>&1 & 
+		config_install_mpich_id=$! 
+		
+		while kill -0 "$config_install_mpich_id" >/dev/null 2>&1; do 
+			sleep 300
+			tail ./out
+		done 
+ 		
+		echo "MPICH configuration is finished!"
+
+		make -j 4 > out 2>&1 & 
+		make_install_mpich_id=$! 
+
+		while kill -0 "$make_install_mpich_id" >/dev/null 2>&1; do 
+			sleep 300
+			tail ./out
+		done 
+
+		echo "MPICH build is finished!"
+
+		rm -fr ./out
+
+		sudo make install > /dev/null
+
+		cd ..
 	else
 		brew install mpich
 	fi
