@@ -60,13 +60,13 @@ matrix:
       install: travis_wait 120 ./scripts/install-osx.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
-    - os: osx
-      osx_image: xcode8.3
-      compiler: gcc
-      sudo: true
-      install: travis_wait 120 ./scripts/install-osx.sh
-      env:
-        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+    # - os: osx
+    #   osx_image: xcode8.3
+    #   compiler: gcc
+    #   sudo: true
+    #   install: travis_wait 120 ./scripts/install-osx.sh
+    #   env:
+    #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
   - test -n $CC   && unset CC
