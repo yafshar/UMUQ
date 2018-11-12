@@ -50,7 +50,7 @@ class kNearestNeighborBase
      * \param nDim         Dimension of each point
      * \param kNeighbors   k nearest neighbors to find
      */
-    kNearestNeighborBase(int const ndataPoints, int const nDim, int const nNearestNeighbors);
+    kNearestNeighborBase(int const ndataPoints, int const nDim, int const kNeighbors);
 
     /*!
      * \brief Construct a new kNearestNeighborBase object
@@ -239,16 +239,16 @@ class kNearestNeighborBase
 
   protected:
     //! Number of data points
-    std::size_t drows;
+    std::size_t nDataPoints;
 
     //! Number of query data points
-    std::size_t qrows;
+    std::size_t nQueryDataPoints;
 
-    //! Number of columns
-    std::size_t cols;
+    //! Number of columns or dimension of each point
+    std::size_t dataDimension;
 
     //! Number of nearest neighbors to find
-    int nn;
+    int nNearestNeighborsToFind;
 
     //! Pointer to keep the indices
     std::unique_ptr<int[]> indices_ptr;
@@ -270,10 +270,10 @@ class kNearestNeighborBase
 };
 
 template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nDim, int const kNeighbors) : drows(ndataPoints),
-                                                                                                                                qrows(ndataPoints),
-                                                                                                                                cols(nDim),
-                                                                                                                                nn(kNeighbors + 1),
+kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
+                                                                                                                                nQueryDataPoints(ndataPoints),
+                                                                                                                                dataDimension(nDim),
+                                                                                                                                nNearestNeighborsToFind(kNeighbors + 1),
                                                                                                                                 indices_ptr(new int[ndataPoints * (kNeighbors + 1)]),
                                                                                                                                 dists_ptr(new T[ndataPoints * (kNeighbors + 1)]),
                                                                                                                                 indices(indices_ptr.get(), ndataPoints, (kNeighbors + 1)),
@@ -281,17 +281,17 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndata
                                                                                                                                 the_same(true),
                                                                                                                                 withCovariance(false)
 {
-    if (drows < static_cast<std::size_t>(nn))
+    if (nDataPoints < static_cast<std::size_t>(nNearestNeighborsToFind))
     {
         UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
     }
 }
 
 template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : drows(ndataPoints),
-                                                                                                                                                        qrows(nqueryPoints),
-                                                                                                                                                        cols(nDim),
-                                                                                                                                                        nn(kNeighbors),
+kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
+                                                                                                                                                        nQueryDataPoints(nqueryPoints),
+                                                                                                                                                        dataDimension(nDim),
+                                                                                                                                                        nNearestNeighborsToFind(kNeighbors),
                                                                                                                                                         indices_ptr(new int[nqueryPoints * kNeighbors]),
                                                                                                                                                         dists_ptr(new T[nqueryPoints * kNeighbors]),
                                                                                                                                                         indices(indices_ptr.get(), nqueryPoints, kNeighbors),
@@ -299,17 +299,17 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndata
                                                                                                                                                         the_same(false),
                                                                                                                                                         withCovariance(false)
 {
-    if (drows < static_cast<std::size_t>(nn))
+    if (nDataPoints < static_cast<std::size_t>(nNearestNeighborsToFind))
     {
         UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
     }
 }
 
 template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> &&other) : drows(other.drows),
-                                                                                                                       qrows(other.qrows),
-                                                                                                                       cols(other.cols),
-                                                                                                                       nn(other.nn),
+kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> &&other) : nDataPoints(other.nDataPoints),
+                                                                                                                       nQueryDataPoints(other.nQueryDataPoints),
+                                                                                                                       dataDimension(other.dataDimension),
+                                                                                                                       nNearestNeighborsToFind(other.nNearestNeighborsToFind),
                                                                                                                        indices_ptr(std::move(other.indices_ptr)),
                                                                                                                        dists_ptr(std::move(other.dists_ptr)),
                                                                                                                        indices(std::move(other.indices)),
@@ -320,36 +320,36 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighbo
 }
 
 template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> const &other) : drows(other.drows),
-                                                                                                                            qrows(other.qrows),
-                                                                                                                            cols(other.cols),
-                                                                                                                            nn(other.nn),
-                                                                                                                            indices_ptr(new int[other.qrows * other.nn]),
-                                                                                                                            dists_ptr(new T[other.qrows * other.nn]),
-                                                                                                                            indices(indices_ptr.get(), other.qrows, other.nn),
-                                                                                                                            dists(dists_ptr.get(), other.qrows, other.nn),
+kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> const &other) : nDataPoints(other.nDataPoints),
+                                                                                                                            nQueryDataPoints(other.nQueryDataPoints),
+                                                                                                                            dataDimension(other.dataDimension),
+                                                                                                                            nNearestNeighborsToFind(other.nNearestNeighborsToFind),
+                                                                                                                            indices_ptr(new int[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
+                                                                                                                            dists_ptr(new T[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
+                                                                                                                            indices(indices_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
+                                                                                                                            dists(dists_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
                                                                                                                             the_same(other.the_same),
                                                                                                                             withCovariance(other.withCovariance)
 {
     {
         int *From = other.indices_ptr.get();
         int *To = indices_ptr.get();
-        std::copy(From, From + qrows * nn, To);
+        std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
     }
     {
         T *From = other.dists_ptr.get();
         T *To = dists_ptr.get();
-        std::copy(From, From + qrows * nn, To);
+        std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
     }
 }
 
 template <typename T, class FlannDistanceType>
 kNearestNeighborBase<T, FlannDistanceType> &kNearestNeighborBase<T, FlannDistanceType>::operator=(kNearestNeighborBase<T, FlannDistanceType> &&other)
 {
-    drows = std::move(other.drows);
-    qrows = std::move(other.qrows);
-    cols = std::move(other.cols);
-    nn = std::move(other.nn);
+    nDataPoints = std::move(other.nDataPoints);
+    nQueryDataPoints = std::move(other.nQueryDataPoints);
+    dataDimension = std::move(other.dataDimension);
+    nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     indices_ptr = std::move(other.indices_ptr);
     dists_ptr = std::move(other.dists_ptr);
     indices = std::move(other.indices);
@@ -365,7 +365,7 @@ kNearestNeighborBase<T, FlannDistanceType>::~kNearestNeighborBase() {}
 template <typename T, class FlannDistanceType>
 void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata)
 {
-    flann::Matrix<T> dataset(idata, drows, cols);
+    flann::Matrix<T> dataset(idata, nDataPoints, dataDimension);
 
     // Construct an randomized kd-tree index using 4 kd-trees
     // For the number of parallel kd-trees to use (Good values are in the range [1..16])
@@ -375,25 +375,25 @@ void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata)
     // Do a knn search, using 128 checks
     // Number of checks means: How many leafs to visit when searching
     // for neighbors (-1 for unlimited)
-    index.knnSearch(dataset, indices, dists, nn, flann::SearchParams(128));
+    index.knnSearch(dataset, indices, dists, nNearestNeighborsToFind, flann::SearchParams(128));
 }
 
 template <typename T, class FlannDistanceType>
 void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata, T *qdata)
 {
-    flann::Matrix<T> dataset(idata, drows, cols);
+    flann::Matrix<T> dataset(idata, nDataPoints, dataDimension);
 
     // Construct an randomized kd-tree index using 4 kd-trees
     // For the number of parallel kd-trees to use (Good values are in the range [1..16])
     flann::Index<FlannDistanceType> index(dataset, flann::KDTreeIndexParams(4));
     index.buildIndex();
 
-    flann::Matrix<T> query(qdata, qrows, cols);
+    flann::Matrix<T> query(qdata, nQueryDataPoints, dataDimension);
 
     // Do a knn search, using 128 checks
     // Number of checks means: How many leafs to visit when searching
     // for neighbors (-1 for unlimited)
-    index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
+    index.knnSearch(query, indices, dists, nNearestNeighborsToFind, flann::SearchParams(128));
 
     if (!checkNearestNeighbors())
     {
@@ -405,7 +405,7 @@ template <typename T, class FlannDistanceType>
 inline int *kNearestNeighborBase<T, FlannDistanceType>::NearestNeighbors(int const &index) const
 {
     // +1 is that we do not want the index of the point itself
-    return indices_ptr.get() + index * nn + the_same;
+    return indices_ptr.get() + index * nNearestNeighborsToFind + the_same;
 }
 
 template <typename T, class FlannDistanceType>
@@ -418,13 +418,13 @@ template <typename T, class FlannDistanceType>
 inline T *kNearestNeighborBase<T, FlannDistanceType>::NearestNeighborsDistances(int const &index) const
 {
     // +1 is that we do not want the index of the point itself
-    return dists_ptr.get() + index * nn + the_same;
+    return dists_ptr.get() + index * nNearestNeighborsToFind + the_same;
 }
 
 template <typename T, class FlannDistanceType>
 inline T kNearestNeighborBase<T, FlannDistanceType>::minDist(int const &index) const
 {
-    std::ptrdiff_t const Id = index * nn + the_same;
+    std::ptrdiff_t const Id = index * nNearestNeighborsToFind + the_same;
     return dists_ptr[Id];
 }
 
@@ -434,16 +434,16 @@ inline T *kNearestNeighborBase<T, FlannDistanceType>::minDist()
     T *mindists = nullptr;
     try
     {
-        mindists = new T[qrows];
+        mindists = new T[nQueryDataPoints];
     }
     catch (std::bad_alloc &e)
     {
         UMUQFAILRETURNNULL("Failed to allocate memory!");
     }
 
-    for (std::size_t i = 0; i < qrows; ++i)
+    for (std::size_t i = 0; i < nQueryDataPoints; ++i)
     {
-        std::ptrdiff_t const Id = i * nn + the_same;
+        std::ptrdiff_t const Id = i * nNearestNeighborsToFind + the_same;
         mindists[i] = dists_ptr[Id];
     }
 
@@ -453,7 +453,7 @@ inline T *kNearestNeighborBase<T, FlannDistanceType>::minDist()
 template <typename T, class FlannDistanceType>
 inline int kNearestNeighborBase<T, FlannDistanceType>::numNearestNeighbors() const
 {
-    return nn - the_same;
+    return nNearestNeighborsToFind - the_same;
 }
 
 template <typename T, class FlannDistanceType>
@@ -465,12 +465,12 @@ bool kNearestNeighborBase<T, FlannDistanceType>::checkNearestNeighbors()
     }
     T const eps = std::numeric_limits<T>::epsilon();
     std::size_t s(0);
-    for (std::size_t i = 0; i < qrows; ++i)
+    for (std::size_t i = 0; i < nQueryDataPoints; ++i)
     {
-        std::ptrdiff_t const Id = i * nn;
+        std::ptrdiff_t const Id = i * nNearestNeighborsToFind;
         s += (dists_ptr[Id] < eps);
     }
-    return (s != qrows);
+    return (s != nQueryDataPoints);
 }
 
 template <typename T, class FlannDistanceType>
@@ -481,10 +481,10 @@ inline void kNearestNeighborBase<T, FlannDistanceType>::IndexSwap(int Indx1, int
 }
 
 template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numInputdata() const { return drows; }
+inline int kNearestNeighborBase<T, FlannDistanceType>::numInputdata() const { return nDataPoints; }
 
 template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numQuerydata() const { return qrows; }
+inline int kNearestNeighborBase<T, FlannDistanceType>::numQuerydata() const { return nQueryDataPoints; }
 
 template <typename T, class FlannDistanceType>
 inline bool kNearestNeighborBase<T, FlannDistanceType>::needsCovariance() const { return withCovariance; }
