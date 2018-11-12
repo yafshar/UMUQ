@@ -470,10 +470,10 @@ kNearestNeighbor<T, DistanceType>::kNearestNeighbor(kNearestNeighbor<T, Distance
 template <typename T, NeighborDistance DistanceType>
 kNearestNeighbor<T, DistanceType> &kNearestNeighbor<T, DistanceType>::operator=(kNearestNeighbor<T, DistanceType> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -504,10 +504,10 @@ kNearestNeighbor<T, NeighborDistance::L2_SIMPLE>::kNearestNeighbor(kNearestNeigh
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::L2_SIMPLE> &kNearestNeighbor<T, NeighborDistance::L2_SIMPLE>::operator=(kNearestNeighbor<T, NeighborDistance::L2_SIMPLE> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -538,10 +538,10 @@ kNearestNeighbor<T, NeighborDistance::MANHATTAN>::kNearestNeighbor(kNearestNeigh
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::MANHATTAN> &kNearestNeighbor<T, NeighborDistance::MANHATTAN>::operator=(kNearestNeighbor<T, NeighborDistance::MANHATTAN> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -572,10 +572,10 @@ kNearestNeighbor<T, NeighborDistance::MINKOWSKI>::kNearestNeighbor(kNearestNeigh
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::MINKOWSKI> &kNearestNeighbor<T, NeighborDistance::MINKOWSKI>::operator=(kNearestNeighbor<T, NeighborDistance::MINKOWSKI> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -606,10 +606,10 @@ kNearestNeighbor<T, NeighborDistance::MAX>::kNearestNeighbor(kNearestNeighbor<T,
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::MAX> &kNearestNeighbor<T, NeighborDistance::MAX>::operator=(kNearestNeighbor<T, NeighborDistance::MAX> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -640,10 +640,10 @@ kNearestNeighbor<T, NeighborDistance::HIST_INTERSECT>::kNearestNeighbor(kNearest
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::HIST_INTERSECT> &kNearestNeighbor<T, NeighborDistance::HIST_INTERSECT>::operator=(kNearestNeighbor<T, NeighborDistance::HIST_INTERSECT> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -674,10 +674,10 @@ kNearestNeighbor<T, NeighborDistance::HELLINGER>::kNearestNeighbor(kNearestNeigh
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::HELLINGER> &kNearestNeighbor<T, NeighborDistance::HELLINGER>::operator=(kNearestNeighbor<T, NeighborDistance::HELLINGER> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -708,10 +708,10 @@ kNearestNeighbor<T, NeighborDistance::CHI_SQUARE>::kNearestNeighbor(kNearestNeig
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::CHI_SQUARE> &kNearestNeighbor<T, NeighborDistance::CHI_SQUARE>::operator=(kNearestNeighbor<T, NeighborDistance::CHI_SQUARE> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -742,10 +742,10 @@ kNearestNeighbor<T, NeighborDistance::KULLBACK_LEIBLER>::kNearestNeighbor(kNeare
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::KULLBACK_LEIBLER> &kNearestNeighbor<T, NeighborDistance::KULLBACK_LEIBLER>::operator=(kNearestNeighbor<T, NeighborDistance::KULLBACK_LEIBLER> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -776,10 +776,10 @@ kNearestNeighbor<T, NeighborDistance::HAMMING>::kNearestNeighbor(kNearestNeighbo
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::HAMMING> &kNearestNeighbor<T, NeighborDistance::HAMMING>::operator=(kNearestNeighbor<T, NeighborDistance::HAMMING> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -810,10 +810,10 @@ kNearestNeighbor<T, NeighborDistance::HAMMING_LUT>::kNearestNeighbor(kNearestNei
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::HAMMING_LUT> &kNearestNeighbor<T, NeighborDistance::HAMMING_LUT>::operator=(kNearestNeighbor<T, NeighborDistance::HAMMING_LUT> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -844,10 +844,10 @@ kNearestNeighbor<T, NeighborDistance::HAMMING_POPCNT>::kNearestNeighbor(kNearest
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::HAMMING_POPCNT> &kNearestNeighbor<T, NeighborDistance::HAMMING_POPCNT>::operator=(kNearestNeighbor<T, NeighborDistance::HAMMING_POPCNT> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -899,10 +899,10 @@ kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(kNearestNei
 template <typename T>
 kNearestNeighbor<T, NeighborDistance::MAHALANOBIS> &kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::operator=(kNearestNeighbor<T, NeighborDistance::MAHALANOBIS> &&other)
 {
-    this->drows = std::move(other.drows);
-    this->qrows = std::move(other.qrows);
-    this->cols = std::move(other.cols);
-    this->nn = std::move(other.nn);
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
     this->indices_ptr = std::move(other.indices_ptr);
     this->dists_ptr = std::move(other.dists_ptr);
     this->indices = std::move(other.indices);
@@ -925,17 +925,17 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata)
     else
     {
         // Copy the input data into a temporary array
-        std::vector<T> inputData{idata, idata + this->drows * this->cols};
+        std::vector<T> inputData{idata, idata + this->nDataPoints * this->dataDimension};
 
         // Map the temporary array in Eigen format without memory copy
-        EMapType<T> inputDataEMap(inputData.data(), this->drows, this->cols);
+        EMapType<T> inputDataEMap(inputData.data(), this->nDataPoints, this->dataDimension);
 
         // Compute the input data matrix multiply by lower triangular matrix L from
         // the Cholesky decomposition of inverse covariance matrix
         inputDataEMap *= matrixL;
 
         // Map the data in flann matrix format
-        flann::Matrix<T> dataset(inputData.data(), this->drows, this->cols);
+        flann::Matrix<T> dataset(inputData.data(), this->nDataPoints, this->dataDimension);
 
         // Construct an randomized kd-tree index using 4 kd-trees
         // For the number of parallel kd-trees to use (Good values are in the range [1..16])
@@ -945,16 +945,16 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata)
         // Do a knn search, using 128 checks
         // Number of checks means: How many leafs to visit when searching
         // for neighbors (-1 for unlimited)
-        index.knnSearch(dataset, this->indices, this->dists, this->nn, flann::SearchParams(128));
+        index.knnSearch(dataset, this->indices, this->dists, this->nNearestNeighborsToFind, flann::SearchParams(128));
 
         // Total number of nearest neighbors for each point
         int nNN = this->numNearestNeighbors();
 
         // Correct the distances
         // Loop over all points
-        for (int i = 0; i < this->drows; i++)
+        for (int i = 0; i < this->nDataPoints; i++)
         {
-            std::ptrdiff_t const IdI = i * this->cols;
+            std::ptrdiff_t const IdI = i * this->dataDimension;
 
             // A pointer to nearest neighbors indices of point i
             int *NearestNeighbors = this->NearestNeighbors(i);
@@ -964,11 +964,11 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata)
 
 #if unrolledIncrement == 0
             {
-                T *last = idata + IdI + this->cols;
+                T *last = idata + IdI + this->dataDimension;
 
                 for (int j = 0; j < nNN; j++)
                 {
-                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->dataDimension;
 
                     // pointer to query data
                     T *Idata = idata + IdI;
@@ -988,12 +988,12 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata)
             }
 #else
             {
-                T *last = idata + IdI + this->cols;
+                T *last = idata + IdI + this->dataDimension;
                 T *lastgroup = last - unrolledIncrement + 1;
 
                 for (int j = 0; j < nNN; j++)
                 {
-                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->dataDimension;
 
                     // pointer to query data
                     T *Idata = idata + IdI;
@@ -1073,16 +1073,16 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata, T 
     else
     {
         // Copy the input data into a temporary array
-        std::vector<T> inputData{idata, idata + this->drows * this->cols};
+        std::vector<T> inputData{idata, idata + this->nDataPoints * this->dataDimension};
 
         // Copy the query data into a temporary array
-        std::vector<T> queryData{qdata, qdata + this->qrows * this->cols};
+        std::vector<T> queryData{qdata, qdata + this->nQueryDataPoints * this->dataDimension};
 
         // Map the temporary array in Eigen format without memory copy
-        EMapType<T> inputDataEMap(inputData.data(), this->drows, this->cols);
+        EMapType<T> inputDataEMap(inputData.data(), this->nDataPoints, this->dataDimension);
 
         // Map the temporary array in Eigen format without memory copy
-        EMapType<T> queryDataEMap(queryData.data(), this->qrows, this->cols);
+        EMapType<T> queryDataEMap(queryData.data(), this->nQueryDataPoints, this->dataDimension);
 
         // Compute the input data matrix multiply by lower triangular matrix L from
         // the Cholesky decomposition of inverse covariance matrix
@@ -1091,19 +1091,19 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata, T 
         queryDataEMap *= matrixL;
 
         // Map the data in flann matrix format
-        flann::Matrix<T> dataset(inputData.data(), this->drows, this->cols);
+        flann::Matrix<T> dataset(inputData.data(), this->nDataPoints, this->dataDimension);
 
         // Construct an randomized kd-tree index using 4 kd-trees
         // For the number of parallel kd-trees to use (Good values are in the range [1..16])
         flann::Index<flann::L2<T>> index(dataset, flann::KDTreeIndexParams(4));
         index.buildIndex();
 
-        flann::Matrix<T> query(queryData.data(), this->qrows, this->cols);
+        flann::Matrix<T> query(queryData.data(), this->nQueryDataPoints, this->dataDimension);
 
         // Do a knn search, using 128 checks
         // Number of checks means: How many leafs to visit when searching
         // for neighbors (-1 for unlimited)
-        index.knnSearch(query, this->indices, this->dists, this->nn, flann::SearchParams(128));
+        index.knnSearch(query, this->indices, this->dists, this->nNearestNeighborsToFind, flann::SearchParams(128));
 
         if (!this->checkNearestNeighbors())
         {
@@ -1115,9 +1115,9 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata, T 
 
         // Correct the distances
         // Loop over all query points
-        for (int i = 0; i < this->qrows; i++)
+        for (int i = 0; i < this->nQueryDataPoints; i++)
         {
-            std::ptrdiff_t const IdI = i * this->cols;
+            std::ptrdiff_t const IdI = i * this->dataDimension;
 
             // A pointer to nearest neighbors indices of point i
             int *NearestNeighbors = this->NearestNeighbors(i);
@@ -1127,11 +1127,11 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata, T 
 
 #if unrolledIncrement == 0
             {
-                T *last = qdata + IdI + this->cols;
+                T *last = qdata + IdI + this->dataDimension;
 
                 for (int j = 0; j < nNN; j++)
                 {
-                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->dataDimension;
 
                     // pointer to query data
                     T *Idata = qdata + IdI;
@@ -1151,12 +1151,12 @@ void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::buildIndex(T *idata, T 
             }
 #else
             {
-                T *last = qdata + IdI + this->cols;
+                T *last = qdata + IdI + this->dataDimension;
                 T *lastgroup = last - unrolledIncrement + 1;
 
                 for (int j = 0; j < nNN; j++)
                 {
-                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->cols;
+                    std::ptrdiff_t const IdJ = NearestNeighbors[j] * this->dataDimension;
 
                     // pointer to query data
                     T *Idata = qdata + IdI;
@@ -1245,7 +1245,7 @@ inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(EM
 template <typename T>
 inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(std::vector<T> const &Covariance)
 {
-    covariance = EMapType<T>(const_cast<T *>(Covariance.data()), this->cols, this->cols);
+    covariance = EMapType<T>(const_cast<T *>(Covariance.data()), this->dataDimension, this->dataDimension);
     // check to see if the input covariance matrix is positive definite, or not
     if (!isSelfAdjointMatrixPositiveDefinite<EMatrixX<T>>(covariance))
     {
@@ -1261,7 +1261,7 @@ inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(st
 template <typename T>
 inline void kNearestNeighbor<T, NeighborDistance::MAHALANOBIS>::setCovariance(T const *Covariance)
 {
-    covariance = EMapType<T>(const_cast<T *>(Covariance), this->cols, this->cols);
+    covariance = EMapType<T>(const_cast<T *>(Covariance), this->dataDimension, this->dataDimension);
     // check to see if the input covariance matrix is positive definite, or not
     if (!isSelfAdjointMatrixPositiveDefinite<EMatrixX<T>>(covariance))
     {
