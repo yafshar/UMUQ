@@ -47,6 +47,10 @@ TESTS += knearestneighbors_test
 check_PROGRAMS += knearestneighbors_test 
 knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
 
+TESTS += hypercubesampling_test
+check_PROGRAMS += hypercubesampling_test
+hypercubesampling_test_SOURCES = numerics/hypercube/hypercubesampling_test.cpp
+
 TESTS += dcpse_test
 check_PROGRAMS += dcpse_test
 dcpse_test_SOURCES = numerics/dcpse_test.cpp 
