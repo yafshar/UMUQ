@@ -111,6 +111,16 @@ template <typename T>
 static T const machinePrecision = std::pow(T{10}, -digits10<T>());
 
 /*!
+ * \ingroup Const_Module
+ * 
+ * \brief Empty vector for initialization
+ * 
+ * \tparam T Data type
+ */
+template <typename T>
+static std::vector<T> const EmptyVector{};
+
+/*!
  * \brief Manual (or static) loop unrolling increment 
  * 
  * \todo
