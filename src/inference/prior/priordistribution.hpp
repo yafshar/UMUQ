@@ -133,7 +133,7 @@ class priorDistribution
      * \returns false If it encounters an unexpected problem
      */
     bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
-    
+
     /*!
      * \brief Set the priorDistribution parameters
      * 
@@ -144,7 +144,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
+    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = EmptyVector<int>);
 
     /*!
      * \brief Set the Random Number Generator object to 
@@ -203,7 +203,7 @@ class priorDistribution
      * \returns T Returns the logarithm probability density function (pdf) evaluated in x
      */
     T logpdf(T const *x);
-    
+
     /*!
      * \brief Logarithm of the probability density function
      * 
@@ -703,7 +703,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
 template <typename T>
 bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior)
 {
-    return set(Param1.data(), Param2.data(), compositeprior.data());
+    return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
 }
 
 template <typename T>
