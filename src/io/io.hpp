@@ -374,7 +374,7 @@ class io
                     int const *nCols,
                     int const options = 0,
                     int const entries = 1,
-                    std::vector<ioFormat> const &ioformat = std::vector<ioFormat>());
+                    std::vector<ioFormat> const &ioformat = EmptyVector<ioFormat>);
 
     /*!
      * \brief Helper function to save the matrix or a vector into a file 
@@ -527,7 +527,7 @@ class io
     bool loadMatrix(T **dataPoints, int const nRows, int const nCols, int const options = 0);
 
     /*!
-     * \brief Helper function to load one matrix (or entries number of matrcies) from a file 
+     * \brief Helper function to load one matrix (or entries number of matrices) from a file 
      * 
      * \tparam T Data type 
      * 
@@ -735,7 +735,7 @@ class io
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
-                     std::vector<ioFormat> const &ioformat = std::vector<ioFormat>());
+                     std::vector<ioFormat> const &ioformat = EmptyVector<ioFormat>);
 
     /*!
      * \brief Helper function to print the matrix
