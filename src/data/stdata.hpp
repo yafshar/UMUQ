@@ -2,6 +2,7 @@
 #define UMUQ_STDATA_H
 
 #include "core/core.hpp"
+#include "data/priortype.hpp"
 #include "misc/parser.hpp"
 #include "io/io.hpp"
 
@@ -66,7 +67,7 @@ struct optimizationParameters
     /*!
      * \brief Reset the optimization parameters which is used in the function optimizer
      * 
-     * The default values are:
+     * The default values are:<br>
      * - \b maxIter = 100
      * - \b display = 0 (Off)
      * - \b functionMinimizerType = 2 (SIMPLEXNM2, The Simplex method of Nelder and Mead)
@@ -77,6 +78,20 @@ struct optimizationParameters
      * \returns false 
      */
     void reset();
+
+    /*!
+     * \brief Reset the optimization parameters which is used in the function optimizer
+     * 
+     * The default values are:<br>
+     * - \b maxIter = 100
+     * - \b display = 0 (Off)
+     * - \b functionMinimizerType = 2 (SIMPLEXNM2, The Simplex method of Nelder and Mead)
+     * - \b tolerance = 1e-6
+     * - \b step = 1e-5
+     * 
+     * \returns true 
+     * \returns false 
+     */
     void reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step);
 
     //! Maximum number of iterations
@@ -179,6 +194,13 @@ class stdata
      * \returns true on success
      */
     bool load(const char *fname = "tmcmc.par");
+
+    /*!
+     * \brief load the input file fname
+     *
+     * \param fname              name of the input file
+     * \returns true on success
+     */
     bool load(std::string const &fname = "tmcmc.par");
 
     /*!
@@ -234,7 +256,7 @@ class stdata
     int samplingType;
 
     //! Prior type which is :   0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
-    int priorType;
+    priorTypes priorType;
 
     //! 1 for printing the data and 0 for not
     int iPlot;
@@ -289,7 +311,7 @@ class stdata
     std::vector<T> upperBound;
 
     //! Composite distribution as a prior
-    std::vector<int> compositePriorDistribution;
+    std::vector<priorTypes> compositePriorDistribution;
 
     //! Prior parameter 1
     std::vector<T> priorParam1;
@@ -311,7 +333,7 @@ stdata<T>::stdata() : nDim(0),
                       maxChainLength(1),
                       seed(280675),
                       samplingType(0),
-                      priorType(0),
+                      priorType(priorTypes::UNIFORM),
                       iPlot(0),
                       saveData(1),
                       useCmaProposal(0),
@@ -332,7 +354,7 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
                                                                          maxChainLength(1),
                                                                          seed(280675),
                                                                          samplingType(0),
-                                                                         priorType(0),
+                                                                         priorType(priorTypes::UNIFORM),
                                                                          iPlot(0),
                                                                          saveData(1),
                                                                          useCmaProposal(0),
@@ -469,7 +491,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
     maxChainLength = 1;
     seed = 280675;
     samplingType = 0;
-    priorType = 0;
+    priorType = priorTypes::UNIFORM;
     iPlot = 0;
     saveData = 1;
     useCmaProposal = 0;
@@ -632,7 +654,8 @@ bool stdata<T>::load(const char *fname)
                 }
                 else if (p.at<std::string>(0) == "priorType")
                 {
-                    priorType = p.at<int>(1);
+
+                    priorType = static_cast<priorTypes>(p.at<int>(1));
                 }
                 else if (p.at<std::string>(0) == "iPlot")
                 {
@@ -692,7 +715,7 @@ bool stdata<T>::load(const char *fname)
             }
 
             // 0: uniform
-            if (priorType == 0)
+            if (priorType == priorTypes::UNIFORM)
             {
                 for (n = 0; n < nDim; n++)
                 {
@@ -702,7 +725,7 @@ bool stdata<T>::load(const char *fname)
             }
 
             // 1: gaussian
-            if (priorType == 1)
+            if (priorType == priorTypes::GAUSSIAN)
             {
                 f.rewindFile();
 
@@ -738,7 +761,7 @@ bool stdata<T>::load(const char *fname)
             }
 
             // 2: exponential
-            if (priorType == 2)
+            if (priorType == priorTypes::EXPONENTIAL)
             {
                 f.rewindFile();
 
@@ -758,7 +781,7 @@ bool stdata<T>::load(const char *fname)
             }
 
             // 3: gamma
-            if (priorType == 3)
+            if (priorType == priorTypes::GAMMA)
             {
                 f.rewindFile();
 
@@ -796,11 +819,11 @@ bool stdata<T>::load(const char *fname)
             }
 
             // 4:composite
-            if (priorType == 4)
+            if (priorType == priorTypes::COMPOSITE)
             {
                 try
                 {
-                    compositePriorDistribution.resize(nDim, 0);
+                    compositePriorDistribution.resize(nDim, priorTypes::UNIFORM);
                 }
                 catch (...)
                 {
@@ -821,9 +844,9 @@ bool stdata<T>::load(const char *fname)
 
                         if (p.at<std::string>(0) == strTemp)
                         {
-                            compositePriorDistribution[n] = p.at<int>(1);
+                            compositePriorDistribution[n] = static_cast<priorTypes>(p.at<int>(1));
                             priorParam1[n] = p.at<T>(2);
-                            if (compositePriorDistribution[n] != 2)
+                            if (compositePriorDistribution[n] != priorTypes::EXPONENTIAL)
                             {
                                 priorParam2[n] = p.at<T>(3);
                             }
