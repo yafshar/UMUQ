@@ -46,7 +46,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
           packages:
             - cmake
             - gcc-5
