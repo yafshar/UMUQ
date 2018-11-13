@@ -18,23 +18,23 @@ git:
 # It is more tedious, but grants us far more flexibility.
 matrix:
   include:
-    - os: linux
-      compiler: gcc
-      sudo: true
-      install: ./scripts/install-linux-gcc.sh
-      # This section installs the necessary dependencies.
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - cmake
-            - gcc-5
-            - g++-5
-            - gfortran-5
-            - libstdc++-5-dev
-      env:
-        - MATRIX_EVAL="sudo apt-get update && CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
+    # - os: linux
+    #   compiler: gcc
+    #   sudo: true
+    #   install: ./scripts/install-linux-gcc.sh
+    #   # This section installs the necessary dependencies.
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - cmake
+    #         - gcc-5
+    #         - g++-5
+    #         - gfortran-5
+    #         - libstdc++-5-dev
+    #   env:
+    #     - MATRIX_EVAL="sudo apt-get update && CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
     # - os: linux
     #   compiler: clang
     #   sudo: true
