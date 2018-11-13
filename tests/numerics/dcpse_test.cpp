@@ -8,7 +8,7 @@
 #include "numerics/stats.hpp"
 #include "gtest/gtest.h"
 
-#define WRITE_TO_FILE 1
+#define WRITE_TO_FILE 0
 
 /*!
  * \ingroup Test_Module
@@ -67,8 +67,8 @@ TEST(dcpse_1d, HandlesQianFunction)
         // Set the pseudo random number generator
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
-        // Create input points
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        // Create uniformly random distributed input points
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
@@ -348,7 +348,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
@@ -505,7 +505,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(dataPoints));
+        EXPECT_TRUE(Domain.sample(dataPoints));
 
         // Compute the function value at each input point
         double *data = dataPoints.data();
@@ -516,7 +516,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         }
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
@@ -662,7 +662,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
@@ -792,7 +792,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(dataPoints));
+        EXPECT_TRUE(Domain.sample(dataPoints));
 
         // Compute the function value at each input point
         double *data = dataPoints.data();
@@ -803,7 +803,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         }
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
@@ -948,7 +948,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         EXPECT_TRUE(Domain.setRandomGenerator(&prng));
 
         // Create uniformly random distributed points in the hypercube
-        EXPECT_TRUE(Domain.uniform(queryPoints, numQueryPoints));
+        EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
 
         // Compute the function value at each query point
         data = queryPoints.data();
