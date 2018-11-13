@@ -92,6 +92,13 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
     inline bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
+     * \brief Get the Random Number Generator object 
+     * 
+     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
+     */
+    inline psrandom<T> *getRandomGenerator();
+
+    /*!
      * \brief Create samples of the Gamma distribution object
      *
      * \param x  Vector of samples
@@ -236,6 +243,9 @@ inline bool gammaDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
+
+template <typename T, class V>
+inline psrandom<T> *gammaDistribution<T, V>::getRandomGenerator() { return this->prng; }
 
 template <typename T, class V>
 bool gammaDistribution<T, V>::sample(T *x)

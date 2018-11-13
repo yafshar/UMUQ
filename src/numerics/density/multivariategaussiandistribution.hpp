@@ -121,6 +121,13 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
     inline bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
+     * \brief Get the Random Number Generator object 
+     * 
+     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
+     */
+    inline psrandom<T> *getRandomGenerator();
+
+    /*!
      * \brief Create samples of the Gaussian Distribution object
      *
      * \param x  Vector of samples
@@ -288,6 +295,13 @@ class multivariateGaussianDistribution : public densityFunction<T, std::function
      * \return false If it encounters an unexpected problem
      */
     inline bool setRandomGenerator(psrandom<T> *PRNG);
+
+    /*!
+     * \brief Get the Random Number Generator object 
+     * 
+     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
+     */
+    inline psrandom<T> *getRandomGenerator();
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -577,6 +591,9 @@ inline bool multivariategaussianDistribution<T, V>::setRandomGenerator(psrandom<
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
+
+template <typename T, class V>
+inline psrandom<T> *multivariategaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
 
 template <typename T, class V>
 bool multivariategaussianDistribution<T, V>::sample(T *x)
@@ -882,6 +899,9 @@ inline bool multivariateGaussianDistribution<T, V>::setRandomGenerator(psrandom<
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
+
+template <typename T, class V>
+inline psrandom<T> *multivariateGaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
 
 template <typename T, class V>
 bool multivariateGaussianDistribution<T, V>::sample(T *x)

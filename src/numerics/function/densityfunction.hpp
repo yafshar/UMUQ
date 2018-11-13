@@ -177,6 +177,13 @@ public:
    */
   virtual inline bool setRandomGenerator(psrandom<T> *PRNG);
 
+  /*!
+   * \brief Get the Random Number Generator object 
+   * 
+   * \returns Pseudo-random number object. \sa umuq::random::psrandom.
+   */
+  virtual inline psrandom<T> *getRandomGenerator();
+
 protected:
   //! Pointer to pseudo random number generator object
   psrandom<T> *prng;
@@ -257,6 +264,12 @@ template <typename T, class F>
 inline bool densityFunction<T, F>::setRandomGenerator(psrandom<T> *PRNG)
 {
   UMUQFAILRETURN("Not implemented!");
+}
+
+template <typename T, class F>
+inline psrandom<T> *densityFunction<T, F>::getRandomGenerator()
+{
+  UMUQFAILRETURNNULL("Not implemented!");
 }
 
 } // namespace density
