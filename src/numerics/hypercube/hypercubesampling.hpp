@@ -1,8 +1,7 @@
 #ifndef UMUQ_HYPERCUBESAMPLING_H
 #define UMUQ_HYPERCUBESAMPLING_H
 
-#include "../density.hpp"
-#include "../random/psrandom.hpp"
+#include "inference/prior/priordistribution.hpp"
 #include "../stats.hpp"
 
 namespace umuq
@@ -168,34 +167,56 @@ class hypercubeSampling
 	bool gridInUnitCube(std::vector<T> &gridPoints, std::vector<int> const &NumPointsInEachDirection, int const Edges = 1);
 
 	/*!
-     * \brief Generates random uniform points in N-dimensional cube of \f$ [lowerBound \cdots upperBound] \f$.
+     * \brief Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
+	 * (Default is the uniform distribution).
      * 
-     * \param points  Uniform random sampling points in the hypercube (It samples totalNumPoints in the hypercube).
+     * \param points          Points generated in the hypercube (sampled totalNumPoints in the hypercube) according to the distributionTypes.
+     * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
      */
-	bool uniform(T *&points);
+	bool sample(T *&points, priorTypes const PriorType = priorTypes::UNIFORM, T const *Param1 = nullptr, T const *Param2 = nullptr, priorTypes const *compositeprior = nullptr);
 
 	/*!
-     * \brief Generates random uniform points in N-dimensional cube of \f$ [lowerBound \cdots upperBound] \f$.
+     * \brief  Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
+	 * (Default is the uniform distribution).
      * 
-     * \param points   Uniform random sampling points in the hypercube (It samples nPoints in the hypercube).
-     * \param nPoints  Number of sampling points in the hypercube.
+     * \param points          Points generated in the hypercube (sampled nPoints in the hypercube) according to the distributionTypes.
+     * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
+     * \param nPoints         Number of sampling points in the hypercube.
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
      */
-	bool uniform(T *&points, int const nPoints);
+	bool sample(T *&points, int const nPoints, priorTypes const PriorType = priorTypes::UNIFORM, T const *Param1 = nullptr, T const *Param2 = nullptr, priorTypes const *compositeprior = nullptr);
 
 	/*!
-     * \brief Generates random uniform points in N-dimensional cube of \f$ [lowerBound \cdots upperBound] \f$.
+     * \brief Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
+	 * (Default is the uniform distribution).
      * 
-     * \param points  Uniform random sampling points in the hypercube (It samples totalNumPoints in the hypercube).
+     * \param points          Points generated in the hypercube (sampled totalNumPoints in the hypercube) according to the distributionTypes.
+     * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
      */
-	bool uniform(std::vector<T> &points);
+	bool sample(std::vector<T> &points, priorTypes const PriorType = priorTypes::UNIFORM,
+				std::vector<T> const &Param1 = EmptyVector<T>, std::vector<T> const &Param2 = EmptyVector<T>, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
 
 	/*!
-     * \brief Generates random uniform points in N-dimensional cube of \f$ [lowerBound \cdots upperBound] \f$.
+     * \brief  Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
+	 * (Default is the uniform distribution).
      * 
-     * \param points   Uniform random sampling points in the hypercube (It samples nPoints in the hypercube).
-     * \param nPoints  Number of sampling points in the hypercube.
+     * \param points          Points generated in the hypercube (sampled nPoints in the hypercube) according to the distributionTypes.
+     * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes.
+     * \param nPoints         Number of sampling points in the hypercube.
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
      */
-	bool uniform(std::vector<T> &points, int const nPoints);
+	bool sample(std::vector<T> &points, int const nPoints, priorTypes const PriorType = priorTypes::UNIFORM,
+				std::vector<T> const &Param1 = EmptyVector<T>, std::vector<T> const &Param2 = EmptyVector<T>, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
 
 	/*!
      * \brief Set the Random Number Generator object 
@@ -226,14 +247,14 @@ class hypercubeSampling
 	bool isItUnitCube;
 
   private:
-	//! Flat (Uniform) distribution
-	std::unique_ptr<uniformDistribution<double>> uniformDist;
+	//! Prior distribution object
+	priorDistribution<T> prior;
 };
 
 template <typename T>
 hypercubeSampling<T>::hypercubeSampling(int const TotalNumPoints, int const NumDimensions, double const *LowerBound, double const *UpperBound) : totalNumPoints(TotalNumPoints),
 																																				 numDimensions(NumDimensions),
-																																				 uniformDist(nullptr)
+																																				 prior(numDimensions)
 {
 	if (numDimensions < 1)
 	{
@@ -263,7 +284,7 @@ template <typename T>
 hypercubeSampling<T>::hypercubeSampling(int const *NumPointsInEachDirection, int const NumDimensions, double const *LowerBound, double const *UpperBound) : totalNumPoints(std::accumulate(NumPointsInEachDirection, NumPointsInEachDirection + NumDimensions, 1, std::multiplies<int>())),
 																																							numPointsInEachDirection(NumPointsInEachDirection, NumPointsInEachDirection + NumDimensions),
 																																							numDimensions(NumDimensions),
-																																							uniformDist(nullptr)
+																																							prior(numDimensions)
 
 {
 	{
@@ -297,7 +318,7 @@ template <typename T>
 hypercubeSampling<T>::hypercubeSampling(std::vector<int> const &NumPointsInEachDirection, std::vector<double> const &LowerBound, std::vector<double> const &UpperBound) : totalNumPoints(std::accumulate(NumPointsInEachDirection.begin(), NumPointsInEachDirection.end(), 1, std::multiplies<int>())),
 																																										  numPointsInEachDirection(NumPointsInEachDirection),
 																																										  numDimensions(NumPointsInEachDirection.size()),
-																																										  uniformDist(nullptr)
+																																										  prior(numDimensions)
 
 {
 	{
@@ -937,27 +958,22 @@ bool hypercubeSampling<T>::setRandomGenerator(psrandom<double> *PRNG)
 			{
 				std::vector<double> Lb(numDimensions, 0.);
 				std::vector<double> Ub(numDimensions, 1.);
-				try
+
+				// Set the distribution parameters
+				if (!prior.set(Lb, Ub))
 				{
-					uniformDist.reset(new uniformDistribution<double>(Lb.data(), Ub.data(), numDimensions * 2));
-				}
-				catch (...)
-				{
-					UMUQFAILRETURN("Failed to allocate memory!");
+					UMUQFAILRETURN("Failed to set the distribution!");
 				}
 			}
 			else
 			{
-				try
+				// Set the distribution parameters
+				if (!prior.set(lowerBound, upperBound))
 				{
-					uniformDist.reset(new uniformDistribution<double>(lowerBound.data(), upperBound.data(), numDimensions * 2));
-				}
-				catch (...)
-				{
-					UMUQFAILRETURN("Failed to allocate memory!");
+					UMUQFAILRETURN("Failed to set the distribution!");
 				}
 			}
-			return uniformDist->setRandomGenerator(PRNG);
+			return prior.setRandomGenerator(PRNG);
 		}
 		UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to any prior distribution!");
 	}
@@ -965,16 +981,37 @@ bool hypercubeSampling<T>::setRandomGenerator(psrandom<double> *PRNG)
 }
 
 template <typename T>
-bool hypercubeSampling<T>::uniform(T *&points)
+bool hypercubeSampling<T>::sample(T *&points, priorTypes const PriorType, T const *Param1, T const *Param2, priorTypes const *compositeprior)
 {
 	if (totalNumPoints < 1)
 	{
 		UMUQFAILRETURN("Wrong number of points of ", totalNumPoints, " < 1 !");
 	}
 
-	if (!uniformDist)
+	if (prior.getpriorType() != PriorType)
 	{
-		UMUQFAILRETURN("Distribution is not set!");
+		// Pseudo-random number generator
+		auto *prng = prior.getRandomGenerator();
+
+		if (!prng)
+		{
+			UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
+		}
+
+		// Construct a prior Distribution object
+		prior = std::move(priorDistribution<T>(numDimensions, PriorType));
+
+		// Set the prior parameters
+		if (!prior.set(Param1, Param2, compositeprior))
+		{
+			UMUQFAILRETURN("Failed to set the prior distribution!");
+		}
+
+		// Set the Random Number Generator object in the prior
+		if (!prior.setRandomGenerator(prng))
+		{
+			UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
+		}
 	}
 
 	if (points == nullptr)
@@ -992,23 +1029,44 @@ bool hypercubeSampling<T>::uniform(T *&points)
 	T *coord = points;
 	for (int i = 0; i < totalNumPoints; i++)
 	{
-		uniformDist->sample(coord);
+		prior.sample(coord);
 		coord += numDimensions;
 	}
 	return true;
 }
 
 template <typename T>
-bool hypercubeSampling<T>::uniform(T *&points, int const nPoints)
+bool hypercubeSampling<T>::sample(T *&points, int const nPoints, priorTypes const PriorType, T const *Param1, T const *Param2, priorTypes const *compositeprior)
 {
 	if (nPoints < 1)
 	{
 		UMUQFAILRETURN("Wrong number of points of ", nPoints, " < 1 !");
 	}
 
-	if (!uniformDist)
+	if (prior.getpriorType() != PriorType)
 	{
-		UMUQFAILRETURN("Distribution is not set!");
+		// Pseudo-random number generator
+		auto *prng = prior.getRandomGenerator();
+
+		if (!prng)
+		{
+			UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
+		}
+
+		// Construct a prior Distribution object
+		prior = std::move(priorDistribution<T>(numDimensions, PriorType));
+
+		// Set the prior parameters
+		if (!prior.set(Param1, Param2, compositeprior))
+		{
+			UMUQFAILRETURN("Failed to set the prior distribution!");
+		}
+
+		// Set the Random Number Generator object in the prior
+		if (!prior.setRandomGenerator(prng))
+		{
+			UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
+		}
 	}
 
 	if (points == nullptr)
@@ -1026,23 +1084,44 @@ bool hypercubeSampling<T>::uniform(T *&points, int const nPoints)
 	T *coord = points;
 	for (int i = 0; i < nPoints; i++)
 	{
-		uniformDist->sample(coord);
+		prior.sample(coord);
 		coord += numDimensions;
 	}
 	return true;
 }
 
 template <typename T>
-bool hypercubeSampling<T>::uniform(std::vector<T> &points)
+bool hypercubeSampling<T>::sample(std::vector<T> &points, priorTypes const PriorType, std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior)
 {
 	if (totalNumPoints < 1)
 	{
 		UMUQFAILRETURN("Wrong number of points of ", totalNumPoints, " < 1 !");
 	}
 
-	if (!uniformDist)
+	if (prior.getpriorType() != PriorType)
 	{
-		UMUQFAILRETURN("Distribution is not set!");
+		// Pseudo-random number generator
+		auto *prng = prior.getRandomGenerator();
+
+		if (!prng)
+		{
+			UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
+		}
+
+		// Construct a prior Distribution object
+		prior = std::move(priorDistribution<T>(numDimensions, PriorType));
+
+		// Set the prior parameters
+		if (!prior.set(Param1, Param2, compositeprior))
+		{
+			UMUQFAILRETURN("Failed to set the prior distribution!");
+		}
+
+		// Set the Random Number Generator object in the prior
+		if (!prior.setRandomGenerator(prng))
+		{
+			UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
+		}
 	}
 
 	if (points.size() < totalNumPoints * numDimensions)
@@ -1053,23 +1132,44 @@ bool hypercubeSampling<T>::uniform(std::vector<T> &points)
 	T *coord = points.data();
 	for (int i = 0; i < totalNumPoints; i++)
 	{
-		uniformDist->sample(coord);
+		prior.sample(coord);
 		coord += numDimensions;
 	}
 	return true;
 }
 
 template <typename T>
-bool hypercubeSampling<T>::uniform(std::vector<T> &points, int const nPoints)
+bool hypercubeSampling<T>::sample(std::vector<T> &points, int const nPoints, priorTypes const PriorType, std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior)
 {
 	if (nPoints < 1)
 	{
 		UMUQFAILRETURN("Wrong number of points of ", nPoints, " < 1 !");
 	}
 
-	if (!uniformDist)
+	if (prior.getpriorType() != PriorType)
 	{
-		UMUQFAILRETURN("Distribution is not set!");
+		// Pseudo-random number generator
+		auto *prng = prior.getRandomGenerator();
+
+		if (!prng)
+		{
+			UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
+		}
+
+		// Construct a prior Distribution object
+		prior = std::move(priorDistribution<T>(numDimensions, PriorType));
+
+		// Set the prior parameters
+		if (!prior.set(Param1, Param2, compositeprior))
+		{
+			UMUQFAILRETURN("Failed to set the prior distribution!");
+		}
+
+		// Set the Random Number Generator object in the prior
+		if (!prior.setRandomGenerator(prng))
+		{
+			UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
+		}
 	}
 
 	if (points.size() < nPoints * numDimensions)
@@ -1080,7 +1180,7 @@ bool hypercubeSampling<T>::uniform(std::vector<T> &points, int const nPoints)
 	T *coord = points.data();
 	for (int i = 0; i < nPoints; i++)
 	{
-		uniformDist->sample(coord);
+		prior.sample(coord);
 		coord += numDimensions;
 	}
 	return true;
