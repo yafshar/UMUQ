@@ -16,7 +16,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(1, d1->maxChainLength);
     EXPECT_EQ(280675, d1->seed);
     EXPECT_EQ(0, d1->samplingType);
-    EXPECT_EQ(0, d1->priorType);
+    EXPECT_EQ(umuq::priorTypes::UNIFORM, d1->priorType);
     EXPECT_EQ(0, d1->iPlot);
     EXPECT_EQ(1, d1->saveData);
     EXPECT_EQ(0, d1->useCmaProposal);
@@ -41,7 +41,7 @@ TEST(streamdatatype, HandlesConstruction)
     EXPECT_EQ(1, d2.maxChainLength);
     EXPECT_EQ(280675, d2.seed);
     EXPECT_EQ(0, d2.samplingType);
-    EXPECT_EQ(0, d2.priorType);
+    EXPECT_EQ(umuq::priorTypes::UNIFORM, d2.priorType);
     EXPECT_EQ(0, d2.iPlot);
     EXPECT_EQ(1, d2.saveData);
     EXPECT_EQ(0, d2.useCmaProposal);
@@ -76,7 +76,7 @@ TEST(streamdatatype, HandlesIO)
     EXPECT_DOUBLE_EQ(static_cast<double>(0.04), d1.bbeta);
     EXPECT_EQ(280675, d1.seed);
     EXPECT_EQ(0, d1.samplingType);
-    EXPECT_EQ(0, d1.priorType);
+    EXPECT_EQ(umuq::priorTypes::UNIFORM, d1.priorType);
     EXPECT_EQ(0, d1.iPlot);
     EXPECT_EQ(1, d1.saveData);
     EXPECT_EQ(0, d1.useCmaProposal);
