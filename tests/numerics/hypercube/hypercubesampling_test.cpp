@@ -64,7 +64,7 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
         std::vector<double> LowerBound{0., 0.};
         std::vector<double> UpperBound{.6, 8.};
 
-        // Create an instance of the hypercubeSampling object in unit hypercube
+        // Create an instance of the hypercubeSampling object in hypercube
         umuq::hypercubeSampling<double> Domain(numPointsInEachDirection, LowerBound, UpperBound);
 
         std::vector<double> dataPoints(numDataPoints * numDimensions);
@@ -97,6 +97,94 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
             EXPECT_DOUBLE_EQ(*dataIt, *exactDataIt);
         }
     }
+
+    {
+        // Problem dimension
+        int numDimensions = 5;
+
+        // Number of data points
+        int const numDataPoints = 32;
+
+        // Number of points in each direction
+        std::vector<int> numPointsInEachDirection{2, 2, 2, 2, 2};
+
+        // Create an instance of the hypercubeSampling object in unit hypercube
+        umuq::hypercubeSampling<double> Domain(numPointsInEachDirection);
+
+        std::vector<double> dataPoints(numDataPoints * numDimensions);
+        std::vector<double> exactDataPoints{
+            0.25, 0.25, 0.25, 0.25, 0.25,
+            0.25, 0.25, 0.25, 0.25, 0.75,
+            0.25, 0.25, 0.25, 0.75, 0.25,
+            0.25, 0.25, 0.25, 0.75, 0.75,
+            0.25, 0.25, 0.75, 0.25, 0.25,
+            0.25, 0.25, 0.75, 0.25, 0.75,
+            0.25, 0.25, 0.75, 0.75, 0.25,
+            0.25, 0.25, 0.75, 0.75, 0.75,
+            0.25, 0.75, 0.25, 0.25, 0.25,
+            0.25, 0.75, 0.25, 0.25, 0.75,
+            0.25, 0.75, 0.25, 0.75, 0.25,
+            0.25, 0.75, 0.25, 0.75, 0.75,
+            0.25, 0.75, 0.75, 0.25, 0.25,
+            0.25, 0.75, 0.75, 0.25, 0.75,
+            0.25, 0.75, 0.75, 0.75, 0.25,
+            0.25, 0.75, 0.75, 0.75, 0.75,
+            0.75, 0.25, 0.25, 0.25, 0.25,
+            0.75, 0.25, 0.25, 0.25, 0.75,
+            0.75, 0.25, 0.25, 0.75, 0.25,
+            0.75, 0.25, 0.25, 0.75, 0.75,
+            0.75, 0.25, 0.75, 0.25, 0.25,
+            0.75, 0.25, 0.75, 0.25, 0.75,
+            0.75, 0.25, 0.75, 0.75, 0.25,
+            0.75, 0.25, 0.75, 0.75, 0.75,
+            0.75, 0.75, 0.25, 0.25, 0.25,
+            0.75, 0.75, 0.25, 0.25, 0.75,
+            0.75, 0.75, 0.25, 0.75, 0.25,
+            0.75, 0.75, 0.25, 0.75, 0.75,
+            0.75, 0.75, 0.75, 0.25, 0.25,
+            0.75, 0.75, 0.75, 0.25, 0.75,
+            0.75, 0.75, 0.75, 0.75, 0.25,
+            0.75, 0.75, 0.75, 0.75, 0.75};
+
+        // Create input points in the middle of the cells
+        EXPECT_TRUE(Domain.grid(dataPoints, 0));
+
+        for (auto dataIt = dataPoints.begin(), exactDataIt = exactDataPoints.begin(); dataIt != dataPoints.end(); dataIt++, exactDataIt++)
+        {
+            EXPECT_DOUBLE_EQ(*dataIt, *exactDataIt);
+        }
+    }
+}
+
+/*!
+ * \ingroup Test_Module
+ *
+ * Test to check hypercubeSampling construction
+ */
+TEST(hypercubeSamplingTest, HandlesUniformdistribution)
+{
+    // Problem dimension
+    int numDimensions = 1;
+
+    // Number of data points
+    int const numDataPoints = 10;
+
+    // Number of points in each direction
+    std::vector<int> numPointsInEachDirection{10};
+
+    // Create an instance of the hypercubeSampling object in unit hypercube
+    umuq::hypercubeSampling<double> Domain(numPointsInEachDirection);
+
+    std::vector<double> dataPoints(numDataPoints * numDimensions);
+
+    // Initialize the PRNG or set the state of the PRNG
+    EXPECT_TRUE(prng.setState());
+
+    // Set the pseudo random number generator
+    EXPECT_TRUE(Domain.setRandomGenerator(&prng));
+
+    // Create uniformly random distributed points in the hypercube
+    EXPECT_TRUE(Domain.sample(dataPoints));
 }
 
 int main(int argc, char **argv)
