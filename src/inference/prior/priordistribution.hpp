@@ -2,31 +2,12 @@
 #define UMUQ_PRIORDISTRIBUTION_H
 
 #include "core/core.hpp"
+#include "data/priortype.hpp"
 #include "numerics/density.hpp"
 #include "numerics/random/psrandom.hpp"
 
 namespace umuq
 {
-
-/*! \enum priorTypes
- * \ingroup Inference_Module
- * 
- * \brief Prior distribution types currently supported in %UMUQ
- * 
- */
-enum priorTypes
-{
-    /*! \link umuq::density::uniformDistribution UNIFORM \endlink */
-    UNIFORM = 0,
-    /*! \link umuq::density::gaussianDistribution GAUSSIAN \endlink */
-    GAUSSIAN = 1,
-    /*! \link umuq::density::exponentialDistribution EXPONENTIAL \endlink */
-    EXPONENTIAL = 2,
-    /*! \link umuq::density::gammaDistribution GAMMA \endlink */
-    GAMMA = 3,
-    /*! COMPOSITE  */
-    COMPOSITE = 4
-};
 
 /*! \class priorDistribution
  * \ingroup Inference_Module
@@ -87,7 +68,15 @@ class priorDistribution
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      */
-    priorDistribution(int const probdim, int const prior = 0);
+    priorDistribution(int const probdim, priorTypes const prior = priorTypes::UNIFORM);
+
+    /*!
+     * \brief Construct a new prior Distribution object
+     * 
+     * \param probdim  Problem dimension
+     * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
+     */
+    priorDistribution(int const probdim, int const prior);
 
     /*!
      * \brief Move constructor, construct a new priorDistribution object from input priorDistribution object
@@ -120,7 +109,18 @@ class priorDistribution
      * \returns true 
      * \returns false  If there is not enough memory or wrong prior type
      */
-    bool reset(int const probdim, int const prior = 0);
+    bool reset(int const probdim, priorTypes const prior = priorTypes::UNIFORM);
+
+    /*!
+     * \brief Reset the priorDistribution object size & type
+     * 
+     * \param probdim  Problem dimension
+     * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
+     * 
+     * \returns true 
+     * \returns false  If there is not enough memory or wrong prior type
+     */
+    bool reset(int const probdim, int const prior);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -132,7 +132,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
+    bool set(T const *Param1, T const *Param2, priorTypes const *compositeprior = nullptr);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -144,7 +144,31 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = EmptyVector<int>);
+    bool set(T const *Param1, T const *Param2, int const *compositeprior);
+
+    /*!
+     * \brief Set the priorDistribution parameters
+     * 
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
+     * 
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
+     */
+    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
+
+    /*!
+     * \brief Set the priorDistribution parameters
+     * 
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
+     * 
+     * \returns true 
+     * \returns false If it encounters an unexpected problem
+     */
+    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior);
 
     /*!
      * \brief Set the Random Number Generator object to 
@@ -157,6 +181,13 @@ class priorDistribution
     bool setRandomGenerator(psrandom<T> *PRNG);
 
     /*!
+     * \brief Get the Random Number Generator object 
+     * 
+     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
+     */
+    inline psrandom<T> *getRandomGenerator();
+
+    /*!
      * \brief Get the dimension
      * 
      * \returns int Dimension of the problem
@@ -166,16 +197,16 @@ class priorDistribution
     /*!
      * \brief Get the prior type
      * 
-     * \returns int prior type
+     * \returns priorTypes prior type
      */
-    inline int getpriorType();
+    inline priorTypes getpriorType();
 
     /*!
      * \brief Get the Prior Types for the composite prior
      * 
-     * \returns int* Prior Types
+     * \returns priorTypes* Prior Types
      */
-    inline int *getPriorTypes();
+    inline priorTypes *getPriorTypes();
 
     /*!
      * \brief Probability density function (pdf)
@@ -256,10 +287,10 @@ class priorDistribution
      * Prior type which is one of : <br>
      * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
      */
-    int priorType;
+    priorTypes priorType;
 
     //! Composite distribution prior
-    std::unique_ptr<int[]> compositePrior;
+    std::unique_ptr<priorTypes[]> compositePrior;
 
   private:
     //! Flat (Uniform) distribution
@@ -305,14 +336,14 @@ priorDistribution<T>::priorDistribution() : nDim(0),
                                             gaussianDist(nullptr) {}
 
 template <typename T>
-priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nDim(probdim),
-                                                                              priorType(prior),
-                                                                              compositePrior(nullptr),
-                                                                              uniformDist(nullptr),
-                                                                              multivariategaussianDist(nullptr),
-                                                                              exponentialDist(nullptr),
-                                                                              gammaDist(nullptr),
-                                                                              gaussianDist(nullptr)
+priorDistribution<T>::priorDistribution(int const probdim, priorTypes const prior) : nDim(probdim),
+                                                                                     priorType(prior),
+                                                                                     compositePrior(nullptr),
+                                                                                     uniformDist(nullptr),
+                                                                                     multivariategaussianDist(nullptr),
+                                                                                     exponentialDist(nullptr),
+                                                                                     gammaDist(nullptr),
+                                                                                     gaussianDist(nullptr)
 {
     switch (priorType)
     {
@@ -331,6 +362,9 @@ priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nD
         break;
     };
 }
+
+template <typename T>
+priorDistribution<T>::priorDistribution(int const probdim, int const prior) : priorDistribution(probdim, static_cast<priorTypes>(prior)) {}
 
 template <typename T>
 priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(other.nDim),
@@ -411,7 +445,7 @@ template <typename T>
 priorDistribution<T>::~priorDistribution() {}
 
 template <typename T>
-bool priorDistribution<T>::reset(int const probdim, int const prior)
+bool priorDistribution<T>::reset(int const probdim, priorTypes const prior)
 {
     nDim = probdim;
     priorType = prior;
@@ -459,7 +493,13 @@ bool priorDistribution<T>::reset(int const probdim, int const prior)
 }
 
 template <typename T>
-bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *compositeprior)
+bool priorDistribution<T>::reset(int const probdim, int const prior)
+{
+    return reset(probdim, static_cast<priorTypes>(prior));
+}
+
+template <typename T>
+bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes const *compositeprior)
 {
     switch (priorType)
     {
@@ -509,15 +549,14 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                compositePrior.reset(new int[nDim]());
+                compositePrior.reset(new priorTypes[nDim]());
             }
             catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
 
-            int *p = const_cast<int *>(compositeprior);
-            std::copy(p, p + nDim, compositePrior.get());
+            std::copy(compositeprior, compositeprior + nDim, compositePrior.get());
         }
         else
         {
@@ -701,6 +740,24 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
 }
 
 template <typename T>
+bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *compositeprior)
+{
+    if (compositeprior)
+    {
+        std::vector<priorTypes> CompositePrior(nDim);
+        std::transform(compositeprior, compositeprior + nDim, CompositePrior.begin(), [](int const c) -> priorTypes { return static_cast<priorTypes>(c); });
+        return set(Param1, Param2, CompositePrior.data());
+    }
+    return set(Param1, Param2);
+}
+
+template <typename T>
+bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior)
+{
+    return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
+}
+
+template <typename T>
 bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior)
 {
     return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
@@ -823,19 +880,25 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
 }
 
 template <typename T>
+inline psrandom<T> *priorDistribution<T>::getRandomGenerator()
+{
+    return uniformDist ? uniformDist->getRandomGenerator() : gaussianDist ? gaussianDist->getRandomGenerator() : exponentialDist ? exponentialDist->getRandomGenerator() : gammaDist ? gammaDist->getRandomGenerator() : multivariategaussianDist ? multivariategaussianDist->getRandomGenerator() : nullptr;
+}
+
+template <typename T>
 inline int priorDistribution<T>::getDim()
 {
     return nDim;
 }
 
 template <typename T>
-inline int priorDistribution<T>::getpriorType()
+inline priorTypes priorDistribution<T>::getpriorType()
 {
     return priorType;
 }
 
 template <typename T>
-inline int *priorDistribution<T>::getPriorTypes()
+inline priorTypes *priorDistribution<T>::getPriorTypes()
 {
     return compositePrior.get();
 }
