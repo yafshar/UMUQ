@@ -36,27 +36,27 @@ matrix:
             - libstdc++-5-dev
       env:
         - MATRIX_EVAL="sudo apt-get update && CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
-    - os: linux
-      compiler: clang
-      sudo: true
-      install: travis_wait 60 ./scripts/install-linux-clang.sh
-      script: ./scripts/build-autotools.sh
-      # This section installs the necessary dependencies.
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-            - ubuntu-toolchain-r-test
-          packages:
-            - cmake
-            - gcc-5
-            - g++-5
-            - gfortran-5
-            - libstdc++-5-dev
-            - clang-5.0
-            - libclang-5.0-dev
-      env:
-        - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
+    # - os: linux
+    #   compiler: clang
+    #   sudo: true
+    #   install: travis_wait 60 ./scripts/install-linux-clang.sh
+    #   script: ./scripts/build-autotools.sh
+    #   # This section installs the necessary dependencies.
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - llvm-toolchain-trusty-5.0
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - cmake
+    #         - gcc-5
+    #         - g++-5
+    #         - gfortran-5
+    #         - libstdc++-5-dev
+    #         - clang-5.0
+    #         - libclang-5.0-dev
+    #   env:
+    #     - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
     - os: osx
       osx_image: xcode10
       sudo: true
@@ -64,14 +64,14 @@ matrix:
       script: ./scripts/build-autotools.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
-    - os: osx
-      osx_image: xcode8.3
-      compiler: gcc
-      sudo: true
-      install: travis_wait 60 ./scripts/install-osx.sh
-      script: ./scripts/build-autotools.sh
-      env:
-        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+    # - os: osx
+    #   osx_image: xcode8.3
+    #   compiler: gcc
+    #   sudo: true
+    #   install: travis_wait 60 ./scripts/install-osx.sh
+    #   script: ./scripts/build-autotools.sh
+    #   env:
+    #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
   - test -n $CC   && unset CC
