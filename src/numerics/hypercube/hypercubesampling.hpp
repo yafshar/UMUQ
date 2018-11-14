@@ -31,34 +31,53 @@ class hypercubeSampling
 {
   public:
 	/*!
-     * \brief Construct a new hypercubeSampling object
-     * 
+     * \brief Construct a new hypercubeSampling object. <br>
+	 * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
+	 * 
      * \param TotalNumPoints  Total number of points to generate in the hypercube
      * \param NumDimensions   Number of dimensions
-     * \param LowerBound      NumDimensions size vector containing lower bound in each dimension of the hypercube
-     * \param UpperBound      NumDimensions size vector containing upper bound in each dimension of the hypercube
+     * \param LowerBound      \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0) 
+     * \param UpperBound      \c NumDimensions size vector containing upper bound in each dimension of the hypercube (default is 1)
      */
 	hypercubeSampling(int const TotalNumPoints, int const NumDimensions, double const *LowerBound = nullptr, double const *UpperBound = nullptr);
 
 	/*!
-     * \brief Construct a new hypercubeSampling object
-     * 
+     * \brief Construct a new hypercubeSampling object. <br>
+	 * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
+	 * 
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
      * \param NumDimensions             Number of dimensions
-     * \param LowerBound                NumDimensions size vector containing lower bound in each dimension of the hypercube
-     * \param UpperBound                NumDimensions size vector containing upper bound in each dimension of the hypercube
+     * \param LowerBound                \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0)
+     * \param UpperBound                \c NumDimensions size vector containing upper bound in each dimension of the hypercube (default is 1)
 	 */
 	hypercubeSampling(int const *NumPointsInEachDirection, int const NumDimensions, double const *LowerBound = nullptr, double const *UpperBound = nullptr);
 
 	/*!
-     * \brief Construct a new hypercubeSampling object
-     * 
-     * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param LowerBound                NumDimensions size vector containing lower bound in each dimension of the hypercube
-     * \param UpperBound                NumDimensions size vector containing upper bound in each dimension of the hypercube
+     * \brief Construct a new hypercubeSampling object. <br>
+	 * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
+	 * 
+     * \param NumPointsInEachDirection  \c NumDimensions size vector containing the number of points along each dimension of the hypercube
+     * \param LowerBound                \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0) 
+     * \param UpperBound                \c NumDimensions size vector containing upper bound in each dimension of the hypercube (default is 1)
 	 */
 	hypercubeSampling(std::vector<int> const &NumPointsInEachDirection,
 					  std::vector<double> const &LowerBound = EmptyVector<double>, std::vector<double> const &UpperBound = EmptyVector<double>);
+
+    /*!
+     * \brief Move constructor, construct a new hypercubeSampling object
+     * 
+     * \param other hypercubeSampling object
+     */
+    explicit hypercubeSampling(hypercubeSampling<T> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param other hypercubeSampling object
+     * 
+     * \returns hypercubeSampling<T>& hypercubeSampling object
+     */
+    hypercubeSampling<T> &operator=(hypercubeSampling<T> &&other);
 
 	/*!
 	 * \brief Destroy the hypercubeSampling object
@@ -228,6 +247,29 @@ class hypercubeSampling
 	bool setRandomGenerator(psrandom<double> *PRNG);
 
   private:
+    /*!
+     * \brief Delete a hypercubeSampling object default construction
+     *
+     */
+    hypercubeSampling() = delete;
+
+    /*!
+     * \brief Delete a hypercubeSampling object copy construction
+     * 
+     * Make it noncopyable.
+     */
+    hypercubeSampling(hypercubeSampling<T> const &) = delete;
+
+    /*!
+     * \brief Delete a hypercubeSampling object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns hypercubeSampling<T>& 
+     */
+    hypercubeSampling<T> &operator=(hypercubeSampling<T> const &) = delete;
+
+  protected:
 	//! Total number of points to generate
 	std::size_t totalNumPoints;
 
@@ -246,7 +288,7 @@ class hypercubeSampling
 	//! Indicator of the unit hypercube or not
 	bool isItUnitCube;
 
-  private:
+  protected:
 	//! Prior distribution object
 	priorDistribution<T> prior;
 };
@@ -356,6 +398,32 @@ hypercubeSampling<T>::hypercubeSampling(std::vector<int> const &NumPointsInEachD
 			}
 		}
 	}
+}
+
+template <typename T>
+hypercubeSampling<T>::hypercubeSampling(hypercubeSampling<T> &&other)
+{
+	totalNumPoints = other.totalNumPoints;
+	numPointsInEachDirection = std::move(other.numPointsInEachDirection);
+	numDimensions = other.numDimensions;
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	isItUnitCube = other.isItUnitCube;
+	prior = std::move(other.prior);
+}
+
+template <typename T>
+hypercubeSampling<T> &hypercubeSampling<T>::operator=(hypercubeSampling<T> &&other)
+{
+	totalNumPoints = other.totalNumPoints;
+	numPointsInEachDirection = std::move(other.numPointsInEachDirection);
+	numDimensions = other.numDimensions;
+	lowerBound = std::move(other.lowerBound);
+	upperBound = std::move(other.upperBound);
+	isItUnitCube = other.isItUnitCube;
+	prior = std::move(other.prior);
+
+    return *this;
 }
 
 template <typename T>
