@@ -10,10 +10,24 @@ fi
 if [ "${TRAVIS_SUDO}" = "true" ]; then
 	sudo apt-get update 
 
+    if [ -e "/usr/bin/clang" ]; then
+        sudo unlink /usr/bin/clang;
+    fi
+    if [ -e "/usr/bin/clang++" ]; then
+        sudo unlink /usr/bin/clang++;
+    fi
+    if [ -e "/usr/bin/gfortran" ]; then
+        sudo unlink /usr/bin/gfortran;
+    fi
+
+	sudo ln -s /usr/bin/clang-5 /usr/bin/clang
+	sudo ln -s /usr/bin/clang++-5 /usr/bin/clang++
+	sudo ln -s /usr/bin/gfortran-5 /usr/bin/gfortran
+
 	wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 	tar zxvf mpich-3.2.1.tar.gz
 	cd mpich-3.2.1
-	./configure CC=clang CXX=clang++ FC=gfortran-5 --enable-threads=multiple > out 2>&1 & 
+	./configure CC=/usr/bin/clang-5 CXX=/usr/bin/clang++-5 FC=/usr/bin/gfortran-5 --enable-threads=multiple > out 2>&1 & 
 	config_install_mpich_id=$! 
 	while kill -0 "$config_install_mpich_id" > /dev/null 2>&1; do 
 		sleep 300
