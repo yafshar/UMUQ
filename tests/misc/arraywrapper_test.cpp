@@ -12,7 +12,7 @@ TEST(arraywrapper_test, HandlesVectors)
 {
     int j;
 
-    //! check for array of int
+    // check for array of int
     {
         std::unique_ptr<int[]> iPointer(new int[1000]);
 
@@ -29,7 +29,7 @@ TEST(arraywrapper_test, HandlesVectors)
         }
     }
 
-    //! check for array of double
+    // check for array of double
     {
         std::unique_ptr<double[]> dPointer(new double[100]);
 
@@ -47,7 +47,23 @@ TEST(arraywrapper_test, HandlesVectors)
         }
     }
 
-    //! check for array of structure
+    // check for std::vector of double
+    {
+        std::vector<double> dPointer(100);
+
+        // Fill the array with some values
+        std::iota(dPointer.begin(), dPointer.end(), 100);
+
+        j = 100;
+        umuq::arrayWrapper<double> dArray(dPointer);
+        for (auto i = dArray.begin(); i != dArray.end(); i++)
+        {
+            EXPECT_EQ(*i, (double)j);
+            j++;
+        }
+    }
+
+    // check for array of structure
     {
         struct srt
         {
@@ -86,11 +102,11 @@ TEST(arraywrapper_test, HandlesVectors)
  */
 TEST(arraywrapper_test, HandlesVectorsWithStride)
 {
-    //! check for array of int with stride 2
+    // check for array of int with stride 2
     {
         std::unique_ptr<int[]> iPointer{new int[10]};
 
-        //Fill the array with some values
+        // Fill the array with some values
         std::iota(iPointer.get(), iPointer.get() + 10, 0);
 
         umuq::arrayWrapper<int> iArray(iPointer, 10, 2);
@@ -105,11 +121,11 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
         EXPECT_EQ(iArray.size(), std::size_t{5});
     }
 
-    //! check for array of double with stride 9
+    // check for array of double with stride 9
     {
         std::unique_ptr<double[]> dPointer{new double[100]};
 
-        //Fill the array with some values
+        // Fill the array with some values
         std::iota(dPointer.get(), dPointer.get() + 100, 1000.);
 
         umuq::arrayWrapper<double> dArray(dPointer, 100, 9);
@@ -123,6 +139,25 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
 
         EXPECT_EQ(dArray.size(), std::size_t{11});
     }
+
+    // check for vector of double with stride 7
+    {
+        std::vector<double> dPointer(100);
+
+        // Fill the array with some values
+        std::iota(dPointer.begin(), dPointer.end(), 1000.);
+
+        umuq::arrayWrapper<double> dArray(dPointer, 7);
+
+        double sd = 1000.;
+        for (auto i = dArray.begin(); i != dArray.end(); i++)
+        {
+            EXPECT_DOUBLE_EQ(*i, sd);
+            sd += 7.;
+        }
+
+        EXPECT_EQ(dArray.size(), std::size_t{14});
+    }
 }
 
 /*!
@@ -133,7 +168,7 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
  */
 TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
 {
-    //! check for 2-Dimensional array
+    // check for 2-Dimensional array
     {
         std::unique_ptr<int[]> iPointer{new int[20]};
 
@@ -171,6 +206,56 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
         }
 
         EXPECT_EQ(jArray.size(), std::size_t{5});
+    }
+}
+
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Construct a new TEST object for writing at elements 
+ * 
+ */
+TEST(arraywrapper_test, HandlesWriteInNDimVectorsWithStride)
+{
+    // check for std::vector of double
+    {
+        std::vector<double> dPointer(100, 10.);
+
+        umuq::arrayWrapper<double> dArray(dPointer, 10);
+        for (auto i : dArray)
+        {
+            i *= 100;
+        }
+
+        int j = 0;
+        for (auto i = dPointer.begin(); i != dPointer.end(); i++)
+        {
+            EXPECT_DOUBLE_EQ(*i, (j % 10 ? 1000. : 10.));
+        }
+    }
+
+    // check for 2-Dimensional array
+    {
+        std::unique_ptr<int[]> iPointer{new int[20]};
+
+        // Fill the array with some values
+        for (int i = 0, j = 0; i < 10; i++)
+        {
+            for (int d = 0; d < 2; d++, j++)
+            {
+                iPointer[j] = j;
+            }
+        }
+
+        umuq::arrayWrapper<int> iArray(iPointer, 10, 2);
+
+        for (auto i = iArray.begin(); i != iArray.end(); i += 2)
+        {
+            *i *= 10;
+        }
+
+        EXPECT_DOUBLE_EQ(iPointer[4], 40.);
+        EXPECT_DOUBLE_EQ(iPointer[8], 80.);
     }
 }
 
