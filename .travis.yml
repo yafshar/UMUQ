@@ -52,11 +52,8 @@ matrix:
             - g++-5
             - gfortran-5
             - libstdc++-5-dev
-            - clang-3.8
-            - clang++-3.8
-            - libclang-3.8-dev
       env:
-        - MATRIX_EVAL="sudo apt-get update && CC=clang-3.8 && CXX=clang++-3.8 && FC=gfortran-5"
+        - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
     - os: osx
       osx_image: xcode10
       sudo: true
@@ -64,14 +61,14 @@ matrix:
       script: ./scripts/build-autotools.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
-    # - os: osx
-    #   osx_image: xcode8.3
-    #   compiler: gcc
-    #   sudo: true
-    #   install: travis_wait 60 ./scripts/install-osx.sh
-    #   script: ./scripts/build-autotools.sh
-    #   env:
-    #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+    - os: osx
+      osx_image: xcode8.3
+      compiler: gcc
+      sudo: true
+      install: travis_wait 60 ./scripts/install-osx.sh
+      script: ./scripts/build-autotools.sh
+      env:
+        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
   - test -n $CC   && unset CC
