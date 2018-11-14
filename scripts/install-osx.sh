@@ -51,7 +51,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 		echo "MPICH configuration is finished!"
 		rm -fr ./out
 
-		make -j 2 > out 2>&1 & 
+		make -j 4 > out 2>&1 & 
 		make_install_mpich_id=$! 
 
 		while kill -0 "$make_install_mpich_id" >/dev/null 2>&1; do 
