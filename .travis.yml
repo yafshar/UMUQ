@@ -52,6 +52,8 @@ matrix:
             - g++-5
             - gfortran-5
             - libstdc++-5-dev
+            - clang-5.0
+            - libclang-5.0-dev
       env:
         - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
     - os: osx
