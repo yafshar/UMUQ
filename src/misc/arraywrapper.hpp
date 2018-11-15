@@ -190,7 +190,11 @@ class arrayWrapper
         using iterator_category = std::forward_iterator_tag;
 
         //! Value type - The type "pointed to" by the iterator.
+#if UMUQ_OS_MAC == 1
+        using value_type = T;
+#else
         using value_type = std::remove_cv<T>;
+#endif
 
         //! Distance between iterators is represented as this type.
         using difference_type = std::ptrdiff_t;
