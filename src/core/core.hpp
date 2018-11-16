@@ -66,6 +66,7 @@ extern "C"
 #include <cmath>
 #include <cstring> //strlen, strstr, strtok
 
+#include <chrono>
 #include <typeinfo>
 #include <vector>
 #include <functional>
@@ -83,8 +84,8 @@ extern "C"
 #include <memory>
 #include <random>
 #include <map>
+#include <thread>
 #include <mutex>
-#include <chrono>
 
 #if HAVE_PYTHON == 1
 #ifdef _POSIX_C_SOURCE
