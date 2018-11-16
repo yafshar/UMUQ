@@ -656,6 +656,9 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
                 gammaIndex[nGAMMA] = i;
                 nGAMMA++;
                 break;
+            default:
+                UMUQFAILRETURN("Unknown prior distribution type!");
+                break;
             };
         }
 
@@ -862,6 +865,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                                 UMUQFAILRETURN("PriorDistribution parameters are not set!");
                             }
                         }
+                        break;
+                    default:
+                        UMUQFAILRETURN("Unknown prior distribution type!");
                         break;
                     };
                 }
