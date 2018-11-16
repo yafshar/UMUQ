@@ -121,6 +121,14 @@ template <typename T>
 static std::vector<T> const EmptyVector{};
 
 /*!
+ * \ingroup Const_Module
+ * 
+ * \brief Empty string for initialization
+ * 
+ */
+static std::string const EmptyString{};
+
+/*!
  * \brief Manual (or static) loop unrolling increment 
  * 
  * \todo
