@@ -259,6 +259,22 @@ TEST(arraywrapper_test, HandlesWriteInNDimVectorsWithStride)
     }
 }
 
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Construct a new TEST object for writing at elements 
+ * 
+ */
+TEST(arraywrapper_test, HandlesStatisticsFunctions)
+{
+    // test for normal array of data
+    std::vector<int> iVector{2, 3, 5, 7, 1, 6, 8, 10, 9, 4, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+
+    umuq::arrayWrapper<int> iArray(iVector, 2);
+
+    EXPECT_EQ(*std::min_element(iArray.begin(), iArray.end()), -9);
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
