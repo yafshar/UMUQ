@@ -42,9 +42,16 @@ struct ioFormat
      * \param rhs ioFormat object
      * 
      * \returns true If lhs \c == rhs 
-     * \returns false  
      */
     inline bool operator==(ioFormat const &rhs);
+
+    /*!
+     * \brief Operator \c == compares the underlying ioFormat object
+     * 
+     * \param rhs ioFormat object
+     * 
+     * \returns true If lhs \c == rhs 
+     */
     inline bool operator==(ioFormat const &rhs) const;
 
     /*!
@@ -53,9 +60,16 @@ struct ioFormat
      * \param rhs  ioFormat object
      * 
      * \returns true  If lhs \c != rhs 
-     * \returns false 
      */
     inline bool operator!=(ioFormat const &rhs);
+
+    /*!
+     * \brief Operator \c != compares the underlying ioFormat object
+     * 
+     * \param rhs  ioFormat object
+     * 
+     * \returns true  If lhs \c != rhs 
+     */
     inline bool operator!=(ioFormat const &rhs) const;
 
   public:
