@@ -9,16 +9,16 @@
  */
 TEST(eigen_test, HandlesMap)
 {
-	//! Create an array of data
+	// Create an array of data
 	std::vector<double> A(12);
 
-	//! Initialize the array
+	// Initialize the array
 	std::iota(A.begin(), A.end(), double{});
 
-	//! Copy the buffer to the new Eigen object
+	// Copy the buffer to the new Eigen object
 	umuq::EMatrixXd ACopy = umuq::EMapType<double>(A.data(), 3, 4);
 
-	//! Check to make sure the values are the same
+	// Check to make sure the values are the same
 	for (int i = 0, l = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 4; j++, l++)
@@ -27,24 +27,24 @@ TEST(eigen_test, HandlesMap)
 		}
 	}
 
-	//! Map the buffer to an Eigen object format no copy
+	// Map the buffer to an Eigen object format no copy
 	umuq::EMapType<double> AMap(A.data(), 3, 4);
 
-	//! Change some of the values in the original buffer
+	// Change some of the values in the original buffer
 	A[0] = -100.;
 	A[1] = 200.0;
 	A[5] = 500.0;
 	A[9] = 900.0;
 	A[11] = -23.;
 
-	//! Compare the Copied buffer and original data
+	// Compare the Copied buffer and original data
 	EXPECT_NE(AMap(0, 0), ACopy(0, 0));
 	EXPECT_NE(AMap(0, 1), ACopy(0, 1));
 	EXPECT_NE(AMap(1, 1), ACopy(1, 1));
 	EXPECT_NE(AMap(2, 1), ACopy(2, 1));
 	EXPECT_NE(AMap(2, 3), ACopy(2, 3));
 
-	//! Make sure that the mapped data is the same as original buffer
+	// Make sure that the mapped data is the same as original buffer
 	EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
 	EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
 	EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
@@ -58,26 +58,26 @@ TEST(eigen_test, HandlesMap)
 	EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
 	EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
 
-	//! Check the mutual exclusive
+	// Check the mutual exclusive
 	AMap(0, 0) = 200.0;
 	EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
 
-	//! Destroy the buffer
+	// Destroy the buffer
 	A.clear();
 	A.shrink_to_fit();
 
 	EXPECT_EQ(nullptr, A.data());
 
-	//! Allocate memory and initialize to 0
+	// Allocate memory and initialize to 0
 	A.resize(625, double{});
 
-	//! Create a new 25*25 Eigen Matrix C and initialize to random values
+	// Create a new 25*25 Eigen Matrix C and initialize to random values
 	umuq::EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
 
-	//! Copy the matrix C into A
+	// Copy the matrix C into A
 	umuq::EMap<umuq::EMatrixXd>(A.data(), C);
 
-	//! Check to see if the copy process has been done correctly
+	// Check to see if the copy process has been done correctly
 	for (int i = 0, l = 0; i < 25; i++)
 	{
 		for (int j = 0; j < 25; j++, l++)
@@ -86,13 +86,13 @@ TEST(eigen_test, HandlesMap)
 		}
 	}
 
-	//! Change one value in the array
+	// Change one value in the array
 	A[624] = 100.0;
 
-	//! Check to make sure that the matrix C is a copy of the array buffer
+	// Check to make sure that the matrix C is a copy of the array buffer
 	EXPECT_NE(A[624], C(24, 24));
 
-	//! Destroy the buffer
+	// Destroy the buffer
 	A.clear();
 	A.shrink_to_fit();
 
@@ -125,7 +125,7 @@ TEST(eigen_test, HandlesMap)
 		}
 	}
 
-	//! Converts them to an array, which uses to multiply them coefficient-wise
+	// Converts them to an array, which uses to multiply them coefficient-wise
 	DCopy = DCopy.array() * DCopy.array();
 
 	umuq::EMap<umuq::EMatrixXd>(D, DCopy);
@@ -159,8 +159,8 @@ TEST(eigen_la_test, HandlesSolver)
 
 	umuq::EVector6d B = umuq::EVector6d::Ones();
 
-	//! LU decomposition of a matrix with complete pivoting
-	//! Eigen::FullPivLU<EMatrix6d> lu(A);
+	// LU decomposition of a matrix with complete pivoting
+	// Eigen::FullPivLU<EMatrix6d> lu(A);
 
 	umuq::EVector6d X = A.fullPivLu().solve(B);
 
@@ -183,15 +183,15 @@ TEST(eigen_la_test, HandlesSolver)
  */
 TEST(eigen_svd_test, HandlesSVD)
 {
-	//! This is the example from wikipedia
-	//! https://en.wikipedia.org/wiki/Singular-value_decomposition
+	// This is the example from wikipedia
+	// https://en.wikipedia.org/wiki/Singular-value_decomposition
 	Eigen::Matrix<double, 4, 5> A;
 	A << 1, 0, 0, 0, 2,
 		0, 0, 3, 0, 0,
 		0, 0, 0, 0, 0,
 		0, 2, 0, 0, 0;
 
-	//!Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
+	//Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
 	Eigen::JacobiSVD<Eigen::Matrix<double, 4, 5>> svd(A);
 	umuq::EVector4<double> B(svd.singularValues());
 
@@ -212,22 +212,22 @@ TEST(eigen_lu_test, HandlesLU)
 	typedef umuq::EMatrix3<double> EMatrix3d;
 	typedef umuq::EVector3<double> EVector3d;
 
-	//! A 3*3 matrix with rank 2 which is not invertible
+	// A 3*3 matrix with rank 2 which is not invertible
 	EMatrix3d m;
 	m << 1, 1, 0,
 		1, 3, 1,
 		0, 2, 1;
 
-	//! LU decomposition of a matrix with complete pivoting, and related features.
+	// LU decomposition of a matrix with complete pivoting, and related features.
 	Eigen::FullPivLU<EMatrix3d> lu(m);
 
-	//! The rank of the matrix m with lu decomposition.
+	// The rank of the matrix m with lu decomposition.
 	EXPECT_EQ(lu.rank(), 2);
 
-	//! False as the matrix m with lu decomposition is not invertible.
+	// False as the matrix m with lu decomposition is not invertible.
 	EXPECT_FALSE(lu.isInvertible());
 
-	//! Column vector
+	// Column vector
 	EVector3d n;
 	n << 5, 5, 5;
 
@@ -239,20 +239,20 @@ TEST(eigen_lu_test, HandlesLU)
 		std::cout << std::endl;
 		std::cout << p << std::endl;
 
-		//! Creating the new matrix from image (also called its column-space) of it and a new vector.
+		// Creating the new matrix from image (also called its column-space) of it and a new vector.
 		m << p, n;
 
 		std::cout << std::endl;
 		std::cout << m << std::endl;
 		std::cout << std::endl;
 
-		//! LU decomposition of a matrix with complete pivoting, and related features.
+		// LU decomposition of a matrix with complete pivoting, and related features.
 		lu.compute(m);
 
-		//! The rank of the matrix m with lu decomposition.
+		// The rank of the matrix m with lu decomposition.
 		EXPECT_EQ(lu.rank(), 3);
 
-		//! True as the matrix m with lu decomposition is invertible.
+		// True as the matrix m with lu decomposition is invertible.
 		EXPECT_TRUE(lu.isInvertible());
 	}
 }
@@ -265,32 +265,88 @@ TEST(eigen_lu_test, HandlesLU)
  */
 TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 {
-	//! Matrix A is selfadjoint
+	// Matrix A is selfadjoint
 	umuq::EMatrix2d A;
 	A << 2, 2, 2, 2;
 
-	//! Matrix A is not positive definite
+	// Matrix A is not positive definite
 	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
 
-	//! Force the matrix to be positive definite
+	// Force the matrix to be positive definite
 	umuq::forceSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A);
 
-	//! Check to see if it is positive definite
+	// Check to see if it is positive definite
 	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
 
-	//! Matrix B is selfadjoint
+	// Matrix B is selfadjoint
 	std::vector<double> B{1, 1, 3,
 						  1, 3, 1,
 						  3, 1, 1};
 
-	//! Matrix B is not positive definite
+	// Matrix B is not positive definite
 	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
 
-	//! Force the matrix to be positive definite
+	// Force the matrix to be positive definite
 	umuq::forceSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3);
 
-	//! Check to see if it is positive definite
+	// Check to see if it is positive definite
 	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
+}
+
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Test to check the computation of the distance between the rows or columns of a matrix
+ * 
+ */
+TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
+{
+	// Construct two simple matrices
+	umuq::EMatrixX<int> X(3, 4);
+	X << 1, 2, 3, 4,
+		4, 5, 6, 4,
+		7, 8, -9, 4;
+
+	umuq::EMatrixX<double> Y;
+
+	// Calculate the squared distance between the rows of X
+	umuq::calculateSquaredDistance<int, double>(X, Y);
+
+	EXPECT_TRUE(Y.rows() == X.rows());
+	EXPECT_TRUE(Y.cols() == X.rows());
+	EXPECT_TRUE((Y.diagonal().array() == 0).all());
+	EXPECT_DOUBLE_EQ(Y(0,1), (1-4)*(1-4)+(2-5)*(2-5)+(3-6)*(3-6)+(4-4)*(4-4));
+	EXPECT_DOUBLE_EQ(Y(0,2), (1-7)*(1-7)+(2-8)*(2-8)+(3+9)*(3+9)+(4-4)*(4-4));
+	EXPECT_DOUBLE_EQ(Y(1,2), (4-7)*(4-7)+(5-8)*(5-8)+(6+9)*(6+9)+(4-4)*(4-4));
+	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
+	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
+
+	// Calculate the squared distance between the columns of X
+	umuq::calculateSquaredDistance<int, double, false>(X, Y);
+
+	EXPECT_TRUE(Y.rows() == X.cols());
+	EXPECT_TRUE(Y.cols() == X.cols());
+
+	EXPECT_TRUE((Y.diagonal().array() == 0).all());
+	EXPECT_DOUBLE_EQ(Y(0,1), (1-2)*(1-2)+(4-5)*(4-5)+(7-8)*(7-8));
+	EXPECT_DOUBLE_EQ(Y(0,2), (1-3)*(1-3)+(4-6)*(4-6)+(7+9)*(7+9));
+	EXPECT_DOUBLE_EQ(Y(0,3), (1-4)*(1-4)+(4-4)*(4-4)+(7-4)*(7-4));
+	EXPECT_DOUBLE_EQ(Y(1,3), (2-4)*(2-4)+(5-4)*(5-4)+(8-4)*(8-4));
+
+	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
+	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
+
+	// Calculate the distance between the rows of X
+	umuq::calculateDistance<int, double>(X, Y);
+
+	EXPECT_TRUE(Y.rows() == X.rows());
+	EXPECT_TRUE(Y.cols() == X.rows());
+	EXPECT_TRUE((Y.diagonal().array() == 0).all());
+	EXPECT_DOUBLE_EQ(Y(0,1), std::sqrt((1-4)*(1-4)+(2-5)*(2-5)+(3-6)*(3-6)+(4-4)*(4-4)));
+	EXPECT_DOUBLE_EQ(Y(0,2), std::sqrt((1-7)*(1-7)+(2-8)*(2-8)+(3+9)*(3+9)+(4-4)*(4-4)));
+	EXPECT_DOUBLE_EQ(Y(1,2), std::sqrt((4-7)*(4-7)+(5-8)*(5-8)+(6+9)*(6+9)+(4-4)*(4-4)));
+	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
+	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
 }
 
 int main(int argc, char **argv)
