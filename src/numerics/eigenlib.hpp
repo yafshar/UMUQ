@@ -6,8 +6,11 @@
 namespace umuq
 {
 
+inline namespace linearalgebra
+{
+
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map type \c #EMapType is a new type to map the existing C++ memory buffer to an Eigen Matrix object.
  * The Map operation maps the existing memory region into the Eigen’s data structures.
@@ -84,7 +87,7 @@ template <class T, int _Options = Eigen::RowMajor>
 using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
@@ -107,7 +110,7 @@ template <typename T, int _Options = Eigen::RowMajor>
 using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type const>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen row vector map type is a new type, used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
@@ -118,7 +121,7 @@ template <typename T>
 using ERowVectorMapType = Eigen::Map<ERowVectorX<T>>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen row vector constant map type is a new read-only map type to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
@@ -129,7 +132,7 @@ template <typename T>
 using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<T> const>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen vector map type is a new type to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
@@ -140,7 +143,7 @@ template <typename T>
 using EVectorMapType = Eigen::Map<EVectorX<T>>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief New read-only map type is used to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
@@ -151,7 +154,7 @@ template <typename T>
 using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  *  
@@ -176,7 +179,7 @@ EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
 }
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * 
@@ -197,7 +200,7 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
 }
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * Eigen map function copies the existing C++ memory buffer to a temporary Eigen Matrix object 
@@ -230,7 +233,7 @@ EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 }
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * Eigen map function copies the existing C++ memory buffer to a temporary Eigen Matrix object 
@@ -261,14 +264,14 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
 }
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \todo
  * We should add the arraywrapper with inner and outer stride to not copy the data when it is not required
  */
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map function copies the Eigen Matrix data to the array of data
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
@@ -291,7 +294,7 @@ inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMa
 }
 
 /*!
- * \ingroup Numerics_Module
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map function copies the Eigen Matrix data to the array of data
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
@@ -316,8 +319,8 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
 	}
 }
 
-/*! \fn isSelfAdjointMatrixPositiveDefinite
- * \ingroup Numerics_Module
+/*! 
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
@@ -343,8 +346,8 @@ inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(nDim - 1) > machinePrecision<T>;
 }
 
-/*! \fn isSelfAdjointMatrixPositiveDefinite
- * \ingroup Numerics_Module
+/*! 
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
@@ -364,8 +367,8 @@ inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixT::Scalar>;
 }
 
-/*! \fn forceSelfAdjointMatrixPositiveDefinite
- * \ingroup Numerics_Module
+/*! 
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
@@ -447,8 +450,8 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 	return;
 }
 
-/*! \fn forceSelfAdjointMatrixPositiveDefinite
- * \ingroup Numerics_Module
+/*! 
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
@@ -531,8 +534,51 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 	return;
 }
 
-/*! \fn calculateSquaredDistance
- * \ingroup Numerics_Module
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between the rows or columns of a matrix
+ * 
+ * \tparam T       Matrix data type
+ * \tparam TOut    Matrix data type of the return output result
+ * \tparam RowWise If true it computes the distance between the rows of a matrix
+ * 
+ * \param eMatrix       The matrix to calculate the distance between its rows or its columns
+ * \param resultMatrix  The matrix to hold the results of the calculation
+ */
+template <typename T, typename TOut = double, bool RowWise = true>
+void calculateDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
+{
+	if (RowWise)
+	{
+		auto const nRows = eMatrix.rows();
+		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
+		{
+			resultMatrix.resize(nRows, nRows);
+		}
+		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
+		resultMatrix.colwise() = vecX;
+		resultMatrix.rowwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
+	}
+	else
+	{
+		auto const nCols = eMatrix.cols();
+		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
+		{
+			resultMatrix.resize(nCols, nCols);
+		}
+
+		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
+		resultMatrix.rowwise() = vecX;
+		resultMatrix.colwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
+	}
+	resultMatrix = resultMatrix.cwiseSqrt();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Calculate the squared distance between the rows or columns of a matrix
  * 
@@ -579,51 +625,8 @@ void calculateSquaredDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &result
 	}
 }
 
-/*! \fn calculateDistance
- * \ingroup Numerics_Module
- * 
- * \brief Calculate the distance between the rows or columns of a matrix
- * 
- * \tparam T       Matrix data type
- * \tparam TOut    Matrix data type of the return output result (default is double)
- * \tparam RowWise If true it computes the distance between the rows of a matrix
- * 
- * \param eMatrix       The matrix to calculate the distance between its rows or its columns
- * \param resultMatrix  The matrix to hold the results of the calculation
- */
-template <typename T, typename TOut = double, bool RowWise = true>
-void calculateDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
-{
-	if (RowWise)
-	{
-		auto const nRows = eMatrix.rows();
-		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
-		{
-			resultMatrix.resize(nRows, nRows);
-		}
-		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
-		resultMatrix.colwise() = vecX;
-		resultMatrix.rowwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
-	}
-	else
-	{
-		auto const nCols = eMatrix.cols();
-		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
-		{
-			resultMatrix.resize(nCols, nCols);
-		}
-
-		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
-		resultMatrix.rowwise() = vecX;
-		resultMatrix.colwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
-	}
-	resultMatrix = resultMatrix.cwiseSqrt();
-}
-
-/*! \fn calculateSOptimality
- * \ingroup Numerics_Module
+/*!
+ * \ingroup LinearAlgebra_Module
  * 
  * \brief Calculate the S-optimality measure
  * 
@@ -633,8 +636,8 @@ void calculateDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
  * 
  * \param eMatrix The matrix to calculate S-optimality for
  * 
- * \returns The S-optimality measure
- *
+ * \returns TOut The S-optimality measure
+ * 
  * The S-optimality measure: <br>
  * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
  * each design point to all the other points in the design. Mathematically, an S–optimal design maximizes 
@@ -655,6 +658,7 @@ TOut calculateSOptimality(EMatrixX<T> const &eMatrix)
 	return 1 / resultMatrix.cwiseInverse().sum();
 }
 
+} // namespace linearalgebra
 } // namespace umuq
 
 #endif // UMUQ_EIGENLIB
