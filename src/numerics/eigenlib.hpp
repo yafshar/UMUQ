@@ -9,7 +9,7 @@ namespace umuq
 /*!
  * \ingroup Numerics_Module
  * 
- * \brief Eigen map type is a new type to map the existing C++ memory buffer to an Eigen Matrix object 
+ * \brief Eigen map type \c #EMapType is a new type to map the existing C++ memory buffer to an Eigen Matrix object.
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
  * \tparam T Data type or \b Eigen::Matrix type
@@ -32,7 +32,7 @@ namespace umuq
  * \code 
  * double A[12];
  * for(int i = 0; i < 12; ++i) A[i] = (double)i;
- * EigenMapType<double, Eigen::ColMajor> B(A, 3, 4); 
+ * EMapType<double, Eigen::ColMajor> B(A, 3, 4); 
  * std::cout << B << std::endl;
  * \endcode
  * 
@@ -47,8 +47,25 @@ namespace umuq
  * \f$
  * 
  * \code 
+ * double A[12];
+ * for(int i = 0; i < 12; ++i) A[i] = (double)i;
+ * EMapType<double> B(A, 3, 4); 
+ * std::cout << B << std::endl;
+ * \endcode
+ * 
+ * Output: 
+ * 
+ * \f$
+ * \begin{matrix}
+ * 0 & 1 &  2 &  3 \\ 
+ * 4 & 5 &  6 &  7 \\ 
+ * 8 & 9 & 10 & 11
+ * \end{matrix}
+ * \f$
+ * 
+ * \code 
  * using EMd = Eigen::Matrix<double, 3, 4>;
- * EigenMapType<EMd> C(A, 3, 4); 
+ * EMapType<EMd> C(A, 3, 4); 
  * std::cout << C << std::endl;
  * \endcode
  * 
@@ -152,7 +169,7 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
  * 
  */
 template <class EigenMatrixT>
-inline typename std::enable_if<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>::type
+inline std::enable_if_t<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>
 EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
 {
 	return EMapTypeConst<EigenMatrixT>(dataPtr, nRows, nCols);
@@ -200,7 +217,7 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
  * be passed to the constructor, because it is not specified by the Matrix type.
  */
 template <class EigenMatrixT>
-inline typename std::enable_if<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>::type
+inline std::enable_if_t<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>
 EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
 {
 	// We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
@@ -360,7 +377,7 @@ inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
 template <typename T>
 void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 {
-	// First Map the data to Eigen Matrix format
+	// First Map the data to Eigen Matrix format. (Symmetric Matrix)
 	EMapType<T, Eigen::ColMajor> eMatrix(dataPtr, nDim, nDim);
 
 	// Fixed value to increase
@@ -369,32 +386,24 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
 	// Fixed value to multiply by
 	T const fixedRate(1.01);
 
-	// Vector for diagonal elements
-	std::vector<T> D(nDim);
-
 #ifdef DEBUG
 	std::cout << "eMatrix=" << eMatrix << std::endl;
 	std::size_t iter(0);
 #endif
 
-	bool belowMachinePrecision(false);
-	for (int i = 0; i < nDim; i++)
-	{
-		D[i] = eMatrix(i, i);
-		if (D[i] <= machinePrecision<T>)
-		{
-			// We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
-			belowMachinePrecision = true;
-		}
-	}
+	// Vector for diagonal elements
+	auto D = eMatrix.diagonal();
+
+	// Whether we have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+	bool const belowMachinePrecision = (D.array() <= machinePrecision<T>).any();
 
 	if (belowMachinePrecision)
 	{
 		// Find the maximum absolute element on the diagonal of the matrix
-		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+		auto MaxAbsD = D.cwiseAbs().maxCoeff();
 
 		// Find the minimum element
-		T const MinD = *std::min_element(D.begin(), D.end());
+		auto const MinD = D.minCoeff();
 
 		MaxAbsD *= increaseRate;
 
@@ -459,34 +468,25 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 	T const fixedRate(1.01);
 
 	// Size of the matrix
-	Eigen::Index const nDim = eMatrix.rows();
-
-	// Vector for diagonal elements
-	std::vector<T> D(nDim);
+	auto const nDim = eMatrix.rows();
 
 #ifdef DEBUG
 	std::cout << "eMatrix=" << eMatrix << std::endl;
 	std::size_t iter(0);
 #endif
 
-	bool belowMachinePrecision(false);
-	for (Eigen::Index i = 0; i < nDim; i++)
-	{
-		D[i] = eMatrix(i, i);
-		if (D[i] <= machinePrecision<T>)
-		{
-			// We have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
-			belowMachinePrecision = true;
-		}
-	}
+	// Vector for diagonal elements
+	auto D = eMatrix.diagonal();
+
+	bool const belowMachinePrecision = (D.array() <= machinePrecision<T>).any();
 
 	if (belowMachinePrecision)
 	{
 		// Find the maximum absolute element on the diagonal of the matrix
-		T MaxAbsD = *std::max_element(D.begin(), D.end(), [](T const &a, T const &b) { return (std::abs(a) < std::abs(b)); });
+		T MaxAbsD = D.cwiseAbs().maxCoeff();
 
 		// Find the minimum element
-		T const MinD = *std::min_element(D.begin(), D.end());
+		T const MinD = D.minCoeff();
 
 		MaxAbsD *= increaseRate;
 
@@ -529,6 +529,130 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
 	}
 
 	return;
+}
+
+/*! \fn calculateSquaredDistance
+ * \ingroup Numerics_Module
+ * 
+ * \brief Calculate the squared distance between the rows or columns of a matrix
+ * 
+ * \tparam T       Matrix data type
+ * \tparam TOut    Matrix data type of the return output result (default is double)
+ * \tparam RowWise If true it computes the squared distance between the rows of a matrix
+ *
+ * \param eMatrix       The matrix to calculate the squared distance between its rows or its columns
+ * \param resultMatrix  The matrix to hold the results of the calculation
+ */
+template <typename T, typename TOut = double, bool RowWise = true>
+void calculateSquaredDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
+{
+	if (RowWise)
+	{
+		auto const nRows = eMatrix.rows();
+		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
+		{
+			resultMatrix.resize(nRows, nRows);
+		}
+		/*!
+		 * \todo
+		 * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
+		 * Profiling is needed to decide whether we should copy cast the eMatrix to the new matrix first or 
+		 * continue the current procedure and do casting in operations
+		 */
+		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
+		resultMatrix.colwise() = vecX;
+		resultMatrix.rowwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
+	}
+	else
+	{
+		auto const nCols = eMatrix.cols();
+		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
+		{
+			resultMatrix.resize(nCols, nCols);
+		}
+
+		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
+		resultMatrix.rowwise() = vecX;
+		resultMatrix.colwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
+	}
+}
+
+/*! \fn calculateDistance
+ * \ingroup Numerics_Module
+ * 
+ * \brief Calculate the distance between the rows or columns of a matrix
+ * 
+ * \tparam T       Matrix data type
+ * \tparam TOut    Matrix data type of the return output result (default is double)
+ * \tparam RowWise If true it computes the distance between the rows of a matrix
+ * 
+ * \param eMatrix       The matrix to calculate the distance between its rows or its columns
+ * \param resultMatrix  The matrix to hold the results of the calculation
+ */
+template <typename T, typename TOut = double, bool RowWise = true>
+void calculateDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
+{
+	if (RowWise)
+	{
+		auto const nRows = eMatrix.rows();
+		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
+		{
+			resultMatrix.resize(nRows, nRows);
+		}
+		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
+		resultMatrix.colwise() = vecX;
+		resultMatrix.rowwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
+	}
+	else
+	{
+		auto const nCols = eMatrix.cols();
+		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
+		{
+			resultMatrix.resize(nCols, nCols);
+		}
+
+		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
+		resultMatrix.rowwise() = vecX;
+		resultMatrix.colwise() += vecX.transpose();
+		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
+	}
+	resultMatrix = resultMatrix.cwiseSqrt();
+}
+
+/*! \fn calculateSOptimality
+ * \ingroup Numerics_Module
+ * 
+ * \brief Calculate the S-optimality measure
+ * 
+ * \tparam T       Matrix data type
+ * \tparam TOut    Matrix data type of the return output result (default is double)
+ * \tparam RowWise If true it computes the distance between the rows of a matrix
+ * 
+ * \param eMatrix The matrix to calculate S-optimality for
+ * 
+ * \returns The S-optimality measure
+ *
+ * The S-optimality measure: <br>
+ * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
+ * each design point to all the other points in the design. Mathematically, an S–optimal design maximizes 
+ * \f$ \frac{N_D}{ \sum_{y \in D} {1/d(y, D-y)}}. \f$ where D is the set of design points, and \f$ N_D \f$ 
+ * is the number of points in \f$ D \f$, the distances \f$ d(y, D-y) \f$ are large, so the points are as 
+ * spread out as possible. This measures how spread out the design points are; therefore, an S–optimal 
+ * design is also called a maximum spread design. 
+ * 
+ * Reference: <br>
+ * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
+ * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
+ */
+template <typename T, typename TOut = double, bool RowWise = true>
+TOut calculateSOptimality(EMatrixX<T> const &eMatrix)
+{
+	EMatrixX<TOut> resultMatrix;
+	calculateDistance<T, TOut, RowWise>(eMatrix, resultMatrix);
+	return 1 / resultMatrix.cwiseInverse().sum();
 }
 
 } // namespace umuq
