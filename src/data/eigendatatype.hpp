@@ -6,7 +6,8 @@
 namespace umuq
 {
 
-/*! \defgroup LinearAlgebra_Module linear algebra module
+/*! 
+ * \defgroup LinearAlgebra_Module Linear algebra module
  * \ingroup Numerics_Module
  * 
  * This is the linear algebra module of %UMUQ providing all necessary classes for linear algebra: matrices, vectors, numerical solvers, and related algorithms.<br>
@@ -16,7 +17,8 @@ namespace umuq
  * <a href="http://eigen.tuxfamily.org/"> Eigen C++ template library </a> 
  */
 
-/*! \namespace umuq::linearalgebra
+/*! 
+ * \namespace umuq::linearalgebra
  * \ingroup LinearAlgebra_Module
  * 
  * \brief Namespace containing all the functions for linear algebra: matrices, vectors, numerical solvers, and related algorithms.

@@ -4,7 +4,8 @@
 namespace umuq
 {
 
-/*! \defgroup Const_Module Constant module
+/*! 
+ * \defgroup Const_Module Constant module
  * \ingroup Core_Module
  *
  * This is the costant module of %UMUQ providing constant variable definitions.

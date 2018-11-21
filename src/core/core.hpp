@@ -120,11 +120,13 @@ extern "C"
 namespace umuq
 {
 
-/*! \defgroup Core_Module Core module
- * This is the core module of %UMUQ providing internal support
+/*! 
+ * \defgroup Core_Module Core module
+ * This is the core module of %UMUQ providing internal and core support
  */
 
-/*! \namespace umuq::internal
+/*! 
+ * \namespace umuq::internal
  * \ingroup Core_Module
  * 
  * \brief Namespace containing all internal symbols from the %UMUQ library.
@@ -176,7 +178,8 @@ inline static const char *SimdInstructionSetsInUse(void)
  */
 #include "meta.hpp"
 
-/*! \defgroup Test_Module test module
+/*! 
+ * \defgroup Test_Module Test module
  * This is the test module of %UMUQ providing functionality and classes for a unit testing.
  */
 

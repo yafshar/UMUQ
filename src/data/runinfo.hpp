@@ -12,7 +12,7 @@ namespace umuq
 namespace tmcmc
 {
 
-/*! \fn broadcastTask
+/*!
  * \ingroup TMCMC_Module
  * 
  * \brief Broadcasts running information to all processes of the group 
