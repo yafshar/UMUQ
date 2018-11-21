@@ -28,7 +28,7 @@ namespace umuq
  * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
  * - \b covariance         Compute the covariance
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
- *                         Find the unique n-dimensions sample points in an array of nRows * nCols data
+ *                         Find the unique n-dimensions sample points in an array of nRows * nCols data          
  */
 struct stats
 {
