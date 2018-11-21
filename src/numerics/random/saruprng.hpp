@@ -490,30 +490,25 @@ inline unsigned int Saru::u32()
 }
 
 /*!
- * \brief  Advance state by 1, and output a 32 bit integer pseudo-random value.
- *         with variate in [0, high] for unsigned int high
+ * \brief  Advance state by 1, and output a 32 bit integer pseudo-random 
+ * value with variate in \f$ [0, high] \f$ for unsigned int high
  */
 inline unsigned int Saru::u32(unsigned int const high)
 {
     if (high == 0)
         return 0;
-
     unsigned int usedhigh = high;
-
     usedhigh |= usedhigh >> 1;
     usedhigh |= usedhigh >> 2;
     usedhigh |= usedhigh >> 4;
     usedhigh |= usedhigh >> 8;
     usedhigh |= usedhigh >> 16;
-
     // Draw numbers until one is found in [0, n]
     unsigned int i = u32<1>() & usedhigh;
-
     while (i > high)
     {
         i = u32<1>() & usedhigh;
     }
-
     return i;
 }
 
