@@ -11,7 +11,8 @@ namespace umuq
 inline namespace multimin
 {
 
-/*! \enum differentiableFunctionMinimizerTypes
+/*! 
+ * \enum differentiableFunctionMinimizerTypes
  * \ingroup Multimin_Module
  * 
  * \brief Different available differentiable Function Minimizer available in %UMUQ

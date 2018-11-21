@@ -28,7 +28,7 @@ namespace umuq
  * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
  * - \b covariance         Compute the covariance
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
- *                         Find the unique n-dimensions sample points in an array of nRows * nCols data          
+ *                         Find the unique n-dimensions sample points in an array of nRows * nCols data 
  */
 struct stats
 {
@@ -54,6 +54,24 @@ struct stats
      * \param Stride  Element stride (default is 1)
      * 
      * \returns T The smallest element in the array of data
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * int A[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+     * 
+     * std::cout << s.minelement<int>(A, 20) << std::endl;
+     * std::cout << s.minelement<int>(A, 20, 2) << std::endl; // smallest element in A with stride = 2 
+     * std::cout << s.minelement<int>(A, 20, 5) << std::endl; // smallest element in A with stride = 5 
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * -10
+     * -9
+     * -6
+     * \endcode
      */
     template <typename T>
     inline T minelement(T const *idata, int const nSize, int const Stride = 1) const;
@@ -66,6 +84,20 @@ struct stats
      * \param idata  Array of data
      * 
      * \returns T The smallest element in the array of data
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> B{2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
+     * 
+     * std::cout << s.minelement<double>(B) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 1
+     * \endcode
      */
     template <typename T>
     inline T minelement(std::vector<T> const &idata) const;
@@ -630,10 +662,10 @@ struct stats
      */
     template <typename T>
     inline void robustzscoreNormal(std::vector<T> &idata);
-
+		
     /*!
-     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
-     * \f$ covariance(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
+     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize <br>
+     * \f$ \text{covariance}(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
      * 
      * \tparam T     Data type (should be double or long double) 
      * \tparam TOut  Data type of the return output result (default is double)
@@ -644,7 +676,22 @@ struct stats
      * \param iMean  Mean of idata array
      * \param jMean  Mean of jdata array
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors  
+     *
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double A[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * double B[] = {8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 4, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 2.26667
+     * \endcode   
      */
     template <typename T, typename TOut = double>
     TOut covariance(T const *idata, T const *jdata, int const nSize, T const iMean, T const jMean);
@@ -676,23 +723,55 @@ struct stats
      * \param iMean   Mean of iArray 
      * \param jMean   Mean of jArray
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> A{2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * std::vector<double> B{8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 2.26667
+     * \endcode  
+     *    
      */
     template <typename T, typename TOut = double>
     TOut covariance(std::vector<T> const &idata, std::vector<T> const &jdata, T const iMean, T const jMean);
 
     /*!
-     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
+     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length \c nSize
      * 
      * \tparam T     Data type (should be double or long double) 
      * \tparam TOut  Data type of the return output result (default is double)
      * 
-     * \param idata  Array of data 
-     * \param jdata  Array of data
-     * \param nSize  Size of array
-     * \param Stride Stride of the data in the array (default is 1)
+     * \param idata   Array of data 
+     * \param jdata   Array of data
+     * \param nSize   Size of array
+     * \param Stride  Stride of the data in the array (default is 1)
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double A[] = {2.1, 2.5, 3.6, 4.0}; // (with stride 2 {2.1, 3.6} - mean = 2.85)
+     * double B[] = {8, 10, 12, 14};	  // (with stride 2 {8, 12}    - mean = 10)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 4, 2) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 3
+     * \endcode 
+     * 
      */
     template <typename T, typename TOut = double>
     TOut covariance(T const *idata, T const *jdata, int const nSize, int const Stride = 1);
@@ -706,7 +785,7 @@ struct stats
      * \param iArray  Array of data 
      * \param jArray  Array of data
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors
      */
     template <typename T, typename TOut = double>
     TOut covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray);
@@ -720,7 +799,22 @@ struct stats
      * \param idata  Array of data 
      * \param jdata  Array of data
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> A{2.1, 3.6}; // (mean = 2.85)
+     * std::vector<double> B{8, 12};    // (mean = 10)
+     * 
+     * std::cout << s.covariance<double, double>(A, B) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 3
+     * \endcode
      */
     template <typename T, typename TOut = double>
     TOut covariance(std::vector<T> const &idata, std::vector<T> const &jdata);
@@ -740,6 +834,35 @@ struct stats
      * and would like to avoid unnecessary copying the data 
      * 
      * \returns Covariance (array of N by N) from N-dimensional idata
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * // A 3-by-4 matrix
+     * double A[] = {5,  0, 3, 7,
+     *               1, -5, 7, 3,
+     *               4,  9, 8, 10};
+     * 
+     * double *Covariance = s.covariance<double, double>(A, 12, 4, 4);
+     * 
+     * for (int i = 0, l = 0; i < 4; i++)
+     * {
+     *      for (int j = 0; j < 4; j++)
+     *          std::cout << Covariance[l++] << " ";
+     *      std::cout << std::endl;
+     * }
+     * \endcode
+     * 
+     * Output:<br>
+     * \f$
+     * \begin{matrix}
+     * 4.33333 & 8.83333 & -3 & 5.66667 \\ 
+     * 8.83333 & 50.3333 & 6.5 & 24.1667  \\
+     * -3 & 6.5 & 7 & 1 \\
+     * 5.66667 & 24.1667 & 1 & 12.3333 
+     * \end{matrix}
+     * \f$
      */
     template <typename T, typename TOut = double>
     TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride = 1);

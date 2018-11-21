@@ -21,7 +21,7 @@ struct qian
    */
   qian() {}
 
-  /*! \fn f
+  /*! 
    * \brief Qian's function
    * 
    * Qian's function
@@ -59,7 +59,7 @@ struct franke2d
    */
   franke2d() {}
 
-  /*! \fn f
+  /*!
    * \brief Franke's bivariate function
    * 
    * Franke's bivariate function is a weighted sum of four exponential
@@ -111,7 +111,7 @@ public:
    */
   rastrigin(int dim = 2) : nDim(dim) {}
 
-  /*! \fn f
+  /*! 
    * \brief Rastrigin function
    * 
    * The Rastrigin function has several local minima. 
@@ -166,7 +166,7 @@ public:
    */
   ackley(int dim = 2, T aa = 20, T bb = 0.2, T cc = M_2PI) : nDim(dim), a(aa), b(bb), c(cc) {}
 
-  /*! \fn f
+  /*!
    * \brief Ackley function
    * 
    * The Ackley function has several local minima, in 2-dimensional form it is characterized 
@@ -225,7 +225,7 @@ struct peaks
    */
   peaks() {}
 
-  /*! \fn f
+  /*!
    * \brief Matlab peaks's function
    * 
    * Matlab peaks's function <br>

@@ -4,7 +4,8 @@
 #include "../../core/core.hpp"
 #include "../factorial.hpp"
 
-/*! \defgroup Random_Module random distribution module
+/*! 
+ * \defgroup Random_Module Random distribution module
  * \ingroup Numerics_Module
  * 
  * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. <br>
@@ -255,7 +256,7 @@ class psrandom
      */
     inline unsigned int u32rnd();
 
-    /*! \fn multinomial
+    /*! 
      * \brief The multinomial random distribution
      *  
      * \param p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
@@ -286,7 +287,7 @@ class psrandom
      */
     bool multinomial(T const *p, int const K, int const N, int *mndist);
 
-    /*! \fn Multinomial
+    /*! 
      * \brief The multinomial distribution
      * 
      * \note 

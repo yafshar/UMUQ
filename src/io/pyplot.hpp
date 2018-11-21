@@ -109,7 +109,7 @@ namespace umuq
 inline namespace matplotlib_223
 {
 
-/*! \fn PyArray
+/*! 
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to Python array
@@ -126,7 +126,7 @@ PyObject *PyArray(std::vector<T> const &idata);
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata);
 
-/*! \fn PyArray
+/*! 
  * \ingroup IO_Module
  * 
  * \brief Converts a data idata to Python array of size nSize
@@ -144,7 +144,7 @@ PyObject *PyArray(T const idata, int const nSize);
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const idata, int const nSize);
 
-/*! \fn PyArray
+/*!
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to Python array
@@ -163,7 +163,7 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride = 1)
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
 
-/*! \fn Py2DArray
+/*! 
  * \ingroup IO_Module
  * 
  * \brief Converts a data array idata to the Python 2D array 
@@ -202,7 +202,7 @@ PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
  */
 static std::string backend;
 
-/*! \fn setbackend
+/*!
  * \ingroup IO_Module
  * 
  * \brief Set the “backend” to any of user interface backends

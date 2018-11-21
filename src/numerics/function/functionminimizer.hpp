@@ -7,14 +7,16 @@
 namespace umuq
 {
 
-/*! \defgroup Multimin_Module multimin module
+/*! 
+ * \defgroup Multimin_Module Multimin module
  * \ingroup Numerics_Module
  *
  * This is the Multidimensional Minimization Module of UMUQ providing all necessary classes 
  * for finding minima of arbitrary multidimensional functions.
  */
 
-/*! \namespace umuq::multimin
+/*! 
+ * \namespace umuq::multimin
  * \ingroup Multimin_Module
  * 
  * \brief Namespace containing all the functions for Multidimensional Minimization Module

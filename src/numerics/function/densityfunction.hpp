@@ -9,13 +9,15 @@
 
 namespace umuq
 {
-/*! \defgroup Density_Module density module
+/*! 
+ * \defgroup Density_Module Density module
  * \ingroup Numerics_Module
  * 
  * This is the density module of %UMUQ providing all necessary classes for probability density computation.
  */
 
-/*! \namespace umuq::density
+/*! 
+ * \namespace umuq::density
  * \ingroup Density_Module
  * 
  * \brief Namespace containing all the functions for probability density computation.

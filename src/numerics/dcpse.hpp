@@ -11,12 +11,13 @@
 namespace umuq
 {
 
-/*! \defgroup Numerics_Module Numerics module
+/*! 
+ * \defgroup Numerics_Module Numerics module
  * This is the numerics module of %UMUQ providing all necessary classes of numerical computation.
  */
 
 /*! 
- * \defgroup DCPSE Discretization-Corrected PSE Operators
+ * \defgroup DCPSE Discretization-corrected PSE Operators
  * \ingroup Numerics_Module 
  */
 
@@ -117,7 +118,7 @@ class dcpse
     bool computeWeights(T *dataPoints, int const nDataPoints, T *queryDataPoints, int const nQueryDataPoints,
                         int *beta, int order = 2, int nENN = 2, T ratio = static_cast<T>(1));
 
-    /*! \fn computeInterpolatorWeights
+    /*! 
      * \brief Computes generalized DC-PSE interpolator operators on the set of points.
      * 
      * This function uses one set of points as input data to compute the generalized DC-PSE 

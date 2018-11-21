@@ -29,8 +29,7 @@ inline namespace linearalgebra
  *    to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
  *    pass only the \c Eigen::Matrix as template parameters
  * 
- * For example:
- * 
+ * Example: <br>
  * Simply mapping a contiguous C++ memory buffer as a column-major Eigen Matrix object:
  * \code 
  * double A[12];
@@ -39,8 +38,7 @@ inline namespace linearalgebra
  * std::cout << B << std::endl;
  * \endcode
  * 
- * Output: 
- * 
+ * Output: <br> 
  * \f$
  * \begin{matrix}
  * 0 & 3 & 6 & ~9 \\ 
@@ -56,8 +54,7 @@ inline namespace linearalgebra
  * std::cout << B << std::endl;
  * \endcode
  * 
- * Output: 
- * 
+ * Output: <br>
  * \f$
  * \begin{matrix}
  * 0 & 1 &  2 &  3 \\ 
@@ -72,8 +69,7 @@ inline namespace linearalgebra
  * std::cout << C << std::endl;
  * \endcode
  * 
- * Output: 
- * 
+ * Output:<br>
  * \f$
  * \begin{matrix}
  * 0 & 3 & 6 & ~9 \\ 
@@ -81,7 +77,6 @@ inline namespace linearalgebra
  * 2 & 5 & 8 & 11
  * \end{matrix}
  * \f$
- *
  */
 template <class T, int _Options = Eigen::RowMajor>
 using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;

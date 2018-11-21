@@ -7,7 +7,8 @@
 namespace umuq
 {
 
-/*! \defgroup HypercubeSampling_Module Hypercube sampling module
+/*! 
+ * \defgroup HypercubeSampling_Module Hypercube sampling module
  * \ingroup Numerics_Module 
  * 
  * This is the Hypercube sampling module of %UMUQ providing all necessary classes for generating a 

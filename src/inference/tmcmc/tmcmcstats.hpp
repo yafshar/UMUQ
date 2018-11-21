@@ -17,7 +17,7 @@ namespace umuq
 namespace tmcmc
 {
 
-/*! \fn CoefVar
+/*! 
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
@@ -43,7 +43,7 @@ TOut CoefVar(T const *FunValues, int const nFunValues, T const PJ1, T const PJ, 
 template <typename T, typename TOut = double>
 TOut CoefVar(std::vector<T> const &FunValues, T const PJ1, T const PJ, T const Tolerance);
 
-/*! \fn CoefVarFun
+/*!
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
