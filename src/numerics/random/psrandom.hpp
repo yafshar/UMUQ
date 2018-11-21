@@ -218,18 +218,18 @@ class psrandom
 
   public:
     /*!
-     * \returns Uniform random number between \f$ [a \cdots b) \f$
+     * \brief Uniform random number between \f$ [a, b) \f$
      * 
-     * \brief Uniform random number between \f$ [a \cdots b) \f$
+     * \returns A uniform random number between \f$ [a, b) \f$
      *
-     * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0, b = 1 \f$)
+     * Advance the PRNG state by 1, and output a T precision \f$ [a, b) \f$ number (default \f$ a = 0,~\text{and}~b = 1 \f$)
      */
     inline T unirnd(T const a = 0, T const b = 1);
 
     /*!
-     * \returns a uniform random number of a double precision \f$ [0 \cdots 1) \f$ floating point 
+     * \brief Advance state by 1, and output a double precision \f$ [0, 1) \f$ floating point
      * 
-     * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
+     * \returns A uniform random number of a double precision \f$ [0, 1) \f$ floating point
      * 
      * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
@@ -237,9 +237,9 @@ class psrandom
     inline double drnd();
 
     /*!
-     * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
+     * \brief Advance state by 1, and output a single precision \f$ [0, 1) \f$ floating point
      * 
-     * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
+     * \returns A uniform random number of a single precision \f$ [0, 1) \f$ floating point
      * 
      * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
@@ -247,14 +247,24 @@ class psrandom
     inline float frnd();
 
     /*!
-     * \returns an unsigned 32 bit integer pseudo-random value
-     * 
      * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
+     * 
+     * \returns An unsigned 32 bit integer pseudo-random value
      * 
      * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
      */
     inline unsigned int u32rnd();
+
+    /*!
+     * \brief Advance state by 1, and output a 32 bit integer pseudo-random value with variate in \f$ [0, high] \f$ for unsigned int high
+     * 
+     * \returns An unsigned 32 bit integer pseudo-random value with variate in \f$ [0, high] \f$ for unsigned int high
+     * 
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
+     */
+    inline unsigned int u32rnd(unsigned int const high);
 
     /*! 
      * \brief The multinomial random distribution
@@ -570,7 +580,7 @@ class psrandom
      * - This should be used after setting the State of psrandom object
      */
     std::unique_ptr<randomdist::exponentialDistribution<T>> expn;
-    
+
     /*!
      * \brief Exponential random number distributions
      */
@@ -786,13 +796,36 @@ inline float psrandom<float>::unirnd(float a, float b)
 }
 
 template <typename T>
-inline double psrandom<T>::drnd() { return saru[0].d(); }
+inline double psrandom<T>::drnd()
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return saru[me].d();
+}
 
 template <typename T>
-inline float psrandom<T>::frnd() { return saru[0].f(); }
+inline float psrandom<T>::frnd()
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return saru[me].f();
+}
 
 template <typename T>
-inline unsigned int psrandom<T>::u32rnd() { return saru[0].u32(); }
+inline unsigned int psrandom<T>::u32rnd()
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return saru[me].u32();
+}
+
+template <typename T>
+inline unsigned int psrandom<T>::u32rnd(unsigned int const high)
+{
+    // Get the thread ID
+    int const me = torc_i_worker_id();
+    return saru[me].u32(high);
+}
 
 template <typename T>
 template <typename D>
@@ -800,7 +833,6 @@ inline void psrandom<T>::shuffle(D *idata, int const nSize)
 {
     // Get the thread ID
     int const me = torc_i_worker_id();
-
     for (int i = nSize - 1; i > 0; --i)
     {
         unsigned int const idx = saru[me].u32(i);
