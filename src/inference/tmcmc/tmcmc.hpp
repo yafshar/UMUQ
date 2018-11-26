@@ -15,12 +15,14 @@
 namespace umuq
 {
 
-/*! \defgroup Inference_Module Inference module
+/*! 
+ * \defgroup Inference_Module Inference module
  * This is the inference module of UMUQ providing all necessary classes of statistical inference in which 
  * Bayes' theorem is used to update the probability for a hypothesis as more evidence or information becomes available.
  */
 
-/*! \defgroup TMCMC_Module TMCMC module
+/*! 
+ * \defgroup TMCMC_Module TMCMC module
  * \ingroup Inference_Module
  * 
  * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.<br>
@@ -37,8 +39,8 @@ namespace umuq
 
 /*! \namespace umuq::tmcmc
  * \ingroup TMCMC_Module
- * \brief Namespace containing all Transitional Markov Chain Monte Carlo Method symbols from the %UMUQ library.
  * 
+ * \brief Namespace containing all Transitional Markov Chain Monte Carlo Method symbols from the %UMUQ library.
  *
  * Reference: <br>
  * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version <br>
@@ -47,7 +49,7 @@ namespace umuq
 namespace tmcmc
 {
 
-//! An instance of funcallcounter object
+/*! An instance of funcallcounter object */
 funcallcounter fc;
 
 /*!
@@ -55,8 +57,8 @@ funcallcounter fc;
  * 
  * \brief Initialization of MCMC sampling task
  * 
- * \tparam RealType Data type
- * \tparam F        Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam RealType     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
@@ -65,7 +67,7 @@ funcallcounter fc;
  * \param nFvalue          Number of function values
  * \param WorkInformation  Information regarding this task work 
  */
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
@@ -73,8 +75,8 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  * 
  * \brief Main MCMC sampling task
  * 
- * \tparam RealType Data type
- * \tparam F        Function type, which is used in fit function (default FITFUN_T<RealType>) 
+ * \tparam RealType     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<RealType>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
@@ -90,7 +92,7 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  *                         equal to \f$ \beta^2 COV \f$
  * \param nBurningSteps    Number of discarding an initial portion of a Markov chain samples
  */
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
                    RealType *Fvalue, int const *nFvalue, int const *WorkInformation,
                    RealType const *PJ, RealType const *Covariance, int const *nBurningSteps);
@@ -100,8 +102,8 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  * 
  * \brief MCMC update sample task
  * 
- * \tparam RealType Data type
- * \tparam F        Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam RealType     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Array of sample points
@@ -110,7 +112,7 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  * \param nFvalue          Number of function values
  * \param WorkInformation  Information regarding this task work
  */
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcUpdateTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
@@ -118,14 +120,14 @@ void tmcmcUpdateTask(long long const TMCMCObj, RealType const *SamplePoints, int
  * 
  * \brief TMCMC task type (function pointer)
  * 
- * \tparam RealType Data type
- * \tparam F        Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam RealType     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
  */
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 using TMCMTASKTYPE = void (*)(long long const, RealType const *, int const *, RealType *, int const *, int const *);
 
 /*! True if TMCMC Tasks have been registered, and false otherwise (logical). */
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 static bool tmcmcTaskRegistered = false;
 
 } // namespace tmcmc
@@ -138,10 +140,10 @@ namespace tmcmc
  * 
  * \brief This class performs Transitional Markov Chain Monte Carlo Method
  * 
- * \tparam RealType  Data type
- * \tparam F  Function type, which is used in fit function (default FITFUN_T<RealType>) 
+ * \tparam RealType     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<RealType>) 
  */
-template <typename RealType, class F = FITFUN_T<RealType>>
+template <typename RealType, class FunctionType = FITFUN_T<RealType>>
 class tmcmc
 {
 public:
@@ -162,7 +164,6 @@ public:
    * 
    * \param fileName Input file name 
    * 
-   * \return true 
    * \return false If the file does not exist
    */
   inline bool setInputFileName(char const *fileName = "");
@@ -179,7 +180,6 @@ public:
    * 
    * \param fileName Input file name 
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
   bool reset(char const *fileName = "");
@@ -194,59 +194,53 @@ public:
    * 
    * \param fitFun Fitting Function object 
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(fitFunction<RealType, F> &fitFun);
+  inline bool setFitFunction(fitFunction<RealType, FunctionType> &fitFun);
 
   /*!
    * \brief Set the fitting Function to be used
    * 
-   * \param Fun  Fitting Function of type (class F)
+   * \param Fun  Fitting Function of type (class FunctionType)
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(F &Fun);
+  inline bool setFitFunction(FunctionType &Fun);
 
   /*!
    * \brief Set the fitting Function to be used
    * 
-   * \param Fun  Fitting Function of type (class F)
+   * \param Fun  Fitting Function of type (class FunctionType)
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(F const &Fun);
+  inline bool setFitFunction(FunctionType const &Fun);
 
   /*!
    * \brief Setting both the Init Function & fitting Function members of Fit Function member
    * 
    * \param InitFun  Initialization function which has the fixed bool type
-   * \param Fun      Fitting Function of type (class F)
+   * \param Fun      Fitting Function of type (class FunctionType)
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(std::function<bool()> &InitFun, F &Fun);
-  
+  inline bool setFitFunction(std::function<bool()> &InitFun, FunctionType &Fun);
+
   /*!
    * \brief Setting both the Init Function & fitting Function members of Fit Function member
    * 
    * \param InitFun  Initialization function which has the fixed bool type
-   * \param Fun      Fitting Function of type (class F)
+   * \param Fun      Fitting Function of type (class FunctionType)
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(std::function<bool()> const &InitFun, F const &Fun);
+  inline bool setFitFunction(std::function<bool()> const &InitFun, FunctionType const &Fun);
 
   /*!
    * \brief Initialize the algorithm and set up the TORC environemnt
    * 
    * \param fileName Input file name 
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
   bool init(char const *fileName = "");
@@ -267,7 +261,6 @@ public:
    * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots, m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1. \f$ <br> 
    * Starting from samples drawn from the prior at stage \f$ j = 1. \f$ 
    *  
-   * \returns true 
    * \returns false If it encounters an unexpected problem
    */
   bool iterate0();
@@ -275,8 +268,6 @@ public:
   /*!
    * \brief Internal part of the main sampling iteration of the TMCMC algorithm 
    * 
-   *  
-   * \returns true 
    * \returns false If it encounters an unexpected problem
    */
   bool iterateInternal();
@@ -294,7 +285,6 @@ public:
    * is approximately distributed according to the target posterior PDF,  
    * \f$~p(\theta | D) \f$. Through the m steps, the evidence is obtained. 
    *  
-   * \returns true 
    * \returns false  If it encounters an unexpected problem
    */
   bool iterate();
@@ -312,8 +302,7 @@ public:
    * - Select the new sample points leaders for propagating the chains and update the statistics
    * - Compute number of selections (steps) for each leader chain
    * - Update leaders information from current data information
-   * 
-   * \returns true 
+   *  
    * \returns false  If it encounters an unexpected problem
    */
   bool prepareNewGeneration();
@@ -338,7 +327,7 @@ public:
   runinfo<RealType> runData;
 
   //! Fitting function
-  fitFunction<RealType, F> fitfun;
+  fitFunction<RealType, FunctionType> fitfun;
 
 private:
   //! Next generation data
@@ -371,8 +360,8 @@ private:
   std::mutex m;
 };
 
-template <typename RealType, class F>
-tmcmc<RealType, F>::tmcmc() : inputFilename("input.par")
+template <typename RealType, class FunctionType>
+tmcmc<RealType, FunctionType>::tmcmc() : inputFilename("input.par")
 {
   if (!std::is_floating_point<RealType>::value)
   {
@@ -381,8 +370,8 @@ tmcmc<RealType, F>::tmcmc() : inputFilename("input.par")
   Torc<RealType>.reset(nullptr);
 }
 
-template <typename RealType, class F>
-tmcmc<RealType, F>::~tmcmc()
+template <typename RealType, class FunctionType>
+tmcmc<RealType, FunctionType>::~tmcmc()
 {
   if (Torc<RealType>)
   {
@@ -390,8 +379,8 @@ tmcmc<RealType, F>::~tmcmc()
   }
 }
 
-template <typename RealType, class F>
-inline bool tmcmc<RealType, F>::setInputFileName(char const *fileName)
+template <typename RealType, class FunctionType>
+inline bool tmcmc<RealType, FunctionType>::setInputFileName(char const *fileName)
 {
   // Create an instance of the io object
   umuq::io f;
@@ -403,14 +392,14 @@ inline bool tmcmc<RealType, F>::setInputFileName(char const *fileName)
   return f.isFileExist(inputFilename);
 }
 
-template <typename RealType, class F>
-inline std::string tmcmc<RealType, F>::getInputFileName()
+template <typename RealType, class FunctionType>
+inline std::string tmcmc<RealType, FunctionType>::getInputFileName()
 {
   return inputFilename;
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::reset(char const *fileName)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::reset(char const *fileName)
 {
   // Check to see if the input file exists in the PATH or not?
   if (setInputFileName(fileName))
@@ -462,8 +451,8 @@ bool tmcmc<RealType, F>::reset(char const *fileName)
   UMUQFAILRETURN("Input file for the input TMCMC parameter does not exist in the current PATH!!");
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::setFitFunction(fitFunction<RealType, F> &fitFun)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::setFitFunction(fitFunction<RealType, FunctionType> &fitFun)
 {
   if (fitFun)
   {
@@ -473,32 +462,32 @@ bool tmcmc<RealType, F>::setFitFunction(fitFunction<RealType, F> &fitFun)
   UMUQFAILRETURN("Function is not assigned!");
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::setFitFunction(F &Fun)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::setFitFunction(FunctionType &Fun)
 {
   return fitfun.setFitFunction(Fun);
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::setFitFunction(F const &Fun)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::setFitFunction(FunctionType const &Fun)
 {
   return fitfun.setFitFunction(Fun);
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::setFitFunction(std::function<bool()> &InitFun, F &Fun)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::setFitFunction(std::function<bool()> &InitFun, FunctionType &Fun)
 {
   return fitfun.set(InitFun, Fun);
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::setFitFunction(std::function<bool()> const &InitFun, F const &Fun)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::setFitFunction(std::function<bool()> const &InitFun, FunctionType const &Fun)
 {
   return fitfun.set(InitFun, Fun);
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::init(char const *fileName)
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::init(char const *fileName)
 {
   if (fitfun)
   {
@@ -515,12 +504,12 @@ bool tmcmc<RealType, F>::init(char const *fileName)
         std::lock_guard<std::mutex> lock(m);
 
         // Check if TMCMC tasks have not been registered, do it
-        if (!tmcmcTaskRegistered<RealType, F>)
+        if (!tmcmcTaskRegistered<RealType, FunctionType>)
         {
-          torc_register_task((void *)tmcmcInitTask<RealType, F>);
-          torc_register_task((void *)tmcmcMainTask<RealType, F>);
-          torc_register_task((void *)tmcmcUpdateTask<RealType, F>);
-          tmcmcTaskRegistered<RealType, F> = true;
+          torc_register_task((void *)tmcmcInitTask<RealType, FunctionType>);
+          torc_register_task((void *)tmcmcMainTask<RealType, FunctionType>);
+          torc_register_task((void *)tmcmcUpdateTask<RealType, FunctionType>);
+          tmcmcTaskRegistered<RealType, FunctionType> = true;
         }
       }
 
@@ -540,15 +529,15 @@ bool tmcmc<RealType, F>::init(char const *fileName)
   UMUQFAILRETURN("Fitting function is not assigned! \n Fitting function must be set before initializing the TMCMC object!");
 }
 
-template <typename RealType, class F>
-inline bool tmcmc<RealType, F>::restart()
+template <typename RealType, class FunctionType>
+inline bool tmcmc<RealType, FunctionType>::restart()
 {
   // Check if the restart file is available and we can load runData from it
   return runData.load() ? currentData.load("", runData.currentGeneration) : false;
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::iterate0()
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::iterate0()
 {
   // Check if it is a fresh run, or the restart data is corrupted or is not available
   if (restart())
@@ -579,7 +568,7 @@ bool tmcmc<RealType, F>::iterate0()
       prior.sample(samplePoints);
 
       // Create and submit tasks
-      torc_create(-1, (void (*)())tmcmcInitTask<RealType, F>, 6,
+      torc_create(-1, (void (*)())tmcmcInitTask<RealType, FunctionType>, 6,
                   1, MPIDatatype<long long>, CALL_BY_REF,
                   Data.nDim, MPIDatatype<RealType>, CALL_BY_COP,
                   1, MPIDatatype<int>, CALL_BY_COP,
@@ -619,8 +608,8 @@ bool tmcmc<RealType, F>::iterate0()
   }
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::iterateInternal()
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::iterateInternal()
 {
   // Current Generation number
   workInformation[0] = runData.currentGeneration;
@@ -667,7 +656,7 @@ bool tmcmc<RealType, F>::iterateInternal()
     }
 
     // Create tasks
-    torc_create(-1, (void (*)())tmcmcMainTask<RealType, F>, 9,
+    torc_create(-1, (void (*)())tmcmcMainTask<RealType, FunctionType>, 9,
                 1, MPIDatatype<long long>, CALL_BY_REF,
                 Data.nDim, MPIDatatype<RealType>, CALL_BY_COP,
                 1, MPIDatatype<int>, CALL_BY_COP,
@@ -710,8 +699,8 @@ bool tmcmc<RealType, F>::iterateInternal()
   return runData.save();
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::iterate()
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::iterate()
 {
   if (!iterate0())
   {
@@ -755,8 +744,8 @@ bool tmcmc<RealType, F>::iterate()
   }
 }
 
-template <typename RealType, class F>
-bool tmcmc<RealType, F>::prepareNewGeneration()
+template <typename RealType, class FunctionType>
+bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
 {
   int const nDimSamplePoints = currentData.nDimSamplePoints;
   int const nCurrentSamplePoints = currentData.size();
@@ -887,11 +876,11 @@ bool tmcmc<RealType, F>::prepareNewGeneration()
   UMUQFAILRETURN("Failed to select the leaders for the new generation!");
 }
 
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
                    RealType *Fvalue, int const *nFvalue, int const *WorkInformation)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, F> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
 
   // If we have set the fitting function
   if (tmcmcObj->fitfun)
@@ -922,12 +911,12 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
   UMUQFAIL("Fitting function is not assigned! \n Fitting function must be set before initializing the TMCMC object!");
 }
 
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
                    RealType *Fvalue, int const *nFvalue, int const *WorkInformation,
                    RealType const *PJ, RealType const *Covariance, int const *nBurningSteps)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, F> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
 
   // If we have set the fitting function
   if (!tmcmcObj->fitfun)
@@ -1063,10 +1052,10 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
   return;
 }
 
-template <typename RealType, class F>
+template <typename RealType, class FunctionType>
 void tmcmcUpdateTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, F> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
 
   // If we have set the fittiting function
   if (tmcmcObj->fitfun)
