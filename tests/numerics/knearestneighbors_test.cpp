@@ -199,7 +199,7 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	M2d << 20, 0.5, 0.5, 1;
 
 	// Create an object of type Multivariate normal distribution
-	EXPECT_TRUE(prng.set_mvNormal(V2d, M2d));
+	EXPECT_TRUE(prng.set_mvnormal(V2d, M2d));
 
 	// Create a vector for sampling points
 	std::vector<double> xPoints(nSPoints * nDim);
@@ -209,7 +209,7 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	for (int i = 0; i < nSPoints; i++)
 	{
 		umuq::EVectorMapType<double> X(x, nDim);
-		X = prng.mvNormal->dist();
+		X = prng.mvnormal->dist();
 		x += nDim;
 	}
 
@@ -221,7 +221,7 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	for (int i = 0; i < nQPoints; i++)
 	{
 		umuq::EVectorMapType<double> X(x, nDim);
-		X = prng.mvNormal->dist();
+		X = prng.mvnormal->dist();
 		x += nDim;
 	}
 
