@@ -63,7 +63,7 @@ matrix:
       install: travis_wait ./scripts/install-osx.sh
       script: ./scripts/build-autotools.sh
       env:
-        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
+        - MATRIX_EVAL="brew update && brew reinstall grep --with-default-names && brew reinstall gnu-sed --with-default-names && sudo rm -fr /usr/local/include/c++"
     # - os: osx
     #   osx_image: xcode8.3
     #   compiler: gcc
