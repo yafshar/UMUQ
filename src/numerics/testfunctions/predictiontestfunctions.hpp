@@ -6,13 +6,13 @@
  * 
  * \brief Qian's 1-Dimensional Function class
  * 
- * \tparam T data type
+ * \tparam DataType Data type
  * 
  * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
-template <typename T>
+template <typename DataType>
 struct qian
 {
   /*!
@@ -33,7 +33,7 @@ struct qian
    * 
    * \returns f  function value at input data point
    */
-  inline T f(T const *x)
+  inline DataType f(DataType const *x)
   {
     return std::exp(3 * (*x)) * std::cos(3.5 * M_PI * (*x));
   }
@@ -44,13 +44,13 @@ struct qian
  * 
  * \brief Franke's 2-Dimensional Function class
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
-template <typename T>
+template <typename DataType>
 struct franke2d
 {
   /*!
@@ -76,14 +76,14 @@ struct franke2d
    * 
    * \returns f  function value at input data point
    */
-  inline T f(T const *x)
+  inline DataType f(DataType const *x)
   {
-    T const x1 = x[0];
-    T const x2 = x[1];
-    T const t1 = 0.75 * std::exp(-std::pow(9 * x1 - 2, 2) / 4 - std::pow(9 * x2 - 2, 2) / 4);
-    T const t2 = 0.75 * std::exp(-std::pow(9 * x1 + 1, 2) / 49 - (9 * x2 + 1) / 10);
-    T const t3 = 0.5 * std::exp(-std::pow(9 * x1 - 7, 2) / 4 - std::pow(9 * x2 - 3, 2) / 4);
-    T const t4 = -0.2 * std::exp(-std::pow(9 * x1 - 4, 2) - std::pow(9 * x2 - 7, 2));
+    DataType const x1 = x[0];
+    DataType const x2 = x[1];
+    DataType const t1 = 0.75 * std::exp(-std::pow(9 * x1 - 2, 2) / 4 - std::pow(9 * x2 - 2, 2) / 4);
+    DataType const t2 = 0.75 * std::exp(-std::pow(9 * x1 + 1, 2) / 49 - (9 * x2 + 1) / 10);
+    DataType const t3 = 0.5 * std::exp(-std::pow(9 * x1 - 7, 2) / 4 - std::pow(9 * x2 - 3, 2) / 4);
+    DataType const t4 = -0.2 * std::exp(-std::pow(9 * x1 - 4, 2) - std::pow(9 * x2 - 7, 2));
     return t1 + t2 + t3 + t4;
   }
 };
@@ -93,14 +93,14 @@ struct franke2d
  * 
  * \brief Rastrigin's N-Dimensional Function class 
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * 
  * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
-template <typename T>
+template <typename DataType>
 class rastrigin
 {
 public:
@@ -122,10 +122,10 @@ public:
    * 
    * \returns f  function value at input data point
    */
-  inline T f(T const *x)
+  inline DataType f(DataType const *x)
   {
-    T sum(0);
-    std::for_each(x, x + nDim, [&](T const i) { sum += i * i - 10 * std::cos(M_2PI * i); });
+    DataType sum(0);
+    std::for_each(x, x + nDim, [&](DataType const i) { sum += i * i - 10 * std::cos(M_2PI * i); });
     return 10 * nDim + sum;
   }
 
@@ -139,13 +139,13 @@ private:
  * 
  * \brief Ackley's N-Dimensional Function class 
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * Reference:<br>
  * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
  * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
  */
-template <typename T>
+template <typename DataType>
 class ackley
 {
 public:
@@ -164,7 +164,7 @@ public:
    * \param bb  A constant (optional), with default value 0.2
    * \param cc  A constant (optional), with default value \f$ 2*\pi \f$
    */
-  ackley(int dim = 2, T aa = 20, T bb = 0.2, T cc = M_2PI) : nDim(dim), a(aa), b(bb), c(cc) {}
+  ackley(int dim = 2, DataType aa = 20, DataType bb = 0.2, DataType cc = M_2PI) : nDim(dim), a(aa), b(bb), c(cc) {}
 
   /*!
    * \brief Ackley function
@@ -180,16 +180,16 @@ public:
    * 
    * \returns f  function value at input data point
    */
-  inline T f(T const *x)
+  inline DataType f(DataType const *x)
   {
-    T sum1(0);
-    T sum2(0);
+    DataType sum1(0);
+    DataType sum2(0);
 
-    std::for_each(x, x + nDim, [&](T const i) { sum1 += i * i; });
-    std::for_each(x, x + nDim, [&](T const i) { sum2 += std::cos(c * i); });
+    std::for_each(x, x + nDim, [&](DataType const i) { sum1 += i * i; });
+    std::for_each(x, x + nDim, [&](DataType const i) { sum2 += std::cos(c * i); });
 
-    T t1 = -a * std::exp(-b * std::sqrt(sum1 / nDim));
-    T t2 = -std::exp(sum2 / nDim);
+    DataType t1 = -a * std::exp(-b * std::sqrt(sum1 / nDim));
+    DataType t2 = -std::exp(sum2 / nDim);
     return t1 + t2 + a + std::exp(1);
   }
 
@@ -197,11 +197,11 @@ private:
   //! Dimension of the problem
   int nDim;
   //! A constant (optional), with default value 20
-  T a;
+  DataType a;
   //! A constant (optional), with default value 0.2
-  T b;
+  DataType b;
   //! A constant (optional), with default value \f$ 2*\pi \f$
-  T c;
+  DataType c;
 };
 
 /*! \class peaks
@@ -211,12 +211,12 @@ private:
  * 
  * Matlab peaks is a function of two variables, obtained by translating and scaling Gaussian distributions
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * Reference:<br>
  * https://www.mathworks.com/help/matlab/ref/peaks.html 
  */
-template <typename T>
+template <typename DataType>
 struct peaks
 {
   /*!
@@ -237,7 +237,7 @@ struct peaks
    * 
    * \returns f Function value at input data point
    */
-  inline T f(T const *x)
+  inline DataType f(DataType const *x)
   {
     return 3 * std::pow(1 - x[0], 2) *
                std::exp(-std::pow(x[0], 2) - std::pow(x[1] + 1, 2)) -
