@@ -33,7 +33,7 @@ enum class ErrorTypes
  *                     to the absolute value of observed data
  *  - \b SquaredError  Squared value of the difference between observed and predicted data
  */
-template <typename T>
+template <typename DataType>
 class residual
 {
   public:
@@ -77,7 +77,7 @@ class residual
      * 
      * \return Residual based on error type
      */
-    inline T operator()(T const &observed, T const &predicted);
+    inline DataType operator()(DataType const &observed, DataType const &predicted);
 
   protected:
     /*!
@@ -85,27 +85,27 @@ class residual
      * 
      * Make it noncopyable.
      */
-    residual(residual<T> const &) = delete;
+    residual(residual<DataType> const &) = delete;
 
     /*!
      * \brief Delete a residual object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns residual<T>& 
+     * \returns residual<DataType>& 
      */
-    residual<T> &operator=(residual<T> const &) = delete;
+    residual<DataType> &operator=(residual<DataType> const &) = delete;
 
   private:
     //! Error type in computing residuals
     ErrorTypes errorType;
 };
 
-template <typename T>
-residual<T>::residual(ErrorTypes const ErrorType) : errorType(ErrorType) {}
+template <typename DataType>
+residual<DataType>::residual(ErrorTypes const ErrorType) : errorType(ErrorType) {}
 
-template <typename T>
-residual<T>::residual(std::string const &ErrorType)
+template <typename DataType>
+residual<DataType>::residual(std::string const &ErrorType)
 {
     std::string upErrorType(ErrorType);
     {
@@ -133,8 +133,8 @@ residual<T>::residual(std::string const &ErrorType)
     }
 }
 
-template <typename T>
-bool residual<T>::set(std::string const &ErrorType)
+template <typename DataType>
+bool residual<DataType>::set(std::string const &ErrorType)
 {
     std::string upErrorType(ErrorType);
     {
@@ -161,8 +161,8 @@ bool residual<T>::set(std::string const &ErrorType)
     UMUQFAILRETURN("ErrorType is unknown!");
 }
 
-template <typename T>
-bool residual<T>::set(ErrorTypes const ErrorType)
+template <typename DataType>
+bool residual<DataType>::set(ErrorTypes const ErrorType)
 {
     if (ErrorType == ErrorTypes::AbsoluteError || ErrorType == ErrorTypes::ScaledError || ErrorType == ErrorTypes::SquaredError)
     {
@@ -175,8 +175,8 @@ bool residual<T>::set(ErrorTypes const ErrorType)
     }
 }
 
-template <typename T>
-inline T residual<T>::operator()(T const &observed, T const &predicted)
+template <typename DataType>
+inline DataType residual<DataType>::operator()(DataType const &observed, DataType const &predicted)
 {
     switch (errorType)
     {

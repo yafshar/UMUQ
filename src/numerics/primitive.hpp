@@ -6,26 +6,26 @@
  * 
  * \brief A class for primitive function
  * 
- * \tparam T  Data type
- * \tparam TF Function type
+ * \tparam DataType     Data type
+ * \tparam FunctionType Function type
  */
-template <typename T, class TF>
+template <typename DataType, class FunctionType>
 class primitive
 {
-  public:
-    /*!
-     * /brief Primitive function
-     * 
-     * /param x input
-     * /return value of \f$ {\mathbf C}(s) \f$
-     */
-    inline T f(T const *x)
-    {
-        return static_cast<TF *>(this)->f(x);
-    }
+public:
+  /*!
+   * /brief Primitive function
+   * 
+   * /param x input
+   * /return value of \f$ {\mathbf C}(s) \f$
+   */
+  inline DataType f(DataType const *x)
+  {
+    return static_cast<FunctionType *>(this)->f(x);
+  }
 
-  private:
-    friend TF;
+private:
+  friend FunctionType;
 };
 
 /*! \class quartic_spline
@@ -33,7 +33,7 @@ class primitive
  * 
  * \brief Primitive function (quartic spline)
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * quartic spline function <br>
  * \f$ 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
@@ -41,20 +41,20 @@ class primitive
  * Reference: <br>
  * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
-template <typename T>
-class quartic_spline : public primitive<T, quartic_spline<T>>
+template <typename DataType>
+class quartic_spline : public primitive<DataType, quartic_spline<DataType>>
 {
-  public:
-    /*! 
-     * \brief Primitive function
-     * 
-     * \param  x  input 
-     * \returns value of \f$ {\mathbf C}(s) = 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
-     */
-    inline T f(T const *x)
-    {
-        return (*x > static_cast<T>(1)) ? T{} : 1 + (*x) * (*x) * (-6 + (*x) * (8 - 3 * (*x)));
-    }
+public:
+  /*! 
+   * \brief Primitive function
+   * 
+   * \param  x  input 
+   * \returns value of \f$ {\mathbf C}(s) = 1 - 6 x^2 + 8 x^3 - 3 x^4 \f$
+   */
+  inline DataType f(DataType const *x)
+  {
+    return (*x > static_cast<DataType>(1)) ? DataType{} : 1 + (*x) * (*x) * (-6 + (*x) * (8 - 3 * (*x)));
+  }
 };
 
 /*! \class cubic_spline
@@ -62,7 +62,7 @@ class quartic_spline : public primitive<T, quartic_spline<T>>
  * 
  * \brief Primitive function (cubic spline)
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * cubic spline function <br>
  * \f$
@@ -78,20 +78,20 @@ class quartic_spline : public primitive<T, quartic_spline<T>>
  * Reference: <br>
  * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
-template <typename T>
-class cubic_spline : public primitive<T, cubic_spline<T>>
+template <typename DataType>
+class cubic_spline : public primitive<DataType, cubic_spline<DataType>>
 {
-  public:
-    /*! 
-     * \brief Primitive function
-     * 
-     * \param  x  input 
-     * \returns value of \f$ {\mathbf C}(s) \f$
-     */
-    inline T f(T const *x)
-    {
-        return (*x > static_cast<T>(1)) ? T{} : (*x > static_cast<T>(0.5)) ? 2 - (*x) * (6 - (*x) * (6 - 2 * (*x))) : 1 - (*x) * (*x) * (6 - 6 * (*x));
-    }
+public:
+  /*! 
+   * \brief Primitive function
+   * 
+   * \param  x  input 
+   * \returns value of \f$ {\mathbf C}(s) \f$
+   */
+  inline DataType f(DataType const *x)
+  {
+    return (*x > static_cast<DataType>(1)) ? DataType{} : (*x > static_cast<DataType>(0.5)) ? 2 - (*x) * (6 - (*x) * (6 - 2 * (*x))) : 1 - (*x) * (*x) * (6 - 6 * (*x));
+  }
 };
 
 /*! \class normalizedgaussian
@@ -99,7 +99,7 @@ class cubic_spline : public primitive<T, cubic_spline<T>>
  * 
  * \brief Primitive function (normalized Gaussian)
  * 
- * \tparam T data type
+ * \tparam DataType data type
  * 
  * normalized Gaussian function <br>
  * \f$
@@ -114,24 +114,24 @@ class cubic_spline : public primitive<T, cubic_spline<T>>
  * Reference: <br>
  * Chen et al., Int. J. Numer. Meth. Eng 2003; 56:935–960.
  */
-template <typename T>
-class normalizedgaussian : public primitive<T, normalizedgaussian<T>>
+template <typename DataType>
+class normalizedgaussian : public primitive<DataType, normalizedgaussian<DataType>>
 {
-  public:
-    /*! 
-     * \brief Primitive function
-     * 
-     * \param  x  input 
-     * \returns value of \f$ {\mathbf C}(s) \f$
-     */
-    inline T f(T const *x)
-    {
-        return (*x > static_cast<T>(1)) ? T{} : (std::exp(-std::pow(*x * alpha, 2)) - std::exp(-alpha * alpha)) / (1 - std::exp(-alpha * alpha));
-    }
+public:
+  /*! 
+   * \brief Primitive function
+   * 
+   * \param  x  input 
+   * \returns value of \f$ {\mathbf C}(s) \f$
+   */
+  inline DataType f(DataType const *x)
+  {
+    return (*x > static_cast<DataType>(1)) ? DataType{} : (std::exp(-std::pow(*x * alpha, 2)) - std::exp(-alpha * alpha)) / (1 - std::exp(-alpha * alpha));
+  }
 
-  private:
-    //! The \f$ \alpha \f$ parameter is taken to be 0.3, as commonly used in the literature.
-    static T alpha = static_cast<T>(1) / static_cast<T>(0.3);
+private:
+  //! The \f$ \alpha \f$ parameter is taken to be 0.3, as commonly used in the literature.
+  static DataType alpha = static_cast<DataType>(1) / static_cast<DataType>(0.3);
 };
 
 #endif // UMUQ_PRIMITIVE
