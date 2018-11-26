@@ -31,10 +31,10 @@ inline namespace density
  * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$, 
  * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-class multinomialDistribution : public densityFunction<T, std::function<T(T const *, unsigned int const *)>>
+template <typename DataType>
+class multinomialDistribution : public densityFunction<DataType, std::function<DataType(DataType const *, unsigned int const *)>>
 {
   public:
     /*!
@@ -62,7 +62,7 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns Density function value (the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$)
      */
-    T multinomialDistribution_f(T const *p, unsigned int const *mndist);
+    DataType multinomialDistribution_f(DataType const *p, unsigned int const *mndist);
 
     /*!
      * \brief Log of multinomial distribution density function
@@ -76,43 +76,43 @@ class multinomialDistribution : public densityFunction<T, std::function<T(T cons
      * 
      * \returns  Log of density function value (the logarithm of the probability \f$Pr(X_1=n_1, \cdots, X_K=n_K)\f$ of sampling \f$n[K]\f$ )
      */
-    T multinomialDistribution_lf(T const *p, unsigned int const *mndist);
+    DataType multinomialDistribution_lf(DataType const *p, unsigned int const *mndist);
 };
 
-template <typename T>
-multinomialDistribution<T>::multinomialDistribution(int const k)
+template <typename DataType>
+multinomialDistribution<DataType>::multinomialDistribution(int const k)
 {
     this->name = std::string("multinomial");
     this->numParams = k;
-    this->f = std::bind(&multinomialDistribution<T>::multinomialDistribution_f, this, std::placeholders::_1, std::placeholders::_2);
-    this->lf = std::bind(&multinomialDistribution<T>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
+    this->f = std::bind(&multinomialDistribution<DataType>::multinomialDistribution_f, this, std::placeholders::_1, std::placeholders::_2);
+    this->lf = std::bind(&multinomialDistribution<DataType>::multinomialDistribution_lf, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-template <typename T>
-T multinomialDistribution<T>::multinomialDistribution_f(T const *p, unsigned int const *mndist)
+template <typename DataType>
+DataType multinomialDistribution<DataType>::multinomialDistribution_f(DataType const *p, unsigned int const *mndist)
 {
     return std::exp(multinomialDistribution_lf(p, mndist));
 }
 
-template <typename T>
-T multinomialDistribution<T>::multinomialDistribution_lf(T const *p, unsigned int const *mndist)
+template <typename DataType>
+DataType multinomialDistribution<DataType>::multinomialDistribution_lf(DataType const *p, unsigned int const *mndist)
 {
 #ifdef DEBUG
     for (int i = 0; i < this->numParams; i++)
     {
-        if (p[i] <= T{})
+        if (p[i] <= DataType{})
         {
-            return std::numeric_limits<T>::infinity();
+            return std::numeric_limits<DataType>::infinity();
         }
     }
 #endif
     // compute the total number of independent trials
     unsigned int const N1 = std::accumulate(mndist, mndist + this->numParams, 0) + 1;
 
-    T const totpsum = std::accumulate(p, p + this->numParams, T{});
+    DataType const totpsum = std::accumulate(p, p + this->numParams, DataType{});
 
     // natural logarithm of the gamma function ~ log(N!)
-    T log_pdf = std::lgamma(N1);
+    DataType log_pdf = std::lgamma(N1);
     for (int i = 0; i < this->numParams; i++)
     {
         if (mndist[i] > 0)

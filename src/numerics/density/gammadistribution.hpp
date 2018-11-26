@@ -34,11 +34,11 @@ inline namespace density
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
 
-template <typename T, class V = T const *>
-class gammaDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
+class gammaDistribution : public densityFunction<DataType, FunctionType>
 {
   public:
     /*!
@@ -47,7 +47,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      */
-    gammaDistribution(T const alpha, T const beta = T{1});
+    gammaDistribution(DataType const alpha, DataType const beta = DataType{1});
 
     /*!
      * \brief Construct a new gamma Distribution object
@@ -56,7 +56,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * \param beta   Scale parameter \f$ beta\f$
      * \param n      Total number of alpha + beta inputs
      */
-    gammaDistribution(T const *alpha, T const *beta, int const n);
+    gammaDistribution(DataType const *alpha, DataType const *beta, int const n);
 
     /*!
      * \brief Destroy the Gamma distribution object
@@ -71,7 +71,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns Density function value 
      */
-    inline T gammaDistribution_f(T const *x);
+    inline DataType gammaDistribution_f(DataType const *x);
 
     /*!
      * \brief Log of Gamma distribution density function
@@ -80,7 +80,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value 
      */
-    inline T gammaDistribution_lf(T const *x);
+    inline DataType gammaDistribution_lf(DataType const *x);
 
     /*!
      * \brief Set the Random Number Generator object 
@@ -89,14 +89,14 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
 
     /*!
      * \brief Get the Random Number Generator object 
      * 
      * \returns Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    inline psrandom<T> *getRandomGenerator();
+    inline psrandom<DataType> *getRandomGenerator();
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -105,7 +105,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
+    bool sample(DataType *x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -114,7 +114,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x);
+    bool sample(std::vector<DataType> &x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -123,7 +123,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<T> &x);
+    bool sample(EVectorX<DataType> &x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -133,7 +133,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x, int const nSamples);
+    bool sample(DataType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -143,7 +143,7 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x, int const nSamples);
+    bool sample(std::vector<DataType> &x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -152,81 +152,81 @@ class gammaDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<T> &x);
+    bool sample(EMatrixX<DataType> &x);
 };
 
-template <typename T, class V>
-gammaDistribution<T, V>::gammaDistribution(T const alpha, T const beta) : densityFunction<T, std::function<T(V)>>(&alpha, &beta, 2, "gamma")
+template <typename DataType, class FunctionType>
+gammaDistribution<DataType, FunctionType>::gammaDistribution(DataType const alpha, DataType const beta) : densityFunction<DataType, FunctionType>(&alpha, &beta, 2, "gamma")
 {
-    this->f = std::bind(&gammaDistribution<T, V>::gammaDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
 }
 
-template <typename T, class V>
-gammaDistribution<T, V>::gammaDistribution(T const *alpha, T const *beta, int const n) : densityFunction<T, std::function<T(V)>>(alpha, beta, n, "gamma")
+template <typename DataType, class FunctionType>
+gammaDistribution<DataType, FunctionType>::gammaDistribution(DataType const *alpha, DataType const *beta, int const n) : densityFunction<DataType, FunctionType>(alpha, beta, n, "gamma")
 {
     if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!")
     }
-    this->f = std::bind(&gammaDistribution<T, V>::gammaDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gammaDistribution<T, V>::gammaDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
 }
 
-template <typename T, class V>
-inline T gammaDistribution<T, V>::gammaDistribution_f(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType gammaDistribution<DataType, FunctionType>::gammaDistribution_f(DataType const *x)
 {
-    T sum(1);
+    DataType sum(1);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        if (x[i] < T{})
+        if (x[i] < DataType{})
         {
-            return T{};
+            return DataType{};
         }
-        else if (x[i] == T{})
+        else if (x[i] == DataType{})
         {
-            if (this->params[k] == static_cast<T>(1))
+            if (this->params[k] == static_cast<DataType>(1))
             {
-                sum *= static_cast<T>(1) / this->params[k + 1];
+                sum *= static_cast<DataType>(1) / this->params[k + 1];
                 continue;
             }
             else
             {
-                return T{};
+                return DataType{};
             }
         }
-        else if (this->params[k] == static_cast<T>(1))
+        else if (this->params[k] == static_cast<DataType>(1))
         {
             sum *= std::exp(-x[i] / this->params[k + 1]) / this->params[k + 1];
         }
         else
         {
-            sum *= std::exp((this->params[k] - static_cast<T>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
+            sum *= std::exp((this->params[k] - static_cast<DataType>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
         }
     }
     return sum;
 }
 
-template <typename T, class V>
-inline T gammaDistribution<T, V>::gammaDistribution_lf(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType gammaDistribution<DataType, FunctionType>::gammaDistribution_lf(DataType const *x)
 {
     for (std::size_t i = 0; i < this->numParams / 2; i++)
     {
-        if (x[i] < T{})
+        if (x[i] < DataType{})
         {
-            return -std::numeric_limits<T>::infinity();
+            return -std::numeric_limits<DataType>::infinity();
         }
     }
-    T sum(0);
+    DataType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<T>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
+        sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<DataType>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
     }
     return sum;
 }
 
-template <typename T, class V>
-inline bool gammaDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType, class FunctionType>
+inline bool gammaDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
     if (PRNG)
     {
@@ -244,11 +244,11 @@ inline bool gammaDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename T, class V>
-inline psrandom<T> *gammaDistribution<T, V>::getRandomGenerator() { return this->prng; }
+template <typename DataType, class FunctionType>
+inline psrandom<DataType> *gammaDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(T *x)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(DataType *x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -270,8 +270,8 @@ bool gammaDistribution<T, V>::sample(T *x)
 #endif
 }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(std::vector<T> &x)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -293,8 +293,8 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(EVectorX<T> &x)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -316,8 +316,8 @@ bool gammaDistribution<T, V>::sample(EVectorX<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(T *x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -346,8 +346,8 @@ bool gammaDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -389,8 +389,8 @@ bool gammaDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool gammaDistribution<T, V>::sample(EMatrixX<T> &x)
+template <typename DataType, class FunctionType>
+bool gammaDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)

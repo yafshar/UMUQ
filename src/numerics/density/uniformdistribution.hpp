@@ -28,10 +28,10 @@ inline namespace density
  * \note
  * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T, class V = T const *>
-class uniformDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
+class uniformDistribution : public densityFunction<DataType, FunctionType>
 {
   public:
     /*!
@@ -40,7 +40,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * \param a  Lower bound
      * \param b  Upper bound
      */
-    uniformDistribution(T const a, T const b);
+    uniformDistribution(DataType const a, DataType const b);
 
     /*!
      * \brief Construct a new uniform Distribution object
@@ -49,7 +49,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * \param b  Upper bound
      * \param n  Total number of Lower bound + Upper bound inputs
      */
-    uniformDistribution(T const *a, T const *b, int const n);
+    uniformDistribution(DataType const *a, DataType const *b, int const n);
 
     /*!
      * \brief Destroy the uniform Distribution object
@@ -64,7 +64,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Density function value 
      */
-    inline T uniformDistribution_f(T const *x);
+    inline DataType uniformDistribution_f(DataType const *x);
 
     /*!
      * \brief Log of Uniform distribution density function
@@ -73,7 +73,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value
      */
-    inline T uniformDistribution_lf(T const *x);
+    inline DataType uniformDistribution_lf(DataType const *x);
 
     /*!
      * \brief Set the Random Number Generator object 
@@ -82,14 +82,14 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
 
     /*!
      * \brief Get the Random Number Generator object 
      * 
      * \returns Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    inline psrandom<T> *getRandomGenerator();
+    inline psrandom<DataType> *getRandomGenerator();
 
     /*!
      * \brief Create samples of the uniform Distribution object
@@ -98,7 +98,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
+    bool sample(DataType *x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
@@ -107,7 +107,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x);
+    bool sample(std::vector<DataType> &x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
@@ -116,7 +116,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<T> &x);
+    bool sample(EVectorX<DataType> &x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
@@ -126,7 +126,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x, int const nSamples);
+    bool sample(DataType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the uniform Distribution object
@@ -136,7 +136,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x, int const nSamples);
+    bool sample(std::vector<DataType> &x, int const nSamples);
 
     /*!
      * \brief  Create samples of the uniform Distribution object
@@ -145,86 +145,86 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<T> &x);
+    bool sample(EMatrixX<DataType> &x);
 
   private:
     //! Const value for uniform distribution function
-    T uniformDistribution_fValue;
+    DataType uniformDistribution_fValue;
     //! Const value for logarithm of the uniform distribution function
-    T uniformDistribution_lfValue;
+    DataType uniformDistribution_lfValue;
 
     //! Helper function
-    inline T uniformDistribution_f_();
+    inline DataType uniformDistribution_f_();
     //! Helper log function
-    inline T uniformDistribution_lf_();
+    inline DataType uniformDistribution_lf_();
 };
 
-template <typename T, class V>
-uniformDistribution<T, V>::uniformDistribution(T const a, T const b) : densityFunction<T, std::function<T(V)>>(&a, &b, 2, "uniform")
+template <typename DataType, class FunctionType>
+uniformDistribution<DataType, FunctionType>::uniformDistribution(DataType const a, DataType const b) : densityFunction<DataType, FunctionType>(&a, &b, 2, "uniform")
 {
-    this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&uniformDistribution<DataType>::uniformDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&uniformDistribution<DataType>::uniformDistribution_lf, this, std::placeholders::_1);
     uniformDistribution_fValue = uniformDistribution_f_();
     uniformDistribution_lfValue = uniformDistribution_lf_();
 }
 
-template <typename T, class V>
-uniformDistribution<T, V>::uniformDistribution(T const *a, T const *b, int const n) : densityFunction<T, std::function<T(V)>>(a, b, n, "uniform")
+template <typename DataType, class FunctionType>
+uniformDistribution<DataType, FunctionType>::uniformDistribution(DataType const *a, DataType const *b, int const n) : densityFunction<DataType, FunctionType>(a, b, n, "uniform")
 {
     if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }
-    this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&uniformDistribution<DataType>::uniformDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&uniformDistribution<DataType>::uniformDistribution_lf, this, std::placeholders::_1);
     uniformDistribution_fValue = uniformDistribution_f_();
     uniformDistribution_lfValue = uniformDistribution_lf_();
 }
 
-template <typename T, class V>
-uniformDistribution<T, V>::~uniformDistribution() {}
+template <typename DataType, class FunctionType>
+uniformDistribution<DataType, FunctionType>::~uniformDistribution() {}
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_f(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType uniformDistribution<DataType, FunctionType>::uniformDistribution_f(DataType const *x)
 {
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
-            return T{};
+            return DataType{};
         }
     }
     return uniformDistribution_fValue;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_lf(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType uniformDistribution<DataType, FunctionType>::uniformDistribution_lf(DataType const *x)
 {
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
-            return std::numeric_limits<T>::infinity();
+            return std::numeric_limits<DataType>::infinity();
         }
     }
     return uniformDistribution_lfValue;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_f_()
+template <typename DataType, class FunctionType>
+inline DataType uniformDistribution<DataType, FunctionType>::uniformDistribution_f_()
 {
-    T sum(1);
+    DataType sum(1);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        sum *= static_cast<T>(1) / (this->params[k + 1] - this->params[k]);
+        sum *= static_cast<DataType>(1) / (this->params[k + 1] - this->params[k]);
     }
     return sum;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_lf_()
+template <typename DataType, class FunctionType>
+inline DataType uniformDistribution<DataType, FunctionType>::uniformDistribution_lf_()
 {
-    T sum(0);
+    DataType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         sum -= std::log(this->params[k + 1] - this->params[k]);
@@ -232,8 +232,8 @@ inline T uniformDistribution<T, V>::uniformDistribution_lf_()
     return sum;
 }
 
-template <typename T, class V>
-inline bool uniformDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType, class FunctionType>
+inline bool uniformDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
     if (PRNG)
     {
@@ -251,11 +251,11 @@ inline bool uniformDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename T, class V>
-inline psrandom<T> *uniformDistribution<T, V>::getRandomGenerator() { return this->prng; }
+template <typename DataType, class FunctionType>
+inline psrandom<DataType> *uniformDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(T *x)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(DataType *x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -277,8 +277,8 @@ bool uniformDistribution<T, V>::sample(T *x)
 #endif
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(std::vector<T> &x)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -299,8 +299,8 @@ bool uniformDistribution<T, V>::sample(std::vector<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(EVectorX<T> &x)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -322,8 +322,8 @@ bool uniformDistribution<T, V>::sample(EVectorX<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(T *x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -353,8 +353,8 @@ bool uniformDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -397,8 +397,8 @@ bool uniformDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(EMatrixX<T> &x)
+template <typename DataType, class FunctionType>
+bool uniformDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)

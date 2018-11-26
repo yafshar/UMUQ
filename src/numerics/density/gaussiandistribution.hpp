@@ -26,10 +26,10 @@ inline namespace density
  * \note
  * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T, class V = T const *>
-class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
+class gaussianDistribution : public densityFunction<DataType, FunctionType>
 {
   public:
     /*!
@@ -38,7 +38,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * \param mu     Mean, \f$ \mu \f$
      * \param sigma  Standard deviation \f$ \sigma \f$
      */
-    gaussianDistribution(T const mu, T const sigma);
+    gaussianDistribution(DataType const mu, DataType const sigma);
 
     /*!
      * \brief Construct a new gaussian Distribution object
@@ -47,7 +47,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * \param sigma  Standard deviation \f$ \sigma \f$
      * \param n      Total number of Mean + Standard deviation inputs
      */
-    gaussianDistribution(T const *mu, T const *sigma, int const n);
+    gaussianDistribution(DataType const *mu, DataType const *sigma, int const n);
 
     /*!
      * \brief Destroy the gaussian Distribution object
@@ -62,7 +62,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns Density function value 
      */
-    inline T gaussianDistribution_f(T const *x);
+    inline DataType gaussianDistribution_f(DataType const *x);
 
     /*!
      * \brief Log of Gaussian Distribution density function
@@ -71,7 +71,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value 
      */
-    inline T gaussianDistribution_lf(T const *x);
+    inline DataType gaussianDistribution_lf(DataType const *x);
 
     /*!
      * \brief Set the Random Number Generator object 
@@ -80,14 +80,14 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
 
     /*!
      * \brief Get the Random Number Generator object 
      * 
      * \returns Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    inline psrandom<T> *getRandomGenerator();
+    inline psrandom<DataType> *getRandomGenerator();
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -96,7 +96,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
+    bool sample(DataType *x);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -105,7 +105,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x);
+    bool sample(std::vector<DataType> &x);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -114,7 +114,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<T> &x);
+    bool sample(EVectorX<DataType> &x);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -124,7 +124,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x, int const nSamples);
+    bool sample(DataType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -134,7 +134,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x, int const nSamples);
+    bool sample(std::vector<DataType> &x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
@@ -143,53 +143,53 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<T> &x);
+    bool sample(EMatrixX<DataType> &x);
 };
 
-template <typename T, class V>
-gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : densityFunction<T, std::function<T(V)>>(&mu, &sigma, 2, "gaussian")
+template <typename DataType, class FunctionType>
+gaussianDistribution<DataType, FunctionType>::gaussianDistribution(DataType const mu, DataType const sigma) : densityFunction<DataType, FunctionType>(&mu, &sigma, 2, "gaussian")
 {
-    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gaussianDistribution<DataType, FunctionType>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<DataType, FunctionType>::gaussianDistribution_lf, this, std::placeholders::_1);
 }
 
-template <typename T, class V>
-gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, int const n) : densityFunction<T, std::function<T(V)>>(mu, sigma, n, "gaussian")
+template <typename DataType, class FunctionType>
+gaussianDistribution<DataType, FunctionType>::gaussianDistribution(DataType const *mu, DataType const *sigma, int const n) : densityFunction<DataType, FunctionType>(mu, sigma, n, "gaussian")
 {
     if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }
-    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gaussianDistribution<DataType, FunctionType>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<DataType, FunctionType>::gaussianDistribution_lf, this, std::placeholders::_1);
 }
 
-template <typename T, class V>
-inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType gaussianDistribution<DataType, FunctionType>::gaussianDistribution_f(DataType const *x)
 {
-    T sum(1);
+    DataType sum(1);
     for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
-        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
-        sum *= static_cast<T>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
+        DataType const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        sum *= static_cast<DataType>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
     }
     return sum;
 }
 
-template <typename T, class V>
-inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType gaussianDistribution<DataType, FunctionType>::gaussianDistribution_lf(DataType const *x)
 {
-    T sum(0);
+    DataType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        DataType const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
         sum += -0.5 * M_L2PI - std::log(this->params[k + 1]) - 0.5 * xSigma * xSigma;
     }
     return sum;
 }
 
-template <typename T, class V>
-inline bool gaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType, class FunctionType>
+inline bool gaussianDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
     if (PRNG)
     {
@@ -207,11 +207,11 @@ inline bool gaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename T, class V>
-inline psrandom<T> *gaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
+template <typename DataType, class FunctionType>
+inline psrandom<DataType> *gaussianDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(T *x)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(DataType *x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -233,8 +233,8 @@ bool gaussianDistribution<T, V>::sample(T *x)
 #endif
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(std::vector<T> &x)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -256,8 +256,8 @@ bool gaussianDistribution<T, V>::sample(std::vector<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(EVectorX<T> &x)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -279,8 +279,8 @@ bool gaussianDistribution<T, V>::sample(EVectorX<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(T *x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -310,8 +310,8 @@ bool gaussianDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -354,8 +354,8 @@ bool gaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(EMatrixX<T> &x)
+template <typename DataType, class FunctionType>
+bool gaussianDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)

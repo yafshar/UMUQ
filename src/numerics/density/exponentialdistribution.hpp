@@ -36,10 +36,10 @@ inline namespace density
  * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * - Requires that \f$ \mu > 0 \f$. 
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T, class V = T const *>
-class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
+class exponentialDistribution : public densityFunction<DataType, FunctionType>
 {
   public:
     /*!
@@ -47,7 +47,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \param mu Mean, \f$ \mu \f$
      */
-    explicit exponentialDistribution(T const mu);
+    explicit exponentialDistribution(DataType const mu);
 
     /*!
      * \brief Construct a new exponential Distribution object
@@ -55,7 +55,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * \param mu Mean, \f$ \mu \f$
      * \param n  Number of input
      */
-    explicit exponentialDistribution(T const *mu, int const n);
+    explicit exponentialDistribution(DataType const *mu, int const n);
 
     /*!
      * \brief Destroy the exponential distribution object
@@ -70,7 +70,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns Density function value 
      */
-    inline T exponentialDistribution_f(T const *x);
+    inline DataType exponentialDistribution_f(DataType const *x);
 
     /*!
      * \brief Log of exponential distribution density function
@@ -79,7 +79,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value 
      */
-    inline T exponentialDistribution_lf(T const *x);
+    inline DataType exponentialDistribution_lf(DataType const *x);
 
     /*!
      * \brief Set the Random Number Generator object 
@@ -88,14 +88,14 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
 
     /*!
      * \brief Get the Random Number Generator object 
      * 
      * \returns Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    inline psrandom<T> *getRandomGenerator();
+    inline psrandom<DataType> *getRandomGenerator();
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -104,7 +104,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
+    bool sample(DataType *x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -113,7 +113,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x);
+    bool sample(std::vector<DataType> &x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -122,7 +122,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<T> &x);
+    bool sample(EVectorX<DataType> &x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -132,7 +132,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x, int const nSamples);
+    bool sample(DataType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -142,7 +142,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<T> &x, int const nSamples);
+    bool sample(std::vector<DataType> &x, int const nSamples);
 
     /*!
      * \brief  Create samples of the exponential distribution object
@@ -151,7 +151,7 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<T> &x);
+    bool sample(EMatrixX<DataType> &x);
 
   private:
     /*!
@@ -165,18 +165,18 @@ class exponentialDistribution : public densityFunction<T, std::function<T(V)>>
  * 
  * \param mu Mean, \f$ \mu \f$
  */
-template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const mu) : densityFunction<T, std::function<T(V)>>(&mu, 1, "exponential")
+template <typename DataType, class FunctionType>
+exponentialDistribution<DataType, FunctionType>::exponentialDistribution(DataType const mu) : densityFunction<DataType, FunctionType>(&mu, 1, "exponential")
 {
-    this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
 }
 
-template <typename T, class V>
-exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n) : densityFunction<T, std::function<T(V)>>(mu, n, "exponential")
+template <typename DataType, class FunctionType>
+exponentialDistribution<DataType, FunctionType>::exponentialDistribution(DataType const *mu, int const n) : densityFunction<DataType, FunctionType>(mu, n, "exponential")
 {
-    this->f = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&exponentialDistribution<T, V>::exponentialDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
 }
 
 /*!
@@ -186,17 +186,17 @@ exponentialDistribution<T, V>::exponentialDistribution(T const *mu, int const n)
  * 
  * \returns Density function value 
  */
-template <typename T, class V>
-inline T exponentialDistribution<T, V>::exponentialDistribution_f(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f(DataType const *x)
 {
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        if (x[i] < T{})
+        if (x[i] < DataType{})
         {
-            return T{};
+            return DataType{};
         }
     }
-    T sum(1);
+    DataType sum(1);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
         sum *= std::exp(-x[i] / this->params[i]) / this->params[i];
@@ -211,17 +211,17 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_f(T const *x)
  * 
  * \returns  Log of density function value 
  */
-template <typename T, class V>
-inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
+template <typename DataType, class FunctionType>
+inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf(DataType const *x)
 {
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        if (x[i] < T{})
+        if (x[i] < DataType{})
         {
-            return std::numeric_limits<T>::infinity();
+            return std::numeric_limits<DataType>::infinity();
         }
     }
-    T sum(0);
+    DataType sum(0);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
         sum -= (std::log(this->params[i]) + x[i] / this->params[i]);
@@ -229,8 +229,8 @@ inline T exponentialDistribution<T, V>::exponentialDistribution_lf(T const *x)
     return sum;
 }
 
-template <typename T, class V>
-inline bool exponentialDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType, class FunctionType>
+inline bool exponentialDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
     if (PRNG)
     {
@@ -248,11 +248,11 @@ inline bool exponentialDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename T, class V>
-inline psrandom<T> *exponentialDistribution<T, V>::getRandomGenerator() { return this->prng; }
+template <typename DataType, class FunctionType>
+inline psrandom<DataType> *exponentialDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(T *x)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(DataType *x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -274,8 +274,8 @@ bool exponentialDistribution<T, V>::sample(T *x)
 #endif
 }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(std::vector<T> &x)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -297,8 +297,8 @@ bool exponentialDistribution<T, V>::sample(std::vector<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(EVectorX<T> &x)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -320,8 +320,8 @@ bool exponentialDistribution<T, V>::sample(EVectorX<T> &x)
 #endif
 }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(T *x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -350,8 +350,8 @@ bool exponentialDistribution<T, V>::sample(T *x, int const nSamples)
 #endif
 }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -392,8 +392,8 @@ bool exponentialDistribution<T, V>::sample(std::vector<T> &x, int const nSamples
 #endif
 }
 
-template <typename T, class V>
-bool exponentialDistribution<T, V>::sample(EMatrixX<T> &x)
+template <typename DataType, class FunctionType>
+bool exponentialDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
 #ifdef DEBUG
     if (this->prng)
