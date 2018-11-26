@@ -15,9 +15,9 @@ inline namespace multimin
  * 
  * \brief Wrapper for an external Multidimensional function
  *  
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
+template <typename DataType>
 class linearFunctionWrapper
 {
   public:
@@ -38,9 +38,9 @@ class linearFunctionWrapper
      * 
      * \param alpha Input data
      * 
-     * \return T 
+     * \return DataType 
      */
-    T f(T const alpha);
+    DataType f(DataType const alpha);
 
     /*!
      * \brief 
@@ -51,7 +51,7 @@ class linearFunctionWrapper
      * \return true 
      * \return false 
      */
-    bool df(T const alpha, T *DF);
+    bool df(DataType const alpha, DataType *DF);
 
     /*!
      * \brief 
@@ -63,7 +63,7 @@ class linearFunctionWrapper
      * \return true 
      * \return false 
      */
-    bool fdf(T const alpha, T *F, T *DF);
+    bool fdf(DataType const alpha, DataType *F, DataType *DF);
 
     /*!
      * \brief Set the fun object to use the external Multidimensional function
@@ -73,7 +73,7 @@ class linearFunctionWrapper
      * \return true 
      * \return false 
      */
-    bool set(umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> &umFun);
+    bool set(umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> &umFun);
 
     /*!
      * \brief 
@@ -86,7 +86,7 @@ class linearFunctionWrapper
      * \param X_alpha 
      * \param G_alpha 
      */
-    void prepare(int const n, T const *X, T const F, T const *G, T const *P, T *X_alpha, T *G_alpha);
+    void prepare(int const n, DataType const *X, DataType const F, DataType const *G, DataType const *P, DataType *X_alpha, DataType *G_alpha);
 
     /*!
      * \brief 
@@ -96,7 +96,7 @@ class linearFunctionWrapper
      * \param f 
      * \param gOut 
      */
-    void updatePosition(T const alpha, T *xOut, T *f, T *gOut);
+    void updatePosition(DataType const alpha, DataType *xOut, DataType *f, DataType *gOut);
 
     /*!
      * \brief 
@@ -108,14 +108,14 @@ class linearFunctionWrapper
      * \brief
      *
      */
-    void moveTo(T const alpha);
+    void moveTo(DataType const alpha);
 
     /*!
      * \brief Calculate the slope along the direction p
      * 
-     * \return T 
+     * \return DataType 
      */
-    inline T slope();
+    inline DataType slope();
 
   private:
     /*!
@@ -123,61 +123,61 @@ class linearFunctionWrapper
      * 
      * Make it noncopyable.
      */
-    linearFunctionWrapper(linearFunctionWrapper<T> const &) = delete;
+    linearFunctionWrapper(linearFunctionWrapper<DataType> const &) = delete;
 
     /*!
      * \brief Delete a linearFunctionWrapper object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns linearFunctionWrapper<T>& 
+     * \returns linearFunctionWrapper<DataType>& 
      */
-    linearFunctionWrapper<T> &operator=(linearFunctionWrapper<T> const &) = delete;
+    linearFunctionWrapper<DataType> &operator=(linearFunctionWrapper<DataType> const &) = delete;
 
   private:
     //! Multidimensional function
-    umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> fun;
+    umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> fun;
 
     //! Read only x
-    T const *x;
+    DataType const *x;
 
     //! Read only g
-    T const *g;
+    DataType const *g;
 
     //! Read only p
-    T const *p;
+    DataType const *p;
 
     //! Cached values, for x(alpha) = x + alpha * p
-    T f_alpha;
+    DataType f_alpha;
     //!
-    T df_alpha;
+    DataType df_alpha;
 
     //!
-    T *x_alpha;
+    DataType *x_alpha;
     //!
-    T *g_alpha;
+    DataType *g_alpha;
 
     //! Cache "keys"
-    T f_cache_key;
+    DataType f_cache_key;
     //!
-    T df_cache_key;
+    DataType df_cache_key;
     //!
-    T x_cache_key;
+    DataType x_cache_key;
     //!
-    T g_cache_key;
+    DataType g_cache_key;
 
     //!
     int nsize;
 };
 
-template <typename T>
-linearFunctionWrapper<T>::linearFunctionWrapper() {}
+template <typename DataType>
+linearFunctionWrapper<DataType>::linearFunctionWrapper() {}
 
-template <typename T>
-linearFunctionWrapper<T>::~linearFunctionWrapper() {}
+template <typename DataType>
+linearFunctionWrapper<DataType>::~linearFunctionWrapper() {}
 
-template <typename T>
-T linearFunctionWrapper<T>::f(T const alpha)
+template <typename DataType>
+DataType linearFunctionWrapper<DataType>::f(DataType const alpha)
 {
     // Using previously cached f(alpha)
     if (alpha == f_cache_key)
@@ -194,8 +194,8 @@ T linearFunctionWrapper<T>::f(T const alpha)
     return f_alpha;
 }
 
-template <typename T>
-bool linearFunctionWrapper<T>::df(T const alpha, T *DF)
+template <typename DataType>
+bool linearFunctionWrapper<DataType>::df(DataType const alpha, DataType *DF)
 {
     // Using previously cached df(alpha)
     if (alpha == df_cache_key)
@@ -226,8 +226,8 @@ bool linearFunctionWrapper<T>::df(T const alpha, T *DF)
     return true;
 }
 
-template <typename T>
-bool linearFunctionWrapper<T>::fdf(T const alpha, T *F, T *DF)
+template <typename DataType>
+bool linearFunctionWrapper<DataType>::fdf(DataType const alpha, DataType *F, DataType *DF)
 {
     // Check for previously cached values
     if (alpha == f_cache_key && alpha == df_cache_key)
@@ -264,8 +264,8 @@ bool linearFunctionWrapper<T>::fdf(T const alpha, T *F, T *DF)
     UMUQFAILRETURN("Failed to compute the function f and its gradient!");
 }
 
-template <typename T>
-bool linearFunctionWrapper<T>::set(umuqDifferentiableFunction<T, F_MTYPE<T>, DF_MTYPE<T>, FDF_MTYPE<T>> &umFun)
+template <typename DataType>
+bool linearFunctionWrapper<DataType>::set(umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> &umFun)
 {
     if (umFun)
     {
@@ -279,8 +279,8 @@ bool linearFunctionWrapper<T>::set(umuqDifferentiableFunction<T, F_MTYPE<T>, DF_
     UMUQFAILRETURN("Function is not assigned!");
 }
 
-template <typename T>
-void linearFunctionWrapper<T>::prepare(int const n, T const *X, T const F, T const *G, T const *P, T *X_alpha, T *G_alpha)
+template <typename DataType>
+void linearFunctionWrapper<DataType>::prepare(int const n, DataType const *X, DataType const F, DataType const *G, DataType const *P, DataType *X_alpha, DataType *G_alpha)
 {
     nsize = n;
 
@@ -292,10 +292,10 @@ void linearFunctionWrapper<T>::prepare(int const n, T const *X, T const F, T con
     x_alpha = X_alpha;
     g_alpha = G_alpha;
 
-    x_cache_key = T{};
-    f_cache_key = T{};
-    g_cache_key = T{};
-    df_cache_key = T{};
+    x_cache_key = DataType{};
+    f_cache_key = DataType{};
+    g_cache_key = DataType{};
+    df_cache_key = DataType{};
 
     std::copy(x, x + nsize, x_alpha);
     std::copy(g, g + nsize, g_alpha);
@@ -303,13 +303,13 @@ void linearFunctionWrapper<T>::prepare(int const n, T const *X, T const F, T con
     df_alpha = slope();
 }
 
-template <typename T>
-void linearFunctionWrapper<T>::updatePosition(T const alpha, T *X, T *F, T *G)
+template <typename DataType>
+void linearFunctionWrapper<DataType>::updatePosition(DataType const alpha, DataType *X, DataType *F, DataType *G)
 {
     // Ensure that everything is fully cached
     {
-        T F_alpha;
-        T DF_alpha;
+        DataType F_alpha;
+        DataType DF_alpha;
 
         fdf(alpha, &F_alpha, &DF_alpha);
     }
@@ -320,8 +320,8 @@ void linearFunctionWrapper<T>::updatePosition(T const alpha, T *X, T *F, T *G)
     std::copy(g_alpha, g_alpha + nsize, G);
 }
 
-template <typename T>
-void linearFunctionWrapper<T>::changeDirection()
+template <typename DataType>
+void linearFunctionWrapper<DataType>::changeDirection()
 {
     // Convert the cache values from the end of the current minimization
     // to those needed for the start of the next minimization, alpha=0
@@ -329,24 +329,24 @@ void linearFunctionWrapper<T>::changeDirection()
     // The new x_alpha for alpha=0 is the current position
     std::copy(x, x + nsize, x_alpha);
 
-    x_cache_key = T{};
+    x_cache_key = DataType{};
 
     // The function value does not change
-    f_cache_key = T{};
+    f_cache_key = DataType{};
 
     // The new g_alpha for alpha=0 is the current gradient at the endpoint
     std::copy(g, g + nsize, g_alpha);
 
-    g_cache_key = T{};
+    g_cache_key = DataType{};
 
     // Calculate the slope along the new direction vector, p
     df_alpha = slope();
 
-    df_cache_key = T{};
+    df_cache_key = DataType{};
 }
 
-template <typename T>
-void linearFunctionWrapper<T>::moveTo(T const alpha)
+template <typename DataType>
+void linearFunctionWrapper<DataType>::moveTo(DataType const alpha)
 {
     // Using previously cached position
     if (alpha == x_cache_key)
@@ -365,10 +365,10 @@ void linearFunctionWrapper<T>::moveTo(T const alpha)
     }
 }
 
-template <typename T>
-inline T linearFunctionWrapper<T>::slope()
+template <typename DataType>
+inline DataType linearFunctionWrapper<DataType>::slope()
 {
-    T s(0);
+    DataType s(0);
     for (int i = 0; i < nsize; i++)
     {
         s += g_alpha[i] * p[i];

@@ -34,11 +34,11 @@ inline namespace density
  * Density function or a probability density (PDF), is a function, with a value at any given point (or sample point) 
  * interpreted as a relative likelihood that the value of the random variable would be equal to that sample.
  * 
- * \tparam T   Data type
- * \tparam F   Function type
+ * \tparam DataType     Data type
+ * \tparam FunctionType Function type
  */
-template <typename T, class F>
-class densityFunction : public umuqFunction<T, F>
+template <typename DataType, class FunctionType>
+class densityFunction : public umuqFunction<DataType, FunctionType>
 {
 public:
   /*!
@@ -55,7 +55,7 @@ public:
    * \param NumParams  Number of parameters
    * \param Name       Distribution name
    */
-  densityFunction(T const *Params, int const NumParams, char const *Name = "");
+  densityFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new density Function object
@@ -64,7 +64,7 @@ public:
    * \param NumParams  Number of parameters
    * \param Name       Distribution name
    */
-  densityFunction(std::vector<T> const &Params, char const *Name = "");
+  densityFunction(std::vector<DataType> const &Params, char const *Name = "");
 
   /*!
    * \brief Construct a new density Function object
@@ -74,7 +74,7 @@ public:
    * \param NumParams   Number of parameters
    * \param Name        Distribution name
    */
-  densityFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
+  densityFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new density Function object
@@ -84,21 +84,21 @@ public:
    * \param NumParams   Number of parameters
    * \param Name        Distribution name
    */
-  densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
+  densityFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, char const *Name = "");
 
   /*!
    * \brief Move constructor, construct a new density Function object
    * 
    * \param other densityFunction object
    */
-  densityFunction(densityFunction<T, F> &&other);
+  densityFunction(densityFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Move assignment operator
    * 
    * \param other densityFunction object 
    */
-  densityFunction<T, F> &operator=(densityFunction<T, F> &&other);
+  densityFunction<DataType, FunctionType> &operator=(densityFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Destroy the density Function object
@@ -112,7 +112,7 @@ public:
    * 
    * \returns the function value (Log of density function)
    */
-  F lf;
+  FunctionType lf;
 
   /*!
    * \brief Create random samples based on the distribution
@@ -121,16 +121,7 @@ public:
    * 
    * \return false If Random Number Generator object is not assigned
    */
-  virtual bool sample(T *x);
-
-  /*!
-   * \brief Create random samples based on the distribution
-   * 
-   * \param x Vector of random samples 
-   *  
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual bool sample(std::vector<T> &x);
+  virtual bool sample(DataType *x);
 
   /*!
    * \brief Create random samples based on the distribution
@@ -139,7 +130,16 @@ public:
    *  
    * \return false If Random Number Generator object is not assigned
    */
-  virtual bool sample(EVectorX<T> &x);
+  virtual bool sample(std::vector<DataType> &x);
+
+  /*!
+   * \brief Create random samples based on the distribution
+   * 
+   * \param x Vector of random samples 
+   *  
+   * \return false If Random Number Generator object is not assigned
+   */
+  virtual bool sample(EVectorX<DataType> &x);
 
   /*!
    * \brief Create random samples based on the distribution
@@ -149,7 +149,7 @@ public:
    *
    * \return false If Random Number Generator object is not assigned
    */
-  virtual bool sample(T *x, int const nSamples);
+  virtual bool sample(DataType *x, int const nSamples);
 
   /*!
    * \brief Create random samples based on the distribution
@@ -159,7 +159,7 @@ public:
    * 
    * \return false If Random Number Generator object is not assigned
    */
-  virtual bool sample(std::vector<T> &x, int const nSamples);
+  virtual bool sample(std::vector<DataType> &x, int const nSamples);
 
   /*!
    * \brief Create random samples based on the distribution
@@ -168,7 +168,7 @@ public:
    * 
    * \return false If Random Number Generator object is not assigned
    */
-  virtual bool sample(EMatrixX<T> &x);
+  virtual bool sample(EMatrixX<DataType> &x);
 
   /*!
    * \brief Set the Random Number Generator object 
@@ -177,99 +177,99 @@ public:
    * 
    * \return false If it encounters an unexpected problem
    */
-  virtual inline bool setRandomGenerator(psrandom<T> *PRNG);
+  virtual inline bool setRandomGenerator(psrandom<DataType> *PRNG);
 
   /*!
    * \brief Get the Random Number Generator object 
    * 
    * \returns Pseudo-random number object. \sa umuq::random::psrandom.
    */
-  virtual inline psrandom<T> *getRandomGenerator();
+  virtual inline psrandom<DataType> *getRandomGenerator();
 
 protected:
   //! Pointer to pseudo random number generator object
-  psrandom<T> *prng;
+  psrandom<DataType> *prng;
 };
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(char const *Name) : umuqFunction<T, F>(Name), prng(nullptr) {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(char const *Name) : umuqFunction<DataType, FunctionType>(Name), prng(nullptr) {}
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(T const *Params, int const NumParams, const char *Name) : umuqFunction<T, F>(Params, NumParams, Name), prng(nullptr) {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(DataType const *Params, int const NumParams, const char *Name) : umuqFunction<DataType, FunctionType>(Params, NumParams, Name), prng(nullptr) {}
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(std::vector<T> const &Params, const char *Name) : umuqFunction<T, F>(Params, Name), prng(nullptr) {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(std::vector<DataType> const &Params, const char *Name) : umuqFunction<DataType, FunctionType>(Params, Name), prng(nullptr) {}
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(T const *Params1, T const *Params2, int const NumParams, const char *Name) : umuqFunction<T, F>(Params1, Params2, NumParams, Name), prng(nullptr) {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(DataType const *Params1, DataType const *Params2, int const NumParams, const char *Name) : umuqFunction<DataType, FunctionType>(Params1, Params2, NumParams, Name), prng(nullptr) {}
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, const char *Name) : umuqFunction<T, F>(Params1, Params2, Name), prng(nullptr) {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, const char *Name) : umuqFunction<DataType, FunctionType>(Params1, Params2, Name), prng(nullptr) {}
 
-template <typename T, class F>
-densityFunction<T, F>::~densityFunction() {}
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::~densityFunction() {}
 
-template <typename T, class F>
-densityFunction<T, F>::densityFunction(densityFunction<T, F> &&other) : umuqFunction<T, F>::umuqFunction(std::move(other)),
-                                                                        lf(std::move(other.lf)),
-                                                                        prng(other.prng)
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType>::densityFunction(densityFunction<DataType, FunctionType> &&other) : umuqFunction<DataType, FunctionType>::umuqFunction(std::move(other)),
+                                                                                                            lf(std::move(other.lf)),
+                                                                                                            prng(other.prng)
 {
 }
 
-template <typename T, class F>
-densityFunction<T, F> &densityFunction<T, F>::operator=(densityFunction<T, F> &&other)
+template <typename DataType, class FunctionType>
+densityFunction<DataType, FunctionType> &densityFunction<DataType, FunctionType>::operator=(densityFunction<DataType, FunctionType> &&other)
 {
-  umuqFunction<T, F>::operator=(std::move(other));
+  umuqFunction<DataType, FunctionType>::operator=(std::move(other));
   lf = std::move(other.lf);
   prng = other.prng;
 
   return *this;
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(T *x)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(DataType *x)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(std::vector<T> &x)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(EVectorX<T> &x)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(T *x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(std::vector<T> &x, int const nSamples)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-bool densityFunction<T, F>::sample(EMatrixX<T> &x)
+template <typename DataType, class FunctionType>
+bool densityFunction<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-inline bool densityFunction<T, F>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType, class FunctionType>
+inline bool densityFunction<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
   UMUQFAILRETURN("Not implemented!");
 }
 
-template <typename T, class F>
-inline psrandom<T> *densityFunction<T, F>::getRandomGenerator()
+template <typename DataType, class FunctionType>
+inline psrandom<DataType> *densityFunction<DataType, FunctionType>::getRandomGenerator()
 {
   UMUQFAILRETURNNULL("Not implemented!");
 }

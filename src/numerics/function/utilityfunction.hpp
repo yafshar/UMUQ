@@ -5,7 +5,7 @@
 
 namespace umuq
 {
-    
+
 inline namespace multimin
 {
 
@@ -19,17 +19,24 @@ inline namespace multimin
 /*!
  * \ingroup Multimin_Module
  * 
- * \brief finds the real roots of \f$ a x^2 + b x + c = 0 \f$
+ * \brief Finds the real roots of \f$ a x^2 + b x + c = 0 \f$
  * 
- * \returns number of found roots
+ * \tparam DataType 
+ * \param a 
+ * \param b 
+ * \param c 
+ * \param x0 
+ * \param x1 
+ * 
+ * \returns int Number of found roots
  */
-template <typename T>
-int poly_solve_quadratic(T const a, T const b, T const c, T *x0, T *x1)
+template <typename DataType>
+int poly_solve_quadratic(DataType const a, DataType const b, DataType const c, DataType *x0, DataType *x1)
 {
     // Handle linear case
-    if (a == T{})
+    if (a == DataType{})
     {
-        if (b == T{})
+        if (b == DataType{})
         {
             // number of found roots is 0
             return 0;
@@ -44,23 +51,23 @@ int poly_solve_quadratic(T const a, T const b, T const c, T *x0, T *x1)
     }
 
     {
-        T disc = b * b - 4 * a * c;
+        DataType disc = b * b - 4 * a * c;
 
-        if (disc > T{})
+        if (disc > DataType{})
         {
-            if (b == T{})
+            if (b == DataType{})
             {
-                T r = std::sqrt(-c / a);
+                DataType r = std::sqrt(-c / a);
 
                 *x0 = -r;
                 *x1 = r;
             }
             else
             {
-                T sgnb = (b > T{} ? 1 : -1);
-                T temp = -0.5 * (b + sgnb * std::sqrt(disc));
-                T r1 = temp / a;
-                T r2 = c / temp;
+                DataType sgnb = (b > DataType{} ? 1 : -1);
+                DataType temp = -0.5 * (b + sgnb * std::sqrt(disc));
+                DataType r1 = temp / a;
+                DataType r2 = c / temp;
 
                 if (r1 < r2)
                 {
@@ -77,7 +84,7 @@ int poly_solve_quadratic(T const a, T const b, T const c, T *x0, T *x1)
             // number of found roots is 2
             return 2;
         }
-        else if (disc == T{})
+        else if (disc == DataType{})
         {
             *x0 = -0.5 * b / a;
             *x1 = -0.5 * b / a;
@@ -96,21 +103,37 @@ int poly_solve_quadratic(T const a, T const b, T const c, T *x0, T *x1)
 /*! 
  * \ingroup Multimin_Module
  * 
- * Find a minimum in \f$ x=[0,1] \f$ of the interpolating quadratic through
+ * 
+ */
+
+/*!
+ * \ingroup Multimin_Module
+ * 
+ * \brief Find a minimum in \f$ x=[0,1] \f$ of the interpolating quadratic through
  * \f$(0,f0)\f$, and \f$ (1,f1) \f$ with derivative \f$ fp0 \f$ at \f$x = 0. \f$  
  * The interpolating polynomial is \f$ q(x) = f0 + fp0 * z + (f1-f0-fp0) * z^2 \f$
+ * 
+ * \tparam DataType Data type
+ * 
+ * \param f0 
+ * \param fp0 
+ * \param f1 
+ * \param zl 
+ * \param zh 
+ * 
+ * \returns DataType Minimum found value in \f$ x=[0,1] \f$ of the interpolating quadratic 
  */
-template <typename T>
-T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
+template <typename DataType>
+DataType interp_quad(DataType const f0, DataType const fp0, DataType const f1, DataType const zl, DataType const zh)
 {
-    T fl = f0 + zl * (fp0 + zl * (f1 - f0 - fp0));
-    T fh = f0 + zh * (fp0 + zh * (f1 - f0 - fp0));
+    DataType fl = f0 + zl * (fp0 + zl * (f1 - f0 - fp0));
+    DataType fh = f0 + zh * (fp0 + zh * (f1 - f0 - fp0));
 
     // Curvature
-    T c = 2 * (f1 - f0 - fp0);
+    DataType c = 2 * (f1 - f0 - fp0);
 
-    T zmin = zl;
-    T fmin = fl;
+    DataType zmin = zl;
+    DataType fmin = fl;
 
     if (fh < fmin)
     {
@@ -119,14 +142,14 @@ T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
     }
 
     // Positive curvature required for a minimum
-    if (c > T{})
+    if (c > DataType{})
     {
         // Location of minimum
-        T z = -fp0 / c;
+        DataType z = -fp0 / c;
 
         if (z > zl && z < zh)
         {
-            T f = f0 + z * (fp0 + z * (f1 - f0 - fp0));
+            DataType f = f0 + z * (fp0 + z * (f1 - f0 - fp0));
             if (f < fmin)
             {
                 zmin = z;
@@ -138,15 +161,30 @@ T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
     return zmin;
 }
 
-/*! 
+/*!
  * \ingroup Multimin_Module
  * 
+ * \brief Find a minimum in \f$ x=[0,1] \f$ of the interpolating cubic through
+ * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$ 
+ * and \f$ fp1 \f$ at \f$ x=1. \f$
+ * 
+ * \tparam DataType Data type
+ * 
+ * \param c0 
+ * \param c1 
+ * \param c2 
+ * \param c3 
+ * \param z 
+ * 
+ * \returns DataType Minimum found value in \f$ x=[0,1] \f$ of the interpolating cubic
+ * 
+ *
  * Find a minimum in \f$ x=[0,1] \f$ of the interpolating cubic through
  * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$ 
  * and \f$ fp1 \f$ at \f$ x=1. \f$
  *
- * The interpolating polynomial is:
- *
+ * The interpolating polynomial is:<br>
+ * 
  * \f$ c(x) = f0 + fp0 * z + \eta * z^2 + xi * z^3 \f$, where 
  * \f$
  * \begin{aligned}
@@ -155,18 +193,19 @@ T interp_quad(T const f0, T const fp0, T const f1, T const zl, T const zh)
  * \end{aligned}
  * \f$
  */
-template <typename T>
-inline T cubic(T const c0, T const c1, T const c2, T const c3, T const z)
+template <typename DataType>
+inline DataType cubic(DataType const c0, DataType const c1, DataType const c2, DataType const c3, DataType const z)
 {
     return c0 + z * (c1 + z * (c2 + z * c3));
 }
 
 /*!
  * \ingroup Multimin_Module
- * \brief check_extremum
  * 
- * \tparam T Data type
+ * \brief Check for the extremum
  * 
+ * \tparam DataType Data type
+ *  
  * \param c0 
  * \param c1 
  * \param c2 
@@ -175,11 +214,11 @@ inline T cubic(T const c0, T const c1, T const c2, T const c3, T const z)
  * \param zmin 
  * \param fmin 
  */
-template <typename T>
-inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T const z, T *zmin, T *fmin)
+template <typename DataType>
+inline void check_extremum(DataType const c0, DataType const c1, DataType const c2, DataType const c3, DataType const z, DataType *zmin, DataType *fmin)
 {
     // Could make an early return by testing curvature >0 for minimum
-    T y = cubic<T>(c0, c1, c2, c3, z);
+    DataType y = cubic<DataType>(c0, c1, c2, c3, z);
 
     if (y < *fmin)
     {
@@ -194,7 +233,7 @@ inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T con
  * 
  * \brief A cubic polynomial interpolation using \f$ f(\alpha_i), \acute{f}(\alpha_i), f(\alpha_{i-1}), and \acute{f}(\alpha_{i-1}) \f$.
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param f0   \f$ f(\alpha_i) \f$
  * \param fp0  \f$ \acute{f}(\alpha_i) \f$
@@ -203,45 +242,45 @@ inline void check_extremum(T const c0, T const c1, T const c2, T const c3, T con
  * \param zl   Lower bound 
  * \param zh   Higher bound
  * 
- * \return Interpolation value
+ * \return DataType Interpolation value
  */
-template <typename T>
-T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T const zh)
+template <typename DataType>
+DataType interp_cubic(DataType const f0, DataType const fp0, DataType const f1, DataType const fp1, DataType const zl, DataType const zh)
 {
-    T eta = 3 * (f1 - f0) - 2 * fp0 - fp1;
-    T xi = fp0 + fp1 - 2 * (f1 - f0);
-    T c0 = f0;
-    T c1 = fp0;
-    T c2 = eta;
-    T c3 = xi;
-    T z0;
-    T z1;
+    DataType eta = 3 * (f1 - f0) - 2 * fp0 - fp1;
+    DataType xi = fp0 + fp1 - 2 * (f1 - f0);
+    DataType c0 = f0;
+    DataType c1 = fp0;
+    DataType c2 = eta;
+    DataType c3 = xi;
+    DataType z0;
+    DataType z1;
 
-    T zmin = zl;
+    DataType zmin = zl;
 
-    T fmin = cubic<T>(c0, c1, c2, c3, zl);
+    DataType fmin = cubic<DataType>(c0, c1, c2, c3, zl);
 
-    check_extremum<T>(c0, c1, c2, c3, zh, &zmin, &fmin);
+    check_extremum<DataType>(c0, c1, c2, c3, zh, &zmin, &fmin);
 
-    switch (poly_solve_quadratic<T>(3 * c3, 2 * c2, c1, &z0, &z1))
+    switch (poly_solve_quadratic<DataType>(3 * c3, 2 * c2, c1, &z0, &z1))
     {
     // Found 2 roots
     case (2):
         if (z0 > zl && z0 < zh)
         {
-            check_extremum<T>(c0, c1, c2, c3, z0, &zmin, &fmin);
+            check_extremum<DataType>(c0, c1, c2, c3, z0, &zmin, &fmin);
         }
 
         if (z1 > zl && z1 < zh)
         {
-            check_extremum<T>(c0, c1, c2, c3, z1, &zmin, &fmin);
+            check_extremum<DataType>(c0, c1, c2, c3, z1, &zmin, &fmin);
         }
         break;
     // Found 1 root
     case (1):
         if (z0 > zl && z0 < zh)
         {
-            check_extremum<T>(c0, c1, c2, c3, z0, &zmin, &fmin);
+            check_extremum<DataType>(c0, c1, c2, c3, z0, &zmin, &fmin);
         }
         break;
     }
@@ -254,7 +293,7 @@ T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T c
  * 
  * \brief interpolate
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param a 
  * \param fa 
@@ -265,28 +304,29 @@ T interp_cubic(T const f0, T const fp0, T const f1, T const fp1, T const zl, T c
  * \param xmin 
  * \param xmax 
  * \param order 
- * \returns T 
+ * 
+ * \returns DataType Interpolation value
  */
-template <typename T>
-T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const fpb, T const xmin, T const xmax, int const order)
+template <typename DataType>
+DataType interpolate(DataType const a, DataType const fa, DataType const fpa, DataType const b, DataType const fb, DataType const fpb, DataType const xmin, DataType const xmax, int const order)
 {
     // Map [a,b] to [0,1]
-    T zmin = (xmin - a) / (b - a);
-    T zmax = (xmax - a) / (b - a);
+    DataType zmin = (xmin - a) / (b - a);
+    DataType zmax = (xmax - a) / (b - a);
 
     if (zmin > zmax)
     {
         std::swap(zmin, zmax);
     }
 
-    T z;
+    DataType z;
     if (order > 2 && std::isfinite(fpb))
     {
-        z = interp_cubic<T>(fa, fpa * (b - a), fb, fpb * (b - a), zmin, zmax);
+        z = interp_cubic<DataType>(fa, fpa * (b - a), fb, fpb * (b - a), zmin, zmax);
     }
     else
     {
-        z = interp_quad<T>(fa, fpa * (b - a), fb, zmin, zmax);
+        z = interp_quad<DataType>(fa, fpa * (b - a), fb, zmin, zmax);
     }
 
     return a + z * (b - a);
@@ -318,7 +358,7 @@ T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const
  * Ref:
  * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
  * 
- * \tparam T      Data type
+ * \tparam DataType Data type
  * 
  * \param obj     linearFunctionWrapper object
  * \param rho     Fixed parameter defined by \f$ f(\alpha) \ge f(0) + \alpha (1 - \rho) \acute{f}(0) \f$  
@@ -333,29 +373,29 @@ T interpolate(T const a, T const fa, T const fpa, T const b, T const fb, T const
  * \return true 
  * \return false 
  */
-template <typename T>
-bool minimize(linearFunctionWrapper<T> &obj,
-              T const rho, T const sigma,
-              T const tau1, T const tau2,
-              T const tau3, int const order,
-              T const alpha1, T *alpha_new)
+template <typename DataType>
+bool minimize(linearFunctionWrapper<DataType> &obj,
+              DataType const rho, DataType const sigma,
+              DataType const tau1, DataType const tau2,
+              DataType const tau3, int const order,
+              DataType const alpha1, DataType *alpha_new)
 {
-    T f0;
-    T fp0;
-    T falpha;
-    T falpha_prev;
-    T fpalpha;
-    T fpalpha_prev;
-    T delta;
-    T alpha_next;
-    T alpha(alpha1);
-    T alpha_prev(0);
-    T a(0);
-    T b(alpha);
-    T fa;
-    T fb(0);
-    T fpa;
-    T fpb(0);
+    DataType f0;
+    DataType fp0;
+    DataType falpha;
+    DataType falpha_prev;
+    DataType fpalpha;
+    DataType fpalpha_prev;
+    DataType delta;
+    DataType alpha_next;
+    DataType alpha(alpha1);
+    DataType alpha_prev(0);
+    DataType a(0);
+    DataType b(alpha);
+    DataType fa;
+    DataType fb(0);
+    DataType fpa;
+    DataType fpb(0);
 
     if (!obj.fdf(0, &f0, &fp0))
     {
@@ -387,7 +427,7 @@ bool minimize(linearFunctionWrapper<T> &obj,
             fpa = fpalpha_prev;
             b = alpha;
             fb = falpha;
-            fpb = std::numeric_limits<T>::quiet_NaN();
+            fpb = std::numeric_limits<DataType>::quiet_NaN();
 
             // Goto sectioning
             break;
@@ -405,7 +445,7 @@ bool minimize(linearFunctionWrapper<T> &obj,
             return true;
         }
 
-        if (fpalpha >= T{})
+        if (fpalpha >= DataType{})
         {
             a = alpha;
             fa = falpha;
@@ -421,10 +461,10 @@ bool minimize(linearFunctionWrapper<T> &obj,
         delta = alpha - alpha_prev;
 
         {
-            T lower = alpha + delta;
-            T upper = alpha + tau1 * delta;
+            DataType lower = alpha + delta;
+            DataType upper = alpha + tau1 * delta;
 
-            alpha_next = interpolate<T>(alpha_prev, falpha_prev, fpalpha_prev, alpha, falpha, fpalpha, lower, upper, order);
+            alpha_next = interpolate<DataType>(alpha_prev, falpha_prev, fpalpha_prev, alpha, falpha, fpalpha, lower, upper, order);
         }
 
         alpha_prev = alpha;
@@ -439,15 +479,15 @@ bool minimize(linearFunctionWrapper<T> &obj,
         delta = b - a;
 
         {
-            T lower = a + tau2 * delta;
-            T upper = b - tau3 * delta;
+            DataType lower = a + tau2 * delta;
+            DataType upper = b - tau3 * delta;
 
-            alpha = interpolate<T>(a, fa, fpa, b, fb, fpb, lower, upper, order);
+            alpha = interpolate<DataType>(a, fa, fpa, b, fb, fpb, lower, upper, order);
         }
 
         falpha = obj.f(alpha);
 
-        if ((a - alpha) * fpa <= std::numeric_limits<T>::epsilon())
+        if ((a - alpha) * fpa <= std::numeric_limits<DataType>::epsilon())
         {
             // Roundoff prevents progress
             UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
@@ -458,7 +498,7 @@ bool minimize(linearFunctionWrapper<T> &obj,
             // \f$ a_next = a \f$
             b = alpha;
             fb = falpha;
-            fpb = std::numeric_limits<T>::quiet_NaN();
+            fpb = std::numeric_limits<DataType>::quiet_NaN();
         }
         else
         {
@@ -475,7 +515,7 @@ bool minimize(linearFunctionWrapper<T> &obj,
                 return true;
             }
 
-            if (((b - a) >= T{} && fpalpha >= T{}) || ((b - a) <= T{} && fpalpha <= T{}))
+            if (((b - a) >= DataType{} && fpalpha >= DataType{}) || ((b - a) <= DataType{} && fpalpha <= DataType{}))
             {
                 b = a;
                 fb = fa;

@@ -7,10 +7,10 @@ namespace umuq
 /*!\class umuqFunction
  * \brief umuqFunction is a general-purpose polymorphic function wrapper of n variables
  *
- * \tparam T  Data type
- * \tparam F  Function type (wrapped as std::function)
+ * \tparam DataType     Data type
+ * \tparam FunctionType Function type (wrapped as std::function)
  */
-template <typename T, class F>
+template <typename DataType, class FunctionType>
 class umuqFunction
 {
 public:
@@ -36,7 +36,7 @@ public:
    * \param NumParams Number of dimensions (Number of parameters) 
    * \param Name      Function name
    */
-  umuqFunction(T const *Params, int const NumParams, char const *Name = "");
+  umuqFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
@@ -46,7 +46,7 @@ public:
    * \param NumParams  Number of dimensions (Number of parameters) 
    * \param Name       Function name
    */
-  umuqFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name = "");
+  umuqFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
@@ -54,7 +54,7 @@ public:
    * \param Params  Input parameters of the Function object
    * \param Name    Function name
    */
-  umuqFunction(std::vector<T> const &Params, char const *Name = "");
+  umuqFunction(std::vector<DataType> const &Params, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
@@ -63,7 +63,7 @@ public:
    * \param Params2  Input parameters of the Function object
    * \param Name    Function name
    */
-  umuqFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name = "");
+  umuqFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, char const *Name = "");
 
   /*!
    * \brief Destroy the umuq Function object
@@ -76,13 +76,13 @@ public:
    * 
    * \param other umuqFunction object
    */
-  umuqFunction(umuqFunction<T, F> &&other);
+  umuqFunction(umuqFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Move assignment operator
    * 
    */
-  umuqFunction<T, F> &operator=(umuqFunction<T, F> &&other);
+  umuqFunction<DataType, FunctionType> &operator=(umuqFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Get the Name object
@@ -110,16 +110,16 @@ protected:
    * 
    * Make it noncopyable.
    */
-  umuqFunction(umuqFunction<T, F> const &) = delete;
+  umuqFunction(umuqFunction<DataType, FunctionType> const &) = delete;
 
   /*!
    * \brief Delete a umuqFunction object assignment
    * 
    * Make it nonassignable
    * 
-   * \returns umuqFunction<T, F>& 
+   * \returns umuqFunction<DataType, FunctionType>& 
    */
-  umuqFunction<T, F> &operator=(umuqFunction<T, F> const &) = delete;
+  umuqFunction<DataType, FunctionType> &operator=(umuqFunction<DataType, FunctionType> const &) = delete;
 
 public:
   //! Name of the function
@@ -129,42 +129,42 @@ public:
   std::size_t numParams;
 
   //! Function parameters
-  std::vector<T> params;
+  std::vector<DataType> params;
 
 public:
   /*!
    * \brief A general-purpose polymorphic function wrapper 
    * 
    */
-  F f;
+  FunctionType f;
 };
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(char const *Name) : name(Name),
-                                                     numParams(0),
-                                                     f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(char const *Name) : name(Name),
+                                                                       numParams(0),
+                                                                       f(nullptr)
 {
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(int const nDim, char const *Name) : name(Name),
-                                                                     numParams(nDim > 0 ? nDim : 0),
-                                                                     f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(int const nDim, char const *Name) : name(Name),
+                                                                                       numParams(nDim > 0 ? nDim : 0),
+                                                                                       f(nullptr)
 {
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(T const *Params, int const NumParams, char const *Name) : name(Name),
-                                                                                           numParams(NumParams > 0 ? NumParams : 0),
-                                                                                           params(Params, Params + NumParams),
-                                                                                           f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(DataType const *Params, int const NumParams, char const *Name) : name(Name),
+                                                                                                                    numParams(NumParams > 0 ? NumParams : 0),
+                                                                                                                    params(Params, Params + NumParams),
+                                                                                                                    f(nullptr)
 {
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(T const *Params1, T const *Params2, int const NumParams, char const *Name) : name(Name),
-                                                                                                              numParams(NumParams > 0 ? NumParams : 0),
-                                                                                                              f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name) : name(Name),
+                                                                                                                                              numParams(NumParams > 0 ? NumParams : 0),
+                                                                                                                                              f(nullptr)
 {
   if (numParams & 1)
   {
@@ -178,18 +178,18 @@ umuqFunction<T, F>::umuqFunction(T const *Params1, T const *Params2, int const N
   }
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(std::vector<T> const &Params, char const *Name) : name(Name),
-                                                                                   numParams(Params.size()),
-                                                                                   params(Params),
-                                                                                   f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(std::vector<DataType> const &Params, char const *Name) : name(Name),
+                                                                                                            numParams(Params.size()),
+                                                                                                            params(Params),
+                                                                                                            f(nullptr)
 {
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(std::vector<T> const &Params1, std::vector<T> const &Params2, char const *Name) : name(Name),
-                                                                                                                   numParams(Params1.size() + Params2.size()),
-                                                                                                                   f(nullptr)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, char const *Name) : name(Name),
+                                                                                                                                                   numParams(Params1.size() + Params2.size()),
+                                                                                                                                                   f(nullptr)
 {
   if (Params1.size() != Params2.size())
   {
@@ -203,19 +203,19 @@ umuqFunction<T, F>::umuqFunction(std::vector<T> const &Params1, std::vector<T> c
   }
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::~umuqFunction() {}
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::~umuqFunction() {}
 
-template <typename T, class F>
-umuqFunction<T, F>::umuqFunction(umuqFunction<T, F> &&other) : name(other.name),
-                                                               numParams(other.numParams),
-                                                               params(std::move(other.params)),
-                                                               f(std::move(other.f))
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::umuqFunction(umuqFunction<DataType, FunctionType> &&other) : name(other.name),
+                                                                                                   numParams(other.numParams),
+                                                                                                   params(std::move(other.params)),
+                                                                                                   f(std::move(other.f))
 {
 }
 
-template <typename T, class F>
-umuqFunction<T, F> &umuqFunction<T, F>::operator=(umuqFunction<T, F> &&other)
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType> &umuqFunction<DataType, FunctionType>::operator=(umuqFunction<DataType, FunctionType> &&other)
 {
   name = other.name;
   numParams = other.numParams;
@@ -225,20 +225,20 @@ umuqFunction<T, F> &umuqFunction<T, F>::operator=(umuqFunction<T, F> &&other)
   return *this;
 }
 
-template <typename T, class F>
-std::string const umuqFunction<T, F>::getName() const
+template <typename DataType, class FunctionType>
+std::string const umuqFunction<DataType, FunctionType>::getName() const
 {
   return name;
 }
 
-template <typename T, class F>
-void umuqFunction<T, F>::setName(char const *Name)
+template <typename DataType, class FunctionType>
+void umuqFunction<DataType, FunctionType>::setName(char const *Name)
 {
   name = std::string(Name);
 }
 
-template <typename T, class F>
-umuqFunction<T, F>::operator bool() const noexcept
+template <typename DataType, class FunctionType>
+umuqFunction<DataType, FunctionType>::operator bool() const noexcept
 {
   return f != nullptr;
 }
