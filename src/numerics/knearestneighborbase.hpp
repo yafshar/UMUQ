@@ -20,7 +20,7 @@ namespace umuq
  * 
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
- * \tparam T                  Data type
+ * \tparam DataType           Data type
  * \tparam FlannDistanceType  Distance type from flann library for computing the distances to the nearest neighbors
  * 
  * Distance type for computing the distances to the nearest neighbors include below distance types from flann library:
@@ -39,7 +39,7 @@ namespace umuq
  * - \b flann::HammingPopcnt             Hamming distance functor (pop count between two binary vectors, i.e. xor them 
  *                                       and count the number of bits set).
  */
-template <typename T, class FlannDistanceType>
+template <typename DataType, class FlannDistanceType>
 class kNearestNeighborBase
 {
   public:
@@ -66,19 +66,19 @@ class kNearestNeighborBase
      * \brief Move constructor
      * \param other kNearestNeighborBase to be moved
      */
-    kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> &&other);
+    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> &&other);
 
     /*!
      * \brief Copy constructor
      * \param other kNearestNeighborBase to be copied
      */
-    kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> const &other);
+    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> const &other);
 
     /*!
      * \brief Move assignment operator
      * \param other kNearestNeighborBase to be assigned
      */
-    kNearestNeighborBase<T, FlannDistanceType> &operator=(kNearestNeighborBase<T, FlannDistanceType> &&other);
+    kNearestNeighborBase<DataType, FlannDistanceType> &operator=(kNearestNeighborBase<DataType, FlannDistanceType> &&other);
 
     /*!
      * \brief Default destructor
@@ -91,7 +91,7 @@ class kNearestNeighborBase
      * 
      * \param idata A pointer to input data 
      */
-    virtual void buildIndex(T *idata);
+    virtual void buildIndex(DataType *idata);
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
@@ -99,7 +99,7 @@ class kNearestNeighborBase
      * \param idata A pointer to input data 
      * \param qdata A pointer to query data 
      */
-    virtual void buildIndex(T *idata, T *qdata);
+    virtual void buildIndex(DataType *idata, DataType *qdata);
 
     /*!
      * \brief A pointer to nearest neighbors indices
@@ -140,7 +140,7 @@ class kNearestNeighborBase
      * 
      * \returns A pointer to nearest neighbors distances from the point index
      */
-    inline T *NearestNeighborsDistances(int const &index) const;
+    inline DataType *NearestNeighborsDistances(int const &index) const;
 
     /*!
      * \brief Distance of a nearest neighbor of index
@@ -149,14 +149,14 @@ class kNearestNeighborBase
      * 
      * \returns Distance of a nearest neighbor point of the index
      */
-    inline T minDist(int const &index) const;
+    inline DataType minDist(int const &index) const;
 
     /*!
      * \brief Vector of all points' distance of their nearest neighbor 
      * 
      * \returns Vector of all points' distance of their nearest neighbor 
      */
-    inline T *minDist();
+    inline DataType *minDist();
 
     /*!
      * \brief Number of each point nearest neighbors
@@ -200,35 +200,35 @@ class kNearestNeighborBase
      *
      * \param Covariance  The covariance matrix
      */
-    virtual void setCovariance(EMatrixX<T> const &Covariance);
+    virtual void setCovariance(EMatrixX<DataType> const &Covariance);
 
     /*!
      * \brief Set the Covariance object
      *
      * \param Covariance  The covariance matrix
      */
-    virtual void setCovariance(T const *Covariance);
+    virtual void setCovariance(DataType const *Covariance);
 
     /*!
      * \brief Set the Covariance object
      *
      * \param Covariance  The covariance matrix
      */
-    virtual void setCovariance(std::vector<T> const &Covariance);
+    virtual void setCovariance(std::vector<DataType> const &Covariance);
 
     /*!
      * \brief Access the covariance matrix.
      *
      * \returns Constant reference to the covariance matrix.
      */
-    virtual EMatrixX<T> const &Covariance() const;
+    virtual EMatrixX<DataType> const &Covariance() const;
 
     /*!
      * \brief Modify the covariance matrix.
      *
      * \returns Reference to the covariance matrix.
      */
-    virtual EMatrixX<T> &Covariance();
+    virtual EMatrixX<DataType> &Covariance();
 
   protected:
     /*!
@@ -254,13 +254,13 @@ class kNearestNeighborBase
     std::unique_ptr<int[]> indices_ptr;
 
     //! Pointer of distances
-    std::unique_ptr<T[]> dists_ptr;
+    std::unique_ptr<DataType[]> dists_ptr;
 
     //! Matrix of indices
     flann::Matrix<int> indices;
 
     //! Matrix of distances
-    flann::Matrix<T> dists;
+    flann::Matrix<DataType> dists;
 
     //! Flag to check if the input data and query data are the same
     bool the_same;
@@ -269,17 +269,17 @@ class kNearestNeighborBase
     bool withCovariance;
 };
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
-                                                                                                                                nQueryDataPoints(ndataPoints),
-                                                                                                                                dataDimension(nDim),
-                                                                                                                                nNearestNeighborsToFind(kNeighbors + 1),
-                                                                                                                                indices_ptr(new int[ndataPoints * (kNeighbors + 1)]),
-                                                                                                                                dists_ptr(new T[ndataPoints * (kNeighbors + 1)]),
-                                                                                                                                indices(indices_ptr.get(), ndataPoints, (kNeighbors + 1)),
-                                                                                                                                dists(dists_ptr.get(), ndataPoints, (kNeighbors + 1)),
-                                                                                                                                the_same(true),
-                                                                                                                                withCovariance(false)
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
+                                                                                                                                       nQueryDataPoints(ndataPoints),
+                                                                                                                                       dataDimension(nDim),
+                                                                                                                                       nNearestNeighborsToFind(kNeighbors + 1),
+                                                                                                                                       indices_ptr(new int[ndataPoints * (kNeighbors + 1)]),
+                                                                                                                                       dists_ptr(new DataType[ndataPoints * (kNeighbors + 1)]),
+                                                                                                                                       indices(indices_ptr.get(), ndataPoints, (kNeighbors + 1)),
+                                                                                                                                       dists(dists_ptr.get(), ndataPoints, (kNeighbors + 1)),
+                                                                                                                                       the_same(true),
+                                                                                                                                       withCovariance(false)
 {
     if (nDataPoints < static_cast<std::size_t>(nNearestNeighborsToFind))
     {
@@ -287,17 +287,17 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndata
     }
 }
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
-                                                                                                                                                        nQueryDataPoints(nqueryPoints),
-                                                                                                                                                        dataDimension(nDim),
-                                                                                                                                                        nNearestNeighborsToFind(kNeighbors),
-                                                                                                                                                        indices_ptr(new int[nqueryPoints * kNeighbors]),
-                                                                                                                                                        dists_ptr(new T[nqueryPoints * kNeighbors]),
-                                                                                                                                                        indices(indices_ptr.get(), nqueryPoints, kNeighbors),
-                                                                                                                                                        dists(dists_ptr.get(), nqueryPoints, kNeighbors),
-                                                                                                                                                        the_same(false),
-                                                                                                                                                        withCovariance(false)
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : nDataPoints(ndataPoints),
+                                                                                                                                                               nQueryDataPoints(nqueryPoints),
+                                                                                                                                                               dataDimension(nDim),
+                                                                                                                                                               nNearestNeighborsToFind(kNeighbors),
+                                                                                                                                                               indices_ptr(new int[nqueryPoints * kNeighbors]),
+                                                                                                                                                               dists_ptr(new DataType[nqueryPoints * kNeighbors]),
+                                                                                                                                                               indices(indices_ptr.get(), nqueryPoints, kNeighbors),
+                                                                                                                                                               dists(dists_ptr.get(), nqueryPoints, kNeighbors),
+                                                                                                                                                               the_same(false),
+                                                                                                                                                               withCovariance(false)
 {
     if (nDataPoints < static_cast<std::size_t>(nNearestNeighborsToFind))
     {
@@ -305,31 +305,31 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(int const ndata
     }
 }
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> &&other) : nDataPoints(other.nDataPoints),
-                                                                                                                       nQueryDataPoints(other.nQueryDataPoints),
-                                                                                                                       dataDimension(other.dataDimension),
-                                                                                                                       nNearestNeighborsToFind(other.nNearestNeighborsToFind),
-                                                                                                                       indices_ptr(std::move(other.indices_ptr)),
-                                                                                                                       dists_ptr(std::move(other.dists_ptr)),
-                                                                                                                       indices(std::move(other.indices)),
-                                                                                                                       dists(std::move(other.dists)),
-                                                                                                                       the_same(other.the_same),
-                                                                                                                       withCovariance(other.withCovariance)
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> &&other) : nDataPoints(other.nDataPoints),
+                                                                                                                                     nQueryDataPoints(other.nQueryDataPoints),
+                                                                                                                                     dataDimension(other.dataDimension),
+                                                                                                                                     nNearestNeighborsToFind(other.nNearestNeighborsToFind),
+                                                                                                                                     indices_ptr(std::move(other.indices_ptr)),
+                                                                                                                                     dists_ptr(std::move(other.dists_ptr)),
+                                                                                                                                     indices(std::move(other.indices)),
+                                                                                                                                     dists(std::move(other.dists)),
+                                                                                                                                     the_same(other.the_same),
+                                                                                                                                     withCovariance(other.withCovariance)
 {
 }
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<T, FlannDistanceType> const &other) : nDataPoints(other.nDataPoints),
-                                                                                                                            nQueryDataPoints(other.nQueryDataPoints),
-                                                                                                                            dataDimension(other.dataDimension),
-                                                                                                                            nNearestNeighborsToFind(other.nNearestNeighborsToFind),
-                                                                                                                            indices_ptr(new int[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
-                                                                                                                            dists_ptr(new T[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
-                                                                                                                            indices(indices_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
-                                                                                                                            dists(dists_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
-                                                                                                                            the_same(other.the_same),
-                                                                                                                            withCovariance(other.withCovariance)
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> const &other) : nDataPoints(other.nDataPoints),
+                                                                                                                                          nQueryDataPoints(other.nQueryDataPoints),
+                                                                                                                                          dataDimension(other.dataDimension),
+                                                                                                                                          nNearestNeighborsToFind(other.nNearestNeighborsToFind),
+                                                                                                                                          indices_ptr(new int[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
+                                                                                                                                          dists_ptr(new DataType[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
+                                                                                                                                          indices(indices_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
+                                                                                                                                          dists(dists_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
+                                                                                                                                          the_same(other.the_same),
+                                                                                                                                          withCovariance(other.withCovariance)
 {
     {
         int *From = other.indices_ptr.get();
@@ -337,14 +337,14 @@ kNearestNeighborBase<T, FlannDistanceType>::kNearestNeighborBase(kNearestNeighbo
         std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
     }
     {
-        T *From = other.dists_ptr.get();
-        T *To = dists_ptr.get();
+        DataType *From = other.dists_ptr.get();
+        DataType *To = dists_ptr.get();
         std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
     }
 }
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType> &kNearestNeighborBase<T, FlannDistanceType>::operator=(kNearestNeighborBase<T, FlannDistanceType> &&other)
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType> &kNearestNeighborBase<DataType, FlannDistanceType>::operator=(kNearestNeighborBase<DataType, FlannDistanceType> &&other)
 {
     nDataPoints = std::move(other.nDataPoints);
     nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -359,13 +359,13 @@ kNearestNeighborBase<T, FlannDistanceType> &kNearestNeighborBase<T, FlannDistanc
     return *this;
 }
 
-template <typename T, class FlannDistanceType>
-kNearestNeighborBase<T, FlannDistanceType>::~kNearestNeighborBase() {}
+template <typename DataType, class FlannDistanceType>
+kNearestNeighborBase<DataType, FlannDistanceType>::~kNearestNeighborBase() {}
 
-template <typename T, class FlannDistanceType>
-void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata)
+template <typename DataType, class FlannDistanceType>
+void kNearestNeighborBase<DataType, FlannDistanceType>::buildIndex(DataType *idata)
 {
-    flann::Matrix<T> dataset(idata, nDataPoints, dataDimension);
+    flann::Matrix<DataType> dataset(idata, nDataPoints, dataDimension);
 
     // Construct an randomized kd-tree index using 4 kd-trees
     // For the number of parallel kd-trees to use (Good values are in the range [1..16])
@@ -378,17 +378,17 @@ void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata)
     index.knnSearch(dataset, indices, dists, nNearestNeighborsToFind, flann::SearchParams(128));
 }
 
-template <typename T, class FlannDistanceType>
-void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata, T *qdata)
+template <typename DataType, class FlannDistanceType>
+void kNearestNeighborBase<DataType, FlannDistanceType>::buildIndex(DataType *idata, DataType *qdata)
 {
-    flann::Matrix<T> dataset(idata, nDataPoints, dataDimension);
+    flann::Matrix<DataType> dataset(idata, nDataPoints, dataDimension);
 
     // Construct an randomized kd-tree index using 4 kd-trees
     // For the number of parallel kd-trees to use (Good values are in the range [1..16])
     flann::Index<FlannDistanceType> index(dataset, flann::KDTreeIndexParams(4));
     index.buildIndex();
 
-    flann::Matrix<T> query(qdata, nQueryDataPoints, dataDimension);
+    flann::Matrix<DataType> query(qdata, nQueryDataPoints, dataDimension);
 
     // Do a knn search, using 128 checks
     // Number of checks means: How many leafs to visit when searching
@@ -401,40 +401,40 @@ void kNearestNeighborBase<T, FlannDistanceType>::buildIndex(T *idata, T *qdata)
     }
 }
 
-template <typename T, class FlannDistanceType>
-inline int *kNearestNeighborBase<T, FlannDistanceType>::NearestNeighbors(int const &index) const
+template <typename DataType, class FlannDistanceType>
+inline int *kNearestNeighborBase<DataType, FlannDistanceType>::NearestNeighbors(int const &index) const
 {
     // +1 is that we do not want the index of the point itself
     return indices_ptr.get() + index * nNearestNeighborsToFind + the_same;
 }
 
-template <typename T, class FlannDistanceType>
-inline int *kNearestNeighborBase<T, FlannDistanceType>::NearestNeighbors() const
+template <typename DataType, class FlannDistanceType>
+inline int *kNearestNeighborBase<DataType, FlannDistanceType>::NearestNeighbors() const
 {
     return indices_ptr.get();
 }
 
-template <typename T, class FlannDistanceType>
-inline T *kNearestNeighborBase<T, FlannDistanceType>::NearestNeighborsDistances(int const &index) const
+template <typename DataType, class FlannDistanceType>
+inline DataType *kNearestNeighborBase<DataType, FlannDistanceType>::NearestNeighborsDistances(int const &index) const
 {
     // +1 is that we do not want the index of the point itself
     return dists_ptr.get() + index * nNearestNeighborsToFind + the_same;
 }
 
-template <typename T, class FlannDistanceType>
-inline T kNearestNeighborBase<T, FlannDistanceType>::minDist(int const &index) const
+template <typename DataType, class FlannDistanceType>
+inline DataType kNearestNeighborBase<DataType, FlannDistanceType>::minDist(int const &index) const
 {
     std::ptrdiff_t const Id = index * nNearestNeighborsToFind + the_same;
     return dists_ptr[Id];
 }
 
-template <typename T, class FlannDistanceType>
-inline T *kNearestNeighborBase<T, FlannDistanceType>::minDist()
+template <typename DataType, class FlannDistanceType>
+inline DataType *kNearestNeighborBase<DataType, FlannDistanceType>::minDist()
 {
-    T *mindists = nullptr;
+    DataType *mindists = nullptr;
     try
     {
-        mindists = new T[nQueryDataPoints];
+        mindists = new DataType[nQueryDataPoints];
     }
     catch (std::bad_alloc &e)
     {
@@ -450,20 +450,20 @@ inline T *kNearestNeighborBase<T, FlannDistanceType>::minDist()
     return mindists;
 }
 
-template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numNearestNeighbors() const
+template <typename DataType, class FlannDistanceType>
+inline int kNearestNeighborBase<DataType, FlannDistanceType>::numNearestNeighbors() const
 {
     return nNearestNeighborsToFind - the_same;
 }
 
-template <typename T, class FlannDistanceType>
-bool kNearestNeighborBase<T, FlannDistanceType>::checkNearestNeighbors()
+template <typename DataType, class FlannDistanceType>
+bool kNearestNeighborBase<DataType, FlannDistanceType>::checkNearestNeighbors()
 {
     if (the_same)
     {
         return true;
     }
-    T const eps = std::numeric_limits<T>::epsilon();
+    DataType const eps = std::numeric_limits<DataType>::epsilon();
     std::size_t s(0);
     for (std::size_t i = 0; i < nQueryDataPoints; ++i)
     {
@@ -473,36 +473,36 @@ bool kNearestNeighborBase<T, FlannDistanceType>::checkNearestNeighbors()
     return (s != nQueryDataPoints);
 }
 
-template <typename T, class FlannDistanceType>
-inline void kNearestNeighborBase<T, FlannDistanceType>::IndexSwap(int Indx1, int Indx2)
+template <typename DataType, class FlannDistanceType>
+inline void kNearestNeighborBase<DataType, FlannDistanceType>::IndexSwap(int Indx1, int Indx2)
 {
     std::swap(indices_ptr[Indx1], indices_ptr[Indx2]);
     std::swap(dists_ptr[Indx1], dists_ptr[Indx2]);
 }
 
-template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numInputdata() const { return nDataPoints; }
+template <typename DataType, class FlannDistanceType>
+inline int kNearestNeighborBase<DataType, FlannDistanceType>::numInputdata() const { return nDataPoints; }
 
-template <typename T, class FlannDistanceType>
-inline int kNearestNeighborBase<T, FlannDistanceType>::numQuerydata() const { return nQueryDataPoints; }
+template <typename DataType, class FlannDistanceType>
+inline int kNearestNeighborBase<DataType, FlannDistanceType>::numQuerydata() const { return nQueryDataPoints; }
 
-template <typename T, class FlannDistanceType>
-inline bool kNearestNeighborBase<T, FlannDistanceType>::needsCovariance() const { return withCovariance; }
+template <typename DataType, class FlannDistanceType>
+inline bool kNearestNeighborBase<DataType, FlannDistanceType>::needsCovariance() const { return withCovariance; }
 
-template <typename T, class FlannDistanceType>
-void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(EMatrixX<T> const &Covariance) {}
+template <typename DataType, class FlannDistanceType>
+void kNearestNeighborBase<DataType, FlannDistanceType>::setCovariance(EMatrixX<DataType> const &Covariance) {}
 
-template <typename T, class FlannDistanceType>
-void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(T const *Covariance) {}
+template <typename DataType, class FlannDistanceType>
+void kNearestNeighborBase<DataType, FlannDistanceType>::setCovariance(DataType const *Covariance) {}
 
-template <typename T, class FlannDistanceType>
-void kNearestNeighborBase<T, FlannDistanceType>::setCovariance(std::vector<T> const &Covariance) {}
+template <typename DataType, class FlannDistanceType>
+void kNearestNeighborBase<DataType, FlannDistanceType>::setCovariance(std::vector<DataType> const &Covariance) {}
 
-template <typename T, class FlannDistanceType>
-EMatrixX<T> const &kNearestNeighborBase<T, FlannDistanceType>::Covariance() const {}
+template <typename DataType, class FlannDistanceType>
+EMatrixX<DataType> const &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() const {}
 
-template <typename T, class FlannDistanceType>
-EMatrixX<T> &kNearestNeighborBase<T, FlannDistanceType>::Covariance() {}
+template <typename DataType, class FlannDistanceType>
+EMatrixX<DataType> &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() {}
 
 } // namespace umuq
 
