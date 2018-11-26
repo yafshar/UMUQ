@@ -110,7 +110,7 @@ TEST(random_test, HandlesMultivariate)
 
     std::vector<double> a(2);
 
-    //! Map the data to the Eigen vector format
+    // Map the data to the Eigen vector format
     umuq::EVectorMapType<double> Ea(a.data(), 2);
 
     // Create an object of type Multivariate normal distribution
