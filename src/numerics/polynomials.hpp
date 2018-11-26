@@ -27,7 +27,7 @@ inline namespace polynomials
  * \brief Different Polynomials, currently available in %UMUQ
  * 
  */
-enum PolynomialTypes
+enum class PolynomialTypes
 {
 	/*! \link umuq::polynomials::polynomial Polynomials. \endlink  */
 	MONOMIAL = 1,
