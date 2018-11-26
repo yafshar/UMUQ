@@ -6,10 +6,10 @@
 /*! 
  * \brief MPI data types variable template wrapper for the given C++ type.
  *
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  */
-template <typename T>
+template <typename DataType>
 constexpr MPI_Datatype MPIDatatype = MPI_DATATYPE_NULL; // variable template
 
 /*!

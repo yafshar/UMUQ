@@ -30,9 +30,9 @@ inline namespace linearalgebra
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience matrix data type. 
- * A rectangular \c Eigen::Matrix of T type with dynamic numbers of rows and dynamic numbers of columns. (dynamic_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with dynamic numbers of rows and dynamic numbers of columns. (dynamic_size_storage)
  * 
- * \tparam T Data type 
+ * \tparam DataType Data type 
  * \tparam _Options  optional parameter, a combination of either 
  *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
  *                     or one of either <br>
@@ -40,149 +40,159 @@ inline namespace linearalgebra
  *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
  *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  */
-template <typename T, int _Options = Eigen::ColMajor>
-using EMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>;
+template <typename DataType, int _Options = Eigen::ColMajor>
+using EMatrixX = Eigen::Matrix<DataType, Eigen::Dynamic, Eigen::Dynamic, _Options>;
+
+/*!
+ * \ingroup Const_Module
+ * 
+ * \brief Empty Matrix for initialization
+ * 
+ * \tparam DataType Data type
+ */
+template <typename DataType>
+static EMatrixX<DataType> EmptyMatrixX = Eigen::Matrix<DataType, 1, 1>::Zero();
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type and size of \f$ 2 \times 2\f$. (fixed_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type and size of \f$ 2 \times 2\f$. (fixed_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix2 = Eigen::Matrix<T, 2, 2>;
+template <typename DataType>
+using EMatrix2 = Eigen::Matrix<DataType, 2, 2>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with 2 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with 2 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix2X = Eigen::Matrix<T, 2, Eigen::Dynamic>;
+template <typename DataType>
+using EMatrix2X = Eigen::Matrix<DataType, 2, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 2 columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 2 columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrixX2 = Eigen::Matrix<T, Eigen::Dynamic, 2>;
+template <typename DataType>
+using EMatrixX2 = Eigen::Matrix<DataType, Eigen::Dynamic, 2>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type and size of \f$ 3 \times 3\f$. (fixed_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type and size of \f$ 3 \times 3\f$. (fixed_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix3 = Eigen::Matrix<T, 3, 3>;
+template <typename DataType>
+using EMatrix3 = Eigen::Matrix<DataType, 3, 3>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with 3 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with 3 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix3X = Eigen::Matrix<T, 3, Eigen::Dynamic>;
+template <typename DataType>
+using EMatrix3X = Eigen::Matrix<DataType, 3, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 3 columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 3 columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrixX3 = Eigen::Matrix<T, Eigen::Dynamic, 3>;
+template <typename DataType>
+using EMatrixX3 = Eigen::Matrix<DataType, Eigen::Dynamic, 3>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type and size of \f$ 4 \times 4\f$. (fixed_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type and size of \f$ 4 \times 4\f$. (fixed_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix4 = Eigen::Matrix<T, 4, 4>;
+template <typename DataType>
+using EMatrix4 = Eigen::Matrix<DataType, 4, 4>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with 4 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with 4 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix4X = Eigen::Matrix<T, 4, Eigen::Dynamic>;
+template <typename DataType>
+using EMatrix4X = Eigen::Matrix<DataType, 4, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 4 columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 4 columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrixX4 = Eigen::Matrix<T, Eigen::Dynamic, 4>;
+template <typename DataType>
+using EMatrixX4 = Eigen::Matrix<DataType, Eigen::Dynamic, 4>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type and size of \f$ 5 \times 5\f$. (fixed_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type and size of \f$ 5 \times 5\f$. (fixed_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix5 = Eigen::Matrix<T, 5, 5>;
+template <typename DataType>
+using EMatrix5 = Eigen::Matrix<DataType, 5, 5>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with 5 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with 5 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix5X = Eigen::Matrix<T, 5, Eigen::Dynamic>;
+template <typename DataType>
+using EMatrix5X = Eigen::Matrix<DataType, 5, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 5 columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 5 columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrixX5 = Eigen::Matrix<T, Eigen::Dynamic, 5>;
+template <typename DataType>
+using EMatrixX5 = Eigen::Matrix<DataType, Eigen::Dynamic, 5>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type and size of \f$ 6 \times 6\f$. (fixed_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type and size of \f$ 6 \times 6\f$. (fixed_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix6 = Eigen::Matrix<T, 6, 6>;
+template <typename DataType>
+using EMatrix6 = Eigen::Matrix<DataType, 6, 6>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with 6 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with 6 rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrix6X = Eigen::Matrix<T, 6, Eigen::Dynamic>;
+template <typename DataType>
+using EMatrix6X = Eigen::Matrix<DataType, 6, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
- * \brief A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 6 columns. (dynamic_size_storage with column storage order.)
+ * \brief A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 6 columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EMatrixX6 = Eigen::Matrix<T, Eigen::Dynamic, 6>;
+template <typename DataType>
+using EMatrixX6 = Eigen::Matrix<DataType, Eigen::Dynamic, 6>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A rectangular \c Eigen::Matrix of double type with dynamic numbers of rows and dynamic numbers of columns. (dynamic_size_storage with column storage order.)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
 using EMatrixXd = EMatrixX<double>;
 
@@ -279,62 +289,62 @@ using EMatrixX6d = EMatrixX6<double>;
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and dynamic numbers of columns. (dynamic_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and dynamic numbers of columns. (dynamic_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVectorX = Eigen::Matrix<T, 1, Eigen::Dynamic>;
+template <typename DataType>
+using ERowVectorX = Eigen::Matrix<DataType, 1, Eigen::Dynamic>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and 2 columns. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and 2 columns. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVector2 = Eigen::Matrix<T, 1, 2>;
+template <typename DataType>
+using ERowVector2 = Eigen::Matrix<DataType, 1, 2>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and 3 columns. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and 3 columns. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVector3 = Eigen::Matrix<T, 1, 3>;
+template <typename DataType>
+using ERowVector3 = Eigen::Matrix<DataType, 1, 3>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and 4 columns. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and 4 columns. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVector4 = Eigen::Matrix<T, 1, 4>;
+template <typename DataType>
+using ERowVector4 = Eigen::Matrix<DataType, 1, 4>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and 5 columns. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and 5 columns. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVector5 = Eigen::Matrix<T, 1, 5>;
+template <typename DataType>
+using ERowVector5 = Eigen::Matrix<DataType, 1, 5>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience row-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with 1 rows and 6 columns. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 1 rows and 6 columns. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVector6 = Eigen::Matrix<T, 1, 6>;
+template <typename DataType>
+using ERowVector6 = Eigen::Matrix<DataType, 1, 6>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -381,62 +391,62 @@ using ERowVector6d = ERowVector6<double>;
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type. 
- * A rectangular \c Eigen::Matrix of T type with dynamic number of rows and 1 column. (dynamic_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with dynamic number of rows and 1 column. (dynamic_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVectorX = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+template <typename DataType>
+using EVectorX = Eigen::Matrix<DataType, Eigen::Dynamic, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type.
- * A rectangular \c Eigen::Matrix of T type with 2 rows and 1 column. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 2 rows and 1 column. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVector2 = Eigen::Matrix<T, 2, 1>;
+template <typename DataType>
+using EVector2 = Eigen::Matrix<DataType, 2, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type.
- * A rectangular \c Eigen::Matrix of T type with 3 rows and 1 column. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 3 rows and 1 column. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVector3 = Eigen::Matrix<T, 3, 1>;
+template <typename DataType>
+using EVector3 = Eigen::Matrix<DataType, 3, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type.
- * A rectangular \c Eigen::Matrix of T type with 4 rows and 1 column. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 4 rows and 1 column. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVector4 = Eigen::Matrix<T, 4, 1>;
+template <typename DataType>
+using EVector4 = Eigen::Matrix<DataType, 4, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type.
- * A rectangular \c Eigen::Matrix of T type with 5 rows and 1 column. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 5 rows and 1 column. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVector5 = Eigen::Matrix<T, 5, 1>;
+template <typename DataType>
+using EVector5 = Eigen::Matrix<DataType, 5, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * \brief A convenience column-vector data type.
- * A rectangular \c Eigen::Matrix of T type with 6 rows and 1 column. (fixed_size_storage)
+ * A rectangular \c Eigen::Matrix of DataType type with 6 rows and 1 column. (fixed_size_storage)
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVector6 = Eigen::Matrix<T, 6, 1>;
+template <typename DataType>
+using EVector6 = Eigen::Matrix<DataType, 6, 1>;
 
 /*!
  * \ingroup LinearAlgebra_Module

@@ -17,15 +17,15 @@ namespace tmcmc
  * 
  * \brief Broadcasts running information to all processes of the group 
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param other runinfo object which is casted to long long
  */
-template <typename T>
+template <typename DataType>
 void broadcastTask(long long const other);
 
 //! True if update_Task has been registered, and false otherwise (logical).
-template <typename T>
+template <typename DataType>
 static bool isBroadcastTaskRegistered = false;
 
 //! Mutex object for data broadcast
@@ -37,7 +37,7 @@ static std::mutex broadcastTask_m;
  * \brief This class contains the running information of the TMCMC algorithm
  * 
  */
-template <typename T>
+template <typename DataType>
 class runinfo
 {
   public:
@@ -62,15 +62,15 @@ class runinfo
      * \param other Input runinfo object
      * 
      */
-	runinfo(runinfo<T> &&other);
+	runinfo(runinfo<DataType> &&other);
 
 	/*!
      * \brief Move assignment operator
      * 
      * \param other      Input runinfo object
-     * \return runinfo<T>& 
+     * \return runinfo<DataType>& 
      */
-	runinfo<T> &operator=(runinfo<T> &&other);
+	runinfo<DataType> &operator=(runinfo<DataType> &&other);
 
 	/*!
      * \brief destructor
@@ -101,17 +101,22 @@ class runinfo
      * 
      * \param other Input runinfo object
      */
-	void swap(runinfo<T> &other);
+	void swap(runinfo<DataType> &other);
 
 	/*!
      * \brief Save the information in a file fileName
      * Write the runinfo data information to a file fileName
      * 
      * \param fileName Name of the file (default name is runinfo.txt) for writing information
-     *  
      */
 	bool save(const char *fileName = "runinfo.txt");
 
+	/*!
+     * \brief Save the information in a file fileName
+     * Write the runinfo data information to a file fileName
+     * 
+     * \param fileName Name of the file (default name is runinfo.txt) for writing information 
+     */
 	bool save(std::string const &fileName);
 
 	/*!
@@ -131,6 +136,15 @@ class runinfo
      */
 	bool load(const char *fileName = "runinfo.txt");
 
+	/*!
+     * \brief Load information from a file fileName
+     * Load the runinfo data information from a file fileName
+     * 
+     * \param fileName  Name of the file (default name is runinfo.txt) for reading information
+     * 
+     * \return true 
+     * \return false 
+     */
 	bool load(std::string const &fileName);
 
 	/*!
@@ -151,7 +165,7 @@ class runinfo
 	 * \return true 
 	 * \return false If the current generation is greater than the defined maximum number 
 	 */
-	inline bool setAcceptanceRate(T const acceptanceRate);
+	inline bool setAcceptanceRate(DataType const acceptanceRate);
 
 	/**
 	 * \brief Broadcasts running information from to all the processes of the group
@@ -169,34 +183,34 @@ class runinfo
 	void printSampleStatistics();
 
   private:
-    /*!
+	/*!
      * \brief Delete a runinfo object copy construction
      * 
      * Make it noncopyable.
      */
-	runinfo(runinfo<T> const &) = delete;
+	runinfo(runinfo<DataType> const &) = delete;
 
-    /*!
+	/*!
      * \brief Delete a runinfo object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns runinfo<T>& 
+     * \returns runinfo<DataType>& 
      */
-	runinfo<T> &operator=(runinfo<T> const &) = delete;
+	runinfo<DataType> &operator=(runinfo<DataType> const &) = delete;
 
   public:
-	//! Dimension
+	//! Number of dimensions
 	int nDim;
-	//! Maximum generations
+	//! Maximum number of generations
 	int maxGenerations;
-	//! Current generation
+	//! Current generation number
 	int currentGeneration;
 
-	//! The coefficient of variation of the plausibility of weights
-	std::vector<T> CoefVar;
+	//! The coefficient of variation of the plausibility of the weights
+	std::vector<DataType> CoefVar;
 	//! Probabilty at each generation
-	std::vector<T> generationProbabilty;
+	std::vector<DataType> generationProbabilty;
 	//! Unique samples in the current generation
 	std::vector<int> currentUniques;
 	/*!
@@ -206,34 +220,34 @@ class runinfo
 	 * The log-evidence is estimated as a by-product of the method from 
 	 * \f$ \ln p(D) \approx \ln{\prod_{j=1}^{m-1}\left( \frac{1}{N_j} \sum_{k=1}^{N_j} w_{j,k} \right )}. \f$ 
 	 */
-	std::vector<T> logselection;
+	std::vector<DataType> logselection;
 	//! Each generation acceptance rate
-	std::vector<T> acceptance;
-	//! Samples covariance \f$ COV(\Theta(j)) \f$ at the generation \f$ j \f$ 
-	std::vector<T> covariance;
-	//! The sample mean \f$ \Theta(j) \f$ at the generation \f$ j \f$ 
-	std::vector<T> meantheta;
+	std::vector<DataType> acceptance;
+	//! Samples covariance \f$ COV(\Theta(j)) \f$ at the generation \f$ j \f$
+	std::vector<DataType> covariance;
+	//! The sample mean \f$ \Theta(j) \f$ at the generation \f$ j \f$
+	std::vector<DataType> meantheta;
 };
 
-template <typename T>
-runinfo<T>::runinfo() : nDim(0),
-						maxGenerations(0),
-						currentGeneration(0)
+template <typename DataType>
+runinfo<DataType>::runinfo() : nDim(0),
+							   maxGenerations(0),
+							   currentGeneration(0)
 {
 	{
 		std::lock_guard<std::mutex> lock(broadcastTask_m);
-		if (!isBroadcastTaskRegistered<T>)
+		if (!isBroadcastTaskRegistered<DataType>)
 		{
-			torc_register_task((void *)broadcastTask<T>);
-			isBroadcastTaskRegistered<T> = true;
+			torc_register_task((void *)broadcastTask<DataType>);
+			isBroadcastTaskRegistered<DataType> = true;
 		}
 	}
 }
 
-template <typename T>
-runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
-													   maxGenerations(MaxGenerations),
-													   currentGeneration(0)
+template <typename DataType>
+runinfo<DataType>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
+															  maxGenerations(MaxGenerations),
+															  currentGeneration(0)
 {
 	if (!init())
 	{
@@ -242,16 +256,16 @@ runinfo<T>::runinfo(int ProbDim, int MaxGenerations) : nDim(ProbDim),
 
 	{
 		std::lock_guard<std::mutex> lock(broadcastTask_m);
-		if (!isBroadcastTaskRegistered<T>)
+		if (!isBroadcastTaskRegistered<DataType>)
 		{
-			torc_register_task((void *)broadcastTask<T>);
-			isBroadcastTaskRegistered<T> = true;
+			torc_register_task((void *)broadcastTask<DataType>);
+			isBroadcastTaskRegistered<DataType> = true;
 		}
 	}
 }
 
-template <typename T>
-runinfo<T>::runinfo(runinfo<T> &&other)
+template <typename DataType>
+runinfo<DataType>::runinfo(runinfo<DataType> &&other)
 {
 	nDim = other.nDim;
 	maxGenerations = other.maxGenerations;
@@ -265,8 +279,8 @@ runinfo<T>::runinfo(runinfo<T> &&other)
 	meantheta = std::move(other.meantheta);
 }
 
-template <typename T>
-runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
+template <typename DataType>
+runinfo<DataType> &runinfo<DataType>::operator=(runinfo<DataType> &&other)
 {
 	nDim = other.nDim;
 	maxGenerations = other.maxGenerations;
@@ -282,19 +296,19 @@ runinfo<T> &runinfo<T>::operator=(runinfo<T> &&other)
 	return *this;
 }
 
-template <typename T>
-bool runinfo<T>::init()
+template <typename DataType>
+bool runinfo<DataType>::init()
 {
 	try
 	{
-		CoefVar.resize(maxGenerations, T{});
-		generationProbabilty.resize(maxGenerations, T{});
+		CoefVar.resize(maxGenerations, DataType{});
+		generationProbabilty.resize(maxGenerations, DataType{});
 		currentUniques.resize(maxGenerations, 0);
-		logselection.resize(maxGenerations, T{});
-		acceptance.resize(maxGenerations, T{});
+		logselection.resize(maxGenerations, DataType{});
+		acceptance.resize(maxGenerations, DataType{});
 
-		covariance.resize(nDim * nDim, T{});
-		meantheta.resize(maxGenerations * nDim, T{});
+		covariance.resize(nDim * nDim, DataType{});
+		meantheta.resize(maxGenerations * nDim, DataType{});
 	}
 	catch (...)
 	{
@@ -302,21 +316,21 @@ bool runinfo<T>::init()
 	}
 
 	// set the first value to a high number
-	CoefVar[0] = std::numeric_limits<T>::max();
+	CoefVar[0] = std::numeric_limits<DataType>::max();
 
 	return true;
 }
 
-template <typename T>
-bool runinfo<T>::reset(int ProbDim, int MaxGenerations)
+template <typename DataType>
+bool runinfo<DataType>::reset(int ProbDim, int MaxGenerations)
 {
 	nDim = ProbDim;
 	maxGenerations = MaxGenerations;
 	return init();
 }
 
-template <typename T>
-void runinfo<T>::swap(runinfo<T> &other)
+template <typename DataType>
+void runinfo<DataType>::swap(runinfo<DataType> &other)
 {
 	std::swap(nDim, other.nDim);
 	std::swap(maxGenerations, other.maxGenerations);
@@ -330,8 +344,8 @@ void runinfo<T>::swap(runinfo<T> &other)
 	meantheta.swap(other.meantheta);
 }
 
-template <typename T>
-bool runinfo<T>::save(const char *fileName)
+template <typename DataType>
+bool runinfo<DataType>::save(const char *fileName)
 {
 	// Create an instance of the IO object
 	umuq::io f;
@@ -348,25 +362,25 @@ bool runinfo<T>::save(const char *fileName)
 		fs << "Generation= " << currentGeneration << "\n";
 
 		fs << "CoefVar[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<T>(CoefVar.data(), maxGenerations);
+		tmp &= f.saveMatrix<DataType>(CoefVar.data(), maxGenerations);
 
 		fs << "generationProbabilty[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<T>(generationProbabilty.data(), maxGenerations);
+		tmp &= f.saveMatrix<DataType>(generationProbabilty.data(), maxGenerations);
 
 		fs << "currentUniques[" << maxGenerations << "]=\n";
 		tmp &= f.saveMatrix<int>(currentUniques.data(), maxGenerations);
 
 		fs << "logselection[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<T>(logselection.data(), maxGenerations);
+		tmp &= f.saveMatrix<DataType>(logselection.data(), maxGenerations);
 
 		fs << "acceptance[" << maxGenerations << "]=\n";
-		tmp &= f.saveMatrix<T>(acceptance.data(), maxGenerations);
+		tmp &= f.saveMatrix<DataType>(acceptance.data(), maxGenerations);
 
 		fs << "covariance[" << nDim << "][" << nDim << "]=\n";
-		tmp &= f.saveMatrix<T>(covariance.data(), nDim, nDim);
+		tmp &= f.saveMatrix<DataType>(covariance.data(), nDim, nDim);
 
 		fs << "meantheta[" << maxGenerations << "][" << nDim << "]=\n";
-		tmp &= f.saveMatrix<T>(meantheta.data(), maxGenerations, nDim);
+		tmp &= f.saveMatrix<DataType>(meantheta.data(), maxGenerations, nDim);
 
 		f.closeFile();
 		return tmp;
@@ -374,16 +388,17 @@ bool runinfo<T>::save(const char *fileName)
 	return false;
 }
 
-template <typename T>
-bool runinfo<T>::save(std::string const &fileName)
+template <typename DataType>
+bool runinfo<DataType>::save(std::string const &fileName)
 {
 	return save(&fileName[0]);
 }
 
-template <typename T>
-void runinfo<T>::print()
+template <typename DataType>
+void runinfo<DataType>::print()
 {
-	std::cout << "\n----------------------------\n" << std::endl;
+	std::cout << "\n----------------------------\n"
+			  << std::endl;
 	std::cout << "Problem Dimension= " << nDim << "\n";
 	std::cout << "Generation= " << currentGeneration << "\n";
 
@@ -396,11 +411,11 @@ void runinfo<T>::print()
 
 		std::cout << "\nEach generation coefficient of variation=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(CoefVar, currentGeneration, 1, umuqFormat);
+		f.printMatrix<DataType>(CoefVar, currentGeneration, 1, umuqFormat);
 
 		std::cout << "\nEach generation probabilty=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(generationProbabilty, currentGeneration, 1, umuqFormat);
+		f.printMatrix<DataType>(generationProbabilty, currentGeneration, 1, umuqFormat);
 
 		std::cout << "\nEach generation number of unique sample points=\n";
 		f.setWidth(-1);
@@ -408,13 +423,13 @@ void runinfo<T>::print()
 
 		std::cout << "\nEach generation log selection for computing evidence=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(logselection, currentGeneration, 1, umuqFormat);
+		f.printMatrix<DataType>(logselection, currentGeneration, 1, umuqFormat);
 
-		std::cout << "\nThe logarithm of evidence is=[" << std::accumulate(logselection.data(), logselection.data() + currentGeneration, T{}) << "]\n";
+		std::cout << "\nThe logarithm of evidence is=[" << std::accumulate(logselection.data(), logselection.data() + currentGeneration, DataType{}) << "]\n";
 
 		std::cout << "\nEach generation acceptance rate=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(acceptance, currentGeneration, 1, umuqFormat);
+		f.printMatrix<DataType>(acceptance, currentGeneration, 1, umuqFormat);
 	}
 
 	{
@@ -423,18 +438,19 @@ void runinfo<T>::print()
 
 		std::cout << "\nEach generation mean of running information=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(meantheta, currentGeneration, nDim, umuqFormat);
+		f.printMatrix<DataType>(meantheta, currentGeneration, nDim, umuqFormat);
 
 		std::cout << "\nCovariance of running information at generation[" << currentGeneration << "]=\n";
 		f.setWidth(-1);
-		f.printMatrix<T>(covariance, nDim, nDim, umuqFormat);
+		f.printMatrix<DataType>(covariance, nDim, nDim, umuqFormat);
 	}
 
-	std::cout << "\n----------------------------\n" << std::endl;
+	std::cout << "\n----------------------------\n"
+			  << std::endl;
 }
 
-template <typename T>
-bool runinfo<T>::load(const char *fileName)
+template <typename DataType>
+bool runinfo<DataType>::load(const char *fileName)
 {
 	// Create an instance of the IO object
 	umuq::io f;
@@ -466,25 +482,25 @@ bool runinfo<T>::load(const char *fileName)
 		currentGeneration = prs.at<int>(0);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(CoefVar.data(), maxGenerations);
+		tmp &= f.loadMatrix<DataType>(CoefVar.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(generationProbabilty.data(), maxGenerations);
+		tmp &= f.loadMatrix<DataType>(generationProbabilty.data(), maxGenerations);
 
 		tmp &= f.readLine();
 		tmp &= f.loadMatrix<int>(currentUniques.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(logselection.data(), maxGenerations);
+		tmp &= f.loadMatrix<DataType>(logselection.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(acceptance.data(), maxGenerations);
+		tmp &= f.loadMatrix<DataType>(acceptance.data(), maxGenerations);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(covariance.data(), nDim, nDim);
+		tmp &= f.loadMatrix<DataType>(covariance.data(), nDim, nDim);
 
 		tmp &= f.readLine();
-		tmp &= f.loadMatrix<T>(meantheta.data(), maxGenerations, nDim);
+		tmp &= f.loadMatrix<DataType>(meantheta.data(), maxGenerations, nDim);
 
 		f.closeFile();
 		return tmp;
@@ -492,14 +508,14 @@ bool runinfo<T>::load(const char *fileName)
 	return false;
 }
 
-template <typename T>
-bool runinfo<T>::load(std::string const &fileName)
+template <typename DataType>
+bool runinfo<DataType>::load(std::string const &fileName)
 {
 	return load(&fileName[0]);
 }
 
-template <typename T>
-inline bool runinfo<T>::setUniqueNumber(int const nUniques)
+template <typename DataType>
+inline bool runinfo<DataType>::setUniqueNumber(int const nUniques)
 {
 	if (currentGeneration < maxGenerations)
 	{
@@ -509,8 +525,8 @@ inline bool runinfo<T>::setUniqueNumber(int const nUniques)
 	UMUQFAILRETURN("Generation number is greater than the defined maximum number!");
 }
 
-template <typename T>
-inline bool runinfo<T>::setAcceptanceRate(T const acceptanceRate)
+template <typename DataType>
+inline bool runinfo<DataType>::setAcceptanceRate(DataType const acceptanceRate)
 {
 	if (currentGeneration < maxGenerations)
 	{
@@ -520,8 +536,8 @@ inline bool runinfo<T>::setAcceptanceRate(T const acceptanceRate)
 	UMUQFAILRETURN("Generation number is greater than the defined maximum number!");
 }
 
-template <typename T>
-inline void runinfo<T>::broadcast()
+template <typename DataType>
+inline void runinfo<DataType>::broadcast()
 {
 	if (torc_num_nodes() == 1)
 	{
@@ -531,7 +547,7 @@ inline void runinfo<T>::broadcast()
 #if HAVE_MPI == 1
 	for (int i = 0; i < torc_num_nodes(); i++)
 	{
-		torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())broadcastTask<T>, 1,
+		torc_create_ex(i * torc_i_num_workers(), 1, (void (*)())broadcastTask<DataType>, 1,
 					   1, MPIDatatype<long long>, CALL_BY_REF,
 					   reinterpret_cast<long long>(this));
 	}
@@ -539,32 +555,32 @@ inline void runinfo<T>::broadcast()
 #endif // MPI
 }
 
-template <typename T>
-void runinfo<T>::printSampleStatistics()
+template <typename DataType>
+void runinfo<DataType>::printSampleStatistics()
 {
 	std::cout << "----------------------------" << std::endl;
 	umuq::io f;
 	// Define the printing format
 	umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nSample covariance matrix=\n"};
 	umuq::ioFormat covarianceFormat = {" ", "\n", "[", "]"};
-	f.printMatrix<T>(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
-	f.printMatrix<T>(covariance, nDim, nDim, covarianceFormat);
+	f.printMatrix<DataType>(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
+	f.printMatrix<DataType>(covariance, nDim, nDim, covarianceFormat);
 	std::cout << "----------------------------" << std::endl;
 }
 
-template <typename T>
+template <typename DataType>
 void broadcastTask(long long const other)
 {
 #if HAVE_MPI == 1
-	auto obj = reinterpret_cast<runinfo<T> *>(other);
+	auto obj = reinterpret_cast<runinfo<DataType> *>(other);
 
 	int const nDim(obj->nDim * obj->nDim);
 	int const maxGenerations(obj->maxGenerations);
 
 	MPI_Request request[3];
 
-	MPI_Ibcast(obj->covariance.data(), nDim, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[0]);
-	MPI_Ibcast(obj->generationProbabilty.data(), maxGenerations, MPIDatatype<T>, 0, MPI_COMM_WORLD, &request[1]);
+	MPI_Ibcast(obj->covariance.data(), nDim, MPIDatatype<DataType>, 0, MPI_COMM_WORLD, &request[0]);
+	MPI_Ibcast(obj->generationProbabilty.data(), maxGenerations, MPIDatatype<DataType>, 0, MPI_COMM_WORLD, &request[1]);
 	MPI_Ibcast(&obj->currentGeneration, 1, MPI_INT, 0, MPI_COMM_WORLD, &request[2]);
 
 	MPI_Waitall(3, request, MPI_STATUSES_IGNORE);

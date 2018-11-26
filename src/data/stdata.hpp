@@ -17,9 +17,9 @@ namespace tmcmc
  * 
  * \brief This is a class to set the optimization parameters 
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
+template <typename DataType>
 struct optimizationParameters
 {
     /*!
@@ -33,30 +33,30 @@ struct optimizationParameters
      * 
      * \param other 
      */
-    explicit optimizationParameters(optimizationParameters<T> const &other);
+    explicit optimizationParameters(optimizationParameters<DataType> const &other);
 
     /*!
      * \brief Move constructor, construct a new optimizationParameters object from an input object
      * 
      * \param other  Input optimizationParameters object
      */
-    optimizationParameters(optimizationParameters<T> &&other);
+    optimizationParameters(optimizationParameters<DataType> &&other);
 
     /*!
      * \brief Copy constructor, construct a new optimizationParameters object from an input object
      * 
      * \param other 
-     * \returns optimizationParameters<T>& 
+     * \returns optimizationParameters<DataType>& 
      */
-    optimizationParameters<T> &operator=(optimizationParameters<T> const &other);
+    optimizationParameters<DataType> &operator=(optimizationParameters<DataType> const &other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other 
-     * \returns optimizationParameters<T>& 
+     * \returns optimizationParameters<DataType>& 
      */
-    optimizationParameters<T> &operator=(optimizationParameters<T> &&other);
+    optimizationParameters<DataType> &operator=(optimizationParameters<DataType> &&other);
 
     /*!
      * \brief Destroy the optimization Parameters object
@@ -92,7 +92,7 @@ struct optimizationParameters
      * \returns true 
      * \returns false 
      */
-    void reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step);
+    void reset(int const maxIter, int const display, int const functionMinimizerType, DataType const tolerance, DataType const step);
 
     //! Maximum number of iterations
     int MaxIter;
@@ -101,9 +101,9 @@ struct optimizationParameters
     //! function minimizer type (per default it is simplex2)
     int FunctionMinimizerType;
     //! minimizer tolerance
-    T Tolerance;
+    DataType Tolerance;
     //! Minimizer step size
-    T Step;
+    DataType Step;
 };
 
 /*! \class stdata
@@ -138,7 +138,7 @@ struct optimizationParameters
  * - \b priorSigma                 Prior standard deviation 
  * - \b auxilData                  Auxillary data
  */
-template <typename T>
+template <typename DataType>
 class stdata
 {
   public:
@@ -165,15 +165,15 @@ class stdata
      * 
      * \param other  Input stdata object
      */
-    stdata(stdata<T> &&other);
+    stdata(stdata<DataType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other 
-     * \returns stdata<T>& 
+     * \returns stdata<DataType>& 
      */
-    stdata<T> &operator=(stdata<T> &&other);
+    stdata<DataType> &operator=(stdata<DataType> &&other);
 
     /*!
      * \brief reset the stream data values to the input values
@@ -208,7 +208,7 @@ class stdata
      * 
      * \param other 
      */
-    void swap(stdata<T> &other);
+    void swap(stdata<DataType> &other);
 
   private:
     /*!
@@ -216,16 +216,16 @@ class stdata
      * 
      * Make it noncopyable.
      */
-    stdata(stdata<T> const &) = delete;
+    stdata(stdata<DataType> const &) = delete;
 
     /*!
      * \brief Delete a stdata object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns stdata<T>& 
+     * \returns stdata<DataType>& 
      */
-    stdata<T> &operator=(stdata<T> const &) = delete;
+    stdata<DataType> &operator=(stdata<DataType> const &) = delete;
 
   public:
     //! Problem Dimension
@@ -272,10 +272,10 @@ class stdata
 
   private:
     //! Generic lower bound (It is -6 per default)
-    T lb;
+    DataType lb;
 
     //! Generic upper bound (It is 6 per default)
-    T ub;
+    DataType ub;
 
   public:
     /*!
@@ -287,7 +287,7 @@ class stdata
      * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
      * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
      */
-    T coefVarPresetThreshold;
+    DataType coefVarPresetThreshold;
 
     /*!
      * \f$ \beta, \f$ a user-specified scaling factor in the TMCMC algorithm.<br>
@@ -295,80 +295,80 @@ class stdata
      * \f$ \beta^2 COV(\Theta(j)), \f$ where \f$ \beta, \f$ is a user-specified scaling factor, and  
      * \f$ \Theta(j) \f$ is the collective samples from MCMC step.
      */
-    T bbeta;
+    DataType bbeta;
 
     //! Optimization parameter
-    optimizationParameters<T> options;
+    optimizationParameters<DataType> options;
 
   public:
     //! Sampling population size for each generation
     std::vector<int> eachPopulationSize;
 
     //! Sampling domain lower bounds for each dimension
-    std::vector<T> lowerBound;
+    std::vector<DataType> lowerBound;
 
     //! Sampling domain upper bounds for each dimension
-    std::vector<T> upperBound;
+    std::vector<DataType> upperBound;
 
     //! Composite distribution as a prior
     std::vector<priorTypes> compositePriorDistribution;
 
     //! Prior parameter 1
-    std::vector<T> priorParam1;
+    std::vector<DataType> priorParam1;
 
     //! Prior parameter 2
-    std::vector<T> priorParam2;
+    std::vector<DataType> priorParam2;
 
     //! Auxillary data
-    std::vector<T> auxilData;
+    std::vector<DataType> auxilData;
 };
 
-template <typename T>
-stdata<T>::stdata() : nDim(0),
-                      maxGenerations(0),
-                      populationSize(0),
-                      lastPopulationSize(0),
-                      auxilSize(0),
-                      minChainLength(1),
-                      maxChainLength(1),
-                      seed(280675),
-                      samplingType(0),
-                      priorType(priorTypes::UNIFORM),
-                      iPlot(0),
-                      saveData(1),
-                      useCmaProposal(0),
-                      useLocalCovariance(0),
-                      lb(-static_cast<T>(6)),
-                      ub(static_cast<T>(6)),
-                      coefVarPresetThreshold(static_cast<T>(1)),
-                      bbeta(static_cast<T>(0.2)),
-                      options(){};
+template <typename DataType>
+stdata<DataType>::stdata() : nDim(0),
+                             maxGenerations(0),
+                             populationSize(0),
+                             lastPopulationSize(0),
+                             auxilSize(0),
+                             minChainLength(1),
+                             maxChainLength(1),
+                             seed(280675),
+                             samplingType(0),
+                             priorType(priorTypes::UNIFORM),
+                             iPlot(0),
+                             saveData(1),
+                             useCmaProposal(0),
+                             useLocalCovariance(0),
+                             lb(-static_cast<DataType>(6)),
+                             ub(static_cast<DataType>(6)),
+                             coefVarPresetThreshold(static_cast<DataType>(1)),
+                             bbeta(static_cast<DataType>(0.2)),
+                             options(){};
 
-template <typename T>
-stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(probdim),
-                                                                         maxGenerations(MaxGenerations),
-                                                                         populationSize(PopulationSize),
-                                                                         lastPopulationSize(PopulationSize),
-                                                                         auxilSize(0),
-                                                                         minChainLength(1),
-                                                                         maxChainLength(1),
-                                                                         seed(280675),
-                                                                         samplingType(0),
-                                                                         priorType(priorTypes::UNIFORM),
-                                                                         iPlot(0),
-                                                                         saveData(1),
-                                                                         useCmaProposal(0),
-                                                                         useLocalCovariance(0),
-                                                                         lb(-static_cast<T>(6)),
-                                                                         ub(static_cast<T>(6)),
-                                                                         coefVarPresetThreshold(static_cast<T>(1)),
-                                                                         bbeta(static_cast<T>(0.2)),
-                                                                         options(),
-                                                                         eachPopulationSize(maxGenerations),
-                                                                         lowerBound(nDim, T{}),
-                                                                         upperBound(nDim, T{}),
-                                                                         priorParam1(nDim, T{}),
-                                                                         priorParam2(nDim * nDim, T{})
+template <typename DataType>
+stdata<DataType>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(probdim),
+                                                                                maxGenerations(MaxGenerations),
+                                                                                populationSize(PopulationSize),
+                                                                                lastPopulationSize(PopulationSize),
+                                                                                auxilSize(0),
+                                                                                minChainLength(1),
+                                                                                maxChainLength(1),
+                                                                                seed(280675),
+                                                                                samplingType(0),
+                                                                                priorType(priorTypes::UNIFORM),
+                                                                                iPlot(0),
+                                                                                saveData(1),
+                                                                                useCmaProposal(0),
+                                                                                useLocalCovariance(0),
+                                                                                lb(-static_cast<DataType>(6)),
+                                                                                ub(static_cast<DataType>(6)),
+                                                                                coefVarPresetThreshold(static_cast<DataType>(1)),
+                                                                                bbeta(static_cast<DataType>(0.2)),
+                                                                                options(),
+                                                                                eachPopulationSize(maxGenerations),
+                                                                                lowerBound(nDim, DataType{}),
+                                                                                upperBound(nDim, DataType{}),
+                                                                                priorParam1(nDim, DataType{}),
+                                                                                priorParam2(nDim * nDim, DataType{})
 {
     for (int i = 0, k = 0; i < nDim; i++)
     {
@@ -376,7 +376,7 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
         {
             if (i == j)
             {
-                priorParam2[k] = static_cast<T>(1);
+                priorParam2[k] = static_cast<DataType>(1);
             }
         }
     }
@@ -384,8 +384,8 @@ stdata<T>::stdata(int probdim, int MaxGenerations, int PopulationSize) : nDim(pr
     std::fill(eachPopulationSize.begin(), eachPopulationSize.end(), populationSize);
 }
 
-template <typename T>
-stdata<T>::stdata(stdata<T> &&other)
+template <typename DataType>
+stdata<DataType>::stdata(stdata<DataType> &&other)
 {
     nDim = other.nDim;
     maxGenerations = other.maxGenerations;
@@ -415,8 +415,8 @@ stdata<T>::stdata(stdata<T> &&other)
     auxilData = std::move(other.auxilData);
 }
 
-template <typename T>
-stdata<T> &stdata<T>::operator=(stdata<T> &&other)
+template <typename DataType>
+stdata<DataType> &stdata<DataType>::operator=(stdata<DataType> &&other)
 {
     nDim = other.nDim;
     maxGenerations = other.maxGenerations;
@@ -448,8 +448,8 @@ stdata<T> &stdata<T>::operator=(stdata<T> &&other)
     return *this;
 }
 
-template <typename T>
-void stdata<T>::swap(stdata<T> &other)
+template <typename DataType>
+void stdata<DataType>::swap(stdata<DataType> &other)
 {
     std::swap(nDim, other.nDim);
     std::swap(maxGenerations, other.maxGenerations);
@@ -483,8 +483,8 @@ void stdata<T>::swap(stdata<T> &other)
     auxilData.swap(other.auxilData);
 }
 
-template <typename T>
-bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
+template <typename DataType>
+bool stdata<DataType>::reset(int probdim, int MaxGenerations, int PopulationSize)
 {
     auxilSize = 0;
     minChainLength = 1;
@@ -496,10 +496,10 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
     saveData = 1;
     useCmaProposal = 0;
     useLocalCovariance = 0;
-    lb = -static_cast<T>(6);
-    ub = static_cast<T>(6);
-    coefVarPresetThreshold = static_cast<T>(1);
-    bbeta = static_cast<T>(0.2);
+    lb = -static_cast<DataType>(6);
+    ub = static_cast<DataType>(6);
+    coefVarPresetThreshold = static_cast<DataType>(1);
+    bbeta = static_cast<DataType>(0.2);
     options.reset();
 
     if (probdim == 0 || MaxGenerations == 0 || PopulationSize == 0)
@@ -528,10 +528,10 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
     try
     {
         eachPopulationSize.resize(maxGenerations);
-        lowerBound.resize(nDim, T{});
-        upperBound.resize(nDim, T{});
-        priorParam1.resize(nDim, T{});
-        priorParam2.resize(nDim * nDim, T{});
+        lowerBound.resize(nDim, DataType{});
+        upperBound.resize(nDim, DataType{});
+        priorParam1.resize(nDim, DataType{});
+        priorParam2.resize(nDim * nDim, DataType{});
     }
     catch (...)
     {
@@ -544,7 +544,7 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
         {
             if (i == j)
             {
-                priorParam2[k] = static_cast<T>(1);
+                priorParam2[k] = static_cast<DataType>(1);
             }
         }
     }
@@ -557,15 +557,15 @@ bool stdata<T>::reset(int probdim, int MaxGenerations, int PopulationSize)
 /*!
  * \brief load the input file fname for setting the input variables
  * 
- * \tparam T      Data type
+ * \tparam DataType      Data type
  * 
  * \param fname   Input file name
  *  
  * \returns true 
  * \returns false 
  */
-template <typename T>
-bool stdata<T>::load(const char *fname)
+template <typename DataType>
+bool stdata<DataType>::load(const char *fname)
 {
     // We use an IO object to open and read a file
     umuq::io f;
@@ -622,11 +622,11 @@ bool stdata<T>::load(const char *fname)
 
                 if (p.at<std::string>(0) == "coefVarPresetThreshold")
                 {
-                    coefVarPresetThreshold = p.at<T>(1);
+                    coefVarPresetThreshold = p.at<DataType>(1);
                 }
                 else if (p.at<std::string>(0) == "bbeta")
                 {
-                    bbeta = p.at<T>(1);
+                    bbeta = p.at<DataType>(1);
                 }
                 else if (p.at<std::string>(0) == "seed")
                 {
@@ -638,11 +638,11 @@ bool stdata<T>::load(const char *fname)
                 }
                 else if (p.at<std::string>(0) == "opt.Tol")
                 {
-                    options.Tolerance = p.at<T>(1);
+                    options.Tolerance = p.at<DataType>(1);
                 }
                 else if (p.at<std::string>(0) == "opt.FMin" || p.at<std::string>(0) == "opt.Minimizer")
                 {
-                    options.FunctionMinimizerType = p.at<T>(1);
+                    options.FunctionMinimizerType = p.at<DataType>(1);
                 }
                 else if (p.at<std::string>(0) == "opt.Display")
                 {
@@ -650,7 +650,7 @@ bool stdata<T>::load(const char *fname)
                 }
                 else if (p.at<std::string>(0) == "opt.Step")
                 {
-                    options.Step = p.at<T>(1);
+                    options.Step = p.at<DataType>(1);
                 }
                 else if (p.at<std::string>(0) == "priorType")
                 {
@@ -667,8 +667,8 @@ bool stdata<T>::load(const char *fname)
                 }
                 else if (p.at<std::string>(0) == "Bdef")
                 {
-                    lb = p.at<T>(1);
-                    ub = p.at<T>(2);
+                    lb = p.at<DataType>(1);
+                    ub = p.at<DataType>(2);
                 }
                 else if (p.at<std::string>(0) == "minChainLength")
                 {
@@ -699,8 +699,8 @@ bool stdata<T>::load(const char *fname)
 
                     if (p.at<std::string>(0) == strTemp)
                     {
-                        lowerBound[n] = p.at<T>(1);
-                        upperBound[n] = p.at<T>(2);
+                        lowerBound[n] = p.at<DataType>(1);
+                        upperBound[n] = p.at<DataType>(2);
                         found = 1;
                         break;
                     }
@@ -737,7 +737,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < nDim; n++)
                         {
-                            priorParam1[n] = p.at<T>(n + 1);
+                            priorParam1[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -753,7 +753,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < nDim * nDim; n++)
                         {
-                            priorParam2[n] = p.at<T>(n + 1);
+                            priorParam2[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -773,7 +773,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < nDim; n++)
                         {
-                            priorParam1[n] = p.at<T>(n + 1);
+                            priorParam1[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -794,7 +794,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < nDim; n++)
                         {
-                            priorParam1[n] = p.at<T>(n + 1);
+                            priorParam1[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -811,7 +811,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < nDim; n++)
                         {
-                            priorParam2[n] = p.at<T>(n + 1);
+                            priorParam2[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -845,10 +845,10 @@ bool stdata<T>::load(const char *fname)
                         if (p.at<std::string>(0) == strTemp)
                         {
                             compositePriorDistribution[n] = static_cast<priorTypes>(p.at<int>(1));
-                            priorParam1[n] = p.at<T>(2);
+                            priorParam1[n] = p.at<DataType>(2);
                             if (compositePriorDistribution[n] != priorTypes::EXPONENTIAL)
                             {
-                                priorParam2[n] = p.at<T>(3);
+                                priorParam2[n] = p.at<DataType>(3);
                             }
                             break;
                         }
@@ -891,7 +891,7 @@ bool stdata<T>::load(const char *fname)
                     {
                         for (n = 0; n < auxilSize; n++)
                         {
-                            auxilData[n] = p.at<T>(n + 1);
+                            auxilData[n] = p.at<DataType>(n + 1);
                         }
                         break;
                     }
@@ -907,21 +907,21 @@ bool stdata<T>::load(const char *fname)
     UMUQFAILRETURN("Requested File does not exist in the current PATH!!");
 }
 
-template <typename T>
-bool stdata<T>::load(std::string const &fname)
+template <typename DataType>
+bool stdata<DataType>::load(std::string const &fname)
 {
     return load(&fname[0]);
 }
 
-template <typename T>
-optimizationParameters<T>::optimizationParameters() : MaxIter(100),
-                                                      Display(0),
-                                                      FunctionMinimizerType(2),
-                                                      Tolerance(1e-6),
-                                                      Step(1e-5){};
+template <typename DataType>
+optimizationParameters<DataType>::optimizationParameters() : MaxIter(100),
+                                                             Display(0),
+                                                             FunctionMinimizerType(2),
+                                                             Tolerance(1e-6),
+                                                             Step(1e-5){};
 
-template <typename T>
-optimizationParameters<T>::optimizationParameters(optimizationParameters<T> const &other)
+template <typename DataType>
+optimizationParameters<DataType>::optimizationParameters(optimizationParameters<DataType> const &other)
 {
     Display = other.Display;
     MaxIter = other.MaxIter;
@@ -930,8 +930,8 @@ optimizationParameters<T>::optimizationParameters(optimizationParameters<T> cons
     Tolerance = other.Tolerance;
 }
 
-template <typename T>
-optimizationParameters<T>::optimizationParameters(optimizationParameters<T> &&other)
+template <typename DataType>
+optimizationParameters<DataType>::optimizationParameters(optimizationParameters<DataType> &&other)
 {
     Display = other.Display;
     MaxIter = other.MaxIter;
@@ -940,19 +940,8 @@ optimizationParameters<T>::optimizationParameters(optimizationParameters<T> &&ot
     Tolerance = other.Tolerance;
 }
 
-template <typename T>
-optimizationParameters<T> &optimizationParameters<T>::operator=(optimizationParameters<T> const &other)
-{
-    Display = other.Display;
-    MaxIter = other.MaxIter;
-    FunctionMinimizerType = other.FunctionMinimizerType;
-    Step = other.Step;
-    Tolerance = other.Tolerance;
-    return *this;
-}
-
-template <typename T>
-optimizationParameters<T> &optimizationParameters<T>::operator=(optimizationParameters<T> &&other)
+template <typename DataType>
+optimizationParameters<DataType> &optimizationParameters<DataType>::operator=(optimizationParameters<DataType> const &other)
 {
     Display = other.Display;
     MaxIter = other.MaxIter;
@@ -962,11 +951,22 @@ optimizationParameters<T> &optimizationParameters<T>::operator=(optimizationPara
     return *this;
 }
 
-template <typename T>
-optimizationParameters<T>::~optimizationParameters() {}
+template <typename DataType>
+optimizationParameters<DataType> &optimizationParameters<DataType>::operator=(optimizationParameters<DataType> &&other)
+{
+    Display = other.Display;
+    MaxIter = other.MaxIter;
+    FunctionMinimizerType = other.FunctionMinimizerType;
+    Step = other.Step;
+    Tolerance = other.Tolerance;
+    return *this;
+}
 
-template <typename T>
-void optimizationParameters<T>::reset()
+template <typename DataType>
+optimizationParameters<DataType>::~optimizationParameters() {}
+
+template <typename DataType>
+void optimizationParameters<DataType>::reset()
 {
     MaxIter = 100;
     Display = 0;
@@ -975,8 +975,8 @@ void optimizationParameters<T>::reset()
     Step = 1e-5;
 }
 
-template <typename T>
-void optimizationParameters<T>::reset(int const maxIter, int const display, int const functionMinimizerType, T const tolerance, T const step)
+template <typename DataType>
+void optimizationParameters<DataType>::reset(int const maxIter, int const display, int const functionMinimizerType, DataType const tolerance, DataType const step)
 {
     MaxIter = maxIter;
     Display = display;

@@ -17,7 +17,7 @@ namespace tmcmc
  * 
  * \brief Updating the data information at each point SamplePoints 
  * 
- * \tparam T Data type (T is a floating-point type)
+ * \tparam RealType Data type (RealType is a floating-point type)
  * 
  * \param other          Database object which is casted to long long
  * \param SamplePoints   Points or sampling points array
@@ -26,27 +26,27 @@ namespace tmcmc
  * \param NDimDataArray  Dimension of G array
  * \param Surrogate      Surrogate
  */
-template <typename T>
-void updateDataTask(long long const other, T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
+template <typename RealType>
+void updateDataTask(long long const other, RealType const *SamplePoints, RealType const *FunValue, RealType const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief A polymorphic function wrapper type for updateTask
  * 
- * \tparam T Data type 
+ * \tparam RealType Data type 
  */
-template <typename T>
-using UPDATETASKTYPE = void (*)(long long const, T const *, T const *, T const *, int const *, int const *);
+template <typename RealType>
+using UPDATETASKTYPE = void (*)(long long const, RealType const *, RealType const *, RealType const *, int const *, int const *);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief It is True if updateDataTask has been registered, and false otherwise (logical).
  * 
- * \tparam T 
+ * \tparam RealType 
  */
-template <typename T>
+template <typename RealType>
 static bool isUpdateTaskRegistered = false;
 
 /*!
@@ -67,7 +67,7 @@ namespace tmcmc
  *
  * \brief basic data base
  * 
- * \tparam T Data type (T is a floating-point type)
+ * \tparam RealType Data type (RealType is a floating-point type)
  *
  * \param samplePoints       Array for points in space
  * \param nDimSamplePoints   An integer argument shows the size of samplePoints
@@ -77,7 +77,7 @@ namespace tmcmc
  * \param surrogate          An integer argument shows the surrogate model
  * \param nSelection         An integer argument for selection of leaders only
  */
-template <typename T>
+template <typename RealType>
 class database
 {
   public:
@@ -109,15 +109,15 @@ class database
      * 
      * \param other  Input database object
      */
-    database(database<T> &&other);
+    database(database<RealType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other 
-     * \return database<T>& 
+     * \return database<RealType>& 
      */
-    database<T> &operator=(database<T> &&other);
+    database<RealType> &operator=(database<RealType> &&other);
 
     /*!
      * \brief Destroy the database object
@@ -149,14 +149,14 @@ class database
      * 
      * \param func 
      */
-    inline void setTask(UPDATETASKTYPE<T> const &func);
+    inline void setTask(UPDATETASKTYPE<RealType> const &func);
 
     /*!
      * \brief Swaps two database objects
      *
      * \param other Input database object
      */
-    void swap(database<T> &other);
+    void swap(database<RealType> &other);
 
     /*!
      * \brief Get the size of database (in terms of number of entries)
@@ -171,7 +171,7 @@ class database
      */
     inline void resetSize();
 
-    /**
+    /*!
      * \brief Breaking the long chain length 
      * 
      * Here, we break the long chain length assigned to important samples to reduce or 
@@ -189,7 +189,7 @@ class database
      */
     bool resetSelection(int const minLength = 1, int const maxLength = 1);
 
-    /**
+    /*!
      * \brief Updating the data information on the new selections 
      * 
      * \param other datbase object 
@@ -197,9 +197,9 @@ class database
      * \returns true 
      * \returns false If it encounters any problem
      */
-    bool updateSelection(database<T> const &other);
+    bool updateSelection(database<RealType> const &other);
 
-    /**
+    /*!
      * \brief Update the work load on each queue based on the amount of work
      * It uses a greedy partitioning based on the amount of workload
      * 
@@ -242,7 +242,7 @@ class database
      * \param NDimDataArray  Dimension of G array
      * \param Surrogate      Surrogate
      */
-    void updateData(T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate);
+    void updateData(RealType const *SamplePoints, RealType const *FunValue, RealType const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
     /*!
      * \brief Updating the data information at each point SamplePoints 
@@ -252,7 +252,7 @@ class database
      * \param DataArray     Array of data SamplePoints 
      * \param Surrogate     Surrogate
      */
-    void update(T const *SamplePoints, T const FunValue, T const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
+    void update(RealType const *SamplePoints, RealType const FunValue, RealType const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
 
   private:
     /*!
@@ -275,16 +275,16 @@ class database
      * 
      * Make it noncopyable.
      */
-    database(database<T> const &) = delete;
+    database(database<RealType> const &) = delete;
 
     /*!
      * \brief Delete a database object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns database<T>& 
+     * \returns database<RealType>& 
      */
-    database<T> &operator=(database<T> const &) = delete;
+    database<RealType> &operator=(database<RealType> const &) = delete;
 
   private:
     /*! \class sortType
@@ -337,13 +337,13 @@ class database
     std::size_t idxPosition;
 
     //! Points or sampling points array
-    std::vector<T> samplePoints;
+    std::vector<RealType> samplePoints;
 
     //! Data array
-    std::vector<T> dataArray;
+    std::vector<RealType> dataArray;
 
     //! Function value
-    std::vector<T> fValue;
+    std::vector<RealType> fValue;
 
     //! Surrogate
     std::vector<int> surrogate;
@@ -359,21 +359,21 @@ class database
 
   private:
     //! Function pointer
-    UPDATETASKTYPE<T> updateTask;
+    UPDATETASKTYPE<RealType> updateTask;
 
     //! List of sort data
     std::unique_ptr<sortType[]> list;
 };
 
-template <typename T>
-database<T>::database() : nDimSamplePoints(0),
-                          nDimDataArray(0),
-                          nSamplePoints(0),
-                          idxPosition(0),
-                          updateTask(nullptr),
-                          list(nullptr)
+template <typename RealType>
+database<RealType>::database() : nDimSamplePoints(0),
+                                 nDimDataArray(0),
+                                 nSamplePoints(0),
+                                 idxPosition(0),
+                                 updateTask(nullptr),
+                                 list(nullptr)
 {
-    if (!std::is_floating_point<T>::value)
+    if (!std::is_floating_point<RealType>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
@@ -386,41 +386,15 @@ database<T>::database() : nDimSamplePoints(0),
     }
 }
 
-template <typename T>
-database<T>::database(int const nDim, int const nSize) : nDimSamplePoints(nDim),
-                                                         nDimDataArray(0),
-                                                         nSamplePoints(0),
-                                                         idxPosition(0),
-                                                         updateTask(nullptr),
-                                                         list(nullptr)
+template <typename RealType>
+database<RealType>::database(int const nDim, int const nSize) : nDimSamplePoints(nDim),
+                                                                nDimDataArray(0),
+                                                                nSamplePoints(0),
+                                                                idxPosition(0),
+                                                                updateTask(nullptr),
+                                                                list(nullptr)
 {
-    if (!std::is_floating_point<T>::value)
-    {
-        UMUQFAIL("This type is not supported in this class!");
-    }
-
-    if (!reset(nSize))
-    {
-        UMUQFAIL("Failed to initialize the data!");
-    }
-
-    setTask(updateDataTask);
-
-    if (!registerTask())
-    {
-        UMUQFAIL("Failed to register the update task!");
-    }
-}
-
-template <typename T>
-database<T>::database(int const nDim1, int const nDim2, int const nSize) : nDimSamplePoints(nDim1),
-                                                                           nDimDataArray(nDim2),
-                                                                           nSamplePoints(0),
-                                                                           idxPosition(0),
-                                                                           updateTask(nullptr),
-                                                                           list(nullptr)
-{
-    if (!std::is_floating_point<T>::value)
+    if (!std::is_floating_point<RealType>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
@@ -438,22 +412,48 @@ database<T>::database(int const nDim1, int const nDim2, int const nSize) : nDimS
     }
 }
 
-template <typename T>
-database<T>::database(database<T> &&other) : nDimSamplePoints(other.nDimSamplePoints),
-                                             nDimDataArray(other.nDimDataArray),
-                                             nSamplePoints(other.nSamplePoints),
-                                             idxPosition(other.idxPosition),
-                                             samplePoints(std::move(other.samplePoints)),
-                                             dataArray(std::move(other.dataArray)),
-                                             fValue(std::move(other.fValue)),
-                                             surrogate(std::move(other.surrogate)),
-                                             nSelection(std::move(other.nSelection)),
-                                             queue(std::move(other.queue)),
-                                             updateTask(std::move(other.updateTask)),
-                                             list(std::move(other.list)) {}
+template <typename RealType>
+database<RealType>::database(int const nDim1, int const nDim2, int const nSize) : nDimSamplePoints(nDim1),
+                                                                                  nDimDataArray(nDim2),
+                                                                                  nSamplePoints(0),
+                                                                                  idxPosition(0),
+                                                                                  updateTask(nullptr),
+                                                                                  list(nullptr)
+{
+    if (!std::is_floating_point<RealType>::value)
+    {
+        UMUQFAIL("This type is not supported in this class!");
+    }
 
-template <typename T>
-database<T> &database<T>::operator=(database<T> &&other)
+    if (!reset(nSize))
+    {
+        UMUQFAIL("Failed to initialize the data!");
+    }
+
+    setTask(updateDataTask);
+
+    if (!registerTask())
+    {
+        UMUQFAIL("Failed to register the update task!");
+    }
+}
+
+template <typename RealType>
+database<RealType>::database(database<RealType> &&other) : nDimSamplePoints(other.nDimSamplePoints),
+                                                           nDimDataArray(other.nDimDataArray),
+                                                           nSamplePoints(other.nSamplePoints),
+                                                           idxPosition(other.idxPosition),
+                                                           samplePoints(std::move(other.samplePoints)),
+                                                           dataArray(std::move(other.dataArray)),
+                                                           fValue(std::move(other.fValue)),
+                                                           surrogate(std::move(other.surrogate)),
+                                                           nSelection(std::move(other.nSelection)),
+                                                           queue(std::move(other.queue)),
+                                                           updateTask(std::move(other.updateTask)),
+                                                           list(std::move(other.list)) {}
+
+template <typename RealType>
+database<RealType> &database<RealType>::operator=(database<RealType> &&other)
 {
     nDimSamplePoints = other.nDimSamplePoints;
     nDimDataArray = other.nDimDataArray;
@@ -472,11 +472,11 @@ database<T> &database<T>::operator=(database<T> &&other)
     return *this;
 }
 
-template <typename T>
-database<T>::~database() {}
+template <typename RealType>
+database<RealType>::~database() {}
 
-template <typename T>
-bool database<T>::reset(int const nSize)
+template <typename RealType>
+bool database<RealType>::reset(int const nSize)
 {
     if (nSize < 0)
     {
@@ -552,14 +552,14 @@ bool database<T>::reset(int const nSize)
     return true;
 }
 
-template <typename T>
-bool database<T>::registerTask()
+template <typename RealType>
+bool database<RealType>::registerTask()
 {
     {
         std::lock_guard<std::mutex> lock(updateTask_m);
 
         // Check if update task is already initialized
-        if (isUpdateTaskRegistered<T>)
+        if (isUpdateTaskRegistered<RealType>)
         {
             return true;
         }
@@ -568,7 +568,7 @@ bool database<T>::registerTask()
         {
             UMUQFAILRETURN("Task Pointer is not assigned to the external function!");
         }
-        isUpdateTaskRegistered<T> = true;
+        isUpdateTaskRegistered<RealType> = true;
     }
 
     torc_register_task((void *)this->updateTask);
@@ -576,14 +576,14 @@ bool database<T>::registerTask()
     return true;
 }
 
-template <typename T>
-inline void database<T>::setTask(UPDATETASKTYPE<T> const &func)
+template <typename RealType>
+inline void database<RealType>::setTask(UPDATETASKTYPE<RealType> const &func)
 {
     updateTask = func;
 }
 
-template <typename T>
-void database<T>::swap(database<T> &other)
+template <typename RealType>
+void database<RealType>::swap(database<RealType> &other)
 {
     std::unique_lock<std::mutex> lock_a(m, std::defer_lock);
     std::unique_lock<std::mutex> lock_b(other.m, std::defer_lock);
@@ -603,14 +603,14 @@ void database<T>::swap(database<T> &other)
     list.swap(other.list);
 }
 
-template <typename T>
-inline int database<T>::size() const { return static_cast<int>(idxPosition); }
+template <typename RealType>
+inline int database<RealType>::size() const { return static_cast<int>(idxPosition); }
 
-template <typename T>
-inline void database<T>::resetSize() { idxPosition = 0; }
+template <typename RealType>
+inline void database<RealType>::resetSize() { idxPosition = 0; }
 
-template <typename T>
-bool database<T>::resetSelection(int const minLength, int const maxLength)
+template <typename RealType>
+bool database<RealType>::resetSelection(int const minLength, int const maxLength)
 {
     if (minLength < 1 || maxLength < 1 || maxLength < minLength)
     {
@@ -691,8 +691,8 @@ bool database<T>::resetSelection(int const minLength, int const maxLength)
     UMUQFAILRETURN("List is not set yet!");
 }
 
-template <typename T>
-bool database<T>::updateSelection(database<T> const &other)
+template <typename RealType>
+bool database<RealType>::updateSelection(database<RealType> const &other)
 {
     if (list)
     {
@@ -702,8 +702,8 @@ bool database<T>::updateSelection(database<T> const &other)
             {
                 int const j = list[i].idx;
 
-                T *From = other.samplePoints.data() + j * nDimSamplePoints;
-                T *To = samplePoints.data() + i * nDimSamplePoints;
+                RealType *From = other.samplePoints.data() + j * nDimSamplePoints;
+                RealType *To = samplePoints.data() + i * nDimSamplePoints;
 
                 std::copy(From, From + nDimSamplePoints, To);
 
@@ -724,8 +724,8 @@ bool database<T>::updateSelection(database<T> const &other)
     UMUQFAILRETURN("List is not set yet!");
 }
 
-template <typename T>
-bool database<T>::updateWorkload(int const nChains)
+template <typename RealType>
+bool database<RealType>::updateWorkload(int const nChains)
 {
     if (nChains <= nSamplePoints)
     {
@@ -752,8 +752,8 @@ bool database<T>::updateWorkload(int const nChains)
     UMUQFAILRETURN("Wrong number of leading chains!");
 }
 
-template <typename T>
-bool database<T>::print()
+template <typename RealType>
+bool database<RealType>::print()
 {
     if (idxPosition > 0 && nDimSamplePoints > 0)
     {
@@ -769,14 +769,14 @@ bool database<T>::print()
         int const nCurrentSamplePoints = static_cast<int>(idxPosition);
 
         // Getting the maximum width in the data for nice printing
-        int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, std::cout);
-        int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, std::cout);
+        int pWidth = f.getWidth<RealType>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, std::cout);
+        int fWidth = f.getWidth<RealType>(fValue, nCurrentSamplePoints, 1, std::cout);
         int Width = std::max<int>(pWidth, fWidth);
         int sWidth = f.getWidth<int>(surrogate, nCurrentSamplePoints, 1, std::cout);
 
         // Array wrapper on the data
-        umuq::arrayWrapper<T> ParrayWrapper(samplePoints, nCurrentSamplePoints * nDimSamplePoints, nDimSamplePoints);
-        umuq::arrayWrapper<T> FvalueWrapper(fValue, nCurrentSamplePoints);
+        umuq::arrayWrapper<RealType> ParrayWrapper(samplePoints, nCurrentSamplePoints * nDimSamplePoints, nDimSamplePoints);
+        umuq::arrayWrapper<RealType> FvalueWrapper(fValue, nCurrentSamplePoints);
         umuq::arrayWrapper<int> SurrogateWrapper(surrogate, nCurrentSamplePoints);
 
         auto fIt = FvalueWrapper.begin();
@@ -786,20 +786,20 @@ bool database<T>::print()
         {
             umuq::ioFormat gvFormat = {",", "\n", "dataArray=[", "]"};
 
-            int gWidth = f.getWidth<T>(dataArray, nCurrentSamplePoints, nDimDataArray, std::cout);
+            int gWidth = f.getWidth<RealType>(dataArray, nCurrentSamplePoints, nDimDataArray, std::cout);
 
-            umuq::arrayWrapper<T> GarrayWrapper(dataArray, nCurrentSamplePoints * nDimDataArray, nDimDataArray);
+            umuq::arrayWrapper<RealType> GarrayWrapper(dataArray, nCurrentSamplePoints * nDimDataArray, nDimDataArray);
 
             auto gIt = GarrayWrapper.begin();
 
             for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
             {
                 f.setWidth(Width);
-                f.printMatrix<T>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
+                f.printMatrix<RealType>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
                 f.setWidth(sWidth);
                 f.printMatrix<int>(sIt.get(), suFormat);
                 f.setWidth(gWidth);
-                f.printMatrix<T>(gIt.get(), nDimDataArray, 1, gvFormat);
+                f.printMatrix<RealType>(gIt.get(), nDimDataArray, 1, gvFormat);
                 fIt++;
                 sIt++;
                 gIt++;
@@ -810,7 +810,7 @@ bool database<T>::print()
             for (auto pIt = ParrayWrapper.begin(); pIt != ParrayWrapper.end(); pIt++)
             {
                 f.setWidth(Width);
-                f.printMatrix<T>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
+                f.printMatrix<RealType>(pIt.get(), nDimSamplePoints, fIt.get(), 1, 1, poFormat, fvFormat);
                 f.setWidth(sWidth);
                 f.printMatrix<int>(sIt.get(), suFormat);
                 fIt++;
@@ -825,8 +825,8 @@ bool database<T>::print()
     UMUQFAILRETURN("There is no sampling point information to print!");
 }
 
-template <typename T>
-bool database<T>::save(const char *fname, int const IdNumber)
+template <typename RealType>
+bool database<RealType>::save(const char *fname, int const IdNumber)
 {
     if (idxPosition > 0 && nDimSamplePoints > 0)
     {
@@ -849,19 +849,19 @@ bool database<T>::save(const char *fname, int const IdNumber)
             {
                 // Getting the maximum width in the data for nice printing
                 {
-                    int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
-                    int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, f.getFstream());
+                    int pWidth = f.getWidth<RealType>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
+                    int fWidth = f.getWidth<RealType>(fValue, nCurrentSamplePoints, 1, f.getFstream());
                     int Width = std::max<int>(pWidth, fWidth);
-                    int gWidth = f.getWidth<T>(dataArray, nCurrentSamplePoints, nDimDataArray, f.getFstream());
+                    int gWidth = f.getWidth<RealType>(dataArray, nCurrentSamplePoints, nDimDataArray, f.getFstream());
                     Width = std::max<int>(Width, gWidth);
 
                     f.setWidth(Width);
                 }
 
-                T *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
+                RealType *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
                 int nCols[3] = {nDimSamplePoints, 1, nDimDataArray};
 
-                if (!f.saveMatrix<T>(tmp, 3, nCols, 1, nCurrentSamplePoints))
+                if (!f.saveMatrix<RealType>(tmp, 3, nCols, 1, nCurrentSamplePoints))
                 {
                     return false;
                 }
@@ -870,18 +870,18 @@ bool database<T>::save(const char *fname, int const IdNumber)
             {
                 // Getting the maximum width in the data for nice printing
                 {
-                    int pWidth = f.getWidth<T>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
-                    int fWidth = f.getWidth<T>(fValue, nCurrentSamplePoints, 1, f.getFstream());
+                    int pWidth = f.getWidth<RealType>(samplePoints, nCurrentSamplePoints, nDimSamplePoints, f.getFstream());
+                    int fWidth = f.getWidth<RealType>(fValue, nCurrentSamplePoints, 1, f.getFstream());
 
                     int Width = std::max<int>(pWidth, fWidth);
 
                     f.setWidth(Width);
                 }
 
-                T *tmp[2] = {samplePoints.data(), fValue.data()};
+                RealType *tmp[2] = {samplePoints.data(), fValue.data()};
                 int nCols[2] = {nDimSamplePoints, 1};
 
-                if (!f.saveMatrix<T>(tmp, 2, nCols, 1, nCurrentSamplePoints))
+                if (!f.saveMatrix<RealType>(tmp, 2, nCols, 1, nCurrentSamplePoints))
                 {
                     return false;
                 }
@@ -896,14 +896,14 @@ bool database<T>::save(const char *fname, int const IdNumber)
     UMUQFAILRETURN("There is no sampling point information to write!");
 }
 
-template <typename T>
-bool database<T>::save(std::string const &fname, int const IdNumber)
+template <typename RealType>
+bool database<RealType>::save(std::string const &fname, int const IdNumber)
 {
     return save(&fname[0], IdNumber);
 }
 
-template <typename T>
-bool database<T>::load(const char *fname, int const IdNumber)
+template <typename RealType>
+bool database<RealType>::load(const char *fname, int const IdNumber)
 {
     if (nSamplePoints > 0 && nDimSamplePoints > 0)
     {
@@ -922,20 +922,20 @@ bool database<T>::load(const char *fname, int const IdNumber)
         {
             if (nDimDataArray > 0)
             {
-                T *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
+                RealType *tmp[3] = {samplePoints.data(), fValue.data(), dataArray.data()};
                 int nCols[3] = {nDimSamplePoints, 1, nDimDataArray};
 
-                if (!f.loadMatrix<T>(tmp, 3, nCols, 1, nSamplePoints))
+                if (!f.loadMatrix<RealType>(tmp, 3, nCols, 1, nSamplePoints))
                 {
                     return false;
                 }
             }
             else
             {
-                T *tmp[2] = {samplePoints.data(), fValue.data()};
+                RealType *tmp[2] = {samplePoints.data(), fValue.data()};
                 int nCols[2] = {nDimSamplePoints, 1};
 
-                if (!f.loadMatrix<T>(tmp, 2, nCols, 1, nSamplePoints))
+                if (!f.loadMatrix<RealType>(tmp, 2, nCols, 1, nSamplePoints))
                 {
                     return false;
                 }
@@ -952,14 +952,14 @@ bool database<T>::load(const char *fname, int const IdNumber)
     UMUQFAILRETURN("First you should create an instance of the database with correct size!");
 }
 
-template <typename T>
-bool database<T>::load(std::string const &fname, int const IdNumber)
+template <typename RealType>
+bool database<RealType>::load(std::string const &fname, int const IdNumber)
 {
     return load(&fname[0], IdNumber);
 }
 
-template <typename T>
-void database<T>::updateData(T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate)
+template <typename RealType>
+void database<RealType>::updateData(RealType const *SamplePoints, RealType const *FunValue, RealType const *DataArray, int const *NDimDataArray, int const *Surrogate)
 {
     std::size_t pos;
 
@@ -988,8 +988,8 @@ void database<T>::updateData(T const *SamplePoints, T const *FunValue, T const *
     }
 }
 
-template <typename T>
-void database<T>::update(T const *SamplePoints, T const FunValue, T const *DataArray, int const Surrogate)
+template <typename RealType>
+void database<RealType>::update(RealType const *SamplePoints, RealType const FunValue, RealType const *DataArray, int const Surrogate)
 {
     if (torc_node_id() == 0)
     {
@@ -1003,9 +1003,9 @@ void database<T>::update(T const *SamplePoints, T const FunValue, T const *DataA
 
     torc_create_direct(0, (void (*)())updateTask, 6,
                        1, MPIDatatype<long long>, CALL_BY_REF,
-                       nDimSamplePoints, MPIDatatype<T>, CALL_BY_VAL,
-                       1, MPIDatatype<T>, CALL_BY_VAL,
-                       nDimGarray2, MPIDatatype<T>, CALL_BY_VAL,
+                       nDimSamplePoints, MPIDatatype<RealType>, CALL_BY_VAL,
+                       1, MPIDatatype<RealType>, CALL_BY_VAL,
+                       nDimGarray2, MPIDatatype<RealType>, CALL_BY_VAL,
                        nDimGarray1, MPI_INT, CALL_BY_VAL,
                        nDimSurroga, MPI_INT, CALL_BY_VAL,
                        reinterpret_cast<long long>(this), SamplePoints,
@@ -1015,10 +1015,10 @@ void database<T>::update(T const *SamplePoints, T const FunValue, T const *DataA
     torc_waitall3();
 }
 
-template <typename T>
-void updateDataTask(long long const other, T const *SamplePoints, T const *FunValue, T const *DataArray, int const *NDimDataArray, int const *Surrogate)
+template <typename RealType>
+void updateDataTask(long long const other, RealType const *SamplePoints, RealType const *FunValue, RealType const *DataArray, int const *NDimDataArray, int const *Surrogate)
 {
-    auto obj = reinterpret_cast<database<T> *>(other);
+    auto obj = reinterpret_cast<database<RealType> *>(other);
 
     std::size_t pos;
 
@@ -1047,8 +1047,8 @@ void updateDataTask(long long const other, T const *SamplePoints, T const *FunVa
     }
 }
 
-template <typename T>
-inline bool database<T>::resetList()
+template <typename RealType>
+inline bool database<RealType>::resetList()
 {
     if (list)
     {
@@ -1069,8 +1069,8 @@ inline bool database<T>::resetList()
     }
 }
 
-template <typename T>
-inline bool database<T>::sort()
+template <typename RealType>
+inline bool database<RealType>::sort()
 {
     if (list)
     {
@@ -1086,14 +1086,14 @@ inline bool database<T>::sort()
     UMUQFAILRETURN("List is not set for sorting!");
 }
 
-template <typename T>
-umuq::tmcmc::database<T>::sortType::sortType() : nSel(0) {}
+template <typename RealType>
+umuq::tmcmc::database<RealType>::sortType::sortType() : nSel(0) {}
 
-template <typename T>
-umuq::tmcmc::database<T>::sortType::sortType(umuq::tmcmc::database<T>::sortType const &other) : nSel(other.nSel), idx(other.idx) {}
+template <typename RealType>
+umuq::tmcmc::database<RealType>::sortType::sortType(umuq::tmcmc::database<RealType>::sortType const &other) : nSel(other.nSel), idx(other.idx) {}
 
-template <typename T>
-typename umuq::tmcmc::database<T>::sortType &umuq::tmcmc::database<T>::sortType::operator=(umuq::tmcmc::database<T>::sortType const &other)
+template <typename RealType>
+typename umuq::tmcmc::database<RealType>::sortType &umuq::tmcmc::database<RealType>::sortType::operator=(umuq::tmcmc::database<RealType>::sortType const &other)
 {
     nSel = other.nSel;
     idx = other.idx;

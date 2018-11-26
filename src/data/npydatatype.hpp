@@ -5,10 +5,10 @@
 /*!
  * \brief numpy data types variable template wrapper for the given C++ types
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  */
-template <typename T>
+template <typename DataType>
 constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
 
 /*!
