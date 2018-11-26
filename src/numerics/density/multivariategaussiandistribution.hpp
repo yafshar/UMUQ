@@ -7,7 +7,7 @@ namespace umuq
 inline namespace density
 {
 
-/*! \class multivariategaussianDistribution
+/*! \class multivariateGaussianDistribution
  * \ingroup Density_Module
  * 
  * \brief The Multivariate Gaussian Distribution
@@ -38,7 +38,7 @@ inline namespace density
  * \tparam T Data type
  */
 template <typename T, class V = T const *>
-class multivariategaussianDistribution : public densityFunction<T, std::function<T(V)>>
+class multivariateGaussianDistribution : public densityFunction<T, std::function<T(V)>>
 {
   public:
     /*!
@@ -48,7 +48,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
      * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
+    multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
 
     /*!
      * \brief Construct a new multivariategaussian distribution object
@@ -58,7 +58,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param n            Vector size
      * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    multivariategaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
+    multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
 
     /*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
@@ -66,7 +66,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
      * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    explicit multivariategaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
+    explicit multivariateGaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
 
     /*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0)
@@ -75,7 +75,7 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param n            Vector size
      * \param PRNG         Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    multivariategaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
+    multivariateGaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
 
     /*!
      * \brief Construct a new multivariategaussian distribution object (default mean = 0, covariance=I)
@@ -83,13 +83,13 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \param n vector size
      * \param PRNG     Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    explicit multivariategaussianDistribution(int const n, psrandom<T> *PRNG = nullptr);
+    explicit multivariateGaussianDistribution(int const n, psrandom<T> *PRNG = nullptr);
 
     /*!
      * \brief Destroy the multinomial distribution object
      * 
      */
-    ~multivariategaussianDistribution();
+    ~multivariateGaussianDistribution();
 
     /*!
      * \brief Multivariate Gaussian distribution density function
@@ -190,187 +190,11 @@ class multivariategaussianDistribution : public densityFunction<T, std::function
      * \note 
      * - This should be used after setting the State of psrandom object
      */
-    std::unique_ptr<randomdist::multivariatenormalDistribution<T>> mvnormal;
-};
-
-/*! \class multivariateGaussianDistribution
- * \brief The Multivariate Gaussian Distribution
- * 
- * The Multivariate Gaussian Distribution is a generalization of the one-dimensional (univariate) Gaussian 
- * distribution to higher dimensions. One definition is that a random vector is said to be k-variate normally 
- * distributed if every linear combination of its k components has a univariate Gaussian distribution.
- * 
- * Reference:<br>
- * https://en.wikipedia.org/wiki/Multivariate_normal_distribution
- * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x using mean vector imean
- * and variance-covariance matrix icovariance. <br>
- * using:
- * 
- * \f$
- * p(x_1,\cdots,x_k) = \frac{1}{\sqrt{(2 \pi)^k |\Sigma|}} \exp \left(-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)\right).
- * \f$
- * 
- * It also provides random values x, distributed according to the Multivariate Gaussian Distribution probability 
- * density function. 
- * 
- * 
- * \tparam T Data type
- */
-template <typename T, class V = T const *>
-class multivariateGaussianDistribution : public densityFunction<T, std::function<T(V)>>
-{
-  public:
-    /*!
-     * \brief Construct a new multivariategaussian distribution object
-     *
-     * \param imean        Mean vector of size \f$n\f$
-     * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
-     */
-    multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
-
-    /*!
-     * \brief Construct a new multivariategaussian distribution object
-     * 
-     * \param imean        Input mean vector of size \f$n\f$
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     */
-    multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
-
-    /*!
-     * \brief Construct a new multivariategaussian distribution object (default mean = 0)
-     *
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     */
-    explicit multivariateGaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG = nullptr);
-
-    /*!
-     * \brief Construct a new multivariategaussian distribution object (default mean = 0)
-     * 
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     */
-    multivariateGaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG = nullptr);
-
-    /*!
-     * \brief Construct a new multivariategaussian distribution object (default mean = 0, covariance=I)
-     * 
-     * \param n vector size
-     */
-    explicit multivariateGaussianDistribution(int const n, psrandom<T> *PRNG = nullptr);
-
-    /*!
-     * \brief Destroy the multinomial distribution object
-     * 
-     */
-    ~multivariateGaussianDistribution() {}
-
-    /*!
-     * \brief Multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param x  Input vector of size \f$ n \f$
-     * 
-     * \returns Density function value 
-     */
-    inline T multivariateGaussianDistribution_f(T const *x);
-
-    /*!
-     * \brief Log of multivariate Gaussian distribution density function
-     * Computes the probability from the Multivariate Gaussian distribution
-     * 
-     * \param x  Input vector of size \f$ n \f$
-     * 
-     * \returns  Log of density function value 
-     */
-    inline T multivariateGaussianDistribution_lf(T const *x);
-
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
-     * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
-
-    /*!
-     * \brief Get the Random Number Generator object 
-     * 
-     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
-     */
-    inline psrandom<T> *getRandomGenerator();
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x  Vector of samples
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(T *x);
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x  Vector of samples
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(std::vector<T> &x);
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x  Vector of samples
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(EVectorX<T> &x);
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x         Vector of samples
-     * \param nSamples  Number of sample vectors
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(T *x, int const nSamples);
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x         Vector of samples
-     * \param nSamples  Number of sample vectors
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(std::vector<T> &x, int const nSamples);
-
-    /*!
-     * \brief Create samples of the Gaussian Distribution object
-     *
-     * \param x  Matrix of random samples 
-     *
-     * \return false If Random Number Generator object is not assigned
-     */
-    bool sample(EMatrixX<T> &x);
-
-  private:
-    /*!
-     * \brief Multivariate random number distribution
-     * 
-     * \note 
-     * - This should be used after setting the State of psrandom object
-     */
-    std::unique_ptr<randomdist::multivariateNormalDistribution<T>> mvNormal;
+    std::unique_ptr<randomdist::multivariateNormalDistribution<T>> mvnormal;
 };
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvnormal(nullptr)
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvnormal(nullptr)
 {
     if (PRNG)
     {
@@ -388,7 +212,7 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EVector
     {
         try
         {
-            mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance));
+            mvnormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance));
         }
         catch (...)
         {
@@ -397,12 +221,12 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EVector
     }
     this->name = std::string("multivariategaussian");
     this->numParams = imean.size();
-    this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
 {
     if (PRNG)
     {
@@ -420,7 +244,7 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
     {
         try
         {
-            mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(imean, icovariance, n));
+            mvnormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance, n));
         }
         catch (...)
         {
@@ -429,12 +253,12 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
     }
     this->name = std::string("multivariategaussian");
     this->numParams = n;
-    this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvnormal(nullptr)
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvnormal(nullptr)
 {
     if (PRNG)
     {
@@ -452,7 +276,7 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EMatrix
     {
         try
         {
-            mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance));
+            mvnormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance));
         }
         catch (...)
         {
@@ -461,12 +285,12 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(EMatrix
     }
     this->name = std::string("multivariategaussian");
     this->numParams = icovariance.rows();
-    this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
 {
     if (PRNG)
     {
@@ -484,7 +308,7 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
     {
         try
         {
-            mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance, n));
+            mvnormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance, n));
         }
         catch (...)
         {
@@ -493,12 +317,12 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(T const
     }
     this->name = std::string("multivariategaussian");
     this->numParams = n;
-    this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::multivariategaussianDistribution(int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
+multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(int const n, psrandom<T> *PRNG) : mvnormal(nullptr)
 {
     if (PRNG)
     {
@@ -516,7 +340,7 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(int con
     {
         try
         {
-            mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(n));
+            mvnormal.reset(new randomdist::multivariateNormalDistribution<T>(n));
         }
         catch (...)
         {
@@ -525,15 +349,15 @@ multivariategaussianDistribution<T, V>::multivariategaussianDistribution(int con
     }
     this->name = std::string("multivariategaussian");
     this->numParams = n;
-    this->f = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf, this, std::placeholders::_1);
 }
 
 template <typename T, class V>
-multivariategaussianDistribution<T, V>::~multivariategaussianDistribution() {}
+multivariateGaussianDistribution<T, V>::~multivariateGaussianDistribution() {}
 
 template <typename T, class V>
-inline T multivariategaussianDistribution<T, V>::multivariategaussianDistribution_f(T const *x)
+inline T multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_f(T const *x)
 {
     if (this->prng)
     {
@@ -554,7 +378,7 @@ inline T multivariategaussianDistribution<T, V>::multivariategaussianDistributio
 }
 
 template <typename T, class V>
-inline T multivariategaussianDistribution<T, V>::multivariategaussianDistribution_lf(T const *x)
+inline T multivariateGaussianDistribution<T, V>::multivariategaussianDistribution_lf(T const *x)
 {
     if (this->prng)
     {
@@ -573,7 +397,7 @@ inline T multivariategaussianDistribution<T, V>::multivariategaussianDistributio
 }
 
 template <typename T, class V>
-inline bool multivariategaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+inline bool multivariateGaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
 {
     if (PRNG)
     {
@@ -593,10 +417,10 @@ inline bool multivariategaussianDistribution<T, V>::setRandomGenerator(psrandom<
 }
 
 template <typename T, class V>
-inline psrandom<T> *multivariategaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
+inline psrandom<T> *multivariateGaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(T *x)
+bool multivariateGaussianDistribution<T, V>::sample(T *x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -612,7 +436,7 @@ bool multivariategaussianDistribution<T, V>::sample(T *x)
 }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x)
+bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -628,7 +452,7 @@ bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x)
 }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(EVectorX<T> &x)
+bool multivariateGaussianDistribution<T, V>::sample(EVectorX<T> &x)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -643,7 +467,7 @@ bool multivariategaussianDistribution<T, V>::sample(EVectorX<T> &x)
 }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(T *x, int const nSamples)
+bool multivariateGaussianDistribution<T, V>::sample(T *x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -662,7 +486,7 @@ bool multivariategaussianDistribution<T, V>::sample(T *x, int const nSamples)
 }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
+bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
 {
 #ifdef DEBUG
     if (this->prng)
@@ -687,314 +511,6 @@ bool multivariategaussianDistribution<T, V>::sample(std::vector<T> &x, int const
 }
 
 template <typename T, class V>
-bool multivariategaussianDistribution<T, V>::sample(EMatrixX<T> &x)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        for (auto i = 0; i < x.cols(); i++)
-        {
-            x.col(i) = this->prng->mvnormal->dist();
-        }
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
-multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EVectorX<T> const &imean, EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvNormal(nullptr)
-{
-    if (PRNG)
-    {
-        this->prng = PRNG;
-        if (!this->prng->set_mvNormal(imean, icovariance))
-        {
-            UMUQFAIL("Failed to set mvNormal object!");
-        }
-    }
-    else
-    {
-        try
-        {
-            mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance));
-        }
-        catch (...)
-        {
-            UMUQFAIL("Failed to allocate memory!");
-        }
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = imean.size();
-    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
-}
-
-template <typename T, class V>
-multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *imean, T const *icovariance, int const n, psrandom<T> *PRNG) : mvNormal(nullptr)
-{
-    if (PRNG)
-    {
-        this->prng = PRNG;
-        if (!this->prng->set_mvNormal(imean, icovariance, n))
-        {
-            UMUQFAIL("Failed to set mvNormal object!");
-        }
-    }
-    else
-    {
-        try
-        {
-            mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(imean, icovariance, n));
-        }
-        catch (...)
-        {
-            UMUQFAIL("Failed to allocate memory!");
-        }
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
-    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
-}
-
-template <typename T, class V>
-multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(EMatrixX<T> const &icovariance, psrandom<T> *PRNG) : mvNormal(nullptr)
-{
-    if (PRNG)
-    {
-        this->prng = PRNG;
-        if (!this->prng->set_mvNormal(icovariance))
-        {
-            UMUQFAIL("Failed to set mvNormal object!");
-        }
-    }
-    else
-    {
-        try
-        {
-            mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance));
-        }
-        catch (...)
-        {
-            UMUQFAIL("Failed to allocate memory!");
-        }
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = icovariance.rows();
-    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
-}
-
-template <typename T, class V>
-multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(T const *icovariance, int const n, psrandom<T> *PRNG) : mvNormal(nullptr)
-{
-    if (PRNG)
-    {
-        this->prng = PRNG;
-        if (!this->prng->set_mvNormal(icovariance, n))
-        {
-            UMUQFAIL("Failed to set mvNormal object!");
-        }
-    }
-    else
-    {
-        try
-        {
-            mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance, n));
-        }
-        catch (...)
-        {
-            UMUQFAIL("Failed to allocate memory!");
-        }
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
-    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
-}
-
-template <typename T, class V>
-multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution(int const n, psrandom<T> *PRNG) : mvNormal(nullptr)
-{
-    if (PRNG)
-    {
-        this->prng = PRNG;
-        if (!this->prng->set_mvNormal(n))
-        {
-            UMUQFAIL("Failed to set mvNormal object!");
-        }
-    }
-    else
-    {
-        try
-        {
-            mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(n));
-        }
-        catch (...)
-        {
-            UMUQFAIL("Failed to allocate memory!");
-        }
-    }
-    this->name = std::string("multivariategaussian");
-    this->numParams = n;
-    this->f = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf, this, std::placeholders::_1);
-}
-
-template <typename T, class V>
-inline T multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_f(T const *x)
-{
-    if (this->prng)
-    {
-        T const denom = std::pow(M_2PI, this->numParams) * this->prng->mvNormal->lu.determinant();
-        EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng->mvNormal->mean;
-        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-        T const MDistSq = ax.transpose() * this->prng->mvNormal->lu.inverse() * ax;
-        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-    }
-    else
-    {
-        T const denom = std::pow(M_2PI, this->numParams) * mvNormal->lu.determinant();
-        EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - mvNormal->mean;
-        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-        T const MDistSq = ax.transpose() * mvNormal->lu.inverse() * ax;
-        return std::exp(-0.5 * MDistSq) / std::sqrt(denom);
-    }
-}
-
-template <typename T, class V>
-inline T multivariateGaussianDistribution<T, V>::multivariateGaussianDistribution_lf(T const *x)
-{
-    if (this->prng)
-    {
-        EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - this->prng->mvNormal->mean;
-        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-        T MDistSq = ax.transpose() * this->prng->mvNormal->lu.inverse() * ax;
-        return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(this->prng->mvNormal->lu.determinant()));
-    }
-    else
-    {
-        EVectorX<T> ax = EVectorMapTypeConst<T>(x, this->numParams) - mvNormal->mean;
-        // Mahalanobis distance between \f$ X \f$ and \f$ \mu \f$
-        T MDistSq = ax.transpose() * mvNormal->lu.inverse() * ax;
-        return -0.5 * (MDistSq + this->numParams * M_L2PI + std::log(mvNormal->lu.determinant()));
-    }
-}
-
-template <typename T, class V>
-inline bool multivariateGaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
-{
-    if (PRNG)
-    {
-        if (mvNormal)
-        {
-            this->prng = PRNG;
-            this->prng->mvNormal = std::move(mvNormal);
-            return true;
-        }
-        UMUQFAILRETURN("The pseudo-random number generator is already assigned!");
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-}
-
-template <typename T, class V>
-inline psrandom<T> *multivariateGaussianDistribution<T, V>::getRandomGenerator() { return this->prng; }
-
-template <typename T, class V>
-bool multivariateGaussianDistribution<T, V>::sample(T *x)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        EVectorMapType<T> X(x, this->numParams);
-        X = this->prng->mvNormal->dist();
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
-bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        EVectorMapType<T> X(x.data(), this->numParams);
-        X = this->prng->mvNormal->dist();
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
-bool multivariateGaussianDistribution<T, V>::sample(EVectorX<T> &x)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        x = this->prng->mvNormal->dist();
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
-bool multivariateGaussianDistribution<T, V>::sample(T *x, int const nSamples)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        EMapType<T> X(x, nSamples, this->numParams);
-        for (int i = 0; i < nSamples; i++)
-        {
-            X.row(i) = this->prng->mvNormal->dist();
-        }
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
-bool multivariateGaussianDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-#ifdef DEBUG
-        if (static_cast<std::size_t>(nSamples * this->numParams) > x.size())
-        {
-            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples * this->numParams, " !");
-        }
-#endif
-        EMapType<T> X(x.data(), nSamples, this->numParams);
-        for (int i = 0; i < nSamples; i++)
-        {
-            X.row(i) = this->prng->mvNormal->dist();
-        }
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename T, class V>
 bool multivariateGaussianDistribution<T, V>::sample(EMatrixX<T> &x)
 {
 #ifdef DEBUG
@@ -1003,7 +519,7 @@ bool multivariateGaussianDistribution<T, V>::sample(EMatrixX<T> &x)
 #endif
         for (auto i = 0; i < x.cols(); i++)
         {
-            x.col(i) = this->prng->mvNormal->dist();
+            x.col(i) = this->prng->mvnormal->dist();
         }
         return true;
 #ifdef DEBUG

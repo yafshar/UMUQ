@@ -23,6 +23,8 @@ inline namespace density
  * It also provides random values x, distributed according to the Gaussian distribution probability 
  * density function. 
  * 
+ * \note
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * 
  * \tparam T Data type
  */
