@@ -78,7 +78,7 @@ static std::mutex PRNG_m;
  * 
  * \returns std::uniform_real_distribution<RealType> Uniform random random of floating-point values uniformly distributed on the interval \f$ [0, 1) \f$ 
  */
-template <typename RealType>
+template <typename RealType = double>
 std::uniform_real_distribution<RealType> uniformRealDistribution(RealType{}, RealType{1});
 
 } // namespace umuq
