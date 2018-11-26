@@ -18,10 +18,10 @@ inline namespace multimin
  * An initial search direction is chosen using the gradient, and line minimization is carried 
  * out in that direction. 
  * 
- * \tparam T      data type
+ * \tparam DataType Data type
  */
-template <typename T>
-class conjugateFr : public differentiableFunctionMinimizer<T>
+template <typename DataType>
+class conjugateFr : public differentiableFunctionMinimizer<DataType>
 {
   public:
     /*!
@@ -77,30 +77,30 @@ class conjugateFr : public differentiableFunctionMinimizer<T>
     int iter;
 
     //!
-    std::vector<T> p;
+    std::vector<DataType> p;
     //!
-    std::vector<T> x1;
+    std::vector<DataType> x1;
     //!
-    std::vector<T> dx1;
+    std::vector<DataType> dx1;
     //!
-    std::vector<T> x2;
+    std::vector<DataType> x2;
     //!
-    std::vector<T> g0;
+    std::vector<DataType> g0;
 
     //!
-    T pnorm;
+    DataType pnorm;
     //!
-    T g0norm;
+    DataType g0norm;
 };
 
-template <typename T>
-conjugateFr<T>::conjugateFr(const char *Name) : differentiableFunctionMinimizer<T>(Name) {}
+template <typename DataType>
+conjugateFr<DataType>::conjugateFr(const char *Name) : differentiableFunctionMinimizer<DataType>(Name) {}
 
-template <typename T>
-conjugateFr<T>::~conjugateFr() {}
+template <typename DataType>
+conjugateFr<DataType>::~conjugateFr() {}
 
-template <typename T>
-bool conjugateFr<T>::reset(int const nDim) noexcept
+template <typename DataType>
+bool conjugateFr<DataType>::reset(int const nDim) noexcept
 {
     if (nDim <= 0)
     {
@@ -121,8 +121,8 @@ bool conjugateFr<T>::reset(int const nDim) noexcept
     return true;
 }
 
-template <typename T>
-bool conjugateFr<T>::init()
+template <typename DataType>
+bool conjugateFr<DataType>::init()
 {
     iter = 0;
 
@@ -132,8 +132,8 @@ bool conjugateFr<T>::init()
 
     {
         // First compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
-        T s(0);
-        std::for_each(this->gradient.begin(), this->gradient.end(), [&](T const g_i) { s += g_i * g_i; });
+        DataType s(0);
+        std::for_each(this->gradient.begin(), this->gradient.end(), [&](DataType const g_i) { s += g_i * g_i; });
 
         pnorm = std::sqrt(s);
         g0norm = pnorm;
@@ -142,28 +142,28 @@ bool conjugateFr<T>::init()
     return true;
 }
 
-template <typename T>
-bool conjugateFr<T>::iterate()
+template <typename DataType>
+bool conjugateFr<DataType>::iterate()
 {
     int const n = this->getDimension();
 
-    T fa = this->fval;
-    T fb;
-    T dir;
-    T stepa(0);
-    T stepb;
-    T stepc = this->step;
-    T g1norm;
+    DataType fa = this->fval;
+    DataType fb;
+    DataType dir;
+    DataType stepa(0);
+    DataType stepb;
+    DataType stepc = this->step;
+    DataType g1norm;
 
-    if (pnorm <= T{} || g0norm <= T{})
+    if (pnorm <= DataType{} || g0norm <= DataType{})
     {
         // Set dx to zero
-        std::fill(this->dx.begin(), this->dx.end(), T{});
+        std::fill(this->dx.begin(), this->dx.end(), DataType{});
 
         UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached.");
     }
 
-    T pg(0);
+    DataType pg(0);
 
     // Determine which direction is downhill, +p or -p
     for (int i = 0; i < n; i++)
@@ -171,13 +171,13 @@ bool conjugateFr<T>::iterate()
         pg += p[i] * this->gradient[i];
     }
 
-    dir = (pg >= T{}) ? static_cast<T>(1) : -static_cast<T>(1);
+    dir = (pg >= DataType{}) ? static_cast<DataType>(1) : -static_cast<DataType>(1);
 
     // Compute new trial point at x_c= x - step * p, where p is the current direction
     this->takeStep(this->x, p, stepc, dir / pnorm, x1, this->dx);
 
     // Evaluate function and gradient at new point xc
-    T fc = this->fun.f(x1.data());
+    DataType fc = this->fun.f(x1.data());
 
     if (fc < fa)
     {
@@ -200,7 +200,7 @@ bool conjugateFr<T>::iterate()
     // xb based on parabolic interpolation
     this->intermediatePoint(this->x, p, dir / pnorm, pg, stepc, fa, fc, x1, dx1, this->gradient, stepb, fb);
 
-    if (stepb == T{})
+    if (stepb == DataType{})
     {
         UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached.");
     }
@@ -221,9 +221,9 @@ bool conjugateFr<T>::iterate()
     else
     {
         //\f$ p' = g1 - beta * p \f$
-        T const beta = std::pow(g1norm / g0norm, 2);
+        DataType const beta = std::pow(g1norm / g0norm, 2);
 
-        std::for_each(p.begin(), p.end(), [&](T &p_i) { p_i *= beta; });
+        std::for_each(p.begin(), p.end(), [&](DataType &p_i) { p_i *= beta; });
 
         for (int i = 0; i < n; i++)
         {
@@ -231,8 +231,8 @@ bool conjugateFr<T>::iterate()
         }
 
         //Compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
-        T s(0);
-        std::for_each(p.begin(), p.end(), [&](T const p_i) { s += p_i * p_i; });
+        DataType s(0);
+        std::for_each(p.begin(), p.end(), [&](DataType const p_i) { s += p_i * p_i; });
         pnorm = std::sqrt(s);
     }
 
@@ -250,8 +250,8 @@ bool conjugateFr<T>::iterate()
     return true;
 }
 
-template <typename T>
-inline bool conjugateFr<T>::restart()
+template <typename DataType>
+inline bool conjugateFr<DataType>::restart()
 {
     iter = 0;
     return true;

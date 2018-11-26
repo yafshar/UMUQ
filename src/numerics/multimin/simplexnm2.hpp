@@ -19,10 +19,10 @@ inline namespace multimin
  * 
  * This implementation uses \f$ n+1 \f$ corner points in the simplex.
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-class simplexNM2 : public functionMinimizer<T>
+template <typename DataType>
+class simplexNM2 : public functionMinimizer<DataType>
 {
   public:
     /*!
@@ -75,7 +75,7 @@ class simplexNM2 : public functionMinimizer<T>
      * 
      * \returns Function value at X
      */
-    T tryCornerMove(T const coeff, int const corner, std::vector<T> &X);
+    DataType tryCornerMove(DataType const coeff, int const corner, std::vector<DataType> &X);
 
     /*!
      * \brief Update the point
@@ -84,7 +84,7 @@ class simplexNM2 : public functionMinimizer<T>
      * \param X    Input point 
      * \param val  
      */
-    void updatePoint(int const i, std::vector<T> const &X, T const val);
+    void updatePoint(int const i, std::vector<DataType> const &X, DataType const val);
 
     /*!
      * \brief Function contracts the simplex in respect to best valued corner.
@@ -98,7 +98,7 @@ class simplexNM2 : public functionMinimizer<T>
      * 
      * \returns false If it encounters an unexpected problem
      */
-    bool contractByBest(int const best, std::vector<T> &X);
+    bool contractByBest(int const best, std::vector<DataType> &X);
 
     /*!
      * \brief Calculates the center of the simplex
@@ -113,44 +113,44 @@ class simplexNM2 : public functionMinimizer<T>
      * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
      * the mean distance, allowing a linear update of this quantity on each step. 
      * 
-     * \returns T Computed characteristic size
+     * \returns DataType Computed characteristic size
      */
-    T computeSize();
+    DataType computeSize();
 
   private:
     /*!
      * \returns a (pointer to a) row of the data.
      */
-    inline T *operator[](std::size_t const index) const;
+    inline DataType *operator[](std::size_t const index) const;
 
   private:
     //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
-    std::vector<T> x1;
+    std::vector<DataType> x1;
 
     //! Function value at corner points with size \f$ (n+1) \f$
-    std::vector<T> y1;
+    std::vector<DataType> y1;
 
     //! Center of all points
-    std::vector<T> center;
+    std::vector<DataType> center;
 
     //! Current step
-    std::vector<T> delta;
+    std::vector<DataType> delta;
 
     //! x - center (workspace)
-    std::vector<T> xmc;
+    std::vector<DataType> xmc;
 
     //! Simplex characteristic size
-    T S2;
+    DataType S2;
 };
 
-template <typename T>
-simplexNM2<T>::simplexNM2(const char *Name) : functionMinimizer<T>(Name), S2(T{}) {}
+template <typename DataType>
+simplexNM2<DataType>::simplexNM2(const char *Name) : functionMinimizer<DataType>(Name), S2(DataType{}) {}
 
-template <typename T>
-simplexNM2<T>::~simplexNM2() {}
+template <typename DataType>
+simplexNM2<DataType>::~simplexNM2() {}
 
-template <typename T>
-bool simplexNM2<T>::reset(int const nDim) noexcept
+template <typename DataType>
+bool simplexNM2<DataType>::reset(int const nDim) noexcept
 {
     if (nDim <= 0)
     {
@@ -171,8 +171,8 @@ bool simplexNM2<T>::reset(int const nDim) noexcept
     return true;
 }
 
-template <typename T>
-bool simplexNM2<T>::init()
+template <typename DataType>
+bool simplexNM2<DataType>::init()
 {
     int const n = this->getDimension();
 
@@ -221,8 +221,8 @@ bool simplexNM2<T>::init()
     return true;
 }
 
-template <typename T>
-bool simplexNM2<T>::iterate()
+template <typename DataType>
+bool simplexNM2<DataType>::iterate()
 {
     // Simplex iteration tries to minimize function f value
     // ws1 and ws2 vectors store tried corner point coordinates
@@ -231,12 +231,12 @@ bool simplexNM2<T>::iterate()
     int s_hi;
     int lo;
 
-    T dhi;
-    T dlo;
-    T ds_hi;
+    DataType dhi;
+    DataType dlo;
+    DataType ds_hi;
 
-    T val;
-    T val2;
+    DataType val;
+    DataType val2;
 
     // Get index of highest, second highest and lowest point
     dhi = dlo = y1[0];
@@ -272,12 +272,12 @@ bool simplexNM2<T>::iterate()
     }
 
     // Ty reflecting the highest value point
-    val = tryCornerMove(-static_cast<T>(1), hi, this->ws1);
+    val = tryCornerMove(-static_cast<DataType>(1), hi, this->ws1);
 
     if (std::isfinite(val) && val < y1[lo])
     {
         // Reflected point becomes lowest point, try expansion
-        val2 = tryCornerMove(-static_cast<T>(2), hi, this->ws2);
+        val2 = tryCornerMove(-static_cast<DataType>(2), hi, this->ws2);
 
         if (std::isfinite(val2) && val2 < y1[lo])
         {
@@ -300,7 +300,7 @@ bool simplexNM2<T>::iterate()
         }
 
         // Try one dimensional contraction
-        val2 = tryCornerMove(static_cast<T>(0.5), hi, this->ws2);
+        val2 = tryCornerMove(static_cast<DataType>(0.5), hi, this->ws2);
 
         if (std::isfinite(val2) && val2 <= y1[hi])
         {
@@ -340,25 +340,25 @@ bool simplexNM2<T>::iterate()
     return true;
 }
 
-template <typename T>
-T simplexNM2<T>::tryCornerMove(T const coeff, int const corner, std::vector<T> &X)
+template <typename DataType>
+DataType simplexNM2<DataType>::tryCornerMove(DataType const coeff, int const corner, std::vector<DataType> &X)
 {
     // \f$ N = n + 1 \f$
     // \f$ xc = (1-coeff)*((N)/(N-1)) * center(all) + ((N*coeff-1)/(N-1))*x_corner \f$
 
     int const n = this->getDimension();
 
-    T const alpha = (1 - coeff) * (n + 1) / static_cast<T>(n);
+    DataType const alpha = (1 - coeff) * (n + 1) / static_cast<DataType>(n);
 
     std::copy(center.begin(), center.end(), X.begin());
 
-    std::for_each(X.begin(), X.end(), [&](T &x_i) { x_i *= alpha; });
+    std::for_each(X.begin(), X.end(), [&](DataType &x_i) { x_i *= alpha; });
 
-    T const beta = ((n + 1) * coeff - 1) / static_cast<T>(n);
+    DataType const beta = ((n + 1) * coeff - 1) / static_cast<DataType>(n);
 
     std::ptrdiff_t const Id = corner * n;
 
-    T *row = x1.data() + Id;
+    DataType *row = x1.data() + Id;
 
     for (int i = 0; i < n; i++)
     {
@@ -368,14 +368,14 @@ T simplexNM2<T>::tryCornerMove(T const coeff, int const corner, std::vector<T> &
     return this->fun.f(X.data());
 }
 
-template <typename T>
-void simplexNM2<T>::updatePoint(int const i, std::vector<T> const &X, T const val)
+template <typename DataType>
+void simplexNM2<DataType>::updatePoint(int const i, std::vector<DataType> const &X, DataType const val)
 {
     int const n = this->getDimension();
 
     std::ptrdiff_t const Id = i * n;
 
-    T *x_orig = x1.data() + Id;
+    DataType *x_orig = x1.data() + Id;
 
     // Compute \f$ delta = x - x_orig \f$
     std::copy(X.begin(), X.end(), delta.begin());
@@ -393,25 +393,25 @@ void simplexNM2<T>::updatePoint(int const i, std::vector<T> const &X, T const va
         xmc[j] -= center[j];
     }
 
-    T const N = static_cast<T>(n + 1);
+    DataType const N = static_cast<DataType>(n + 1);
 
     // Update size: \f$ S2' = S2 + (2/N) * (x_orig - c).delta + (N-1)*(delta/N)^2 \f$
     {
-        T dsq(0);
-        std::for_each(delta.begin(), delta.end(), [&](T const d_i) { dsq += d_i * d_i; });
+        DataType dsq(0);
+        std::for_each(delta.begin(), delta.end(), [&](DataType const d_i) { dsq += d_i * d_i; });
 
-        T s(0);
+        DataType s(0);
         for (int j = 0; j < n; j++)
         {
             s += xmc[j] * delta[j];
         }
 
-        S2 += (static_cast<T>(2) / N) * s + (static_cast<T>(n) / N) * (dsq / N);
+        S2 += (static_cast<DataType>(2) / N) * s + (static_cast<DataType>(n) / N) * (dsq / N);
     }
 
     // Update center:  \f$ c' = c + (x - x_orig) / N \f$
     {
-        T const alpha = static_cast<T>(1) / N;
+        DataType const alpha = static_cast<DataType>(1) / N;
 
         for (int j = 0; j < n; j++)
         {
@@ -430,8 +430,8 @@ void simplexNM2<T>::updatePoint(int const i, std::vector<T> const &X, T const va
     y1[i] = val;
 }
 
-template <typename T>
-bool simplexNM2<T>::contractByBest(int const best, std::vector<T> &X)
+template <typename DataType>
+bool simplexNM2<DataType>::contractByBest(int const best, std::vector<DataType> &X)
 {
     std::ptrdiff_t const n = static_cast<std::ptrdiff_t>(this->getDimension());
     std::ptrdiff_t const b = static_cast<std::ptrdiff_t>(best);
@@ -440,14 +440,14 @@ bool simplexNM2<T>::contractByBest(int const best, std::vector<T> &X)
     {
         if (i != b)
         {
-            T newval;
+            DataType newval;
 
             std::ptrdiff_t Id = i * n;
             std::ptrdiff_t Idb = b * n;
 
             for (std::ptrdiff_t j = 0; j < n; j++, Id++, Idb++)
             {
-                newval = static_cast<T>(0.5) * (x1[Id] + x1[Idb]);
+                newval = static_cast<DataType>(0.5) * (x1[Id] + x1[Idb]);
                 x1[Id] = newval;
             }
 
@@ -479,11 +479,11 @@ bool simplexNM2<T>::contractByBest(int const best, std::vector<T> &X)
     return true;
 }
 
-template <typename T>
-bool simplexNM2<T>::computeCenter()
+template <typename DataType>
+bool simplexNM2<DataType>::computeCenter()
 {
     // Calculates the center of the simplex and stores in center
-    std::fill(center.begin(), center.end(), T{});
+    std::fill(center.begin(), center.end(), DataType{});
 
     int const n = this->getDimension();
 
@@ -491,7 +491,7 @@ bool simplexNM2<T>::computeCenter()
     {
         std::ptrdiff_t const Id = i * n;
 
-        T *row = x1.data() + Id;
+        DataType *row = x1.data() + Id;
 
         for (int j = 0; j < n; j++)
         {
@@ -500,23 +500,23 @@ bool simplexNM2<T>::computeCenter()
     }
 
     {
-        T const alpha = static_cast<T>(1) / static_cast<T>(n + 1);
+        DataType const alpha = static_cast<DataType>(1) / static_cast<DataType>(n + 1);
 
-        std::for_each(center.begin(), center.end(), [&](T &c_i) { c_i *= alpha; });
+        std::for_each(center.begin(), center.end(), [&](DataType &c_i) { c_i *= alpha; });
     }
 
     return true;
 }
 
-template <typename T>
-T simplexNM2<T>::computeSize()
+template <typename DataType>
+DataType simplexNM2<DataType>::computeSize()
 {
     int const n = this->getDimension();
 
     // Calculates simplex size as rms sum of length of vectors
     // from simplex center to corner points:
     // \f$ sqrt( sum ( || y - y_middlepoint ||^2 ) / n ) \f$
-    T s(0);
+    DataType s(0);
     for (int i = 0; i < n + 1; i++)
     {
         // Copy the elements of the i-th row of the matrix x1 into the vector s
@@ -529,21 +529,21 @@ T simplexNM2<T>::computeSize()
             this->ws1[j] -= center[j];
         }
 
-        T t(0);
-        std::for_each(this->ws1.begin(), this->ws1.end(), [&](T const w_i) { t += w_i * w_i; });
+        DataType t(0);
+        std::for_each(this->ws1.begin(), this->ws1.end(), [&](DataType const w_i) { t += w_i * w_i; });
 
         // squared size
         s += t;
     }
 
     // Store squared size
-    S2 = s / static_cast<T>(n + 1);
+    S2 = s / static_cast<DataType>(n + 1);
 
     return std::sqrt(S2);
 }
 
-template <typename T>
-inline T *simplexNM2<T>::operator[](std::size_t const index) const
+template <typename DataType>
+inline DataType *simplexNM2<DataType>::operator[](std::size_t const index) const
 {
     int const n = this->getDimension();
     return x1.data() + index * n;
