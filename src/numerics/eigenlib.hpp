@@ -15,7 +15,7 @@ inline namespace linearalgebra
  * \brief Eigen map type \c #EMapType is a new type to map the existing C++ memory buffer to an Eigen Matrix object.
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T Data type or \b Eigen::Matrix type
+ * \tparam T         Data type or \b Eigen::Matrix type
  * \tparam _Options  optional parameter, a combination of either 
  *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br> 
  *                     or one of either <br>
@@ -87,7 +87,7 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T Data type or \b Eigen::Matrix type
+ * \tparam T         Data type or \b Eigen::Matrix type
  * \tparam _Options  optional parameter, a combination of either 
  *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
  *                     or one of either <br>
@@ -110,10 +110,10 @@ using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>
  * \brief Eigen row vector map type is a new type, used to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVectorMapType = Eigen::Map<ERowVectorX<T>>;
+template <typename DataType>
+using ERowVectorMapType = Eigen::Map<ERowVectorX<DataType>>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -121,10 +121,10 @@ using ERowVectorMapType = Eigen::Map<ERowVectorX<T>>;
  * \brief Eigen row vector constant map type is a new read-only map type to map the existing C++ memory buffer to an Eigen RowMajor Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<T> const>;
+template <typename DataType>
+using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<DataType> const>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -132,10 +132,10 @@ using ERowVectorMapTypeConst = Eigen::Map<ERowVectorX<T> const>;
  * \brief Eigen vector map type is a new type to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVectorMapType = Eigen::Map<EVectorX<T>>;
+template <typename DataType>
+using EVectorMapType = Eigen::Map<EVectorX<DataType>>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -143,17 +143,17 @@ using EVectorMapType = Eigen::Map<EVectorX<T>>;
  * \brief New read-only map type is used to map the existing C++ memory buffer to an Eigen Vector object
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
+template <typename DataType>
+using EVectorMapTypeConst = Eigen::Map<EVectorX<DataType> const>;
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  *  
- * \tparam EigenMatrixT  Eigen matrix type (dynamic_size_storage matrix)
+ * \tparam EigenMatrixType  Eigen matrix type (dynamic_size_storage matrix)
  * 
  * \param  dataPtr  Pointer to the array of data
  * \param  nRows    Number of Rows in Matrix representation of Input array
@@ -162,15 +162,15 @@ using EVectorMapTypeConst = Eigen::Map<EVectorX<T> const>;
  * \returns  Eigen Matrix representation of the array    
  * 
  * \note
- * - If the \c EigenMatrixT template class is a dynamic_size_storage Eigen::Matrix, then one should 
+ * - If the \c EigenMatrixType template class is a dynamic_size_storage Eigen::Matrix, then one should 
  * provide the number of rows and number of columns at input
  * 
  */
-template <class EigenMatrixT>
-inline std::enable_if_t<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>
-EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
+template <class EigenMatrixType>
+inline std::enable_if_t<EigenMatrixType::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixType::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixType>
+EMap(typename EigenMatrixType::Scalar *dataPtr, int const nRows, int const nCols)
 {
-	return EMapTypeConst<EigenMatrixT>(dataPtr, nRows, nCols);
+    return EMapTypeConst<EigenMatrixType>(dataPtr, nRows, nCols);
 }
 
 /*!
@@ -178,20 +178,20 @@ EMap(typename EigenMatrixT::Scalar *dataPtr, int const nRows, int const nCols)
  * 
  * \brief Eigen map returns the Eigen Matrix representation of the array from array of data
  * 
- * \tparam EigenMatrixT Eigen matrix type (fixed_size_storage matrix)
+ * \tparam EigenMatrixType Eigen matrix type (fixed_size_storage matrix)
  * 
  * \param dataPtr  Pointer to the array of data
  * 
- * \returns EigenMatrixT  Eigen Matrix representation of the array
+ * \returns EigenMatrixType  Eigen Matrix representation of the array
  * 
  * \note
- * - If the \c EigenMatrixT template class is a fixed_size_storage \c Eigen::Matrix, then one should not
+ * - If the \c EigenMatrixType template class is a fixed_size_storage \c Eigen::Matrix, then one should not
  * provide the number of rows and number of columns at input
  */
-template <class EigenMatrixT>
-inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
+template <class EigenMatrixType>
+inline EigenMatrixType EMap(typename EigenMatrixType::Scalar *dataPtr)
 {
-	return EMapTypeConst<EigenMatrixT>(dataPtr);
+    return EMapTypeConst<EigenMatrixType>(dataPtr);
 }
 
 /*!
@@ -202,7 +202,7 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
  * of size(nRows, nCols). 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  *  
- * \tparam EigenMatrixT Eigen matrix type (dynamic_size_storage matrix)
+ * \tparam EigenMatrixType Eigen matrix type (dynamic_size_storage matrix)
  * 
  * \param  dataPtr  Pointer to the array of data
  * \param  nRows    Number of Rows in Matrix representation of Input array
@@ -211,20 +211,20 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar *dataPtr)
  * \returns Eigen Matrix representation of the array    
  *
  * \note
- * - If the \c EigenMatrixT template class is a dynamic_size_storage \c Eigen::Matrix, then the size does must  
+ * - If the \c EigenMatrixType template class is a dynamic_size_storage \c Eigen::Matrix, then the size does must  
  * be passed to the constructor, because it is not specified by the Matrix type.
  */
-template <class EigenMatrixT>
-inline std::enable_if_t<EigenMatrixT::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixT::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixT>
-EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
+template <class EigenMatrixType>
+inline std::enable_if_t<EigenMatrixType::MaxRowsAtCompileTime == Eigen::Dynamic || EigenMatrixType::MaxColsAtCompileTime == Eigen::Dynamic, EigenMatrixType>
+EMap(typename EigenMatrixType::Scalar **dataPtr, int const nRows, int const nCols)
 {
-	// We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
-	EigenMatrixT tmpMatrix(nRows, nCols);
-	for (int i = 0; i < nRows; i++)
-	{
-		tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixT::Scalar>(&dataPtr[i][0], nCols);
-	}
-	return tmpMatrix;
+    // We have a dynamic_size_storage matrix and it should get the size from number of rows and columns on input
+    EigenMatrixType tmpMatrix(nRows, nCols);
+    for (int i = 0; i < nRows; i++)
+    {
+        tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixType::Scalar>(&dataPtr[i][0], nCols);
+    }
+    return tmpMatrix;
 }
 
 /*!
@@ -235,27 +235,27 @@ EMap(typename EigenMatrixT::Scalar **dataPtr, int const nRows, int const nCols)
  * of size(nRows, nCols). 
  * The Map operation maps the existing memory region into the Eigen’s data structures. 
  * 
- * \tparam EigenMatrixT Eigen matrix type (fixed_size_storage matrix)
+ * \tparam EigenMatrixType Eigen matrix type (fixed_size_storage matrix)
  * 
  * \param dataPtr  Pointer to the array of data
  * 
  * \returns  Eigen Matrix representation of the array    
  *
  * \note
- * - If the \c EigenMatrixT template class is a fixed_size_storage \c Eigen::Matrix, then the size does not have 
+ * - If the \c EigenMatrixType template class is a fixed_size_storage \c Eigen::Matrix, then the size does not have 
  * to be passed to the constructor, because it is already specified by the Matrix type.
  */
-template <class EigenMatrixT>
-inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
+template <class EigenMatrixType>
+inline EigenMatrixType EMap(typename EigenMatrixType::Scalar **dataPtr)
 {
-	// We have a fixed_size_storage matrix
-	EigenMatrixT tmpMatrix;
-	auto nCols = tmpMatrix.cols();
-	for (auto i = 0; i < tmpMatrix.rows(); i++)
-	{
-		tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixT::Scalar>(&dataPtr[i][0], nCols);
-	}
-	return tmpMatrix;
+    // We have a fixed_size_storage matrix
+    EigenMatrixType tmpMatrix;
+    auto nCols = tmpMatrix.cols();
+    for (auto i = 0; i < tmpMatrix.rows(); i++)
+    {
+        tmpMatrix.row(i) = EVectorMapTypeConst<typename EigenMatrixType::Scalar>(&dataPtr[i][0], nCols);
+    }
+    return tmpMatrix;
 }
 
 /*!
@@ -272,7 +272,7 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
  * 
- * \tparam EigenMatrixT Eigen matrix type
+ * \tparam EigenMatrixType Eigen matrix type
  * 
  * \param dataPtr  Pointer to the array of the same Eigen matrix element type with the same size 
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
@@ -282,10 +282,10 @@ inline EigenMatrixT EMap(typename EigenMatrixT::Scalar **dataPtr)
  * - We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
-template <class EigenMatrixT>
-inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMatrix)
+template <class EigenMatrixType>
+inline void EMap(typename EigenMatrixType::Scalar *dataPtr, EigenMatrixType const &eMatrix)
 {
-	EMapType<typename EigenMatrixT::Scalar>(dataPtr, eMatrix.rows(), eMatrix.cols()) = eMatrix;
+    EMapType<typename EigenMatrixType::Scalar>(dataPtr, eMatrix.rows(), eMatrix.cols()) = eMatrix;
 }
 
 /*!
@@ -295,7 +295,7 @@ inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMa
  * Eigen map function copies the existing Eigen Matrix object to a C++ memory buffer of 
  * the same size as Eigen matrix.
  * 
- * \tparam EigenMatrixT Eigen matrix type
+ * \tparam EigenMatrixType Eigen matrix type
  * 
  * \param dataPtr  Pointer to the array of the same Eigen matrix element type with the same size 
  *                 The data from eMatrix are copied to dataPtr in a rowmajor
@@ -305,13 +305,13 @@ inline void EMap(typename EigenMatrixT::Scalar *dataPtr, EigenMatrixT const &eMa
  * - We have to copy the data as we do not know before hand that the internal Eigen matrix data 
  * pointer is Aligned, or Unaligned and what is the StrideType
  */
-template <class EigenMatrixT>
-inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eMatrix)
+template <class EigenMatrixType>
+inline void EMap(typename EigenMatrixType::Scalar **dataPtr, EigenMatrixType const &eMatrix)
 {
-	for (auto i = 0; i < eMatrix.rows(); i++)
-	{
-		EVectorMapType<typename EigenMatrixT::Scalar>(&dataPtr[i][0], eMatrix.cols()) = eMatrix.row(i);
-	}
+    for (auto i = 0; i < eMatrix.rows(); i++)
+    {
+        EVectorMapType<typename EigenMatrixType::Scalar>(&dataPtr[i][0], eMatrix.cols()) = eMatrix.row(i);
+    }
 }
 
 /*! 
@@ -322,7 +322,7 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
  * A matrix is selfadjoint if it equals its adjoint. For real matrices, this means 
  * that the matrix is symmetric: it equals its transpose.
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param dataPtr Pointer to the array of data (nDim * nDim)
  * \param nDim    Dimension of a square matrix  
@@ -330,15 +330,15 @@ inline void EMap(typename EigenMatrixT::Scalar **dataPtr, EigenMatrixT const &eM
  * \returns true  If the selfadjoint matrix is positive definite
  * \returns false If the selfadjoint matrix is not positive definite
  */
-template <typename T>
-inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
+template <typename DataType>
+inline bool isSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
 {
-	// First Map the data to Eigen Matrix format
-	EMapType<T, Eigen::ColMajor> DMap(dataPtr, nDim, nDim);
-	// Since the matrix is selfadjoint
-	Eigen::SelfAdjointEigenSolver<EMatrixX<T>> es(DMap, Eigen::EigenvaluesOnly);
+    // First Map the data to Eigen Matrix format
+    EMapType<DataType, Eigen::ColMajor> DMap(dataPtr, nDim, nDim);
+    // Since the matrix is selfadjoint
+    Eigen::SelfAdjointEigenSolver<EMatrixX<DataType>> es(DMap, Eigen::EigenvaluesOnly);
 
-	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(nDim - 1) > machinePrecision<T>;
+    return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(nDim - 1) > machinePrecision<DataType>;
 }
 
 /*! 
@@ -346,20 +346,20 @@ inline bool isSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
  * 
  * \brief This is a check to see if a selfadjoint matrix is positive definite or not?
  * 
- * \tparam EigenMatrixT Eigen Matrix type
+ * \tparam EigenMatrixType Eigen Matrix type
  * 
  * \param eMatrix Input matrix
  * 
  * \returns true  If the selfadjoint matrix is positive definite
  * \returns false If the selfadjoint matrix is not positive definite
  */
-template <class EigenMatrixT>
-inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
+template <class EigenMatrixType>
+inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixType const &eMatrix)
 {
-	// Since the matrix is selfadjoint
-	Eigen::SelfAdjointEigenSolver<EigenMatrixT> es(eMatrix, Eigen::EigenvaluesOnly);
+    // Since the matrix is selfadjoint
+    Eigen::SelfAdjointEigenSolver<EigenMatrixType> es(eMatrix, Eigen::EigenvaluesOnly);
 
-	return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixT::Scalar>;
+    return es.eigenvalues()(0) > 0 && es.eigenvalues()(0) / es.eigenvalues()(eMatrix.rows() - 1) > machinePrecision<typename EigenMatrixType::Scalar>;
 }
 
 /*! 
@@ -367,82 +367,82 @@ inline bool isSelfAdjointMatrixPositiveDefinite(EigenMatrixT const &eMatrix)
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param dataPtr Pointer to the array of data (nDim * nDim)
  * \param nDim    Dimension of a square matrix 
  */
-template <typename T>
-void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
+template <typename DataType>
+void forceSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
 {
-	// First Map the data to Eigen Matrix format. (Symmetric Matrix)
-	EMapType<T, Eigen::ColMajor> eMatrix(dataPtr, nDim, nDim);
+    // First Map the data to Eigen Matrix format. (Symmetric Matrix)
+    EMapType<DataType, Eigen::ColMajor> eMatrix(dataPtr, nDim, nDim);
 
-	// Fixed value to increase
-	T const increaseRate(0.01);
+    // Fixed value to increase
+    DataType const increaseRate(0.01);
 
-	// Fixed value to multiply by
-	T const fixedRate(1.01);
+    // Fixed value to multiply by
+    DataType const fixedRate(1.01);
 
 #ifdef DEBUG
-	std::cout << "eMatrix=" << eMatrix << std::endl;
-	std::size_t iter(0);
+    std::cout << "eMatrix=" << eMatrix << std::endl;
+    std::size_t iter(0);
 #endif
 
-	// Vector for diagonal elements
-	auto D = eMatrix.diagonal();
+    // Vector for diagonal elements
+    auto D = eMatrix.diagonal();
 
-	// Whether we have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
-	bool const belowMachinePrecision = (D.array() <= machinePrecision<T>).any();
+    // Whether we have negative or zero ( < machinePrecision) on the diagonal elements fo the matrix
+    bool const belowMachinePrecision = (D.array() <= machinePrecision<DataType>).any();
 
-	if (belowMachinePrecision)
-	{
-		// Find the maximum absolute element on the diagonal of the matrix
-		auto MaxAbsD = D.cwiseAbs().maxCoeff();
+    if (belowMachinePrecision)
+    {
+        // Find the maximum absolute element on the diagonal of the matrix
+        auto MaxAbsD = D.cwiseAbs().maxCoeff();
 
-		// Find the minimum element
-		auto const MinD = D.minCoeff();
+        // Find the minimum element
+        auto const MinD = D.minCoeff();
 
-		MaxAbsD *= increaseRate;
+        MaxAbsD *= increaseRate;
 
-		// There is a negative component on the diagonal, and we should get rid of it.
-		if (MinD < 0)
-		{
-			MaxAbsD -= MinD;
-		}
+        // There is a negative component on the diagonal, and we should get rid of it.
+        if (MinD < 0)
+        {
+            MaxAbsD -= MinD;
+        }
 
-		if (MaxAbsD < machinePrecision<T>)
-		{
-			MaxAbsD = machinePrecision<T>;
-		}
+        if (MaxAbsD < machinePrecision<DataType>)
+        {
+            MaxAbsD = machinePrecision<DataType>;
+        }
 
-		for (int i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) += MaxAbsD;
-		}
-		// Now none of the diagonal elements are below machine precision
-	}
-	else
-	{
-		for (int i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) *= fixedRate;
-		}
-	}
+        for (int i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) += MaxAbsD;
+        }
+        // Now none of the diagonal elements are below machine precision
+    }
+    else
+    {
+        for (int i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) *= fixedRate;
+        }
+    }
 
-	while (!isSelfAdjointMatrixPositiveDefinite<T>(dataPtr, nDim))
-	{
+    while (!isSelfAdjointMatrixPositiveDefinite<DataType>(dataPtr, nDim))
+    {
 #ifdef DEBUG
-		iter++;
-		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-		std::cout << "eMatrix=" << eMatrix << std::endl;
+        iter++;
+        std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
+        std::cout << "eMatrix=" << eMatrix << std::endl;
 #endif
-		for (int i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) *= fixedRate;
-		}
-	}
-	return;
+        for (int i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) *= fixedRate;
+        }
+    }
+    return;
 }
 
 /*! 
@@ -450,174 +450,175 @@ void forceSelfAdjointMatrixPositiveDefinite(T *dataPtr, int const nDim)
  * 
  * \brief Force the selfadjoint matrix to be positive definite   
  * 
- * \tparam EigenMatrixT Eigen Matrix type
+ * \tparam EigenMatrixType Eigen Matrix type
  * 
  * \param eMatrix Input matrix
  */
-template <class EigenMatrixT>
-void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixT &eMatrix)
+template <class EigenMatrixType>
+void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
 {
-	typedef typename EigenMatrixT::Scalar T;
+    typedef typename EigenMatrixType::Scalar DataType;
 
-	// Fixed value to increase
-	T const increaseRate(0.01);
+    // Fixed value to increase
+    DataType const increaseRate(0.01);
 
-	// Fixed value to multiply by
-	T const fixedRate(1.01);
+    // Fixed value to multiply by
+    DataType const fixedRate(1.01);
 
-	// Size of the matrix
-	auto const nDim = eMatrix.rows();
+    // Size of the matrix
+    auto const nDim = eMatrix.rows();
 
 #ifdef DEBUG
-	std::cout << "eMatrix=" << eMatrix << std::endl;
-	std::size_t iter(0);
+    std::cout << "eMatrix=" << eMatrix << std::endl;
+    std::size_t iter(0);
 #endif
 
-	// Vector for diagonal elements
-	auto D = eMatrix.diagonal();
+    // Vector for diagonal elements
+    auto D = eMatrix.diagonal();
 
-	bool const belowMachinePrecision = (D.array() <= machinePrecision<T>).any();
+    bool const belowMachinePrecision = (D.array() <= machinePrecision<DataType>).any();
 
-	if (belowMachinePrecision)
-	{
-		// Find the maximum absolute element on the diagonal of the matrix
-		T MaxAbsD = D.cwiseAbs().maxCoeff();
+    if (belowMachinePrecision)
+    {
+        // Find the maximum absolute element on the diagonal of the matrix
+        DataType MaxAbsD = D.cwiseAbs().maxCoeff();
 
-		// Find the minimum element
-		T const MinD = D.minCoeff();
+        // Find the minimum element
+        DataType const MinD = D.minCoeff();
 
-		MaxAbsD *= increaseRate;
+        MaxAbsD *= increaseRate;
 
-		// There is a negative component on the diagonal, and we should get rid of it.
-		if (MinD < 0)
-		{
-			MaxAbsD -= MinD;
-		}
+        // There is a negative component on the diagonal, and we should get rid of it.
+        if (MinD < 0)
+        {
+            MaxAbsD -= MinD;
+        }
 
-		if (MaxAbsD < machinePrecision<T>)
-		{
-			MaxAbsD = machinePrecision<T>;
-		}
+        if (MaxAbsD < machinePrecision<DataType>)
+        {
+            MaxAbsD = machinePrecision<DataType>;
+        }
 
-		for (Eigen::Index i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) += MaxAbsD;
-		}
-		// Now none of the diagonal elements are below machine precision
-	}
-	else
-	{
-		for (Eigen::Index i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) *= fixedRate;
-		}
-	}
+        for (Eigen::Index i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) += MaxAbsD;
+        }
+        // Now none of the diagonal elements are below machine precision
+    }
+    else
+    {
+        for (Eigen::Index i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) *= fixedRate;
+        }
+    }
 
-	while (!isSelfAdjointMatrixPositiveDefinite<EigenMatrixT>(eMatrix))
-	{
+    while (!isSelfAdjointMatrixPositiveDefinite<EigenMatrixType>(eMatrix))
+    {
 #ifdef DEBUG
-		iter++;
-		std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-		std::cout << "eMatrix=" << eMatrix << std::endl;
+        iter++;
+        std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
+        std::cout << "eMatrix=" << eMatrix << std::endl;
 #endif
-		for (Eigen::Index i = 0; i < nDim; i++)
-		{
-			eMatrix(i, i) *= fixedRate;
-		}
-	}
+        for (Eigen::Index i = 0; i < nDim; i++)
+        {
+            eMatrix(i, i) *= fixedRate;
+        }
+    }
 
-	return;
+    return;
 }
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
- * \brief Calculate the distance between the rows or columns of a matrix
+ * \brief Calculate the squared distance between the rows of a matrix
  * 
- * \tparam T       Matrix data type
- * \tparam TOut    Matrix data type of the return output result
- * \tparam RowWise If true it computes the distance between the rows of a matrix
- * 
- * \param eMatrix       The matrix to calculate the distance between its rows or its columns
- * \param resultMatrix  The matrix to hold the results of the calculation
- */
-template <typename T, typename TOut = double, bool RowWise = true>
-void calculateDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
-{
-	if (RowWise)
-	{
-		auto const nRows = eMatrix.rows();
-		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
-		{
-			resultMatrix.resize(nRows, nRows);
-		}
-		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
-		resultMatrix.colwise() = vecX;
-		resultMatrix.rowwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
-	}
-	else
-	{
-		auto const nCols = eMatrix.cols();
-		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
-		{
-			resultMatrix.resize(nCols, nCols);
-		}
-
-		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
-		resultMatrix.rowwise() = vecX;
-		resultMatrix.colwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
-	}
-	resultMatrix = resultMatrix.cwiseSqrt();
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Calculate the squared distance between the rows or columns of a matrix
- * 
- * \tparam T       Matrix data type
- * \tparam TOut    Matrix data type of the return output result (default is double)
- * \tparam RowWise If true it computes the squared distance between the rows of a matrix
+ * \tparam DataType       Data type
+ * \tparam OutputDataType Data type of the return output result (default is double)
  *
- * \param eMatrix       The matrix to calculate the squared distance between its rows or its columns
- * \param resultMatrix  The matrix to hold the results of the calculation
+ * \param inMatrix   The input matrix to calculate the squared distance between its rows
+ * \param outMatrix  The output matrix to hold the results of the calculation
  */
-template <typename T, typename TOut = double, bool RowWise = true>
-void calculateSquaredDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &resultMatrix)
+template <typename DataType, typename OutputDataType = double>
+void calculateRowsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
 {
-	if (RowWise)
-	{
-		auto const nRows = eMatrix.rows();
-		if (resultMatrix.rows() != nRows || resultMatrix.cols() != nRows)
-		{
-			resultMatrix.resize(nRows, nRows);
-		}
-		/*!
-		 * \todo
-		 * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
-		 * Profiling is needed to decide whether we should copy cast the eMatrix to the new matrix first or 
-		 * continue the current procedure and do casting in operations
-		 */
-		EVectorX<TOut> vecX = eMatrix.array().square().rowwise().sum().template cast<TOut>();
-		resultMatrix.colwise() = vecX;
-		resultMatrix.rowwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.template cast<TOut>() * eMatrix.transpose().template cast<TOut>();
-	}
-	else
-	{
-		auto const nCols = eMatrix.cols();
-		if (resultMatrix.rows() != nCols || resultMatrix.cols() != nCols)
-		{
-			resultMatrix.resize(nCols, nCols);
-		}
+    auto const nRows = inMatrix.rows();
+    if (outMatrix.rows() != nRows || outMatrix.cols() != nRows)
+    {
+        outMatrix.resize(nRows, nRows);
+    }
+    /*!
+     * \todo
+     * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
+     * Profiling is needed to decide whether we should copy cast the inMatrix to the new matrix first or 
+     * continue the current procedure and do casting in operations
+     */
+    EVectorX<OutputDataType> vecX = inMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
+    outMatrix.colwise() = vecX;
+    outMatrix.rowwise() += vecX.transpose();
+    outMatrix -= 2 * inMatrix.template cast<OutputDataType>() * inMatrix.transpose().template cast<OutputDataType>();
+}
 
-		ERowVectorX<TOut> vecX = eMatrix.array().square().colwise().sum().template cast<TOut>();
-		resultMatrix.rowwise() = vecX;
-		resultMatrix.colwise() += vecX.transpose();
-		resultMatrix -= 2 * eMatrix.transpose().template cast<TOut>() * eMatrix.template cast<TOut>();
-	}
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the squared distance between the columns of a matrix
+ * 
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
+ *
+ * \param inMatrix   The input matrix to calculate the squared distance between its columns
+ * \param outMatrix  The output matrix to hold the results of the calculation
+ */
+template <typename DataType, typename OutputDataType = double>
+void calculateColumnsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+{
+    auto const nCols = inMatrix.cols();
+    if (outMatrix.rows() != nCols || outMatrix.cols() != nCols)
+    {
+        outMatrix.resize(nCols, nCols);
+    }
+    ERowVectorX<OutputDataType> vecX = inMatrix.array().square().colwise().sum().template cast<OutputDataType>();
+    outMatrix.rowwise() = vecX;
+    outMatrix.colwise() += vecX.transpose();
+    outMatrix -= 2 * inMatrix.transpose().template cast<OutputDataType>() * inMatrix.template cast<OutputDataType>();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between the rows of a matrix
+ * 
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
+ * 
+ * \param inMatrix   The input matrix to calculate the distance between its rows
+ * \param outMatrix  The output matrix to hold the results of the calculation
+ */
+template <typename DataType, typename OutputDataType = double>
+void calculateRowsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+{
+    calculateRowsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
+    outMatrix = outMatrix.cwiseSqrt();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between the columns of a matrix
+ * 
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
+ *
+ * \param inMatrix   The input matrix to calculate the distance between its columns
+ * \param outMatrix  The output matrix to hold the results of the calculation
+ */
+template <typename DataType, typename OutputDataType = double>
+void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+{
+    calculateColumnsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
+    outMatrix = outMatrix.cwiseSqrt();
 }
 
 /*!
@@ -625,13 +626,12 @@ void calculateSquaredDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &result
  * 
  * \brief Calculate the S-optimality measure
  * 
- * \tparam T       Matrix data type
- * \tparam TOut    Matrix data type of the return output result (default is double)
- * \tparam RowWise If true it computes the distance between the rows of a matrix
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
  * 
- * \param eMatrix The matrix to calculate S-optimality for
+ * \param inMatrix The matrix to calculate its row wise S-optimality 
  * 
- * \returns TOut The S-optimality measure
+ * \returns OutputDataType The S-optimality measure
  * 
  * The S-optimality measure: <br>
  * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
@@ -645,12 +645,84 @@ void calculateSquaredDistance(EMatrixX<T> const &eMatrix, EMatrixX<TOut> &result
  * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
  * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
  */
-template <typename T, typename TOut = double, bool RowWise = true>
-TOut calculateSOptimality(EMatrixX<T> const &eMatrix)
+template <typename DataType, typename OutputDataType = double>
+OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &inMatrix)
 {
-	EMatrixX<TOut> resultMatrix;
-	calculateDistance<T, TOut, RowWise>(eMatrix, resultMatrix);
-	return 1 / resultMatrix.cwiseInverse().sum();
+    EMatrixX<OutputDataType> outMatrix;
+    calculateRowsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
+    return 1. / outMatrix.cwiseInverse().sum();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the S-optimality measure
+ * 
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
+ * 
+ * \param inMatrix The matrix to calculate its row wise S-optimality 
+ * 
+ * \returns OutputDataType The S-optimality measure
+ * 
+ * The S-optimality measure: <br>
+ * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
+ * each design point to all the other points in the design. Mathematically, an S–optimal design maximizes 
+ * \f$ \frac{N_D}{ \sum_{y \in D} {1/d(y, D-y)}}. \f$ where D is the set of design points, and \f$ N_D \f$ 
+ * is the number of points in \f$ D \f$, the distances \f$ d(y, D-y) \f$ are large, so the points are as 
+ * spread out as possible. This measures how spread out the design points are; therefore, an S–optimal 
+ * design is also called a maximum spread design. 
+ * 
+ * Reference: <br>
+ * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
+ * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
+ */
+template <typename DataType, typename OutputDataType = double>
+OutputDataType calculateColumnWiseSOptimality(EMatrixX<DataType> const &inMatrix)
+{
+    EMatrixX<OutputDataType> outMatrix;
+    calculateColumnsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
+    return 1. / outMatrix.cwiseInverse().sum();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Fills the rows of the matrix with the specified size whose coefficients are equally spaced between low and high.
+ * 
+ * The function generates equally spaced values in each row of the matrix with the closed interval of \f$ [low, high].\f$
+ * 
+ * \tparam DataType Input data type
+ * 
+ * \param eMatrix  The Eigen matrix
+ * \param low      Lower bound of the interval
+ * \param high     Upperbound of the interval
+ */
+template <typename DataType>
+void rowWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
+{
+    ERowVectorX<DataType> const row = ERowVectorX<DataType>::LinSpaced(eMatrix.cols(), low, high);
+    eMatrix.rowwise() = row;
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Fills the columns of the matrix with the specified size whose coefficients are equally spaced between low and high.
+ * 
+ * The function generates equally spaced values in each column of the matrix with the closed interval of \f$ [low, high].\f$
+ * 
+ * \tparam DataType Input data type
+ * 
+ * \param eMatrix  The Eigen matrix
+ * \param low      Lower bound of the interval
+ * \param high     Upperbound of the interval
+ */
+template <typename DataType>
+void columnWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
+{
+    EVectorX<DataType> const col = EVectorX<DataType>::LinSpaced(eMatrix.rows(), low, high);
+    eMatrix.colwise() = col;
 }
 
 } // namespace linearalgebra
