@@ -20,8 +20,25 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 		export GCC_VERSION=`gfortran-6 -dumpversion | cut -d. -f1`  
 	fi
 
-	brew reinstall grep --with-default-names;
-	brew reinstall gnu-sed --with-default-names;
+	# brew reinstall grep --with-default-names;
+	# brew reinstall gnu-sed --with-default-names;
+	brew reinstall grep
+    if [ -e "/usr/bin/grep" ]; then
+        sudo unlink /usr/bin/grep ;
+    fi
+    if [ -e "/usr/local/bin/grep" ]; then
+        sudo ln -sf /usr/local/bin/grep /usr/bin/grep ;
+    fi
+    if [ -e "/usr/local/bin/ggrep" ]; then
+        sudo ln -sf /usr/local/bin/ggrep /usr/bin/grep ;
+    fi
+
+	brew reinstall gnu-sed
+    if [ -e "/usr/bin/sed" ]; then
+        sudo unlink /usr/bin/sed ;
+    fi
+	sudo ln -sf /usr/local/bin/gsed /usr/bin/sed
+
 	
 	brew outdated cmake || brew upgrade cmake ;
 	brew outdated autoconf || brew upgrade autoconf ;
