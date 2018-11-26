@@ -60,7 +60,7 @@ matrix:
     - os: osx
       osx_image:
       sudo: true
-      install: travis_wait 60 ./scripts/install-osx.sh
+      install: travis_wait ./scripts/install-osx.sh
       script: ./scripts/build-autotools.sh
       env:
         - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
