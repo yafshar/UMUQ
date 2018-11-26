@@ -257,11 +257,11 @@ class io
     /*!
      * \brief Set the stream Precision 
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param streamBuffer  Stream buffer to use as output sequence
      */
-    template <typename T>
+    template <typename DataType>
     inline void setPrecision(std::ostream &streamBuffer);
 
     /*!
@@ -276,7 +276,7 @@ class io
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
@@ -285,13 +285,13 @@ class io
      * 
      * \returns The width parameter of the stream
      */
-    template <typename T>
-    int getWidth(T const *dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
+    template <typename DataType>
+    int getWidth(DataType const *dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
@@ -300,13 +300,13 @@ class io
      * 
      * \returns The width parameter of the stream
      */
-    template <typename T>
-    int getWidth(std::unique_ptr<T[]> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
+    template <typename DataType>
+    int getWidth(std::unique_ptr<DataType[]> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
@@ -315,13 +315,13 @@ class io
      * 
      * \returns The width parameter of the stream
      */
-    template <typename T>
-    int getWidth(std::vector<T> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
+    template <typename DataType>
+    int getWidth(std::vector<DataType> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Get the width parameter of the input data and stream for the precision 
      * 
-     * \tparam T data type
+     * \tparam DataType data type
      * 
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
@@ -330,8 +330,8 @@ class io
      * 
      * \returns The width parameter of the stream
      */
-    template <typename T>
-    int getWidth(T **dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
+    template <typename DataType>
+    int getWidth(DataType **dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
      * \brief Helper function to save the matrix of type EigenMatrixType with IOFormatType format into a file 
@@ -350,7 +350,7 @@ class io
     /*!
      * \brief Helper function to save one matrix into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param   dataPoints  Input data points
      * \param   nRows  Number of rows
@@ -362,13 +362,13 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(T **dataPoints, int const nRows, int const nCols, int const options = 0);
+    template <typename DataType>
+    bool saveMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options = 0);
 
     /*!
      * \brief Helper function to save one matrix (or entries number matrices) into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param   nRows     Number of rows
@@ -382,8 +382,8 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(T **dataPoints,
+    template <typename DataType>
+    bool saveMatrix(DataType **dataPoints,
                     int const nRows,
                     int const *nCols,
                     int const options = 0,
@@ -393,7 +393,7 @@ class io
     /*!
      * \brief Helper function to save the matrix or a vector into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows 
@@ -405,8 +405,8 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(T const *dataPoints,
+    template <typename DataType>
+    bool saveMatrix(DataType const *dataPoints,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
@@ -414,7 +414,7 @@ class io
     /*!
      * \brief Helper function to save the matrix or a vector into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows 
@@ -426,8 +426,8 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(std::unique_ptr<T[]> const &dataPoints,
+    template <typename DataType>
+    bool saveMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
@@ -435,7 +435,7 @@ class io
     /*!
      * \brief Helper function to save the matrix or a vector into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows 
@@ -447,8 +447,8 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(std::vector<T> const &dataPoints,
+    template <typename DataType>
+    bool saveMatrix(std::vector<DataType> const &dataPoints,
                     int const nRows,
                     int const nCols = 1,
                     int const options = 0);
@@ -456,7 +456,7 @@ class io
     /*!
      * \brief Helper function to save two arrays of data into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
@@ -466,17 +466,17 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(T const *dataPoints,
+    template <typename DataType>
+    bool saveMatrix(DataType const *dataPoints,
                     int const dataPointsDim,
-                    T const *functionValues,
+                    DataType const *functionValues,
                     int const nFunctionValues,
                     int const nRows);
 
     /*!
      * \brief Helper function to save two arrays of data into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
@@ -486,17 +486,17 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(std::unique_ptr<T[]> const &dataPoints,
+    template <typename DataType>
+    bool saveMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                     int const dataPointsDim,
-                    std::unique_ptr<T[]> const &functionValues,
+                    std::unique_ptr<DataType[]> const &functionValues,
                     int const nFunctionValues,
                     int const nRows);
 
     /*!
      * \brief Helper function to save two arrays of data into a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
@@ -506,10 +506,10 @@ class io
      * 
      * \returns true If no error occurs during writing the matrix
      */
-    template <typename T>
-    bool saveMatrix(std::vector<T> const &dataPoints,
+    template <typename DataType>
+    bool saveMatrix(std::vector<DataType> const &dataPoints,
                     int const dataPointsDim,
-                    std::vector<T> const &functionValues,
+                    std::vector<DataType> const &functionValues,
                     int const nFunctionValues,
                     int const nRows);
 
@@ -528,7 +528,7 @@ class io
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -537,13 +537,13 @@ class io
      *
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(T **dataPoints, int const nRows, int const nCols, int const options = 0);
+    template <typename DataType>
+    bool loadMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options = 0);
 
     /*!
      * \brief Helper function to load one matrix (or entries number of matrices) from a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -553,13 +553,13 @@ class io
      *
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(T **dataPoints, int const nRows, int const *nCols, int const options = 0, int const entries = 1);
+    template <typename DataType>
+    bool loadMatrix(DataType **dataPoints, int const nRows, int const *nCols, int const options = 0, int const entries = 1);
 
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -567,13 +567,13 @@ class io
      *
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(T *dataPoints, int const nRows, int const nCols = 1);
+    template <typename DataType>
+    bool loadMatrix(DataType *dataPoints, int const nRows, int const nCols = 1);
 
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -581,13 +581,13 @@ class io
      *
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(std::unique_ptr<T[]> &dataPoints, int const nRows, int const nCols = 1);
+    template <typename DataType>
+    bool loadMatrix(std::unique_ptr<DataType[]> &dataPoints, int const nRows, int const nCols = 1);
 
     /*!
      * \brief Helper function to load the matrix from a file 
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -595,13 +595,13 @@ class io
      *
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(std::vector<T> &dataPoints, int const nRows, int const nCols = 1);
+    template <typename DataType>
+    bool loadMatrix(std::vector<DataType> &dataPoints, int const nRows, int const nCols = 1);
 
     /*!
      * \brief Helper function to load two vector of data from a file
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints        Input data points
      * \param dataPointsDim     Number of columns of input array data (data dimension)
@@ -611,13 +611,13 @@ class io
      * 
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(T *dataPoints, int const dataPointsDim, T *functionValues, int const nFunctionValues, int const nRows);
+    template <typename DataType>
+    bool loadMatrix(DataType *dataPoints, int const dataPointsDim, DataType *functionValues, int const nFunctionValues, int const nRows);
 
     /*!
      * \brief Helper function to load two vector of data from a file
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
@@ -627,13 +627,13 @@ class io
      * 
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(std::unique_ptr<T[]> &dataPoints, int const dataPointsDim, std::unique_ptr<T[]> &functionValues, int const nFunctionValues, int const nRows);
+    template <typename DataType>
+    bool loadMatrix(std::unique_ptr<DataType[]> &dataPoints, int const dataPointsDim, std::unique_ptr<DataType[]> &functionValues, int const nFunctionValues, int const nRows);
 
     /*!
      * \brief Helper function to load two vector of data from a file
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
@@ -643,13 +643,13 @@ class io
      * 
      * \returns true If no error occurs during reading data
      */
-    template <typename T>
-    bool loadMatrix(std::vector<T> &dataPoints, int const dataPointsDim, std::vector<T> &functionValues, int const nFunctionValues, int const nRows);
+    template <typename DataType>
+    bool loadMatrix(std::vector<DataType> &dataPoints, int const dataPointsDim, std::vector<DataType> &functionValues, int const nFunctionValues, int const nRows);
 
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title        Title (string) that should be written at the top 
      * \param dataPoints   Input data points
@@ -657,9 +657,9 @@ class io
      * \param nCols        Number of columns
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     T **dataPoints,
+                     DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -667,15 +667,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
-    void printMatrix(T **dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -683,15 +683,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns
      * \param ioformat    Print format
      */
-    template <typename T>
-    void printMatrix(T **dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      ioFormat const &ioformat);
@@ -699,7 +699,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title        Title (string) that should be written at the top 
      * \param dataPoints   Input data points
@@ -708,9 +708,9 @@ class io
      * \param entries      Number of data entry   
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     T **dataPoints,
+                     DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -719,15 +719,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns for each row
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
-    void printMatrix(T **dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -736,7 +736,7 @@ class io
     /*!
      * \brief Helper function to print one matrix (or entries number of matrices)
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
@@ -744,8 +744,8 @@ class io
      * \param entries     Number of data entry   
      * \param ioformat    Print format for each row 
      */
-    template <typename T>
-    void printMatrix(T **dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries = 1,
@@ -754,7 +754,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title        Title (string) that should be written at the top 
      * \param dataPoints   Input data points
@@ -762,9 +762,9 @@ class io
      * \param nCols        Number of columns (default is 1)
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     T const *dataPoints,
+                     DataType const *dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -772,7 +772,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title        Title (string) that should be written at the top 
      * \param dataPoints   Input data points
@@ -780,9 +780,9 @@ class io
      * \param nCols        Number of columns (default is 1)
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     std::unique_ptr<T[]> const &dataPoints,
+                     std::unique_ptr<DataType[]> const &dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -790,7 +790,7 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title        Title (string) that should be written at the top 
      * \param dataPoints   Input data points
@@ -798,9 +798,9 @@ class io
      * \param nCols        Number of columns (default is 1)
      * \param printPrefix  Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     std::vector<T> const &dataPoints,
+                     std::vector<DataType> const &dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -808,15 +808,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
      * \param ioformat    Print format
      */
-    template <typename T>
-    void printMatrix(T const *dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType const *dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &ioformat = ioFormat("NO"));
@@ -824,15 +824,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
      * \param ioformat    Print format
      */
-    template <typename T>
-    void printMatrix(std::unique_ptr<T[]> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &ioformat = ioFormat("NO"));
@@ -840,15 +840,15 @@ class io
     /*!
      * \brief Helper function to print the matrix
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
      * \param ioformat    Print format
      */
-    template <typename T>
-    void printMatrix(std::vector<T> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::vector<DataType> const &dataPoints,
                      int const nRows,
                      int const nCols = 1,
                      ioFormat const &ioformat = ioFormat("NO"));
@@ -856,18 +856,18 @@ class io
     /*!
      * \brief Helper function to print one element of input data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints  Input data points
      * \param ioformat    Print format
      */
-    template <typename T>
-    void printMatrix(T const *dataPoints, ioFormat const &ioformat);
+    template <typename DataType>
+    void printMatrix(DataType const *dataPoints, ioFormat const &ioformat);
 
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -877,11 +877,11 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     T const *dataPoints,
+                     DataType const *dataPoints,
                      int const dataPointsDim,
-                     T const *functionValues,
+                     DataType const *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -889,7 +889,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -899,11 +899,11 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     std::unique_ptr<T[]> const &dataPoints,
+                     std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -911,7 +911,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -921,11 +921,11 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
+    template <typename DataType>
     void printMatrix(const char *title,
-                     std::vector<T> const &dataPoints,
+                     std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -933,7 +933,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -943,9 +943,9 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
-    void printMatrix(T const *dataPoints,
-                     int const dataPointsDim, T *functionValues,
+    template <typename DataType>
+    void printMatrix(DataType const *dataPoints,
+                     int const dataPointsDim, DataType *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -953,7 +953,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -963,10 +963,10 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
-    void printMatrix(std::unique_ptr<T[]> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -974,7 +974,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param title            Title (string) that should be written at the top 
      * \param dataPoints       Input data points
@@ -984,10 +984,10 @@ class io
      * \param nRows            Number of rows
      * \param printPrefix      Prefix and suffix of the print  
      */
-    template <typename T>
-    void printMatrix(std::vector<T> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix = "\n----------------------------------------\n");
@@ -995,7 +995,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
@@ -1005,10 +1005,10 @@ class io
      * \param dataIOFormat            Print format for input data
      * \param functionValuesIOFormat  Print format for input function value 
      */
-    template <typename T>
-    void printMatrix(T const *dataPoints,
+    template <typename DataType>
+    void printMatrix(DataType const *dataPoints,
                      int const dataPointsDim,
-                     T const *functionValues,
+                     DataType const *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
@@ -1017,7 +1017,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
@@ -1027,10 +1027,10 @@ class io
      * \param dataIOFormat            Print format for input data
      * \param functionValuesIOFormat  Print format for input function value 
      */
-    template <typename T>
-    void printMatrix(std::unique_ptr<T[]> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
@@ -1039,7 +1039,7 @@ class io
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
@@ -1049,10 +1049,10 @@ class io
      * \param dataIOFormat            Print format for input data
      * \param functionValuesIOFormat  Print format for input function value 
      */
-    template <typename T>
-    void printMatrix(std::vector<T> const &dataPoints,
+    template <typename DataType>
+    void printMatrix(std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
@@ -1215,10 +1215,10 @@ inline std::fstream &io::getFstream() { return fs; }
 
 inline std::string &io::getLine() { return line; }
 
-template <typename T>
+template <typename DataType>
 inline void io::setPrecision(std::ostream &streamBuffer)
 {
-    if (std::numeric_limits<T>::is_integer)
+    if (std::numeric_limits<DataType>::is_integer)
     {
         // Manages the precision (i.e. how many digits are generated)
         streamBuffer.precision(0);
@@ -1226,7 +1226,7 @@ inline void io::setPrecision(std::ostream &streamBuffer)
     else
     {
         // Manages the precision (i.e. how many digits are generated)
-        streamBuffer.precision(digits10<T>());
+        streamBuffer.precision(digits10<DataType>());
         streamBuffer << std::fixed;
     }
 }
@@ -1237,11 +1237,11 @@ inline void io::setWidth(int const streamWidth)
     FixedWidth = streamWidth >= 0;
 }
 
-template <typename T>
-int io::getWidth(T const *dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
+template <typename DataType>
+int io::getWidth(DataType const *dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(streamBuffer);
+    setPrecision<DataType>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -1252,11 +1252,11 @@ int io::getWidth(T const *dataPoints, int const nRows, int const nCols, std::ost
     return static_cast<int>(tWidth);
 }
 
-template <typename T>
-int io::getWidth(std::unique_ptr<T[]> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
+template <typename DataType>
+int io::getWidth(std::unique_ptr<DataType[]> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(streamBuffer);
+    setPrecision<DataType>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -1267,11 +1267,11 @@ int io::getWidth(std::unique_ptr<T[]> const &dataPoints, int const nRows, int co
     return static_cast<int>(tWidth);
 }
 
-template <typename T>
-int io::getWidth(std::vector<T> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
+template <typename DataType>
+int io::getWidth(std::vector<DataType> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(streamBuffer);
+    setPrecision<DataType>(streamBuffer);
     for (int i = 0; i < nRows * nCols; i++)
     {
         std::stringstream sstr;
@@ -1282,11 +1282,11 @@ int io::getWidth(std::vector<T> const &dataPoints, int const nRows, int const nC
     return static_cast<int>(tWidth);
 }
 
-template <typename T>
-int io::getWidth(T **dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
+template <typename DataType>
+int io::getWidth(DataType **dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer)
 {
     std::ptrdiff_t tWidth(0);
-    setPrecision<T>(streamBuffer);
+    setPrecision<DataType>(streamBuffer);
     for (int i = 0; i < nRows; i++)
     {
         for (int j = 0; j < nCols; j++)
@@ -1314,8 +1314,8 @@ bool io::saveMatrix(EigenMatrixType &dataMatrix, IOFormatType const &ioformat)
     UMUQFAILRETURN("This file stream is not open for writing!");
 }
 
-template <typename T>
-bool io::saveMatrix(T **dataPoints, int const nRows, int const nCols, int const options)
+template <typename DataType>
+bool io::saveMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options)
 {
     if (!fs.is_open())
     {
@@ -1329,7 +1329,7 @@ bool io::saveMatrix(T **dataPoints, int const nRows, int const nCols, int const 
         fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<T>(fs);
+    setPrecision<DataType>(fs);
 
     if (!FixedWidth)
     {
@@ -1399,8 +1399,8 @@ bool io::saveMatrix(T **dataPoints, int const nRows, int const nCols, int const 
     return false;
 }
 
-template <typename T>
-bool io::saveMatrix(T **dataPoints,
+template <typename DataType>
+bool io::saveMatrix(DataType **dataPoints,
                     int const nRows,
                     int const *nCols,
                     int const options,
@@ -1412,7 +1412,7 @@ bool io::saveMatrix(T **dataPoints,
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<T>(fs);
+    setPrecision<DataType>(fs);
 
     //Default case, only one set of data
     if (entries == 1)
@@ -1564,7 +1564,7 @@ bool io::saveMatrix(T **dataPoints,
 
                 for (int i = 0; i < nRows; i++)
                 {
-                    T *ePointer = dataPoints[i];
+                    DataType *ePointer = dataPoints[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -1582,7 +1582,7 @@ bool io::saveMatrix(T **dataPoints,
             {
                 if (options == 1)
                 {
-                    T *ePointer;
+                    DataType *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1606,7 +1606,7 @@ bool io::saveMatrix(T **dataPoints,
                 }
                 else
                 {
-                    T *ePointer;
+                    DataType *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1632,7 +1632,7 @@ bool io::saveMatrix(T **dataPoints,
             {
                 if (options == 1)
                 {
-                    T *ePointer;
+                    DataType *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1654,7 +1654,7 @@ bool io::saveMatrix(T **dataPoints,
                 }
                 else
                 {
-                    T *ePointer;
+                    DataType *ePointer;
                     for (int e = 0; e < entries; e++)
                     {
                         for (int i = 0; i < nRows; ++i)
@@ -1701,7 +1701,7 @@ bool io::saveMatrix(T **dataPoints,
 
                 for (int i = 0; i < nRows; i++)
                 {
-                    T *ePointer = dataPoints[i];
+                    DataType *ePointer = dataPoints[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -1717,7 +1717,7 @@ bool io::saveMatrix(T **dataPoints,
 
             if (Width)
             {
-                T *ePointer;
+                DataType *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -1740,7 +1740,7 @@ bool io::saveMatrix(T **dataPoints,
             }
             else
             {
-                T *ePointer;
+                DataType *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -1765,8 +1765,8 @@ bool io::saveMatrix(T **dataPoints,
     }
 }
 
-template <typename T>
-bool io::saveMatrix(T const *dataPoints,
+template <typename DataType>
+bool io::saveMatrix(DataType const *dataPoints,
                     int const nRows,
                     int const nCols,
                     int const options)
@@ -1783,7 +1783,7 @@ bool io::saveMatrix(T const *dataPoints,
         fmt.rowSeparator = fmt.coeffSeparator;
     }
 
-    setPrecision<T>(fs);
+    setPrecision<DataType>(fs);
 
     if (!FixedWidth)
     {
@@ -1881,28 +1881,28 @@ bool io::saveMatrix(T const *dataPoints,
     return false;
 }
 
-template <typename T>
-bool io::saveMatrix(std::unique_ptr<T[]> const &dataPoints,
+template <typename DataType>
+bool io::saveMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                     int const nRows,
                     int const nCols,
                     int const options)
 {
-    return io::saveMatrix<T>(dataPoints.get(), nRows, nCols, options);
+    return io::saveMatrix<DataType>(dataPoints.get(), nRows, nCols, options);
 }
 
-template <typename T>
-bool io::saveMatrix(std::vector<T> const &dataPoints,
+template <typename DataType>
+bool io::saveMatrix(std::vector<DataType> const &dataPoints,
                     int const nRows,
                     int const nCols,
                     int const options)
 {
-    return io::saveMatrix<T>(const_cast<T *>(dataPoints.data()), nRows, nCols, options);
+    return io::saveMatrix<DataType>(const_cast<DataType *>(dataPoints.data()), nRows, nCols, options);
 }
 
-template <typename T>
-bool io::saveMatrix(T const *dataPoints,
+template <typename DataType>
+bool io::saveMatrix(DataType const *dataPoints,
                     int const dataPointsDim,
-                    T const *functionValues,
+                    DataType const *functionValues,
                     int const nFunctionValues,
                     int const nRows)
 {
@@ -1911,7 +1911,7 @@ bool io::saveMatrix(T const *dataPoints,
         UMUQFAILRETURN("This file stream is not open for writing!");
     }
 
-    setPrecision<T>(fs);
+    setPrecision<DataType>(fs);
 
     if (!FixedWidth)
     {
@@ -1981,24 +1981,24 @@ bool io::saveMatrix(T const *dataPoints,
     return true;
 }
 
-template <typename T>
-bool io::saveMatrix(std::unique_ptr<T[]> const &dataPoints,
+template <typename DataType>
+bool io::saveMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                     int const dataPointsDim,
-                    std::unique_ptr<T[]> const &functionValues,
+                    std::unique_ptr<DataType[]> const &functionValues,
                     int const nFunctionValues,
                     int const nRows)
 {
-    return io::saveMatrix<T>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows);
+    return io::saveMatrix<DataType>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows);
 }
 
-template <typename T>
-bool io::saveMatrix(std::vector<T> const &dataPoints,
+template <typename DataType>
+bool io::saveMatrix(std::vector<DataType> const &dataPoints,
                     int const dataPointsDim,
-                    std::vector<T> const &functionValues,
+                    std::vector<DataType> const &functionValues,
                     int const nFunctionValues,
                     int const nRows)
 {
-    return io::saveMatrix<T>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows);
+    return io::saveMatrix<DataType>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows);
 }
 
 template <typename EigenMatrixType>
@@ -2025,8 +2025,8 @@ bool io::loadMatrix(EigenMatrixType &dataMatrix)
     return true;
 }
 
-template <typename T>
-bool io::loadMatrix(T **dataPoints, int const nRows, int const nCols, int const options)
+template <typename DataType>
+bool io::loadMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options)
 {
     std::string Line;
 
@@ -2072,8 +2072,8 @@ bool io::loadMatrix(T **dataPoints, int const nRows, int const nCols, int const 
     return false;
 }
 
-template <typename T>
-bool io::loadMatrix(T **dataPoints, int const nRows, int const *nCols, int const options, int const entries)
+template <typename DataType>
+bool io::loadMatrix(DataType **dataPoints, int const nRows, int const *nCols, int const options, int const entries)
 {
     std::string Line;
 
@@ -2125,7 +2125,7 @@ bool io::loadMatrix(T **dataPoints, int const nRows, int const *nCols, int const
     {
         if (options == 0)
         {
-            T *ePointer;
+            DataType *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; i++)
@@ -2151,7 +2151,7 @@ bool io::loadMatrix(T **dataPoints, int const nRows, int const *nCols, int const
         }
         else if (options == 1)
         {
-            T *ePointer;
+            DataType *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 if (std::getline(fs, Line))
@@ -2179,8 +2179,8 @@ bool io::loadMatrix(T **dataPoints, int const nRows, int const *nCols, int const
     }
 }
 
-template <typename T>
-bool io::loadMatrix(T *dataPoints, int const nRows, int const nCols)
+template <typename DataType>
+bool io::loadMatrix(DataType *dataPoints, int const nRows, int const nCols)
 {
     std::string Line;
 
@@ -2223,20 +2223,20 @@ bool io::loadMatrix(T *dataPoints, int const nRows, int const nCols)
     return false;
 }
 
-template <typename T>
-bool io::loadMatrix(std::unique_ptr<T[]> &dataPoints, int const nRows, int const nCols)
+template <typename DataType>
+bool io::loadMatrix(std::unique_ptr<DataType[]> &dataPoints, int const nRows, int const nCols)
 {
-    return io::loadMatrix<T>(dataPoints.get(), nRows, nCols);
+    return io::loadMatrix<DataType>(dataPoints.get(), nRows, nCols);
 }
 
-template <typename T>
-bool io::loadMatrix(std::vector<T> &dataPoints, int const nRows, int const nCols)
+template <typename DataType>
+bool io::loadMatrix(std::vector<DataType> &dataPoints, int const nRows, int const nCols)
 {
-    return io::loadMatrix<T>(dataPoints.data(), nRows, nCols);
+    return io::loadMatrix<DataType>(dataPoints.data(), nRows, nCols);
 }
 
-template <typename T>
-bool io::loadMatrix(T *dataPoints, int const dataPointsDim, T *functionValues, int const nFunctionValues, int const nRows)
+template <typename DataType>
+bool io::loadMatrix(DataType *dataPoints, int const dataPointsDim, DataType *functionValues, int const nFunctionValues, int const nRows)
 {
     std::string Line;
 
@@ -2264,29 +2264,29 @@ bool io::loadMatrix(T *dataPoints, int const dataPointsDim, T *functionValues, i
     return true;
 }
 
-template <typename T>
-bool io::loadMatrix(std::unique_ptr<T[]> &dataPoints,
+template <typename DataType>
+bool io::loadMatrix(std::unique_ptr<DataType[]> &dataPoints,
                     int const dataPointsDim,
-                    std::unique_ptr<T[]> &functionValues,
+                    std::unique_ptr<DataType[]> &functionValues,
                     int const nFunctionValues,
                     int const nRows)
 {
-    return io::loadMatrix<T>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows);
+    return io::loadMatrix<DataType>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows);
 }
 
-template <typename T>
-bool io::loadMatrix(std::vector<T> &dataPoints,
+template <typename DataType>
+bool io::loadMatrix(std::vector<DataType> &dataPoints,
                     int const dataPointsDim,
-                    std::vector<T> &functionValues,
+                    std::vector<DataType> &functionValues,
                     int const nFunctionValues,
                     int const nRows)
 {
-    return io::loadMatrix<T>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows);
+    return io::loadMatrix<DataType>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows);
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     T **dataPoints,
+                     DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2301,7 +2301,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2352,22 +2352,22 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename T>
-void io::printMatrix(T **dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>("", dataPoints, nRows, nCols, printPrefix);
+    io::printMatrix<DataType>("", dataPoints, nRows, nCols, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(T **dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const nCols,
                      ioFormat const &ioformat)
 {
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2417,9 +2417,9 @@ void io::printMatrix(T **dataPoints,
     }
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     T **dataPoints,
+                     DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2435,7 +2435,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     //DEfault case one set of data
     if (entries == 1)
@@ -2493,7 +2493,7 @@ void io::printMatrix(const char *title,
         {
             for (int i = 0; i < nRows; i++)
             {
-                T *ePointer = dataPoints[i];
+                DataType *ePointer = dataPoints[i];
                 for (int e = 0; e < entries; e++)
                 {
                     for (int j = 0; j < nCols[i]; j++)
@@ -2509,7 +2509,7 @@ void io::printMatrix(const char *title,
 
         if (Width)
         {
-            T *ePointer;
+            DataType *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; ++i)
@@ -2532,7 +2532,7 @@ void io::printMatrix(const char *title,
         }
         else
         {
-            T *ePointer;
+            DataType *ePointer;
             for (int e = 0; e < entries; e++)
             {
                 for (int i = 0; i < nRows; ++i)
@@ -2555,18 +2555,18 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename T>
-void io::printMatrix(T **dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>("", dataPoints, nRows, nCols, entries, printPrefix);
+    io::printMatrix<DataType>("", dataPoints, nRows, nCols, entries, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(T **dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType **dataPoints,
                      int const nRows,
                      int const *nCols,
                      int const entries,
@@ -2574,11 +2574,11 @@ void io::printMatrix(T **dataPoints,
 {
     if (ioformat.size() != static_cast<decltype(ioformat.size())>(nRows))
     {
-        io::printMatrix<T>(dataPoints, nRows, nCols, entries);
+        io::printMatrix<DataType>(dataPoints, nRows, nCols, entries);
     }
     else
     {
-        setPrecision<T>(std::cout);
+        setPrecision<DataType>(std::cout);
 
         //Default case
         if (entries == 1)
@@ -2636,7 +2636,7 @@ void io::printMatrix(T **dataPoints,
             {
                 for (int i = 0; i < nRows; i++)
                 {
-                    T *ePointer = dataPoints[i];
+                    DataType *ePointer = dataPoints[i];
                     for (int e = 0; e < entries; e++)
                     {
                         for (int j = 0; j < nCols[i]; j++)
@@ -2652,7 +2652,7 @@ void io::printMatrix(T **dataPoints,
 
             if (Width)
             {
-                T *ePointer;
+                DataType *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -2675,7 +2675,7 @@ void io::printMatrix(T **dataPoints,
             }
             else
             {
-                T *ePointer;
+                DataType *ePointer;
                 for (int e = 0; e < entries; e++)
                 {
                     for (int i = 0; i < nRows; ++i)
@@ -2698,9 +2698,9 @@ void io::printMatrix(T **dataPoints,
     }
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     T const *dataPoints,
+                     DataType const *dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
@@ -2716,7 +2716,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2793,39 +2793,39 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     std::unique_ptr<T[]> const &dataPoints,
+                     std::unique_ptr<DataType[]> const &dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>(title, dataPoints.get(), nRows, nCols, printPrefix);
+    io::printMatrix<DataType>(title, dataPoints.get(), nRows, nCols, printPrefix);
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     std::vector<T> const &dataPoints,
+                     std::vector<DataType> const &dataPoints,
                      int const nRows,
                      int const nCols,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>(title, dataPoints.data(), nRows, nCols, printPrefix);
+    io::printMatrix<DataType>(title, dataPoints.data(), nRows, nCols, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(T const *dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType const *dataPoints,
                      int const nRows,
                      int const nCols,
                      ioFormat const &ioformat)
 {
     if (ioformat.coeffSeparator == "NO")
     {
-        io::printMatrix<T>("", dataPoints, nRows, nCols);
+        io::printMatrix<DataType>("", dataPoints, nRows, nCols);
     }
     else
     {
-        setPrecision<T>(std::cout);
+        setPrecision<DataType>(std::cout);
 
         if (!FixedWidth)
         {
@@ -2902,28 +2902,28 @@ void io::printMatrix(T const *dataPoints,
     }
 }
 
-template <typename T>
-void io::printMatrix(std::unique_ptr<T[]> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const nRows,
                      int const nCols,
                      ioFormat const &ioformat)
 {
-    io::printMatrix<T>(dataPoints.get(), nRows, nCols, ioformat);
+    io::printMatrix<DataType>(dataPoints.get(), nRows, nCols, ioformat);
 }
 
-template <typename T>
-void io::printMatrix(std::vector<T> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::vector<DataType> const &dataPoints,
                      int const nRows,
                      int const nCols,
                      ioFormat const &ioformat)
 {
-    io::printMatrix<T>(dataPoints.data(), nRows, nCols, ioformat);
+    io::printMatrix<DataType>(dataPoints.data(), nRows, nCols, ioformat);
 }
 
-template <typename T>
-void io::printMatrix(T const *dataPoints, ioFormat const &ioformat)
+template <typename DataType>
+void io::printMatrix(DataType const *dataPoints, ioFormat const &ioformat)
 {
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -2943,11 +2943,11 @@ void io::printMatrix(T const *dataPoints, ioFormat const &ioformat)
     std::cout << ioformat.rowSeparator;
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     T const *dataPoints,
+                     DataType const *dataPoints,
                      int const dataPointsDim,
-                     T const *functionValues,
+                     DataType const *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
@@ -2963,7 +2963,7 @@ void io::printMatrix(const char *title,
         }
     }
 
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -3030,72 +3030,72 @@ void io::printMatrix(const char *title,
     std::cout << printPrefix;
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     std::unique_ptr<T[]> const &dataPoints,
+                     std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>(title, dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, printPrefix);
+    io::printMatrix<DataType>(title, dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, printPrefix);
 }
 
-template <typename T>
+template <typename DataType>
 void io::printMatrix(const char *title,
-                     std::vector<T> const &dataPoints,
+                     std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>(title, dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, printPrefix);
+    io::printMatrix<DataType>(title, dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(T const *dataPoints,
-                     int const dataPointsDim, T *functionValues,
+template <typename DataType>
+void io::printMatrix(DataType const *dataPoints,
+                     int const dataPointsDim, DataType *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>("", dataPoints, dataPointsDim, functionValues, nFunctionValues, nRows, printPrefix);
+    io::printMatrix<DataType>("", dataPoints, dataPointsDim, functionValues, nFunctionValues, nRows, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(std::unique_ptr<T[]> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>("", dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, printPrefix);
+    io::printMatrix<DataType>("", dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(std::vector<T> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      std::string const &printPrefix)
 {
-    io::printMatrix<T>("", dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, printPrefix);
+    io::printMatrix<DataType>("", dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, printPrefix);
 }
 
-template <typename T>
-void io::printMatrix(T const *dataPoints,
+template <typename DataType>
+void io::printMatrix(DataType const *dataPoints,
                      int const dataPointsDim,
-                     T const *functionValues,
+                     DataType const *functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
                      ioFormat const &functionValuesIOFormat)
 {
-    setPrecision<T>(std::cout);
+    setPrecision<DataType>(std::cout);
 
     if (!FixedWidth)
     {
@@ -3167,28 +3167,28 @@ void io::printMatrix(T const *dataPoints,
     }
 }
 
-template <typename T>
-void io::printMatrix(std::unique_ptr<T[]> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
                      int const dataPointsDim,
-                     std::unique_ptr<T[]> const &functionValues,
+                     std::unique_ptr<DataType[]> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
                      ioFormat const &functionValuesIOFormat)
 {
-    io::printMatrix<T>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, dataIOFormat, functionValuesIOFormat);
+    io::printMatrix<DataType>(dataPoints.get(), dataPointsDim, functionValues.get(), nFunctionValues, nRows, dataIOFormat, functionValuesIOFormat);
 }
 
-template <typename T>
-void io::printMatrix(std::vector<T> const &dataPoints,
+template <typename DataType>
+void io::printMatrix(std::vector<DataType> const &dataPoints,
                      int const dataPointsDim,
-                     std::vector<T> const &functionValues,
+                     std::vector<DataType> const &functionValues,
                      int const nFunctionValues,
                      int const nRows,
                      ioFormat const &dataIOFormat,
                      ioFormat const &functionValuesIOFormat)
 {
-    io::printMatrix<T>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, dataIOFormat, functionValuesIOFormat);
+    io::printMatrix<DataType>(dataPoints.data(), dataPointsDim, functionValues.data(), nFunctionValues, nRows, dataIOFormat, functionValuesIOFormat);
 }
 
 } // namespace umuq

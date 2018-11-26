@@ -114,14 +114,14 @@ inline namespace matplotlib_223
  * 
  * \brief Converts a data array idata to Python array
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param idata Input array of data
  * 
  * \return PyObject* Python array
  */
-template <typename T>
-PyObject *PyArray(std::vector<T> const &idata);
+template <typename DataType>
+PyObject *PyArray(std::vector<DataType> const &idata);
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata);
@@ -131,15 +131,15 @@ PyObject *PyArray(std::vector<TIn> const &idata);
  * 
  * \brief Converts a data idata to Python array of size nSize
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param idata  Input data
  * \param nSize  Size of the requested array
  * 
  * \return PyObject* Python array
  */
-template <typename T>
-PyObject *PyArray(T const idata, int const nSize);
+template <typename DataType>
+PyObject *PyArray(DataType const idata, int const nSize);
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const idata, int const nSize);
@@ -149,7 +149,7 @@ PyObject *PyArray(TIn const idata, int const nSize);
  * 
  * \brief Converts a data array idata to Python array
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  * 
  * \param idata   Input array of data
  * \param nSize   Size of the array
@@ -157,8 +157,8 @@ PyObject *PyArray(TIn const idata, int const nSize);
  * 
  * \return PyObject* Python array
  */
-template <typename T>
-PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride = 1);
+template <typename DataType>
+PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stride = 1);
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
@@ -168,7 +168,7 @@ PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 
  * 
  * \brief Converts a data array idata to the Python 2D array 
  * 
- * \tparam T Data type 
+ * \tparam DataType Data type 
  * 
  * \param idata  Input array of data (with size of nDimX*nDimY)
  * \param nDimX  X size in the 2D array
@@ -176,14 +176,14 @@ PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 
  * 
  * \returns PyObject* Python 2D array
  */
-template <typename T>
-PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDimY);
+template <typename DataType>
+PyObject *Py2DArray(std::vector<DataType> const &idata, int const nDimX, int const nDimY);
 
 template <typename TIn, typename TOut>
 PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY);
 
-template <typename T>
-PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY);
+template <typename DataType>
+PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY);
 
 /*! \var static std::string backend
  * \ingroup IO_Module
@@ -393,8 +393,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool annotate(std::string const &annotation, T x, T y);
+    template <typename DataType>
+    bool annotate(std::string const &annotation, DataType x, DataType y);
 
     /*!
      * \brief Convenience method to get or set axis properties
@@ -424,7 +424,7 @@ class pyplot
     /*!
      * \brief Draw contour lines
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param x         Array-like (1D arrays representing the x coordinates of a grid)
      *                  such that len(x) is the number of columns in z
@@ -440,22 +440,22 @@ class pyplot
      * \returns true 
      * \returns false 
      */
-    template <typename T>
-    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+    template <typename DataType>
+    inline bool contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, std::vector<DataType> const &levels,
                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+    template <typename DataType>
+    inline bool contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, int const levels,
                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    inline bool contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+    template <typename DataType>
+    inline bool contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z,
                         std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Draw filled contour
      *
-     * \tparam T Data type
+     * \tparam DataType Data type
      *
      * \param x         Array-like (1D arrays representing the x coordinates of a grid)
      *                  such that len(x) is the number of columns in z
@@ -471,16 +471,16 @@ class pyplot
      * \returns true
      * \returns false
      */
-    template <typename T>
-    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+    template <typename DataType>
+    inline bool contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, std::vector<DataType> const &levels,
                          std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+    template <typename DataType>
+    inline bool contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, int const levels,
                          std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    inline bool contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+    template <typename DataType>
+    inline bool contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z,
                          std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -495,7 +495,7 @@ class pyplot
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
-     * \tparam T      Data type
+     * \tparam DataType      Data type
      * 
      * \param x       Scalar or array-like, data positions
      * \param y       Scalar or array-like, data positions
@@ -505,14 +505,14 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr,
+    template <typename DataType>
+    bool errorbar(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &yerr,
                   std::string const &fmt = "");
 
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -528,16 +528,16 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
-                  T const *yerr, int const nSizeE, std::size_t const StrideE,
+    template <typename DataType>
+    bool errorbar(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
+                  DataType const *yerr, int const nSizeE, std::size_t const StrideE,
                   std::string const &fmt = "");
 
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -548,8 +548,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool errorbar(T const *x, T const *y, T const *yerr, int const nSize,
+    template <typename DataType>
+    bool errorbar(DataType const *x, DataType const *y, DataType const *yerr, int const nSize,
                   std::string const &fmt = "");
 
     /*!
@@ -575,7 +575,7 @@ class pyplot
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
      * 
-     * \tparam T 
+     * \tparam DataType 
      * 
      * \param x          The x coordinates of the nodes defining the curves.
      * \param y1         The y coordinates of the nodes defining the first curve.
@@ -585,8 +585,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2,
+    template <typename DataType>
+    bool fill_between(std::vector<DataType> const &x, std::vector<DataType> const &y1, std::vector<DataType> const &y2,
                       std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -594,7 +594,7 @@ class pyplot
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
      * 
-     * \tparam T         Data type
+     * \tparam DataType         Data type
      * 
      * \param x          The x coordinates of the nodes defining the curves.
      * \param nSizeX     Size of array x
@@ -610,10 +610,10 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y1, int const nSizeY1, std::size_t const StrideY1,
-                      T const *y2, int const nSizeY2, std::size_t const StrideY2,
+    template <typename DataType>
+    bool fill_between(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                      DataType const *y1, int const nSizeY1, std::size_t const StrideY1,
+                      DataType const *y2, int const nSizeY2, std::size_t const StrideY2,
                       std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -621,7 +621,7 @@ class pyplot
      * The curves are defined by the points (x, y1) and (x, y2). 
      * This creates one or multiple polygons describing the filled area.
      * 
-     * \tparam T         Data type
+     * \tparam DataType         Data type
      * 
      * \param x          The x coordinates of the nodes defining the curves.
      * \param y1         The y coordinates of the nodes defining the first curve.
@@ -632,8 +632,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool fill_between(T const *x, T const *y1, T const *y2, int const nSize,
+    template <typename DataType>
+    bool fill_between(DataType const *x, DataType const *y1, DataType const *y2, int const nSize,
                       std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
@@ -647,7 +647,7 @@ class pyplot
      * \brief Plot a histogram
      * Compute and draw the histogram of x
      * 
-     * \tparam T 
+     * \tparam DataType 
      * 
      * \param x        Input values
      * \param bins     The bin specification (The default value is 50)
@@ -667,8 +667,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool hist(std::vector<T> const &x, long const bins = 50, bool const density = false,
+    template <typename DataType>
+    bool hist(std::vector<DataType> const &x, long const bins = 50, bool const density = false,
               std::string const &color = "b", std::string const &label = "", double const alpha = 1.0,
               int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
 
@@ -676,7 +676,7 @@ class pyplot
      * \brief Plot a histogram
      * Compute and draw the histogram of x
      * 
-     * \tparam T       Data type
+     * \tparam DataType       Data type
      * 
      * \param x        Input values
      * \param nSizeX   Size of array x
@@ -698,8 +698,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool hist(T const *x, int const nSizeX, std::size_t const StrideX = 1,
+    template <typename DataType>
+    bool hist(DataType const *x, int const nSizeX, std::size_t const StrideX = 1,
               long const bins = 50, bool const density = false, std::string const &color = "b",
               std::string const &label = "", double const alpha = 1.0,
               int const Rcolor = 0, int const Gcolor = 0, int const Bcolor = 0);
@@ -722,7 +722,7 @@ class pyplot
      * both the x-axis and the y-axis to log scaling. All of the concepts 
      * and parameters of plot can be used here as well.
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
@@ -732,8 +732,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool loglog(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool loglog(std::vector<DataType> const &x, std::vector<DataType> const &y,
                 std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -742,7 +742,7 @@ class pyplot
      * both the x-axis and the y-axis to log scaling. All of the concepts 
      * and parameters of plot can be used here as well.
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -756,9 +756,9 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool loglog(T const *x, int const nSizeX, std::size_t const StrideX,
-                T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool loglog(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                DataType const *y, int const nSizeY, std::size_t const StrideY,
                 std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -767,7 +767,7 @@ class pyplot
      * both the x-axis and the y-axis to log scaling. All of the concepts 
      * and parameters of plot can be used here as well.
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -778,14 +778,14 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool loglog(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool loglog(DataType const *x, DataType const *y, int const nSize,
                 std::string const &fmt = "", std::string const &label = "");
 
     /*!
      * \brief Pause for interval seconds
      * 
-     * \tparam T 
+     * \tparam DataType 
      * 
      * \param interval 
      */
@@ -794,7 +794,7 @@ class pyplot
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -803,14 +803,14 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool plot(std::vector<DataType> const &x, std::vector<DataType> const &y,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -823,15 +823,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool plot(DataType const *x, int const nSizeX, std::size_t const StrideX,
+              DataType const *y, int const nSizeY, std::size_t const StrideY,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -841,14 +841,14 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool plot(DataType const *x, DataType const *y, int const nSize,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -859,14 +859,14 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool plot(std::vector<DataType> const &x, std::vector<DataType> const &y,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -881,15 +881,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool plot(DataType const *x, int const nSizeX, std::size_t const StrideX,
+              DataType const *y, int const nSizeY, std::size_t const StrideY,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
      * \brief Plot y versus x as lines and/or markers
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -901,8 +901,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool plot(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool plot(DataType const *x, DataType const *y, int const nSize,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -915,7 +915,7 @@ class pyplot
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -930,20 +930,20 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
-                 std::vector<int> const &s, std::vector<T> const &c,
+    template <typename DataType>
+    bool scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
+                 std::vector<int> const &s, std::vector<DataType> const &c,
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
                  std::vector<int> const &s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and color
      * 
-     * \tparam T Data type 
+     * \tparam DataType Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -955,15 +955,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
                  int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -986,16 +986,16 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                 T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool scatter(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                 DataType const *y, int const nSizeY, std::size_t const StrideY,
                  int const *s, int const nSizeS, std::size_t const StrideS,
-                 T const *c, int const nSizeC, std::size_t const StrideC,
+                 DataType const *c, int const nSizeC, std::size_t const StrideC,
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                 T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool scatter(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                 DataType const *y, int const nSizeY, std::size_t const StrideY,
                  int const *s, int const nSizeS, std::size_t const StrideS,
                  std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
@@ -1003,7 +1003,7 @@ class pyplot
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and color
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -1019,16 +1019,16 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                 T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool scatter(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                 DataType const *y, int const nSizeY, std::size_t const StrideY,
                  int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -1044,20 +1044,20 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(T const *x, T const *y, int const nSize,
-                 int const *s, T const *c,
+    template <typename DataType>
+    bool scatter(DataType const *x, DataType const *y, int const nSize,
+                 int const *s, DataType const *c,
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
-    template <typename T>
-    bool scatter(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool scatter(DataType const *x, DataType const *y, int const nSize,
                  int const *s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and/or color
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      *  
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
@@ -1070,8 +1070,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool scatter(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool scatter(DataType const *x, DataType const *y, int const nSize,
                  int const s, std::string const c = "k",
                  std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
@@ -1080,7 +1080,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
@@ -1090,8 +1090,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogx(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool semilogx(std::vector<DataType> const &x, std::vector<DataType> const &y,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1099,7 +1099,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -1113,9 +1113,9 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool semilogx(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1123,7 +1123,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
@@ -1134,8 +1134,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogx(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool semilogx(DataType const *x, DataType const *y, int const nSize,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1143,7 +1143,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
@@ -1153,8 +1153,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogy(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool semilogy(std::vector<DataType> const &x, std::vector<DataType> const &y,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1162,7 +1162,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
@@ -1176,9 +1176,9 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool semilogy(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1186,7 +1186,7 @@ class pyplot
      * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
      * All of the concepts and parameters of plot can be used here as well.
      * 
-     * \tparam T     Data type 
+     * \tparam DataType     Data type 
      * 
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
@@ -1197,8 +1197,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool semilogy(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool semilogy(DataType const *x, DataType const *y, int const nSize,
                   std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1212,7 +1212,7 @@ class pyplot
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
-     * \tparam T 
+     * \tparam DataType 
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
@@ -1221,15 +1221,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool stem(std::vector<DataType> const &x, std::vector<DataType> const &y,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param nSizeX    Size of array x
@@ -1242,16 +1242,16 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool stem(DataType const *x, int const nSizeX, std::size_t const StrideX,
+              DataType const *y, int const nSizeY, std::size_t const StrideY,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
@@ -1261,15 +1261,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool stem(DataType const *x, DataType const *y, int const nSize,
               std::map<std::string, std::string> const &keywords = std::map<std::string, std::string>());
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
-     * \tparam T
+     * \tparam DataType
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1).
      * \param y         The y-values of the stem heads.
@@ -1279,15 +1279,15 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(std::vector<T> const &x, std::vector<T> const &y,
+    template <typename DataType>
+    bool stem(std::vector<DataType> const &x, std::vector<DataType> const &y,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param nSizeX    Size of array x
@@ -1301,16 +1301,16 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(T const *x, int const nSizeX, std::size_t const StrideX,
-              T const *y, int const nSizeY, std::size_t const StrideY,
+    template <typename DataType>
+    bool stem(DataType const *x, int const nSizeX, std::size_t const StrideX,
+              DataType const *y, int const nSizeY, std::size_t const StrideY,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
      * 
-     * \tparam T        Data type 
+     * \tparam DataType        Data type 
      * 
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
@@ -1321,8 +1321,8 @@ class pyplot
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    template <typename T>
-    bool stem(T const *x, T const *y, int const nSize,
+    template <typename DataType>
+    bool stem(DataType const *x, DataType const *y, int const nSize,
               std::string const &fmt = "", std::string const &label = "");
 
     /*!
@@ -1355,24 +1355,24 @@ class pyplot
     /*!
      * \brief Set the x limits of the current axes
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param left  xmin
      * \param right xmax
      */
-    template <typename T>
-    bool xlim(T left, T right);
+    template <typename DataType>
+    bool xlim(DataType left, DataType right);
 
     /*!
      * \brief Get the x limits of the current axes
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param left  xmin
      * \param right xmax
      */
-    template <typename T>
-    bool xlim(T *left, T *right);
+    template <typename DataType>
+    bool xlim(DataType *left, DataType *right);
 
     /*!
      * \brief Set the x-axis label of the current axes
@@ -1391,24 +1391,24 @@ class pyplot
     /*!
      * \brief Set the y limits of the current axes
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param left  ymin
      * \param right ymax
      */
-    template <typename T>
-    bool ylim(T left, T right);
+    template <typename DataType>
+    bool ylim(DataType left, DataType right);
 
     /*!
      * \brief Get the y limits of the current axes
      * 
-     * \tparam T Data type
+     * \tparam DataType Data type
      * 
      * \param left  ymin
      * \param right ymax
      */
-    template <typename T>
-    bool ylim(T *left, T *right);
+    template <typename DataType>
+    bool ylim(DataType *left, DataType *right);
 
     /*!
      * \brief Set the y-axis label of the current axes
@@ -1590,8 +1590,8 @@ inline std::string pyplot::get_backend()
     UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
 }
 
-template <typename T>
-bool pyplot::annotate(std::string const &annotation, T x, T y)
+template <typename DataType>
+bool pyplot::annotate(std::string const &annotation, DataType x, DataType y)
 {
     return annotate<double>(annotation, static_cast<double>(x), static_cast<double>(y));
 }
@@ -1688,8 +1688,8 @@ inline bool pyplot::close()
     UMUQFAILRETURN("Call to close failed!");
 }
 
-template <typename T>
-inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+template <typename DataType>
+inline bool pyplot::contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, std::vector<DataType> const &levels,
                             std::map<std::string, std::string> const &keywords)
 {
 
@@ -1705,10 +1705,10 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
-        PyObject *larray = PyArray<T>(levels);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
+        PyObject *larray = PyArray<DataType>(levels);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -1738,8 +1738,8 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
     UMUQFAILRETURN("Call to contour failed!");
 }
 
-template <typename T>
-inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+template <typename DataType>
+inline bool pyplot::contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, int const levels,
                             std::map<std::string, std::string> const &keywords)
 {
 
@@ -1755,9 +1755,9 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
         PyObject *larray = PyInt_FromLong(levels);
 
         PyTuple_SetItem(args, 0, xarray);
@@ -1788,8 +1788,8 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
     UMUQFAILRETURN("Call to contour failed!");
 }
 
-template <typename T>
-inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+template <typename DataType>
+inline bool pyplot::contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z,
                             std::map<std::string, std::string> const &keywords)
 {
 
@@ -1805,9 +1805,9 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
 
         std::cout << std::endl;
         PyTuple_SetItem(args, 0, xarray);
@@ -1837,8 +1837,8 @@ inline bool pyplot::contour(std::vector<T> const &x, std::vector<T> const &y, st
     UMUQFAILRETURN("Call to contour failed!");
 }
 
-template <typename T>
-inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, std::vector<T> const &levels,
+template <typename DataType>
+inline bool pyplot::contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, std::vector<DataType> const &levels,
                              std::map<std::string, std::string> const &keywords)
 {
 
@@ -1854,10 +1854,10 @@ inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, s
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
-        PyObject *larray = PyArray<T>(levels);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
+        PyObject *larray = PyArray<DataType>(levels);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -1887,8 +1887,8 @@ inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, s
     UMUQFAILRETURN("Call to contourf failed!");
 }
 
-template <typename T>
-inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z, int const levels,
+template <typename DataType>
+inline bool pyplot::contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, int const levels,
                              std::map<std::string, std::string> const &keywords)
 {
 
@@ -1904,9 +1904,9 @@ inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, s
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
         PyObject *larray = PyInt_FromLong(levels);
 
         PyTuple_SetItem(args, 0, xarray);
@@ -1937,8 +1937,8 @@ inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, s
     UMUQFAILRETURN("Call to contourf failed!");
 }
 
-template <typename T>
-inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &z,
+template <typename DataType>
+inline bool pyplot::contourf(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z,
                              std::map<std::string, std::string> const &keywords)
 {
 
@@ -1954,9 +1954,9 @@ inline bool pyplot::contourf(std::vector<T> const &x, std::vector<T> const &y, s
         int const nDimY = static_cast<int>(y.size());
 
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *zarray = Py2DArray<T>(z, nDimX, nDimY);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *zarray = Py2DArray<DataType>(z, nDimX, nDimY);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -1997,8 +1997,8 @@ inline bool pyplot::draw()
     UMUQFAILRETURN("Call to draw failed!");
 }
 
-template <typename T>
-bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vector<T> const &yerr, std::string const &fmt)
+template <typename DataType>
+bool pyplot::errorbar(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &yerr, std::string const &fmt)
 {
     if (x.size() != y.size() || x.size() != yerr.size())
     {
@@ -2007,9 +2007,9 @@ bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vec
 
     PyObject *args = PyTuple_New(4);
     {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
-        PyObject *yerrarray = PyArray<T>(yerr);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
+        PyObject *yerrarray = PyArray<DataType>(yerr);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2030,10 +2030,10 @@ bool pyplot::errorbar(std::vector<T> const &x, std::vector<T> const &y, std::vec
     UMUQFAILRETURN("Call to errorbar failed!");
 }
 
-template <typename T>
-bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
-                      T const *yerr, int const nSizeE, std::size_t const StrideE,
+template <typename DataType>
+bool pyplot::errorbar(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                      DataType const *y, int const nSizeY, std::size_t const StrideY,
+                      DataType const *yerr, int const nSizeE, std::size_t const StrideE,
                       std::string const &fmt)
 {
     {
@@ -2049,9 +2049,9 @@ bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
 
     PyObject *args = PyTuple_New(4);
     {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
-        PyObject *yerrarray = PyArray<T>(yerr, nSizeE, StrideE);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
+        PyObject *yerrarray = PyArray<DataType>(yerr, nSizeE, StrideE);
 
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
@@ -2073,14 +2073,14 @@ bool pyplot::errorbar(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to errorbar failed!");
 }
 
-template <typename T>
-bool pyplot::errorbar(T const *x, T const *y, T const *yerr, int const nSize, std::string const &fmt)
+template <typename DataType>
+bool pyplot::errorbar(DataType const *x, DataType const *y, DataType const *yerr, int const nSize, std::string const &fmt)
 {
     PyObject *args = PyTuple_New(4);
     {
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
-        PyObject *yerrarray = PyArray<T>(yerr, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
+        PyObject *yerrarray = PyArray<DataType>(yerr, nSize);
 
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
@@ -2141,8 +2141,8 @@ bool pyplot::figure(std::size_t const width, std::size_t const height, std::size
     UMUQFAILRETURN("Call to figure failed!");
 }
 
-template <typename T>
-bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std::vector<T> const &y2, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::fill_between(std::vector<DataType> const &x, std::vector<DataType> const &y1, std::vector<DataType> const &y2, std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y1.size() || x.size() != y2.size())
     {
@@ -2153,9 +2153,9 @@ bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *y1array = PyArray<T>(y1);
-        PyObject *y2array = PyArray<T>(y2);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *y1array = PyArray<DataType>(y1);
+        PyObject *y2array = PyArray<DataType>(y2);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, y1array);
@@ -2184,10 +2184,10 @@ bool pyplot::fill_between(std::vector<T> const &x, std::vector<T> const &y1, std
     UMUQFAILRETURN("Call to fill_between failed!");
 }
 
-template <typename T>
-bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const StrideX,
-                          T const *y1, int const nSizeY1, std::size_t const StrideY1,
-                          T const *y2, int const nSizeY2, std::size_t const StrideY2,
+template <typename DataType>
+bool pyplot::fill_between(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                          DataType const *y1, int const nSizeY1, std::size_t const StrideY1,
+                          DataType const *y2, int const nSizeY2, std::size_t const StrideY2,
                           std::map<std::string, std::string> const &keywords)
 {
     {
@@ -2205,9 +2205,9 @@ bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const Stride
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *y1array = PyArray<T>(y1, nSizeY1, StrideY1);
-        PyObject *y2array = PyArray<T>(y2, nSizeY2, StrideY2);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *y1array = PyArray<DataType>(y1, nSizeY1, StrideY1);
+        PyObject *y2array = PyArray<DataType>(y2, nSizeY2, StrideY2);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, y1array);
@@ -2236,16 +2236,16 @@ bool pyplot::fill_between(T const *x, int const nSizeX, std::size_t const Stride
     UMUQFAILRETURN("Call to fill_between failed!");
 }
 
-template <typename T>
-bool pyplot::fill_between(T const *x, T const *y1, T const *y2, int const nSize, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::fill_between(DataType const *x, DataType const *y1, DataType const *y2, int const nSize, std::map<std::string, std::string> const &keywords)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *y1array = PyArray<T>(y1, nSize);
-        PyObject *y2array = PyArray<T>(y2, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *y1array = PyArray<DataType>(y1, nSize);
+        PyObject *y2array = PyArray<DataType>(y2, nSize);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, y1array);
@@ -2293,14 +2293,14 @@ bool pyplot::grid(bool flag)
     UMUQFAILRETURN("Call to grid failed!");
 }
 
-template <typename T>
-bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
+template <typename DataType>
+bool pyplot::hist(std::vector<DataType> const &x, long const bins, bool const density,
                   std::string const &color, std::string const &label, double const alpha,
                   int const Rcolor, int const Gcolor, int const Bcolor)
 {
     PyObject *args = PyTuple_New(2);
     {
-        PyObject *xarray = PyArray<T>(x);
+        PyObject *xarray = PyArray<DataType>(x);
         PyObject *pybins = PyInt_FromLong(bins);
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2362,15 +2362,15 @@ bool pyplot::hist(std::vector<T> const &x, long const bins, bool const density,
     UMUQFAILRETURN("Call to hist failed!");
 }
 
-template <typename T>
-bool pyplot::hist(T const *x, int const nSizeX, std::size_t const StrideX,
+template <typename DataType>
+bool pyplot::hist(DataType const *x, int const nSizeX, std::size_t const StrideX,
                   long const bins, bool const density, std::string const &color,
                   std::string const &label, double const alpha,
                   int const Rcolor, int const Gcolor, int const Bcolor)
 {
     PyObject *args = PyTuple_New(2);
     {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
         PyObject *pybins = PyInt_FromLong(bins);
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2452,8 +2452,8 @@ inline bool pyplot::legend()
     UMUQFAILRETURN("Call to legend failed!");
 }
 
-template <typename T>
-bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::loglog(std::vector<DataType> const &x, std::vector<DataType> const &y, std::string const &fmt, std::string const &label)
 {
     if (x.size() != y.size())
     {
@@ -2462,8 +2462,8 @@ bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::strin
 
     PyObject *args = PyTuple_New(3);
     {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2492,9 +2492,9 @@ bool pyplot::loglog(std::vector<T> const &x, std::vector<T> const &y, std::strin
     UMUQFAILRETURN("Call to loglog failed!");
 }
 
-template <typename T>
-bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
-                    T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::loglog(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                    DataType const *y, int const nSizeY, std::size_t const StrideY,
                     std::string const &fmt, std::string const &label)
 {
     {
@@ -2509,8 +2509,8 @@ bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
 
     PyObject *args = PyTuple_New(3);
     {
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2539,13 +2539,13 @@ bool pyplot::loglog(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to loglog failed!");
 }
 
-template <typename T>
-bool pyplot::loglog(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::loglog(DataType const *x, DataType const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
     PyObject *args = PyTuple_New(3);
     {
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2593,8 +2593,8 @@ bool pyplot::pause(double const interval)
     UMUQFAILRETURN("Call to pause failed!");
 }
 
-template <typename T>
-bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::plot(std::vector<DataType> const &x, std::vector<DataType> const &y, std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y.size())
     {
@@ -2605,8 +2605,8 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -2634,9 +2634,9 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-template <typename T>
-bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::plot(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::map<std::string, std::string> const &keywords)
 {
     {
@@ -2653,8 +2653,8 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -2682,15 +2682,15 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-template <typename T>
-bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::plot(DataType const *x, DataType const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -2718,8 +2718,8 @@ bool pyplot::plot(T const *x, T const *y, int const nSize, std::map<std::string,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-template <typename T>
-bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::plot(std::vector<DataType> const &x, std::vector<DataType> const &y, std::string const &fmt, std::string const &label)
 {
     if (x.size() != y.size())
     {
@@ -2730,8 +2730,8 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string 
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2760,9 +2760,9 @@ bool pyplot::plot(std::vector<T> const &x, std::vector<T> const &y, std::string 
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-template <typename T>
-bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::plot(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::string const &fmt, std::string const &label)
 {
     {
@@ -2779,8 +2779,8 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2809,15 +2809,15 @@ bool pyplot::plot(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to plot failed!");
 }
 
-template <typename T>
-bool pyplot::plot(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::plot(DataType const *x, DataType const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -2871,9 +2871,9 @@ bool pyplot::savefig(std::string const &filename)
     UMUQFAILRETURN("Call to savefig failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
-                     std::vector<int> const &s, std::vector<T> const &c,
+template <typename DataType>
+bool pyplot::scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
+                     std::vector<int> const &s, std::vector<DataType> const &c,
                      std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y.size())
@@ -2896,10 +2896,10 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     PyObject *args = PyTuple_New(4);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x);
-        PyObject *PyArrayY = PyArray<T>(y);
+        PyObject *PyArrayX = PyArray<DataType>(x);
+        PyObject *PyArrayY = PyArray<DataType>(y);
         PyObject *PyArrayS = s.size() > 1 ? PyArray<int>(s) : PyInt_FromLong(s[0]);
-        PyObject *PyArrayC = PyArray<T>(c);
+        PyObject *PyArrayC = PyArray<DataType>(c);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -2934,8 +2934,8 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
+template <typename DataType>
+bool pyplot::scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
                      std::vector<int> const &s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
@@ -2955,8 +2955,8 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x);
-        PyObject *PyArrayY = PyArray<T>(y);
+        PyObject *PyArrayX = PyArray<DataType>(x);
+        PyObject *PyArrayY = PyArray<DataType>(y);
         PyObject *PyArrayS = s.size() > 1 ? PyArray<int>(s) : PyInt_FromLong(s[0]);
 
         PyTuple_SetItem(args, 0, PyArrayX);
@@ -2994,8 +2994,8 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
+template <typename DataType>
+bool pyplot::scatter(std::vector<DataType> const &x, std::vector<DataType> const &y,
                      int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
@@ -3008,8 +3008,8 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x);
-        PyObject *PyArrayY = PyArray<T>(y);
+        PyObject *PyArrayX = PyArray<DataType>(x);
+        PyObject *PyArrayY = PyArray<DataType>(y);
         PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
@@ -3047,11 +3047,11 @@ bool pyplot::scatter(std::vector<T> const &x, std::vector<T> const &y,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                     T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::scatter(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                     DataType const *y, int const nSizeY, std::size_t const StrideY,
                      int const *s, int const nSizeS, std::size_t const StrideS,
-                     T const *c, int const nSizeC, std::size_t const StrideC,
+                     DataType const *c, int const nSizeC, std::size_t const StrideC,
                      std::map<std::string, std::string> const &keywords)
 {
 
@@ -3080,10 +3080,10 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(4);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *PyArrayX = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *PyArrayY = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *PyArrayS = nsizeS > 1 ? PyArray<int>(s, nSizeS, StrideS) : PyInt_FromLong(s[0]);
-        PyObject *PyArrayC = PyArray<T>(c, nsizeC, StrideC);
+        PyObject *PyArrayC = PyArray<DataType>(c, nsizeC, StrideC);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -3118,9 +3118,9 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
-                     T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::scatter(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                     DataType const *y, int const nSizeY, std::size_t const StrideY,
                      int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
@@ -3136,8 +3136,8 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *PyArrayY = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *PyArrayX = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *PyArrayY = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
@@ -3175,19 +3175,19 @@ bool pyplot::scatter(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(T const *x, T const *y, int const nSize,
-                     int const *s, T const *c,
+template <typename DataType>
+bool pyplot::scatter(DataType const *x, DataType const *y, int const nSize,
+                     int const *s, DataType const *c,
                      std::map<std::string, std::string> const &keywords)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(4);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSize);
-        PyObject *PyArrayY = PyArray<T>(y, nSize);
+        PyObject *PyArrayX = PyArray<DataType>(x, nSize);
+        PyObject *PyArrayY = PyArray<DataType>(y, nSize);
         PyObject *PyArrayS = PyArray<int>(s, nSize);
-        PyObject *PyArrayC = PyArray<T>(c, nSize);
+        PyObject *PyArrayC = PyArray<DataType>(c, nSize);
 
         PyTuple_SetItem(args, 0, PyArrayX);
         PyTuple_SetItem(args, 1, PyArrayY);
@@ -3222,8 +3222,8 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::scatter(T const *x, T const *y, int const nSize,
+template <typename DataType>
+bool pyplot::scatter(DataType const *x, DataType const *y, int const nSize,
                      int const s, std::string const c,
                      std::map<std::string, std::string> const &keywords)
 {
@@ -3231,8 +3231,8 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *PyArrayX = PyArray<T>(x, nSize);
-        PyObject *PyArrayY = PyArray<T>(y, nSize);
+        PyObject *PyArrayX = PyArray<DataType>(x, nSize);
+        PyObject *PyArrayY = PyArray<DataType>(y, nSize);
         PyObject *PyArrayS = PyInt_FromLong(s);
 
         PyTuple_SetItem(args, 0, PyArrayX);
@@ -3270,8 +3270,8 @@ bool pyplot::scatter(T const *x, T const *y, int const nSize,
     UMUQFAILRETURN("Call to scatter failed!");
 }
 
-template <typename T>
-bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::semilogx(std::vector<DataType> const &x, std::vector<DataType> const &y, std::string const &fmt, std::string const &label)
 {
     if (x.size() != y.size())
     {
@@ -3280,8 +3280,8 @@ bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::str
 
     PyObject *args = PyTuple_New(3);
     {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3310,9 +3310,9 @@ bool pyplot::semilogx(std::vector<T> const &x, std::vector<T> const &y, std::str
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-template <typename T>
-bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::semilogx(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                      DataType const *y, int const nSizeY, std::size_t const StrideY,
                       std::string const &fmt, std::string const &label)
 {
     {
@@ -3328,8 +3328,8 @@ bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3358,14 +3358,14 @@ bool pyplot::semilogx(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-template <typename T>
-bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::semilogx(DataType const *x, DataType const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3394,8 +3394,8 @@ bool pyplot::semilogx(T const *x, T const *y, int const nSize, std::string const
     UMUQFAILRETURN("Call to semilogx failed!");
 }
 
-template <typename T>
-bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::semilogy(std::vector<DataType> const &x, std::vector<DataType> const &y, std::string const &fmt, std::string const &label)
 {
     if (x.size() != y.size())
     {
@@ -3404,8 +3404,8 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
 
     PyObject *args = PyTuple_New(3);
     {
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3434,9 +3434,9 @@ bool pyplot::semilogy(std::vector<T> const &x, std::vector<T> const &y, std::str
     UMUQFAILRETURN("Call to semilogy failed!");
 }
 
-template <typename T>
-bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
-                      T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::semilogy(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                      DataType const *y, int const nSizeY, std::size_t const StrideY,
                       std::string const &fmt, std::string const &label)
 {
     {
@@ -3452,8 +3452,8 @@ bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3482,14 +3482,14 @@ bool pyplot::semilogy(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to semilogy failed!");
 }
 
-template <typename T>
-bool pyplot::semilogy(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::semilogy(DataType const *x, DataType const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3551,8 +3551,8 @@ bool pyplot::show(bool const block)
     UMUQFAILRETURN("Call to show failed!");
 }
 
-template <typename T>
-bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::stem(std::vector<DataType> const &x, std::vector<DataType> const &y, std::map<std::string, std::string> const &keywords)
 {
     if (x.size() != y.size())
     {
@@ -3563,8 +3563,8 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -3592,9 +3592,9 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::map<std
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-template <typename T>
-bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::stem(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::map<std::string, std::string> const &keywords)
 {
     {
@@ -3611,8 +3611,8 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -3640,15 +3640,15 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-template <typename T>
-bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string, std::string> const &keywords)
+template <typename DataType>
+bool pyplot::stem(DataType const *x, DataType const *y, int const nSize, std::map<std::string, std::string> const &keywords)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(2);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
 
         PyTuple_SetItem(args, 0, xarray);
         PyTuple_SetItem(args, 1, yarray);
@@ -3676,8 +3676,8 @@ bool pyplot::stem(T const *x, T const *y, int const nSize, std::map<std::string,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-template <typename T>
-bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::stem(std::vector<DataType> const &x, std::vector<DataType> const &y, std::string const &fmt, std::string const &label)
 {
     if (x.size() != y.size())
     {
@@ -3688,8 +3688,8 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string 
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x);
-        PyObject *yarray = PyArray<T>(y);
+        PyObject *xarray = PyArray<DataType>(x);
+        PyObject *yarray = PyArray<DataType>(y);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3718,9 +3718,9 @@ bool pyplot::stem(std::vector<T> const &x, std::vector<T> const &y, std::string 
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-template <typename T>
-bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
-                  T const *y, int const nSizeY, std::size_t const StrideY,
+template <typename DataType>
+bool pyplot::stem(DataType const *x, int const nSizeX, std::size_t const StrideX,
+                  DataType const *y, int const nSizeY, std::size_t const StrideY,
                   std::string const &fmt, std::string const &label)
 {
     {
@@ -3737,8 +3737,8 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSizeX, StrideX);
-        PyObject *yarray = PyArray<T>(y, nSizeY, StrideY);
+        PyObject *xarray = PyArray<DataType>(x, nSizeX, StrideX);
+        PyObject *yarray = PyArray<DataType>(y, nSizeY, StrideY);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3767,15 +3767,15 @@ bool pyplot::stem(T const *x, int const nSizeX, std::size_t const StrideX,
     UMUQFAILRETURN("Call to stem failed!");
 }
 
-template <typename T>
-bool pyplot::stem(T const *x, T const *y, int const nSize, std::string const &fmt, std::string const &label)
+template <typename DataType>
+bool pyplot::stem(DataType const *x, DataType const *y, int const nSize, std::string const &fmt, std::string const &label)
 {
     // Construct positional args
     PyObject *args = PyTuple_New(3);
     {
         // Using numpy arrays
-        PyObject *xarray = PyArray<T>(x, nSize);
-        PyObject *yarray = PyArray<T>(y, nSize);
+        PyObject *xarray = PyArray<DataType>(x, nSize);
+        PyObject *yarray = PyArray<DataType>(y, nSize);
         PyObject *pystring = PyString_FromString(fmt.c_str());
 
         PyTuple_SetItem(args, 0, xarray);
@@ -3858,8 +3858,8 @@ inline bool pyplot::tight_layout()
     UMUQFAILRETURN("Call to tight_layout failed!");
 }
 
-template <typename T>
-bool pyplot::xlim(T left, T right)
+template <typename DataType>
+bool pyplot::xlim(DataType left, DataType right)
 {
     PyObject *args = PyTuple_New(1);
     {
@@ -3882,16 +3882,16 @@ bool pyplot::xlim(T left, T right)
     UMUQFAILRETURN("Call to xlim failed!");
 }
 
-template <typename T>
-bool pyplot::xlim(T *left, T *right)
+template <typename DataType>
+bool pyplot::xlim(DataType *left, DataType *right)
 {
     PyObject *args = pyplot::mpl.pyEmpty;
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyxlim, args);
     PyObject *pleft = PyTuple_GetItem(res, 0);
     PyObject *pright = PyTuple_GetItem(res, 1);
 
-    *left = static_cast<T>(PyFloat_AsDouble(pleft));
-    *right = static_cast<T>(PyFloat_AsDouble(pright));
+    *left = static_cast<DataType>(PyFloat_AsDouble(pleft));
+    *right = static_cast<DataType>(PyFloat_AsDouble(pright));
 
     if (res)
     {
@@ -3936,8 +3936,8 @@ inline bool pyplot::xkcd()
     UMUQFAILRETURN("Call to xkcd failed!");
 }
 
-template <typename T>
-bool pyplot::ylim(T left, T right)
+template <typename DataType>
+bool pyplot::ylim(DataType left, DataType right)
 {
     PyObject *args = PyTuple_New(1);
     {
@@ -3960,16 +3960,16 @@ bool pyplot::ylim(T left, T right)
     UMUQFAILRETURN("Call to ylim failed!");
 }
 
-template <typename T>
-bool pyplot::ylim(T *left, T *right)
+template <typename DataType>
+bool pyplot::ylim(DataType *left, DataType *right)
 {
     PyObject *args = pyplot::mpl.pyEmpty;
     PyObject *res = PyObject_CallObject(pyplot::mpl.pyylim, args);
     PyObject *pleft = PyTuple_GetItem(res, 0);
     PyObject *pright = PyTuple_GetItem(res, 1);
 
-    *left = static_cast<T>(PyFloat_AsDouble(pleft));
-    *right = static_cast<T>(PyFloat_AsDouble(pright));
+    *left = static_cast<DataType>(PyFloat_AsDouble(pleft));
+    *right = static_cast<DataType>(PyFloat_AsDouble(pright));
 
     if (res)
     {
@@ -4424,13 +4424,13 @@ pyplot::matplotlib::matplotlib()
     }
 }
 
-template <typename T>
-PyObject *PyArray(std::vector<T> const &idata)
+template <typename DataType>
+PyObject *PyArray(std::vector<DataType> const &idata)
 {
     PyObject *pArray;
     {
         npy_intp nsize = static_cast<npy_intp>(idata.size());
-        if (NPIDatatype<T> == NPY_NOTYPE)
+        if (NPIDatatype<DataType> == NPY_NOTYPE)
         {
             std::vector<double> vd(nsize);
             std::copy(idata.begin(), idata.end(), vd.begin());
@@ -4438,7 +4438,7 @@ PyObject *PyArray(std::vector<T> const &idata)
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata.data()));
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(idata.data()));
         }
     }
     return pArray;
@@ -4473,13 +4473,13 @@ PyObject *PyArray(std::vector<TIn> const &idata)
     return pArray;
 }
 
-template <typename T>
-PyObject *PyArray(T const idata, int const nSize)
+template <typename DataType>
+PyObject *PyArray(DataType const idata, int const nSize)
 {
     PyObject *pArray;
     {
         npy_intp nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<T> == NPY_NOTYPE)
+        if (NPIDatatype<DataType> == NPY_NOTYPE)
         {
             std::vector<double> vd(nsize);
             std::fill(vd.begin(), vd.end(), static_cast<double>(idata));
@@ -4487,9 +4487,9 @@ PyObject *PyArray(T const idata, int const nSize)
         }
         else
         {
-            std::vector<T> vd(nsize);
+            std::vector<DataType> vd(nsize);
             std::fill(vd.begin(), vd.end(), idata);
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(vd.data()));
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(vd.data()));
         }
     }
     return pArray;
@@ -4538,8 +4538,8 @@ PyObject *PyArray(TIn const idata, int const nSize)
     return pArray;
 }
 
-template <typename T>
-PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
+template <typename DataType>
+PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stride)
 {
     PyObject *pArray;
     {
@@ -4547,9 +4547,9 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 
         if (Stride != 1)
         {
-            arrayWrapper<T> iArray(idata, nSize, Stride);
+            arrayWrapper<DataType> iArray(idata, nSize, Stride);
             nsize = static_cast<npy_intp>(iArray.size());
-            if (NPIDatatype<T> == NPY_NOTYPE)
+            if (NPIDatatype<DataType> == NPY_NOTYPE)
             {
                 std::vector<double> vd(nsize);
                 std::copy(iArray.begin(), iArray.end(), vd.begin());
@@ -4557,15 +4557,15 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
             }
             else
             {
-                std::vector<T> vd(nsize);
+                std::vector<DataType> vd(nsize);
                 std::copy(iArray.begin(), iArray.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(vd.data()));
+                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(vd.data()));
             }
             return pArray;
         }
 
         nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<T> == NPY_NOTYPE)
+        if (NPIDatatype<DataType> == NPY_NOTYPE)
         {
             std::vector<double> vd(nsize);
             std::copy(idata, idata + nSize, vd.begin());
@@ -4573,7 +4573,7 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<T>, (void *)(idata));
+            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(idata));
         }
     }
     return pArray;
@@ -4630,8 +4630,8 @@ PyObject *PyArray(T const *idata, int const nSize, std::size_t const Stride)
 //     return pArray;
 // }
 
-template <typename T>
-PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDimY)
+template <typename DataType>
+PyObject *Py2DArray(std::vector<DataType> const &idata, int const nDimX, int const nDimY)
 {
     if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
     {
@@ -4641,7 +4641,7 @@ PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDim
     PyObject *pArray;
     {
         npy_intp PyArrayDims[] = {nDimY, nDimX};
-        if (NPIDatatype<T> == NPY_NOTYPE)
+        if (NPIDatatype<DataType> == NPY_NOTYPE)
         {
             std::vector<double> vd(idata.size());
             std::copy(idata.begin(), idata.end(), vd.begin());
@@ -4649,7 +4649,7 @@ PyObject *Py2DArray(std::vector<T> const &idata, int const nDimX, int const nDim
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<T>, (void *)(idata.data()));
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<DataType>, (void *)(idata.data()));
         }
     }
     return pArray;
@@ -4689,20 +4689,20 @@ PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nD
     return pArray;
 }
 
-template <typename T>
-PyObject *Py2DArray(T const *idata, int const nDimX, int const nDimY)
+template <typename DataType>
+PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
 {
     PyObject *pArray;
     {
         npy_intp PyArrayDims[] = {nDimY, nDimX};
-        if (NPIDatatype<T> == NPY_NOTYPE)
+        if (NPIDatatype<DataType> == NPY_NOTYPE)
         {
             std::vector<double> vd{idata, idata + nDimX * nDimY};
             pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<T>, (void *)(idata));
+            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<DataType>, (void *)(idata));
         }
     }
     return pArray;
