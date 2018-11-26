@@ -25,6 +25,9 @@ inline namespace density
  * \right.
  * \f$
  * 
+ * \note
+ * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
+ * 
  * \tparam T Data type
  */
 template <typename T, class V = T const *>
@@ -237,7 +240,11 @@ inline bool uniformDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
         if (PRNG_initialized)
         {
             this->prng = PRNG;
-            return true;
+            if (this->numParams > 2)
+            {
+                return this->prng->set_uniforms(this->params.data(), this->numParams);
+            }
+            return this->prng->set_uniform(this->params[0], this->params[1]);
         }
         UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
     }
@@ -254,10 +261,15 @@ bool uniformDistribution<T, V>::sample(T *x)
     if (this->prng)
     {
 #endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        if (this->numParams > 2)
         {
-            x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->uniforms[i].dist();
+            }
+            return true;
         }
+        *x = this->prng->uniform->dist();
         return true;
 #ifdef DEBUG
     }
@@ -272,11 +284,15 @@ bool uniformDistribution<T, V>::sample(std::vector<T> &x)
     if (this->prng)
     {
 #endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        if (this->numParams > 2)
         {
-            x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->uniforms[i].dist();
+            }
+            return true;
         }
-        return true;
+        x[0] = this->prng->uniform->dist();
 #ifdef DEBUG
     }
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
@@ -290,10 +306,15 @@ bool uniformDistribution<T, V>::sample(EVectorX<T> &x)
     if (this->prng)
     {
 #endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        if (this->numParams > 2)
         {
-            x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
+            for (std::size_t i = 0; i < this->numParams / 2; i++)
+            {
+                x[i] = this->prng->uniforms[i].dist();
+            }
+            return true;
         }
+        x[0] = this->prng->uniform->dist();
         return true;
 #ifdef DEBUG
     }
@@ -308,18 +329,22 @@ bool uniformDistribution<T, V>::sample(T *x, int const nSamples)
     if (this->prng)
     {
 #endif
-        std::size_t const Stride = this->numParams / 2;
-        std::size_t const nSizeArray = Stride * nSamples;
-
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        if (this->numParams > 2)
         {
-            T const P1 = this->params[k];
-            T const P2 = this->params[k + 1];
+            std::size_t const nDim = this->numParams / 2;
 
-            for (std::size_t l = i; l < nSizeArray; l += Stride)
+            for (std::size_t j = 0, l = 0; j < nSamples; j++)
             {
-                x[l] = this->prng->unirnd(P1, P2);
+                for (std::size_t i = 0; i < nDim; i++)
+                {
+                    x[l++] = this->prng->uniforms[i].dist();
+                }
             }
+            return true;
+        }
+        for (int i = 0; i < nSamples; i++)
+        {
+            x[i] = this->prng->uniform->dist();
         }
         return true;
 #ifdef DEBUG
@@ -335,25 +360,35 @@ bool uniformDistribution<T, V>::sample(std::vector<T> &x, int const nSamples)
     if (this->prng)
     {
 #endif
-        std::size_t const Stride = this->numParams / 2;
-        std::size_t const nSizeArray = Stride * nSamples;
+        if (this->numParams > 2)
+        {
+            std::size_t const Stride = this->numParams / 2;
+            std::size_t const nSizeArray = Stride * nSamples;
 
 #ifdef DEBUG
-        if (nSizeArray > x.size())
+            if (nSizeArray > x.size())
+            {
+                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
+            }
+#endif
+            for (std::size_t i = 0; i < Stride; i++)
+            {
+                for (std::size_t l = i; l < nSizeArray; l += Stride)
+                {
+                    x[l] = this->prng->uniforms[i].dist();
+                }
+            }
+            return true;
+        }
+#ifdef DEBUG
+        if (static_cast<std::size_t>(nSamples) > x.size())
         {
-            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
+            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples, " !");
         }
 #endif
-
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        for (int i = 0; i < nSamples; i++)
         {
-            T const P1 = this->params[k];
-            T const P2 = this->params[k + 1];
-
-            for (std::size_t l = i; l < nSizeArray; l += Stride)
-            {
-                x[l] = this->prng->unirnd(P1, P2);
-            }
+            x[i] = this->prng->uniform->dist();
         }
         return true;
 #ifdef DEBUG
@@ -373,15 +408,22 @@ bool uniformDistribution<T, V>::sample(EMatrixX<T> &x)
             UMUQFAILRETURN("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
         }
 #endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
+        if (this->numParams > 2)
         {
-            T const P1 = this->params[k];
-            T const P2 = this->params[k + 1];
+            std::size_t const nDim = this->numParams / 2;
 
-            for (auto l = 0; l < x.cols(); ++l)
+            for (auto j = 0; j < x.cols(); j++)
             {
-                x(i, l) = this->prng->unirnd(P1, P2);
+                for (std::size_t i = 0; i < nDim; i++)
+                {
+                    x(i, j) = this->prng->uniforms[i].dist();
+                }
             }
+            return true;
+        }
+        for (auto i = 0; i < x.cols(); i++)
+        {
+            x(0, i) = this->prng->uniform->dist();
         }
         return true;
 #ifdef DEBUG
