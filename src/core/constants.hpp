@@ -104,22 +104,22 @@ int const HugeCost = 10000;
 /*!
  * \ingroup Const_Module
  * 
- * \brief Get the machine precision accuracy for T data type
+ * \brief Get the machine precision accuracy for DataType data type
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-static T const machinePrecision = std::pow(T{10}, -digits10<T>());
+template <typename DataType>
+static DataType const machinePrecision = std::pow(DataType{10}, -digits10<DataType>());
 
 /*!
  * \ingroup Const_Module
  * 
  * \brief Empty vector for initialization
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-static std::vector<T> const EmptyVector{};
+template <typename DataType>
+static std::vector<DataType> const EmptyVector{};
 
 /*!
  * \ingroup Const_Module
