@@ -14,9 +14,9 @@ namespace umuq
  * 
  * \brief Predefined max factorial
  * 
- * \tparam T data type one of float, double, int
+ * \tparam DataType data type one of float, double, int
  */
-template <class T>
+template <class DataType>
 struct max_factorial
 {
     static unsigned int const value = 0;
@@ -60,14 +60,14 @@ struct max_factorial<int>
  * 
  * \brief Predefined unchecked factorial
  * 
- * \tparam T Data type one of float, double, long double
+ * \tparam DataType Data type one of float, double, long double
  * 
  * \param n  Input number 
  * 
  * \returns The factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
-template <class T>
-inline T unchecked_factorial(unsigned int n)
+template <class DataType>
+inline DataType unchecked_factorial(unsigned int n)
 {
     UMUQFAIL("The unchecked_factorial is not implemented for this type!");
 }
@@ -448,14 +448,14 @@ inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int con
  * 
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$
  * 
- * \tparam T data type one of float, double, int, unsigned int, long int, and long unsigned int
+ * \tparam DataType data type one of float, double, int, unsigned int, long int, and long unsigned int
  * 
  * \param n Input number 
  * 
  * \returns The factorial of n : \f$\left(n!\right)\f$ for any types of float, double, int, unsigned int, long int, long unsigned int and Error for anything else
  */
-template <class T>
-inline T factorial(unsigned int const n)
+template <class DataType>
+inline DataType factorial(unsigned int const n)
 {
     UMUQFAIL("Factorial is not implemented for this type!");
 }
