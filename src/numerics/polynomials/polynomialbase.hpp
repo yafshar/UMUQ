@@ -41,7 +41,7 @@ inline namespace polynomials
  * Vandermonde-like matrix.
  *  
  */
-template <typename T>
+template <typename DataType>
 class polynomialBase
 {
   public:
@@ -99,7 +99,7 @@ class polynomialBase
      * 
      * \returns The size of the monomial array
      */
-	virtual int monomialValue(T const *x, T *&value);
+	virtual int monomialValue(DataType const *x, DataType *&value);
 
 	/*! 
      * \brief Evaluates a monomial at a point x.
@@ -109,7 +109,7 @@ class polynomialBase
      * 
      * \returns The size of the monomial array
      */
-	virtual int monomialValue(T const *x, std::vector<T> &value);
+	virtual int monomialValue(DataType const *x, std::vector<DataType> &value);
 
 	/*!
 	 * \brief Evaluates monomial derivatives at origin.
@@ -121,7 +121,7 @@ class polynomialBase
 	 * 
 	 * \returns int The size of the monomial array
 	 */
-	virtual int monomialDerivative(int const *beta, T *&value);
+	virtual int monomialDerivative(int const *beta, DataType *&value);
 
 	/*!
 	 * \brief Evaluates monomial derivatives at origin.
@@ -133,7 +133,7 @@ class polynomialBase
 	 * 
 	 * \returns int The size of the monomial array
 	 */
-	virtual int monomialDerivative(int const *beta, std::vector<T> &value);
+	virtual int monomialDerivative(int const *beta, std::vector<DataType> &value);
 
 	/*!
      * \brief Get the monomial size
@@ -171,16 +171,16 @@ class polynomialBase
      * 
      * Make it noncopyable.
      */
-	polynomialBase(polynomialBase<T> const &) = delete;
+	polynomialBase(polynomialBase<DataType> const &) = delete;
 
 	/*!
      * \brief Delete a polynomialBase object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns polynomialBase<T>& 
+     * \returns polynomialBase<DataType>& 
      */
-	polynomialBase<T> &operator=(polynomialBase<T> const &) = delete;
+	polynomialBase<DataType> &operator=(polynomialBase<DataType> const &) = delete;
 
   protected:
 	//! Dimension
@@ -196,8 +196,8 @@ class polynomialBase
 	std::unique_ptr<int[]> alpha;
 };
 
-template <typename T>
-polynomialBase<T>::polynomialBase(int const dim, int const PolynomialOrder) : nDim(dim), Order(PolynomialOrder)
+template <typename DataType>
+polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrder) : nDim(dim), Order(PolynomialOrder)
 {
 	if (nDim <= 0)
 	{
@@ -216,8 +216,8 @@ polynomialBase<T>::polynomialBase(int const dim, int const PolynomialOrder) : nD
 	}
 }
 
-template <typename T>
-void polynomialBase<T>::reset(int const dim, int const PolynomialOrder)
+template <typename DataType>
+void polynomialBase<DataType>::reset(int const dim, int const PolynomialOrder)
 {
 	nDim = dim;
 	if (nDim <= 0)
@@ -240,8 +240,8 @@ void polynomialBase<T>::reset(int const dim, int const PolynomialOrder)
 	alpha.reset(nullptr);
 }
 
-template <typename T>
-int polynomialBase<T>::binomialCoefficient(int const n, int const k)
+template <typename DataType>
+int polynomialBase<DataType>::binomialCoefficient(int const n, int const k)
 {
 	if ((k < 0) || (n < 0))
 	{
@@ -277,61 +277,61 @@ int polynomialBase<T>::binomialCoefficient(int const n, int const k)
 	return 0;
 }
 
-template <typename T>
-int *polynomialBase<T>::monomialBasis()
+template <typename DataType>
+int *polynomialBase<DataType>::monomialBasis()
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return nullptr;
 }
 
-template <typename T>
-int polynomialBase<T>::monomialValue(T const *x, T *&value)
+template <typename DataType>
+int polynomialBase<DataType>::monomialValue(DataType const *x, DataType *&value)
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return -1;
 }
 
-template <typename T>
-int polynomialBase<T>::monomialValue(T const *x, std::vector<T> &value)
+template <typename DataType>
+int polynomialBase<DataType>::monomialValue(DataType const *x, std::vector<DataType> &value)
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return -1;
 }
 
-template <typename T>
-int polynomialBase<T>::monomialDerivative(int const *beta, T *&value)
+template <typename DataType>
+int polynomialBase<DataType>::monomialDerivative(int const *beta, DataType *&value)
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return -1;
 }
 
-template <typename T>
-int polynomialBase<T>::monomialDerivative(int const *beta, std::vector<T> &value)
+template <typename DataType>
+int polynomialBase<DataType>::monomialDerivative(int const *beta, std::vector<DataType> &value)
 {
 	UMUQFAIL("This is a virtual method in the base class and not implemented on purpose!");
 	return -1;
 }
 
-template <typename T>
-inline int polynomialBase<T>::monomialsize() const
+template <typename DataType>
+inline int polynomialBase<DataType>::monomialsize() const
 {
 	return monomialSize;
 }
 
-template <typename T>
-inline int polynomialBase<T>::dim() const
+template <typename DataType>
+inline int polynomialBase<DataType>::dim() const
 {
 	return nDim;
 }
 
-template <typename T>
-inline int polynomialBase<T>::order() const
+template <typename DataType>
+inline int polynomialBase<DataType>::order() const
 {
 	return Order;
 }
 
-template <typename T>
-bool polynomialBase<T>::graded_reverse_lexicographic_order(int *x)
+template <typename DataType>
+bool polynomialBase<DataType>::graded_reverse_lexicographic_order(int *x)
 {
 	if (Order == 0)
 	{

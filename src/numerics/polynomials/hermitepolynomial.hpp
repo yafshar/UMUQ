@@ -41,8 +41,8 @@ inline namespace polynomials
  * 
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Hermite monomial.
  */
-template <typename T>
-class HermitePolynomial : public polynomialBase<T>
+template <typename RealType>
+class HermitePolynomial : public polynomialBase<RealType>
 {
   public:
     /*!
@@ -100,7 +100,7 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-    int monomialValue(T const *x, T *&value);
+    int monomialValue(RealType const *x, RealType *&value);
 
     /*! 
      * \brief Evaluates a monomial at a point x.
@@ -110,7 +110,7 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-    int monomialValue(T const *x, std::vector<T> &value);
+    int monomialValue(RealType const *x, std::vector<RealType> &value);
 
     /*!
      * \brief Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated. 
@@ -123,9 +123,9 @@ class HermitePolynomial : public polynomialBase<T>
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
      * 
-     * \returns T The computed Hermite Polynomial 
+     * \returns RealType The computed Hermite Polynomial 
      */
-    inline T hermite_next(int const n, T const x, T const Pn, T const Pnm1);
+    inline RealType hermite_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1);
 
     /*!
      * \brief Implement Hermite polynomials.
@@ -141,9 +141,9 @@ class HermitePolynomial : public polynomialBase<T>
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
      * \param x  The abscissa value.
      * 
-     * \returns T The Hermite polynomial of the degree n of x. 
+     * \returns RealType The Hermite polynomial of the degree n of x. 
      */
-    T hermite(int const n, T const x);
+    RealType hermite(int const n, RealType const x);
 
     /*!
      * \brief Implement Hermite polynomials.
@@ -159,9 +159,9 @@ class HermitePolynomial : public polynomialBase<T>
      * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
      * \param x  The abscissa value.
      * 
-     * \returns T* All the Hermite polynomials of the degrees \f$ 0, \cdots, n. \f$
+     * \returns RealType* All the Hermite polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-    T *hermite_array(int const n, T const x);
+    RealType *hermite_array(int const n, RealType const x);
 
   private:
     /*!
@@ -169,29 +169,29 @@ class HermitePolynomial : public polynomialBase<T>
      * 
      * Make it noncopyable.
      */
-    HermitePolynomial(HermitePolynomial<T> const &) = delete;
+    HermitePolynomial(HermitePolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a HermitePolynomial object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns HermitePolynomial<T>& 
+     * \returns HermitePolynomial<RealType>& 
      */
-    HermitePolynomial<T> &operator=(HermitePolynomial<T> const &) = delete;
+    HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> const &) = delete;
 };
 
-template <typename T>
-HermitePolynomial<T>::HermitePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
+template <typename RealType>
+HermitePolynomial<RealType>::HermitePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<RealType>(dim, PolynomialOrder)
 {
-    if (!std::is_floating_point<T>::value)
+    if (!std::is_floating_point<RealType>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
 }
 
-template <typename T>
-int *HermitePolynomial<T>::monomialBasis()
+template <typename RealType>
+int *HermitePolynomial<RealType>::monomialBasis()
 {
     if (this->alpha)
     {
@@ -236,8 +236,8 @@ int *HermitePolynomial<T>::monomialBasis()
     }
 }
 
-template <typename T>
-int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
+template <typename RealType>
+int HermitePolynomial<RealType>::monomialValue(RealType const *x, RealType *&value)
 {
     if (!this->alpha)
     {
@@ -254,7 +254,7 @@ int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
     {
         try
         {
-            value = new T[this->monomialSize];
+            value = new RealType[this->monomialSize];
         }
         catch (...)
         {
@@ -262,7 +262,7 @@ int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
         }
     }
 
-    std::vector<T *> HermitePolynomialsValues(this->nDim);
+    std::vector<RealType *> HermitePolynomialsValues(this->nDim);
 
     for (int j = 0; j < this->nDim; j++)
     {
@@ -271,7 +271,7 @@ int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
 
     for (int i = 0, k = 0; i < this->monomialSize; i++)
     {
-        T v = static_cast<T>(1);
+        RealType v = static_cast<RealType>(1);
         for (int j = 0; j < this->nDim; j++, k++)
         {
             int const l = this->alpha[k];
@@ -288,8 +288,8 @@ int HermitePolynomial<T>::monomialValue(T const *x, T *&value)
     return this->monomialSize;
 }
 
-template <typename T>
-int HermitePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+template <typename RealType>
+int HermitePolynomial<RealType>::monomialValue(RealType const *x, std::vector<RealType> &value)
 {
     if (!this->alpha)
     {
@@ -307,7 +307,7 @@ int HermitePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
         value.resize(this->monomialSize);
     }
 
-    std::vector<T *> HermitePolynomialsValues(this->nDim);
+    std::vector<RealType *> HermitePolynomialsValues(this->nDim);
 
     for (int j = 0; j < this->nDim; j++)
     {
@@ -316,7 +316,7 @@ int HermitePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
 
     for (int i = 0, k = 0; i < this->monomialSize; i++)
     {
-        T v = static_cast<T>(1);
+        RealType v = static_cast<RealType>(1);
         for (int j = 0; j < this->nDim; j++, k++)
         {
             int const l = this->alpha[k];
@@ -333,22 +333,22 @@ int HermitePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
     return this->monomialSize;
 }
 
-template <typename T>
-inline T HermitePolynomial<T>::hermite_next(int const n, T const x, T const Pn, T const Pnm1)
+template <typename RealType>
+inline RealType HermitePolynomial<RealType>::hermite_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1)
 {
-    return (static_cast<T>(2) * x * Pn - static_cast<T>(2) * static_cast<T>(n) * Pnm1);
+    return (static_cast<RealType>(2) * x * Pn - static_cast<RealType>(2) * static_cast<RealType>(n) * Pnm1);
 }
 
-template <typename T>
-T HermitePolynomial<T>::hermite(int const n, T const x)
+template <typename RealType>
+RealType HermitePolynomial<RealType>::hermite(int const n, RealType const x)
 {
     if (n == 0)
     {
-        return static_cast<T>(1);
+        return static_cast<RealType>(1);
     }
     {
-        T P0(1);
-        T P1(static_cast<T>(2) * x);
+        RealType P0(1);
+        RealType P1(static_cast<RealType>(2) * x);
         int i(1);
         while (i < n)
         {
@@ -360,26 +360,26 @@ T HermitePolynomial<T>::hermite(int const n, T const x)
     }
 }
 
-template <typename T>
-T *HermitePolynomial<T>::hermite_array(int const n, T const x)
+template <typename RealType>
+RealType *HermitePolynomial<RealType>::hermite_array(int const n, RealType const x)
 {
-    T *results = nullptr;
+    RealType *results = nullptr;
     try
     {
-        results = new T[n + 1];
+        results = new RealType[n + 1];
     }
     catch (...)
     {
         UMUQFAIL("Failed to allocate memory!");
     }
-    T P0 = static_cast<T>(1);
+    RealType P0 = static_cast<RealType>(1);
     results[0] = P0;
     if (n == 0)
     {
         return results;
     }
     {
-        T P1 = static_cast<T>(2) * x;
+        RealType P1 = static_cast<RealType>(2) * x;
         results[1] = P1;
         int i(1);
         while (i < n)

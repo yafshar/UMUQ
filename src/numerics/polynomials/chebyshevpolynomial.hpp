@@ -64,8 +64,8 @@ inline namespace polynomials
  * 
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Chebyshev monomial.
  */
-template <typename T>
-class ChebyshevPolynomial : public polynomialBase<T>
+template <typename RealType>
+class ChebyshevPolynomial : public polynomialBase<RealType>
 {
   public:
     /*!
@@ -123,7 +123,7 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns int The size of the monomial array
      */
-    int monomialValue(T const *x, T *&value);
+    int monomialValue(RealType const *x, RealType *&value);
 
     /*! 
      * \brief Evaluates a monomial at a point x.
@@ -133,21 +133,21 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * \returns int The size of the monomial array
      */
-    int monomialValue(T const *x, std::vector<T> &value);
+    int monomialValue(RealType const *x, std::vector<RealType> &value);
 
     /*!
      * \brief Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
      * 
      * Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
-     * Recurrence relation for Chebyshev T and U polynomials.
+     * Recurrence relation for Chebyshev RealType and U polynomials.
      * 
      * \param x     The abscissa value.
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
      * 
-     * \returns T The computed Chebyshev Polynomial 
+     * \returns RealType The computed Chebyshev Polynomial 
      */
-    inline T chebyshev_next(T const x, T const Pn, T const Pnm1);
+    inline RealType chebyshev_next(RealType const x, RealType const Pn, RealType const Pnm1);
 
     /*!
      * \brief Implement Chebyshev polynomials.
@@ -163,9 +163,9 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$ 
      * \param x  The abscissa value.
      * 
-     * \returns T The Chebyshev polynomial of the degree n of x.
+     * \returns RealType The Chebyshev polynomial of the degree n of x.
      */
-    T chebyshev(int const n, T const x, bool const second = false);
+    RealType chebyshev(int const n, RealType const x, bool const second = false);
 
     /*!
      * \brief Implement Chebyshev polynomials.
@@ -181,9 +181,9 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$ 
      * \param x  The abscissa value.
      * 
-     * \returns T* All the Chebyshev polynomials of the degrees \f$ 0, \cdots, n. \f$
+     * \returns RealType* All the Chebyshev polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-    T *chebyshev_array(int const n, T const x, bool const second = false);
+    RealType *chebyshev_array(int const n, RealType const x, bool const second = false);
 
   private:
     /*!
@@ -191,29 +191,29 @@ class ChebyshevPolynomial : public polynomialBase<T>
      * 
      * Make it noncopyable.
      */
-    ChebyshevPolynomial(ChebyshevPolynomial<T> const &) = delete;
+    ChebyshevPolynomial(ChebyshevPolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a ChebyshevPolynomial object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns ChebyshevPolynomial<T>& 
+     * \returns ChebyshevPolynomial<RealType>& 
      */
-    ChebyshevPolynomial<T> &operator=(ChebyshevPolynomial<T> const &) = delete;
+    ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> const &) = delete;
 };
 
-template <typename T>
-ChebyshevPolynomial<T>::ChebyshevPolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
+template <typename RealType>
+ChebyshevPolynomial<RealType>::ChebyshevPolynomial(int const dim, int const PolynomialOrder) : polynomialBase<RealType>(dim, PolynomialOrder)
 {
-    if (!std::is_floating_point<T>::value)
+    if (!std::is_floating_point<RealType>::value)
     {
         UMUQFAIL("This type is not supported in this class!");
     }
 }
 
-template <typename T>
-int *ChebyshevPolynomial<T>::monomialBasis()
+template <typename RealType>
+int *ChebyshevPolynomial<RealType>::monomialBasis()
 {
     if (this->alpha)
     {
@@ -258,8 +258,8 @@ int *ChebyshevPolynomial<T>::monomialBasis()
     }
 }
 
-template <typename T>
-int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
+template <typename RealType>
+int ChebyshevPolynomial<RealType>::monomialValue(RealType const *x, RealType *&value)
 {
     if (!this->alpha)
     {
@@ -276,7 +276,7 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
     {
         try
         {
-            value = new T[this->monomialSize];
+            value = new RealType[this->monomialSize];
         }
         catch (...)
         {
@@ -284,7 +284,7 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
         }
     }
 
-    std::vector<T *> ChebyshevPolynomialsValues(this->nDim);
+    std::vector<RealType *> ChebyshevPolynomialsValues(this->nDim);
 
     for (int j = 0; j < this->nDim; j++)
     {
@@ -293,7 +293,7 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
 
     for (int i = 0, k = 0; i < this->monomialSize; i++)
     {
-        T v = static_cast<T>(1);
+        RealType v = static_cast<RealType>(1);
         for (int j = 0; j < this->nDim; j++, k++)
         {
             int const l = this->alpha[k];
@@ -310,8 +310,8 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, T *&value)
     return this->monomialSize;
 }
 
-template <typename T>
-int ChebyshevPolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+template <typename RealType>
+int ChebyshevPolynomial<RealType>::monomialValue(RealType const *x, std::vector<RealType> &value)
 {
     if (!this->alpha)
     {
@@ -329,7 +329,7 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
         value.resize(this->monomialSize);
     }
 
-    std::vector<T *> ChebyshevPolynomialsValues(this->nDim);
+    std::vector<RealType *> ChebyshevPolynomialsValues(this->nDim);
 
     for (int j = 0; j < this->nDim; j++)
     {
@@ -338,7 +338,7 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
 
     for (int i = 0, k = 0; i < this->monomialSize; i++)
     {
-        T v = static_cast<T>(1);
+        RealType v = static_cast<RealType>(1);
         for (int j = 0; j < this->nDim; j++, k++)
         {
             int const l = this->alpha[k];
@@ -355,41 +355,41 @@ int ChebyshevPolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
     return this->monomialSize;
 }
 
-template <typename T>
-inline T ChebyshevPolynomial<T>::chebyshev_next(T const x, T const Pn, T const Pnm1)
+template <typename RealType>
+inline RealType ChebyshevPolynomial<RealType>::chebyshev_next(RealType const x, RealType const Pn, RealType const Pnm1)
 {
-    return (static_cast<T>(2) * x * Pn - Pnm1);
+    return (static_cast<RealType>(2) * x * Pn - Pnm1);
 }
 
-template <typename T>
-T ChebyshevPolynomial<T>::chebyshev(int const n, T const x, bool const second)
+template <typename RealType>
+RealType ChebyshevPolynomial<RealType>::chebyshev(int const n, RealType const x, bool const second)
 {
-    T P0(1);
-    T P1;
+    RealType P0(1);
+    RealType P1;
     if (second)
     {
         if (x > 1 || x < -1)
         {
-            T const tmp = std::sqrt(x * x - static_cast<T>(1));
-            return (std::pow(x + tmp, n + 1) - std::pow(x - tmp, n + 1)) / (static_cast<T>(2) * tmp);
+            RealType const tmp = std::sqrt(x * x - static_cast<RealType>(1));
+            return (std::pow(x + tmp, n + 1) - std::pow(x - tmp, n + 1)) / (static_cast<RealType>(2) * tmp);
         }
-        P1 = static_cast<T>(2) * x;
+        P1 = static_cast<RealType>(2) * x;
     }
     else
     {
         if (x > 1)
         {
-            return std::cosh(static_cast<T>(n) * std::acosh(x));
+            return std::cosh(static_cast<RealType>(n) * std::acosh(x));
         }
         if (x < -1)
         {
             if (n & 1)
             {
-                return -std::cosh(static_cast<T>(n) * std::acosh(-x));
+                return -std::cosh(static_cast<RealType>(n) * std::acosh(-x));
             }
             else
             {
-                return std::cosh(static_cast<T>(n) * acosh(-x));
+                return std::cosh(static_cast<RealType>(n) * acosh(-x));
             }
         }
         P1 = x;
@@ -409,39 +409,39 @@ T ChebyshevPolynomial<T>::chebyshev(int const n, T const x, bool const second)
     return P1;
 }
 
-template <typename T>
-T *ChebyshevPolynomial<T>::chebyshev_array(int const n, T const x, bool const second)
+template <typename RealType>
+RealType *ChebyshevPolynomial<RealType>::chebyshev_array(int const n, RealType const x, bool const second)
 {
-    T *results = nullptr;
+    RealType *results = nullptr;
 
     try
     {
-        results = new T[n + 1];
+        results = new RealType[n + 1];
     }
     catch (...)
     {
         UMUQFAILRETURNNULL("Failed to allocate memory!");
     }
 
-    T P0(1);
-    T P1;
+    RealType P0(1);
+    RealType P1;
     if (second)
     {
         if (x > 1 || x < -1)
         {
-            T const tmp = std::sqrt(x * x - static_cast<T>(1));
+            RealType const tmp = std::sqrt(x * x - static_cast<RealType>(1));
             int j(0);
-            std::for_each(results, results + n + 1, [&](T &r_i) { j++; r_i = (std::pow(x + tmp, j) - std::pow(x - tmp, j)) / (static_cast<T>(2) * tmp); });
+            std::for_each(results, results + n + 1, [&](RealType &r_i) { j++; r_i = (std::pow(x + tmp, j) - std::pow(x - tmp, j)) / (static_cast<RealType>(2) * tmp); });
             return results;
         }
-        P1 = static_cast<T>(2) * x;
+        P1 = static_cast<RealType>(2) * x;
     }
     else
     {
         if (x > 1)
         {
             int j(0);
-            std::for_each(results, results + n + 1, [&](T &r_i) {r_i = std::cosh(static_cast<T>(j) * std::acosh(x)); j++; });
+            std::for_each(results, results + n + 1, [&](RealType &r_i) {r_i = std::cosh(static_cast<RealType>(j) * std::acosh(x)); j++; });
             return results;
         }
         if (x < -1)
@@ -450,11 +450,11 @@ T *ChebyshevPolynomial<T>::chebyshev_array(int const n, T const x, bool const se
             {
                 if (j & 1)
                 {
-                    results[j] = -std::cosh(static_cast<T>(j) * std::acosh(-x));
+                    results[j] = -std::cosh(static_cast<RealType>(j) * std::acosh(-x));
                 }
                 else
                 {
-                    results[j] = std::cosh(static_cast<T>(j) * acosh(-x));
+                    results[j] = std::cosh(static_cast<RealType>(j) * acosh(-x));
                 }
             }
             return results;

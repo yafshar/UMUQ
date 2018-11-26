@@ -24,19 +24,19 @@ inline namespace polynomials
  * so that any monomial is of the form \f$ x^ay^bz^c\f$ with \f$ a,~b,~\text{and}~c \f$ non-negative integers 
  * (taking note that any exponent 0 makes the corresponding factor equal to 1).
  */
-template <typename T>
-class polynomial : public polynomialBase<T>
+template <typename DataType>
+class polynomial : public polynomialBase<DataType>
 {
   public:
-	/*!
-	 * \brief Construct a new polynomial object
-	 * 
+    /*!
+     * \brief Construct a new polynomial object
+     * 
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
-	 */
-	polynomial(int const dim, int const PolynomialOrder = 2);
+     */
+    polynomial(int const dim, int const PolynomialOrder = 2);
 
-	/*! 
+    /*! 
      * \brief Here, \f$\alpha=\f$ all the monomials in a \b d dimensional space, with total degree \b r.
      *   
      * For example: <br>
@@ -62,9 +62,9 @@ class polynomial : public polynomialBase<T>
      *
      * \returns A pointer to monomial sequence
      */
-	int *monomialBasis();
+    int *monomialBasis();
 
-	/*! 
+    /*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x      The abscissa values. (The coordinates of the evaluation points)
@@ -72,9 +72,9 @@ class polynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-	int monomialValue(T const *x, T *&value);
+    int monomialValue(DataType const *x, DataType *&value);
 
-	/*! 
+    /*! 
      * \brief Evaluates a monomial at a point x.
      * 
      * \param  x      The abscissa values. (The coordinates of the evaluation points)
@@ -82,257 +82,257 @@ class polynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-	int monomialValue(T const *x, std::vector<T> &value);
+    int monomialValue(DataType const *x, std::vector<DataType> &value);
 
-	/*!
-	 * \brief Evaluates monomial derivatives at origin.
-	 * 
-	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
-	 *               Notation for partial derivatives:<br>
-	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
-	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
-	 * 
-	 * \returns int The size of the monomial array
-	 */
-	int monomialDerivative(int const *beta, T *&value);
+    /*!
+     * \brief Evaluates monomial derivatives at origin.
+     * 
+     * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+     *               Notation for partial derivatives:<br>
+     *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+     * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
+     * 
+     * \returns int The size of the monomial array
+     */
+    int monomialDerivative(int const *beta, DataType *&value);
 
-	/*!
-	 * \brief Evaluates monomial derivatives at origin.
-	 *
-	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
-	 *               Notation for partial derivatives:<br>
-	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
-	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
-	 *
-	 * \returns int The size of the monomial array
-	 */
-	int monomialDerivative(int const *beta, std::vector<T> &value);
+    /*!
+     * \brief Evaluates monomial derivatives at origin.
+     *
+     * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
+     *               Notation for partial derivatives:<br>
+     *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
+     * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
+     *
+     * \returns int The size of the monomial array
+     */
+    int monomialDerivative(int const *beta, std::vector<DataType> &value);
 
   private:
-	/*!
+    /*!
      * \brief Delete a polynomial object copy construction
      * 
      * Make it noncopyable.
      */
-	polynomial(polynomial<T> const &) = delete;
+    polynomial(polynomial<DataType> const &) = delete;
 
-	/*!
+    /*!
      * \brief Delete a polynomial object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns polynomial<T>& 
+     * \returns polynomial<DataType>& 
      */
-	polynomial<T> &operator=(polynomial<T> const &) = delete;
+    polynomial<DataType> &operator=(polynomial<DataType> const &) = delete;
 };
 
-template <typename T>
-polynomial<T>::polynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder) {}
+template <typename DataType>
+polynomial<DataType>::polynomial(int const dim, int const PolynomialOrder) : polynomialBase<DataType>(dim, PolynomialOrder) {}
 
-template <typename T>
-int *polynomial<T>::monomialBasis()
+template <typename DataType>
+int *polynomial<DataType>::monomialBasis()
 {
-	if (this->alpha)
-	{
-		return this->alpha.get();
-	}
-	else
-	{
-		int const N = this->nDim * this->monomialSize;
+    if (this->alpha)
+    {
+        return this->alpha.get();
+    }
+    else
+    {
+        int const N = this->nDim * this->monomialSize;
 
-		std::vector<int> x(this->nDim, 0);
+        std::vector<int> x(this->nDim, 0);
 
-		try
-		{
-			this->alpha.reset(new int[N]);
-		}
-		catch (...)
-		{
-			UMUQFAILRETURNNULL("Failed to allocate memory!");
-		}
+        try
+        {
+            this->alpha.reset(new int[N]);
+        }
+        catch (...)
+        {
+            UMUQFAILRETURNNULL("Failed to allocate memory!");
+        }
 
-		int n(0);
+        int n(0);
 
-		for (;;)
-		{
-			for (int j = this->nDim - 1; j >= 0; j--, n++)
-			{
-				this->alpha[n] = x[j];
-			}
+        for (;;)
+        {
+            for (int j = this->nDim - 1; j >= 0; j--, n++)
+            {
+                this->alpha[n] = x[j];
+            }
 
-			if (x[0] == this->Order)
-			{
-				return this->alpha.get();
-			}
+            if (x[0] == this->Order)
+            {
+                return this->alpha.get();
+            }
 
-			if (!this->graded_reverse_lexicographic_order(x.data()))
-			{
-				return nullptr;
-			}
-		}
+            if (!this->graded_reverse_lexicographic_order(x.data()))
+            {
+                return nullptr;
+            }
+        }
 
-		return this->alpha.get();
-	}
+        return this->alpha.get();
+    }
 }
 
-template <typename T>
-int polynomial<T>::monomialValue(T const *x, T *&value)
+template <typename DataType>
+int polynomial<DataType>::monomialValue(DataType const *x, DataType *&value)
 {
-	if (!this->alpha)
-	{
-		// Have to create monomial sequence
-		int *tmp = monomialBasis();
+    if (!this->alpha)
+    {
+        // Have to create monomial sequence
+        int *tmp = monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value == nullptr)
-	{
-		try
-		{
-			value = new T[this->monomialSize];
-		}
-		catch (...)
-		{
-			UMUQFAIL("Failed to allocate memory!");
-		}
-	}
+    if (value == nullptr)
+    {
+        try
+        {
+            value = new DataType[this->monomialSize];
+        }
+        catch (...)
+        {
+            UMUQFAIL("Failed to allocate memory!");
+        }
+    }
 
-	for (int i = 0, k = 0; i < this->monomialSize; i++)
-	{
-		T v = static_cast<T>(1);
-		for (int j = 0; j < this->nDim; j++, k++)
-		{
-			v *= std::pow(x[j], this->alpha[k]);
-		}
-		value[i] = v;
-	}
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        DataType v = static_cast<DataType>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            v *= std::pow(x[j], this->alpha[k]);
+        }
+        value[i] = v;
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
 }
 
-template <typename T>
-int polynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+template <typename DataType>
+int polynomial<DataType>::monomialValue(DataType const *x, std::vector<DataType> &value)
 {
-	if (!this->alpha)
-	{
-		// Have to create monomial sequence
-		int *tmp = monomialBasis();
+    if (!this->alpha)
+    {
+        // Have to create monomial sequence
+        int *tmp = monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value.size() < static_cast<std::size_t>(this->monomialSize))
-	{
-		value.resize(this->monomialSize);
-	}
+    if (value.size() < static_cast<std::size_t>(this->monomialSize))
+    {
+        value.resize(this->monomialSize);
+    }
 
-	for (int i = 0, k = 0; i < this->monomialSize; i++)
-	{
-		T v = static_cast<T>(1);
-		for (int j = 0; j < this->nDim; j++, k++)
-		{
-			v *= std::pow(x[j], this->alpha[k]);
-		}
-		value[i] = v;
-	}
+    for (int i = 0, k = 0; i < this->monomialSize; i++)
+    {
+        DataType v = static_cast<DataType>(1);
+        for (int j = 0; j < this->nDim; j++, k++)
+        {
+            v *= std::pow(x[j], this->alpha[k]);
+        }
+        value[i] = v;
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
 }
 
-template <typename T>
-int polynomial<T>::monomialDerivative(int const *beta, T *&value)
+template <typename DataType>
+int polynomial<DataType>::monomialDerivative(int const *beta, DataType *&value)
 {
-	if (!this->alpha)
-	{
-		// Have to create monomial sequence
-		int *tmp = monomialBasis();
+    if (!this->alpha)
+    {
+        // Have to create monomial sequence
+        int *tmp = monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value == nullptr)
-	{
-		try
-		{
-			value = new T[this->monomialSize];
-		}
-		catch (...)
-		{
-			UMUQFAIL("Failed to allocate memory!");
-		}
-	}
+    if (value == nullptr)
+    {
+        try
+        {
+            value = new DataType[this->monomialSize];
+        }
+        catch (...)
+        {
+            UMUQFAIL("Failed to allocate memory!");
+        }
+    }
 
-	for (int i = 0; i < this->monomialSize; i++)
-	{
-		int maxalpha = 0;
-		for (int j = 0; j < this->nDim; j++)
-		{
-			maxalpha = std::max(maxalpha, std::abs(this->alpha[i] - beta[j]));
-		}
-		if (maxalpha)
-		{
-			value[i] = T{};
-		}
-		else
-		{
-			T fact = static_cast<T>(1);
-			std::for_each(beta, beta + this->nDim, [&](int const b_j) { fact *= factorial<T>(b_j); });
-			value[i] = fact;
-		}
-	}
+    for (int i = 0; i < this->monomialSize; i++)
+    {
+        int maxalpha = 0;
+        for (int j = 0; j < this->nDim; j++)
+        {
+            maxalpha = std::max(maxalpha, std::abs(this->alpha[i] - beta[j]));
+        }
+        if (maxalpha)
+        {
+            value[i] = DataType{};
+        }
+        else
+        {
+            DataType fact = static_cast<DataType>(1);
+            std::for_each(beta, beta + this->nDim, [&](int const b_j) { fact *= factorial<DataType>(b_j); });
+            value[i] = fact;
+        }
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
 }
 
-template <typename T>
-int polynomial<T>::monomialDerivative(int const *beta, std::vector<T> &value)
+template <typename DataType>
+int polynomial<DataType>::monomialDerivative(int const *beta, std::vector<DataType> &value)
 {
-	if (!this->alpha)
-	{
-		// Have to create monomial sequence
-		int *tmp = monomialBasis();
+    if (!this->alpha)
+    {
+        // Have to create monomial sequence
+        int *tmp = monomialBasis();
 
-		if (tmp == nullptr)
-		{
-			UMUQFAIL("Something went wrong in creating monomial sequence!");
-		}
-	}
+        if (tmp == nullptr)
+        {
+            UMUQFAIL("Something went wrong in creating monomial sequence!");
+        }
+    }
 
-	if (value.size() < static_cast<std::size_t>(this->monomialSize))
-	{
-		value.resize(this->monomialSize);
-	}
+    if (value.size() < static_cast<std::size_t>(this->monomialSize))
+    {
+        value.resize(this->monomialSize);
+    }
 
-	for (int i = 0; i < this->monomialSize; i++)
-	{
-		int maxalpha = 0;
-		for (int j = 0; j < this->nDim; j++)
-		{
-			maxalpha = std::max(maxalpha, std::abs(this->alpha[i] - beta[j]));
-		}
-		if (maxalpha)
-		{
-			value[i] = T{};
-		}
-		else
-		{
-			T fact = static_cast<T>(1);
-			std::for_each(beta, beta + this->nDim, [&](int const b_j) { fact *= factorial<T>(b_j); });
-			value[i] = fact;
-		}
-	}
+    for (int i = 0; i < this->monomialSize; i++)
+    {
+        int maxalpha = 0;
+        for (int j = 0; j < this->nDim; j++)
+        {
+            maxalpha = std::max(maxalpha, std::abs(this->alpha[i] - beta[j]));
+        }
+        if (maxalpha)
+        {
+            value[i] = DataType{};
+        }
+        else
+        {
+            DataType fact = static_cast<DataType>(1);
+            std::for_each(beta, beta + this->nDim, [&](int const b_j) { fact *= factorial<DataType>(b_j); });
+            value[i] = fact;
+        }
+    }
 
-	return this->monomialSize;
+    return this->monomialSize;
 }
 
 } // namespace polynomials

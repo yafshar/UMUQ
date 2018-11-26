@@ -92,8 +92,8 @@ inline namespace polynomials
  * 
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Legendre monomial.
  */
-template <typename T>
-class LegendrePolynomial : public polynomialBase<T>
+template <typename RealType>
+class LegendrePolynomial : public polynomialBase<RealType>
 {
   public:
 	/*!
@@ -151,7 +151,7 @@ class LegendrePolynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-	int monomialValue(T const *x, T *&value);
+	int monomialValue(RealType const *x, RealType *&value);
 
 	/*! 
      * \brief Evaluates a monomial at a point x.
@@ -161,7 +161,7 @@ class LegendrePolynomial : public polynomialBase<T>
      * 
      * \returns The size of the monomial array
      */
-	int monomialValue(T const *x, std::vector<T> &value);
+	int monomialValue(RealType const *x, std::vector<RealType> &value);
 
 	/*!
      * \brief Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
@@ -174,9 +174,9 @@ class LegendrePolynomial : public polynomialBase<T>
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
      * 
-     * \returns T The computed Legendre Polynomial
+     * \returns RealType The computed Legendre Polynomial
      */
-	inline T legendre_next(int const n, T const x, T const Pn, T const Pnm1);
+	inline RealType legendre_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1);
 
 	/*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
@@ -193,9 +193,9 @@ class LegendrePolynomial : public polynomialBase<T>
      * \param x       The abscissa value.
      * \param second  Request for the value of the Legendre polynomial that is the second solution to the Legendre differential equation.
      * 
-     * \returns T The Legendre polynomial of the degree n \f$ P_n(x)~\text{or}~Q_n(x).\f$ 
+     * \returns RealType The Legendre polynomial of the degree n \f$ P_n(x)~\text{or}~Q_n(x).\f$ 
      */
-	T legendre(int const n, T const x, bool const second = false);
+	RealType legendre(int const n, RealType const x, bool const second = false);
 
 	/*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
@@ -212,9 +212,9 @@ class LegendrePolynomial : public polynomialBase<T>
      * \param x       The abscissa value.
      * \param second  Request for the value of the Legendre polynomial that is the second solution to the Legendre differential equation.
      * 
-     * \returns T* All the Legendre polynomials of the degrees \f$ 0, \cdots, n. \f$
+     * \returns RealType* All the Legendre polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
-	T *legendre_array(int const n, T const x, bool const second = false);
+	RealType *legendre_array(int const n, RealType const x, bool const second = false);
 
   private:
 	/*!
@@ -222,29 +222,29 @@ class LegendrePolynomial : public polynomialBase<T>
      * 
      * Make it noncopyable.
      */
-	LegendrePolynomial(LegendrePolynomial<T> const &) = delete;
+	LegendrePolynomial(LegendrePolynomial<RealType> const &) = delete;
 
 	/*!
      * \brief Delete a LegendrePolynomial object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns LegendrePolynomial<T>& 
+     * \returns LegendrePolynomial<RealType>& 
      */
-	LegendrePolynomial<T> &operator=(LegendrePolynomial<T> const &) = delete;
+	LegendrePolynomial<RealType> &operator=(LegendrePolynomial<RealType> const &) = delete;
 };
 
-template <typename T>
-LegendrePolynomial<T>::LegendrePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<T>(dim, PolynomialOrder)
+template <typename RealType>
+LegendrePolynomial<RealType>::LegendrePolynomial(int const dim, int const PolynomialOrder) : polynomialBase<RealType>(dim, PolynomialOrder)
 {
-	if (!std::is_floating_point<T>::value)
+	if (!std::is_floating_point<RealType>::value)
 	{
 		UMUQFAIL("This type is not supported in this class!");
 	}
 }
 
-template <typename T>
-int *LegendrePolynomial<T>::monomialBasis()
+template <typename RealType>
+int *LegendrePolynomial<RealType>::monomialBasis()
 {
 	if (this->alpha)
 	{
@@ -289,8 +289,8 @@ int *LegendrePolynomial<T>::monomialBasis()
 	}
 }
 
-template <typename T>
-int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
+template <typename RealType>
+int LegendrePolynomial<RealType>::monomialValue(RealType const *x, RealType *&value)
 {
 	if (!this->alpha)
 	{
@@ -307,7 +307,7 @@ int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 	{
 		try
 		{
-			value = new T[this->monomialSize];
+			value = new RealType[this->monomialSize];
 		}
 		catch (...)
 		{
@@ -315,7 +315,7 @@ int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 		}
 	}
 
-	std::vector<T *> legendrePolynomialsValues(this->nDim);
+	std::vector<RealType *> legendrePolynomialsValues(this->nDim);
 
 	for (int j = 0; j < this->nDim; j++)
 	{
@@ -324,7 +324,7 @@ int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 
 	for (int i = 0, k = 0; i < this->monomialSize; i++)
 	{
-		T v = static_cast<T>(1);
+		RealType v = static_cast<RealType>(1);
 		for (int j = 0; j < this->nDim; j++, k++)
 		{
 			int const l = this->alpha[k];
@@ -341,8 +341,8 @@ int LegendrePolynomial<T>::monomialValue(T const *x, T *&value)
 	return this->monomialSize;
 }
 
-template <typename T>
-int LegendrePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
+template <typename RealType>
+int LegendrePolynomial<RealType>::monomialValue(RealType const *x, std::vector<RealType> &value)
 {
 	if (!this->alpha)
 	{
@@ -360,7 +360,7 @@ int LegendrePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
 		value.resize(this->monomialSize);
 	}
 
-	std::vector<T *> legendrePolynomialsValues(this->nDim);
+	std::vector<RealType *> legendrePolynomialsValues(this->nDim);
 
 	for (int j = 0; j < this->nDim; j++)
 	{
@@ -369,7 +369,7 @@ int LegendrePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
 
 	for (int i = 0, k = 0; i < this->monomialSize; i++)
 	{
-		T v = static_cast<T>(1);
+		RealType v = static_cast<RealType>(1);
 		for (int j = 0; j < this->nDim; j++, k++)
 		{
 			int const l = this->alpha[k];
@@ -386,14 +386,14 @@ int LegendrePolynomial<T>::monomialValue(T const *x, std::vector<T> &value)
 	return this->monomialSize;
 }
 
-template <typename T>
-inline T LegendrePolynomial<T>::legendre_next(int const n, T const x, T const Pn, T const Pnm1)
+template <typename RealType>
+inline RealType LegendrePolynomial<RealType>::legendre_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1)
 {
-	return ((static_cast<T>(2) * static_cast<T>(n) + static_cast<T>(1)) * x * Pn - static_cast<T>(n) * Pnm1) / static_cast<T>(n + 1);
+	return ((static_cast<RealType>(2) * static_cast<RealType>(n) + static_cast<RealType>(1)) * x * Pn - static_cast<RealType>(n) * Pnm1) / static_cast<RealType>(n + 1);
 }
 
-template <typename T>
-T LegendrePolynomial<T>::legendre(int const n, T const x, bool const second)
+template <typename RealType>
+RealType LegendrePolynomial<RealType>::legendre(int const n, RealType const x, bool const second)
 {
 	// Error handling:
 	if ((x < -1) || (x > 1))
@@ -401,18 +401,18 @@ T LegendrePolynomial<T>::legendre(int const n, T const x, bool const second)
 		UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
 	}
 
-	T P0;
-	T P1;
+	RealType P0;
+	RealType P1;
 	if (second)
 	{
 		// A solution of the second kind (Q):
-		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
-		P1 = x * P0 - static_cast<T>(1);
+		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<RealType>(2);
+		P1 = x * P0 - static_cast<RealType>(1);
 	}
 	else
 	{
 		// A solution of the first kind (P):
-		P0 = static_cast<T>(1);
+		P0 = static_cast<RealType>(1);
 		P1 = x;
 	}
 	if (n == 0)
@@ -430,8 +430,8 @@ T LegendrePolynomial<T>::legendre(int const n, T const x, bool const second)
 	return P1;
 }
 
-template <typename T>
-T *LegendrePolynomial<T>::legendre_array(int const n, T const x, bool const second)
+template <typename RealType>
+RealType *LegendrePolynomial<RealType>::legendre_array(int const n, RealType const x, bool const second)
 {
 	// Error handling:
 	if ((x < -1) || (x > 1))
@@ -439,29 +439,29 @@ T *LegendrePolynomial<T>::legendre_array(int const n, T const x, bool const seco
 		UMUQFAIL("The Legendre Polynomial is defined for  -1 <= x <= 1, but got x =", x);
 	}
 
-	T *results = nullptr;
+	RealType *results = nullptr;
 
 	try
 	{
-		results = new T[n + 1];
+		results = new RealType[n + 1];
 	}
 	catch (...)
 	{
 		UMUQFAIL("Failed to allocate memory!");
 	}
 
-	T P0;
-	T P1;
+	RealType P0;
+	RealType P1;
 	if (second)
 	{
 		// A solution of the second kind (Q):
-		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<T>(2);
-		P1 = x * P0 - static_cast<T>(1);
+		P0 = (std::log1p(x) - std::log1p(-x)) / static_cast<RealType>(2);
+		P1 = x * P0 - static_cast<RealType>(1);
 	}
 	else
 	{
 		// A solution of the first kind (P):
-		P0 = static_cast<T>(1);
+		P0 = static_cast<RealType>(1);
 		P1 = x;
 	}
 
@@ -489,8 +489,8 @@ T *LegendrePolynomial<T>::legendre_array(int const n, T const x, bool const seco
 
 #endif // UMUQ_LEGENDREPOLYNOMIAL
 
-// template <class T>
-// void uncheckedNonZeroLegendrePolynomialsCoefficientsExponents(unsigned int const n, T *Coefficients, int *Exponents)
+// template <class RealType>
+// void uncheckedNonZeroLegendrePolynomialsCoefficientsExponents(unsigned int const n, RealType *Coefficients, int *Exponents)
 // {
 //     UMUQFAIL("The uncheckedNonZeroLegendrePolynomialsCoefficientsExponents is not implemented for this type!");
 // }
