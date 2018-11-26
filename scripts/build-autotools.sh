@@ -11,6 +11,10 @@ rm -fr m4/lt\~obsolete.m4
 # Create the configuration script
 bash ./scripts/bootstrap.sh 
 
+if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+	export PATH=/usr/local/bin:$PATH
+fi
+
 # Configure and make
 ./configure --with-googletest
 make
