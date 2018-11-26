@@ -310,7 +310,7 @@ TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
 	umuq::EMatrixX<double> Y;
 
 	// Calculate the squared distance between the rows of X
-	umuq::calculateSquaredDistance<int, double>(X, Y);
+	umuq::calculateRowsSquaredDistance<int, double>(X, Y);
 
 	EXPECT_TRUE(Y.rows() == X.rows());
 	EXPECT_TRUE(Y.cols() == X.rows());
@@ -322,7 +322,7 @@ TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
 	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
 
 	// Calculate the squared distance between the columns of X
-	umuq::calculateSquaredDistance<int, double, false>(X, Y);
+	umuq::calculateColumnsSquaredDistance<int, double>(X, Y);
 
 	EXPECT_TRUE(Y.rows() == X.cols());
 	EXPECT_TRUE(Y.cols() == X.cols());
@@ -337,7 +337,7 @@ TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
 	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
 
 	// Calculate the distance between the rows of X
-	umuq::calculateDistance<int, double>(X, Y);
+	umuq::calculateRowsDistance<int, double>(X, Y);
 
 	EXPECT_TRUE(Y.rows() == X.rows());
 	EXPECT_TRUE(Y.cols() == X.rows());
