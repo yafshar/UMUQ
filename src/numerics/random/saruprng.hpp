@@ -124,7 +124,7 @@ class Saru
      * 3 bit flips.  All 32 incrementing counters (each of the circular
      * shifts) pass the TestU01 Crush tests.  
      */
-	explicit inline Saru(unsigned int seed);
+	explicit Saru(unsigned int seed);
 
 	/*!
      * \brief Construct a new Saru object (Two-seeds constructor)
@@ -135,7 +135,7 @@ class Saru
      * seeding from 2 samples. We lose one bit of entropy since our input
      * seeds have 64 bits but at the end, after mixing, we have just 63. 
      */
-	inline Saru(unsigned int seed1, unsigned int seed2);
+	Saru(unsigned int seed1, unsigned int seed2);
 
 	/*!
      * \brief Construct a new Saru object (Three-seeds constructor)
@@ -149,21 +149,21 @@ class Saru
      * \todo
      * this may be better optimized in a future version 
      */
-	inline Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
+	Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
 
 	/*!
      * \brief Copy constructor, construct a new Saru object
      * 
      * \param other Saru object
      */
-	explicit inline Saru(Saru const &other);
+	Saru(Saru const &other);
 
 	/*!
      * \brief Move constructor, construct a new Saru object
      * 
      * \param other Saru object
      */
-	explicit inline Saru(Saru &&other);
+	Saru(Saru &&other);
 
 	/*!
      * \brief Move assignment operator
@@ -193,15 +193,18 @@ class Saru
 	inline void advance(unsigned int steps);
 
 	/*!  
-     * Set the state
+     * Set the state of the PRNG
      */
 	void setstate(unsigned int istate, unsigned int iwstate);
 
 	/*!
-	 * \brief 
+	 * \brief Fork the PRNG, creating a new independent stream, seeded using
+	 * current generator's state. Template seeding allows multiple
+	 * independent children forks.
 	 * 
-	 * \tparam seed 
-	 * \returns Saru 
+	 * \tparam seed Template seeding
+	 * 
+	 * \returns Saru New forked PRNG
 	 */
 	template <unsigned int seed>
 	inline Saru fork() const;
@@ -284,7 +287,7 @@ class Saru
 	 */
 	template <unsigned int steps>
 	inline double d();
-	
+
 	/*!
 	 * \brief Advance state by 1, and output a double precision \f$ [0..1) \f$ floating point
 	 * 
@@ -424,6 +427,7 @@ class Saru
 	//! wraps mod 2^32
 	static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset;
 
+  private:
 	//! LCG state
 	unsigned int state;
 
@@ -433,7 +437,7 @@ class Saru
 
 Saru::Saru() : state(0x12345678), wstate(12345678) {}
 
-inline Saru::Saru(unsigned int seed)
+Saru::Saru(unsigned int seed)
 {
 	state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
 	wstate = seed ^ (static_cast<signed int>(state) >> 8);
@@ -441,7 +445,7 @@ inline Saru::Saru(unsigned int seed)
 	wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
-inline Saru::Saru(unsigned int seed1, unsigned int seed2)
+Saru::Saru(unsigned int seed1, unsigned int seed2)
 {
 	seed2 += seed1 << 16;
 	seed1 += seed2 << 11;
@@ -458,7 +462,7 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2)
 	wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
-inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
+Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
 {
 	seed3 ^= (seed1 << 7) ^ (seed2 >> 6);
 	seed2 += (seed1 >> 4) ^ (seed3 >> 15);
@@ -476,13 +480,13 @@ inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
 	wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
-inline Saru::Saru(Saru const &other)
+Saru::Saru(Saru const &other)
 {
 	state = other.state;
 	wstate = other.wstate;
 }
 
-inline Saru::Saru(Saru &&other)
+Saru::Saru(Saru &&other)
 {
 	state = other.state;
 	wstate = other.wstate;
@@ -552,7 +556,6 @@ inline void Saru::advance(unsigned int steps)
 	// Computes the LCG advancement AND the Weyl D*E mod m simultaneously
 	unsigned int currentA = LCGA;
 	unsigned int currentC = LCGC;
-
 	unsigned int currentDelta = oWeylDelta;
 	unsigned int netDelta = 0;
 
@@ -561,57 +564,31 @@ inline void Saru::advance(unsigned int steps)
 		if (steps & 1)
 		{
 			state = currentA * state + currentC; // LCG step
-			if (netDelta < oWeylPeriod - currentDelta)
-				netDelta += currentDelta;
-			else
-				netDelta += currentDelta - oWeylPeriod;
+			netDelta += (netDelta < oWeylPeriod - currentDelta) ? currentDelta : currentDelta - oWeylPeriod;
 		}
 		// Change the LCG to step at twice the rate as before
 		currentC += currentA * currentC;
 		currentA *= currentA;
 		// Change the Weyl delta to step at 2X rate
-		if (currentDelta < oWeylPeriod - currentDelta)
-		{
-			currentDelta += currentDelta;
-		}
-		else
-		{
-			currentDelta += currentDelta - oWeylPeriod;
-		}
-
+		currentDelta += (currentDelta < oWeylPeriod - currentDelta) ? currentDelta : currentDelta - oWeylPeriod;
 		steps /= 2;
 	}
 	// Apply the net delta to the Weyl state.
-	if (wstate - oWeylOffset < oWeylPeriod - netDelta)
-	{
-		wstate += netDelta;
-	}
-	else
-	{
-		wstate += netDelta - oWeylPeriod;
-	}
+	wstate += (wstate - oWeylOffset < oWeylPeriod - netDelta) ? netDelta : netDelta - oWeylPeriod;
 }
 
 template <unsigned int seed>
 inline Saru Saru::fork() const
 {
+	/* These lines are FREE since they'll be precomputed at compile time. They
+       take user values like 1 2 3 and hash them to become roughly uncorrelated. */
 	static const unsigned int churned1 = 0xDEADBEEF ^ (0x1fc4ce47 * (seed ^ (seed >> 13)));
 	static const unsigned int churned2 = 0x1234567 + (0x82948463 * (churned1 ^ (churned1 >> 20)));
 	static const unsigned int churned3 = 0x87654321 ^ (0x87655677 * (churned2 ^ (churned2 >> 16)));
-	/* The above lines are FREE since they'll be precomputed at compile time. They
-       take user values like 1 2 3 and hash them to become roughly uncorrelated. */
 	Saru z;
-
 	z.state = churned2 + state + (churned3 ^ wstate);
 	unsigned int add = (z.state + churned1) >> 1;
-	if (z.wstate - oWeylOffset < oWeylPeriod - add)
-	{
-		z.wstate += add;
-	}
-	else
-	{
-		z.wstate += add - oWeylPeriod;
-	}
+	z.wstate += (z.wstate - oWeylOffset < oWeylPeriod - add) ? add : add - oWeylPeriod;
 	return z;
 }
 
@@ -634,7 +611,6 @@ inline unsigned int Saru::u32(unsigned int const high)
 	}
 
 	unsigned int usedhigh = high;
-
 	usedhigh |= usedhigh >> 1;
 	usedhigh |= usedhigh >> 2;
 	usedhigh |= usedhigh >> 4;
