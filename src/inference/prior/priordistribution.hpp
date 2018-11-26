@@ -24,7 +24,7 @@ namespace umuq
  * <tr><td> 4       <td> COMPOSITE
  * </table>
  * 
- * \tparam T Data type 
+ * \tparam DataType Data type 
  * 
  * USE: <br>
  * To use the priorDistribution object:
@@ -52,7 +52,7 @@ namespace umuq
  * 
  * - Forth, call any other member function.
  */
-template <typename T>
+template <typename DataType>
 class priorDistribution
 {
   public:
@@ -83,16 +83,16 @@ class priorDistribution
      * 
      * \param other priorDistribution object
      */
-    priorDistribution(priorDistribution<T> &&other);
+    priorDistribution(priorDistribution<DataType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other priorDistribution object
      * 
-     * \returns priorDistribution<T>& 
+     * \returns priorDistribution<DataType>& 
      */
-    priorDistribution<T> &operator=(priorDistribution<T> &&other);
+    priorDistribution<DataType> &operator=(priorDistribution<DataType> &&other);
 
     /*!
      * \brief Destroy the prior Distribution object
@@ -132,7 +132,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(T const *Param1, T const *Param2, priorTypes const *compositeprior = nullptr);
+    bool set(DataType const *Param1, DataType const *Param2, priorTypes const *compositeprior = nullptr);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -144,7 +144,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(T const *Param1, T const *Param2, int const *compositeprior);
+    bool set(DataType const *Param1, DataType const *Param2, int const *compositeprior);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -156,7 +156,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
+    bool set(std::vector<DataType> const &Param1, std::vector<DataType> const &Param2, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -168,7 +168,7 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior);
+    bool set(std::vector<DataType> const &Param1, std::vector<DataType> const &Param2, std::vector<int> const &compositeprior);
 
     /*!
      * \brief Set the Random Number Generator object to 
@@ -178,14 +178,14 @@ class priorDistribution
      * \returns true 
      * \returns false If it encounters an unexpected problem
      */
-    bool setRandomGenerator(psrandom<T> *PRNG);
+    bool setRandomGenerator(psrandom<DataType> *PRNG);
 
     /*!
      * \brief Get the Random Number Generator object 
      * 
      * \returns Pseudo-random number object. \sa umuq::random::psrandom.
      */
-    inline psrandom<T> *getRandomGenerator();
+    inline psrandom<DataType> *getRandomGenerator();
 
     /*!
      * \brief Get the dimension
@@ -213,36 +213,36 @@ class priorDistribution
      * 
      * \param x  Input point
      *  
-     * \returns T Returns the probability density function (pdf) evaluated in x
+     * \returns DataType Returns the probability density function (pdf) evaluated in x
      */
-    T pdf(T const *x);
+    DataType pdf(DataType const *x);
 
     /*!
      * \brief Probability density function (pdf)
      * 
      * \param x  Input point
      *  
-     * \returns T Returns the probability density function (pdf) evaluated in x
+     * \returns DataType Returns the probability density function (pdf) evaluated in x
      */
-    T pdf(std::vector<T> const &x);
+    DataType pdf(std::vector<DataType> const &x);
 
     /*!
      * \brief Logarithm of the probability density function
      * 
      * \param x  Input point
      * 
-     * \returns T Returns the logarithm probability density function (pdf) evaluated in x
+     * \returns DataType Returns the logarithm probability density function (pdf) evaluated in x
      */
-    T logpdf(T const *x);
+    DataType logpdf(DataType const *x);
 
     /*!
      * \brief Logarithm of the probability density function
      * 
      * \param x  Input point
      * 
-     * \returns T Returns the logarithm probability density function (pdf) evaluated in x
+     * \returns DataType Returns the logarithm probability density function (pdf) evaluated in x
      */
-    T logpdf(std::vector<T> const &x);
+    DataType logpdf(std::vector<DataType> const &x);
 
     /*!
      * \brief Create samples based on the prior distribution type
@@ -251,7 +251,7 @@ class priorDistribution
      * 
      * \returns false If it encounters an unexpected problem
      */
-    bool sample(T *x);
+    bool sample(DataType *x);
 
     /*!
      * \brief Create samples based on the prior distribution type
@@ -260,7 +260,7 @@ class priorDistribution
      * 
      * \returns false If it encounters an unexpected problem
      */
-    bool sample(std::vector<T> &x);
+    bool sample(std::vector<DataType> &x);
 
   protected:
     /*!
@@ -268,19 +268,19 @@ class priorDistribution
      * 
      * Make it noncopyable.
      */
-    priorDistribution(priorDistribution<T> const &) = delete;
+    priorDistribution(priorDistribution<DataType> const &) = delete;
 
     /*!
      * \brief Delete a priorDistribution object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns priorDistribution<T>& 
+     * \returns priorDistribution<DataType>& 
      */
-    priorDistribution<T> &operator=(priorDistribution<T> const &) = delete;
+    priorDistribution<DataType> &operator=(priorDistribution<DataType> const &) = delete;
 
   private:
-    //! Problem Dimension
+    /*! Problem Dimension */
     int nDim;
 
     /*!
@@ -289,24 +289,24 @@ class priorDistribution
      */
     priorTypes priorType;
 
-    //! Composite distribution prior
+    /*! Composite distribution prior */
     std::unique_ptr<priorTypes[]> compositePrior;
 
   private:
-    //! Flat (Uniform) distribution
-    std::unique_ptr<uniformDistribution<T>> uniformDist;
+    /*! Flat (Uniform) distribution */
+    std::unique_ptr<uniformDistribution<DataType>> uniformDist;
 
-    //! The Multivariate Gaussian Distribution
-    std::unique_ptr<multivariategaussianDistribution<T>> multivariategaussianDist;
+    /*! The Multivariate Gaussian Distribution */
+    std::unique_ptr<multivariateGaussianDistribution<DataType>> multivariateGaussianDist;
 
-    //! The exponential distribution
-    std::unique_ptr<exponentialDistribution<T>> exponentialDist;
+    /*! The exponential distribution */
+    std::unique_ptr<exponentialDistribution<DataType>> exponentialDist;
 
-    //! The Gamma distribution
-    std::unique_ptr<gammaDistribution<T>> gammaDist;
+    /*! The Gamma distribution */
+    std::unique_ptr<gammaDistribution<DataType>> gammaDist;
 
-    //! The Gaussian distribution
-    std::unique_ptr<gaussianDistribution<T>> gaussianDist;
+    /*! The Gaussian distribution */
+    std::unique_ptr<gaussianDistribution<DataType>> gaussianDist;
 
   private:
     /*!
@@ -318,32 +318,32 @@ class priorDistribution
     std::vector<int> exponentialIndex;
     std::vector<int> gammaIndex;
 
-    //! Input points
-    std::vector<T> uniformPoints;
-    std::vector<T> gaussianPoints;
-    std::vector<T> exponentialPoints;
-    std::vector<T> gammaPoints;
+    /*! Input points */
+    std::vector<DataType> uniformPoints;
+    std::vector<DataType> gaussianPoints;
+    std::vector<DataType> exponentialPoints;
+    std::vector<DataType> gammaPoints;
 };
 
-template <typename T>
-priorDistribution<T>::priorDistribution() : nDim(0),
-                                            priorType(priorTypes::UNIFORM),
-                                            compositePrior(nullptr),
-                                            uniformDist(nullptr),
-                                            multivariategaussianDist(nullptr),
-                                            exponentialDist(nullptr),
-                                            gammaDist(nullptr),
-                                            gaussianDist(nullptr) {}
+template <typename DataType>
+priorDistribution<DataType>::priorDistribution() : nDim(0),
+                                                   priorType(priorTypes::UNIFORM),
+                                                   compositePrior(nullptr),
+                                                   uniformDist(nullptr),
+                                                   multivariateGaussianDist(nullptr),
+                                                   exponentialDist(nullptr),
+                                                   gammaDist(nullptr),
+                                                   gaussianDist(nullptr) {}
 
-template <typename T>
-priorDistribution<T>::priorDistribution(int const probdim, priorTypes const prior) : nDim(probdim),
-                                                                                     priorType(prior),
-                                                                                     compositePrior(nullptr),
-                                                                                     uniformDist(nullptr),
-                                                                                     multivariategaussianDist(nullptr),
-                                                                                     exponentialDist(nullptr),
-                                                                                     gammaDist(nullptr),
-                                                                                     gaussianDist(nullptr)
+template <typename DataType>
+priorDistribution<DataType>::priorDistribution(int const probdim, priorTypes const prior) : nDim(probdim),
+                                                                                            priorType(prior),
+                                                                                            compositePrior(nullptr),
+                                                                                            uniformDist(nullptr),
+                                                                                            multivariateGaussianDist(nullptr),
+                                                                                            exponentialDist(nullptr),
+                                                                                            gammaDist(nullptr),
+                                                                                            gaussianDist(nullptr)
 {
     switch (priorType)
     {
@@ -363,26 +363,26 @@ priorDistribution<T>::priorDistribution(int const probdim, priorTypes const prio
     };
 }
 
-template <typename T>
-priorDistribution<T>::priorDistribution(int const probdim, int const prior) : priorDistribution(probdim, static_cast<priorTypes>(prior)) {}
+template <typename DataType>
+priorDistribution<DataType>::priorDistribution(int const probdim, int const prior) : priorDistribution(probdim, static_cast<priorTypes>(prior)) {}
 
-template <typename T>
-priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(other.nDim),
-                                                                        priorType(other.priorType),
-                                                                        compositePrior(std::move(other.compositePrior)),
-                                                                        uniformDist(std::move(other.uniformDist)),
-                                                                        multivariategaussianDist(std::move(other.multivariategaussianDist)),
-                                                                        exponentialDist(std::move(other.exponentialDist)),
-                                                                        gammaDist(std::move(other.gammaDist)),
-                                                                        gaussianDist(std::move(other.gaussianDist)),
-                                                                        uniformIndex(std::move(other.uniformIndex)),
-                                                                        gaussianIndex(std::move(other.gaussianIndex)),
-                                                                        exponentialIndex(std::move(other.exponentialIndex)),
-                                                                        gammaIndex(std::move(other.gammaIndex)),
-                                                                        uniformPoints(std::move(other.uniformPoints)),
-                                                                        gaussianPoints(std::move(other.gaussianPoints)),
-                                                                        exponentialPoints(std::move(other.exponentialPoints)),
-                                                                        gammaPoints(std::move(other.gammaPoints))
+template <typename DataType>
+priorDistribution<DataType>::priorDistribution(priorDistribution<DataType> &&other) : nDim(other.nDim),
+                                                                                      priorType(other.priorType),
+                                                                                      compositePrior(std::move(other.compositePrior)),
+                                                                                      uniformDist(std::move(other.uniformDist)),
+                                                                                      multivariateGaussianDist(std::move(other.multivariateGaussianDist)),
+                                                                                      exponentialDist(std::move(other.exponentialDist)),
+                                                                                      gammaDist(std::move(other.gammaDist)),
+                                                                                      gaussianDist(std::move(other.gaussianDist)),
+                                                                                      uniformIndex(std::move(other.uniformIndex)),
+                                                                                      gaussianIndex(std::move(other.gaussianIndex)),
+                                                                                      exponentialIndex(std::move(other.exponentialIndex)),
+                                                                                      gammaIndex(std::move(other.gammaIndex)),
+                                                                                      uniformPoints(std::move(other.uniformPoints)),
+                                                                                      gaussianPoints(std::move(other.gaussianPoints)),
+                                                                                      exponentialPoints(std::move(other.exponentialPoints)),
+                                                                                      gammaPoints(std::move(other.gammaPoints))
 {
     switch (priorType)
     {
@@ -402,8 +402,8 @@ priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(oth
     };
 }
 
-template <typename T>
-priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&other)
+template <typename DataType>
+priorDistribution<DataType> &priorDistribution<DataType>::operator=(priorDistribution<DataType> &&other)
 {
     nDim = other.nDim;
     priorType = other.priorType;
@@ -425,7 +425,7 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     };
     compositePrior = std::move(other.compositePrior);
     uniformDist = std::move(other.uniformDist);
-    multivariategaussianDist = std::move(other.multivariategaussianDist);
+    multivariateGaussianDist = std::move(other.multivariateGaussianDist);
     exponentialDist = std::move(other.exponentialDist);
     gammaDist = std::move(other.gammaDist);
     gaussianDist = std::move(other.gaussianDist);
@@ -441,11 +441,11 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     return *this;
 }
 
-template <typename T>
-priorDistribution<T>::~priorDistribution() {}
+template <typename DataType>
+priorDistribution<DataType>::~priorDistribution() {}
 
-template <typename T>
-bool priorDistribution<T>::reset(int const probdim, priorTypes const prior)
+template <typename DataType>
+bool priorDistribution<DataType>::reset(int const probdim, priorTypes const prior)
 {
     nDim = probdim;
     priorType = prior;
@@ -473,9 +473,9 @@ bool priorDistribution<T>::reset(int const probdim, priorTypes const prior)
     {
         uniformDist.reset(nullptr);
     }
-    if (multivariategaussianDist)
+    if (multivariateGaussianDist)
     {
-        multivariategaussianDist.reset(nullptr);
+        multivariateGaussianDist.reset(nullptr);
     }
     if (exponentialDist)
     {
@@ -492,21 +492,21 @@ bool priorDistribution<T>::reset(int const probdim, priorTypes const prior)
     return true;
 }
 
-template <typename T>
-bool priorDistribution<T>::reset(int const probdim, int const prior)
+template <typename DataType>
+bool priorDistribution<DataType>::reset(int const probdim, int const prior)
 {
     return reset(probdim, static_cast<priorTypes>(prior));
 }
 
-template <typename T>
-bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes const *compositeprior)
+template <typename DataType>
+bool priorDistribution<DataType>::set(DataType const *Param1, DataType const *Param2, priorTypes const *compositeprior)
 {
     switch (priorType)
     {
     case priorTypes::UNIFORM:
         try
         {
-            uniformDist.reset(new uniformDistribution<T>(Param1, Param2, nDim * 2));
+            uniformDist.reset(new uniformDistribution<DataType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -516,7 +516,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
     case priorTypes::GAUSSIAN:
         try
         {
-            multivariategaussianDist.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim * 2));
+            multivariateGaussianDist.reset(new multivariateGaussianDistribution<DataType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -526,7 +526,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
     case priorTypes::EXPONENTIAL:
         try
         {
-            exponentialDist.reset(new exponentialDistribution<T>(Param1, nDim * 2));
+            exponentialDist.reset(new exponentialDistribution<DataType>(Param1, nDim * 2));
         }
         catch (...)
         {
@@ -536,7 +536,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
     case priorTypes::GAMMA:
         try
         {
-            gammaDist.reset(new gammaDistribution<T>(Param1, Param2, nDim * 2));
+            gammaDist.reset(new gammaDistribution<DataType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
@@ -563,9 +563,9 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
             UMUQFAILRETURN("Failed to provide composite prior types for each dimension!");
         }
 
-        if (multivariategaussianDist)
+        if (multivariateGaussianDist)
         {
-            multivariategaussianDist.reset(nullptr);
+            multivariateGaussianDist.reset(nullptr);
         }
 
         int nUNIFORM(0);
@@ -616,13 +616,13 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
             gammaPoints.resize(nGAMMA);
         }
 
-        std::vector<T> uparam1(nUNIFORM);
-        std::vector<T> uparam2(nUNIFORM);
-        std::vector<T> nparam1(nGAUSSIAN);
-        std::vector<T> nparam2(nGAUSSIAN);
-        std::vector<T> eparam1(nEXPONENTIAL);
-        std::vector<T> gparam1(nGAMMA);
-        std::vector<T> gparam2(nGAMMA);
+        std::vector<DataType> uparam1(nUNIFORM);
+        std::vector<DataType> uparam2(nUNIFORM);
+        std::vector<DataType> nparam1(nGAUSSIAN);
+        std::vector<DataType> nparam2(nGAUSSIAN);
+        std::vector<DataType> eparam1(nEXPONENTIAL);
+        std::vector<DataType> gparam1(nGAMMA);
+        std::vector<DataType> gparam2(nGAMMA);
 
         nUNIFORM = 0;
         nGAUSSIAN = 0;
@@ -666,7 +666,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
         {
             try
             {
-                uniformDist.reset(new uniformDistribution<T>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
+                uniformDist.reset(new uniformDistribution<DataType>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
             }
             catch (...)
             {
@@ -684,7 +684,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
         {
             try
             {
-                gaussianDist.reset(new gaussianDistribution<T>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
+                gaussianDist.reset(new gaussianDistribution<DataType>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
             }
             catch (...)
             {
@@ -699,7 +699,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
         {
             try
             {
-                exponentialDist.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL));
+                exponentialDist.reset(new exponentialDistribution<DataType>(eparam1.data(), nEXPONENTIAL));
             }
             catch (...)
             {
@@ -717,7 +717,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
         {
             try
             {
-                gammaDist.reset(new gammaDistribution<T>(gparam1.data(), gparam2.data(), nGAMMA * 2));
+                gammaDist.reset(new gammaDistribution<DataType>(gparam1.data(), gparam2.data(), nGAMMA * 2));
             }
             catch (...)
             {
@@ -742,8 +742,8 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, priorTypes cons
     return true;
 }
 
-template <typename T>
-bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *compositeprior)
+template <typename DataType>
+bool priorDistribution<DataType>::set(DataType const *Param1, DataType const *Param2, int const *compositeprior)
 {
     if (compositeprior)
     {
@@ -754,20 +754,20 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     return set(Param1, Param2);
 }
 
-template <typename T>
-bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<priorTypes> const &compositeprior)
+template <typename DataType>
+bool priorDistribution<DataType>::set(std::vector<DataType> const &Param1, std::vector<DataType> const &Param2, std::vector<priorTypes> const &compositeprior)
 {
     return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
 }
 
-template <typename T>
-bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior)
+template <typename DataType>
+bool priorDistribution<DataType>::set(std::vector<DataType> const &Param1, std::vector<DataType> const &Param2, std::vector<int> const &compositeprior)
 {
     return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
 }
 
-template <typename T>
-bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename DataType>
+bool priorDistribution<DataType>::setRandomGenerator(psrandom<DataType> *PRNG)
 {
     if (PRNG)
     {
@@ -782,9 +782,9 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
                 }
                 break;
             case priorTypes::GAUSSIAN:
-                if (multivariategaussianDist)
+                if (multivariateGaussianDist)
                 {
-                    return multivariategaussianDist->setRandomGenerator(PRNG);
+                    return multivariateGaussianDist->setRandomGenerator(PRNG);
                 }
                 break;
             case priorTypes::EXPONENTIAL:
@@ -885,32 +885,32 @@ bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
 }
 
-template <typename T>
-inline psrandom<T> *priorDistribution<T>::getRandomGenerator()
+template <typename DataType>
+inline psrandom<DataType> *priorDistribution<DataType>::getRandomGenerator()
 {
-    return uniformDist ? uniformDist->getRandomGenerator() : gaussianDist ? gaussianDist->getRandomGenerator() : exponentialDist ? exponentialDist->getRandomGenerator() : gammaDist ? gammaDist->getRandomGenerator() : multivariategaussianDist ? multivariategaussianDist->getRandomGenerator() : nullptr;
+    return uniformDist ? uniformDist->getRandomGenerator() : gaussianDist ? gaussianDist->getRandomGenerator() : exponentialDist ? exponentialDist->getRandomGenerator() : gammaDist ? gammaDist->getRandomGenerator() : multivariateGaussianDist ? multivariateGaussianDist->getRandomGenerator() : nullptr;
 }
 
-template <typename T>
-inline int priorDistribution<T>::getDim()
+template <typename DataType>
+inline int priorDistribution<DataType>::getDim()
 {
     return nDim;
 }
 
-template <typename T>
-inline priorTypes priorDistribution<T>::getpriorType()
+template <typename DataType>
+inline priorTypes priorDistribution<DataType>::getpriorType()
 {
     return priorType;
 }
 
-template <typename T>
-inline priorTypes *priorDistribution<T>::getPriorTypes()
+template <typename DataType>
+inline priorTypes *priorDistribution<DataType>::getPriorTypes()
 {
     return compositePrior.get();
 }
 
-template <typename T>
-T priorDistribution<T>::pdf(T const *x)
+template <typename DataType>
+DataType priorDistribution<DataType>::pdf(DataType const *x)
 {
     switch (priorType)
     {
@@ -918,7 +918,7 @@ T priorDistribution<T>::pdf(T const *x)
         return uniformDist->f(x);
         break;
     case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->f(x);
+        return multivariateGaussianDist->f(x);
         break;
     case priorTypes::EXPONENTIAL:
         return exponentialDist->f(x);
@@ -927,7 +927,7 @@ T priorDistribution<T>::pdf(T const *x)
         return gammaDist->f(x);
         break;
     case priorTypes::COMPOSITE:
-        T sum(1);
+        DataType sum(1);
         if (uniformDist)
         {
             int j(0);
@@ -970,14 +970,14 @@ T priorDistribution<T>::pdf(T const *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-T priorDistribution<T>::pdf(std::vector<T> const &x)
+template <typename DataType>
+DataType priorDistribution<DataType>::pdf(std::vector<DataType> const &x)
 {
     return pdf(x.data());
 }
 
-template <typename T>
-T priorDistribution<T>::logpdf(T const *x)
+template <typename DataType>
+DataType priorDistribution<DataType>::logpdf(DataType const *x)
 {
     switch (priorType)
     {
@@ -985,7 +985,7 @@ T priorDistribution<T>::logpdf(T const *x)
         return uniformDist->lf(x);
         break;
     case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->lf(x);
+        return multivariateGaussianDist->lf(x);
         break;
     case priorTypes::EXPONENTIAL:
         return exponentialDist->lf(x);
@@ -994,7 +994,7 @@ T priorDistribution<T>::logpdf(T const *x)
         return gammaDist->lf(x);
         break;
     case priorTypes::COMPOSITE:
-        T sum(0);
+        DataType sum(0);
         if (uniformDist)
         {
             int j(0);
@@ -1037,14 +1037,14 @@ T priorDistribution<T>::logpdf(T const *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-T priorDistribution<T>::logpdf(std::vector<T> const &x)
+template <typename DataType>
+DataType priorDistribution<DataType>::logpdf(std::vector<DataType> const &x)
 {
     return logpdf(x.data());
 }
 
-template <typename T>
-bool priorDistribution<T>::sample(T *x)
+template <typename DataType>
+bool priorDistribution<DataType>::sample(DataType *x)
 {
     switch (priorType)
     {
@@ -1052,7 +1052,7 @@ bool priorDistribution<T>::sample(T *x)
         return uniformDist->sample(x);
         break;
     case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->sample(x);
+        return multivariateGaussianDist->sample(x);
         break;
     case priorTypes::EXPONENTIAL:
         return exponentialDist->sample(x);
@@ -1111,8 +1111,8 @@ bool priorDistribution<T>::sample(T *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-bool priorDistribution<T>::sample(std::vector<T> &x)
+template <typename DataType>
+bool priorDistribution<DataType>::sample(std::vector<DataType> &x)
 {
     return sample(x.data());
 }
