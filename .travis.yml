@@ -58,7 +58,7 @@ matrix:
     #   env:
     #     - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
     - os: osx
-      osx_image: 10
+      osx_image: 10.1
       sudo: true
       install: ./scripts/install-osx.sh
       script: ./scripts/build-autotools.sh
@@ -74,10 +74,6 @@ matrix:
     #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
 
 before_install:
-  - test -n $CC   && unset CC
-  - test -n $CXX  && unset CXX
-  - test -n $FC   && unset FC
-  - test -n $F77  && unset F77
   - eval "${MATRIX_EVAL}"
 
 install: make get-deps
