@@ -11,17 +11,14 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	if [ "${TRAVIS_OSX_IMAGE}" = "xcode8" ] || [ "${TRAVIS_OSX_IMAGE}" = "xcode8.3" ] ; then
 		brew install gcc@6 > out 2>&1 &
  		brew_install_gcc_id=$!
-	else
-		brew install gcc > out 2>&1 &
- 		brew_install_gcc_id=$!
+		while kill -0 "$brew_install_gcc_id" > /dev/null 2>&1; do
+			sleep 300
+			tail ./out
+		done
+ 		echo "GCC installation is finished!"
+		rm -fr ./out	
 	fi
-	while kill -0 "$brew_install_gcc_id" > /dev/null 2>&1; do
-		sleep 300
-		tail ./out
-	done
-
- 	echo "GCC installation is finished!"
-	rm -fr ./out
+	brew link --overwrite gcc || true
 
 	# brew reinstall grep --with-default-names;
 	# brew reinstall gnu-sed --with-default-names;
@@ -56,7 +53,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 		done 
 		echo "MPICH configuration is finished!"
 		rm -fr ./out
-		make -j 4 > out 2>&1 & 
+		make -j 2 > out 2>&1 & 
 		make_install_mpich_id=$! 
 		while kill -0 "$make_install_mpich_id" > /dev/null 2>&1; do 
 			sleep 300
