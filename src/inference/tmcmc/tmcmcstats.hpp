@@ -22,8 +22,7 @@ namespace tmcmc
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
  * 
- * \tparam DataType       Data type
- * \tparam OutputDataType Output data type (return output result (default is double))
+ * \tparam double Output data type (return output result (default is double))
  * 
  * \param  FunValues   An array of log value
  * \param  nFunValues  Number of FunValues 
@@ -32,18 +31,14 @@ namespace tmcmc
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
  * 
- * \returns OutputDataType The square of the coefficient of variation (COV)
+ * \returns double The square of the coefficient of variation (COV)
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, int const Stride, DataType const PJ1, DataType const PJ, DataType const Tolerance);
+double CoefVar(double const *FunValues, int const nFunValues, int const Stride, double const PJ1, double const PJ, double const Tolerance);
 
 /*! 
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
- * 
- * \tparam DataType       Data type
- * \tparam OutputDataType Output data type (return output result (default is double))
  * 
  * \param  FunValues   An array of log value
  * \param  nFunValues  Number of FunValues 
@@ -51,28 +46,23 @@ OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, int cons
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
  * 
- * \returns OutputDataType The square of the coefficient of variation (COV)
+ * \returns double The square of the coefficient of variation (COV)
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, DataType const PJ1, DataType const PJ, DataType const Tolerance);
+double CoefVar(double const *FunValues, int const nFunValues, double const PJ1, double const PJ, double const Tolerance);
 
 /*! 
  * \ingroup TMCMC_Module
  * 
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
  * 
- * \tparam DataType       Data type
- * \tparam OutputDataType Output data type (return output result (default is double))
- * 
  * \param  FunValues   An array of log value
  * \param  PJ1         \f$ p_{j+1} \f$      
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
  * 
- * \returns OutputDataType The square of the coefficient of variation (COV)
+ * \returns double The square of the coefficient of variation (COV)
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType CoefVar(std::vector<DataType> const &FunValues, DataType const PJ1, DataType const PJ, DataType const Tolerance);
+double CoefVar(std::vector<double> const &FunValues, double const PJ1, double const PJ, double const Tolerance);
 
 /*!
  * \ingroup TMCMC_Module
@@ -81,35 +71,29 @@ OutputDataType CoefVar(std::vector<DataType> const &FunValues, DataType const PJ
  * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used 
  * in multidimensional minimization \sa umuq::functionMinimizer.
  * 
- * \tparam DataType Data type 
- * 
  * \param x Input p
  *  
  * \returns The square of the coefficient of variation (COV) for the choice of input p
  */
-template <typename DataType>
-DataType CoefVarFun(DataType const *x);
+double CoefVarFun(double const *x);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief Pointer to array of function values
  * 
- * \tparam DataType Data type
+ * \tparam double Data type
  */
-template <typename DataType>
-DataType *functionValues;
+static double *functionValues;
 
 /*! Number of function values in functionValues array */
-int nFunctionValues;
+static int nFunctionValues;
 
 /*! Current \f$ p_j \f$ */
-template <typename DataType>
-DataType pj;
+static double pj;
 
 /*! A preset threshold for coefficient of variation of the plausibility of weights. */
-template <typename DataType>
-DataType coefVarPresetThreshold;
+static double coefVarPresetThreshold;
 
 } // namespace tmcmc
 
@@ -120,10 +104,7 @@ namespace tmcmc
  * \ingroup TMCMC_Module
  * 
  * \brief Statistic class for TMCMC algorithm
- * 
- * \tparam DataType Data type
  */
-template <typename DataType>
 class tmcmcStats
 {
   public:
@@ -139,22 +120,22 @@ class tmcmcStats
      * \param OptParams               Optimization Parameters
      * \param CoefVarPresetThreshold  A preset threshold for coefficient of variation of the plausibility of weights
      */
-    tmcmcStats(optimizationParameters<DataType> const &OptParams, DataType const CoefVarPresetThreshold);
+    tmcmcStats(optimizationParameters<double> const &OptParams, double const CoefVarPresetThreshold);
 
     /*!
      * \brief Move constructor, construct a new tmcmcStats object from an input object
      * 
      * \param other  Input tmcmcStats object
      */
-    tmcmcStats(tmcmcStats<DataType> &&other);
+    tmcmcStats(tmcmcStats &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other 
-     * \return tmcmcStats<DataType>& 
+     * \return tmcmcStats& 
      */
-    tmcmcStats<DataType> &operator=(tmcmcStats<DataType> &&other);
+    tmcmcStats &operator=(tmcmcStats &&other);
 
     /*!
      * \brief Destroy the tmcmc Stats object
@@ -170,7 +151,7 @@ class tmcmcStats
      * \return true 
      * \return false If it encounters an unexpected problem
      */
-    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
+    inline bool setRandomGenerator(psrandom<double> *PRNG);
 
     /*!
      * \brief Find the optimum value of  \f$ p_j \f$
@@ -191,7 +172,7 @@ class tmcmcStats
      * \return true 
      * \return false If it encounters any problem 
      */
-    bool findOptimumP(DataType const *FunValues, int const nFunValues, DataType const PJ, DataType *OptimumP, DataType *OptimumCoefVar);
+    bool findOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
 
     /*!
      * \brief Find the optimum value of  \f$ p_j \f$ through direct search of the \f$ p \in [0, 4] \f$
@@ -206,7 +187,7 @@ class tmcmcStats
      * \return true 
      * \return false If it encounters any problem 
      */
-    bool searchOptimumP(DataType const *FunValues, int const nFunValues, DataType const PJ, DataType *OptimumP, DataType *OptimumCoefVar);
+    bool searchOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
 
     /*!
      * \brief This function, prepares and set the new generation from current sample points
@@ -219,7 +200,7 @@ class tmcmcStats
      * \returns true 
      * \returns false If it encounters any problem
      */
-    bool selectNewGeneration(stdata<DataType> &StreamData, database<DataType> &CurrentData, runinfo<DataType> &RunData, database<DataType> &Leaders);
+    bool selectNewGeneration(stdata<double> &StreamData, database<double> &CurrentData, runinfo<double> &RunData, database<double> &Leaders);
 
   protected:
     /*!
@@ -227,32 +208,31 @@ class tmcmcStats
      * 
      * Make it noncopyable.
      */
-    tmcmcStats(tmcmcStats<DataType> const &) = delete;
+    tmcmcStats(tmcmcStats const &) = delete;
 
     /*!
      * \brief Delete a tmcmcStats object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns tmcmcStats<DataType>& 
+     * \returns tmcmcStats& 
      */
-    tmcmcStats<DataType> &operator=(tmcmcStats<DataType> const &) = delete;
+    tmcmcStats &operator=(tmcmcStats const &) = delete;
 
   private:
     /*! Optimizer information */
-    optimizationParameters<DataType> optParams;
+    optimizationParameters<double> optParams;
 
     /*! Create an instance of the function minimizer */
-    std::unique_ptr<umuq::functionMinimizer<DataType>> fMinimizer;
+    std::unique_ptr<umuq::functionMinimizer<double>> fMinimizer;
 
     /*! pseudo-random numbers */
-    psrandom<DataType> *prng;
+    psrandom<double> *prng;
 };
 
-template <typename DataType>
-tmcmcStats<DataType>::tmcmcStats() : optParams(),
-                                     fMinimizer(new umuq::simplexNM2<DataType>),
-                                     prng(nullptr)
+tmcmcStats::tmcmcStats() : optParams(),
+                           fMinimizer(new umuq::simplexNM2<double>),
+                           prng(nullptr)
 {
     // First we have to set the minimizer dimension
     if (!fMinimizer->reset(1))
@@ -261,24 +241,23 @@ tmcmcStats<DataType>::tmcmcStats() : optParams(),
     }
 
     // Set the preset threshold for coefficient of variation of the plausibility of weights to the default value of 1
-    coefVarPresetThreshold<DataType> = DataType{1};
+    coefVarPresetThreshold = double{1};
 }
 
-template <typename DataType>
-tmcmcStats<DataType>::tmcmcStats(optimizationParameters<DataType> const &OptParams, DataType const CoefVarPresetThreshold) : optParams(OptParams),
-                                                                                                                             prng(nullptr)
+tmcmcStats::tmcmcStats(optimizationParameters<double> const &OptParams, double const CoefVarPresetThreshold) : optParams(OptParams),
+                                                                                                               prng(nullptr)
 {
     // Get the correct instance of the minimizer
     switch (optParams.FunctionMinimizerType)
     {
     case (FunctionMinimizerTypes::SIMPLEXNM):
-        fMinimizer.reset(new umuq::simplexNM<DataType>);
+        fMinimizer.reset(new umuq::simplexNM<double>);
         break;
     case (FunctionMinimizerTypes::SIMPLEXNM2):
-        fMinimizer.reset(new umuq::simplexNM2<DataType>);
+        fMinimizer.reset(new umuq::simplexNM2<double>);
         break;
     case (FunctionMinimizerTypes::SIMPLEXNM2RND):
-        fMinimizer.reset(new umuq::simplexNM2Rnd<DataType>);
+        fMinimizer.reset(new umuq::simplexNM2Rnd<double>);
         break;
     default:
         UMUQFAIL("Unknown function minimizer type!");
@@ -292,16 +271,14 @@ tmcmcStats<DataType>::tmcmcStats(optimizationParameters<DataType> const &OptPara
     }
 
     // Set the preset threshold for coefficient of variation of the plausibility of weights
-    coefVarPresetThreshold<DataType> = CoefVarPresetThreshold;
+    coefVarPresetThreshold = CoefVarPresetThreshold;
 }
 
-template <typename DataType>
-tmcmcStats<DataType>::tmcmcStats(tmcmcStats<DataType> &&other) : optParams(std::move(other.optParams)),
-                                                                 fMinimizer(std::move(other.fMinimizer)),
-                                                                 prng(other.prng) {}
+tmcmcStats::tmcmcStats(tmcmcStats &&other) : optParams(std::move(other.optParams)),
+                                             fMinimizer(std::move(other.fMinimizer)),
+                                             prng(other.prng) {}
 
-template <typename DataType>
-tmcmcStats<DataType> &tmcmcStats<DataType>::operator=(tmcmcStats<DataType> &&other)
+tmcmcStats &tmcmcStats::operator=(tmcmcStats &&other)
 {
     optParams = std::move(other.optParams);
     fMinimizer = std::move(other.fMinimizer);
@@ -309,11 +286,9 @@ tmcmcStats<DataType> &tmcmcStats<DataType>::operator=(tmcmcStats<DataType> &&oth
     return *this;
 }
 
-template <typename DataType>
-tmcmcStats<DataType>::~tmcmcStats(){};
+tmcmcStats::~tmcmcStats(){};
 
-template <typename DataType>
-inline bool tmcmcStats<DataType>::setRandomGenerator(psrandom<DataType> *PRNG)
+inline bool tmcmcStats::setRandomGenerator(psrandom<double> *PRNG)
 {
     if (PRNG)
     {
@@ -327,16 +302,15 @@ inline bool tmcmcStats<DataType>::setRandomGenerator(psrandom<DataType> *PRNG)
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename DataType>
-bool tmcmcStats<DataType>::findOptimumP(DataType const *FunValues, int const nFunValues, DataType const PJ, DataType *OptimumP, DataType *OptimumCoefVar)
+bool tmcmcStats::findOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar)
 {
     // Set the global helper pointer & variables
-    functionValues<DataType> = FunValues;
+    functionValues = const_cast<double *>(FunValues);
     nFunctionValues = nFunValues;
-    pj<DataType> = PJ;
+    pj = PJ;
 
     // Second, we have to set the function, input vector and stepsize in the function minimizer
-    if (!fMinimizer->set(CoefVarFun<DataType>, &pj<DataType>, &optParams.Step))
+    if (!fMinimizer->set(CoefVarFun, &pj, &optParams.Step))
     {
         UMUQFAILRETURN("Failed to set the minimizer!");
     }
@@ -350,7 +324,7 @@ bool tmcmcStats<DataType>::findOptimumP(DataType const *FunValues, int const nFu
     // Print the initial starting points, if it is requested
     if (optParams.Display)
     {
-        DataType *x = fMinimizer->getX();
+        double *x = fMinimizer->getX();
         std::cout << "x =" << x[0] << std::endl;
     }
 
@@ -371,7 +345,7 @@ bool tmcmcStats<DataType>::findOptimumP(DataType const *FunValues, int const nFu
 
         if (optParams.Display)
         {
-            DataType *x = fMinimizer->getX();
+            double *x = fMinimizer->getX();
             std::cout << iter << ": ";
             std::cout << "CoefVar(p=" << x[0] << ") =" << fMinimizer->getMin() << ", & characteristic size =" << fMinimizer->size() << std::endl;
         }
@@ -396,14 +370,13 @@ bool tmcmcStats<DataType>::findOptimumP(DataType const *FunValues, int const nFu
     UMUQFAILRETURN("Could not find the optimum value of p through optimization!");
 }
 
-template <typename DataType>
-bool tmcmcStats<DataType>::searchOptimumP(DataType const *FunValues, int const nFunValues, DataType const PJ, DataType *OptimumP, DataType *OptimumCoefVar)
+bool tmcmcStats::searchOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar)
 {
-    DataType MinValp = DataType{};
-    DataType MaxValp = DataType{4};
+    double MinValp = double{};
+    double MaxValp = double{4};
 
     // Initialize the step size to the prescribed user value
-    DataType stepSize(optParams.Step);
+    double stepSize(optParams.Step);
 
     for (;;)
     {
@@ -419,23 +392,23 @@ bool tmcmcStats<DataType>::searchOptimumP(DataType const *FunValues, int const n
         std::size_t const MaxIter = static_cast<std::size_t>((MaxValp - MinValp) / stepSize);
 
         // Optimum value of p
-        DataType optimumP(MinValp);
+        double optimumP(MinValp);
 
         // Max value of CoefVar
-        DataType MaxCoefVar(std::numeric_limits<DataType>::max());
+        double MaxCoefVar(std::numeric_limits<double>::max());
 
         // We search the space for the optimum value
         for (std::size_t iter = 0; iter < MaxIter; iter++)
         {
-            DataType const p = MinValp + iter * stepSize;
-            DataType const NewCoefVar = CoefVarFun<DataType>(&p);
+            double const p = MinValp + iter * stepSize;
+            double const NewCoefVar = CoefVarFun(&p);
 
             if (NewCoefVar < MaxCoefVar)
             {
                 MaxCoefVar = NewCoefVar;
                 optimumP = p;
 
-                if (MaxCoefVar <= coefVarPresetThreshold<DataType>)
+                if (MaxCoefVar <= coefVarPresetThreshold)
                 {
                     found = true;
                     break;
@@ -463,17 +436,17 @@ bool tmcmcStats<DataType>::searchOptimumP(DataType const *FunValues, int const n
             MinValp = optimumP - 10 * stepSize;
             if (MinValp < 0)
             {
-                MinValp = DataType{};
+                MinValp = double{};
             }
 
             MaxValp = optimumP + 10 * stepSize;
-            if (MaxValp > DataType{4})
+            if (MaxValp > double{4})
             {
-                MaxValp = DataType{4};
+                MaxValp = double{4};
             }
 
-            stepSize /= DataType{10};
-            if (stepSize < machinePrecision<DataType>)
+            stepSize /= double{10};
+            if (stepSize < machinePrecision<double>)
             {
                 // Fail:-1
                 UMUQFAILRETURN("Could not find the optimum value of p through search!");
@@ -483,8 +456,7 @@ bool tmcmcStats<DataType>::searchOptimumP(DataType const *FunValues, int const n
     UMUQFAILRETURN("Could not find the optimum value of p through search!");
 }
 
-template <typename DataType>
-bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, database<DataType> &CurrentData, runinfo<DataType> &RunData, database<DataType> &Leaders)
+bool tmcmcStats::selectNewGeneration(stdata<double> &StreamData, database<double> &CurrentData, runinfo<double> &RunData, database<double> &Leaders)
 {
     // current generation
     int const currentGeneration = RunData.currentGeneration;
@@ -493,20 +465,20 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
     int const newGeneration = currentGeneration + 1;
 
     // Probabilty at each generation
-    DataType *generationProbabilty = RunData.generationProbabilty.data();
+    double *generationProbabilty = RunData.generationProbabilty.data();
 
     // Get the pointer to the function values
-    DataType *Fvalue = CurrentData.fValue.data();
+    double *Fvalue = CurrentData.fValue.data();
 
     // Total number of function values
-    int const nCurrentSamplePoints = CurrentData.size();
+    int const nCurrentSamplePoints = static_cast<int>(CurrentData.size());
 
     {
-        DataType optimumP(DataType{});
-        DataType optimumCoefVar(DataType{});
+        double optimumP(double{});
+        double optimumCoefVar(double{});
 
         // Probability of the current generation
-        DataType const PJ = generationProbabilty[currentGeneration];
+        double const PJ = generationProbabilty[currentGeneration];
 
         bool status(true);
 
@@ -534,15 +506,15 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
     // If the probability of this generation is greater than one, then it is the last step
     if (generationProbabilty[newGeneration] > 1)
     {
-        generationProbabilty[newGeneration] = DataType{1};
+        generationProbabilty[newGeneration] = double{1};
         StreamData.eachPopulationSize[newGeneration] = StreamData.lastPopulationSize;
     }
 
-    std::vector<DataType> weight(nCurrentSamplePoints);
+    std::vector<double> weight(nCurrentSamplePoints);
 
     {
         // Get the PJ1 - PJ
-        DataType const probabiltyDiff = generationProbabilty[newGeneration] - generationProbabilty[currentGeneration];
+        double const probabiltyDiff = generationProbabilty[newGeneration] - generationProbabilty[currentGeneration];
 
         // The function value is in log space
         for (int i = 0; i < nCurrentSamplePoints; i++)
@@ -552,46 +524,46 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
     }
 
     stats s;
-    DataType const weightMax = s.maxelement<DataType, DataType>(weight);
+    double const weightMax = s.maxelement(weight);
 
-    std::for_each(weight.begin(), weight.end(), [&](DataType &w_i) { w_i = std::exp(w_i - weightMax); });
+    std::for_each(weight.begin(), weight.end(), [&](double &w_i) { w_i = std::exp(w_i - weightMax); });
 
     if (optParams.Display)
     {
         io f;
-        f.printMatrix<DataType>("Weight matrix", weight.data(), 1, nCurrentSamplePoints);
+        f.printMatrix("Weight matrix", weight.data(), 1, nCurrentSamplePoints);
     }
 
     // Compute the weight sum
-    DataType const weightSum = s.sum<DataType, DataType>(weight);
+    double const weightSum = s.sum(weight);
 
     // Normalize the weight
-    std::for_each(weight.begin(), weight.end(), [&](DataType &w_i) { w_i /= weightSum; });
+    std::for_each(weight.begin(), weight.end(), [&](double &w_i) { w_i /= weightSum; });
 
     if (optParams.Display)
     {
         io f;
-        f.printMatrix<DataType>("Normalized Weight matrix", weight.data(), 1, nCurrentSamplePoints);
+        f.printMatrix("Normalized Weight matrix", weight.data(), 1, nCurrentSamplePoints);
     }
 
     {
         // Keep the value for computing evidence
-        RunData.logselection[currentGeneration] = std::log(weightSum) + weightMax - std::log(static_cast<DataType>(nCurrentSamplePoints));
+        RunData.logselection[currentGeneration] = std::log(weightSum) + weightMax - std::log(static_cast<double>(nCurrentSamplePoints));
 
         if (optParams.Display)
         {
             io f;
-            f.printMatrix<DataType>("log selection matrix", RunData.logselection.data(), 1, newGeneration);
+            f.printMatrix("log selection matrix", RunData.logselection.data(), 1, newGeneration);
         }
     }
 
     // Compute the current Generation CoefVar
-    RunData.CoefVar[currentGeneration] = s.coefvar<DataType, DataType>(weight);
+    RunData.CoefVar[currentGeneration] = s.coefvar(weight);
 
     if (optParams.Display)
     {
         io f;
-        f.printMatrix<DataType>("CoefVar matrix", RunData.CoefVar.data(), 1, newGeneration);
+        f.printMatrix("CoefVar matrix", RunData.CoefVar.data(), 1, newGeneration);
     }
 
     if (prng)
@@ -622,7 +594,7 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
             if (optParams.Display)
             {
                 io f;
-                f.printMatrix<int>("Number of selection = [", nSelection, 1, nCurrentSamplePoints, "]\n----------------------------------------\n");
+                f.printMatrix("Number of selection = [", nSelection, 1, nCurrentSamplePoints, "]\n----------------------------------------\n");
             }
         }
 
@@ -630,12 +602,12 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
         int const nSize = nCurrentSamplePoints * nDimSamplePoints;
 
         // Compute vectors of mean and standard deviation for each dimension
-        std::vector<DataType> thetaMean(nDimSamplePoints);
+        std::vector<double> thetaMean(nDimSamplePoints);
 
         for (int i = 0; i < nDimSamplePoints; i++)
         {
-            arrayWrapper<DataType> Parray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
-            thetaMean[i] = std::inner_product(weight.begin(), weight.end(), Parray.begin(), DataType{});
+            arrayWrapper<double> Parray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
+            thetaMean[i] = std::inner_product(weight.begin(), weight.end(), Parray.begin(), double{});
         }
 
         std::copy(thetaMean.begin(), thetaMean.end(), RunData.meantheta.data() + currentGeneration * nDimSamplePoints);
@@ -643,29 +615,30 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
         if (optParams.Display)
         {
             io f;
-            f.printMatrix<int>("Mean of theta = [", thetaMean.data(), 1, nDimSamplePoints, "]\n----------------------------------------\n");
+            f.printMatrix("Mean of theta = [", thetaMean.data(), 1, nDimSamplePoints, "]\n----------------------------------------\n");
         }
 
         {
-            DataType *Covariance = RunData.covariance.data();
+            double *Covariance = RunData.covariance.data();
 
             for (int i = 0; i < nDimSamplePoints; i++)
             {
-                arrayWrapper<DataType> iArray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
+                arrayWrapper<double> iArray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
 
-                DataType const iMean = thetaMean[i];
+                double const iMean = thetaMean[i];
 
                 for (int j = i; j < nDimSamplePoints; j++)
                 {
-                    arrayWrapper<DataType> jArray(CurrentData.samplePoints.data() + j, nSize, nDimSamplePoints);
+                    arrayWrapper<double> jArray(CurrentData.samplePoints.data() + j, nSize, nDimSamplePoints);
 
-                    DataType const jMean = thetaMean[j];
+                    double const jMean = thetaMean[j];
 
-                    DataType S(0);
-                    for (auto i = iArray.begin(), j = jArray.begin(), k = weight.begin(); i != iArray.end(); i++, j++, k++)
+                    double S(0);
+                    auto k = weight.begin();
+                    for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++, k++)
                     {
-                        DataType const d1 = *i - iMean;
-                        DataType const d2 = *j - jMean;
+                        double const d1 = *i - iMean;
+                        double const d2 = *j - jMean;
                         S += *k * d1 * d2;
                     }
                     Covariance[i * nDimSamplePoints + j] = S;
@@ -681,16 +654,16 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
             }
 
             // If the covariance matrix is not positive definite
-            if (!isSelfAdjointMatrixPositiveDefinite<DataType>(Covariance, nDimSamplePoints))
+            if (!isSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints))
             {
                 // We force it to be positive definite
-                forceSelfAdjointMatrixPositiveDefinite<DataType>(Covariance, nDimSamplePoints);
+                forceSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints);
             }
 
             if (optParams.Display)
             {
                 io f;
-                f.printMatrix<int>("Covariance = [", Covariance, nDimSamplePoints, nDimSamplePoints, "]\n----------------------------------------\n");
+                f.printMatrix("Covariance = [", Covariance, nDimSamplePoints, nDimSamplePoints, "]\n----------------------------------------\n");
             }
         }
         return true;
@@ -698,20 +671,19 @@ bool tmcmcStats<DataType>::selectNewGeneration(stdata<DataType> &StreamData, dat
     UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, int const Stride, DataType const PJ1, DataType const PJ, DataType const Tolerance)
+double CoefVar(double const *FunValues, int const nFunValues, int const Stride, double const PJ1, double const PJ, double const Tolerance)
 {
-    arrayWrapper<DataType> iArray(FunValues, nFunValues, Stride);
+    arrayWrapper<double> iArray(FunValues, nFunValues, Stride);
 
-    std::vector<OutputDataType> weight(iArray.size());
+    std::vector<double> weight(iArray.size());
 
     stats s;
 
     {
         //Find the maximum value in the array of FunValues of size nFunValues
-        DataType const fMaxValue = s.maxelement<DataType>(iArray);
+        double const fMaxValue = s.maxelement(iArray);
 
-        OutputDataType const diff = static_cast<OutputDataType>(PJ1 - PJ);
+        double const diff = PJ1 - PJ;
 
         //Compute the weight
         for (std::size_t i = 0; i < iArray.size(); i++)
@@ -721,34 +693,33 @@ OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, int cons
     }
 
     { //Compute the summation of weight
-        OutputDataType const weightsum = s.sum<OutputDataType, OutputDataType>(weight);
+        double const weightsum = s.sum(weight);
 
         //Normalize the weight
-        std::for_each(weight.begin(), weight.end(), [&](OutputDataType &w) { w /= weightsum; });
+        std::for_each(weight.begin(), weight.end(), [&](double &w) { w /= weightsum; });
     }
 
     //Compute the mean
-    OutputDataType const weightmean = s.mean<OutputDataType, OutputDataType>(weight);
+    double const weightmean = s.mean(weight);
 
     //Compute the standard deviation
-    OutputDataType const weightstddev = s.stddev<OutputDataType, OutputDataType>(weight, weightmean);
+    double const weightstddev = s.stddev(weight, weightmean);
 
     //return the square of the coefficient of variation (COV)
     return std::pow(weightstddev / weightmean - Tolerance, 2);
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, DataType const PJ1, DataType const PJ, DataType const Tolerance)
+double CoefVar(double const *FunValues, int const nFunValues, double const PJ1, double const PJ, double const Tolerance)
 {
-    std::vector<OutputDataType> weight(nFunValues);
+    std::vector<double> weight(nFunValues);
 
     stats s;
 
     {
         //Find the maximum value in the array of FunValues of size nFunValues
-        DataType const fMaxValue = s.maxelement<DataType>(FunValues, nFunValues);
+        double const fMaxValue = s.maxelement(FunValues, nFunValues);
 
-        OutputDataType const diff = static_cast<OutputDataType>(PJ1 - PJ);
+        double const diff = PJ1 - PJ;
 
         //Compute the weight
         for (int i = 0; i < nFunValues; i++)
@@ -758,34 +729,33 @@ OutputDataType CoefVar(DataType const *FunValues, int const nFunValues, DataType
     }
 
     { //Compute the summation of weight
-        OutputDataType const weightsum = s.sum<OutputDataType, OutputDataType>(weight);
+        double const weightsum = s.sum(weight);
 
         //Normalize the weight
-        std::for_each(weight.begin(), weight.end(), [&](OutputDataType &w) { w /= weightsum; });
+        std::for_each(weight.begin(), weight.end(), [&](double &w) { w /= weightsum; });
     }
 
     //Compute the mean
-    OutputDataType const weightmean = s.mean<OutputDataType, OutputDataType>(weight);
+    double const weightmean = s.mean(weight);
 
     //Compute the standard deviation
-    OutputDataType const weightstddev = s.stddev<OutputDataType, OutputDataType>(weight, weightmean);
+    double const weightstddev = s.stddev(weight, weightmean);
 
     //return the square of the coefficient of variation (COV)
     return std::pow(weightstddev / weightmean - Tolerance, 2);
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType CoefVar(std::vector<DataType> const &FunValues, DataType const PJ1, DataType const PJ, DataType const Tolerance)
+double CoefVar(std::vector<double> const &FunValues, double const PJ1, double const PJ, double const Tolerance)
 {
-    std::vector<OutputDataType> weight(FunValues.size());
+    std::vector<double> weight(FunValues.size());
 
     stats s;
 
     {
         //Find the maximum value in the array of FunValues of size nFunValues
-        DataType const fMaxValue = s.maxelement<DataType>(FunValues);
+        double const fMaxValue = s.maxelement(FunValues);
 
-        OutputDataType const diff = static_cast<OutputDataType>(PJ1 - PJ);
+        double const diff = PJ1 - PJ;
 
         //Compute the weight
         for (std::size_t i = 0; i < FunValues.size(); i++)
@@ -795,26 +765,25 @@ OutputDataType CoefVar(std::vector<DataType> const &FunValues, DataType const PJ
     }
 
     { //Compute the summation of weight
-        OutputDataType const weightsum = s.sum<OutputDataType, OutputDataType>(weight);
+        double const weightsum = s.sum(weight);
 
         //Normalize the weight
-        std::for_each(weight.begin(), weight.end(), [&](OutputDataType &w) { w /= weightsum; });
+        std::for_each(weight.begin(), weight.end(), [&](double &w) { w /= weightsum; });
     }
 
     //Compute the mean
-    OutputDataType const weightmean = s.mean<OutputDataType, OutputDataType>(weight);
+    double const weightmean = s.mean(weight);
 
     //Compute the standard deviation
-    OutputDataType const weightstddev = s.stddev<OutputDataType, OutputDataType>(weight, weightmean);
+    double const weightstddev = s.stddev(weight, weightmean);
 
     //return the square of the coefficient of variation (COV)
     return std::pow(weightstddev / weightmean - Tolerance, 2);
 }
 
-template <typename DataType>
-DataType CoefVarFun(DataType const *x)
+double CoefVarFun(double const *x)
 {
-    return CoefVar<DataType, DataType>(functionValues<DataType>, nFunctionValues, *x, pj<DataType>, coefVarPresetThreshold<DataType>);
+    return CoefVar(functionValues, nFunctionValues, *x, pj, coefVarPresetThreshold);
 }
 
 } // namespace tmcmc

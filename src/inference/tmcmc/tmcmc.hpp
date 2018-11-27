@@ -57,8 +57,7 @@ funcallcounter fc;
  * 
  * \brief Initialization of MCMC sampling task
  * 
- * \tparam RealType     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
@@ -67,16 +66,15 @@ funcallcounter fc;
  * \param nFvalue          Number of function values
  * \param WorkInformation  Information regarding this task work 
  */
-template <typename RealType, class FunctionType>
-void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation);
+template <class FunctionType>
+void tmcmcInitTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints, double *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief Main MCMC sampling task
  * 
- * \tparam RealType     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<RealType>) 
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
@@ -92,18 +90,17 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  *                         equal to \f$ \beta^2 COV \f$
  * \param nBurningSteps    Number of discarding an initial portion of a Markov chain samples
  */
-template <typename RealType, class FunctionType>
-void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
-                   RealType *Fvalue, int const *nFvalue, int const *WorkInformation,
-                   RealType const *PJ, RealType const *Covariance, int const *nBurningSteps);
+template <class FunctionType>
+void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints,
+                   double *Fvalue, int const *nFvalue, int const *WorkInformation,
+                   double const *PJ, double const *Covariance, int const *nBurningSteps);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief MCMC update sample task
  * 
- * \tparam RealType     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
  * 
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Array of sample points
@@ -112,22 +109,22 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
  * \param nFvalue          Number of function values
  * \param WorkInformation  Information regarding this task work
  */
-template <typename RealType, class FunctionType>
-void tmcmcUpdateTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation);
+template <class FunctionType>
+void tmcmcUpdateTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints, double *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
  * \ingroup TMCMC_Module
  * 
  * \brief TMCMC task type (function pointer)
  * 
- * \tparam RealType     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<RealType>) 
+ * \tparam double     Real data type
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
  */
-template <typename RealType, class FunctionType>
-using TMCMTASKTYPE = void (*)(long long const, RealType const *, int const *, RealType *, int const *, int const *);
+template <class FunctionType>
+using TMCMTASKTYPE = void (*)(long long const, double const *, int const *, double *, int const *, int const *);
 
 /*! True if TMCMC Tasks have been registered, and false otherwise (logical). */
-template <typename RealType, class FunctionType>
+template <class FunctionType>
 static bool tmcmcTaskRegistered = false;
 
 } // namespace tmcmc
@@ -140,10 +137,9 @@ namespace tmcmc
  * 
  * \brief This class performs Transitional Markov Chain Monte Carlo Method
  * 
- * \tparam RealType     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<RealType>) 
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>) 
  */
-template <typename RealType, class FunctionType = FITFUN_T<RealType>>
+template <class FunctionType = FITFUN_T<double>>
 class tmcmc
 {
 public:
@@ -196,7 +192,7 @@ public:
    * 
    * \return false If it encounters an unexpected problem
    */
-  inline bool setFitFunction(fitFunction<RealType, FunctionType> &fitFun);
+  inline bool setFitFunction(fitFunction<double, FunctionType> &fitFun);
 
   /*!
    * \brief Set the fitting Function to be used
@@ -312,75 +308,71 @@ public:
   std::string inputFilename;
 
   //! Stream data for getting the problem size and variables from the input file
-  stdata<RealType> Data;
+  stdata<double> Data;
 
   //! Current data
-  database<RealType> currentData;
+  database<double> currentData;
 
   //! Full data
-  database<RealType> fullData;
+  database<double> fullData;
 
   //! Experimental data
-  database<RealType> expData;
+  database<double> expData;
 
   //! Running data
-  runinfo<RealType> runData;
+  runinfo<double> runData;
 
   //! Fitting function
-  fitFunction<RealType, FunctionType> fitfun;
+  fitFunction<double, FunctionType> fitfun;
 
 private:
   //! Next generation data
-  database<RealType> leadersData;
+  database<double> leadersData;
 
   //! TMCMC statistical
-  tmcmcStats<RealType> tStats;
+  tmcmcStats tStats;
 
 public:
   //! Prior distribution object
-  priorDistribution<RealType> prior;
+  priorDistribution<double> prior;
 
   //! Pseudo-random number generator
-  psrandom<RealType> prng;
+  psrandom<double> prng;
 
 private:
   //! Sample points
-  std::vector<RealType> samplePoints;
+  std::vector<double> samplePoints;
 
   //! Function values
-  std::vector<RealType> fValue;
+  std::vector<double> fValue;
 
   //! Array of the work information, it includes : [Generation, Sample, Step]
   int workInformation[3];
 
   //! Local covariance with the size of [populationSize * sample dimension * sample dimension]
-  std::vector<RealType> localCovariance;
+  std::vector<double> localCovariance;
 
   //! Mutex object
   std::mutex m;
 };
 
-template <typename RealType, class FunctionType>
-tmcmc<RealType, FunctionType>::tmcmc() : inputFilename("input.par")
+template <class FunctionType>
+tmcmc<FunctionType>::tmcmc() : inputFilename("input.par")
 {
-  if (!std::is_floating_point<RealType>::value)
-  {
-    UMUQFAIL("This type is not supported in this class!");
-  }
-  Torc<RealType>.reset(nullptr);
+  Torc<double>.reset(nullptr);
 }
 
-template <typename RealType, class FunctionType>
-tmcmc<RealType, FunctionType>::~tmcmc()
+template <class FunctionType>
+tmcmc<FunctionType>::~tmcmc()
 {
-  if (Torc<RealType>)
+  if (Torc<double>)
   {
-    Torc<RealType>->TearDown();
+    Torc<double>->TearDown();
   }
 }
 
-template <typename RealType, class FunctionType>
-inline bool tmcmc<RealType, FunctionType>::setInputFileName(char const *fileName)
+template <class FunctionType>
+inline bool tmcmc<FunctionType>::setInputFileName(char const *fileName)
 {
   // Create an instance of the io object
   umuq::io f;
@@ -392,14 +384,14 @@ inline bool tmcmc<RealType, FunctionType>::setInputFileName(char const *fileName
   return f.isFileExist(inputFilename);
 }
 
-template <typename RealType, class FunctionType>
-inline std::string tmcmc<RealType, FunctionType>::getInputFileName()
+template <class FunctionType>
+inline std::string tmcmc<FunctionType>::getInputFileName()
 {
   return inputFilename;
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::reset(char const *fileName)
+template <class FunctionType>
+bool tmcmc<FunctionType>::reset(char const *fileName)
 {
   // Check to see if the input file exists in the PATH or not?
   if (setInputFileName(fileName))
@@ -408,10 +400,10 @@ bool tmcmc<RealType, FunctionType>::reset(char const *fileName)
     if (Data.load(inputFilename))
     {
       // Creating a database based on the read information
-      currentData = std::move(database<RealType>(Data.nDim, Data.lastPopulationSize));
+      currentData = std::move(database<double>(Data.nDim, Data.lastPopulationSize));
 
       // Creating the running information data
-      runData = std::move(runinfo<RealType>(Data.nDim, Data.maxGenerations));
+      runData = std::move(runinfo<double>(Data.nDim, Data.maxGenerations));
 
       // Seed the PRNG
       if (!prng.setSeed(Data.seed))
@@ -438,10 +430,10 @@ bool tmcmc<RealType, FunctionType>::reset(char const *fileName)
       }
 
       // Initialize the tstats variable from io data
-      tStats = std::move(tmcmcStats<RealType>(Data.options, Data.coefVarPresetThreshold));
+      tStats = std::move(tmcmcStats(Data.options, Data.coefVarPresetThreshold));
 
       // Construct a prior Distribution object
-      prior = std::move(priorDistribution<RealType>(Data.nDim, Data.priorType));
+      prior = std::move(priorDistribution<double>(Data.nDim, Data.priorType));
 
       // Set the prior parameters
       return prior.set(Data.priorParam1, Data.priorParam2, Data.compositePriorDistribution);
@@ -451,8 +443,8 @@ bool tmcmc<RealType, FunctionType>::reset(char const *fileName)
   UMUQFAILRETURN("Input file for the input TMCMC parameter does not exist in the current PATH!!");
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::setFitFunction(fitFunction<RealType, FunctionType> &fitFun)
+template <class FunctionType>
+bool tmcmc<FunctionType>::setFitFunction(fitFunction<double, FunctionType> &fitFun)
 {
   if (fitFun)
   {
@@ -462,32 +454,32 @@ bool tmcmc<RealType, FunctionType>::setFitFunction(fitFunction<RealType, Functio
   UMUQFAILRETURN("Function is not assigned!");
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::setFitFunction(FunctionType &Fun)
+template <class FunctionType>
+bool tmcmc<FunctionType>::setFitFunction(FunctionType &Fun)
 {
   return fitfun.setFitFunction(Fun);
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::setFitFunction(FunctionType const &Fun)
+template <class FunctionType>
+bool tmcmc<FunctionType>::setFitFunction(FunctionType const &Fun)
 {
   return fitfun.setFitFunction(Fun);
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::setFitFunction(std::function<bool()> &InitFun, FunctionType &Fun)
+template <class FunctionType>
+bool tmcmc<FunctionType>::setFitFunction(std::function<bool()> &InitFun, FunctionType &Fun)
 {
   return fitfun.set(InitFun, Fun);
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::setFitFunction(std::function<bool()> const &InitFun, FunctionType const &Fun)
+template <class FunctionType>
+bool tmcmc<FunctionType>::setFitFunction(std::function<bool()> const &InitFun, FunctionType const &Fun)
 {
   return fitfun.set(InitFun, Fun);
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::init(char const *fileName)
+template <class FunctionType>
+bool tmcmc<FunctionType>::init(char const *fileName)
 {
   if (fitfun)
   {
@@ -497,24 +489,24 @@ bool tmcmc<RealType, FunctionType>::init(char const *fileName)
       fitfun.init();
 
       // Create a torc environment object
-      Torc<RealType>.reset(new torcEnvironment<RealType>);
+      Torc<double>.reset(new torcEnvironment<double>);
 
       // Register tasks
       {
         std::lock_guard<std::mutex> lock(m);
 
         // Check if TMCMC tasks have not been registered, do it
-        if (!tmcmcTaskRegistered<RealType, FunctionType>)
+        if (!tmcmcTaskRegistered<FunctionType>)
         {
-          torc_register_task((void *)tmcmcInitTask<RealType, FunctionType>);
-          torc_register_task((void *)tmcmcMainTask<RealType, FunctionType>);
-          torc_register_task((void *)tmcmcUpdateTask<RealType, FunctionType>);
-          tmcmcTaskRegistered<RealType, FunctionType> = true;
+          torc_register_task((void *)tmcmcInitTask<FunctionType>);
+          torc_register_task((void *)tmcmcMainTask<FunctionType>);
+          torc_register_task((void *)tmcmcUpdateTask<FunctionType>);
+          tmcmcTaskRegistered<FunctionType> = true;
         }
       }
 
       // Set up the TORC environemnt
-      Torc<RealType>->SetUp();
+      Torc<double>->SetUp();
 
       // Set the State of pseudo random number generator
       if (prng.setState())
@@ -529,15 +521,15 @@ bool tmcmc<RealType, FunctionType>::init(char const *fileName)
   UMUQFAILRETURN("Fitting function is not assigned! \n Fitting function must be set before initializing the TMCMC object!");
 }
 
-template <typename RealType, class FunctionType>
-inline bool tmcmc<RealType, FunctionType>::restart()
+template <class FunctionType>
+inline bool tmcmc<FunctionType>::restart()
 {
   // Check if the restart file is available and we can load runData from it
   return runData.load() ? currentData.load("", runData.currentGeneration) : false;
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::iterate0()
+template <class FunctionType>
+bool tmcmc<FunctionType>::iterate0()
 {
   // Check if it is a fresh run, or the restart data is corrupted or is not available
   if (restart())
@@ -568,11 +560,11 @@ bool tmcmc<RealType, FunctionType>::iterate0()
       prior.sample(samplePoints);
 
       // Create and submit tasks
-      torc_create(-1, (void (*)())tmcmcInitTask<RealType, FunctionType>, 6,
+      torc_create(-1, (void (*)())tmcmcInitTask<FunctionType>, 6,
                   1, MPIDatatype<long long>, CALL_BY_REF,
-                  Data.nDim, MPIDatatype<RealType>, CALL_BY_COP,
+                  Data.nDim, MPIDatatype<double>, CALL_BY_COP,
                   1, MPIDatatype<int>, CALL_BY_COP,
-                  1, MPIDatatype<RealType>, CALL_BY_RES,
+                  1, MPIDatatype<double>, CALL_BY_RES,
                   1, MPIDatatype<int>, CALL_BY_COP,
                   3, MPIDatatype<int>, CALL_BY_COP,
                   reinterpret_cast<long long>(this), samplePoints.data(),
@@ -608,8 +600,8 @@ bool tmcmc<RealType, FunctionType>::iterate0()
   }
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::iterateInternal()
+template <class FunctionType>
+bool tmcmc<FunctionType>::iterateInternal()
 {
   // Current Generation number
   workInformation[0] = runData.currentGeneration;
@@ -621,18 +613,18 @@ bool tmcmc<RealType, FunctionType>::iterateInternal()
   int const nChains = leadersData.size();
 
   // Get the pointer to the sample points
-  RealType *leadersSamplePoints = leadersData.samplePoints.data();
+  double *leadersSamplePoints = leadersData.samplePoints.data();
 
   // Dimension of sample points
   int const nDimSamplePoints = leadersData.nDimSamplePoints;
 
   // Get this generation probability
-  RealType *PJ = runData.generationProbabilty.data() + runData.currentGeneration;
+  double *PJ = runData.generationProbabilty.data() + runData.currentGeneration;
 
   // Get the scaled chain covariance as \f$ \beta covariance \f$
   if (!Data.useLocalCovariance)
   {
-    std::transform(runData.covariance.begin(), runData.covariance.end(), localCovariance.begin(), [&](RealType const C) { return Data.bbeta * C; });
+    std::transform(runData.covariance.begin(), runData.covariance.end(), localCovariance.begin(), [&](double const C) { return Data.bbeta * C; });
   }
 
   // Number of burning steps
@@ -656,15 +648,15 @@ bool tmcmc<RealType, FunctionType>::iterateInternal()
     }
 
     // Create tasks
-    torc_create(-1, (void (*)())tmcmcMainTask<RealType, FunctionType>, 9,
+    torc_create(-1, (void (*)())tmcmcMainTask<FunctionType>, 9,
                 1, MPIDatatype<long long>, CALL_BY_REF,
-                Data.nDim, MPIDatatype<RealType>, CALL_BY_COP,
+                Data.nDim, MPIDatatype<double>, CALL_BY_COP,
                 1, MPIDatatype<int>, CALL_BY_COP,
-                1, MPIDatatype<RealType>, CALL_BY_RES,
+                1, MPIDatatype<double>, CALL_BY_RES,
                 1, MPIDatatype<int>, CALL_BY_COP,
                 3, MPIDatatype<int>, CALL_BY_COP,
-                1, MPIDatatype<RealType>, CALL_BY_COP,
-                Data.nDim * Data.nDim, MPIDatatype<RealType>, CALL_BY_COP,
+                1, MPIDatatype<double>, CALL_BY_COP,
+                Data.nDim * Data.nDim, MPIDatatype<double>, CALL_BY_COP,
                 1, MPIDatatype<int>, CALL_BY_COP,
                 reinterpret_cast<long long>(this), samplePoints.data(),
                 &Data.nDim, fValue.data() + i, &nFvalue, workInformation,
@@ -699,8 +691,8 @@ bool tmcmc<RealType, FunctionType>::iterateInternal()
   return runData.save();
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::iterate()
+template <class FunctionType>
+bool tmcmc<FunctionType>::iterate()
 {
   if (!iterate0())
   {
@@ -720,7 +712,7 @@ bool tmcmc<RealType, FunctionType>::iterate()
   runData.printSampleStatistics();
 
   // Check the current data probability
-  while (runData.generationProbabilty[runData.currentGeneration] < RealType{1} &&
+  while (runData.generationProbabilty[runData.currentGeneration] < double{1} &&
          runData.currentGeneration < runData.maxGenerations)
   {
     runData.currentGeneration++;
@@ -744,8 +736,8 @@ bool tmcmc<RealType, FunctionType>::iterate()
   }
 }
 
-template <typename RealType, class FunctionType>
-bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
+template <class FunctionType>
+bool tmcmc<FunctionType>::prepareNewGeneration()
 {
   int const nDimSamplePoints = currentData.nDimSamplePoints;
   int const nCurrentSamplePoints = currentData.size();
@@ -758,33 +750,33 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
 
 #ifdef DEBUG
   // Compute vectors of mean and standard deviation for each dimension
-  std::vector<RealType> mean(nDimSamplePoints);
-  std::vector<RealType> stddev(nDimSamplePoints);
+  std::vector<double> mean(nDimSamplePoints);
+  std::vector<double> stddev(nDimSamplePoints);
 
   for (int i = 0; i < nDimSamplePoints; i++)
   {
-    mean[i] = s.mean<RealType, RealType>(currentData.samplePoints.data() + i, nSize, nDimSamplePoints);
-    stddev[i] = s.stddev<RealType, RealType>(currentData.samplePoints.data() + i, nSize, nDimSamplePoints, mean[i]);
+    mean[i] = s.mean(currentData.samplePoints.data() + i, nSize, nDimSamplePoints);
+    stddev[i] = s.stddev(currentData.samplePoints.data() + i, nSize, nDimSamplePoints, mean[i]);
   }
 
   io f;
   std::cout << "Complete data samples on the current Generation Number = " << runData.currentGeneration << std::endl;
-  f.printMatrix<RealType>("Means", mean.data(), 1, nDimSamplePoints);
-  f.printMatrix<RealType>("Stddev", stddev.data(), 1, nDimSamplePoints);
+  f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
+  f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
 
   // Now we check to find unique sampling points
-  std::vector<RealType> currentDataUniques(nSize);
+  std::vector<double> currentDataUniques(nSize);
 
   // Get the uniques samples
-  s.unique<RealType>(currentData.samplePoints, nCurrentSamplePoints, nDimSamplePoints, currentDataUniques);
+  s.unique(currentData.samplePoints, nCurrentSamplePoints, nDimSamplePoints, currentDataUniques);
 
   // Set the number of uniques samples
   runData.setUniqueNumber(currentDataUniques.size());
 
   {
     // Compute the acceptance rate
-    RealType const acceptanceRate = static_cast<RealType>(currentDataUniques.size()) / static_cast<RealType>(nCurrentSamplePoints);
+    double const acceptanceRate = static_cast<double>(currentDataUniques.size()) / static_cast<double>(nCurrentSamplePoints);
 
     // Set the acceptance rate
     runData.setAcceptanceRate(acceptanceRate);
@@ -793,17 +785,17 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
 #ifdef DEBUG
   for (int i = 0; i < nDimSamplePoints; i++)
   {
-    mean[i] = s.mean<RealType, RealType>(currentDataUniques.data() + i, nSize, nDimSamplePoints);
-    stddev[i] = s.stddev<RealType, RealType>(currentDataUniques.data() + i, nSize, nDimSamplePoints, mean[i]);
+    mean[i] = s.mean(currentDataUniques.data() + i, nSize, nDimSamplePoints);
+    stddev[i] = s.stddev(currentDataUniques.data() + i, nSize, nDimSamplePoints, mean[i]);
   }
 
   std::cout << "Unique data samples on current Generation Number = " << runData.currentGeneration << std::endl;
-  f.printMatrix<RealType>("Means", mean.data(), 1, nDimSamplePoints);
-  f.printMatrix<RealType>("Stddev", stddev.data(), 1, nDimSamplePoints);
+  f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
+  f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
 
   // Create database for leaders selection
-  leadersData = std::move(database<RealType>(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
+  leadersData = std::move(database<double>(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
 
   // Select the new generaion leaders and update the statistics
   if (tStats.selectNewGeneration(Data, currentData, runData, leadersData))
@@ -826,13 +818,13 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
 
         for (int i = 0; i < nDimSamplePoints; i++)
         {
-          mean[i] = s.mean<RealType, RealType>(leadersData.samplePoints.data() + i, nLeadersSize, nDimSamplePoints);
-          stddev[i] = s.stddev<RealType, RealType>(leadersData.samplePoints.data() + i, nLeadersSize, nDimSamplePoints, mean[i]);
+          mean[i] = s.mean(leadersData.samplePoints.data() + i, nLeadersSize, nDimSamplePoints);
+          stddev[i] = s.stddev(leadersData.samplePoints.data() + i, nLeadersSize, nDimSamplePoints, mean[i]);
         }
 
         std::cout << "Leaders samples = " << runData.currentGeneration << std::endl;
-        f.printMatrix<RealType>("Means", mean.data(), 1, nDimSamplePoints);
-        f.printMatrix<RealType>("Stddev", stddev.data(), 1, nDimSamplePoints);
+        f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
+        f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
 
         if (Data.useLocalCovariance)
@@ -843,7 +835,7 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
           // // Assign the correct local covariance size
           // try
           // {
-          //   localCovariance.resize(nLeadersSamplePoints * nDimSamplePoints * nDimSamplePoints, RealType{});
+          //   localCovariance.resize(nLeadersSamplePoints * nDimSamplePoints * nDimSamplePoints, double{});
           // }
           // catch (...)
           // {
@@ -859,7 +851,7 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
           //     {
           //       if (j == k)
           //       {
-          //         localCovariance[l] = RealType{1};
+          //         localCovariance[l] = double{1};
           //       }
           //     }
           //   }
@@ -876,11 +868,11 @@ bool tmcmc<RealType, FunctionType>::prepareNewGeneration()
   UMUQFAILRETURN("Failed to select the leaders for the new generation!");
 }
 
-template <typename RealType, class FunctionType>
-void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
-                   RealType *Fvalue, int const *nFvalue, int const *WorkInformation)
+template <class FunctionType>
+void tmcmcInitTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints,
+                   double *Fvalue, int const *nFvalue, int const *WorkInformation)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<FunctionType> *>(TMCMCObj);
 
   // If we have set the fitting function
   if (tmcmcObj->fitfun)
@@ -889,7 +881,7 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
     int const nFunvals = *nFvalue;
 
     // Create an array of sample points
-    std::vector<RealType> samplePoints{SamplePoints, SamplePoints + nSamples};
+    std::vector<double> samplePoints{SamplePoints, SamplePoints + nSamples};
 
     // Create an array of work information
     std::vector<int> workInformation{WorkInformation, WorkInformation + 3};
@@ -900,7 +892,7 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
     // Call the fitting function
     Fvalue[0] = tmcmcObj->fitfun.f(samplePoints.data(), nSamples, Fvalue, nFunvals, workInformation.data());
 
-    // RealType *fv = Fvalue;
+    // double *fv = Fvalue;
     // fv += (nFunvals > 1 ? 1 : 0);
 
     // Update the data
@@ -911,12 +903,12 @@ void tmcmcInitTask(long long const TMCMCObj, RealType const *SamplePoints, int c
   UMUQFAIL("Fitting function is not assigned! \n Fitting function must be set before initializing the TMCMC object!");
 }
 
-template <typename RealType, class FunctionType>
-void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints,
-                   RealType *Fvalue, int const *nFvalue, int const *WorkInformation,
-                   RealType const *PJ, RealType const *Covariance, int const *nBurningSteps)
+template <class FunctionType>
+void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints,
+                   double *Fvalue, int const *nFvalue, int const *WorkInformation,
+                   double const *PJ, double const *Covariance, int const *nBurningSteps)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<FunctionType> *>(TMCMCObj);
 
   // If we have set the fitting function
   if (!tmcmcObj->fitfun)
@@ -928,24 +920,26 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
   int const nFunvals = *nFvalue;
   int const nSteps = WorkInformation[2];
   int const nBurnSteps = *nBurningSteps;
-  RealType const pj = *PJ;
+  double const pj = *PJ;
 
   // Create an array of sample points & function values for leaders
-  std::vector<RealType> leaderSamplePoints{SamplePoints, SamplePoints + nSamples};
-  std::vector<RealType> leaderFvalue{Fvalue, Fvalue + nFunvals};
+  std::vector<double> leaderSamplePoints{SamplePoints, SamplePoints + nSamples};
+  std::vector<double> leaderFvalue{Fvalue, Fvalue + nFunvals};
 
   // Create an array of sample points & function values for candidates
-  std::vector<RealType> candidateSamplePoints(nSamples);
-  std::vector<RealType> candidateFvalue(nFunvals);
+  std::vector<double> candidateSamplePoints(nSamples);
+  std::vector<double> candidateFvalue(nFunvals);
 
+  return;
+  
   // Map the data to the Eigen vector format without memory copy
-  umuq::EVectorMapType<RealType> EcandidateSamplePoints(candidateSamplePoints.data(), nSamples);
+  umuq::EVectorMapType<double> EcandidateSamplePoints(candidateSamplePoints.data(), nSamples);
 
   // Create an array of work information
   std::vector<int> workInformation{WorkInformation, WorkInformation + 3};
 
   // Sample mean for the first step
-  std::vector<RealType> chainMean{SamplePoints, SamplePoints + nSamples};
+  std::vector<double> chainMean{SamplePoints, SamplePoints + nSamples};
 
   for (int step = 0; step < nSteps + nBurnSteps; step++)
   {
@@ -994,24 +988,24 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
       // Accept or Reject
 
       // The acceptance ratio
-      RealType acceptanceRatio;
+      double acceptanceRatio;
 
       {
         // Calculate the acceptance ratio
 
-        RealType const candidateLogPrior = tmcmcObj->prior.logpdf(candidateSamplePoints);
-        RealType const leaderLogPrior = tmcmcObj->prior.logpdf(leaderSamplePoints);
+        double const candidateLogPrior = tmcmcObj->prior.logpdf(candidateSamplePoints);
+        double const leaderLogPrior = tmcmcObj->prior.logpdf(leaderSamplePoints);
 
         acceptanceRatio = std::exp((candidateLogPrior - leaderLogPrior) + (candidateFvalue[0] - leaderFvalue[0]) * pj);
 
         if (acceptanceRatio > 1)
         {
-          acceptanceRatio = RealType{1};
+          acceptanceRatio = double{1};
         }
       }
 
       // Generate a uniform random number uniformRandomNumber on [0,1]
-      RealType uniformRandomNumber = tmcmcObj->prng.unirnd();
+      double uniformRandomNumber = tmcmcObj->prng.unirnd();
 
       if (uniformRandomNumber < acceptanceRatio)
       {
@@ -1052,10 +1046,10 @@ void tmcmcMainTask(long long const TMCMCObj, RealType const *SamplePoints, int c
   return;
 }
 
-template <typename RealType, class FunctionType>
-void tmcmcUpdateTask(long long const TMCMCObj, RealType const *SamplePoints, int const *nSamplePoints, RealType *Fvalue, int const *nFvalue, int const *WorkInformation)
+template <class FunctionType>
+void tmcmcUpdateTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints, double *Fvalue, int const *nFvalue, int const *WorkInformation)
 {
-  auto tmcmcObj = reinterpret_cast<tmcmc<RealType, FunctionType> *>(TMCMCObj);
+  auto tmcmcObj = reinterpret_cast<tmcmc<FunctionType> *>(TMCMCObj);
 
   // If we have set the fittiting function
   if (tmcmcObj->fitfun)
