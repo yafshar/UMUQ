@@ -1178,13 +1178,16 @@ bool io::readLine(const char comment)
         if (fs.good())
         {
             const std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
-
+            
             // See if we found a valid line
-            if (linetmp.length() > 0 && linetmp[linePos] != comment)
+            if (linetmp.length() > 0 && linePos < linetmp.size())
             {
-                //Trim the empty space at the start of the line
-                line = linetmp.substr(linePos);
-                return true;
+                if (linetmp[linePos] != comment)
+                {
+                    // Trim the empty space at the start of the line
+                    line = linetmp.substr(linePos);
+                    return true;
+                }
             }
         }
         else
