@@ -260,14 +260,14 @@ class priorDistribution
     /*!
      * \brief Delete a priorDistribution object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     priorDistribution(priorDistribution<RealType> const &) = delete;
 
     /*!
      * \brief Delete a priorDistribution object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns priorDistribution<RealType>& 
      */
