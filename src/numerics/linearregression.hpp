@@ -100,16 +100,14 @@ class linearRegression
     /*!
      * \brief Delete a linearRegression object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     linearRegression(linearRegression<DataType, PolynomialType> const &) = delete;
 
     /*!
      * \brief Delete a linearRegression object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns linearRegression<DataType, PolynomialType>& 
+     * Avoiding implicit copy assignment.
      */
     linearRegression<DataType, PolynomialType> &operator=(linearRegression<DataType, PolynomialType> const &) = delete;
 
