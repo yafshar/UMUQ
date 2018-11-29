@@ -21,15 +21,7 @@ umuq::pyplot plt;
  * \brief Get an instance of a seeded double random object
  * 
  */
-umuq::psrandom<double> prng(123);
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief Get an instance of a seeded float random object
- * 
- */
-umuq::psrandom<float> prngf(123);
+umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -39,7 +31,7 @@ umuq::psrandom<float> prngf(123);
 TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
     // Uniform distribution between 1 and 2
-    umuq::uniformDistribution<double> u(1, 2);
+    umuq::density::uniformDistribution<double> u(1, 2);
 
     double X1 = 1.5;
     double X2 = 3.;
@@ -52,23 +44,20 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    // Set the PRNG
-    EXPECT_TRUE(u.setRandomGenerator(&prng));
-
     // Produce samples with uniform distribution density
-    EXPECT_TRUE(u.sample(&X1));
+    u.sample(&X1);
 
     std::vector<double> X(10, -1);
     double *p = X.data();
     for (int i = 0; i < 10; i++)
     {
-        EXPECT_TRUE(u.sample(p++));
+        u.sample(p++);
         EXPECT_TRUE(X[i] >= 1.0 && X[i] <= 2.0);
     }
 
     // Check for sampling vector
     std::vector<double> Y(10, -1);
-    EXPECT_TRUE(u.sample(Y, 10));
+    u.sample(Y, 10);
 
     for (int i = 0; i < 10; i++)
     {
@@ -77,7 +66,7 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 
     // Check for sampling matrix
     umuq::EMatrixX<double> Z(1, 25);
-    EXPECT_TRUE(u.sample(Z));
+    u.sample(Z);
 
     for (int i = 0; i < 25; i++)
     {
@@ -93,7 +82,7 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 {
     // Exponential distribution with mean 1
-    umuq::exponentialDistribution<float> e(1);
+    umuq::density::exponentialDistribution<float> e(1);
     float X1 = 1.5f;
     float X2 = 3.f;
 
@@ -102,23 +91,20 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
     EXPECT_FLOAT_EQ(e.lf(&X2), -X2);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(prngf.setState());
-
-    // Set the PRNG
-    EXPECT_TRUE(e.setRandomGenerator(&prngf));
+    EXPECT_TRUE(prng.setState());
 
     // Produce samples with Exponential distribution density
-    EXPECT_TRUE(e.sample(&X1));
+    e.sample(&X1);
 
     // Check for sampling vector
     std::vector<float> Y(10, -1);
 
-    EXPECT_TRUE(e.sample(Y, 10));
+    e.sample(Y, 10);
 
     // Check for sampling matrix
     umuq::EMatrixX<float> Z(1, 25);
-    
-    EXPECT_TRUE(e.sample(Z));
+
+    e.sample(Z);
 }
 
 /*! 
@@ -129,7 +115,7 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 {
     // Gamma distribution with Shape parameter of 0.5
-    umuq::gammaDistribution<double> g(0.5);
+    umuq::density::gammaDistribution<double> g(0.5);
     double X1 = 1.5;
     double X2 = 3.;
 
@@ -142,21 +128,18 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    // Set the PRNG
-    EXPECT_TRUE(g.setRandomGenerator(&prng));
-
     // Produce samples with Exponential distribution density
-    EXPECT_TRUE(g.sample(&X1));
+    g.sample(&X1);
 
     // Check for sampling vector
     std::vector<double> Y(10, -1);
 
-    EXPECT_TRUE(g.sample(Y, 10));
+    g.sample(Y, 10);
 
     // Check for sampling matrix
     umuq::EMatrixX<double> Z(1, 25);
 
-    EXPECT_TRUE(g.sample(Z));
+    g.sample(Z);
 }
 
 /*! 
@@ -167,7 +150,7 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 {
     // Gaussian distribution with mean 2 and standard deviation of 5
-    umuq::gaussianDistribution<double> gu(2, 5);
+    umuq::density::gaussianDistribution<double> gu(2, 5);
     double X1 = 1.5;
     double X2 = 3.;
 
@@ -181,21 +164,18 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    // Set the PRNG
-    EXPECT_TRUE(gu.setRandomGenerator(&prng));
-
     // Produce samples with Exponential distribution density
-    EXPECT_TRUE(gu.sample(&X1));
+    gu.sample(&X1);
 
     // Check for sampling vector
     std::vector<double> Y(15, -1);
 
-    EXPECT_TRUE(gu.sample(Y, 15));
+    gu.sample(Y, 15);
 
     // Check for sampling matrix
     umuq::EMatrixX<double> Z(1, 19);
 
-    EXPECT_TRUE(gu.sample(Z));
+    gu.sample(Z);
 }
 
 /*! 
@@ -349,25 +329,22 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     EXPECT_TRUE(plt.close());
 #endif
 
-    // Set the PRNG
-    EXPECT_TRUE(mvn.setRandomGenerator(&prng));
-
     {
         double X[2];
         // Produce samples with  Multivariate normal distribution density
-        EXPECT_TRUE(mvn.sample(X));
+        mvn.sample(X);
     }
 
     {
         // Check for sampling vector
         std::vector<double> Y(30, -1);
-        EXPECT_TRUE(mvn.sample(Y, 15));
+        mvn.sample(Y, 15);
     }
 
     {
         // Check for sampling vector
         umuq::EMatrixX<double> Z(2, 19);
-        EXPECT_TRUE(mvn.sample(Z));
+        mvn.sample(Z);
     }
 }
 
@@ -390,7 +367,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
 
     {
         // multinomialDistribution distribution where the vector size or types of outputs is 4
-        umuq::multinomialDistribution<double> m(4);
+        umuq::density::multinomialDistribution<double> m(4);
 
         // A random sample (with size of K) from the multinomial distribution
         unsigned int X[] = {2, 3, 3, 2};
@@ -414,7 +391,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
 
     {
         // multinomialDistribution distribution where the vector size or types of outputs is 4
-        umuq::multinomialDistribution<double> m(4);
+        umuq::density::multinomialDistribution<double> m(4);
 
         // A random sample (with size of K) from the multinomial distribution
         unsigned int X[] = {5, 2, 2, 1};
@@ -429,7 +406,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
