@@ -20,28 +20,10 @@ namespace umuq
  */
 inline namespace polynomials
 {
-
-/*!
- * \ingroup Polynomials_Module
- * 
- * \brief Different Polynomials, currently available in %UMUQ
- * 
- */
-enum class PolynomialTypes
-{
-	/*! \link umuq::polynomials::polynomial Polynomials. \endlink  */
-	MONOMIAL = 1,
-	/*! \link umuq::polynomials::LegendrePolynomial Legendre Polynomials. \endlink  */
-	LEGENDRE = 2,
-	/*! \link umuq::polynomials::HermitePolynomial Hermite Polynomials. \endlink */
-	HERMITE = 3,
-	/*! \link umuq::polynomials::ChebyshevPolynomial Chebyshev Polynomials. \endlink */
-	CHEBYSHEV = 4
-};
-
 } // namespace polynomials
 } // namespace umuq
 
+#include "datatype/polynomialtype.hpp"
 #include "./polynomials/polynomialbase.hpp"
 #include "./polynomials/polynomial.hpp"
 #include "./polynomials/legendrepolynomial.hpp"
