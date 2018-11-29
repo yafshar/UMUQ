@@ -42,8 +42,8 @@ class funcallcounter
     /*! 
      * \brief Initializes and registers tasks on TORC library
      * 
-     * NOTE: 
-     * init should be called before calling any other functions
+     * \note
+     * - init should be called before calling any other functions
      */
     inline bool init();
 
@@ -66,13 +66,13 @@ class funcallcounter
     inline void reset();
 
     /*! 
-     * \brief Task of getting the local function call counters
+     * \brief This is the Task of getting the local function call counters
      * 
      */
     static inline void countTask(int *x);
 
     /*! 
-     * \returns Count the Global number of function calls
+     * \brief Count the Global number of function calls
      * 
      */
     inline void count();
@@ -103,7 +103,7 @@ funcallcounter::funcallcounter()
 {
     std::lock_guard<std::mutex> lock(functionCounter_m);
 
-    // Check if psrandom is already initialized
+    // Check if function counter is already initialized
     if (!isFuncallcounterTaskRegistered)
     {
         torc_register_task((void *)funcallcounter::resetTask);
@@ -115,12 +115,6 @@ funcallcounter::funcallcounter()
 
 funcallcounter::~funcallcounter() {}
 
-/*! 
- * \brief Initialize and registers tasks on TORC library
- * 
- * NOTE: 
- * init should be called before calling any other functions
- */
 inline bool funcallcounter::init()
 {
     // Make sure MPI is initialized
@@ -134,26 +128,14 @@ inline bool funcallcounter::init()
     return true;
 }
 
-/*! 
- * \brief Increment the local function call counters
- * 
- */
 inline void funcallcounter::increment()
 {
     std::lock_guard<std::mutex> lock(functionCounter_m);
     nLocalFunctionCounter++;
 }
 
-/*! 
- * \brief Resetting the local function call counters to zero
- * 
- */
 inline void funcallcounter::resetTask() { nLocalFunctionCounter = 0; }
 
-/*! 
- * \brief Resetting the local function call counters to zero
- * 
- */
 inline void funcallcounter::reset()
 {
     for (int i = 0; i < torc_num_nodes(); i++)
@@ -163,16 +145,8 @@ inline void funcallcounter::reset()
     torc_waitall();
 }
 
-/*! 
- * \brief Task of getting the local function call counters
- * 
- */
 inline void funcallcounter::countTask(int *x) { *x = nLocalFunctionCounter; }
 
-/*!
- * \returns Count the Global number of function calls
- * 
- */
 inline void funcallcounter::count()
 {
     int const maxNumNodes = torc_num_nodes();

@@ -21,7 +21,7 @@ umuq::pyplot plt;
  * \brief Get an instance of a seeded double random object
  * 
  */
-umuq::psrandom<double> prng(123);
+umuq::psrandom prng(123);
 
 /*! 
  * \ingroup Test_Module
@@ -41,14 +41,14 @@ TEST(random_test, HandlesRandoms)
     umuq::EVector2d V2d = umuq::EVector2d::Zero();
 
     // Create an object of type Multivariate normal distribution
-    EXPECT_TRUE(prng.set_mvnormal(M2d));
+    umuq::randomdist::multivariateNormalDistribution<double> mvnormal(M2d);
 
-    umuq::EVector2d X = prng.mvnormal->dist();
+    umuq::EVector2d X = mvnormal.dist();
 
     // Create an object of type Multivariate normal distribution
-    EXPECT_TRUE(prng.set_mvnormal(V2d, M2d));
+    mvnormal = std::move(umuq::randomdist::multivariateNormalDistribution<double>(V2d, M2d));
 
-    X = prng.mvnormal->dist();
+    X = mvnormal.dist();
 
 #ifdef HAVE_PYTHON
     std::string fileName = "./multivariatescatterpoints.svg";
@@ -65,7 +65,7 @@ TEST(random_test, HandlesRandoms)
     //! Create sample points from Multivariate normal distribution
     for (int i = 0; i < n; ++i)
     {
-        X = prng.mvnormal->dist();
+        X = mvnormal.dist();
         x[i] = X[0];
         y[i] = X[1];
     }
@@ -110,19 +110,19 @@ TEST(random_test, HandlesMultivariate)
 
     std::vector<double> a(2);
 
-    //! Map the data to the Eigen vector format
+    // Map the data to the Eigen vector format
     umuq::EVectorMapType<double> Ea(a.data(), 2);
 
     // Create an object of type Multivariate normal distribution
-    EXPECT_TRUE(prng.set_mvnormal(Mean.data(), Covariance.data(), 2));
+    umuq::randomdist::multivariateNormalDistribution<double> mvnormal(Mean.data(), Covariance.data(), 2);
 
-    Ea = prng.mvnormal->dist();
+    Ea = mvnormal.dist();
 }
 
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

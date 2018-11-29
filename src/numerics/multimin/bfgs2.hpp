@@ -26,16 +26,16 @@ inline namespace multimin
  * The user-supplied tolerance tol corresponds to the parameter \f$ \sigma \f$ used by Fletcher. 
  * A value of 0.1 is recommended for typical use (larger values correspond to less accurate line searches).
  *
- * Reference:
+ * Reference:<br>
  * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
  * Algorithms 2.6.2 and 2.6.4.
  * 
  * 
- * \tparam T  Data type
+ * \tparam DataType  Data type
  */
 
-template <typename T>
-class bfgs2 : public differentiableFunctionMinimizer<T>
+template <typename DataType>
+class bfgs2 : public differentiableFunctionMinimizer<DataType>
 {
   public:
     /*!
@@ -91,49 +91,49 @@ class bfgs2 : public differentiableFunctionMinimizer<T>
     int iter;
 
     //! f'(0) for f(x-alpha*p)
-    T fp0;
+    DataType fp0;
     //!
-    std::vector<T> p;
+    std::vector<DataType> p;
     //!
-    std::vector<T> x0;
+    std::vector<DataType> x0;
     //!
-    std::vector<T> g0;
+    std::vector<DataType> g0;
     //! Work space
-    std::vector<T> dx0;
+    std::vector<DataType> dx0;
     //!
-    std::vector<T> dg0;
+    std::vector<DataType> dg0;
     //!
-    std::vector<T> x_alpha;
+    std::vector<DataType> x_alpha;
     //!
-    std::vector<T> g_alpha;
+    std::vector<DataType> g_alpha;
     //!
-    T pnorm;
+    DataType pnorm;
     //!
-    T g0norm;
+    DataType g0norm;
     //!
-    T delta_f;
+    DataType delta_f;
 
     //! Wrapper function
-    linearFunctionWrapper<T> funw;
+    linearFunctionWrapper<DataType> funw;
 
     //! Minimization parameters
-    T rho;
-    T sigma;
-    T tau1;
-    T tau2;
-    T tau3;
+    DataType rho;
+    DataType sigma;
+    DataType tau1;
+    DataType tau2;
+    DataType tau3;
 
     int order;
 };
 
-template <typename T>
-bfgs2<T>::bfgs2(const char *Name) : differentiableFunctionMinimizer<T>(Name) {}
+template <typename DataType>
+bfgs2<DataType>::bfgs2(const char *Name) : differentiableFunctionMinimizer<DataType>(Name) {}
 
-template <typename T>
-bfgs2<T>::~bfgs2() {}
+template <typename DataType>
+bfgs2<DataType>::~bfgs2() {}
 
-template <typename T>
-bool bfgs2<T>::reset(int const nDim) noexcept
+template <typename DataType>
+bool bfgs2<DataType>::reset(int const nDim) noexcept
 {
     if (nDim <= 0)
     {
@@ -155,12 +155,12 @@ bool bfgs2<T>::reset(int const nDim) noexcept
     return true;
 }
 
-template <typename T>
-bool bfgs2<T>::init()
+template <typename DataType>
+bool bfgs2<DataType>::init()
 {
     iter = 0;
 
-    delta_f = T{};
+    delta_f = DataType{};
 
     // Use the gradient as the initial direction
     std::copy(this->x.begin(), this->x.end(), x0.begin());
@@ -168,8 +168,8 @@ bool bfgs2<T>::init()
 
     {
         // Compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
-        T s(0);
-        std::for_each(g0.begin(), g0.end(), [&](T const g_i) { s += g_i * g_i; });
+        DataType s(0);
+        std::for_each(g0.begin(), g0.end(), [&](DataType const g_i) { s += g_i * g_i; });
 
         g0norm = std::sqrt(s);
     }
@@ -177,14 +177,14 @@ bool bfgs2<T>::init()
     std::copy(this->gradient.begin(), this->gradient.end(), p.begin());
 
     {
-        T const alpha = -static_cast<T>(1) / g0norm;
-        std::for_each(p.begin(), p.end(), [&](T &p_i) { p_i *= alpha; });
+        DataType const alpha = -static_cast<DataType>(1) / g0norm;
+        std::for_each(p.begin(), p.end(), [&](DataType &p_i) { p_i *= alpha; });
     }
 
     {
         // Compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
-        T s(0);
-        std::for_each(p.begin(), p.end(), [&](T const p_i) { s += p_i * p_i; });
+        DataType s(0);
+        std::for_each(p.begin(), p.end(), [&](DataType const p_i) { s += p_i * p_i; });
 
         // should be 1
         pnorm = std::sqrt(s);
@@ -192,7 +192,7 @@ bool bfgs2<T>::init()
 
     fp0 = -g0norm;
 
-    //! Set the Multidimensional function for the wrapper
+    // Set the Multidimensional function for the wrapper
     if (funw.set(this->fun))
     {
         int const n = this->getDimension();
@@ -201,11 +201,11 @@ bool bfgs2<T>::init()
         funw.prepare(n, x0.data(), this->fval, g0.data(), p.data(), x_alpha.data(), g_alpha.data());
 
         // Prepare 1d minimization parameters
-        rho = static_cast<T>(0.01);
+        rho = static_cast<DataType>(0.01);
         sigma = this->tol;
-        tau1 = static_cast<T>(9);
-        tau2 = static_cast<T>(0.05);
-        tau3 = static_cast<T>(0.5);
+        tau1 = static_cast<DataType>(9);
+        tau2 = static_cast<DataType>(0.05);
+        tau3 = static_cast<DataType>(0.5);
 
         // Use cubic interpolation where possible
         order = 3;
@@ -216,32 +216,32 @@ bool bfgs2<T>::init()
     return false;
 }
 
-template <typename T>
-bool bfgs2<T>::iterate()
+template <typename DataType>
+bool bfgs2<DataType>::iterate()
 {
-    if (pnorm == T{} || g0norm == T{} || fp0 == T{})
+    if (pnorm == DataType{} || g0norm == DataType{} || fp0 == DataType{})
     {
         // set dx to zero
-        std::fill(this->dx.begin(), this->dx.end(), T{});
+        std::fill(this->dx.begin(), this->dx.end(), DataType{});
 
         UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
     }
 
     int const n = this->getDimension();
 
-    T alpha(0);
-    T alpha1;
+    DataType alpha(0);
+    DataType alpha1;
 
-    T pg;
-    T dir;
+    DataType pg;
+    DataType dir;
 
-    T f0 = this->fval;
+    DataType f0 = this->fval;
 
-    if (delta_f < T{})
+    if (delta_f < DataType{})
     {
-        T del = std::max(-delta_f, 10 * std::numeric_limits<T>::epsilon() * std::abs(f0));
+        DataType del = std::max(-delta_f, 10 * std::numeric_limits<DataType>::epsilon() * std::abs(f0));
 
-        alpha1 = std::min(static_cast<T>(1), -2 * del / fp0);
+        alpha1 = std::min(static_cast<DataType>(1), -2 * del / fp0);
     }
     else
     {
@@ -249,7 +249,7 @@ bool bfgs2<T>::iterate()
     }
 
     // Line minimization, with cubic interpolation (order = 3)
-    bool status = minimize<T>(funw, rho, sigma, tau1, tau2, tau3, order, alpha1, &alpha);
+    bool status = minimize<DataType>(funw, rho, sigma, tau1, tau2, tau3, order, alpha1, &alpha);
 
     if (status != true)
     {
@@ -286,44 +286,44 @@ bool bfgs2<T>::iterate()
             dg0[i] -= g0[i];
         }
 
-        T dxg(0);
+        DataType dxg(0);
         for (int i = 0; i < n; i++)
         {
             dxg += dx0[i] * this->gradient[i];
         }
 
-        T dgg(0);
+        DataType dgg(0);
         for (int i = 0; i < n; i++)
         {
             dgg += dg0[i] * this->gradient[i];
         }
 
-        T dxdg(0);
+        DataType dxdg(0);
         for (int i = 0; i < n; i++)
         {
             dxdg += dx0[i] * dg0[i];
         }
 
-        T dgnorm;
+        DataType dgnorm;
         {
-            T s(0);
-            std::for_each(dg0.begin(), dg0.end(), [&](T const d_i) { s += d_i * d_i; });
+            DataType s(0);
+            std::for_each(dg0.begin(), dg0.end(), [&](DataType const d_i) { s += d_i * d_i; });
 
             dgnorm = std::sqrt(s);
         }
 
-        T A;
-        T B;
+        DataType A;
+        DataType B;
 
-        if (dxdg != T{})
+        if (dxdg != DataType{})
         {
             B = dxg / dxdg;
-            A = -(static_cast<T>(1) + dgnorm * dgnorm / dxdg) * B + dgg / dxdg;
+            A = -(static_cast<DataType>(1) + dgnorm * dgnorm / dxdg) * B + dgg / dxdg;
         }
         else
         {
-            B = T{};
-            A = T{};
+            B = DataType{};
+            A = DataType{};
         }
 
         std::copy(this->gradient.begin(), this->gradient.end(), p.begin());
@@ -344,41 +344,41 @@ bool bfgs2<T>::iterate()
     std::copy(this->x.begin(), this->x.end(), x0.begin());
 
     {
-        T s(0);
-        std::for_each(g0.begin(), g0.end(), [&](T const g_i) { s += g_i * g_i; });
+        DataType s(0);
+        std::for_each(g0.begin(), g0.end(), [&](DataType const g_i) { s += g_i * g_i; });
 
         g0norm = std::sqrt(s);
     }
 
     {
-        T s(0);
-        std::for_each(p.begin(), p.end(), [&](T const p_i) { s += p_i * p_i; });
+        DataType s(0);
+        std::for_each(p.begin(), p.end(), [&](DataType const p_i) { s += p_i * p_i; });
 
         pnorm = std::sqrt(s);
     }
 
     //Update direction and fp0
-    pg = T{};
+    pg = DataType{};
     for (int i = 0; i < n; i++)
     {
         pg += p[i] * this->gradient[i];
     }
 
-    dir = (pg >= T{}) ? -static_cast<T>(1) : static_cast<T>(1);
+    dir = (pg >= DataType{}) ? -static_cast<DataType>(1) : static_cast<DataType>(1);
 
     {
-        T const alpha = dir / pnorm;
-        std::for_each(p.begin(), p.end(), [&](T &p_i) { p_i *= alpha; });
+        DataType const alpha = dir / pnorm;
+        std::for_each(p.begin(), p.end(), [&](DataType &p_i) { p_i *= alpha; });
     }
 
     {
-        T s(0);
-        std::for_each(p.begin(), p.end(), [&](T const p_i) { s += p_i * p_i; });
+        DataType s(0);
+        std::for_each(p.begin(), p.end(), [&](DataType const p_i) { s += p_i * p_i; });
 
         pnorm = std::sqrt(s);
     }
 
-    fp0 = T{};
+    fp0 = DataType{};
     for (int i = 0; i < n; i++)
     {
         fp0 += g0[i] * p[i];
@@ -389,8 +389,8 @@ bool bfgs2<T>::iterate()
     return true;
 }
 
-template <typename T>
-inline bool bfgs2<T>::restart()
+template <typename DataType>
+inline bool bfgs2<DataType>::restart()
 {
     iter = 0;
     return true;

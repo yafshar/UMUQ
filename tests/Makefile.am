@@ -9,7 +9,19 @@ LIBS = $(GTEST_LIBS)
 #numerics
 TESTS += polynomial_test
 check_PROGRAMS += polynomial_test
-polynomial_test_SOURCES = numerics/polynomial_test.cpp 
+polynomial_test_SOURCES = numerics/polynomials/polynomial_test.cpp 
+
+TESTS += legendrepolynomial_test 
+check_PROGRAMS += legendrepolynomial_test
+legendrepolynomial_test_SOURCES = numerics/polynomials/legendrepolynomial_test.cpp 
+
+TESTS += hermitepolynomial_test 
+check_PROGRAMS += hermitepolynomial_test
+hermitepolynomial_test_SOURCES = numerics/polynomials/hermitepolynomial_test.cpp 
+
+TESTS += chebyshevpolynomial_test 
+check_PROGRAMS += chebyshevpolynomial_test
+chebyshevpolynomial_test_SOURCES = numerics/polynomials/chebyshevpolynomial_test.cpp 
 
 TESTS += eigen_test
 check_PROGRAMS += eigen_test
@@ -34,6 +46,10 @@ multimin_test_SOURCES = numerics/multimin_test.cpp
 TESTS += knearestneighbors_test 
 check_PROGRAMS += knearestneighbors_test 
 knearestneighbors_test_SOURCES = numerics/knearestneighbors_test.cpp 
+
+TESTS += hypercubesampling_test
+check_PROGRAMS += hypercubesampling_test
+hypercubesampling_test_SOURCES = numerics/hypercube/hypercubesampling_test.cpp
 
 TESTS += dcpse_test
 check_PROGRAMS += dcpse_test
@@ -132,22 +148,7 @@ TESTS += pyplot_test
 check_PROGRAMS += pyplot_test
 pyplot_test_SOURCES = io/pyplot_test.cpp
 
-#data
-TESTS += stdata_test
-check_PROGRAMS += stdata_test
-stdata_test_SOURCES = data/stdata_test.cpp
-
-TESTS += runinfo_test
-check_PROGRAMS += runinfo_test
-runinfo_test_SOURCES = data/runinfo_test.cpp
-
-TESTS += database_test
-check_PROGRAMS += database_test
-database_test_SOURCES = data/database_test.cpp
-
-TESTS += datatype_test
-check_PROGRAMS += datatype_test
-datatype_test_SOURCES = data/datatype_test.cpp
+#datatype
 
 #inference
 #prior
@@ -156,6 +157,22 @@ check_PROGRAMS += priordistribution_test
 priordistribution_test_SOURCES = inference/prior/priordistribution_test.cpp
 
 #tmcmc
+TESTS += stdata_test
+check_PROGRAMS += stdata_test
+stdata_test_SOURCES = inference/tmcmc/stdata_test.cpp
+
+TESTS += runinfo_test
+check_PROGRAMS += runinfo_test
+runinfo_test_SOURCES = inference/tmcmc/runinfo_test.cpp
+
+TESTS += database_test
+check_PROGRAMS += database_test
+database_test_SOURCES = inference/tmcmc/database_test.cpp
+
+TESTS += datatype_test
+check_PROGRAMS += datatype_test
+datatype_test_SOURCES = inference/tmcmc/datatype_test.cpp
+
 TESTS += tmcmc_test
 check_PROGRAMS += tmcmc_test
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp

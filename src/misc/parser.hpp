@@ -1,12 +1,18 @@
 #ifndef UMUQ_PARSER_H
 #define UMUQ_PARSER_H
 
+#if HAVE_PYTHON == 1
+#ifdef toupper
+#undef toupper
+#endif
+#endif
+
 namespace umuq
 {
 
 /*! \class parser
  *
- * \brief  This class parses string of data to seperate words
+ * \brief This class parses string of data to seperate words
  * 
  * It ignores all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters
  */
@@ -62,7 +68,7 @@ class parser
      * character which indicates the beginning of an argument.  It saves the address 
      * to argv[], and then skips all non-white spaces which constitute the argument. 
      * 
-     * Reference:
+     * Reference:<br>
      * http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/shell.c
      * 
      */

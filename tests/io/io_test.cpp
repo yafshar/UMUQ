@@ -3,30 +3,30 @@
 #include "misc/parser.hpp"
 #include "gtest/gtest.h"
 
-//! TEST for file existence
+// TEST for file existence
 TEST(isFileExist_test, HandlesFiles)
 {
     umuq::io f;
-    EXPECT_TRUE(f.isFileExist("./data/test.txt"));
+    EXPECT_TRUE(f.isFileExist("./inference/tmcmc/test.txt"));
     EXPECT_FALSE(f.isFileExist("utility.txt"));
 }
 
-//! TEST how IO handles files
+// TEST how IO handles files
 TEST(openFile_test, HandlesFiles)
 {
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
     EXPECT_FALSE(f.isFileOpened());
 
-    EXPECT_TRUE(f.openFile("./data/test.txt"));
+    EXPECT_TRUE(f.openFile("./inference/tmcmc/test.txt"));
 
     EXPECT_TRUE(f.isFileOpened());
     
     int n = 0;
     while (f.readLine())
     {
-        //count the number of non empty and not commented line with "#" as default comment
+        // count the number of non empty and not commented line with "#" as default comment
         n++;
     }
     
@@ -37,13 +37,13 @@ TEST(openFile_test, HandlesFiles)
     EXPECT_FALSE(f.isFileOpened());
 }
 
-//! TEST how IO handles std::fstream
+// TEST how IO handles std::fstream
 TEST(openFilestream_test, HandlesFiles)
 {
     const char *fileName = "iotmp";
     std::remove(fileName);
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
     EXPECT_FALSE(f.openFile(fileName, f.in));
@@ -67,31 +67,31 @@ TEST(io_test, HandlesLoadandSaveArray)
 {
     const char *fileName = "iotmp";
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
-    //! - 1
+    // - 1
 
-    //!Create a new array and initialize it
+    // Create a new array and initialize it
     int *E = new int[12];
     for (int i = 0; i < 12; i++)
     {
         E[i] = i;
     }
 
-    //!Create a new array
+    // Create a new array
     int *F = new int[12];
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
-        //!Save the array in a matrix format
+        // Save the array in a matrix format
         f.saveMatrix<int>(E, 3, 4);
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
-        //!Read the array
+        // Read the array
         f.loadMatrix<int>(F, 3, 4);
 
         for (int i = 0, l = 0; i < 3; i++)
@@ -106,20 +106,20 @@ TEST(io_test, HandlesLoadandSaveArray)
 
     delete[] F;
 
-    //!Create a new array
+    // Create a new array
     F = new int[24];
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
-        //!Save the array in a vector format and keep the stream pointer at the end of line
+        // Save the array in a vector format and keep the stream pointer at the end of line
         f.saveMatrix<int>(E, 12, 1, 2);
         f.saveMatrix<int>(E, 12);
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
-        //!Read the array
+        // Read the array
         f.loadMatrix<int>(F, 24);
 
         for (int i = 0, l = 0; i < 24; i++, l++)
@@ -131,7 +131,7 @@ TEST(io_test, HandlesLoadandSaveArray)
 
         f.closeFile();
 
-        //!delete the file
+        // delete the file
         std::remove(fileName);
     }
 
@@ -146,12 +146,12 @@ TEST(io_test, HandlesLoadandSaveArrayofPointers)
 {
     const char *fileName = "iotmp";
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
-    //! - 2
+    // - 2
 
-    //!Create a new array and initialize it
+    // Create a new array and initialize it
     double **G = nullptr;
     G = new double *[3];
     for (int i = 0; i < 3; i++)
@@ -166,19 +166,19 @@ TEST(io_test, HandlesLoadandSaveArrayofPointers)
         }
     }
 
-    //!Create a new array
+    // Create a new array
     double H[3][4];
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
-        //!Write the matrix
+        // Write the matrix
         f.saveMatrix<double>(G, 3, 4);
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
-        //!Read the matrix
+        // Read the matrix
         f.loadMatrix<double>(reinterpret_cast<double *>(H), 3, 4);
 
         for (int i = 0; i < 3; i++)
@@ -191,7 +191,7 @@ TEST(io_test, HandlesLoadandSaveArrayofPointers)
 
         f.closeFile();
 
-        //!delete the file
+        // delete the file
         std::remove(fileName);
     }
 
@@ -206,12 +206,12 @@ TEST(io_test, HandlesLoadandSaveDifferentData)
 {
     const char *fileName = "iotmp";
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
-    //! - 3
+    // - 3
 
-    //!Create a new array and initialize it
+    // Create a new array and initialize it
     double **K = nullptr;
     K = new double *[3];
     for (int i = 0; i < 3; i++)
@@ -226,22 +226,22 @@ TEST(io_test, HandlesLoadandSaveDifferentData)
         }
     }
 
-    //!Create a new array and initialize it
+    // Create a new array and initialize it
     int *L = new int[20];
     for (int i = 0; i < 20; i++)
     {
         L[i] = i;
     }
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
 
-        //!Write the matrices
+        // Write the matrices
         f.saveMatrix<double>(K, 3, 8);
         f.saveMatrix<int>(L, 20);
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
         double M[3][8];
@@ -264,7 +264,7 @@ TEST(io_test, HandlesLoadandSaveDifferentData)
         }
 
         f.closeFile();
-        //!delete the file
+        // delete the file
         std::remove(fileName);
     }
 
@@ -281,12 +281,12 @@ TEST(io_test, HandlesLoadandSaveDoubleArrays)
 
     const char *fileName = "iotmp";
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
-    //! - 4
+    // - 4
 
-    //!Create a new array and initialize it
+    // Create a new array and initialize it
     double **K = nullptr;
     K = new double *[3];
     for (int i = 0; i < 3; i++)
@@ -308,13 +308,13 @@ TEST(io_test, HandlesLoadandSaveDoubleArrays)
         M[i] = new double[6];
     }
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
-        //!Write the matrices
+        // Write the matrices
         f.saveMatrix<double>(K, 3, 6);
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
         f.loadMatrix<double>(M, 3, 6);
@@ -328,7 +328,7 @@ TEST(io_test, HandlesLoadandSaveDoubleArrays)
         }
 
         f.closeFile();
-        //!delete the file
+        // delete the file
         std::remove(fileName);
     }
 
@@ -346,10 +346,10 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
 
     const char *fileName = "iotmp";
 
-    //!An instance of io class
+    // An instance of io class
     umuq::io f;
 
-    // ! - 5
+    // - 5
 
     struct ebasic
     {
@@ -406,7 +406,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
         }
     };
 
-    //!Create data and initialize it
+    // Create data and initialize it
     edatabase dd;
 
     dd.entries = 4;
@@ -432,7 +432,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
         dd.entry[i].Fvalue = (double)(l) + 1000.;
     }
 
-    //!Open a file for reading and writing
+    // Open a file for reading and writing
     if (f.openFile(fileName, f.in | f.out | f.trunc))
     {
 
@@ -452,10 +452,10 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
             f.saveMatrix<double>(dd.entry[i].Garray, 1, dd.entry[i].ndimGarray);
         }
 
-        //!Rewind the file
+        // Rewind the file
         f.rewindFile();
 
-        //!Create data and initialize it
+        // Create data and initialize it
         edatabase ee;
         ee.entries = 4;
         ee.entry = new ebasic[ee.entries];
@@ -498,7 +498,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
         }
 
         f.closeFile();
-        //!delete the file
+        // delete the file
         std::remove(fileName);
 
         delete[] tmp;

@@ -20,10 +20,10 @@ inline namespace multimin
  * A suitable value of tol for most applications is 0.1. 
  * The steepest descent method is inefficient and is included only for demonstration purposes. 
  * 
- * \tparam T  Data type
+ * \tparam DataType Data type
  */
-template <typename T>
-class steepestDescent : public differentiableFunctionMinimizer<T>
+template <typename DataType>
+class steepestDescent : public differentiableFunctionMinimizer<DataType>
 {
   public:
     /*!
@@ -68,19 +68,19 @@ class steepestDescent : public differentiableFunctionMinimizer<T>
 
   private:
     //!
-    std::vector<T> x1;
+    std::vector<DataType> x1;
     //!
-    std::vector<T> g1;
+    std::vector<DataType> g1;
 };
 
-template <typename T>
-steepestDescent<T>::steepestDescent(const char *Name) : differentiableFunctionMinimizer<T>(Name) {}
+template <typename DataType>
+steepestDescent<DataType>::steepestDescent(const char *Name) : differentiableFunctionMinimizer<DataType>(Name) {}
 
-template <typename T>
-steepestDescent<T>::~steepestDescent() {}
+template <typename DataType>
+steepestDescent<DataType>::~steepestDescent() {}
 
-template <typename T>
-bool steepestDescent<T>::reset(int const nDim) noexcept
+template <typename DataType>
+bool steepestDescent<DataType>::reset(int const nDim) noexcept
 {
     if (nDim <= 0)
     {
@@ -97,37 +97,37 @@ bool steepestDescent<T>::reset(int const nDim) noexcept
     return true;
 }
 
-template <typename T>
-bool steepestDescent<T>::iterate()
+template <typename DataType>
+bool steepestDescent<DataType>::iterate()
 {
     int const n = this->getDimension();
 
-    T f0 = this->fval;
+    DataType f0 = this->fval;
 
     bool failed(false);
 
     // Compute new trial point at x1= x - step * dir, where dir is the normalized gradient
 
     // First compute the Euclidean norm \f$ ||x||_2 = \sqrt {\sum x_i^2} of the vector x = gradient. \f$
-    T gnorm(0);
-    std::for_each(this->gradient.begin(), this->gradient.end(), [&](T const g_i) { gnorm += g_i * g_i; });
+    DataType gnorm(0);
+    std::for_each(this->gradient.begin(), this->gradient.end(), [&](DataType const g_i) { gnorm += g_i * g_i; });
 
-    if (gnorm <= T{})
+    if (gnorm <= DataType{})
     {
         // set dx to zero
-        std::fill(this->dx.begin(), this->dx.end(), T{});
+        std::fill(this->dx.begin(), this->dx.end(), DataType{});
 
         UMUQFAILRETURN("The minimizer is unable to improve on its current estimate, either due \n to the numerical difficulty or because a genuine local minimum has been reached!");
     }
 
     gnorm = std::sqrt(gnorm);
 
-    T f1 = 2 * f0;
+    DataType f1 = 2 * f0;
     while (f1 > f0)
     {
         // Compute the sum \f$y = \alpha x + y\f$ for the vectors x and y.
         // (set dx to zero)
-        T const alpha = -this->step / gnorm;
+        DataType const alpha = -this->step / gnorm;
         for (int i = 0; i < n; i++)
         {
             this->dx[i] = alpha * this->gradient[i];
@@ -162,8 +162,8 @@ bool steepestDescent<T>::iterate()
     return true;
 }
 
-template <typename T>
-inline bool steepestDescent<T>::restart()
+template <typename DataType>
+inline bool steepestDescent<DataType>::restart()
 {
     this->step = this->maxStep;
     return true;

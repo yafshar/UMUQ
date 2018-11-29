@@ -6,14 +6,14 @@
  * 
  * \brief Default digits10() class based on std::numeric_limits
  * 
- * \tparam T data type
+ * \tparam DataType data type
  */
-template <typename T,
-          bool use_numeric_limits = std::numeric_limits<T>::is_specialized,
-          bool is_integer = std::numeric_limits<T>::is_integer>
+template <typename DataType,
+          bool use_numeric_limits = std::numeric_limits<DataType>::is_specialized,
+          bool is_integer = std::numeric_limits<DataType>::is_integer>
 struct default_digits10
 {
-    static int run() { return std::numeric_limits<T>::digits10; }
+    static int run() { return std::numeric_limits<DataType>::digits10; }
 };
 
 /*!
@@ -21,12 +21,12 @@ struct default_digits10
  * 
  * \brief Specialization for Floating point
  * 
- * \tparam T data type
+ * \tparam DataType data type
  */
-template <typename T>
-struct default_digits10<T, false, false>
+template <typename DataType>
+struct default_digits10<DataType, false, false>
 {
-    static int run() { return int(std::ceil(-std::log10(std::numeric_limits<T>::epsilon()))); }
+    static int run() { return int(std::ceil(-std::log10(std::numeric_limits<DataType>::epsilon()))); }
 };
 
 /*!
@@ -34,10 +34,10 @@ struct default_digits10<T, false, false>
  * 
  * \brief Specialization for Integer
  * 
- * \tparam T data type
+ * \tparam DataType data type
  */
-template <typename T>
-struct default_digits10<T, false, true>
+template <typename DataType>
+struct default_digits10<DataType, false, true>
 {
     static int run() { return 0; }
 };
@@ -50,12 +50,12 @@ struct default_digits10<T, false, true>
  * It is based on std::numeric_limits if specialized, 0 for integer types, and 
  * log10(epsilon()) otherwise.
  * 
- * \tparam T data type
+ * \tparam DataType data type
  */
-template <typename T>
+template <typename DataType>
 static inline int digits10()
 {
-    return default_digits10<T>::run();
+    return default_digits10<DataType>::run();
 }
 
 #endif // UMUQ_DIGITS10

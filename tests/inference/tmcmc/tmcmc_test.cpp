@@ -3,7 +3,7 @@
 #include "inference/tmcmc/tmcmc.hpp"
 #include "gtest/gtest.h"
 
-//! Global vector of data
+// Global vector of data
 std::vector<double> x;
 std::vector<double> y;
 
@@ -27,13 +27,13 @@ bool init()
             ndata++;
         }
 
-        //!Rewind the file
+        //Rewind the file
         f.rewindFile();
 
         x.resize(ndata);
         y.resize(ndata);
 
-        EXPECT_TRUE(f.loadMatrix<double>(x.data(), 1, y.data(), 1, ndata));
+        EXPECT_TRUE(f.loadMatrix(x.data(), 1, y.data(), 1, ndata));
 
         f.closeFile();
     }
@@ -64,11 +64,11 @@ void f2(std::vector<double> const &x, std::vector<double> &y, double const *c)
  * 
  * \brief Testing fitting function
  * 
- * \param c Input parameter
- * \param numc Number of input parameters
- * \param out Output
+ * \param c      Input parameter
+ * \param numc   Number of input parameters
+ * \param out    Output
  * \param numout Number of outputs
- * \param info Task information
+ * \param info   Task information
  * 
  * \returns log likelihood 
  */
@@ -92,34 +92,34 @@ double fitfun(double const *c, int const numc, double *out, int const numout, in
     return -res * 0.5;
 }
 
-//! Tests tmcmc
+// Tests tmcmc
 TEST(tmcmc_test, HandlesConstruction)
 {
-    //! Create an instance of the tmcmc object
-    umuq::tmcmc::tmcmc<double> t;
+    // Create an instance of the tmcmc object
+    umuq::tmcmc::tmcmc<> t;
 
-    //! Set the input file
-    EXPECT_TRUE(t.setInputFileName("./data/test.txt"));
+    // Set the input file
+    EXPECT_TRUE(t.setInputFileName("./inference/tmcmc/test.txt"));
 
     std::cout << t.inputFilename << std::endl;
 
-    //! Initilizing the object before setting the fitting function is wrong!
+    // Initializing the object before setting the fitting function is wrong!
     EXPECT_FALSE(t.init());
 
-    //! reset the TMCMC object based on the read data
+    // reset the TMCMC object based on the read data
     EXPECT_TRUE(t.reset());  
 
-    // //! Set the init and fit function together or individually
+    // // Set the init and fit function together or individually
     // EXPECT_TRUE(t.setFitFunction(init, fitfun));
 
-    // //! Initilizing the object before setting the fitting function is wrong!
+    // // Initializing the object before setting the fitting function is wrong!
     // EXPECT_TRUE(t.init());    
 }
 
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

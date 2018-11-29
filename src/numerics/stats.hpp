@@ -11,12 +11,13 @@ namespace umuq
  * 
  * \brief stats is a class which includes some functionality for statistics of the input data
  *
- * It includes:
+ * It includes:<br>
  * - \b minelement         Finds the smallest element in the array of data
  * - \b maxelement         Finds the greatest element in the array of data
  * - \b minelement_index   Finds the position of the smallest element in the array of data 
  * - \b maxelement_index   Finds the position of the greatest element in the array of data 
  * - \b sum                Computes the sum of the elements in the array of data
+ * - \b sumAbs             Computes the sum of the absolute value of the elements in the array of data
  * - \b mean               Computes the mean of the elements in the array of data
  * - \b median             Computes the median of the elements in the array of data
  * - \b medianAbs          Computes the median absolute deviation (MAD) of the elements in the array of data
@@ -27,7 +28,7 @@ namespace umuq
  * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
  * - \b covariance         Compute the covariance
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
- *                       Find the unique n-dimensions sample points in an array of nRows * nCols data
+ *                         Find the unique n-dimensions sample points in an array of nRows * nCols data 
  */
 struct stats
 {
@@ -46,213 +47,487 @@ struct stats
     /*!
      * \brief Finds the smallest element in the array of data with stride
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata  array of data
-     * \param nSize  size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The smallest element in the array of data
+     * \returns DataType The smallest element in the array of data
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * int A[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
+     * 
+     * std::cout << s.minelement<int>(A, 20) << std::endl;
+     * std::cout << s.minelement<int>(A, 20, 2) << std::endl; // smallest element in A with stride = 2 
+     * std::cout << s.minelement<int>(A, 20, 5) << std::endl; // smallest element in A with stride = 5 
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * -10
+     * -9
+     * -6
+     * \endcode
      */
-    template <typename T>
-    inline T minelement(T const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType>
+    inline DataType minelement(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T>
-    inline T minelement(std::vector<T> const &idata) const;
+    /*!
+     * \brief Finds the smallest element in the array of data with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns DataType The smallest element in the array of data
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> B{2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
+     * 
+     * std::cout << s.minelement<double>(B) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 1
+     * \endcode
+     */
+    template <typename DataType>
+    inline DataType minelement(std::vector<DataType> const &idata) const;
 
-    template <typename T>
-    inline T minelement(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Finds the smallest element in the array of data with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns DataType The smallest element in the array of data
+     */
+    template <typename DataType>
+    inline DataType minelement(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Finds the greatest element in the array of data with stride
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The greatest element in the array of data
+     * \returns DataType The greatest element in the array of data
      */
-    template <typename T>
-    inline T maxelement(T const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType>
+    inline DataType maxelement(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T>
-    inline T maxelement(std::vector<T> const &idata) const;
+    /*!
+     * \brief Finds the greatest element in the array of data with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata   Array of data
+     * 
+     * \returns DataType The greatest element in the array of data
+     */
+    template <typename DataType>
+    inline DataType maxelement(std::vector<DataType> const &idata) const;
 
-    template <typename T>
-    inline T maxelement(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Finds the greatest element in the array of data with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param iArray Array of data
+     * 
+     * \returns DataType The greatest element in the array of data
+     */
+    template <typename DataType>
+    inline DataType maxelement(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Finds the position of the smallest element in the array of data (idata) with stride
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The the position of the smallest element
+     * \returns int The position of the smallest element
      */
-    template <typename T>
-    inline int minelement_index(T const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType>
+    inline int minelement_index(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T>
-    inline int minelement_index(std::vector<T> const &idata) const;
+    /*!
+     * \brief Finds the position of the smallest element in the array of data (idata) with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns int The position of the smallest element
+     */
+    template <typename DataType>
+    inline int minelement_index(std::vector<DataType> const &idata) const;
 
-    template <typename T>
-    inline int minelement_index(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Finds the position of the smallest element in the array of data (idata) with stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns int The position of the smallest element
+     */
+    template <typename DataType>
+    inline int minelement_index(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Finds the position of the greatest element in the array of data (idata) with Stride
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The the position of the greatest element
+     * \returns int The the position of the greatest element
      */
-    template <typename T>
-    inline int maxelement_index(T const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType>
+    inline int maxelement_index(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T>
-    inline int maxelement_index(std::vector<T> const &idata) const;
+    /*!
+     * \brief Finds the position of the greatest element in the array of data (idata) with Stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns int The the position of the greatest element
+     */
+    template <typename DataType>
+    inline int maxelement_index(std::vector<DataType> const &idata) const;
 
-    template <typename T>
-    inline int maxelement_index(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Finds the position of the greatest element in the array of data (idata) with Stride
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns int The the position of the greatest element
+     */
+    template <typename DataType>
+    inline int maxelement_index(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Computes the sum of the elements in the array of data with stride
      * 
-     * \tparam T    data type
-     * \tparam TOut data type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The sum of the elements in the array of data
+     * \returns OutputDataType The sum of the elements in the array of data
      */
-    template <typename T, typename TOut = double>
-    inline TOut sum(T const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sum(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut sum(std::vector<T> const &idata) const;
+    /*!
+     * \brief Computes the sum of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns OutputDataType The sum of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sum(std::vector<DataType> const &idata) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut sum(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Computes the sum of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns OutputDataType The sum of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sum(arrayWrapper<DataType> const &iArray) const;
+
+    /*!
+     * \brief Computes the sum of the absolute value of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
+     * 
+     * \returns OutputDataType The sum of the absolute value of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sumAbs(DataType const *idata, int const nSize, int const Stride = 1) const;
+
+    /*!
+     * \brief Computes the sum of the absolute value of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns OutputDataType The sum of the absolute value of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sumAbs(std::vector<DataType> const &idata) const;
+
+    /*!
+     * \brief Computes the sum of the absolute value of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns OutputDataType The sum of the absolute value of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType sumAbs(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
      * 
-     * \tparam T data type
-     * \tparam TOut type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The mean of the elements in the array of data
+     * \returns OutputDataType The mean of the elements in the array of data
      */
-    template <typename T, typename TOut = double>
-    inline TOut mean(T const *idata, const int nSize, int const Stride = 1) const;
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType mean(DataType const *idata, int const nSize, int const Stride = 1) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut mean(std::vector<T> const &idata) const;
+    /*!
+     * \brief Computes the mean of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data
+     * 
+     * \returns OutputDataType The mean of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType mean(std::vector<DataType> const &idata) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut mean(arrayWrapper<T> const &iArray) const;
+    /*!
+     * \brief Computes the mean of the elements in the array of data with stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns OutputDataType The mean of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType mean(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Computes the median of the elements in the array of data with Stride
      * 
-     * \tparam T data type
-     * \tparam TOut type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
-     * \param idata array of data
-     * \param nSize size of the array
-     * \param Stride element stride (default is 1)
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride (default is 1)
      * 
-     * \returns The median of the elements in the array of data with Stride
+     * \returns OutputDataType The median of the elements in the array of data with Stride
      */
-    template <typename T, typename TOut = double>
-    inline TOut median(T const *idata, const int nSize, int const Stride = 1);
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType median(DataType const *idata, int const nSize, int const Stride = 1);
 
-    template <typename T, typename TOut = double>
-    inline TOut median(std::vector<T> const &idata);
+    /*!
+     * \brief Computes the median of the elements in the array of data with Stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data
+     * 
+     * \returns OutputDataType The median of the elements in the array of data with Stride
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType median(std::vector<DataType> const &idata);
 
-    template <typename T, typename TOut = double>
-    inline TOut median(arrayWrapper<T> const &iArray);
+    /*!
+     * \brief Computes the median of the elements in the array of data with Stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data
+     * 
+     * \returns OutputDataType The median of the elements in the array of data with Stride
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType median(arrayWrapper<DataType> const &iArray);
 
     /*!
      * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
      * 
-     * \tparam T data type
-     * \tparam TOut type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
-     * \param idata   array of data
-     * \param nSize   size of the array
-     * \param Stride  element stride
-     * \param median_ median of the elements in the array of data
+     * \param idata   Array of data
+     * \param nSize   Size of the array
+     * \param Stride  Element stride
+     * \param Median  Median of the elements in the array of data
      * 
-     * \returns The median absolute deviation of the elements in the array of data
+     * \returns OutputDataType The median absolute deviation of the elements in the array of data
      */
-    template <typename T, typename TOut = double>
-    inline TOut medianAbs(T const *idata, const int nSize, int const Stride = 1, TOut &median_ = TOut{});
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType medianAbs(DataType const *idata, int const nSize, int const Stride = 1, OutputDataType &Median = OutputDataType{});
 
-    template <typename T, typename TOut = double>
-    inline TOut medianAbs(std::vector<T> const &idata, TOut &median_ = TOut{});
+    /*!
+     * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data
+     * \param Median  Median of the elements in the array of data
+     * 
+     * \returns OutputDataType The median absolute deviation of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType medianAbs(std::vector<DataType> const &idata, OutputDataType &Median = OutputDataType{});
 
-    template <typename T, typename TOut = double>
-    inline TOut medianAbs(arrayWrapper<T> const &iArray, TOut &median_ = TOut{});
+    /*!
+     * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data
+     * \param Median  Median of the elements in the array of data
+     * 
+     * \returns OutputDataType The median absolute deviation of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType medianAbs(arrayWrapper<DataType> const &iArray, OutputDataType &Median = OutputDataType{});
 
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
      * 
-     * \tparam T    data type
-     * \tparam TOut data type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
      * 
-     * \param idata     array of data
-     * \param nSize     size of the array
-     * \param Stride    element stride (optional, default is 1)
-     * \param idataMean mean of the elements in idata (optional)
+     * \param idata      Array of data
+     * \param nSize      Size of the array
+     * \param Stride     Element stride (optional, default is 1)
+     * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns The standard deviation of the elements in the array of data
+     * \returns OutputDataType The standard deviation of the elements in the array of data
      */
-    template <typename T, typename TOut = double>
-    inline TOut stddev(T const *idata, int const nSize, int const Stride = 1, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType stddev(DataType const *idata, int const nSize, int const Stride = 1, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut stddev(std::vector<T> const &idata, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
-
-    template <typename T, typename TOut = double>
-    inline TOut stddev(arrayWrapper<T> const &iArray, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
+    /*!
+     * \brief Computes the standard deviation of the elements in the array of data with or without stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
+     * 
+     * \param idata      Array of data
+     * \param idataMean  Mean of the elements in idata (optional)
+     * 
+     * \returns OutputDataType The standard deviation of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType stddev(std::vector<DataType> const &idata, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    /*!
+     * \brief Computes the standard deviation of the elements in the array of data with or without stride
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
+     * 
+     * \param iArray     Array of data
+     * \param idataMean  Mean of the elements in idata (optional)
+     * 
+     * \returns OutputDataType The standard deviation of the elements in the array of data
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType stddev(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
 
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
      * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
      * 
-     * \tparam T    data type
-     * \tparam TOut data type of return output result (default is double)
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
      * 
-     * \param idata     array of data
-     * \param nSize     size of the array
-     * \param Stride    element stride (optional, default is 1)
-     * \param idataMean mean of the elements in idata (optional)
+     * \param idata      Array of data
+     * \param nSize      Size of the array
+     * \param Stride     Element stride (optional, default is 1)
+     * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns The coefficient of variation (CV)
+     * \returns OutputDataType The coefficient of variation (CV)
      */
-    template <typename T, typename TOut = double>
-    inline TOut coefvar(T const *idata, int const nSize, int const Stride = 1, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType coefvar(DataType const *idata, int const nSize, int const Stride = 1, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut coefvar(std::vector<T> const &idata, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
+    /*!
+     * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
+     * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
+     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
+     * 
+     * \param idata      Array of data
+     * \param idataMean  Mean of the elements in idata (optional)
+     * 
+     * \returns OutputDataType The coefficient of variation (CV)
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType coefvar(std::vector<DataType> const &idata, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
 
-    template <typename T, typename TOut = double>
-    inline TOut coefvar(arrayWrapper<T> const &iArray, TOut const idataMean = std::numeric_limits<TOut>::max()) const;
+    /*!
+     * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
+     * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
+     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
+     * 
+     * \tparam DataType       Data type
+     * \tparam OutputDataType Data type of return output result (default is double)
+     * 
+     * \param iArray     Array of data
+     * \param idataMean  Mean of the elements in idata (optional)
+     * 
+     * \returns OutputDataType The coefficient of variation (CV)
+     */
+    template <typename DataType, typename OutputDataType = double>
+    inline OutputDataType coefvar(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
@@ -261,17 +536,66 @@ struct stats
      * Doing so allows to compare values on very different scales to one another by reducing 
      * the dominance of one dimension over the other.
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata  array of data
-     * \param nSize  size of array
-     * \param Stride element stride (default is 1)
+     * \param idata     Array of data
+     * \param nSize     Size of array
+     * \param Stride    Element stride (default is 1)
+     * \param MinValue  Input minimum value
+     * \param MaxValue  Input maximum value
      */
-    template <typename T>
-    void minmaxNormal(T *idata, int const nSize, int const Stride = 1);
+    template <typename DataType>
+    void minmaxNormal(DataType *idata, int const nSize, int const Stride = 1, DataType const MinValue = UFAIL, DataType const MaxValue = UFAIL);
 
-    template <typename T>
-    void minmaxNormal(std::vector<T> &idata);
+    /*!
+     * \brief minmaxNormal scales the numeric data using the MinMax normalization method
+     * 
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
+     * Doing so allows to compare values on very different scales to one another by reducing 
+     * the dominance of one dimension over the other.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata     Array of data
+     * \param nSize     Size of array
+     * \param MinValue  Output minimum value
+     * \param MaxValue  Output maximum value
+     * \param Stride    Element stride (default is 1)
+     */
+    template <typename DataType>
+    void minmaxNormal(DataType *idata, int const nSize, DataType &MinValue, DataType &MaxValue, int const Stride = 1);
+
+    /*!
+     * \brief minmaxNormal scales the numeric data using the MinMax normalization method
+     * 
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
+     * Doing so allows to compare values on very different scales to one another by reducing 
+     * the dominance of one dimension over the other.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata     Array of data
+     * \param MinValue  Input minimum value
+     * \param MaxValue  Input maximum value
+     */
+    template <typename DataType>
+    void minmaxNormal(std::vector<DataType> &idata, DataType const MinValue = UFAIL, DataType const MaxValue = UFAIL);
+
+    /*!
+     * \brief minmaxNormal scales the numeric data using the MinMax normalization method
+     * 
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
+     * Doing so allows to compare values on very different scales to one another by reducing 
+     * the dominance of one dimension over the other.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata     Array of data
+     * \param MinValue  Output minimum value
+     * \param MaxValue  Output maximum value
+     */
+    template <typename DataType>
+    void minmaxNormal(std::vector<DataType> &idata, DataType &MinValue, DataType &MaxValue);
 
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
@@ -280,45 +604,71 @@ struct stats
      * standard deviations an observation is from the mean of each dimension. 
      * This allows to compare data to a normally distributed random variable.
      * 
-     * \tparam T data type
+     * \tparam DataType Data type
      * 
-     * \param idata array of data
-     * \param nSize size of array
-     * \param Stride element stride (default is 1)
+     * \param idata  Input data
+     * \param nSize  Size of array
+     * \param Stride Element stride (default is 1)
      */
-    template <typename T>
-    inline void zscoreNormal(T *idata, int const nSize, int const Stride = 1);
+    template <typename DataType>
+    inline void zscoreNormal(DataType *idata, int const nSize, int const Stride = 1);
 
-    template <typename T>
-    inline void zscoreNormal(std::vector<T> &idata);
+    /*!
+     * \brief zscoreNormal scales the numeric data using the Z-score normalization method
+     * 
+     * Using the Z-score normalization method, one can normalize the values to be the number of 
+     * standard deviations an observation is from the mean of each dimension. 
+     * This allows to compare data to a normally distributed random variable.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Input data
+     */
+    template <typename DataType>
+    inline void zscoreNormal(std::vector<DataType> &idata);
 
     /*!
      * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
      * 
      * Using the robust Z-score normalization method, one can lessen the influence of outliers 
      * on Z-score calculations. Robust Z-score normalization uses the median value as opposed 
-     * to the mean value used in Z-score. 
+     * to the mean value used in Z-score. <br>
      * By using the median instead of the mean, it helps remove some of the influence of outliers 
      * in the data.
-     * medianAbs
-     * \tparam T    data type
      * 
-     * \param idata array of data
-     * \param nSize size of array
-     * \param Stride element stride (default is 1)
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Input data
+     * \param nSize  Size of the array
+     * \param Stride Element stride (default is 1)
      */
-    template <typename T>
-    inline void robustzscoreNormal(T *idata, int const nSize, int const Stride = 1);
-
-    template <typename T>
-    inline void robustzscoreNormal(std::vector<T> &idata);
+    template <typename DataType>
+    inline void robustzscoreNormal(DataType *idata, int const nSize, int const Stride = 1);
 
     /*!
-     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
-     * \f$ covariance(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
+     * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
      * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
+     * Using the robust Z-score normalization method, one can lessen the influence of outliers 
+     * on Z-score calculations. Robust Z-score normalization uses the median value as opposed 
+     * to the mean value used in Z-score. <br>
+     * By using the median instead of the mean, it helps remove some of the influence of outliers 
+     * in the data.
+     * 
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Input data
+     */
+    template <typename DataType>
+    inline void robustzscoreNormal(std::vector<DataType> &idata);
+
+    /*!
+     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize <br>
+     * \f$ \text{covariance}(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
+     * 
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
      * \param idata  Array of data 
      * \param jdata  Array of data
@@ -326,16 +676,31 @@ struct stats
      * \param iMean  Mean of idata array
      * \param jMean  Mean of jdata array
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors  
+     *
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double A[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * double B[] = {8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 4, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 2.26667
+     * \endcode   
      */
-    template <typename T, typename TOut = double>
-    TOut covariance(T const *idata, T const *jdata, int const nSize, T const iMean, T const jMean);
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(DataType const *idata, DataType const *jdata, int const nSize, DataType const iMean, DataType const jMean);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
      * \param iArray  Array of data 
      * \param jArray  Array of data
@@ -344,50 +709,121 @@ struct stats
      * 
      * \returns Covariance (scaler value) between idata and jdata vectors     
      */
-    template <typename T, typename TOut = double>
-    TOut covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray, T const iMean, T const jMean);
-
-    template <typename T, typename TOut = double>
-    TOut covariance(std::vector<T> const &idata, std::vector<T> const &jdata, T const iMean, T const jMean);
-
-    /*!
-     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize
-     * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
-     * 
-     * \param idata  Array of data 
-     * \param jdata  Array of data
-     * \param nSize  Size of array
-     * \param Stride Stride of the data in the array (default is 1)
-     * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
-     */
-    template <typename T, typename TOut = double>
-    TOut covariance(T const *idata, T const *jdata, int const nSize, int const Stride = 1);
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, DataType const iMean, DataType const jMean);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data 
+     * \param jdata   Array of data
+     * \param iMean   Mean of iArray 
+     * \param jMean   Mean of jArray
+     * 
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> A{2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * std::vector<double> B{8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 2.26667
+     * \endcode  
+     *    
+     */
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, DataType const iMean, DataType const jMean);
+
+    /*!
+     * \brief Compute the covariance between idata and jdata vectors which must both be of the same length \c nSize
+     * 
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data 
+     * \param jdata   Array of data
+     * \param nSize   Size of array
+     * \param Stride  Stride of the data in the array (default is 1)
+     * 
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double A[] = {2.1, 2.5, 3.6, 4.0}; // (with stride 2 {2.1, 3.6} - mean = 2.85)
+     * double B[] = {8, 10, 12, 14};	  // (with stride 2 {8, 12}    - mean = 10)
+     * 
+     * std::cout << s.covariance<double, double>(A, B, 4, 2) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 3
+     * \endcode 
+     * 
+     */
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride = 1);
+
+    /*!
+     * \brief Compute the covariance between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
      * \param iArray  Array of data 
      * \param jArray  Array of data
      * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     * \returns Covariance (scaler value) between idata and jdata vectors
      */
-    template <typename T, typename TOut = double>
-    TOut covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray);
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray);
 
-    template <typename T, typename TOut = double>
-    TOut covariance(std::vector<T> const &iArray, std::vector<T> const &jArray);
+    /*!
+     * \brief Compute the covariance between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data 
+     * \param jdata  Array of data
+     * 
+     * \returns Covariance (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> A{2.1, 3.6}; // (mean = 2.85)
+     * std::vector<double> B{8, 12};    // (mean = 10)
+     * 
+     * std::cout << s.covariance<double, double>(A, B) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 3
+     * \endcode
+     */
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata);
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
      * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
      * \param idata  Array of N-dimensional data 
      * \param nSize  Total size of the array
@@ -398,15 +834,44 @@ struct stats
      * and would like to avoid unnecessary copying the data 
      * 
      * \returns Covariance (array of N by N) from N-dimensional idata
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * // A 3-by-4 matrix
+     * double A[] = {5,  0, 3, 7,
+     *               1, -5, 7, 3,
+     *               4,  9, 8, 10};
+     * 
+     * double *Covariance = s.covariance<double, double>(A, 12, 4, 4);
+     * 
+     * for (int i = 0, l = 0; i < 4; i++)
+     * {
+     *      for (int j = 0; j < 4; j++)
+     *          std::cout << Covariance[l++] << " ";
+     *      std::cout << std::endl;
+     * }
+     * \endcode
+     * 
+     * Output:<br>
+     * \f$
+     * \begin{matrix}
+     * 4.33333 & 8.83333 & -3 & 5.66667 \\ 
+     * 8.83333 & 50.3333 & 6.5 & 24.1667  \\
+     * -3 & 6.5 & 7 & 1 \\
+     * 5.66667 & 24.1667 & 1 & 12.3333 
+     * \end{matrix}
+     * \f$
      */
-    template <typename T, typename TOut = double>
-    TOut *covariance(T const *idata, int const nSize, int const nDim, int const Stride = 1);
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType *covariance(DataType const *idata, int const nSize, int const nDim, int const Stride = 1);
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
      * 
-     * \tparam T     Data type (should be double or long double) 
-     * \tparam TOut  Data type of the return output result (default is double)
+     * \tparam DataType       Data type (should be double or long double) 
+     * \tparam OutputDataType Data type of the return output result (default is double)
      * 
      * \param idata  Array of N-dimensional data with size of [nSize/nDim][nDim]
      * \param nSize  Total size of the array
@@ -415,377 +880,768 @@ struct stats
      * 
      * \returns Covariance (array of [nDim * nDim]) from N-dimensional idata
      */
-    template <typename T, typename TOut = double>
-    TOut *covariance(T const *idata, int const nSize, int const nDim, T const *iMean);
+    template <typename DataType, typename OutputDataType = double>
+    OutputDataType *covariance(DataType const *idata, int const nSize, int const nDim, DataType const *iMean);
 
     /*!
      * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
      * of equivalent elements from idata which is an array of size nRows * nCols.
      * Find the unique n-dimensions sample points in an array of nRows * nCols data.
      * 
-     * \tparam T     Data type
+     * \tparam DataType Data type
      * 
      * \param idata  Input data
      * \param nRows  Number of rows
      * \param nCols  Number of columns (data dimension)
      * \param udata  Unique data (every row in this data is unique)
      */
-    template <typename T>
-    void unique(T const *idata, int const nRows, int const nCols, std::vector<T> &udata);
+    template <typename DataType>
+    void unique(DataType const *idata, int const nRows, int const nCols, std::vector<DataType> &udata);
 
-    template <typename T>
-    void unique(std::vector<T> const &idata, int const nRows, int const nCols, std::vector<T> &udata);
+    /*!
+     * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
+     * of equivalent elements from idata which is an array of size nRows * nCols.
+     * Find the unique n-dimensions sample points in an array of nRows * nCols data.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Input data
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns (data dimension)
+     * \param udata  Unique data (every row in this data is unique)
+     */
+    template <typename DataType>
+    void unique(std::vector<DataType> const &idata, int const nRows, int const nCols, std::vector<DataType> &udata);
 
-    template <typename T>
-    void unique(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::vector<T> &udata);
+    /*!
+     * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
+     * of equivalent elements from idata which is an array of size nRows * nCols.
+     * Find the unique n-dimensions sample points in an array of nRows * nCols data.
+     * 
+     * \tparam DataType Data type
+     * 
+     * \param idata  Input data
+     * \param nRows  Number of rows
+     * \param nCols  Number of columns (data dimension)
+     * \param udata  Unique data (every row in this data is unique)
+     */
+    template <typename DataType>
+    void unique(std::unique_ptr<DataType[]> const &idata, int const nRows, int const nCols, std::vector<DataType> &udata);
 };
 
-stats::stats() {}
+stats::stats()
+{
+    if (!(unrolledIncrement == 0 || unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
+    {
+        UMUQFAIL("The unrolled increment value of unrolledIncrement is not correctly set!");
+    }
+}
 
 stats::~stats() {}
 
-template <typename T>
-inline T stats::minelement(T const *idata, int const nSize, int const Stride) const
+template <typename DataType>
+inline DataType stats::minelement(DataType const *idata, int const nSize, int const Stride) const
 {
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? *std::min_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
     }
     return (nSize > 0) ? *std::min_element(idata, idata + nSize) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline T stats::minelement(std::vector<T> const &idata) const
+template <typename DataType>
+inline DataType stats::minelement(std::vector<DataType> const &idata) const
 {
     return (idata.size() > 0) ? *std::min_element(idata.begin(), idata.end()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline T stats::minelement(arrayWrapper<T> const &iArray) const
+template <typename DataType>
+inline DataType stats::minelement(arrayWrapper<DataType> const &iArray) const
 {
     return (iArray.size() > 0) ? *std::min_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline T stats::maxelement(T const *idata, int const nSize, int const Stride) const
+template <typename DataType>
+inline DataType stats::maxelement(DataType const *idata, int const nSize, int const Stride) const
 {
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? *std::max_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
     }
     return (nSize > 0) ? *std::max_element(idata, idata + nSize) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline T stats::maxelement(std::vector<T> const &idata) const
+template <typename DataType>
+inline DataType stats::maxelement(std::vector<DataType> const &idata) const
 {
     return (idata.size() > 0) ? *std::max_element(idata.begin(), idata.end()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline T stats::maxelement(arrayWrapper<T> const &iArray) const
+template <typename DataType>
+inline DataType stats::maxelement(arrayWrapper<DataType> const &iArray) const
 {
     return (iArray.size() > 0) ? *std::max_element(iArray.begin(), iArray.end()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::minelement_index(T const *idata, int const nSize, int const Stride) const
+template <typename DataType>
+inline int stats::minelement_index(DataType const *idata, int const nSize, int const Stride) const
 {
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * Stride) : throw(std::runtime_error("Wrong input size!"));
     }
 
     return (nSize > 0) ? static_cast<int>(std::distance(idata, std::min_element(idata, idata + nSize))) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::minelement_index(std::vector<T> const &idata) const
+template <typename DataType>
+inline int stats::minelement_index(std::vector<DataType> const &idata) const
 {
     return (idata.size() > 0) ? static_cast<int>(std::distance(idata.begin(), std::min_element(idata.begin(), idata.end()))) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::minelement_index(arrayWrapper<T> const &iArray) const
+template <typename DataType>
+inline int stats::minelement_index(arrayWrapper<DataType> const &iArray) const
 {
     return (iArray.size() > 0) ? static_cast<int>(std::distance(iArray.begin(), std::min_element(iArray.begin(), iArray.end())) * iArray.stride()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::maxelement_index(T const *idata, int const nSize, int const Stride) const
+template <typename DataType>
+inline int stats::maxelement_index(DataType const *idata, int const nSize, int const Stride) const
 {
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
         return (iArray.size() > 0) ? static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * Stride) : throw(std::runtime_error("Wrong input size!"));
     }
     return (nSize > 0) ? static_cast<int>(std::distance(idata, std::max_element(idata, idata + nSize))) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::maxelement_index(std::vector<T> const &idata) const
+template <typename DataType>
+inline int stats::maxelement_index(std::vector<DataType> const &idata) const
 {
     return (idata.size() > 0) ? static_cast<int>(std::distance(idata.begin(), std::max_element(idata.begin(), idata.end()))) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T>
-inline int stats::maxelement_index(arrayWrapper<T> const &iArray) const
+template <typename DataType>
+inline int stats::maxelement_index(arrayWrapper<DataType> const &iArray) const
 {
     return (iArray.size() > 0) ? static_cast<int>(std::distance(iArray.begin(), std::max_element(iArray.begin(), iArray.end())) * iArray.stride()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::sum(T const *idata, int const nSize, int const Stride) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sum(DataType const *idata, int const nSize, int const Stride) const
 {
-    if (Stride > 1)
+    if (nSize <= 0)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        return (iArray.size() > 0) ? static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) : TOut{};
+        return OutputDataType{};
     }
-    return (nSize > 0) ? static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) : TOut{};
-}
-
-template <typename T, typename TOut>
-inline TOut stats::sum(std::vector<T> const &idata) const
-{
-    return (idata.size() > 0) ? (static_cast<TOut>(std::accumulate(idata.begin(), idata.end(), T{}))) : TOut{};
-}
-
-template <typename T, typename TOut>
-inline TOut stats::sum(arrayWrapper<T> const &iArray) const
-{
-    return (iArray.size() > 0) ? (static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{}))) : TOut{};
-}
-
-template <typename T, typename TOut>
-inline TOut stats::mean(T const *idata, const int nSize, int const Stride) const
-{
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        return (iArray.size() > 0) ? (static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        return (iArray.size() > 0) ? static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) : OutputDataType{};
     }
-    return (nSize > 0) ? (static_cast<TOut>(std::accumulate(idata, idata + nSize, T{})) / nSize) : throw(std::runtime_error("Wrong input size!"));
+#if unrolledIncrement == 0
+    return static_cast<OutputDataType>(std::accumulate(idata, idata + nSize, DataType{}));
+#else
+    DataType s(0);
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            s += idata[i];
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+#if unrolledIncrement == 4
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3];
+#endif
+#if unrolledIncrement == 6
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5];
+#endif
+#if unrolledIncrement == 8
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7];
+#endif
+#if unrolledIncrement == 10
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7] + idata[i + 8] + idata[i + 9];
+#endif
+#if unrolledIncrement == 12
+        s += idata[i] + idata[i + 1] + idata[i + 2] + idata[i + 3] + idata[i + 4] + idata[i + 5] + idata[i + 6] + idata[i + 7] + idata[i + 8] + idata[i + 9] + idata[i + 10] + idata[i + 11];
+#endif
+    }
+    return static_cast<OutputDataType>(s);
+#endif
 }
 
-template <typename T, typename TOut>
-inline TOut stats::mean(std::vector<T> const &idata) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sum(std::vector<DataType> const &idata) const
 {
-    return (idata.size() > 0) ? (static_cast<TOut>(std::accumulate(idata.begin(), idata.end(), T{})) / idata.size()) : throw(std::runtime_error("Wrong input size!"));
+    return (idata.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(idata.begin(), idata.end(), DataType{}))) : OutputDataType{};
 }
 
-template <typename T, typename TOut>
-inline TOut stats::mean(arrayWrapper<T> const &iArray) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sum(arrayWrapper<DataType> const &iArray) const
 {
-    return (iArray.size() > 0) ? (static_cast<TOut>(std::accumulate(iArray.begin(), iArray.end(), T{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+    return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{}))) : OutputDataType{};
 }
 
-template <typename T, typename TOut>
-inline TOut stats::median(T const *idata, const int nSize, int const Stride)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sumAbs(DataType const *idata, int const nSize, int const Stride) const
+{
+    if (nSize <= 0)
+    {
+        return OutputDataType{};
+    }
+    if (Stride > 1)
+    {
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        return (iArray.size() > 0) ? static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{}, [](DataType const &lhs, DataType const &rhs) { return lhs + std::abs(rhs); })) : OutputDataType{};
+    }
+#if unrolledIncrement == 0
+    return static_cast<OutputDataType>(std::accumulate(idata, idata + nSize, DataType{}, [](DataType const &lhs, DataType const &rhs) { return lhs + std::abs(rhs); }));
+#else
+    DataType s(0);
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            s += std::abs(idata[i]);
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+#if unrolledIncrement == 4
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]);
+#endif
+#if unrolledIncrement == 6
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]);
+#endif
+#if unrolledIncrement == 8
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]);
+#endif
+#if unrolledIncrement == 10
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]) +
+             std::abs(idata[i + 8]) +
+             std::abs(idata[i + 9]);
+#endif
+#if unrolledIncrement == 12
+        s += std::abs(idata[i]) +
+             std::abs(idata[i + 1]) +
+             std::abs(idata[i + 2]) +
+             std::abs(idata[i + 3]) +
+             std::abs(idata[i + 4]) +
+             std::abs(idata[i + 5]) +
+             std::abs(idata[i + 6]) +
+             std::abs(idata[i + 7]) +
+             std::abs(idata[i + 8]) +
+             std::abs(idata[i + 9]) +
+             std::abs(idata[i + 10]) +
+             std::abs(idata[i + 11]);
+#endif
+    }
+    return static_cast<OutputDataType>(s);
+#endif
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sumAbs(std::vector<DataType> const &idata) const
+{
+    return (idata.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(idata.begin(), idata.end(), DataType{}, [](DataType const &lhs, DataType const &rhs) { return lhs + std::abs(rhs); }))) : OutputDataType{};
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::sumAbs(arrayWrapper<DataType> const &iArray) const
+{
+    return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{}, [](DataType const &lhs, DataType const &rhs) { return lhs + std::abs(rhs); }))) : OutputDataType{};
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::mean(DataType const *idata, int const nSize, int const Stride) const
+{
+    if (nSize <= 0)
+    {
+        UMUQFAIL("Wrong input size!");
+    }
+    if (Stride > 1)
+    {
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+    }
+    return sum<DataType, OutputDataType>(idata, nSize) / static_cast<OutputDataType>(nSize);
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::mean(std::vector<DataType> const &idata) const
+{
+    return (idata.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(idata.begin(), idata.end(), DataType{})) / idata.size()) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::mean(arrayWrapper<DataType> const &iArray) const
+{
+    return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+}
+
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::median(DataType const *idata, int const nSize, int const Stride)
 {
     if (Stride > 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
 
-        //! We do partial sorting algorithm that rearranges elements
-        std::vector<TOut> data(iArray.begin(), iArray.end());
+        // We do partial sorting algorithm that rearranges elements
+        std::vector<OutputDataType> data(iArray.begin(), iArray.end());
         std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
         return (iArray.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
     }
 
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(idata, idata + nSize);
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(idata, idata + nSize);
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (nSize > 1) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::median(std::vector<T> const &idata)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::median(std::vector<DataType> const &idata)
 {
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(idata);
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(idata);
 
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (idata.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::median(arrayWrapper<T> const &iArray)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::median(arrayWrapper<DataType> const &iArray)
 {
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(iArray.begin(), iArray.end());
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(iArray.begin(), iArray.end());
 
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (iArray.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::medianAbs(T const *idata, const int nSize, int const Stride, TOut &median_)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::medianAbs(DataType const *idata, int const nSize, int const Stride, OutputDataType &Median)
 {
-    arrayWrapper<T> iArray(idata, nSize, Stride);
+    arrayWrapper<DataType> iArray(idata, nSize, Stride);
 
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(iArray.begin(), iArray.end());
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(iArray.begin(), iArray.end());
 
-    //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    // std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-    median_ = data[data.size() / 2];
-    std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
+    Median = data[data.size() / 2];
+    std::for_each(data.begin(), data.end(), [&](OutputDataType &d_i) { d_i = std::abs(d_i - Median); });
 
-    //! std::nth_element partial sorting algorithm that rearranges elements in [first, last)
+    // std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (nSize > 1) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::medianAbs(std::vector<T> const &idata, TOut &median_)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::medianAbs(std::vector<DataType> const &idata, OutputDataType &Median)
 {
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(idata);
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(idata);
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-    median_ = data[data.size() / 2];
-    std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
+    Median = data[data.size() / 2];
+    std::for_each(data.begin(), data.end(), [&](OutputDataType &d_i) { d_i = std::abs(d_i - Median); });
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (idata.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::medianAbs(arrayWrapper<T> const &iArray, TOut &median_)
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::medianAbs(arrayWrapper<DataType> const &iArray, OutputDataType &Median)
 {
-    //! We do partial sorting algorithm that rearranges elements
-    std::vector<TOut> data(iArray.begin(), iArray.end());
+    // We do partial sorting algorithm that rearranges elements
+    std::vector<OutputDataType> data(iArray.begin(), iArray.end());
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
-    median_ = data[data.size() / 2];
-    std::for_each(data.begin(), data.end(), [&](TOut &d_i) { d_i = std::abs(d_i - median_); });
+    Median = data[data.size() / 2];
+    std::for_each(data.begin(), data.end(), [&](OutputDataType &d_i) { d_i = std::abs(d_i - Median); });
 
     //std::nth_element partial sorting algorithm that rearranges elements in [first, last)
     std::nth_element(data.begin(), data.begin() + data.size() / 2, data.end());
     return (iArray.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename T, typename TOut>
-inline TOut stats::stddev(T const *idata, int const nSize, int const Stride, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::stddev(DataType const *idata, int const nSize, int const Stride, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(idata, nSize, Stride);
-    TOut s(0);
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata, nSize, Stride);
+    OutputDataType s(0);
     if (Stride != 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        std::for_each(iArray.begin(), iArray.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
         return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) : std::sqrt(s);
     }
-    std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](DataType const d) { s += (d - Mean) * (d - Mean); });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            s += (idata[i] - Mean) * (idata[i] - Mean);
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        OutputDataType const diff0 = idata[i] - Mean;
+        OutputDataType const diff1 = idata[i + 1] - Mean;
+        OutputDataType const diff2 = idata[i + 2] - Mean;
+        OutputDataType const diff3 = idata[i + 3] - Mean;
+#if unrolledIncrement == 4
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
+#endif
+#if unrolledIncrement == 6
+        OutputDataType const diff4 = idata[i + 4] - Mean;
+        OutputDataType const diff5 = idata[i + 5] - Mean;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5;
+#endif
+#if unrolledIncrement == 8
+        OutputDataType const diff4 = idata[i + 4] - Mean;
+        OutputDataType const diff5 = idata[i + 5] - Mean;
+        OutputDataType const diff6 = idata[i + 6] - Mean;
+        OutputDataType const diff7 = idata[i + 7] - Mean;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7;
+#endif
+#if unrolledIncrement == 10
+        OutputDataType const diff4 = idata[i + 4] - Mean;
+        OutputDataType const diff5 = idata[i + 5] - Mean;
+        OutputDataType const diff6 = idata[i + 6] - Mean;
+        OutputDataType const diff7 = idata[i + 7] - Mean;
+        OutputDataType const diff8 = idata[i + 8] - Mean;
+        OutputDataType const diff9 = idata[i + 9] - Mean;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9;
+#endif
+#if unrolledIncrement == 12
+        OutputDataType const diff4 = idata[i + 4] - Mean;
+        OutputDataType const diff5 = idata[i + 5] - Mean;
+        OutputDataType const diff6 = idata[i + 6] - Mean;
+        OutputDataType const diff7 = idata[i + 7] - Mean;
+        OutputDataType const diff8 = idata[i + 8] - Mean;
+        OutputDataType const diff9 = idata[i + 9] - Mean;
+        OutputDataType const diff10 = idata[i + 10] - Mean;
+        OutputDataType const diff11 = idata[i + 11] - Mean;
+        s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9 + diff10 * diff10 + diff11 * diff11;
+#endif
+    }
+#endif
     return (nSize > 1) ? std::sqrt(s / (nSize - 1)) : std::sqrt(s);
 }
 
-template <typename T, typename TOut>
-inline TOut stats::stddev(std::vector<T> const &idata, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::stddev(std::vector<DataType> const &idata, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(idata);
-    TOut s(0);
-    std::for_each(idata.begin(), idata.end(), [&](T const d) { s += (d - m) * (d - m); });
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata);
+    OutputDataType s(0);
+    std::for_each(idata.begin(), idata.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (idata.size() > 1) ? std::sqrt(s / (idata.size() - 1)) : std::sqrt(s);
 }
 
-template <typename T, typename TOut>
-inline TOut stats::stddev(arrayWrapper<T> const &iArray, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::stddev(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(iArray);
-    TOut s(0);
-    std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(iArray);
+    OutputDataType s(0);
+    std::for_each(iArray.begin(), iArray.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) : std::sqrt(s);
 }
 
-template <typename T, typename TOut>
-inline TOut stats::coefvar(T const *idata, int const nSize, int const Stride, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::coefvar(DataType const *idata, int const nSize, int const Stride, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(idata, nSize, Stride);
-    TOut s(0);
-    if (Stride != 1)
-    {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
-        return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) / m : std::sqrt(s) / m;
-    }
-    std::for_each(idata, idata + nSize, [&](T const d) { s += (d - m) * (d - m); });
-    return (nSize > 1) ? std::sqrt(s / (nSize - 1)) / m : std::sqrt(s) / m;
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata, nSize, Stride);
+    OutputDataType const s = stddev<DataType, OutputDataType>(idata, nSize, Stride, Mean);
+    return s / Mean;
 }
 
-template <typename T, typename TOut>
-inline TOut stats::coefvar(std::vector<T> const &idata, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::coefvar(std::vector<DataType> const &idata, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(idata);
-    TOut s(0);
-    std::for_each(idata.begin(), idata.end(), [&](T const d) { s += (d - m) * (d - m); });
-    return (idata.size() > 1) ? std::sqrt(s / (idata.size() - 1)) / m : std::sqrt(s) / m;
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata);
+    OutputDataType s(0);
+    std::for_each(idata.begin(), idata.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
+    return (idata.size() > 1) ? std::sqrt(s / (idata.size() - 1)) / Mean : std::sqrt(s) / Mean;
 }
 
-template <typename T, typename TOut>
-inline TOut stats::coefvar(arrayWrapper<T> const &iArray, TOut const idataMean) const
+template <typename DataType, typename OutputDataType>
+inline OutputDataType stats::coefvar(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean) const
 {
-    TOut const m = idataMean < std::numeric_limits<TOut>::max() ? idataMean : mean<T, TOut>(iArray);
-    TOut s(0);
-    std::for_each(iArray.begin(), iArray.end(), [&](T const d) { s += (d - m) * (d - m); });
-    return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) / m : std::sqrt(s) / m;
+    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(iArray);
+    OutputDataType s(0);
+    std::for_each(iArray.begin(), iArray.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
+    return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) / Mean : std::sqrt(s) / Mean;
 }
 
-template <typename T>
-void stats::minmaxNormal(T *idata, int const nSize, int const Stride)
+template <typename DataType>
+void stats::minmaxNormal(DataType *idata, int const nSize, int const Stride, DataType const MinValue, DataType const MaxValue)
 {
-    T const MinValue = minelement<T>(idata, nSize, Stride);
-    T const MaxValue = maxelement<T>(idata, nSize, Stride);
+    DataType const minValue = (MinValue <= UFAIL) ? minelement<DataType>(idata, nSize, Stride) : MinValue;
+    DataType const maxValue = (MaxValue <= UFAIL) ? maxelement<DataType>(idata, nSize, Stride) : MaxValue;
 
-    T denom = MaxValue - MinValue;
-    if (denom < std::numeric_limits<T>::epsilon())
+    DataType minmaxDenominator = maxValue - minValue;
+    if (minmaxDenominator < std::numeric_limits<DataType>::epsilon())
     {
         UMUQWARNING("Maximum and Minimum Value are identical!");
-        denom = std::numeric_limits<T>::epsilon();
+        minmaxDenominator = std::numeric_limits<DataType>::epsilon();
     }
+    if (Stride > 1)
+    {
+        for (int i = 0; i < nSize; i += Stride)
+        {
+            idata[i] -= minValue;
+            idata[i] /= minmaxDenominator;
+        }
+        return;
+    }
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](DataType &d_i) { d_i = (d_i - minValue) / minmaxDenominator; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= minValue;
+            idata[i] /= minmaxDenominator;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= minValue;
+        idata[i] /= minmaxDenominator;
+        idata[i + 1] -= minValue;
+        idata[i + 1] /= minmaxDenominator;
+        idata[i + 2] -= minValue;
+        idata[i + 2] /= minmaxDenominator;
+        idata[i + 3] -= minValue;
+        idata[i + 3] /= minmaxDenominator;
+#if unrolledIncrement == 6
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= minValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= minValue;
+        idata[i + 9] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= minValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= minValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= minValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= minValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= minValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= minValue;
+        idata[i + 9] /= minmaxDenominator;
+        idata[i + 10] -= minValue;
+        idata[i + 10] /= minmaxDenominator;
+        idata[i + 11] -= minValue;
+        idata[i + 11] /= minmaxDenominator;
+#endif
+    }
+#endif
+    return;
+}
 
+template <typename DataType>
+void stats::minmaxNormal(DataType *idata, int const nSize, DataType &MinValue, DataType &MaxValue, int const Stride)
+{
+    MinValue = minelement<DataType>(idata, nSize, Stride);
+    MaxValue = maxelement<DataType>(idata, nSize, Stride);
+
+    DataType minmaxDenominator = MaxValue - MinValue;
+    if (minmaxDenominator < std::numeric_limits<DataType>::epsilon())
+    {
+        UMUQWARNING("Maximum and Minimum Value are identical!");
+        minmaxDenominator = std::numeric_limits<DataType>::epsilon();
+    }
     if (Stride > 1)
     {
         for (int i = 0; i < nSize; i += Stride)
         {
             idata[i] -= MinValue;
-            idata[i] /= denom;
+            idata[i] /= minmaxDenominator;
         }
         return;
     }
-    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](DataType &d_i) { d_i = (d_i - MinValue) / minmaxDenominator; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= MinValue;
+            idata[i] /= minmaxDenominator;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= MinValue;
+        idata[i] /= minmaxDenominator;
+        idata[i + 1] -= MinValue;
+        idata[i + 1] /= minmaxDenominator;
+        idata[i + 2] -= MinValue;
+        idata[i + 2] /= minmaxDenominator;
+        idata[i + 3] -= MinValue;
+        idata[i + 3] /= minmaxDenominator;
+#if unrolledIncrement == 6
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= minmaxDenominator;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= MinValue;
+        idata[i + 4] /= minmaxDenominator;
+        idata[i + 5] -= MinValue;
+        idata[i + 5] /= minmaxDenominator;
+        idata[i + 6] -= MinValue;
+        idata[i + 6] /= minmaxDenominator;
+        idata[i + 7] -= MinValue;
+        idata[i + 7] /= minmaxDenominator;
+        idata[i + 8] -= MinValue;
+        idata[i + 8] /= minmaxDenominator;
+        idata[i + 9] -= MinValue;
+        idata[i + 9] /= minmaxDenominator;
+        idata[i + 10] -= MinValue;
+        idata[i + 10] /= minmaxDenominator;
+        idata[i + 11] -= MinValue;
+        idata[i + 11] /= minmaxDenominator;
+#endif
+    }
+#endif
     return;
 }
 
-template <typename T>
-void stats::minmaxNormal(std::vector<T> &idata)
+template <typename DataType>
+void stats::minmaxNormal(std::vector<DataType> &idata, DataType const MinValue, DataType const MaxValue)
 {
-    T const MinValue = minelement<T>(idata);
-    T const MaxValue = maxelement<T>(idata);
+    DataType const minValue = (MinValue <= UFAIL) ? minelement<DataType>(idata) : MinValue;
+    DataType const maxValue = (MaxValue <= UFAIL) ? maxelement<DataType>(idata) : MaxValue;
 
-    T denom = MaxValue - MinValue;
-    if (denom < std::numeric_limits<T>::epsilon())
+    DataType minmaxDenominator = maxValue - minValue;
+    if (minmaxDenominator < std::numeric_limits<DataType>::epsilon())
     {
         UMUQWARNING("Maximum and Minimum Value are identical!");
-        denom = std::numeric_limits<T>::epsilon();
+        minmaxDenominator = std::numeric_limits<DataType>::epsilon();
     }
 
-    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MinValue) / denom; });
+    std::for_each(idata.begin(), idata.end(), [&](DataType &d_i) { d_i = (d_i - minValue) / minmaxDenominator; });
     return;
 }
 
-template <typename T>
-inline void stats::zscoreNormal(T *idata, int const nSize, int const Stride)
+template <typename DataType>
+void stats::minmaxNormal(std::vector<DataType> &idata, DataType &MinValue, DataType &MaxValue)
 {
-    T const MeanValue = mean<T, T>(idata, nSize, Stride);
-    T const StddevValue = stddev<T, T>(idata, nSize, Stride, MeanValue);
+    MinValue = minelement<DataType>(idata);
+    MaxValue = maxelement<DataType>(idata);
+
+    DataType minmaxDenominator = MaxValue - MinValue;
+    if (minmaxDenominator < std::numeric_limits<DataType>::epsilon())
+    {
+        UMUQWARNING("Maximum and Minimum Value are identical!");
+        minmaxDenominator = std::numeric_limits<DataType>::epsilon();
+    }
+
+    std::for_each(idata.begin(), idata.end(), [&](DataType &d_i) { d_i = (d_i - MinValue) / minmaxDenominator; });
+    return;
+}
+
+template <typename DataType>
+inline void stats::zscoreNormal(DataType *idata, int const nSize, int const Stride)
+{
+    DataType const MeanValue = mean<DataType, DataType>(idata, nSize, Stride);
+    DataType const StddevValue = stddev<DataType, DataType>(idata, nSize, Stride, MeanValue);
     if (Stride > 1)
     {
         for (int i = 0; i < nSize; i += Stride)
@@ -795,212 +1651,354 @@ inline void stats::zscoreNormal(T *idata, int const nSize, int const Stride)
         }
         return;
     }
-    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](DataType &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= MeanValue;
+            idata[i] /= StddevValue;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= MeanValue;
+        idata[i] /= StddevValue;
+        idata[i + 1] -= MeanValue;
+        idata[i + 1] /= StddevValue;
+        idata[i + 2] -= MeanValue;
+        idata[i + 2] /= StddevValue;
+        idata[i + 3] -= MeanValue;
+        idata[i + 3] /= StddevValue;
+#if unrolledIncrement == 6
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+        idata[i + 8] -= MeanValue;
+        idata[i + 8] /= StddevValue;
+        idata[i + 9] -= MeanValue;
+        idata[i + 9] /= StddevValue;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= MeanValue;
+        idata[i + 4] /= StddevValue;
+        idata[i + 5] -= MeanValue;
+        idata[i + 5] /= StddevValue;
+        idata[i + 6] -= MeanValue;
+        idata[i + 6] /= StddevValue;
+        idata[i + 7] -= MeanValue;
+        idata[i + 7] /= StddevValue;
+        idata[i + 8] -= MeanValue;
+        idata[i + 8] /= StddevValue;
+        idata[i + 9] -= MeanValue;
+        idata[i + 9] /= StddevValue;
+        idata[i + 10] -= MeanValue;
+        idata[i + 10] /= StddevValue;
+        idata[i + 11] -= MeanValue;
+        idata[i + 11] /= StddevValue;
+#endif
+    }
+#endif
     return;
 }
 
-template <typename T>
-inline void stats::zscoreNormal(std::vector<T> &idata)
+template <typename DataType>
+inline void stats::zscoreNormal(std::vector<DataType> &idata)
 {
-    T const MeanValue = mean<T, T>(idata);
-    T const StddevValue = stddev<T, T>(idata, MeanValue);
-    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
+    DataType const MeanValue = mean<DataType, DataType>(idata);
+    DataType const StddevValue = stddev<DataType, DataType>(idata, MeanValue);
+    std::for_each(idata.begin(), idata.end(), [&](DataType &d_i) { d_i = (d_i - MeanValue) / StddevValue; });
     return;
 }
 
-template <typename T>
-inline void stats::robustzscoreNormal(T *idata, int const nSize, int const Stride)
+template <typename DataType>
+inline void stats::robustzscoreNormal(DataType *idata, int const nSize, int const Stride)
 {
-    T median_;
-    T const mad = medianAbs<T, T>(idata, nSize, Stride, median_);
+    DataType Median;
+    DataType const mad = medianAbs<DataType, DataType>(idata, nSize, Stride, Median);
     if (Stride > 1)
     {
         for (int i = 0; i < nSize; i += Stride)
         {
-            idata[i] -= median_;
+            idata[i] -= Median;
             idata[i] /= mad;
         }
         return;
     }
-    std::for_each(idata, idata + nSize, [&](T &d_i) { d_i = (d_i - median_) / mad; });
+#if unrolledIncrement == 0
+    std::for_each(idata, idata + nSize, [&](DataType &d_i) { d_i = (d_i - Median) / mad; });
+#else
+    int const n = (nSize > unrolledIncrement) ? (nSize % unrolledIncrement) : nSize;
+    if (n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            idata[i] -= Median;
+            idata[i] /= mad;
+        }
+    }
+    for (int i = n; i < nSize; i += unrolledIncrement)
+    {
+        idata[i] -= Median;
+        idata[i] /= mad;
+        idata[i + 1] -= Median;
+        idata[i + 1] /= mad;
+        idata[i + 2] -= Median;
+        idata[i + 2] /= mad;
+        idata[i + 3] -= Median;
+        idata[i + 3] /= mad;
+#if unrolledIncrement == 6
+        idata[i + 4] -= Median;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= Median;
+        idata[i + 5] /= mad;
+#endif
+#if unrolledIncrement == 8
+        idata[i + 4] -= Median;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= Median;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= Median;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= Median;
+        idata[i + 7] /= mad;
+#endif
+#if unrolledIncrement == 10
+        idata[i + 4] -= Median;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= Median;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= Median;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= Median;
+        idata[i + 7] /= mad;
+        idata[i + 8] -= Median;
+        idata[i + 8] /= mad;
+        idata[i + 9] -= Median;
+        idata[i + 9] /= mad;
+#endif
+#if unrolledIncrement == 12
+        idata[i + 4] -= Median;
+        idata[i + 4] /= mad;
+        idata[i + 5] -= Median;
+        idata[i + 5] /= mad;
+        idata[i + 6] -= Median;
+        idata[i + 6] /= mad;
+        idata[i + 7] -= Median;
+        idata[i + 7] /= mad;
+        idata[i + 8] -= Median;
+        idata[i + 8] /= mad;
+        idata[i + 9] -= Median;
+        idata[i + 9] /= mad;
+        idata[i + 10] -= Median;
+        idata[i + 10] /= mad;
+        idata[i + 11] -= Median;
+        idata[i + 11] /= mad;
+#endif
+    }
+#endif
     return;
 }
 
-template <typename T>
-inline void stats::robustzscoreNormal(std::vector<T> &idata)
+template <typename DataType>
+inline void stats::robustzscoreNormal(std::vector<DataType> &idata)
 {
-    T median_;
-    T const mad = medianAbs<T, T>(idata, median_);
-    std::for_each(idata.begin(), idata.end(), [&](T &d_i) { d_i = (d_i - median_) / mad; });
+    DataType Median;
+    DataType const mad = medianAbs<DataType, DataType>(idata, Median);
+    std::for_each(idata.begin(), idata.end(), [&](DataType &d_i) { d_i = (d_i - Median) / mad; });
     return;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(T const *idata, T const *jdata, int const nSize, T const iMean, T const jMean)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, DataType const iMean, DataType const jMean)
 {
     /*!
      * \todo
      * If the data size is too big, maybe we should force long double
      */
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     for (int i = 0; i < nSize; i++)
     {
-        TOut const d1 = idata[i] - iMean;
-        TOut const d2 = jdata[i] - jMean;
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(i + 1);
+        OutputDataType const d1 = idata[i] - iMean;
+        OutputDataType const d2 = jdata[i] - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(i + 1);
     }
 
-    return (nSize > 1) ? Covariance * static_cast<TOut>(nSize) / static_cast<TOut>(nSize - 1) : Covariance;
+    return (nSize > 1) ? Covariance * static_cast<OutputDataType>(nSize) / static_cast<OutputDataType>(nSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray, T const iMean, T const jMean)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, DataType const iMean, DataType const jMean)
 {
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     int iSize = 1;
     for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
     {
-        TOut const d1 = *i - iMean;
-        TOut const d2 = *j - jMean;
+        OutputDataType const d1 = *i - iMean;
+        OutputDataType const d2 = *j - jMean;
 
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
     }
 
     --iSize;
 
-    return (iSize > 1) ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(std::vector<T> const &idata, std::vector<T> const &jdata, T const iMean, T const jMean)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, DataType const iMean, DataType const jMean)
 {
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     int iSize = 1;
     for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
     {
-        TOut const d1 = *i - iMean;
-        TOut const d2 = *j - jMean;
+        OutputDataType const d1 = *i - iMean;
+        OutputDataType const d2 = *j - jMean;
 
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
     }
 
     --iSize;
 
-    return (iSize > 1) ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(T const *idata, T const *jdata, int const nSize, int const Stride)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride)
 {
-    T const iMean = mean<T, T>(idata, nSize, Stride);
-    T const jMean = mean<T, T>(jdata, nSize, Stride);
+    DataType const iMean = mean<DataType, DataType>(idata, nSize, Stride);
+    DataType const jMean = mean<DataType, DataType>(jdata, nSize, Stride);
 
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     if (Stride != 1)
     {
-        arrayWrapper<T> iArray(idata, nSize, Stride);
-        arrayWrapper<T> jArray(jdata, nSize, Stride);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        arrayWrapper<DataType> jArray(jdata, nSize, Stride);
 
         int iSize = 1;
         for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
         {
-            TOut const d1 = *i - iMean;
-            TOut const d2 = *j - jMean;
+            OutputDataType const d1 = *i - iMean;
+            OutputDataType const d2 = *j - jMean;
 
-            Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+            Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
         }
 
         --iSize;
 
-        return (iSize > 1) ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+        return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
     }
 
     for (int i = 0; i < nSize; i++)
     {
-        TOut const d1 = idata[i] - iMean;
-        TOut const d2 = jdata[i] - jMean;
+        OutputDataType const d1 = idata[i] - iMean;
+        OutputDataType const d2 = jdata[i] - jMean;
 
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(i + 1);
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(i + 1);
     }
 
-    return (nSize > 1) ? Covariance * static_cast<TOut>(nSize) / static_cast<TOut>(nSize - 1) : Covariance;
+    return (nSize > 1) ? Covariance * static_cast<OutputDataType>(nSize) / static_cast<OutputDataType>(nSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(arrayWrapper<T> const &iArray, arrayWrapper<T> const &jArray)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray)
 {
-    T const iMean = mean<T, T>(iArray);
-    T const jMean = mean<T, T>(jArray);
+    DataType const iMean = mean<DataType, DataType>(iArray);
+    DataType const jMean = mean<DataType, DataType>(jArray);
 
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     int iSize = 1;
     for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
     {
-        TOut const d1 = *i - iMean;
-        TOut const d2 = *j - jMean;
+        OutputDataType const d1 = *i - iMean;
+        OutputDataType const d2 = *j - jMean;
 
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
     }
 
     --iSize;
 
-    return (iSize > 1) ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut stats::covariance(std::vector<T> const &idata, std::vector<T> const &jdata)
+template <typename DataType, typename OutputDataType>
+OutputDataType stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata)
 {
-    T const iMean = mean<T, T>(idata);
-    T const jMean = mean<T, T>(jdata);
+    DataType const iMean = mean<DataType, DataType>(idata);
+    DataType const jMean = mean<DataType, DataType>(jdata);
 
-    TOut Covariance(0);
+    OutputDataType Covariance(0);
     int iSize = 1;
     for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
     {
-        TOut const d1 = *i - iMean;
-        TOut const d2 = *j - jMean;
+        OutputDataType const d1 = *i - iMean;
+        OutputDataType const d2 = *j - jMean;
 
-        Covariance += (d1 * d2 - Covariance) / static_cast<TOut>(iSize++);
+        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
     }
 
     --iSize;
 
-    return (iSize > 1) ? Covariance * static_cast<TOut>(iSize) / static_cast<TOut>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
 }
 
-template <typename T, typename TOut>
-TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int const Stride)
+template <typename DataType, typename OutputDataType>
+OutputDataType *stats::covariance(DataType const *idata, int const nSize, int const nDim, int const Stride)
 {
-    TOut *Covariance = nullptr;
+    OutputDataType *Covariance = nullptr;
     try
     {
-        Covariance = new TOut[nDim * nDim]();
+        Covariance = new OutputDataType[nDim * nDim]();
     }
     catch (std::bad_alloc &e)
     {
         UMUQFAILRETURNNULL("Failed to allocate memory!");
     }
 
-    std::vector<T> iMean(nDim);
+    std::vector<DataType> iMean(nDim);
 
-    //! We should make sure of the correct stride
+    // We should make sure of the correct stride
     int const stride = Stride > nDim ? Stride : nDim;
 
-    //! Compute the mean for each dimension
+    // Compute the mean for each dimension
     for (int i = 0; i < nDim; i++)
     {
-        iMean[i] = mean<T, T>(idata + i, nSize, stride);
+        iMean[i] = mean<DataType, DataType>(idata + i, nSize, stride);
     }
 
     for (int i = 0; i < nDim; i++)
     {
-        arrayWrapper<T> iArray(idata + i, nSize, stride);
+        arrayWrapper<DataType> iArray(idata + i, nSize, stride);
 
         for (int j = i; j < nDim; j++)
         {
-            arrayWrapper<T> jArray(idata + j, nSize, stride);
+            arrayWrapper<DataType> jArray(idata + j, nSize, stride);
 
-            Covariance[i * nDim + j] = covariance<T, TOut>(iArray, jArray, iMean[i], iMean[j]);
+            Covariance[i * nDim + j] = covariance<DataType, OutputDataType>(iArray, jArray, iMean[i], iMean[j]);
         }
     }
 
@@ -1015,13 +2013,13 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, int con
     return Covariance;
 }
 
-template <typename T, typename TOut>
-TOut *stats::covariance(T const *idata, int const nSize, int const nDim, T const *iMean)
+template <typename DataType, typename OutputDataType>
+OutputDataType *stats::covariance(DataType const *idata, int const nSize, int const nDim, DataType const *iMean)
 {
-    TOut *Covariance = nullptr;
+    OutputDataType *Covariance = nullptr;
     try
     {
-        Covariance = new TOut[nDim * nDim]();
+        Covariance = new OutputDataType[nDim * nDim]();
     }
     catch (std::bad_alloc &e)
     {
@@ -1030,13 +2028,13 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, T const
 
     for (int i = 0; i < nDim; i++)
     {
-        arrayWrapper<T> iArray(idata + i, nSize, nDim);
+        arrayWrapper<DataType> iArray(idata + i, nSize, nDim);
 
         for (int j = i; j < nDim; j++)
         {
-            arrayWrapper<T> jArray(idata + j, nSize, nDim);
+            arrayWrapper<DataType> jArray(idata + j, nSize, nDim);
 
-            Covariance[i * nDim + j] = covariance<T, TOut>(iArray, jArray, iMean[i], iMean[j]);
+            Covariance[i * nDim + j] = covariance<DataType, OutputDataType>(iArray, jArray, iMean[i], iMean[j]);
         }
     }
 
@@ -1051,22 +2049,22 @@ TOut *stats::covariance(T const *idata, int const nSize, int const nDim, T const
     return Covariance;
 }
 
-template <typename T>
-void stats::unique(T const *idata, int const nRows, int const nCols, std::vector<T> &udata)
+template <typename DataType>
+void stats::unique(DataType const *idata, int const nRows, int const nCols, std::vector<DataType> &udata)
 {
     if (udata.size() < nRows * nCols)
     {
-        //! Resize the unique array to the maximum size
+        // Resize the unique array to the maximum size
         udata.resize(nRows * nCols);
     }
 
-    //! Create a temporary array with the size of number of columns (one row of data)
-    std::vector<T> x(nCols);
+    // Create a temporary array with the size of number of columns (one row of data)
+    std::vector<DataType> x(nCols);
 
-    //! First element in the input array is considered unique
+    // First element in the input array is considered unique
     std::copy(idata, idata + nCols, udata.begin());
 
-    //! We have one unique
+    // We have one unique
     int nUniques(1);
 
     for (int i = 1; i < nRows; i++)
@@ -1074,26 +2072,26 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
         int const s = i * nCols;
         std::copy(idata + s, idata + s + nCols, x.begin());
 
-        //! Consider this x rows is unique among all the rows
+        // Consider this x rows is unique among all the rows
         bool uniqueFlag(true);
 
-        //! check it with all the unique rows
+        // check it with all the unique rows
         for (int j = 0, l = 0; j < nUniques; j++, l += nCols)
         {
-            //! Consider they are the same
+            // Consider they are the same
             bool compareFlag = true;
             for (int k = 0; k < nCols; k++)
             {
                 if (std::abs(x[k] - udata[l + k]) > 1e-6)
                 {
-                    //! one element in the row differs, so they are different
+                    // one element in the row differs, so they are different
                     compareFlag = false;
                     break;
                 }
             }
             if (compareFlag)
             {
-                //! It is not a unique row
+                // It is not a unique row
                 uniqueFlag = false;
                 break;
             }
@@ -1107,7 +2105,7 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
         }
     }
 
-    //! Correct the size of the unique array
+    // Correct the size of the unique array
     if (nUniques * nCols < udata.size())
     {
         udata.resize(nUniques * nCols);
@@ -1115,14 +2113,14 @@ void stats::unique(T const *idata, int const nRows, int const nCols, std::vector
     return;
 }
 
-template <typename T>
-void stats::unique(std::vector<T> const &idata, int const nRows, int const nCols, std::vector<T> &udata)
+template <typename DataType>
+void stats::unique(std::vector<DataType> const &idata, int const nRows, int const nCols, std::vector<DataType> &udata)
 {
     unique(idata.data(), nRows, nCols, udata);
 }
 
-template <typename T>
-void stats::unique(std::unique_ptr<T[]> const &idata, int const nRows, int const nCols, std::vector<T> &udata)
+template <typename DataType>
+void stats::unique(std::unique_ptr<DataType[]> const &idata, int const nRows, int const nCols, std::vector<DataType> &udata)
 {
     unique(idata.get(), nRows, nCols, udata);
 }

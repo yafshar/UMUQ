@@ -1,6 +1,9 @@
 #ifndef UMUQ_SARUPRNG_H
 #define UMUQ_SARUPRNG_H
 
+namespace umuq
+{
+
 /*! \file saruprng.hpp
  * \ingroup Random_Module
  * 
@@ -66,7 +69,7 @@
 /* \class saru
  * \ingroup Random_Module
  * 
- * Usage:
+ * Usage:<br>
  * 
  * Constructors for 0, 1, 2, or 3 integer seeds.
  * Saru z, s(12345), t(123, 456), u(123, 456, 789);
@@ -74,10 +77,10 @@
  * Advance state by 1, and output a 32 bit integer pseudo-random value.
  * cout << s.u32() << endl; //  Passes BigCrush and DIEHARD
  * 
- * Advance state by 1, and output a double precision [0..1) floating point
+ * Advance state by 1, and output a double precision \f$ [0..1) \f$ floating point
  * cout << s.d() << endl;
  * 
- * Advance state by 1, and output a single precision [0..1) floating point
+ * Advance state by 1, and output a single precision \f$ [0..1) \f$ floating point
  * cout << s.f() << endl;
  * 
  * Move the generator state forwards a variable number of steps
@@ -105,126 +108,233 @@
  */
 class Saru
 {
-
   public:
-    /*! 
+	/*! 
      * \brief Default constructor
      * The default constructor initializes a dummy state.
      */
-    Saru() : state(0x12345678), wstate(12345678) {}
+	Saru();
 
-    /*!
+	/*!
      * \brief Construct a new Saru object (One-seed constructor)
      * 
      * \param seed PRNG seed
+	 *
+     * This seeding was carefully tested for good churning with 1, 2, and
+     * 3 bit flips.  All 32 incrementing counters (each of the circular
+     * shifts) pass the TestU01 Crush tests.  
      */
-    explicit inline Saru(unsigned int seed);
-    
-    /*!
+	explicit Saru(unsigned int seed);
+
+	/*!
      * \brief Construct a new Saru object (Two-seeds constructor)
      * 
      * \param seed1 PRNG seed1
      * \param seed2 PRNG seed2
+	 * 
+     * seeding from 2 samples. We lose one bit of entropy since our input
+     * seeds have 64 bits but at the end, after mixing, we have just 63. 
      */
-    inline Saru(unsigned int seed1, unsigned int seed2);
-    
-    /*!
+	Saru(unsigned int seed1, unsigned int seed2);
+
+	/*!
      * \brief Construct a new Saru object (Three-seeds constructor)
      * 
      * \param seed1 PRNG seed1
      * \param seed2 PRNG seed2
      * \param seed3 PRNG seed3
+	 *
+     * 3 seeds. We have to premix the seeds before dropping to 64 bits.
+     * 
+     * \todo
+     * this may be better optimized in a future version 
      */
-    inline Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
+	Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3);
 
-    /*! 
+	/*!
+     * \brief Copy constructor, construct a new Saru object
+     * 
+     * \param other Saru object
+     */
+	Saru(Saru const &other);
+
+	/*!
+     * \brief Move constructor, construct a new Saru object
+     * 
+     * \param other Saru object
+     */
+	Saru(Saru &&other);
+
+	/*!
+     * \brief Move assignment operator
+     * 
+     * \param other Saru object
+     * 
+     * \returns Saru>& dcpse object
+     */
+	Saru &operator=(Saru &&other);
+
+	/*! 
      * \brief Efficient compile-time computed advancements 
      */
-    template <unsigned int steps>
-    inline void advance()
-    {
-        advanceWeyl<steps>();
-        advanceLCG<steps>();
-    }
+	template <unsigned int steps>
+	inline void advance();
 
-    /*! 
+	/*! 
      * OK to advance negative steps in LCG, it's done mod \f$ 2^32 \f$ so it's
      * the same as advancing \f$ 2^32-1 \f$ steps, which is correct!
      */
-    template <unsigned int steps>
-    inline void rewind()
-    {
-        rewindWeyl<steps>();
-        advanceLCG<-steps>();
-    }
+	template <unsigned int steps>
+	inline void rewind();
 
-    /*!  
+	/*!  
      * Slower (but still reasonable) run-time computed advancement 
      */
-    inline void advance(unsigned int steps);
+	inline void advance(unsigned int steps);
 
-    /*!  
-     * Set the state
+	/*!  
+     * Set the state of the PRNG
      */
-    void setstate(unsigned int istate, unsigned int iwstate)
-    {
-        state = istate;
-        wstate = iwstate;
-    }
+	void setstate(unsigned int istate, unsigned int iwstate);
 
-    template <unsigned int seed>
-    inline Saru fork() const;
+	/*!
+	 * \brief Fork the PRNG, creating a new independent stream, seeded using
+	 * current generator's state. Template seeding allows multiple
+	 * independent children forks.
+	 * 
+	 * \tparam seed Template seeding
+	 * 
+	 * \returns Saru New forked PRNG
+	 */
+	template <unsigned int seed>
+	inline Saru fork() const;
 
-    template <unsigned int steps>
-    inline unsigned int u32();
+	/*!
+	 * \brief Core PRNG evaluation
+	 * 
+	 * \tparam steps Number of steps to advance the state 
+	 * 
+	 * \returns unsigned int A 32 bit integer pseudo-random value
+	 */
+	template <unsigned int steps>
+	inline unsigned int u32();
 
-    template <unsigned int steps>
-    inline float f();
+	/*!
+	 * \brief Core PRNG evaluation, specialized version for advance state by 1
+	 * 
+	 * \returns unsigned int A 32 bit integer pseudo-random value 
+	 */
+	inline unsigned int u32();
 
-    template <unsigned int steps>
-    inline double d();
+	/*!
+     * \brief  Advance state by 1, and output a 32 bit integer pseudo-random value.
+     *         with variate in closed interval \f$ [0, high] \f$ for unsigned int high
+     */
+	inline unsigned int u32(unsigned int high);
 
-    template <unsigned int steps>
-    inline float f(float low, float high);
+	/*!
+	 * \brief Advance state by steps, and output a single precision \f$ [0..1) \f$ floating point
+	 * 
+	 * \tparam steps Number of steps to advance the state 
+	 * 
+	 * \returns float A single precision \f$ [0..1) \f$ floating point
+	 *
+     * Floats have 23 bits of mantissa. We take 31 p-rand bits, cast to
+     * signed int and simply multiply to get the (0,1] range. We shift and cast
+     * to long to boost x86 conversion speed, see worley.com/mathgeek/floatconvert.html. 
+	 */
+	template <unsigned int steps>
+	inline float f();
 
-    template <unsigned int steps>
-    inline double d(double low, double high);
+	/*!
+	 * \brief Advance state by 1, and output a single precision \f$ [0..1) \f$ floating point
+	 *  
+	 * \returns float A single precision \f$ [0..1) \f$ floating point
+	 */
+	inline float f();
 
-    inline unsigned int u32();
+	/*!
+	 * \brief Advance state by steps, and output a single precision \f$ [low..high) \f$ floating point
+	 * 
+	 * \tparam steps Number of steps to advance the state 
+	 * 
+	 * \returns float A single precision \f$ [low..high) \f$ floating point
+	 * 
+     * For a range that doesn't start at 0, we use the full 32 bits since
+     * we need to add an offset anyway. We still use the long cast method. 
+	 */
+	template <unsigned int steps>
+	inline float f(float low, float high);
 
-    inline unsigned int u32(unsigned int high);
+	/*!
+	 * \brief Advance state by 1, and output a single precision \f$ [low..high) \f$ floating point
+	 * 
+	 * \returns float A single precision \f$ [low..high) \f$ floating point
+	 */
+	inline float f(float low, float high);
 
-    inline float f();
+	/*!
+	 * \brief Advance state by steps, and output a double precision \f$ [0..1) \f$ floating point
+	 * 
+	 * \tparam steps Number of steps to advance the state 
+	 * 
+	 * \returns double
+	 * 
+     * Doubles have 52 bits of mantissa. Casting to a long allows faster
+     * conversion, even with the extra needed fp addition. We use less-random
+     * "state" bits for the lowest order bits simply for speed. Output is
+     * in the (0,1] range. See worley.com/mathgeek/floatconvert.html. 
+	 */
+	template <unsigned int steps>
+	inline double d();
 
-    inline double d();
+	/*!
+	 * \brief Advance state by 1, and output a double precision \f$ [0..1) \f$ floating point
+	 * 
+	 * \returns double A double precision \f$ [0..1) \f$ floating point
+	 */
+	inline double d();
 
-    inline float f(float low, float high);
+	/*!
+	 * \brief Advance state by steps, and output a double precision \f$ [low..high) \f$ floating point
+	 * 
+	 * \tparam steps Number of steps to advance the state 
+	 * 
+	 * \returns double A double precision \f$ [low..high) \f$ floating point
+	 */
+	template <unsigned int steps>
+	inline double d(double low, double high);
 
-    inline double d(double low, double high);
+	/*!
+	 * \brief Advance state by 1, and output a double precision \f$ [low..high) \f$ floating point
+	 * 
+	 * \returns double A double precision \f$ [low..high) \f$ floating point
+	 */
+	inline double d(double low, double high);
 
   private:
-    /* compile-time metaprograms to compute LCG and Weyl advancement */
+	/* compile-time metaprograms to compute LCG and Weyl advancement */
 
-    /*! 
+	/*! 
      * Computes \f$ A^N \f$ mod \f$ 2^32 \f$  
      */
-    template <unsigned int A, unsigned int N>
-    struct CTpow
-    {
-        static const unsigned int value = (N & 1 ? A : 1) * CTpow<A * A, N / 2>::value;
-    };
+	template <unsigned int A, unsigned int N>
+	struct CTpow
+	{
+		static const unsigned int value = (N & 1 ? A : 1) * CTpow<A * A, N / 2>::value;
+	};
 
-    /*! 
+	/*! 
      * Specialization to terminate recursion: 
      * \f$ A^0 = 1 \f$ 
      */
-    template <unsigned int A>
-    struct CTpow<A, 0>
-    {
-        static const unsigned int value = 1;
-    };
+	template <unsigned int A>
+	struct CTpow<A, 0>
+	{
+		static const unsigned int value = 1;
+	};
 
-    /*! 
+	/*! 
      * CTpowseries<A,N> computes \f$ 1+A+A^2+A^3+A^4+A^5 \cdots + A^(N-1) \f$ mod \f$ 2^32 \f$.
      * We do NOT use the more elegant formula \f$ \frac{(a^N-1)}{(a-1)} \f$ (see Knuth
      * 3.2.1), because it's more awkward to compute with implicit mod \f$ 2^32 \f$.
@@ -235,26 +345,26 @@ class Saru
      * g(A,n)= 1+A*(1+A)*g(A*A, n/2);  if n is ODD (since n/2 truncates) 
      * \endverbatim
      */
-    template <unsigned int A, unsigned int N>
-    struct CTpowseries
-    {
-        static const unsigned int recurse = (1 + A) * CTpowseries<A * A, N / 2>::value;
-        static const unsigned int value = (N & 1) ? 1 + A * recurse : recurse;
-    };
+	template <unsigned int A, unsigned int N>
+	struct CTpowseries
+	{
+		static const unsigned int recurse = (1 + A) * CTpowseries<A * A, N / 2>::value;
+		static const unsigned int value = (N & 1) ? 1 + A * recurse : recurse;
+	};
 
-    template <unsigned int A>
-    struct CTpowseries<A, 0>
-    {
-        static const unsigned int value = 0;
-    };
+	template <unsigned int A>
+	struct CTpowseries<A, 0>
+	{
+		static const unsigned int value = 0;
+	};
 
-    template <unsigned int A>
-    struct CTpowseries<A, 1>
-    {
-        static const unsigned int value = 1;
-    };
+	template <unsigned int A>
+	struct CTpowseries<A, 1>
+	{
+		static const unsigned int value = 1;
+	};
 
-    /*! 
+	/*! 
      * Compute A*B mod m.  Tricky only because of implicit \f$ 2^32 \f$ modulus.
      * Uses recursion.
      * 
@@ -263,312 +373,305 @@ class Saru
      * if A is odd,  then A*B mod m =  ((A/2)*(B+B mod m) mod m) + B mod m.  
      * \endverbatim
      */
-    template <unsigned int A, unsigned int B, unsigned int m>
-    struct CTmultmod
-    {
-        // (A/2)*(B*2) mod m
-        static const unsigned int temp = CTmultmod<A / 2, (B >= m - B ? B + B - m : B + B), m>::value;
-        static const unsigned int value = A & 1 ? ((B >= m - temp) ? B + temp - m : B + temp) : temp;
-    };
+	template <unsigned int A, unsigned int B, unsigned int m>
+	struct CTmultmod
+	{
+		// (A/2)*(B*2) mod m
+		static const unsigned int temp = CTmultmod<A / 2, (B >= m - B ? B + B - m : B + B), m>::value;
+		static const unsigned int value = A & 1 ? ((B >= m - temp) ? B + temp - m : B + temp) : temp;
+	};
 
-    /*! 
+	/*! 
      * terminate the recursion 
      */
-    template <unsigned int B, unsigned int m>
-    struct CTmultmod<0, B, m>
-    {
-        static const unsigned int value = 0;
-    };
+	template <unsigned int B, unsigned int m>
+	struct CTmultmod<0, B, m>
+	{
+		static const unsigned int value = 0;
+	};
 
-    template <unsigned int offset, unsigned int delta, unsigned int modulus, unsigned int steps>
-    inline unsigned int advanceAnyWeyl(unsigned int);
+  private:
+	template <unsigned int offset, unsigned int delta, unsigned int modulus, unsigned int steps>
+	inline unsigned int advanceAnyWeyl(unsigned int);
 
-    //! Full period 32 bit LCG
-    static const unsigned int LCGA = 0x4beb5d59;
-    static const unsigned int LCGC = 0x2600e1f7;
-
-    //! Prime period 3666320093
-    static const unsigned int oWeylPeriod = 0xda879add;
-    static const unsigned int oWeylOffset = 0x8009d14b;
-
-    //! wraps mod 2^32
-    static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset;
-
-    /*! 
+	/*! 
      * Compile-time template function to efficiently advance a state x with
      * a LCG (mod \f$ 2^32 \f$) N steps.  Runtime, this all becomes a super-simple
      * single multiply and add. 
      */
-    template <unsigned int steps>
-    inline void advanceLCG()
-    {
-        state = CTpow<LCGA, steps>::value * state + LCGC * CTpowseries<LCGA, steps>::value;
-    }
+	template <unsigned int steps>
+	inline void advanceLCG();
 
-    template <unsigned int steps>
-    inline void advanceWeyl()
-    {
-        wstate = advanceAnyWeyl<oWeylOffset, oWeylDelta, oWeylPeriod, steps>(wstate);
-    }
+	/*! 
+     * partial specialization to make a special case for step of 1
+     * especially efficient single step  
+     */
+	template <unsigned int steps>
+	inline void advanceWeyl();
 
-    /*
+	/*
      * \tparam steps Number of steps to rewind.
      */
-    template <unsigned int steps>
-    inline void rewindWeyl()
-    {
-        wstate = advanceAnyWeyl<oWeylOffset, oWeylPeriod - oWeylDelta, oWeylPeriod, steps>(wstate);
-    }
+	template <unsigned int steps>
+	inline void rewindWeyl();
 
-    //! LCG state
-    unsigned int state;
+  private:
+	//! Full period 32 bit LCG
+	static const unsigned int LCGA = 0x4beb5d59;
+	static const unsigned int LCGC = 0x2600e1f7;
 
-    //! Offset Weyl sequence state
-    unsigned int wstate;
+	//! Prime period 3666320093
+	static const unsigned int oWeylPeriod = 0xda879add;
+	static const unsigned int oWeylOffset = 0x8009d14b;
+
+	//! wraps mod 2^32
+	static const unsigned int oWeylDelta = oWeylPeriod + oWeylOffset;
+
+  private:
+	//! LCG state
+	unsigned int state;
+
+	//! Offset Weyl sequence state
+	unsigned int wstate;
 };
 
-/*! 
- * partial specialization to make a special case for step of 1
- * especially efficient single step  
- */
+Saru::Saru() : state(0x12345678), wstate(12345678) {}
+
+Saru::Saru(unsigned int seed)
+{
+	state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
+	wstate = seed ^ (static_cast<signed int>(state) >> 8);
+	state = state + (wstate * (wstate ^ 0xdddf97f5));
+	wstate = 0xABCB96F7 + (wstate >> 1);
+}
+
+Saru::Saru(unsigned int seed1, unsigned int seed2)
+{
+	seed2 += seed1 << 16;
+	seed1 += seed2 << 11;
+	seed2 += static_cast<signed int>(seed1) >> 7;
+	seed1 ^= static_cast<signed int>(seed2) >> 3;
+	seed2 *= 0xA5366B4D;
+	seed2 ^= seed2 >> 10;
+	seed2 ^= static_cast<signed int>(seed2) >> 19;
+	seed1 += seed2 ^ 0x6d2d4e11;
+
+	state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+	wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
+	state = state + (wstate * (wstate ^ 0xdddf97f5));
+	wstate = 0xABCB96F7 + (wstate >> 1);
+}
+
+Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
+{
+	seed3 ^= (seed1 << 7) ^ (seed2 >> 6);
+	seed2 += (seed1 >> 4) ^ (seed3 >> 15);
+	seed1 ^= (seed2 << 9) + (seed3 << 8);
+	seed3 ^= 0xA5366B4D * ((seed2 >> 11) ^ (seed1 << 1));
+	seed2 += 0x72BE1579 * ((seed1 << 4) ^ (seed3 >> 16));
+	seed1 ^= 0X3F38A6ED * ((seed3 >> 5) ^ (static_cast<signed int>(seed2) >> 22));
+	seed2 += seed1 * seed3;
+	seed1 += seed3 ^ (seed2 >> 2);
+	seed2 ^= static_cast<signed int>(seed2) >> 17;
+
+	state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+	wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
+	state = state + (wstate * (wstate ^ 0xdddf97f5));
+	wstate = 0xABCB96F7 + (wstate >> 1);
+}
+
+Saru::Saru(Saru const &other)
+{
+	state = other.state;
+	wstate = other.wstate;
+}
+
+Saru::Saru(Saru &&other)
+{
+	state = other.state;
+	wstate = other.wstate;
+}
+
+Saru &Saru::operator=(Saru &&other)
+{
+	state = other.state;
+	wstate = other.wstate;
+	return *this;
+}
+
+void Saru::setstate(unsigned int istate, unsigned int iwstate)
+{
+	state = istate;
+	wstate = iwstate;
+}
+
+template <unsigned int steps>
+inline void Saru::advanceWeyl()
+{
+	wstate = advanceAnyWeyl<oWeylOffset, oWeylDelta, oWeylPeriod, steps>(wstate);
+}
+
 template <>
 inline void Saru::advanceWeyl<1>()
 {
-    wstate = wstate + oWeylOffset + ((static_cast<signed int>(wstate) >> 31) & oWeylPeriod);
+	wstate = wstate + oWeylOffset + ((static_cast<signed int>(wstate) >> 31) & oWeylPeriod);
 }
 
-/*! 
- * This seeding was carefully tested for good churning with 1, 2, and
- * 3 bit flips.  All 32 incrementing counters (each of the circular
- * shifts) pass the TestU01 Crush tests. 
- */
-inline Saru::Saru(unsigned int seed)
+template <unsigned int steps>
+inline void Saru::advanceLCG()
 {
-    state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
-    wstate = seed ^ (static_cast<signed int>(state) >> 8);
-    state = state + (wstate * (wstate ^ 0xdddf97f5));
-    wstate = 0xABCB96F7 + (wstate >> 1);
+	state = CTpow<LCGA, steps>::value * state + LCGC * CTpowseries<LCGA, steps>::value;
 }
 
-/*! 
- * seeding from 2 samples. We lose one bit of entropy since our input
- * seeds have 64 bits but at the end, after mixing, we have just 63. 
- */
-inline Saru::Saru(unsigned int seed1, unsigned int seed2)
+template <unsigned int steps>
+inline void Saru::rewindWeyl()
 {
-    seed2 += seed1 << 16;
-    seed1 += seed2 << 11;
-    seed2 += static_cast<signed int>(seed1) >> 7;
-    seed1 ^= static_cast<signed int>(seed2) >> 3;
-    seed2 *= 0xA5366B4D;
-    seed2 ^= seed2 >> 10;
-    seed2 ^= static_cast<signed int>(seed2) >> 19;
-    seed1 += seed2 ^ 0x6d2d4e11;
-
-    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
-    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
-    state = state + (wstate * (wstate ^ 0xdddf97f5));
-    wstate = 0xABCB96F7 + (wstate >> 1);
+	wstate = advanceAnyWeyl<oWeylOffset, oWeylPeriod - oWeylDelta, oWeylPeriod, steps>(wstate);
 }
 
-/* 
- * 3 seeds. We have to premix the seeds before dropping to 64 bits.
- * 
- * \todo
- * this may be better optimized in a future version 
- */
-inline Saru::Saru(unsigned int seed1, unsigned int seed2, unsigned int seed3)
+template <unsigned int steps>
+inline void Saru::advance()
 {
-    seed3 ^= (seed1 << 7) ^ (seed2 >> 6);
-    seed2 += (seed1 >> 4) ^ (seed3 >> 15);
-    seed1 ^= (seed2 << 9) + (seed3 << 8);
-    seed3 ^= 0xA5366B4D * ((seed2 >> 11) ^ (seed1 << 1));
-    seed2 += 0x72BE1579 * ((seed1 << 4) ^ (seed3 >> 16));
-    seed1 ^= 0X3F38A6ED * ((seed3 >> 5) ^ (static_cast<signed int>(seed2) >> 22));
-    seed2 += seed1 * seed3;
-    seed1 += seed3 ^ (seed2 >> 2);
-    seed2 ^= static_cast<signed int>(seed2) >> 17;
+	advanceWeyl<steps>();
+	advanceLCG<steps>();
+}
 
-    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
-    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
-    state = state + (wstate * (wstate ^ 0xdddf97f5));
-    wstate = 0xABCB96F7 + (wstate >> 1);
+template <unsigned int steps>
+inline void Saru::rewind()
+{
+	rewindWeyl<steps>();
+	advanceLCG<-steps>();
 }
 
 template <unsigned int offset, unsigned int delta, unsigned int modulus, unsigned int steps>
 inline unsigned int Saru::advanceAnyWeyl(unsigned int x)
 {
-    static const unsigned int fullDelta = CTmultmod<delta, steps % modulus, modulus>::value;
-    /* runtime code boils down to this single constant-filled line. */
-    return x + ((x - offset > modulus - fullDelta) ? fullDelta - modulus : fullDelta);
+	static const unsigned int fullDelta = CTmultmod<delta, steps % modulus, modulus>::value;
+	/* runtime code boils down to this single constant-filled line. */
+	return x + ((x - offset > modulus - fullDelta) ? fullDelta - modulus : fullDelta);
 }
 
 inline void Saru::advance(unsigned int steps)
 {
+	// Computes the LCG advancement AND the Weyl D*E mod m simultaneously
+	unsigned int currentA = LCGA;
+	unsigned int currentC = LCGC;
+	unsigned int currentDelta = oWeylDelta;
+	unsigned int netDelta = 0;
 
-    // Computes the LCG advancement AND the Weyl D*E mod m simultaneously
-    unsigned int currentA = LCGA;
-    unsigned int currentC = LCGC;
-
-    unsigned int currentDelta = oWeylDelta;
-    unsigned int netDelta = 0;
-
-    while (steps)
-    {
-        if (steps & 1)
-        {
-            state = currentA * state + currentC; // LCG step
-            if (netDelta < oWeylPeriod - currentDelta)
-                netDelta += currentDelta;
-            else
-                netDelta += currentDelta - oWeylPeriod;
-        }
-
-        // Change the LCG to step at twice the rate as before
-        currentC += currentA * currentC;
-        currentA *= currentA;
-
-        // Change the Weyl delta to step at 2X rate
-        if (currentDelta < oWeylPeriod - currentDelta)
-            currentDelta += currentDelta;
-        else
-            currentDelta += currentDelta - oWeylPeriod;
-
-        steps /= 2;
-    }
-
-    // Apply the net delta to the Weyl state.
-    if (wstate - oWeylOffset < oWeylPeriod - netDelta)
-        wstate += netDelta;
-    else
-        wstate += netDelta - oWeylPeriod;
+	while (steps)
+	{
+		if (steps & 1)
+		{
+			state = currentA * state + currentC; // LCG step
+			netDelta += (netDelta < oWeylPeriod - currentDelta) ? currentDelta : currentDelta - oWeylPeriod;
+		}
+		// Change the LCG to step at twice the rate as before
+		currentC += currentA * currentC;
+		currentA *= currentA;
+		// Change the Weyl delta to step at 2X rate
+		currentDelta += (currentDelta < oWeylPeriod - currentDelta) ? currentDelta : currentDelta - oWeylPeriod;
+		steps /= 2;
+	}
+	// Apply the net delta to the Weyl state.
+	wstate += (wstate - oWeylOffset < oWeylPeriod - netDelta) ? netDelta : netDelta - oWeylPeriod;
 }
 
 template <unsigned int seed>
 inline Saru Saru::fork() const
 {
-    static const unsigned int churned1 = 0xDEADBEEF ^ (0x1fc4ce47 * (seed ^ (seed >> 13)));
-    static const unsigned int churned2 = 0x1234567 + (0x82948463 * (churned1 ^ (churned1 >> 20)));
-    static const unsigned int churned3 = 0x87654321 ^ (0x87655677 * (churned2 ^ (churned2 >> 16)));
-    /* The above lines are FREE since they'll be precomputed at compile time. They
-     take user values like 1 2 3 and hash them to become roughly uncorrelated. */
-    Saru z;
-
-    z.state = churned2 + state + (churned3 ^ wstate);
-    unsigned int add = (z.state + churned1) >> 1;
-    if (z.wstate - oWeylOffset < oWeylPeriod - add)
-        z.wstate += add;
-    else
-        z.wstate += add - oWeylPeriod;
-    return z;
+	/* These lines are FREE since they'll be precomputed at compile time. They
+       take user values like 1 2 3 and hash them to become roughly uncorrelated. */
+	static const unsigned int churned1 = 0xDEADBEEF ^ (0x1fc4ce47 * (seed ^ (seed >> 13)));
+	static const unsigned int churned2 = 0x1234567 + (0x82948463 * (churned1 ^ (churned1 >> 20)));
+	static const unsigned int churned3 = 0x87654321 ^ (0x87655677 * (churned2 ^ (churned2 >> 16)));
+	Saru z;
+	z.state = churned2 + state + (churned3 ^ wstate);
+	unsigned int add = (z.state + churned1) >> 1;
+	z.wstate += (z.wstate - oWeylOffset < oWeylPeriod - add) ? add : add - oWeylPeriod;
+	return z;
 }
 
-/* Core PRNG evaluation. Very simple! */
 template <unsigned int steps>
 inline unsigned int Saru::u32()
 {
-    advanceLCG<steps>();
-    advanceWeyl<steps>();
-    unsigned int v = (state ^ (state >> 26)) + wstate;
-    return (v ^ (v >> 20)) * 0x6957f5a7;
+	advanceLCG<steps>();
+	advanceWeyl<steps>();
+	unsigned int v = (state ^ (state >> 26)) + wstate;
+	return (v ^ (v >> 20)) * 0x6957f5a7;
 }
 
-inline unsigned int Saru::u32()
-{
-    return u32<1>();
-}
+inline unsigned int Saru::u32() { return u32<1>(); }
 
-/*!
- * \brief  Advance state by 1, and output a 32 bit integer pseudo-random value.
- *         with variate in [0, high] for unsigned int high
- */
 inline unsigned int Saru::u32(unsigned int const high)
 {
-    if (high == 0)
-        return 0;
+	if (high == 0)
+	{
+		return 0;
+	}
 
-    unsigned int usedhigh = high;
+	unsigned int usedhigh = high;
+	usedhigh |= usedhigh >> 1;
+	usedhigh |= usedhigh >> 2;
+	usedhigh |= usedhigh >> 4;
+	usedhigh |= usedhigh >> 8;
+	usedhigh |= usedhigh >> 16;
 
-    usedhigh |= usedhigh >> 1;
-    usedhigh |= usedhigh >> 2;
-    usedhigh |= usedhigh >> 4;
-    usedhigh |= usedhigh >> 8;
-    usedhigh |= usedhigh >> 16;
+	// Draw numbers until one is found in [0, n]
+	unsigned int i = u32<1>() & usedhigh;
 
-    // Draw numbers until one is found in [0, n]
-    unsigned int i = u32<1>() & usedhigh;
-
-    while (i > high)
-    {
-        i = u32<1>() & usedhigh;
-    }
-
-    return i;
+	while (i > high)
+	{
+		i = u32<1>() & usedhigh;
+	}
+	return i;
 }
 
-/*! 
- * Floats have 23 bits of mantissa. We take 31 p-rand bits, cast to
- * signed int and simply multiply to get the (0,1] range. We shift and cast
- * to long to boost x86 conversion speed, see worley.com/mathgeek/floatconvert.html. 
- */
 template <unsigned int steps>
 inline float Saru::f()
 {
-    return static_cast<signed int>(u32<steps>() >> 1) * (1.0f / 0x80000000);
+	return static_cast<signed int>(u32<steps>() >> 1) * (1.0f / 0x80000000);
 }
 
-/* for a range that doesn't start at 0, we use the full 32 bits since
- * we need to add an offset anyway. We still use the long cast method. 
- */
 template <unsigned int steps>
 inline float Saru::f(float low, float high)
 {
-    const float TWO_N32 = 2.32830643653869628906250e-10f; /* 2^-32 */
-    return static_cast<signed int>(u32<steps>()) * (TWO_N32 * (high - low)) + 0.5f * (high + low);
+	const float TWO_N32 = 2.32830643653869628906250e-10f; /* 2^-32 */
+	return static_cast<signed int>(u32<steps>()) * (TWO_N32 * (high - low)) + 0.5f * (high + low);
 }
 
 inline float Saru::f()
 {
-    return f<1>();
+	return f<1>();
 }
 
 inline float Saru::f(float low, float high)
 {
-    return f<1>(low, high);
+	return f<1>(low, high);
 }
 
-/* 
- * Doubles have 52 bits of mantissa. Casting to a long allows faster
- * conversion, even with the extra needed fp addition. We use less-random
- * "state" bits for the lowest order bits simply for speed. Output is
- * in the (0,1] range. See worley.com/mathgeek/floatconvert.html. 
- */
 template <unsigned int steps>
 inline double Saru::d()
 {
-    const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
-    // deliberate cast to signed int for conversion speed
-    signed int v = static_cast<signed int>(u32<steps>());
-    return (v * TWO_N32 + (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32);
+	const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
+	// deliberate cast to signed int for conversion speed
+	signed int v = static_cast<signed int>(u32<steps>());
+	return (v * TWO_N32 + (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32);
 }
+
+inline double Saru::d() { return d<1>(); }
 
 template <unsigned int steps>
 inline double Saru::d(double low, double high)
 {
-    const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
-    // deliberate cast to signed int for conversion speed
-    signed int v = static_cast<signed int>(u32<steps>());
-    return (v * TWO_N32 * (high - low) + (high + low) * (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32 * (high - low));
+	const double TWO_N32 = 0.232830643653869628906250e-9; /* 2^-32 */
+	// deliberate cast to signed int for conversion speed
+	signed int v = static_cast<signed int>(u32<steps>());
+	return (v * TWO_N32 * (high - low) + (high + low) * (0.5 + 0.5 * TWO_N32)) + static_cast<long>(state) * (TWO_N32 * TWO_N32 * (high - low));
 }
 
-inline double Saru::d()
-{
-    return d<1>();
-}
+inline double Saru::d(double low, double high) { return d<1>(low, high); }
 
-inline double Saru::d(double low, double high)
-{
-    return d<1>(low, high);
-}
+} // namespace umuq
 
 #endif // SARUPRNG

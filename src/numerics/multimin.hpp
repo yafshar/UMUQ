@@ -11,6 +11,7 @@
  * to the original GSL Multidimensional Minimization source codes made  
  * available under the following license:
  * 
+ * \copyright
  * \verbatim
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Fabrice Rossi
  * 

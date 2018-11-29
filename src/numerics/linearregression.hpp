@@ -1,7 +1,7 @@
 #ifndef UMUQ_LINEARREGRESSION_H
 #define UMUQ_LINEARREGRESSION_H
 
-#include "polynomial.hpp"
+#include "polynomials.hpp"
 #include "eigenlib.hpp"
 
 namespace umuq
@@ -14,9 +14,11 @@ namespace umuq
  * scalar response (or dependent variable) and one or more explanatory variables (or 
  * independent variables).
  * 
- * \tparam T Data type
+ * \tparam DataType        Data type
+ * \tparam PolynomialType  Polynomial type (Default is - \b polynomial<DataType> with monomials)<br>
+ *                         \sa umuq::polynomials::PolynomialTypes.<br>
  */
-template <typename T>
+template <typename DataType, class PolynomialType = polynomial<DataType>>
 class linearRegression
 {
   public:
@@ -33,16 +35,16 @@ class linearRegression
      * 
      * \param other linearRegression object
      */
-    linearRegression(linearRegression<T> &&other);
+    linearRegression(linearRegression<DataType, PolynomialType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other  linearRegression object
      * 
-     * \return linearRegression<T>& 
+     * \return linearRegression<DataType, PolynomialType>& 
      */
-    linearRegression<T> &operator=(linearRegression<T> &&other);
+    linearRegression<DataType, PolynomialType> &operator=(linearRegression<DataType, PolynomialType> &&other);
 
     /*!
      * \brief Destroy the linearRegression object
@@ -56,24 +58,22 @@ class linearRegression
      * \param idata    Input data points
      * \param iFvalue  Function value at the input points
      * \param nPoints  Number of input points
-     * 
-     * \return true    
+     *  
      * \return false   For wrong number of input points or not having enough memory
      */
-    bool computeWeights(T *idata, T *iFvalue, int const nPoints);
+    bool computeWeights(DataType *idata, DataType *iFvalue, int const nPoints);
 
     /*!
      * \brief Solution for the new points using the computed Kernel weights
      * 
-     * \param qdata     N-dimensional input qury data points
+     * \param qdata     N-dimensional input query data points
      * \param qFvalue   [out] Value of the function at the query points
-     * \param nqPoints  Number of qury points
-     * 
-     * \return true     
+     * \param nqPoints  Number of query points
+     *   
      * \return false    If polynomialOrder has been changed between computing the kernels and solution
      *                  or not having enough memory
      */
-    bool solve(T *qdata, T *qFvalue, int const nqPoints);
+    bool solve(DataType *qdata, DataType *qFvalue, int const nqPoints);
 
     /*!
      * \brief Minimum number of points which is required to do the linear regression
@@ -94,14 +94,24 @@ class linearRegression
      * 
      * \param polynomialorder new polynomial order
      */
-    void resetPolynomialOrder(int polynomialorder);
+    void resetPolynomialOrder(int const polynomialorder);
 
   private:
-    // Make it noncopyable
-    linearRegression(linearRegression<T> const &) = delete;
+    /*!
+     * \brief Delete a linearRegression object copy construction
+     * 
+     * Make it noncopyable.
+     */
+    linearRegression(linearRegression<DataType, PolynomialType> const &) = delete;
 
-    // Make it not assignable
-    linearRegression<T> &operator=(linearRegression<T> const &) = delete;
+    /*!
+     * \brief Delete a linearRegression object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns linearRegression<DataType, PolynomialType>& 
+     */
+    linearRegression<DataType, PolynomialType> &operator=(linearRegression<DataType, PolynomialType> const &) = delete;
 
   private:
     //! Dimensionality
@@ -117,17 +127,17 @@ class linearRegression
     int linearRegressionkernelSize;
 
     //! Operator kernel
-    std::vector<T> linearRegressionkernel;
+    std::vector<DataType> linearRegressionkernel;
 };
 
-template <typename T>
-linearRegression<T>::linearRegression(int ndim, int polynomialorder) : nDim(ndim),
-                                                                       polynomialOrder(polynomialorder),
-                                                                       linearRegressionMonomialSize(0),
-                                                                       linearRegressionkernelSize(0) {}
+template <typename DataType, class PolynomialType>
+linearRegression<DataType, PolynomialType>::linearRegression(int ndim, int polynomialorder) : nDim(ndim),
+                                                                                              polynomialOrder(polynomialorder),
+                                                                                              linearRegressionMonomialSize(0),
+                                                                                              linearRegressionkernelSize(0) {}
 
-template <typename T>
-linearRegression<T>::linearRegression(linearRegression<T> &&other)
+template <typename DataType, class PolynomialType>
+linearRegression<DataType, PolynomialType>::linearRegression(linearRegression<DataType, PolynomialType> &&other)
 {
     nDim = other.nDim;
     polynomialOrder = other.polynomialOrder;
@@ -136,8 +146,8 @@ linearRegression<T>::linearRegression(linearRegression<T> &&other)
     linearRegressionkernel = std::move(other.linearRegressionkernel);
 }
 
-template <typename T>
-linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&other)
+template <typename DataType, class PolynomialType>
+linearRegression<DataType, PolynomialType> &linearRegression<DataType, PolynomialType>::operator=(linearRegression<DataType, PolynomialType> &&other)
 {
     nDim = other.nDim;
     polynomialOrder = other.polynomialOrder;
@@ -148,19 +158,19 @@ linearRegression<T> &linearRegression<T>::operator=(linearRegression<T> &&other)
     return *this;
 }
 
-template <typename T>
-linearRegression<T>::~linearRegression() {}
+template <typename DataType, class PolynomialType>
+linearRegression<DataType, PolynomialType>::~linearRegression() {}
 
-template <typename T>
-bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints)
+template <typename DataType, class PolynomialType>
+bool linearRegression<DataType, PolynomialType>::computeWeights(DataType *idata, DataType *iFvalue, int const nPoints)
 {
     if (nPoints < 1 || nPoints < minPointsRequired())
     {
-        UMUQFAILRETURN("Number of input data points are not enough!");
+        UMUQFAILRETURN("Number of input data points =", nPoints, " are not enough!");
     }
 
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
+    PolynomialType poly(nDim, polynomialOrder);
 
     // Get the monomials size
     linearRegressionMonomialSize = poly.monomialsize();
@@ -184,18 +194,18 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
     }
 
     // Right hand side vector
-    EVectorMapType<T> BV(iFvalue, nPoints);
+    EVectorMapType<DataType> BV(iFvalue, nPoints);
 
     // Matrix A
-    EMatrixX<T> AM(nPoints, linearRegressionMonomialSize);
+    EMatrixX<DataType> AM(nPoints, linearRegressionMonomialSize);
 
     // Solution vector
-    T *sv = linearRegressionkernel.data();
-    EVectorMapType<T> SV(sv, linearRegressionMonomialSize);
+    DataType *sv = linearRegressionkernel.data();
+    EVectorMapType<DataType> SV(sv, linearRegressionMonomialSize);
 
     // dummy array of data
-    std::unique_ptr<T[]> rowData(new T[linearRegressionMonomialSize]);
-    T *rowdata = rowData.get();
+    std::unique_ptr<DataType[]> rowData(new DataType[linearRegressionMonomialSize]);
+    DataType *rowdata = rowData.get();
 
     // Loop over all query points
     for (int i = 0; i < nPoints; i++)
@@ -204,7 +214,7 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
         std::ptrdiff_t const IdI = i * nDim;
 
         // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        poly.monomial_value(idata + IdI, rowdata);
+        poly.monomialValue(idata + IdI, rowdata);
 
         // Loop through the neighbors
         for (int j = 0; j < linearRegressionMonomialSize; j++)
@@ -216,27 +226,27 @@ bool linearRegression<T>::computeWeights(T *idata, T *iFvalue, int const nPoints
 
     {
         /*
-             * Two-sided Jacobi SVD decomposition, ensuring optimal reliability and accuracy.
-             * Thin U and V are all we need for (least squares) solving.
-             */
-        Eigen::JacobiSVD<EMatrixX<T>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
+         * Two-sided Jacobi SVD decomposition, ensuring optimal reliability and accuracy.
+         * Thin U and V are all we need for (least squares) solving.
+         */
+        Eigen::JacobiSVD<EMatrixX<DataType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
         /*
-             * SV contains the least-squares solution of 
-             * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b} \f$
-             * using the current SVD decomposition of A.
-             */
+         * SV contains the least-squares solution of 
+         * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b}, \f$
+         * using the current SVD decomposition of A.
+         */
         SV = svd.solve(BV);
     }
 
     return true;
 }
 
-template <typename T>
-bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
+template <typename DataType, class PolynomialType>
+bool linearRegression<DataType, PolynomialType>::solve(DataType *qdata, DataType *qFvalue, int const nqPoints)
 {
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
+    PolynomialType poly(nDim, polynomialOrder);
 
     if (poly.monomialsize() != linearRegressionkernelSize)
     {
@@ -247,7 +257,7 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
     {
         try
         {
-            qFvalue = new T[nqPoints];
+            qFvalue = new DataType[nqPoints];
         }
         catch (std::bad_alloc &e)
         {
@@ -256,11 +266,11 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
     }
 
     // Get the pointer to the kernel weights
-    T *sv = linearRegressionkernel.data();
+    DataType *sv = linearRegressionkernel.data();
 
     // dummy array of data
-    std::unique_ptr<T[]> rowData(new T[linearRegressionMonomialSize]);
-    T *rowdata;
+    std::unique_ptr<DataType[]> rowData(new DataType[linearRegressionMonomialSize]);
+    DataType *rowdata;
 
     // Loop over all query points
     for (int i = 0; i < nqPoints; i++)
@@ -271,10 +281,10 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
         rowdata = rowData.get();
 
         // Evaluates a monomial at a point \f$ {\mathbf x} \f$
-        poly.monomial_value(qdata + IdI, rowdata);
+        poly.monomialValue(qdata + IdI, rowdata);
 
-        T sum(0);
-        std::for_each(sv, sv + linearRegressionMonomialSize, [&](T const s) { sum += s * (*rowdata++); });
+        DataType sum(0);
+        std::for_each(sv, sv + linearRegressionMonomialSize, [&](DataType const s) { sum += s * (*rowdata++); });
 
         qFvalue[i] = sum;
     }
@@ -282,26 +292,23 @@ bool linearRegression<T>::solve(T *qdata, T *qFvalue, int const nqPoints)
     return true;
 }
 
-template <typename T>
-inline int linearRegression<T>::minPointsRequired()
+template <typename DataType, class PolynomialType>
+inline int linearRegression<DataType, PolynomialType>::minPointsRequired()
 {
     // Create an instance of a polynomial object with polynomial order
-    polynomial<T> poly(nDim, polynomialOrder);
-    /* 
-         * Get the monomials size
-         * \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
-         */
+    PolynomialType poly(nDim, polynomialOrder);
+    /* Get the monomials size \f$ monomialSize = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$ */
     return poly.monomialsize();
 }
 
-template <typename T>
-inline int linearRegression<T>::recommendedNumPoints()
+template <typename DataType, class PolynomialType>
+inline int linearRegression<DataType, PolynomialType>::recommendedNumPoints()
 {
     return minPointsRequired();
 }
 
-template <typename T>
-void linearRegression<T>::resetPolynomialOrder(int polynomialorder)
+template <typename DataType, class PolynomialType>
+void linearRegression<DataType, PolynomialType>::resetPolynomialOrder(int const polynomialorder)
 {
     polynomialOrder = polynomialorder;
     //

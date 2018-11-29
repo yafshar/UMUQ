@@ -3,17 +3,16 @@
 # This file can be validated on:
 # http://lint.travis-ci.org/
 
+# List of whitelisted in travis packages for ubuntu-precise can be found here:
+#   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+# List of whitelisted in travis apt-sources:
+#   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+
 sudo: false
 language: cpp
 
 git:
   submodules: false
-
-before_install:
-  - test -n $CC     && unset CC
-  - test -n $CXX    && unset CXX
-  - test -n $FC     && unset FC
-  - test -n $F77    && unset F77
 
 # Define the matrix explicitly, manually expanding the combinations of (os, compiler, env).
 # It is more tedious, but grants us far more flexibility.
@@ -23,58 +22,73 @@ matrix:
       compiler: gcc
       sudo: true
       install: ./scripts/install-linux-gcc.sh
-      script: ./scripts/build-linux-autotools.sh
+      script: ./scripts/build-autotools.sh
+      # This section installs the necessary dependencies.
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - gcc-5
+            - g++-5
+            - gfortran-5
+            - libstdc++-5-dev
       env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+        - MATRIX_EVAL="sudo apt-get update && CC=gcc-5 && CXX=g++-5 && FC=gfortran-5"
     # - os: linux
     #   compiler: clang
     #   sudo: true
-    #   install: ./scripts/install-linux-clang.sh
-    #   script: ./scripts/build-linux-autotools.sh
+    #   install: travis_wait 60 ./scripts/install-linux-clang.sh
+    #   script: ./scripts/build-autotools.sh
+    #   # This section installs the necessary dependencies.
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - llvm-toolchain-trusty-5.0
+    #         - ubuntu-toolchain-r-test
+    #       packages:
+    #         - cmake
+    #         - gcc-5
+    #         - g++-5
+    #         - gfortran-5
+    #         - libstdc++-5-dev
+    #         - clang-5.0
+    #         - libclang-5.0-dev
     #   env:
-    #     - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
+    #     - MATRIX_EVAL="sudo apt-get update && CC=clang && CXX=clang++ && FC=gfortran-5"
     - os: osx
-      osx_image: xcode8
-      compiler: gcc
+      osx_image: xcode10.1
       sudo: true
-      install: ./scripts/install-osx-gcc.sh
-      script: ./scripts/build-osx-autotools.sh
+      install: ./scripts/install-osx.sh
+      script: ./scripts/build-autotools.sh
       env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++ && FC=gfortran"
+        - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++"
     # - os: osx
-    #   osx_image: xcode8
+    #   osx_image: xcode8.3
     #   compiler: gcc
     #   sudo: true
-    #   install: ./scripts/install-osx-gcc6.sh
-    #   script: ./scripts/build-osx-autotools.sh
+    #   install: travis_wait 60 ./scripts/install-osx.sh
+    #   script: ./scripts/build-autotools.sh
     #   env:
-    #     - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
-## These are the install and build (script) phases for the most common entries in the matrix.  They could be included
-## in each entry in the matrix, but that is just repetitive.
+    #     - MATRIX_EVAL="brew update && sudo rm -fr /usr/local/include/c++ && CC=gcc-6 && CXX=g++-6 && FC=gfortran-6"
+
+before_install:
+  - test -n $CC  && unset CC
+  - test -n $CXX && unset CXX
+  - test -n $FC  && unset FC
+  - test -n $F77 && unset F77
+  - eval "${MATRIX_EVAL}"
+
 install: make get-deps
 
 before_script:
   - . ./scripts/env.sh
   - ./scripts/log-config.sh
 
-# after_failure phase to dump the logs
+# After_failure phase to dump the logs
 after_failure:
   - cat ./tests/*.log
-
-# For sudo=false builds this section installs the necessary dependencies.
-addons:
-  apt:
-    # List of whitelisted in travis packages for ubuntu-precise can be found here:
-    #   https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-    # List of whitelisted in travis apt-sources:
-    #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
-    sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.7
-    packages:
-    - cmake
-    - g++-5
-    - clang-3.7
 
 notifications:
   email: false

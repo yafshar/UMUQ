@@ -1,6 +1,6 @@
 #include "core/core.hpp"
 #include "environment.hpp"
-#include "data/mpidatatype.hpp"
+#include "datatype/mpidatatype.hpp"
 #include "gtest/gtest.h"
 
 /*! \class baseA
@@ -79,7 +79,7 @@ class torcTest
             a1 = 100;
             a2[0] *= (i + 1);
             torc_create(-1, (void (*)())FUN, 3,
-                        1, MPIDatatype<long long>, CALL_BY_REF,
+                        1, umuq::MPIDatatype<long long>, CALL_BY_REF,
                         1, MPI_INT, CALL_BY_REF,
                         1, MPI_DOUBLE, CALL_BY_VAL,
                         reinterpret_cast<long long>(&obj1), a1, a2);
@@ -87,7 +87,7 @@ class torcTest
             a1 = 10000;
             a2[0] *= (i + 2);
             torc_create(-1, (void (*)())FUN, 3,
-                        1, MPIDatatype<long long>, CALL_BY_REF,
+                        1, umuq::MPIDatatype<long long>, CALL_BY_REF,
                         1, MPI_INT, CALL_BY_REF,
                         1, MPI_DOUBLE, CALL_BY_VAL,
                         reinterpret_cast<long long>(&obj2), a1, a2);
@@ -97,7 +97,7 @@ class torcTest
     }
 };
 
-//! Tests torc
+/*! Tests torc */
 TEST(torc_test, HandlesClass)
 {
     torc_register_task((void *)FUN);
@@ -109,7 +109,7 @@ TEST(torc_test, HandlesClass)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =

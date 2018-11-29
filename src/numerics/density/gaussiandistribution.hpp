@@ -12,21 +12,22 @@ inline namespace density
  * 
  * \brief The Gaussian distribution
  * 
+ * \tparam RealType     Data type
+ * \tparam FunctionType Function type
+ * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a Gaussian 
- * distribution wiuh standard deviation \f$ \sigma \f$
- * using: 
- * \f[
+ * distribution with standard deviation \f$ \sigma \f$ <br>
+ * using:<br>
+ * 
+ * \f$
  * p(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{\left(-\frac{\left(x - \mu \right)^2}{2\sigma^2}\right)}.
- * \f]
+ * \f$
  * 
- * It also provides random values x, distributed according to the Gaussian distribution probability 
- * density function. 
- * 
- * 
- * \tparam T Data type
+ * This class also provides random values x, distributed according to the Gaussian distribution probability 
+ * density function. \sa sample
  */
-template <typename T, class V = T const *>
-class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
+class gaussianDistribution : public densityFunction<RealType, FunctionType>
 {
   public:
     /*!
@@ -35,7 +36,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * \param mu     Mean, \f$ \mu \f$
      * \param sigma  Standard deviation \f$ \sigma \f$
      */
-    gaussianDistribution(T const mu, T const sigma);
+    gaussianDistribution(RealType const mu, RealType const sigma);
 
     /*!
      * \brief Construct a new gaussian Distribution object
@@ -44,13 +45,12 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * \param sigma  Standard deviation \f$ \sigma \f$
      * \param n      Total number of Mean + Standard deviation inputs
      */
-    gaussianDistribution(T const *mu, T const *sigma, int const n);
+    gaussianDistribution(RealType const *mu, RealType const *sigma, int const n);
 
     /*!
      * \brief Destroy the gaussian Distribution object
-     * 
      */
-    ~gaussianDistribution() {}
+    ~gaussianDistribution();
 
     /*!
      * \brief Gaussian Distribution density function
@@ -59,7 +59,7 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns Density function value 
      */
-    inline T gaussianDistribution_f(T const *x);
+    inline RealType gaussianDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Gaussian Distribution density function
@@ -68,138 +68,266 @@ class gaussianDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value 
      */
-    inline T gaussianDistribution_lf(T const *x);
-
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
-     * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline RealType gaussianDistribution_lf(RealType const *x);
 
     /*!
      * \brief Create samples of the Gaussian Distribution object
      *
      * \param x  Vector of samples
      *
-     * \return true
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
-    bool sample(std::vector<T> &x);
+    void sample(RealType *x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    void sample(std::vector<RealType> &x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Vector of samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    void sample(EVectorX<RealType> &x);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    void sample(RealType *x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    void sample(std::vector<RealType> &x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the Gaussian Distribution object
+     *
+     * \param x  Matrix of random samples 
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    void sample(EMatrixX<RealType> &x);
+
+  private:
+    /*! Normal (or Gaussian) random number distribution of double type */
+    std::unique_ptr<randomdist::normalDistribution<RealType>> normal;
+
+    /*! Normals (or Gaussian) random number distribution of double type */
+    std::unique_ptr<randomdist::normalDistribution<RealType>[]> normals;
+
+    /*! Number of normal distributions. \sa normals */
+    int nnormals;
 };
 
-template <typename T, class V>
-gaussianDistribution<T, V>::gaussianDistribution(T const mu, T const sigma) : densityFunction<T, std::function<T(V)>>(&mu, &sigma, 2, "gaussian")
+template <typename RealType, class FunctionType>
+gaussianDistribution<RealType, FunctionType>::gaussianDistribution(RealType const mu, RealType const sigma) : densityFunction<RealType, FunctionType>(&mu, &sigma, 2, "gaussian"),
+                                                                                                              normal(nullptr),
+                                                                                                              normals(nullptr),
+                                                                                                              nnormals(0)
 {
-    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gaussianDistribution<RealType, FunctionType>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<RealType, FunctionType>::gaussianDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        normal.reset(new randomdist::normalDistribution<RealType>(mu, sigma));
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
 }
 
-template <typename T, class V>
-gaussianDistribution<T, V>::gaussianDistribution(T const *mu, T const *sigma, int const n) : densityFunction<T, std::function<T(V)>>(mu, sigma, n, "gaussian")
+template <typename RealType, class FunctionType>
+gaussianDistribution<RealType, FunctionType>::gaussianDistribution(RealType const *mu, RealType const *sigma, int const n) : densityFunction<RealType, FunctionType>(mu, sigma, n, "gaussian"),
+                                                                                                                             normal(nullptr),
+                                                                                                                             normals(nullptr),
+                                                                                                                             nnormals(n / 2)
 {
-    if (n % 2 != 0)
+    if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }
-    this->f = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gaussianDistribution<T, V>::gaussianDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gaussianDistribution<RealType, FunctionType>::gaussianDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gaussianDistribution<RealType, FunctionType>::gaussianDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        normals.reset(new randomdist::normalDistribution<RealType>[nnormals]);
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
+    for (int i = 0; i < nnormals; i++)
+    {
+        normals[i] = std::move(randomdist::normalDistribution<RealType>(mu[i], sigma[i]));
+    }
 }
 
-template <typename T, class V>
-inline T gaussianDistribution<T, V>::gaussianDistribution_f(T const *x)
+template <typename RealType, class FunctionType>
+gaussianDistribution<RealType, FunctionType>::~gaussianDistribution() {}
+
+template <typename RealType, class FunctionType>
+inline RealType gaussianDistribution<RealType, FunctionType>::gaussianDistribution_f(RealType const *x)
 {
-    T sum(1);
+    RealType sum(1);
     for (std::size_t i = 0, k = 0; i < this->numParams / 2; i++, k += 2)
     {
-        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
-        sum *= static_cast<T>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
+        RealType const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        sum *= static_cast<RealType>(1) / (M_S2PI * this->params[k + 1]) * std::exp(-0.5 * xSigma * xSigma);
     }
     return sum;
 }
 
-template <typename T, class V>
-inline T gaussianDistribution<T, V>::gaussianDistribution_lf(T const *x)
+template <typename RealType, class FunctionType>
+inline RealType gaussianDistribution<RealType, FunctionType>::gaussianDistribution_lf(RealType const *x)
 {
-    T sum(0);
+    RealType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        T const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
+        RealType const xSigma = (x[i] - this->params[k]) / this->params[k + 1];
         sum += -0.5 * M_L2PI - std::log(this->params[k + 1]) - 0.5 * xSigma * xSigma;
     }
     return sum;
 }
 
-template <typename T, class V>
-inline bool gaussianDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(RealType *x)
 {
-    if (PRNG)
+    if (normal)
     {
-        if (PRNG_initialized)
-        {
-            this->prng = PRNG;
-            if (this->numParams > 2)
-            {
-                return this->prng->set_normals(this->params.data(), this->numParams);
-            }
-            return this->prng->set_normal(this->params[0], this->params[1]);
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        *x = normal->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    for (int i = 0; i < nnormals; i++)
+    {
+        x[i] = normals[i].dist();
+    }
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(T *x)
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (normal)
     {
-#endif
-        if (this->numParams > 2)
-        {
-            for (int i = 0; i < this->numParams / 2; i++)
-            {
-                x[i] = this->prng->normals[i].dist();
-            }
-            return true;
-        }
-        *x = this->prng->normal->dist();
-        return true;
-#ifdef DEBUG
+        x[0] = normal->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
-#endif
+    for (int i = 0; i < nnormals; i++)
+    {
+        x[i] = normals[i].dist();
+    }
 }
 
-template <typename T, class V>
-bool gaussianDistribution<T, V>::sample(std::vector<T> &x)
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(EVectorX<RealType> &x)
+{
+    if (normal)
+    {
+        x[0] = normal->dist();
+        return;
+    }
+    for (int i = 0; i < nnormals; i++)
+    {
+        x[i] = normals[i].dist();
+    }
+}
+
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(RealType *x, int const nSamples)
+{
+    if (normal)
+    {
+        normal->dist(x, nSamples);
+        return;
+    }
+    std::size_t const nSizeArray = nnormals * static_cast<std::size_t>(nSamples);
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nnormals; i++)
+    {
+        arrayWrapper<RealType> xArray(x + i, nSizeArray, nnormals);
+        normals[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
+}
+
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x, int const nSamples)
+{
+    if (normal)
+    {
+#ifdef DEBUG
+        if (static_cast<std::size_t>(nSamples) > x.size())
+        {
+            UMUQFAIL("The input array size of ", x.size(), " < requested number of ", nSamples, " samples!");
+        }
+#endif
+        normal->dist(x);
+        return;
+    }
+    std::size_t const nSizeArray = nnormals * static_cast<std::size_t>(nSamples);
+#ifdef DEBUG
+    if (nSizeArray > x.size())
+    {
+        UMUQFAIL("The input array size of ", x.size(), " < requested samples size of ", nSizeArray, " !");
+    }
+#endif
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nnormals; i++)
+    {
+        normals[i].dist(X);
+        arrayWrapper<RealType> xArray(x.data() + i, nSizeArray, nnormals);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
+}
+
+template <typename RealType, class FunctionType>
+void gaussianDistribution<RealType, FunctionType>::sample(EMatrixX<RealType> &x)
 {
 #ifdef DEBUG
-    if (this->prng)
+    if (this->numParams / 2 != x.rows())
     {
-#endif
-        if (this->numParams > 2)
-        {
-            for (int i = 0; i < this->numParams / 2; i++)
-            {
-                x[i] = this->prng->normals[i].dist();
-            }
-            return true;
-        }
-        x[0] = this->prng->normal->dist();
-        return true;
-#ifdef DEBUG
+        UMUQFAIL("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
 #endif
+    std::vector<RealType> X(x.cols());
+    if (normal)
+    {
+        normal->dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(0, j) = X[j];
+        }
+        return;
+    }
+    for (int i = 0; i < nnormals; ++i)
+    {
+        normals[i].dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(i, j) = X[j];
+        }
+    }
 }
 
 } // namespace density
 } // namespace umuq
 
-#endif //UMUQ_GAUSSIANDISTRIBUTION_H
+#endif //UMUQ_GAUSSIANDISTRIBUTION

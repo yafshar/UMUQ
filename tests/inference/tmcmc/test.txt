@@ -1,0 +1,81 @@
+# TMCMC and SN-TMCMC configuration file
+# The user should spesify each of the parameters, unless written otherwise
+
+#------------------------ GENERAL PARAMETERS ----------------------------------
+# Problem dimension
+nDim               4
+
+# Max number of generations
+maxGenerations        20
+
+# Population size
+populationSize        5000
+
+# Chain lengths:
+# 1) TMCMC (biased): min=0, max>=populationSize
+# 2) BASIS (unbiased): min=max=1
+minChainLength    1
+maxChainLength    1
+
+# Desired coefficient of variation (=std/mean) of the weights
+coefVarPresetThreshold 1
+
+#------------------------ PRIOR OPTIONS ---------------------------------------
+# Type of the prior:
+# 0 - uniform
+# 1 - gaussian
+# 3 - composite (for every parameter its own distribution)
+priorType  0
+
+# prior information needed for hiegherarchical analysis
+# this number = prior + number of datasets = 1 + N_IND
+# if it is 0, we only do the TMCMC
+priorCount      1
+
+# Parameters of the uniform prior
+# Bdef: same boundaries in each dimension
+# Bi: boundaries in i-th dimension, e.g. B0 -1 1
+# Note: Bi overwrites Bdef
+#Bdef        -15    15
+B0              0.05           10.0
+B1              3.0             4.0
+B2              6.01           15.0
+B3              0.0001          1.0
+
+
+# Parameters of the Gaussian prior
+# Note: priorMu size is 1 x nDim, priorSigma size is nDim x nDim
+priorMu    0.0,0.0
+priorSigma    10,0;0,10
+
+# Parameters of the composite prior: <distribution type> <parameter_1> ... <parameter_k>
+C0        0    0.25    16
+C1        1    0    1
+
+#auxilSize    5
+#auxilData    0.1,0.2,0.3,0.4,5
+
+#------------------------------ MCMC OPTIONS ----------------------------------
+# Flag to use local proposal covariance;
+# should be used if the global covariance fails
+useLocalCovariance   0
+
+# Scaling for the global proposal covariance
+bbeta            0.04
+
+# Use or not CMA-style proposal in MCMC (experimental)
+useCmaProposal 0
+
+#---------------------------- OTHER OPTIONS -----------------------------------
+# RNG seed
+seed        280675
+
+# Internal options
+opt.MaxIter    1000
+opt.Tol        1e-12
+opt.Display    1
+opt.Step    1e-4
+
+# Online plotting of data, useful for 2D data and debugging
+iPlot           0
+saveData        1

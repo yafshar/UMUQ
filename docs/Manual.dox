@@ -3,12 +3,13 @@
 
 namespace umuq {
 
-
-
-
 /** \page UserManual_CustomizingUMUQ Extending/Customizing umuq
   %UMUQ can be extended in several ways, for instance, by defining global methods, by inserting custom methods within %UMUQ's classes through the.
 */
+
+/** \addtogroup TopicDCPSE
+    \ingroup Numerics_Module */
+
 
 /** \internal \brief Namespace containing low-level routines from the %UMUQ library. */
 namespace internal {}

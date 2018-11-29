@@ -7,14 +7,16 @@
 namespace umuq
 {
 
-/*! \defgroup Multimin_Module multimin module
+/*! 
+ * \defgroup Multimin_Module Multimin module
  * \ingroup Numerics_Module
  *
  * This is the Multidimensional Minimization Module of UMUQ providing all necessary classes 
  * for finding minima of arbitrary multidimensional functions.
  */
 
-/*! \namespace umuq::multimin
+/*! 
+ * \namespace umuq::multimin
  * \ingroup Multimin_Module
  * 
  * \brief Namespace containing all the functions for Multidimensional Minimization Module
@@ -29,13 +31,16 @@ inline namespace multimin
 /*!
  * \ingroup Multimin_Module
  * 
- * \brief Different available Function Minimizer available in UMUQ
+ * \brief Different Function Minimizer, currently available in %UMUQ
  * 
  */
 enum FunctionMinimizerTypes
 {
+  /*! \link umuq::multimin::simplexNM The Simplex method of Nelder and Mead. \endlink  */
   SIMPLEXNM = 1,
+  /*! \link umuq::multimin::simplexNM2 The Simplex method of Nelder and Mead (order N operations). \endlink  */
   SIMPLEXNM2 = 2,
+  /*! \link umuq::multimin::simplexNM2Rnd The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors).  \endlink */
   SIMPLEXNM2RND = 3
 };
 
@@ -49,26 +54,26 @@ enum FunctionMinimizerTypes
 /*! \class functionMinimizer
  * \ingroup Multimin_Module
  * 
- * \brief The base class which is for finding minima of arbitrary multidimensional functions.
+ * \brief The base class which is for finding minima of arbitrary multidimensional functions.<br>
  * This is the low level component for a variety of iterative minimizers
  * 
- * This class is the base class for algorithms which do not require the gradient of the function. 
+ * This class is the base class for algorithms which do not require the gradient of the function. <br>
  * For example, the Nelder-Mead Simplex algorithm.
  * 
- * NOTE:
- * It is important to note that the minimization algorithms find local minima; there is 
- * no way to determine whether a minimum is a global minimum of the function in question.
+ * \note
+ * - It is important to note that the minimization algorithms find local minima; there is 
+ *   no way to determine whether a minimum is a global minimum of the function in question.
  * 
  * 
- * To use the Minimizer:
+ * To use the Minimizer: <br>
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
  * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
- * \tparam T Data type
+ * \tparam DataType Data type
  */
-template <typename T>
+template <typename DataType>
 class functionMinimizer
 {
 public:
@@ -90,13 +95,13 @@ public:
    * 
    * \param other functionMinimizer object
    */
-  functionMinimizer(functionMinimizer<T> &&other);
+  functionMinimizer(functionMinimizer<DataType> &&other);
 
   /*!
    * \brief Move assignment operator
    * 
    */
-  functionMinimizer<T> &operator=(functionMinimizer<T> &&other);
+  functionMinimizer<DataType> &operator=(functionMinimizer<DataType> &&other);
 
   /*!
    * \brief Resizes the x-vector to contain nDim elements 
@@ -114,11 +119,20 @@ public:
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  virtual bool set(umuqFunction<T, F_MTYPE<T>> &umFun, std::vector<T> const &X, std::vector<T> const &stepSize);
-  virtual bool set(umuqFunction<T, F_MTYPE<T>> &umFun, T const *X, T const *stepSize);
+  virtual bool set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
+
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   * 
+   * \param umFun     umuq Function to be used in this minimizer
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   * 
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
@@ -127,14 +141,42 @@ public:
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
    * 
-   * \return true 
    * \return false If it encounters an unexpected problem
    */
-  virtual bool set(F_MTYPE<T> &Fun, std::vector<T> const &X, std::vector<T> const &stepSize);
-  virtual bool set(F_MTYPE<T> const &Fun, std::vector<T> const &X, std::vector<T> const &stepSize);
+  virtual bool set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
 
-  virtual bool set(F_MTYPE<T> &Fun, T const *X, T const *stepSize);
-  virtual bool set(F_MTYPE<T> const &Fun, T const *X, T const *stepSize);
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   * 
+   * \param Fun       Function to be used in this minimizer
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   * 
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
+
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   * 
+   * \param Fun       Function to be used in this minimizer
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   * 
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(F_MTYPE<DataType> &Fun, DataType const *X, DataType const *stepSize);
+
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   * 
+   * \param Fun       Function to be used in this minimizer
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   * 
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(F_MTYPE<DataType> const &Fun, DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
@@ -144,11 +186,21 @@ public:
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
    *
-   * \return true
    * \return false If it encounters an unexpected problem
    */
-  virtual bool set(F_MTYPE<T> &Fun, std::vector<T> const &Params, std::vector<T> const &X, std::vector<T> const &stepSize);
-  virtual bool set(F_MTYPE<T> const &Fun, std::vector<T> const &Params, std::vector<T> const &X, std::vector<T> const &stepSize);
+  virtual bool set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
+
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   *
+   * \param Fun       Function to be used in this minimizer
+   * \param Params    Input parameters of the Function object
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   *
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
@@ -159,11 +211,22 @@ public:
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
    *
-   * \return true
    * \return false If it encounters an unexpected problem
    */
-  virtual bool set(F_MTYPE<T> &Fun, T const *Params, int const NumParams, T const *X, T const *stepSize);
-  virtual bool set(F_MTYPE<T> const &Fun, T const *Params, int const NumParams, T const *X, T const *stepSize);
+  virtual bool set(F_MTYPE<DataType> &Fun, DataType const *Params, int const NumParams, DataType const *X, DataType const *stepSize);
+
+  /*!
+   * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
+   *
+   * \param Fun       Function to be used in this minimizer
+   * \param Params    Input parameters of the Function object
+   * \param NumParams Number of dimensions (Number of parameters of the Function object)
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   *
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(F_MTYPE<DataType> const &Fun, DataType const *Params, int const NumParams, DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Set the N-dimensional initial vector and initial stepSize
@@ -171,17 +234,24 @@ public:
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
    *
-   * \return true
    * \return false If it encounters an unexpected problem
    */
-  virtual bool set(std::vector<T> const &X, std::vector<T> const &stepSize);
-  virtual bool set(T const *X, T const *stepSize);
+  virtual bool set(std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
+
+  /*!
+   * \brief Set the N-dimensional initial vector and initial stepSize
+   *
+   * \param X         N-dimensional initial vector
+   * \param stepSize  N-dimensional initial step size vector
+   *
+   * \return false If it encounters an unexpected problem
+   */
+  virtual bool set(DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Initialize the minimizer
    * 
-   * \return true 
-   * \return false 
+   * \return false If it encounters an unexpected problem
    */
   virtual bool init();
 
@@ -190,7 +260,6 @@ public:
    * 
    * It performs one iteration to update the state of the minimizer.
    * 
-   * \return true 
    * \return false If the iteration encounters an unexpected problem
    */
   virtual bool iterate();
@@ -207,7 +276,7 @@ public:
    * 
    * \returns minimizer-specific characteristic size
    */
-  inline T const size() const;
+  inline DataType const size() const;
 
   /*!
    * \brief Helper function to check the specific characteristic size against absolute tolerance
@@ -216,21 +285,21 @@ public:
    * 
    * \return -1, 0, and 1 (where -1:Fail, 0:Success, and 1:Continue) 
    */
-  inline int testSize(T const abstol);
+  inline int testSize(DataType const abstol);
 
   /*!
    * \brief Get the N-dimensional x vector
    * 
-   * \return T* 
+   * \return DataType* Get the N-dimensional x vector
    */
-  inline T *getX();
+  inline DataType *getX();
 
   /*!
    * \brief Get the minimum function value
    * 
    * \return the minimum function value
    */
-  inline T getMin();
+  inline DataType getMin();
 
   /*!
    * \brief Get the number of Dimensions 
@@ -239,44 +308,54 @@ public:
    */
   inline int getDimension();
 
-private:
-  // Make it noncopyable
-  functionMinimizer(functionMinimizer<T> const &) = delete;
+protected:
+  /*!
+   * \brief Delete a functionMinimizer object copy construction
+   * 
+   * Make it noncopyable.
+   */
+  functionMinimizer(functionMinimizer<DataType> const &) = delete;
 
-  // Make it not assignable
-  functionMinimizer<T> &operator=(functionMinimizer<T> const &) = delete;
+  /*!
+   * \brief Delete a functionMinimizer object assignment
+   * 
+   * Make it nonassignable
+   * 
+   * \returns functionMinimizer<DataType>& 
+   */
+  functionMinimizer<DataType> &operator=(functionMinimizer<DataType> const &) = delete;
 
 public:
   //! Name of the functionMinimizer
   std::string name;
 
   //! Function to be used in this minimizer
-  umuqFunction<T, F_MTYPE<T>> fun;
+  umuqFunction<DataType, F_MTYPE<DataType>> fun;
 
   //! N-dimensional x vector
-  std::vector<T> x;
+  std::vector<DataType> x;
 
-  //! Workspace 1 for algorithm
-  std::vector<T> ws1;
+  //! Workspace 1 for the algorithm
+  std::vector<DataType> ws1;
 
-  //! Workspace 2 for algorithm
-  std::vector<T> ws2;
+  //! Workspace 2 for the algorithm
+  std::vector<DataType> ws2;
 
   //! The minimizer-specific characteristic size (This size can be used as a stopping criteria)
-  T characteristicSize;
+  DataType characteristicSize;
 
   //! Minimum function value
-  T fval;
+  DataType fval;
 };
 
-template <typename T>
-functionMinimizer<T>::functionMinimizer(char const *Name) : name(Name) {}
+template <typename DataType>
+functionMinimizer<DataType>::functionMinimizer(char const *Name) : name(Name) {}
 
-template <typename T>
-functionMinimizer<T>::~functionMinimizer() {}
+template <typename DataType>
+functionMinimizer<DataType>::~functionMinimizer() {}
 
-template <typename T>
-functionMinimizer<T>::functionMinimizer(functionMinimizer<T> &&other)
+template <typename DataType>
+functionMinimizer<DataType>::functionMinimizer(functionMinimizer<DataType> &&other)
 {
   name = other.name;
   fun = std::move(other.fun);
@@ -287,8 +366,8 @@ functionMinimizer<T>::functionMinimizer(functionMinimizer<T> &&other)
   fval = other.fval;
 }
 
-template <typename T>
-functionMinimizer<T> &functionMinimizer<T>::operator=(functionMinimizer<T> &&other)
+template <typename DataType>
+functionMinimizer<DataType> &functionMinimizer<DataType>::operator=(functionMinimizer<DataType> &&other)
 {
   name = other.name;
   fun = std::move(other.fun);
@@ -301,8 +380,8 @@ functionMinimizer<T> &functionMinimizer<T>::operator=(functionMinimizer<T> &&oth
   return *this;
 }
 
-template <typename T>
-bool functionMinimizer<T>::reset(int const nDim) noexcept
+template <typename DataType>
+bool functionMinimizer<DataType>::reset(int const nDim) noexcept
 {
   if (nDim <= 0)
   {
@@ -316,8 +395,8 @@ bool functionMinimizer<T>::reset(int const nDim) noexcept
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (X.size() != x.size())
   {
@@ -344,8 +423,8 @@ bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, std::vector<T
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, DataType const *X, DataType const *stepSize)
 {
   if (x.size() > 0)
   {
@@ -369,8 +448,8 @@ bool functionMinimizer<T>::set(umuqFunction<T, F_MTYPE<T>> &umFun, T const *X, T
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (X.size() != x.size())
   {
@@ -397,8 +476,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &X, std::ve
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (X.size() != x.size())
   {
@@ -425,8 +504,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &X, s
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> &Fun, DataType const *X, DataType const *stepSize)
 {
   if (x.size() > 0)
   {
@@ -450,8 +529,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *X, T const *stepSize)
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> const &Fun, DataType const *X, DataType const *stepSize)
 {
   if (x.size() > 0)
   {
@@ -475,8 +554,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *X, T const *stepS
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &Params, std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (X.size() != x.size())
   {
@@ -490,7 +569,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &Params, st
 
   if (Fun)
   {
-    fun = std::move(umuqFunction<T, F_MTYPE<T>>(Params));
+    fun = std::move(umuqFunction<DataType, F_MTYPE<DataType>>(Params));
     fun.f = Fun;
   }
   else
@@ -504,8 +583,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, std::vector<T> const &Params, st
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &Params, std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (X.size() != x.size())
   {
@@ -519,7 +598,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &Para
 
   if (Fun)
   {
-    fun = std::move(umuqFunction<T, F_MTYPE<T>>(Params));
+    fun = std::move(umuqFunction<DataType, F_MTYPE<DataType>>(Params));
     fun.f = Fun;
   }
   else
@@ -533,8 +612,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, std::vector<T> const &Para
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *Params, int const NumParams, T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> &Fun, DataType const *Params, int const NumParams, DataType const *X, DataType const *stepSize)
 {
   if (x.size() > 0)
   {
@@ -548,7 +627,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *Params, int const NumPa
 
   if (Fun)
   {
-    fun = std::move(umuqFunction<T, F_MTYPE<T>>(Params, NumParams));
+    fun = std::move(umuqFunction<DataType, F_MTYPE<DataType>>(Params, NumParams));
     fun.f = Fun;
   }
   else
@@ -559,8 +638,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> &Fun, T const *Params, int const NumPa
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *Params, int const NumParams, T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(F_MTYPE<DataType> const &Fun, DataType const *Params, int const NumParams, DataType const *X, DataType const *stepSize)
 {
   if (x.size() > 0)
   {
@@ -574,7 +653,7 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *Params, int const
 
   if (Fun)
   {
-    fun = std::move(umuqFunction<T, F_MTYPE<T>>(Params, NumParams));
+    fun = std::move(umuqFunction<DataType, F_MTYPE<DataType>>(Params, NumParams));
     fun.f = Fun;
   }
   else
@@ -585,8 +664,8 @@ bool functionMinimizer<T>::set(F_MTYPE<T> const &Fun, T const *Params, int const
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(std::vector<T> const &X, std::vector<T> const &stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(std::vector<DataType> const &X, std::vector<DataType> const &stepSize)
 {
   if (!fun)
   {
@@ -609,8 +688,8 @@ bool functionMinimizer<T>::set(std::vector<T> const &X, std::vector<T> const &st
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::set(T const *X, T const *stepSize)
+template <typename DataType>
+bool functionMinimizer<DataType>::set(DataType const *X, DataType const *stepSize)
 {
   if (!fun)
   {
@@ -623,50 +702,50 @@ bool functionMinimizer<T>::set(T const *X, T const *stepSize)
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::init()
+template <typename DataType>
+bool functionMinimizer<DataType>::init()
 {
   return true;
 }
 
-template <typename T>
-bool functionMinimizer<T>::iterate()
+template <typename DataType>
+bool functionMinimizer<DataType>::iterate()
 {
   return true;
 }
 
-template <typename T>
-inline std::string const functionMinimizer<T>::getName() const
+template <typename DataType>
+inline std::string const functionMinimizer<DataType>::getName() const
 {
   return name;
 }
 
-template <typename T>
-inline T const functionMinimizer<T>::size() const
+template <typename DataType>
+inline DataType const functionMinimizer<DataType>::size() const
 {
   return characteristicSize;
 }
 
-template <typename T>
-inline int functionMinimizer<T>::testSize(T const abstol)
+template <typename DataType>
+inline int functionMinimizer<DataType>::testSize(DataType const abstol)
 {
   return (abstol < 0) ? -1 : ((characteristicSize < abstol) ? 0 : 1);
 }
 
-template <typename T>
-inline T *functionMinimizer<T>::getX()
+template <typename DataType>
+inline DataType *functionMinimizer<DataType>::getX()
 {
   return x.data();
 }
 
-template <typename T>
-inline T functionMinimizer<T>::getMin()
+template <typename DataType>
+inline DataType functionMinimizer<DataType>::getMin()
 {
   return fval;
 }
 
-template <typename T>
-inline int functionMinimizer<T>::getDimension()
+template <typename DataType>
+inline int functionMinimizer<DataType>::getDimension()
 {
   return x.size();
 }

@@ -12,40 +12,45 @@ inline namespace density
  * 
  * \brief Flat (Uniform) distribution function
  * 
+ * \tparam RealType     Data type
+ * \tparam FunctionType Function type
+ * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a uniform distribution 
- * from \f$ [a \cdots b] \f$, 
- * using: 
- * \f[
+ * on the closed interval \f$ [low \cdots high] \f$, <br>
+ * using:<br>
+ * 
+ * \f$
  * p(x)= \left\{
  * \begin{matrix}
- * 1/(b-a)  &a \leqslant  x < b \\ 
+ * 1/(high-low)  &low \leq x < high \\ 
  *  0       &otherwise
  * \end{matrix}
  * \right.
- * \f]
+ * \f$
  * 
- * \tparam T Data type
+ * This class also provides sample of random values x, distributed according to the uniform distribution 
+ * probability density function. \sa sample
  */
-template <typename T, class V = T const *>
-class uniformDistribution : public densityFunction<T, std::function<T(V)>>
+template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
+class uniformDistribution : public densityFunction<RealType, FunctionType>
 {
   public:
     /*!
      * \brief Construct a new uniform Distribution object
      * 
-     * \param a  Lower bound
-     * \param b  Upper bound
+     * \param low  Lower bound
+     * \param high  Upper bound
      */
-    uniformDistribution(T const a, T const b);
+    uniformDistribution(RealType const low, RealType const high);
 
     /*!
      * \brief Construct a new uniform Distribution object
      * 
-     * \param a  Lower bound
-     * \param b  Upper bound
-     * \param n  Total number of Lower bound + Upper bound inputs
+     * \param low   Lower bound
+     * \param high  Upper bound
+     * \param n     Total number of Lower bound + Upper bound inputs
      */
-    uniformDistribution(T const *a, T const *b, int const n);
+    uniformDistribution(RealType const *low, RealType const *high, int const n);
 
     /*!
      * \brief Destroy the uniform Distribution object
@@ -60,7 +65,7 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Density function value 
      */
-    inline T uniformDistribution_f(T const *x);
+    inline RealType uniformDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Uniform distribution density function
@@ -69,107 +74,169 @@ class uniformDistribution : public densityFunction<T, std::function<T(V)>>
      * 
      * \returns  Log of density function value
      */
-    inline T uniformDistribution_lf(T const *x);
-
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
-     * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<T> *PRNG);
+    inline RealType uniformDistribution_lf(RealType const *x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
      * 
      * \param x  Vector of samples
      * 
-     * \return true 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(T *x);
-    bool sample(std::vector<T> &x);
+    void sample(RealType *x);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x  Vector of samples
+     */
+    void sample(std::vector<RealType> &x);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x  Vector of samples
+     */
+    void sample(EVectorX<RealType> &x);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     */
+    void sample(RealType *x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x         Vector of samples
+     * \param nSamples  Number of sample vectors
+     */
+    void sample(std::vector<RealType> &x, int const nSamples);
+
+    /*!
+     * \brief Create samples of the uniform Distribution object
+     * 
+     * \param x  Matrix of random samples 
+     */
+    void sample(EMatrixX<RealType> &x);
 
   private:
-    //! Const value for uniform distribution function
-    T uniformDistribution_fValue;
-    //! Const value for logarithm of the uniform distribution function
-    T uniformDistribution_lfValue;
+    /*! Const value for uniform distribution function */
+    RealType uniformDistribution_fValue;
 
-    //! Helper function
-    inline T uniformDistribution_f_();
-    //! Helper log function
-    inline T uniformDistribution_lf_();
+    /*! Const value for logarithm of the uniform distribution function */
+    RealType uniformDistribution_lfValue;
+
+    /*! Helper function */
+    inline RealType uniformDistribution_f_();
+
+    /*! Helper log function */
+    inline RealType uniformDistribution_lf_();
+
+    /*! Uniform random number distribution of RealType */
+    std::unique_ptr<randomdist::uniformDistribution<RealType>> uniform;
+
+    /*! Uniform random number distribution of RealType type */
+    std::unique_ptr<randomdist::uniformDistribution<RealType>[]> uniforms;
+
+    /*! Number of uniform distributions. \sa uniforms */
+    int nuniforms;
 };
 
-template <typename T, class V>
-uniformDistribution<T, V>::uniformDistribution(T const a, T const b) : densityFunction<T, std::function<T(V)>>(&a, &b, 2, "uniform")
+template <typename RealType, class FunctionType>
+uniformDistribution<RealType, FunctionType>::uniformDistribution(RealType const low, RealType const high) : densityFunction<RealType, FunctionType>(&low, &high, 2, "uniform"),
+                                                                                                            uniform(nullptr),
+                                                                                                            uniforms(nullptr),
+                                                                                                            nuniforms(0)
 {
-    this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&uniformDistribution<RealType>::uniformDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&uniformDistribution<RealType>::uniformDistribution_lf, this, std::placeholders::_1);
     uniformDistribution_fValue = uniformDistribution_f_();
     uniformDistribution_lfValue = uniformDistribution_lf_();
+    try
+    {
+        uniform.reset(new randomdist::uniformDistribution<RealType>(low, high));
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
 }
 
-template <typename T, class V>
-uniformDistribution<T, V>::uniformDistribution(T const *a, T const *b, int const n) : densityFunction<T, std::function<T(V)>>(a, b, n, "uniform")
+template <typename RealType, class FunctionType>
+uniformDistribution<RealType, FunctionType>::uniformDistribution(RealType const *low, RealType const *high, int const n) : densityFunction<RealType, FunctionType>(low, high, n, "uniform"),
+                                                                                                                           uniform(nullptr),
+                                                                                                                           uniforms(nullptr),
+                                                                                                                           nuniforms(n / 2)
 {
-    if (n % 2 != 0)
+    if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!");
     }
-    this->f = std::bind(&uniformDistribution<T>::uniformDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&uniformDistribution<T>::uniformDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&uniformDistribution<RealType>::uniformDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&uniformDistribution<RealType>::uniformDistribution_lf, this, std::placeholders::_1);
     uniformDistribution_fValue = uniformDistribution_f_();
     uniformDistribution_lfValue = uniformDistribution_lf_();
+    try
+    {
+        uniforms.reset(new randomdist::uniformDistribution<RealType>[nuniforms]);
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
+    for (int i = 0; i < nuniforms; i++)
+    {
+        uniforms[i] = std::move(randomdist::uniformDistribution<RealType>(low[i], high[i]));
+    }
 }
 
-template <typename T, class V>
-uniformDistribution<T, V>::~uniformDistribution() {}
+template <typename RealType, class FunctionType>
+uniformDistribution<RealType, FunctionType>::~uniformDistribution() {}
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_f(T const *x)
+template <typename RealType, class FunctionType>
+inline RealType uniformDistribution<RealType, FunctionType>::uniformDistribution_f(RealType const *x)
 {
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
-            return T{};
+            return RealType{};
         }
     }
     return uniformDistribution_fValue;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_lf(T const *x)
+template <typename RealType, class FunctionType>
+inline RealType uniformDistribution<RealType, FunctionType>::uniformDistribution_lf(RealType const *x)
 {
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         if (x[i] < this->params[k] || x[i] >= this->params[k + 1])
         {
-            return std::numeric_limits<T>::infinity();
+            return std::numeric_limits<RealType>::infinity();
         }
     }
     return uniformDistribution_lfValue;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_f_()
+template <typename RealType, class FunctionType>
+inline RealType uniformDistribution<RealType, FunctionType>::uniformDistribution_f_()
 {
-    T sum(1);
+    RealType sum(1);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        sum *= static_cast<T>(1) / (this->params[k + 1] - this->params[k]);
+        sum *= static_cast<RealType>(1) / (this->params[k + 1] - this->params[k]);
     }
     return sum;
 }
 
-template <typename T, class V>
-inline T uniformDistribution<T, V>::uniformDistribution_lf_()
+template <typename RealType, class FunctionType>
+inline RealType uniformDistribution<RealType, FunctionType>::uniformDistribution_lf_()
 {
-    T sum(0);
+    RealType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
         sum -= std::log(this->params[k + 1] - this->params[k]);
@@ -177,55 +244,123 @@ inline T uniformDistribution<T, V>::uniformDistribution_lf_()
     return sum;
 }
 
-template <typename T, class V>
-inline bool uniformDistribution<T, V>::setRandomGenerator(psrandom<T> *PRNG)
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(RealType *x)
 {
-    if (PRNG)
+    if (uniform)
     {
-        if (PRNG_initialized)
-        {
-            this->prng = PRNG;
-            return true;
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        x[0] = uniform->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    for (int i = 0; i < nuniforms; i++)
+    {
+        x[i] = uniforms[i].dist();
+    }
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(T *x)
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (uniform)
     {
-#endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
-        {
-            x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
-        }
-        return true;
-#ifdef DEBUG
+        x[0] = uniform->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
-#endif
+    for (int i = 0; i < nuniforms; i++)
+    {
+        x[i] = uniforms[i].dist();
+    }
 }
 
-template <typename T, class V>
-bool uniformDistribution<T, V>::sample(std::vector<T> &x)
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(EVectorX<RealType> &x)
+{
+    if (uniform)
+    {
+        x[0] = uniform->dist();
+        return;
+    }
+    for (int i = 0; i < nuniforms; i++)
+    {
+        x[i] = uniforms[i].dist();
+    }
+}
+
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(RealType *x, int const nSamples)
+{
+    if (uniform)
+    {
+        uniform->dist(x, nSamples);
+        return;
+    }
+    std::size_t const nSizeArray = nuniforms * static_cast<std::size_t>(nSamples);
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nuniforms; i++)
+    {
+        arrayWrapper<RealType> xArray(x + i, nSizeArray, nuniforms);
+        uniforms[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
+}
+
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x, int const nSamples)
+{
+    if (uniform)
+    {
+#ifdef DEBUG
+        if (static_cast<std::size_t>(nSamples) > x.size())
+        {
+            UMUQFAIL("The input array size of ", x.size(), " < requested number of ", nSamples, " samples!");
+        }
+#endif
+        uniform->dist(x);
+        return;
+    }
+    std::size_t const nSizeArray = nuniforms * static_cast<std::size_t>(nSamples);
+#ifdef DEBUG
+    if (nSizeArray > x.size())
+    {
+        UMUQFAIL("The input array size of ", x.size(), " < requested samples size of ", nSizeArray, " !");
+    }
+#endif
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nuniforms; i++)
+    {
+        uniforms[i].dist(X);
+        arrayWrapper<RealType> xArray(x.data() + i, nSizeArray, nuniforms);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
+}
+
+template <typename RealType, class FunctionType>
+void uniformDistribution<RealType, FunctionType>::sample(EMatrixX<RealType> &x)
 {
 #ifdef DEBUG
-    if (this->prng)
+    if (this->numParams / 2 != x.rows())
     {
-#endif
-        for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
-        {
-            x[i] = this->prng->unirnd(this->params[k], this->params[k + 1]);
-        }
-        return true;
-#ifdef DEBUG
+        UMUQFAIL("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!")
 #endif
+    std::vector<RealType> X(x.cols());
+    if (uniform)
+    {
+        uniform->dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(0, j) = X[j];
+        }
+        return;
+    }
+    for (int i = 0; i < nuniforms; ++i)
+    {
+        uniforms[i].dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(i, j) = X[j];
+        }
+    }
 }
 
 } // namespace density

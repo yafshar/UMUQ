@@ -4,10 +4,11 @@
 #include "../../core/core.hpp"
 #include "../factorial.hpp"
 
-/*! \defgroup Random_Module random distribution module
+/*! 
+ * \defgroup Random_Module Random distribution module
  * \ingroup Numerics_Module
  * 
- * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. 
+ * This is the random module of %UMUQ providing all necessary classes that generate random number distributions. <br>
  * A random number distribution post-processes the output of a uniform random generators in such a way that 
  * resulting output is distributed according to a defined statistical probability density function.
  */
@@ -31,16 +32,16 @@ static std::size_t PRNG_seed = 0;
  * \brief 32-bit Mersenne Twister by Matsumoto and Nishimura, 1998
  * 
  */
-static std::vector<std::mt19937> NumberGenerator(1);
+static std::vector<std::mt19937> NumberGenerator(1, std::move(std::mt19937(std::random_device{}())));
 
 /*!
  * \ingroup Random_Module
  * 
- * \brief C++ Saru pseudo-random number generator.
+ * \brief \c C++ Saru pseudo-random number generator.
  * 
- * \sa Saru
+ * \sa Saru.
  */
-static std::vector<Saru> saru(1);
+static std::vector<Saru> saru(1, std::move(Saru(std::random_device{}())));
 
 /*!
  * \ingroup Random_Module
@@ -55,9 +56,8 @@ static bool PRNG_initialized = false;
  * 
  * \brief It would be true if Tasks have been registered, and false otherwise (logical).
  * 
- * \tparam T Data type
+ * \tparam double Data type
  */
-template <typename T>
 static bool isPrngTaskRegistered = false;
 
 /*!
@@ -68,10 +68,30 @@ static bool isPrngTaskRegistered = false;
  */
 static std::mutex PRNG_m;
 
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief Uniform random of floating-point values uniformly distributed on the interval \f$ [0, 1) \f$ 
+ * 
+ * \returns std::uniform_real_distribution<double> Uniform random of floating-point values uniformly distributed on the interval \f$ [0, 1) \f$ 
+ */
+std::uniform_real_distribution<double> uniformDoubleDistribution(double{}, double{1});
+
+/*!
+ * \ingroup Random_Module
+ * 
+ * \brief Uniform random of floating-point values uniformly distributed on the interval \f$ [0, 1) \f$ 
+ * 
+ * \returns std::uniform_real_distribution<float> Uniform random of floating-point values uniformly distributed on the interval \f$ [0, 1) \f$ 
+ */
+std::uniform_real_distribution<float> uniformRealDistribution(float{}, float{1});
+
 } // namespace umuq
 
+#include "psrandom_uniformdistribution.hpp"
 #include "psrandom_normaldistribution.hpp"
 #include "psrandom_lognormaldistribution.hpp"
+#include "psrandom_multinomialdistribution.hpp"
 #include "psrandom_multivariatenormaldistribution.hpp"
 #include "psrandom_exponentialdistribution.hpp"
 #include "psrandom_gammadistribution.hpp"
@@ -82,31 +102,30 @@ namespace umuq
 /*! \class psrandom
  * \ingroup Random_Module
  *
+ * \brief The psrandom class includes pseudo-random numbers engines and distributions used in %UMUQ to produce pseudo-random values. 
+ * 
  * This class generates pseudo-random numbers.
  * It includes engines and distributions used to produce pseudo-random values. 
  * 
- * All of the engines may be specifically seeded, for use with repeatable simulators.
- * Random number engines generate pseudo-random numbers using seed data as entropy source. 
- * The choice of which engine to use involves a number of tradeoffs: 
+ * All of the engines may be specifically seeded, for use with repeatable simulators. <br>
+ * Random number engines generate pseudo-random numbers using seed data as entropy source.  <br>
+ * The choice of which engine to use involves a number of tradeoffs: <br>
  * 
- * Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast. 
+ * -# Saru PRNG has only a small storage requirement for state which is 64-bit and is very fast.
+ * -# [The Mersenne twister](https://en.wikipedia.org/wiki/Mersenne_Twister) is slower and has greater state storage 
+ *    requirements but with the right parameters has the longest non-repeating sequence with the most desirable spectral 
+ *    characteristics (for a given definition of desirable). 
  * 
- * The Mersenne twister is slower and has greater state storage requirements but with the right parameters has 
- * the longest non-repeating sequence with the most desirable spectral characteristics (for a given definition of desirable). 
+ * \note
+ * - To use the psrandom in multithreaded application or in any class which requires setting the PRNG: <br>
+ *   - First, construct a new psrandom object either with a seed or without it.
+ *   - Second, initialize the PRNG or set the state of the PRNG.<br>
+ *   - Third, use any member function or set the PRNG object in other classes 
  * 
- * \tparam T  Data type one of float or double
- * 
- * NOTE:
- * - Choosing the data type does not mean it only produces that type random number, the data type is only for function members
- * 
- * 
- * USE:
- * To use the psrandom in multithreaded application or in any class which requires setting the PRNG \sa densityFunction:
- * - First, construct a new psrandom object either with a seed or without it.
- * - Second, initialize the PRNG \sa init or set the state of the PRNG \sa setState.
- * - Third, use any member function or set the PRNG object in other classes 
+ * \sa init.
+ * \sa setState.
+ * \sa umuq::density::densityFunction.
  */
-template <typename T = double>
 class psrandom
 {
   public:
@@ -137,449 +156,288 @@ class psrandom
     /*!
      * \brief Set the State of psrandom object
      * 
-     * \return \a true when sets the current state of the engine successfully 
+     * \returns \c true When it successfully sets the current state of the engine. 
      */
     bool init();
 
     /*!
      * \brief Set the State of psrandom object
      * 
-     * \return \a true when sets the current state of the engine successfully
+     * \returns \c true When it successfully sets the current state of the engine.
      */
     bool setState();
 
     /*!
-     * \brief Set the Seed object
+     * \brief Set the PRNG seed.
      * 
      * \param inSeed  Input seed for random number initialization 
      * 
-     * \return true  when sets the seed of the engine successfully
-     * \return false If the PRNG is already initialized or the state has been set
+     * \returns true  When it successfully sets the seed of the engine
+     * \returns false If the PRNG is already initialized or the state has been set before
      */
     inline bool setSeed(long const inSeed);
 
-  private:
-    // Make it noncopyable
+  protected:
+    /*!
+     * \brief Delete a psrandom object copy construction
+     * 
+     * Make it noncopyable.
+     */
     psrandom(psrandom const &) = delete;
 
-    // Make it not assignable
+    /*!
+     * \brief Delete a psrandom object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns psrandom& 
+     */
     psrandom &operator=(psrandom const &) = delete;
 
   public:
     /*!
-     * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
-     *
-     * \tparam D Input data type
-     * 
-     * \param idata array of input data of type int
-     * \param nSize Size of the array idata
-     *
-     * 
-     * NOTE: This should be called after setting the State of psrandom object
-     * 
-     * 
-     * The permutations generated by this algorithm occur with the same probability.
-     *
-     * References : 
-     * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
-     */
-    template <typename D>
-    inline void shuffle(D *idata, int const nSize);
+	 * \brief Uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [0, 1) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \return double A uniform random number between \f$ [0, 1) \f$
+	 */
+    inline double unirnd();
 
     /*!
-     * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
-     *
-     * \tparam D Input data type
-     * 
-     * \param idata array of input data of type int
-     * \param nSize Size of the array idata
-     * 
-     * NOTE: This can be called without setting the State of psrandom object
-     */
-    template <typename D>
-    inline void Shuffle(D *idata, int const nSize);
-
-  public:
-    /*!
-     * \returns Uniform random number between \f$ [a \cdots b) \f$
-     * 
-     * \brief Uniform random number between \f$ [a \cdots b) \f$
-     *
-     * Advance the PRNG state by 1, and output a T precision \f$ [a \cdots b) \f$ number (default \f$ a = 0, b = 1 \f$)
-     */
-    inline T unirnd(T const a = 0, T const b = 1);
+	 * \brief Uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param low  Lower bound of the interval (default is 0)
+	 * \param high  Upper bound of theinterval  (default is 1)
+	 * 
+	 * \return double A uniform random number between \f$ [low, high) \f$
+	 */
+    inline double unirnd(double const low, double const high);
 
     /*!
-     * \returns a uniform random number of a double precision \f$ [0 \cdots 1) \f$ floating point 
+	 * \brief Uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param low  Lower bound of the interval (default is 0)
+	 * \param high  Upper bound of theinterval  (default is 1)
+	 * 
+	 * \return float A uniform random number between \f$ [low, high) \f$
+	 */
+    inline float unirnd(float const low, float const high);
+
+    /*!
+	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of type double
+	 * \param nSize  Size of the array 
+	 * \param low    Lower bound of the interval (default is 0)
+	 * \param high   Upper bound of theinterval  (default is 1)
+	 */
+    void unirnd(double *idata, int const nSize, double const low = double{}, double const high = double{1});
+
+    /*!
+	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of type float
+	 * \param nSize  Size of the array 
+	 * \param low    Lower bound of the interval (default is 0)
+	 * \param high   Upper bound of theinterval  (default is 1)
+	 */
+    void unirnd(float *idata, int const nSize, float const low = float{}, float const high = float{1});
+
+    /*!
+	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of type double
+	 * \param low    Lower bound of the interval (default is 0)
+	 * \param high   Upper bound of theinterval  (default is 1)
+	 */
+    void unirnd(std::vector<double> &idata, double const low = double{}, double const high = double{1});
+
+    /*!
+	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
+	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of type float
+	 * \param low    Lower bound of the interval (default is 0)
+	 * \param high   Upper bound of theinterval  (default is 1)
+	 */
+    void unirnd(std::vector<float> &idata, float const low = float{}, float const high = float{1});
+
+    /*!
+	 * \brief Vector of uniform of integer values uniformly distributed on the closed interval
+	 * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of integers
+	 * \param nSize  Size of the array 
+	 * \param low    Lower bound of the interval 
+	 * \param high   Upper bound of theinterval
+	 */
+    void u32rnd(int *idata, int const nSize, int const low, int const high);
+
+    /*!
+	 * \brief Vector of uniform of integer values uniformly distributed on the closed interval
+	 * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
+	 * 
+	 * \param idata  Array of input data of integers
+	 * \param low    Lower bound of the interval 
+	 * \param high   Upper bound of theinterval
+	 */
+    void u32rnd(std::vector<int> &idata, int const low, int const high);
+
+    /*!
+     * \brief Advance the Saru PRNG state by 1, and output a double precision \f$ [0, 1) \f$ floating point
      * 
-     * \brief Advance state by 1, and output a double precision \f$ [0 \cdots 1) \f$ floating point
+     * \returns A uniform random number of a double precision \f$ [0, 1) \f$ floating point
      * 
-     * Reference:
-     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
      */
     inline double drnd();
 
     /*!
-     * \returns a uniform random number of a single precision \f$ [0 \cdots 1) \f$ floating point
+     * \brief Advance the Saru PRNG state by 1, and output a double precision \f$ [0, 1) \f$ floating point
      * 
-     * \Advance state by 1, and output a single precision \f$ [0 \cdots 1) \f$ floating point
+	 * \param low   Lower bound of the interval (default is 0)
+	 * \param high  Upper bound of theinterval  (default is 1)
+	 * 
+	 * \return double A uniform random number between \f$ [low, high) \f$
      * 
-     * Reference:
-     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
+     */
+    inline double drnd(double const low, double const high);
+
+    /*!
+     * \brief Advance the Saru PRNG  state by 1, and output a single precision \f$ [0, 1) \f$ floating point
+     * 
+     * \returns A uniform random number of a single precision \f$ [0, 1) \f$ floating point
+     * 
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
      */
     inline float frnd();
 
     /*!
-     * \returns an unsigned 32 bit integer pseudo-random value
-     * 
-     * \brief Advance state by 1, and output a 32 bit integer pseudo-random value.
-     * 
-     * Reference:
-     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, Comput. Phys. Comm. 184 (2013), 1119–1128.
-     */
-    inline unsigned int u32rnd();
-
-    /*! \fn multinomial
-     * \brief The multinomial random distribution
+     * \brief Advance the Saru PRNG  state by 1, and output a single precision \f$ [0, 1) \f$ floating point
      *  
-     * \param    p        Vector of probabilities \f$ p_1, \cdots, p_k \f$
-     * \param    K        Size of vector which shows K possible mutually exclusive outcomes 
-     * \param    N        N independent trials
-     * \param    mndist   A random sample from the multinomial distribution (with size of K)
+     * \param low   Lower bound of the interval (default is 0)
+	 * \param high  Upper bound of theinterval  (default is 1)
+	 * 
+	 * \return float A uniform random number between \f$ [low, high) \f$
      * 
-     * 
-     * NOTE: This should be called after setting the State of psrandom object
-     * 
-     * 
-     * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * The distribution of \f$ X \f$ is given by:
-     * \f[
-     *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
-     * \f] 
-     *
-     * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$,
-     * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
-     *
-     * Random variates are generated using the conditional binomial method.
-     * This scales well with N and does not require a setup step.
-     *   
-     *  Ref: 
-     *  C.S. David, The computer generation of multinomial random variates,
-     *  Comp. Stat. Data Anal. 16 (1993) 205-217
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
      */
-    bool multinomial(T const *p, int const K, int const N, int *mndist);
+    inline float frnd(float const low, float const high);
 
-    /*! \fn Multinomial
-     * \brief The multinomial distribution
+    /*!
+     * \brief Advance the Saru PRNG state by 1, and output a 32 bit integer pseudo-random value.
      * 
-     * NOTE: This can be called without setting the State of psrandom object
+     * \returns An unsigned 32 bit integer pseudo-random value
+     * 
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
      */
-    bool Multinomial(T const *p, int const K, int const N, int *mndist);
+    inline unsigned int u32();
+
+    /*!
+     * \brief Advance the Saru PRNG state by 1, and output a 32 bit integer pseudo-random value 
+     * with variate in \f$ [0, high] \f$ for unsigned int high
+     * 
+     * \returns An unsigned 32 bit integer pseudo-random value with variate in \f$ [0, high] \f$ for unsigned int high
+     * 
+     * Reference:<br>
+     * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
+     */
+    inline unsigned int u32(unsigned int const high);
 
   public:
     /*!
-     * \brief Replaces the normal object 
+     * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
+     *
+     * \tparam DataType Input data type
      * 
-     * \param inMean    Input Mean
-     * \param inStddev  Input standard deviation
+     * \param idata Array of input data of type DataType
+     * \param nSize Size of the array idata
+     *
+     * \note 
+     * - This should be called after setting the State of psrandom object for use 
+	 * in multi processes or multi threaded applications, \sa setState
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * The permutations generated by this algorithm occur with the same probability.
+     *
+     * Reference:<br>
+     * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
      */
-    inline bool set_normal(T const inMean, T const inStddev);
-    inline bool set_normals(T const *inMean, T const *inStddev, int const N);
-    inline bool set_normals(T const *inMeanInStddev, int const N);
+    template <typename DataType>
+    inline void shuffle(DataType *idata, int const nSize);
 
     /*!
-     * \brief Replaces the Normal object 
+     * \brief The Fisher-Yates shuffle is used to permute randomly given input array.
+     *
+     * \tparam DataType Input data type
      * 
-     * \param inMean    Input Mean
-     * \param inStddev  Input standard deviation
+     * \param idata Array of input data of type DataType
      * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_Normal(T const inMean, T const inStddev);
-
-    /*!
-     * \brief Replaces the lnormal object 
+     * \note 
+     * - This should be called after setting the State of psrandom object for use
+	 *  in multi processes or multi threaded applications, \sa setState
      * 
-     * \param inMean    Input Mean
-     * \param inStddev  Input standard deviation
      * 
-     * \return true 
-     * \return false in failure to allocate storage
+     * The permutations generated by this algorithm occur with the same probability.
+     *
+     * Reference:<br>
+     * R. Durstenfeld, "Algorithm 235: Random permutation" Communications of the ACM, 7 (1964), p. 420
      */
-    inline bool set_lnormal(T const inMean, T const inStddev);
-
-    /*!
-     * \brief Replaces the lNormal object 
-     * 
-     * \param inMean    Input Mean
-     * \param inStddev  Input standard deviation
-     * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_lNormal(T const inMean, T const inStddev);
-
-    /*!
-     * \brief Replaces the mvnormal object 
-     * 
-     * \param inMean        Mean vector of size \f$n\f$
-     * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
-     * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
-
-    /*!
-     * \brief Replaces the mvnormal object
-     *
-     * \param inMean        Input mean vector of size \f$n\f$
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-
-    inline bool set_mvnormal(T const *inMean, T const *icovariance, int const n);
-
-    /*!
-     * \brief Replaces the mvnormal object (default mean = 0)
-     *
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvnormal(EMatrixX<T> const &icovariance);
-
-    /*!
-     * \brief Replaces the mvnormal object (default mean = 0)
-     *
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-
-    inline bool set_mvnormal(T const *icovariance, int const n);
-
-    /*!
-     * \brief Replaces the mvnormal object (default mean = 0, covariance=I)
-     *
-     * \param n vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvnormal(int const n);
-
-    /*!
-     * \brief Replaces the mvNormal object 
-     * 
-     * \param inMean        Mean vector of size \f$n\f$
-     * \param icovariance  Input Variance-covariance matrix of size \f$n \times n\f$
-     * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance);
-
-    /*!
-     * \brief Replaces the mvNormal object
-     *
-     * \param inMean        Input mean vector of size \f$n\f$
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvNormal(T const *inMean, T const *icovariance, int const n);
-
-    /*!
-     * \brief Replaces the mvNormal object (default mean = 0)
-     *
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvNormal(EMatrixX<T> const &icovariance);
-
-    /*!
-     * \brief Replaces the mvNormal object (default mean = 0)
-     *
-     * \param icovariance  Input variance-covariance matrix of size \f$n \times n\f$
-     * \param n            Vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvNormal(T const *icovariance, int const n);
-
-    /*!
-     * \brief Replaces the mvNormal object (default mean = 0, covariance=I)
-     *
-     * \param n vector size
-     *
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_mvNormal(int const n);
-
-    /*!
-     * \brief Replaces the exponential object 
-     * 
-     * \param mu Mean, \f$ \mu \f$
-     * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_expn(T const mu);
-    inline bool set_expns(T const *mu, int const N);
-
-    /*!
-     * \brief Replaces the Gamma object 
-     * 
-     * \param alpha  Shape parameter \f$\alpha\f$
-     * \param beta   Scale parameter \f$ beta\f$
-     * 
-     * \return true 
-     * \return false in failure to allocate storage
-     */
-    inline bool set_gamma(T const alpha, T const beta);
-    inline bool set_gammas(T const *alpha, T const *beta, int const N);
-    inline bool set_gammas(T const *alphabeta, int const N);
-
-  public:
-    //! Normal (or Gaussian) random number distribution (NOTE: This should be used after setting the State of psrandom object)
-    std::unique_ptr<randomdist::normalDistribution<T>> normal;
-    std::unique_ptr<randomdist::normalDistribution<T>[]> normals;
-
-    //! Number of normal distributions
-    int nnormals;
-
-    //! Normal (or Gaussian) random number distribution (NOTE: This can be used without setting the State of psrandom object)
-    std::unique_ptr<randomdist::NormalDistribution<T>> Normal;
-
-    //! lognormal_distribution random number distribution (NOTE: This should be used after setting the State of psrandom object)
-    std::unique_ptr<randomdist::lognormalDistribution<T>> lnormal;
-
-    //! lognormal_distribution random number distribution (NOTE: This can be used without setting the State of psrandom object)
-    std::unique_ptr<randomdist::logNormalDistribution<T>> lNormal;
-
-    //! Multivariate random number distribution (NOTE: This should be used after setting the State of psrandom object)
-    std::unique_ptr<randomdist::multivariatenormalDistribution<T>> mvnormal;
-
-    //! Multivariate random number distribution (NOTE: This can be used without setting the State of psrandom object)
-    std::unique_ptr<randomdist::multivariateNormalDistribution<T>> mvNormal;
-
-    //! Exponential random number distribution (NOTE: This should be used after setting the State of psrandom object)
-    std::unique_ptr<randomdist::exponentialDistribution<T>> expn;
-    std::unique_ptr<randomdist::exponentialDistribution<T>[]> expns;
-
-    //! Number of Exponential distributions
-    int nexpns;
-
-    //! Gamma random number distribution (NOTE: This should be used after setting the State of psrandom object)
-    std::unique_ptr<randomdist::gammaDistribution<T>> gamma;
-    std::unique_ptr<randomdist::gammaDistribution<T>[]> gammas;
-
-    //! Number of Gamma distributions
-    int ngammas;
+    template <typename DataType>
+    inline void shuffle(std::vector<DataType> &idata);
 };
 
-template <typename T>
-psrandom<T>::psrandom() : normal(nullptr),
-                          normals(nullptr),
-                          nnormals(0),
-                          Normal(nullptr),
-                          lnormal(nullptr),
-                          lNormal(nullptr),
-                          mvnormal(nullptr),
-                          mvNormal(nullptr),
-                          expn(nullptr),
-                          expns(nullptr),
-                          nexpns(0),
-                          gamma(nullptr),
-                          gammas(nullptr),
-                          ngammas(0)
+psrandom::psrandom()
 {
-    if (!std::is_floating_point<T>::value)
+    std::lock_guard<std::mutex> lock(PRNG_m);
+    if (PRNG_seed == 0)
     {
-        UMUQFAIL("This type is not supported in this class!");
+        PRNG_seed = std::random_device{}();
     }
+    if (!isPrngTaskRegistered)
     {
-        std::lock_guard<std::mutex> lock(PRNG_m);
-        if (PRNG_seed == 0)
-        {
-            PRNG_seed = std::random_device{}();
-        }
-
-        if (!isPrngTaskRegistered<T>)
-        {
-            torc_register_task((void *)psrandom<T>::initTask);
-            isPrngTaskRegistered<T> = true;
-        }
+        torc_register_task((void *)psrandom::initTask);
+        isPrngTaskRegistered = true;
     }
 }
 
-template <typename T>
-psrandom<T>::psrandom(int const inSeed) : normal(nullptr),
-                                          normals(nullptr),
-                                          nnormals(0),
-                                          Normal(nullptr),
-                                          lnormal(nullptr),
-                                          lNormal(nullptr),
-                                          mvnormal(nullptr),
-                                          mvNormal(nullptr),
-                                          expn(nullptr),
-                                          expns(nullptr),
-                                          nexpns(0),
-                                          gamma(nullptr),
-                                          gammas(nullptr),
-                                          ngammas(0)
+psrandom::psrandom(int const inSeed)
 {
-    if (!std::is_floating_point<T>::value)
+    std::lock_guard<std::mutex> lock(PRNG_m);
+    if (PRNG_seed == 0)
     {
-        UMUQFAIL("This type is not supported in this class!");
+        PRNG_seed = static_cast<std::size_t>(inSeed);
     }
+    if (!isPrngTaskRegistered)
     {
-        std::lock_guard<std::mutex> lock(PRNG_m);
-        if (PRNG_seed == 0)
-        {
-            PRNG_seed = static_cast<std::size_t>(inSeed);
-        }
-
-        if (!isPrngTaskRegistered<T>)
-        {
-            torc_register_task((void *)psrandom<T>::initTask);
-            isPrngTaskRegistered<T> = true;
-        }
+        torc_register_task((void *)psrandom::initTask);
+        isPrngTaskRegistered = true;
     }
 }
 
-template <typename T>
-psrandom<T>::~psrandom() {}
+psrandom::~psrandom() {}
 
-template <typename T>
-void psrandom<T>::initTask()
+void psrandom::initTask()
 {
     std::vector<std::size_t> rSeed(std::mt19937::state_size);
 
     // Get the local number of workers
-    std::size_t nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
+    std::size_t const nlocalworkers = static_cast<std::size_t>(torc_i_num_workers());
 
     // Node Id (MPI rank)
-    std::size_t node_id = static_cast<std::size_t>(torc_node_id());
+    std::size_t const node_id = static_cast<std::size_t>(torc_node_id());
 
-    std::size_t n = nlocalworkers * (node_id + 1);
+    std::size_t const n = nlocalworkers * (node_id + 1);
 
     for (std::size_t i = 0; i < nlocalworkers; i++)
     {
@@ -597,8 +455,7 @@ void psrandom<T>::initTask()
     }
 }
 
-template <typename T>
-bool psrandom<T>::init()
+bool psrandom::init()
 {
     {
         // Make sure MPI is initialized
@@ -636,21 +493,19 @@ bool psrandom<T>::init()
 
     for (int i = 0; i < torc_num_nodes(); i++)
     {
-        torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom<T>::initTask, 0);
+        torc_create_ex(i * nlocalworkers, 1, (void (*)())psrandom::initTask, 0);
     }
     torc_waitall();
 
     return true;
 }
 
-template <typename T>
-bool psrandom<T>::setState()
+bool psrandom::setState()
 {
     return init();
 }
 
-template <typename T>
-inline bool psrandom<T>::setSeed(long const inSeed)
+inline bool psrandom::setSeed(long const inSeed)
 {
     std::lock_guard<std::mutex> lock(PRNG_m);
     if (!PRNG_initialized)
@@ -662,44 +517,140 @@ inline bool psrandom<T>::setSeed(long const inSeed)
     return false;
 }
 
-template <typename T>
-inline T psrandom<T>::unirnd(T const a, T const b)
-{
-    UMUQFAIL("The Uniform random number of requested type is not implemented!");
-}
-
-template <>
-inline double psrandom<double>::unirnd(double const a, double const b)
+inline double psrandom::unirnd()
 {
     // Get the thread ID
-    int const me = torc_i_worker_id();
-    return saru[me].d(a, b);
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return uniformDoubleDistribution(NumberGenerator[me]);
 }
 
-template <>
-inline float psrandom<float>::unirnd(float a, float b)
+inline double psrandom::unirnd(double const low, double const high)
 {
     // Get the thread ID
-    int const me = torc_i_worker_id();
-    return saru[me].f(a, b);
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return low + (high - low) * uniformDoubleDistribution(NumberGenerator[me]);
 }
 
-template <typename T>
-inline double psrandom<T>::drnd() { return saru[0].d(); }
-
-template <typename T>
-inline float psrandom<T>::frnd() { return saru[0].f(); }
-
-template <typename T>
-inline unsigned int psrandom<T>::u32rnd() { return saru[0].u32(); }
-
-template <typename T>
-template <typename D>
-inline void psrandom<T>::shuffle(D *idata, int const nSize)
+inline float psrandom::unirnd(float const low, float const high)
 {
     // Get the thread ID
-    int const me = torc_i_worker_id();
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return low + (high - low) * uniformRealDistribution(NumberGenerator[me]);
+}
 
+inline void psrandom::unirnd(double *idata, int const nSize, double const low, double const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_real_distribution<double> d(low, high);
+    for (auto i = 0; i < nSize; i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline void psrandom::unirnd(float *idata, int const nSize, float const low, float const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_real_distribution<float> d(low, high);
+    for (auto i = 0; i < nSize; i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline void psrandom::unirnd(std::vector<double> &idata, double const low, double const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_real_distribution<double> d(low, high);
+    for (auto i = 0; i < idata.size(); i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline void psrandom::unirnd(std::vector<float> &idata, float const low, float const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_real_distribution<float> d(low, high);
+    for (auto i = 0; i < idata.size(); i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline void psrandom::u32rnd(int *idata, int const nSize, int const low, int const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_int_distribution<> d(low, high);
+    for (auto i = 0; i < nSize; i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline void psrandom::u32rnd(std::vector<int> &idata, int const low, int const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    std::uniform_int_distribution<> d(low, high);
+    for (auto i = 0; i < idata.size(); i++)
+    {
+        idata[i] = d(NumberGenerator[me]);
+    }
+}
+
+inline double psrandom::drnd()
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].d();
+}
+
+inline double psrandom::drnd(double const low, double const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].d(low, high);
+}
+
+inline float psrandom::frnd()
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].f();
+}
+
+inline float psrandom::frnd(float const low, float const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].f(low, high);
+}
+
+inline unsigned int psrandom::u32()
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].u32();
+}
+
+inline unsigned int psrandom::u32(unsigned int const high)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    return saru[me].u32(high);
+}
+
+template <typename DataType>
+inline void psrandom::shuffle(DataType *idata, int const nSize)
+{
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
     for (int i = nSize - 1; i > 0; --i)
     {
         unsigned int const idx = saru[me].u32(i);
@@ -707,412 +658,16 @@ inline void psrandom<T>::shuffle(D *idata, int const nSize)
     }
 }
 
-template <typename T>
-template <typename D>
-inline void psrandom<T>::Shuffle(D *idata, int const nSize)
+template <typename DataType>
+inline void psrandom::shuffle(std::vector<DataType> &idata)
 {
-    for (int i = nSize - 1; i > 0; --i)
+    // Get the thread ID
+    int const me = PRNG_initialized ? torc_i_worker_id() : 0;
+    for (auto i = idata.size() - 1; i > 0; --i)
     {
-        unsigned int const idx = saru[0].u32(i);
+        unsigned int const idx = saru[me].u32(i);
         std::swap(idata[i], idata[idx]);
     }
-}
-
-template <typename T>
-bool psrandom<T>::multinomial(T const *p, int const K, int const N, int *mndist)
-{
-    if (!PRNG_initialized)
-    {
-        UMUQFAILRETURN("One should set the current state of the engine before calling this function!");
-    }
-
-    // Get the thread ID
-    int const me = torc_i_worker_id();
-
-    T const totalProbabilitySum = std::accumulate(p, p + K, 0);
-
-    T probabilitySum(0);
-    int nProbabilitySum(0);
-    for (int i = 0; i < K; i++)
-    {
-        if (p[i] > 0.0)
-        {
-            std::binomial_distribution<> d(N - nProbabilitySum, p[i] / (totalProbabilitySum - probabilitySum));
-            mndist[i] = d(NumberGenerator[me]);
-        }
-        else
-        {
-            mndist[i] = 0;
-        }
-        probabilitySum += p[i];
-        nProbabilitySum += mndist[i];
-    }
-    return true;
-}
-
-template <typename T>
-bool psrandom<T>::Multinomial(T const *p, int const K, int const N, int *mndist)
-{
-    std::mt19937 gen(std::random_device{}());
-
-    T const totalProbabilitySum = std::accumulate(p, p + K, 0);
-
-    T probabilitySum(0);
-    int nProbabilitySum(0);
-    for (int i = 0; i < K; i++)
-    {
-        if (p[i] > 0.0)
-        {
-            std::binomial_distribution<> d(N - nProbabilitySum, p[i] / (totalProbabilitySum - probabilitySum));
-            mndist[i] = d(gen);
-        }
-        else
-        {
-            mndist[i] = 0;
-        }
-        probabilitySum += p[i];
-        nProbabilitySum += mndist[i];
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_normal(T const inMean, T const inStddev)
-{
-    try
-    {
-        normal.reset(new randomdist::normalDistribution<T>(inMean, inStddev));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_normals(T const *inMean, T const *inStddev, int const N)
-{
-    if (N > 0)
-    {
-        nnormals = N;
-        try
-        {
-            normals.reset(new randomdist::normalDistribution<T>[nnormals]);
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
-        for (int i = 0; i < nnormals; i++)
-        {
-            normals[i] = std::move(randomdist::normalDistribution<T>(inMean[i], inStddev[i]));
-        }
-        return true;
-    }
-    UMUQFAILRETURN("Wrong number of distributions requested!");
-}
-
-template <typename T>
-inline bool psrandom<T>::set_normals(T const *inMeanInStddev, int const N)
-{
-    if (N > 0)
-    {
-        nnormals = N / 2;
-        try
-        {
-            normals.reset(new randomdist::normalDistribution<T>[nnormals]);
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
-        for (int i = 0, k = 0; i < nnormals; i++, k += 2)
-        {
-            normals[i] = std::move(randomdist::normalDistribution<T>(inMeanInStddev[k], inMeanInStddev[k + 1]));
-        }
-        return true;
-    }
-    UMUQFAILRETURN("Wrong number of distributions requested!");
-}
-
-template <typename T>
-inline bool psrandom<T>::set_Normal(T const inMean, T const inStddev)
-{
-    try
-    {
-        Normal.reset(new randomdist::NormalDistribution<T>(inMean, inStddev));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_lnormal(T const inMean, T const inStddev)
-{
-    try
-    {
-        lnormal.reset(new randomdist::lognormalDistribution<T>(inMean, inStddev));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_lNormal(T const inMean, T const inStddev)
-{
-    try
-    {
-        lNormal.reset(new randomdist::logNormalDistribution<T>(inMean, inStddev));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvnormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance)
-{
-    try
-    {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(inMean, icovariance));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvnormal(T const *inMean, T const *icovariance, int const n)
-{
-    try
-    {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(inMean, icovariance, n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvnormal(EMatrixX<T> const &icovariance)
-{
-    try
-    {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvnormal(T const *icovariance, int const n)
-{
-    try
-    {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(icovariance, n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvnormal(int const n)
-{
-    try
-    {
-        mvnormal.reset(new randomdist::multivariatenormalDistribution<T>(n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvNormal(EVectorX<T> const &inMean, EMatrixX<T> const &icovariance)
-{
-    try
-    {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(inMean, icovariance));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvNormal(T const *inMean, T const *icovariance, int const n)
-{
-    try
-    {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(inMean, icovariance, n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvNormal(EMatrixX<T> const &icovariance)
-{
-    try
-    {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvNormal(T const *icovariance, int const n)
-{
-    try
-    {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(icovariance, n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_mvNormal(int const n)
-{
-    try
-    {
-        mvNormal.reset(new randomdist::multivariateNormalDistribution<T>(n));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_expn(T const mu)
-{
-    try
-    {
-        expn.reset(new randomdist::exponentialDistribution<T>(mu));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_expns(T const *mu, int const N)
-{
-    if (N > 0)
-    {
-        nexpns = N;
-        try
-        {
-            expns.reset(new randomdist::exponentialDistribution<T>[nexpns]);
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
-        for (int i = 0; i < nexpns; i++)
-        {
-            expns[i] = std::move(randomdist::exponentialDistribution<T>(mu[i]));
-        }
-        return true;
-    }
-    UMUQFAILRETURN("Wrong number of distributions requested!");
-}
-
-template <typename T>
-inline bool psrandom<T>::set_gamma(T const alpha, T const beta)
-{
-    try
-    {
-        gamma.reset(new randomdist::gammaDistribution<T>(alpha, beta));
-    }
-    catch (...)
-    {
-        UMUQFAILRETURN("Failed to allocate memory!");
-    }
-    return true;
-}
-
-template <typename T>
-inline bool psrandom<T>::set_gammas(T const *alpha, T const *beta, int const N)
-{
-    if (N > 0)
-    {
-        ngammas = N;
-        try
-        {
-            gammas.reset(new randomdist::gammaDistribution<T>[ngammas]);
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
-        for (int i = 0; i < ngammas; i++)
-        {
-            gammas[i] = std::move(randomdist::gammaDistribution<T>(alpha[i], beta[i]));
-        }
-        return true;
-    }
-    UMUQFAILRETURN("Wrong number of distributions requested!");
-}
-
-template <typename T>
-inline bool psrandom<T>::set_gammas(T const *alphabeta, int const N)
-{
-    if (N > 0)
-    {
-        ngammas = N / 2;
-        try
-        {
-            gammas.reset(new randomdist::gammaDistribution<T>[ngammas]);
-        }
-        catch (...)
-        {
-            UMUQFAILRETURN("Failed to allocate memory!");
-        }
-        for (int i = 0, k = 0; i < ngammas; i++, k += 2)
-        {
-            gammas[i] = std::move(randomdist::gammaDistribution<T>(alphabeta[k], alphabeta[k + 1]));
-        }
-        return true;
-    }
-    UMUQFAILRETURN("Wrong number of distributions requested!");
 }
 
 } // namespace umuq

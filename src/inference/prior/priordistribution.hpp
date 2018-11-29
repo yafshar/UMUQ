@@ -2,33 +2,12 @@
 #define UMUQ_PRIORDISTRIBUTION_H
 
 #include "core/core.hpp"
+#include "datatype/priortype.hpp"
 #include "numerics/density.hpp"
 #include "numerics/random/psrandom.hpp"
 
 namespace umuq
 {
-
-/*!
- * \ingroup Inference_Module
- * 
- * \brief Prior distribution types
- * 
- * Currently we have these types:
- * 
- * - \b UNIFORM \sa uniformDistribution
- * - \b GAUSSIAN \sa gaussianDistribution
- * - \b EXPONENTIAL \sa exponentialDistribution
- * - \b GAMMA \sa gammaDistribution
- * - \b COMPOSITE
- */
-enum priorTypes
-{
-    UNIFORM = 0,
-    GAUSSIAN = 1,
-    EXPONENTIAL = 2,
-    GAMMA = 3,
-    COMPOSITE = 4
-};
 
 /*! \class priorDistribution
  * \ingroup Inference_Module
@@ -45,21 +24,52 @@ enum priorTypes
  * <tr><td> 4       <td> COMPOSITE
  * </table>
  * 
- * \tparam T Data type 
+ * \tparam RealType Data type 
  * 
- * USE:
+ * USE: <br>
  * To use the priorDistribution object:
- * - First, construct a new prior Distribution object with problem dimension and the prior type \sa priorTypes
- *          in case, the prior type is not known yet, you should reset the priorDistribution later with the 
- *          correct problem dimension and corresponding prior type \sa reset .
- * - Second, set the priorDistribution parameters \sa set .
- * IF you only need the probability density function (pdf) \sa pdf or logarithm probability density function \sa logpdf .
- * - Third, call the member function.
- * IF you also need samples from the desired distribution, you must set the Random Number Generator object \sa setRandomGenerator 
- * otherwise you can not use sample member function \sa sample .
- * - Forth, call any member function.
+ * - First, construct a new prior Distribution object with problem dimension and the prior type. <br>
+ *   \code
+ *      int const  problemDimension = 4;
+ *      priorTypes problemPriorTypes = priorTypes::UNIFORM;
+ * 
+ *      priorDistribution<double> prior(problemDimension, problemPriorTypes);
+ *   \endcode <br>
+ *   In case, the prior type is not known yet, you should reset the priorDistribution later in the code with the 
+ *   correct problem dimension and the corresponding prior type. <br>
+ *   \code
+ *      priorDistribution<double> prior();
+ *      \\ ...
+ *      int const  problemDimension = 4;
+ *      priorTypes problemPriorTypes = priorTypes::UNIFORM;
+ *      
+ *      prior.reset(problemDimension, problemPriorTypes);
+ *   \endcode <br>
+ *   \sa umuq::priorTypes. <br>
+ *   \sa reset. <br>
+ * 
+ * - Second, set the priorDistribution parameters. <br> 
+ *   \sa set.
+ * 
+ * - Third, call the member function. <br>
+ *   You can call the probability density function (pdf). <br>
+ *    or <br>
+ *   logarithm probability density function (logpdf). <br>
+ *   \sa pdf. <br>
+ *   \sa logpdf. <br>
+ *   You can also sample from the distribution using sample member function (sample). <br>
+ *   \sa sample. <br>
+ * 
+ * - Forth, call any other member function.
+ * 
+ * \note
+ * - For multi threaded and multi processors application the Random Number Generator object must be initialized before.
+ * \sa umuq::psrandom
+ * \sa umuq::psrandom::init
+ * \sa umuq::psrandom::setState
+ * 
  */
-template <typename T>
+template <typename RealType>
 class priorDistribution
 {
   public:
@@ -75,23 +85,31 @@ class priorDistribution
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      */
-    priorDistribution(int const probdim, int const prior = 0);
+    priorDistribution(int const probdim, umuq::priorTypes const prior = umuq::priorTypes::UNIFORM);
+
+    /*!
+     * \brief Construct a new prior Distribution object
+     * 
+     * \param probdim  Problem dimension
+     * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
+     */
+    priorDistribution(int const probdim, int const prior);
 
     /*!
      * \brief Move constructor, construct a new priorDistribution object from input priorDistribution object
      * 
-     * \param other  Input priorDistribution object
+     * \param other priorDistribution object
      */
-    priorDistribution(priorDistribution<T> &&other);
+    priorDistribution(priorDistribution<RealType> &&other);
 
     /*!
      * \brief Move assignment operator
      * 
      * \param other priorDistribution object
      * 
-     * \return priorDistribution<T>& 
+     * \returns priorDistribution<RealType>& 
      */
-    priorDistribution<T> &operator=(priorDistribution<T> &&other);
+    priorDistribution<RealType> &operator=(priorDistribution<RealType> &&other);
 
     /*!
      * \brief Destroy the prior Distribution object
@@ -105,10 +123,19 @@ class priorDistribution
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      * 
-     * \return true 
-     * \return false  If there is not enough memory or wrong prior type
+     * \returns false  If there is not enough memory or wrong prior type
      */
-    bool reset(int const probdim, int const prior = 0);
+    bool reset(int const probdim, umuq::priorTypes const prior = umuq::priorTypes::UNIFORM);
+
+    /*!
+     * \brief Reset the priorDistribution object size & type
+     * 
+     * \param probdim  Problem dimension
+     * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
+     * 
+     * \returns false  If there is not enough memory or wrong prior type
+     */
+    bool reset(int const probdim, int const prior);
 
     /*!
      * \brief Set the priorDistribution parameters
@@ -117,154 +144,214 @@ class priorDistribution
      * \param Param2          Second parameter for a prior distribution  
      * \param compositeprior  Composite priors type
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns false If it encounters an unexpected problem
      */
-    bool set(T const *Param1, T const *Param2, int const *compositeprior = nullptr);
-    bool set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior = std::vector<int>{});
+    bool set(RealType const *Param1, RealType const *Param2, umuq::priorTypes const *compositeprior = nullptr);
 
     /*!
-     * \brief Set the Random Number Generator object to 
+     * \brief Set the priorDistribution parameters
      * 
-     * \param PRNG  Pseudo-random number object \sa psrandom
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns false If it encounters an unexpected problem
      */
-    bool setRandomGenerator(psrandom<T> *PRNG);
+    bool set(RealType const *Param1, RealType const *Param2, int const *compositeprior);
+
+    /*!
+     * \brief Set the priorDistribution parameters
+     * 
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
+     * 
+     * \returns false If it encounters an unexpected problem
+     */
+    bool set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<umuq::priorTypes> const &compositeprior = EmptyVector<umuq::priorTypes>);
+
+    /*!
+     * \brief Set the priorDistribution parameters
+     * 
+     * \param Param1          First parameter for a prior distribution  
+     * \param Param2          Second parameter for a prior distribution  
+     * \param compositeprior  Composite priors type
+     * 
+     * \returns false If it encounters an unexpected problem
+     */
+    bool set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<int> const &compositeprior);
 
     /*!
      * \brief Get the dimension
      * 
-     * \return int Dimension of the problem
+     * \returns int Dimension of the problem
      */
     inline int getDim();
 
     /*!
      * \brief Get the prior type
      * 
-     * \return int prior type
+     * \returns umuq::priorTypes prior type
      */
-    inline int getpriorType();
+    inline umuq::priorTypes getpriorType();
 
     /*!
      * \brief Get the Prior Types for the composite prior
      * 
-     * \return int* Prior Types
+     * \returns umuq::priorTypes* Prior Types
      */
-    inline int *getPriorTypes();
+    inline umuq::priorTypes *getPriorTypes();
 
     /*!
      * \brief Probability density function (pdf)
      * 
      * \param x  Input point
      *  
-     * \return T Returns the probability density function (pdf) evaluated in x
+     * \returns RealType Returns the probability density function (pdf) evaluated in x
      */
-    T pdf(T const *x);
-    T pdf(std::vector<T> const &x);
+    RealType pdf(RealType const *x);
+
+    /*!
+     * \brief Probability density function (pdf)
+     * 
+     * \param x  Input point
+     *  
+     * \returns RealType Returns the probability density function (pdf) evaluated in x
+     */
+    RealType pdf(std::vector<RealType> const &x);
 
     /*!
      * \brief Logarithm of the probability density function
      * 
      * \param x  Input point
      * 
-     * \return T Returns the logarithm probability density function (pdf) evaluated in x
+     * \returns RealType Returns the logarithm probability density function (pdf) evaluated in x
      */
-    T logpdf(T const *x);
-    T logpdf(std::vector<T> const &x);
+    RealType logpdf(RealType const *x);
+
+    /*!
+     * \brief Logarithm of the probability density function
+     * 
+     * \param x  Input point
+     * 
+     * \returns RealType Returns the logarithm probability density function (pdf) evaluated in x
+     */
+    RealType logpdf(std::vector<RealType> const &x);
 
     /*!
      * \brief Create samples based on the prior distribution type
      * 
      * \param x Samples 
      * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
+     * \returns false If it encounters an unexpected problem
      */
-    bool sample(T *x);
-    bool sample(std::vector<T> &x);
+    bool sample(RealType *x);
+
+    /*!
+     * \brief Create samples based on the prior distribution type
+     * 
+     * \param x Samples 
+     * 
+     * \returns false If it encounters an unexpected problem
+     */
+    bool sample(std::vector<RealType> &x);
+
+  protected:
+    /*!
+     * \brief Delete a priorDistribution object copy construction
+     * 
+     * Make it noncopyable.
+     */
+    priorDistribution(priorDistribution<RealType> const &) = delete;
+
+    /*!
+     * \brief Delete a priorDistribution object assignment
+     * 
+     * Make it nonassignable
+     * 
+     * \returns priorDistribution<RealType>& 
+     */
+    priorDistribution<RealType> &operator=(priorDistribution<RealType> const &) = delete;
 
   private:
-    // Make it noncopyable
-    priorDistribution(priorDistribution<T> const &) = delete;
-
-    // Make it not assignable
-    priorDistribution<T> &operator=(priorDistribution<T> const &) = delete;
-
-  private:
-    //! Problem Dimension
+    /*! Problem Dimension */
     int nDim;
 
-    //! Prior type which is :
-    //! 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite
-    int priorType;
+    /*!
+     * Prior type which is one of : <br>
+     * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite<br>
+     * 
+     * \sa umuq::priorTypes
+     */
+    umuq::priorTypes priorType;
 
-    //! Composite distribution prior
-    std::unique_ptr<int[]> compositePrior;
-
-  private:
-    //! Flat (Uniform) distribution
-    std::unique_ptr<uniformDistribution<T>> uniformDist;
-
-    //! The Multivariate Gaussian Distribution
-    std::unique_ptr<multivariategaussianDistribution<T>> multivariategaussianDist;
-
-    //! The exponential distribution
-    std::unique_ptr<exponentialDistribution<T>> exponentialDist;
-
-    //! The Gamma distribution
-    std::unique_ptr<gammaDistribution<T>> gammaDist;
-
-    //! The Gaussian distribution
-    std::unique_ptr<gaussianDistribution<T>> gaussianDist;
+    /*! Composite distribution prior */
+    std::unique_ptr<umuq::priorTypes[]> compositePrior;
 
   private:
-    //! The below data are only used for composite prior distribution
-    //! Index of the points
+    /*! Flat (Uniform) distribution */
+    std::unique_ptr<umuq::density::uniformDistribution<RealType>> uniformDist;
+
+    /*! The Multivariate Gaussian Distribution */
+    std::unique_ptr<umuq::density::multivariateGaussianDistribution<RealType>> multivariateGaussianDist;
+
+    /*! The exponential distribution */
+    std::unique_ptr<umuq::density::exponentialDistribution<RealType>> exponentialDist;
+
+    /*! The Gamma distribution */
+    std::unique_ptr<umuq::density::gammaDistribution<RealType>> gammaDist;
+
+    /*! The Gaussian distribution */
+    std::unique_ptr<umuq::density::gaussianDistribution<RealType>> gaussianDist;
+
+  private:
+    /*!
+     * The below data are only used for composite prior distribution
+     * indexing of the points
+     */
     std::vector<int> uniformIndex;
     std::vector<int> gaussianIndex;
     std::vector<int> exponentialIndex;
     std::vector<int> gammaIndex;
 
-    //! Input points
-    std::vector<T> uniformPoints;
-    std::vector<T> gaussianPoints;
-    std::vector<T> exponentialPoints;
-    std::vector<T> gammaPoints;
+    /*! Input points */
+    std::vector<RealType> uniformPoints;
+    std::vector<RealType> gaussianPoints;
+    std::vector<RealType> exponentialPoints;
+    std::vector<RealType> gammaPoints;
 };
 
-template <typename T>
-priorDistribution<T>::priorDistribution() : nDim(0),
-                                            priorType(priorTypes::UNIFORM),
-                                            compositePrior(nullptr),
-                                            uniformDist(nullptr),
-                                            multivariategaussianDist(nullptr),
-                                            exponentialDist(nullptr),
-                                            gammaDist(nullptr),
-                                            gaussianDist(nullptr) {}
+template <typename RealType>
+priorDistribution<RealType>::priorDistribution() : nDim(0),
+                                                   priorType(umuq::priorTypes::UNIFORM),
+                                                   compositePrior(nullptr),
+                                                   uniformDist(nullptr),
+                                                   multivariateGaussianDist(nullptr),
+                                                   exponentialDist(nullptr),
+                                                   gammaDist(nullptr),
+                                                   gaussianDist(nullptr) {}
 
-template <typename T>
-priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nDim(probdim),
-                                                                              priorType(prior),
-                                                                              compositePrior(nullptr),
-                                                                              uniformDist(nullptr),
-                                                                              multivariategaussianDist(nullptr),
-                                                                              exponentialDist(nullptr),
-                                                                              gammaDist(nullptr),
-                                                                              gaussianDist(nullptr)
+template <typename RealType>
+priorDistribution<RealType>::priorDistribution(int const probdim, umuq::priorTypes const prior) : nDim(probdim),
+                                                                                                  priorType(prior),
+                                                                                                  compositePrior(nullptr),
+                                                                                                  uniformDist(nullptr),
+                                                                                                  multivariateGaussianDist(nullptr),
+                                                                                                  exponentialDist(nullptr),
+                                                                                                  gammaDist(nullptr),
+                                                                                                  gaussianDist(nullptr)
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         break;
-    case priorTypes::GAUSSIAN:
+    case umuq::priorTypes::GAUSSIAN:
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
         break;
     default:
         UMUQFAIL("Unknown prior distribution type!");
@@ -272,35 +359,38 @@ priorDistribution<T>::priorDistribution(int const probdim, int const prior) : nD
     };
 }
 
-template <typename T>
-priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(other.nDim),
-                                                                        priorType(other.priorType),
-                                                                        compositePrior(std::move(other.compositePrior)),
-                                                                        uniformDist(std::move(other.uniformDist)),
-                                                                        multivariategaussianDist(std::move(other.multivariategaussianDist)),
-                                                                        exponentialDist(std::move(other.exponentialDist)),
-                                                                        gammaDist(std::move(other.gammaDist)),
-                                                                        gaussianDist(std::move(other.gaussianDist)),
-                                                                        uniformIndex(std::move(other.uniformIndex)),
-                                                                        gaussianIndex(std::move(other.gaussianIndex)),
-                                                                        exponentialIndex(std::move(other.exponentialIndex)),
-                                                                        gammaIndex(std::move(other.gammaIndex)),
-                                                                        uniformPoints(std::move(other.uniformPoints)),
-                                                                        gaussianPoints(std::move(other.gaussianPoints)),
-                                                                        exponentialPoints(std::move(other.exponentialPoints)),
-                                                                        gammaPoints(std::move(other.gammaPoints))
+template <typename RealType>
+priorDistribution<RealType>::priorDistribution(int const probdim, int const prior) : priorDistribution(probdim, static_cast<umuq::priorTypes>(prior)) {}
+
+template <typename RealType>
+priorDistribution<RealType>::priorDistribution(priorDistribution<RealType> &&other) : nDim(other.nDim),
+                                                                                      priorType(other.priorType),
+                                                                                      compositePrior(std::move(other.compositePrior)),
+                                                                                      uniformDist(std::move(other.uniformDist)),
+                                                                                      multivariateGaussianDist(std::move(other.multivariateGaussianDist)),
+                                                                                      exponentialDist(std::move(other.exponentialDist)),
+                                                                                      gammaDist(std::move(other.gammaDist)),
+                                                                                      gaussianDist(std::move(other.gaussianDist)),
+                                                                                      uniformIndex(std::move(other.uniformIndex)),
+                                                                                      gaussianIndex(std::move(other.gaussianIndex)),
+                                                                                      exponentialIndex(std::move(other.exponentialIndex)),
+                                                                                      gammaIndex(std::move(other.gammaIndex)),
+                                                                                      uniformPoints(std::move(other.uniformPoints)),
+                                                                                      gaussianPoints(std::move(other.gaussianPoints)),
+                                                                                      exponentialPoints(std::move(other.exponentialPoints)),
+                                                                                      gammaPoints(std::move(other.gammaPoints))
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         break;
-    case priorTypes::GAUSSIAN:
+    case umuq::priorTypes::GAUSSIAN:
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
         break;
     default:
         UMUQFAIL("Unknown prior distribution type!");
@@ -308,22 +398,22 @@ priorDistribution<T>::priorDistribution(priorDistribution<T> &&other) : nDim(oth
     };
 }
 
-template <typename T>
-priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&other)
+template <typename RealType>
+priorDistribution<RealType> &priorDistribution<RealType>::operator=(priorDistribution<RealType> &&other)
 {
     nDim = other.nDim;
     priorType = other.priorType;
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         break;
-    case priorTypes::GAUSSIAN:
+    case umuq::priorTypes::GAUSSIAN:
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
         break;
     default:
         UMUQFAIL("Unknown prior distribution type!");
@@ -331,7 +421,7 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     };
     compositePrior = std::move(other.compositePrior);
     uniformDist = std::move(other.uniformDist);
-    multivariategaussianDist = std::move(other.multivariategaussianDist);
+    multivariateGaussianDist = std::move(other.multivariateGaussianDist);
     exponentialDist = std::move(other.exponentialDist);
     gammaDist = std::move(other.gammaDist);
     gaussianDist = std::move(other.gaussianDist);
@@ -347,25 +437,25 @@ priorDistribution<T> &priorDistribution<T>::operator=(priorDistribution<T> &&oth
     return *this;
 }
 
-template <typename T>
-priorDistribution<T>::~priorDistribution() {}
+template <typename RealType>
+priorDistribution<RealType>::~priorDistribution() {}
 
-template <typename T>
-bool priorDistribution<T>::reset(int const probdim, int const prior)
+template <typename RealType>
+bool priorDistribution<RealType>::reset(int const probdim, umuq::priorTypes const prior)
 {
     nDim = probdim;
     priorType = prior;
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         break;
-    case priorTypes::GAUSSIAN:
+    case umuq::priorTypes::GAUSSIAN:
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
         break;
     default:
         UMUQFAILRETURN("Unknown prior distribution type!");
@@ -379,9 +469,9 @@ bool priorDistribution<T>::reset(int const probdim, int const prior)
     {
         uniformDist.reset(nullptr);
     }
-    if (multivariategaussianDist)
+    if (multivariateGaussianDist)
     {
-        multivariategaussianDist.reset(nullptr);
+        multivariateGaussianDist.reset(nullptr);
     }
     if (exponentialDist)
     {
@@ -398,75 +488,80 @@ bool priorDistribution<T>::reset(int const probdim, int const prior)
     return true;
 }
 
-template <typename T>
-bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *compositeprior)
+template <typename RealType>
+bool priorDistribution<RealType>::reset(int const probdim, int const prior)
+{
+    return reset(probdim, static_cast<umuq::priorTypes>(prior));
+}
+
+template <typename RealType>
+bool priorDistribution<RealType>::set(RealType const *Param1, RealType const *Param2, umuq::priorTypes const *compositeprior)
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         try
         {
-            uniformDist.reset(new uniformDistribution<T>(Param1, Param2, nDim * 2));
+            uniformDist.reset(new umuq::density::uniformDistribution<RealType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
         break;
-    case priorTypes::GAUSSIAN:
+    case umuq::priorTypes::GAUSSIAN:
         try
         {
-            multivariategaussianDist.reset(new multivariategaussianDistribution<T>(Param1, Param2, nDim * 2));
+            multivariateGaussianDist.reset(new umuq::density::multivariateGaussianDistribution<RealType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         try
         {
-            exponentialDist.reset(new exponentialDistribution<T>(Param1, nDim * 2));
+            exponentialDist.reset(new umuq::density::exponentialDistribution<RealType>(Param1, nDim * 2));
         }
         catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         try
         {
-            gammaDist.reset(new gammaDistribution<T>(Param1, Param2, nDim * 2));
+            gammaDist.reset(new umuq::density::gammaDistribution<RealType>(Param1, Param2, nDim * 2));
         }
         catch (...)
         {
             UMUQFAILRETURN("Failed to allocate memory!");
         }
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
     {
         if (compositeprior)
         {
             try
             {
-                compositePrior.reset(new int[nDim]());
+                compositePrior.reset(new umuq::priorTypes[nDim]());
             }
             catch (...)
             {
                 UMUQFAILRETURN("Failed to allocate memory!");
             }
 
-            int *p = const_cast<int *>(compositeprior);
-            std::copy(p, p + nDim, compositePrior.get());
+            std::copy(compositeprior, compositeprior + nDim, compositePrior.get());
         }
         else
         {
             UMUQFAILRETURN("Failed to provide composite prior types for each dimension!");
         }
 
-        if (multivariategaussianDist)
+        if (multivariateGaussianDist)
         {
-            multivariategaussianDist.reset(nullptr);
+            multivariateGaussianDist.reset(nullptr);
         }
 
         int nUNIFORM(0);
@@ -478,16 +573,16 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             switch (compositePrior[i])
             {
-            case priorTypes::UNIFORM:
+            case umuq::priorTypes::UNIFORM:
                 nUNIFORM++;
                 break;
-            case priorTypes::GAUSSIAN:
+            case umuq::priorTypes::GAUSSIAN:
                 nGAUSSIAN++;
                 break;
-            case priorTypes::EXPONENTIAL:
+            case umuq::priorTypes::EXPONENTIAL:
                 nEXPONENTIAL++;
                 break;
-            case priorTypes::GAMMA:
+            case umuq::priorTypes::GAMMA:
                 nGAMMA++;
                 break;
             default:
@@ -517,13 +612,13 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
             gammaPoints.resize(nGAMMA);
         }
 
-        std::vector<T> uparam1(nUNIFORM);
-        std::vector<T> uparam2(nUNIFORM);
-        std::vector<T> nparam1(nGAUSSIAN);
-        std::vector<T> nparam2(nGAUSSIAN);
-        std::vector<T> eparam1(nEXPONENTIAL);
-        std::vector<T> gparam1(nGAMMA);
-        std::vector<T> gparam2(nGAMMA);
+        std::vector<RealType> uparam1(nUNIFORM);
+        std::vector<RealType> uparam2(nUNIFORM);
+        std::vector<RealType> nparam1(nGAUSSIAN);
+        std::vector<RealType> nparam2(nGAUSSIAN);
+        std::vector<RealType> eparam1(nEXPONENTIAL);
+        std::vector<RealType> gparam1(nGAMMA);
+        std::vector<RealType> gparam2(nGAMMA);
 
         nUNIFORM = 0;
         nGAUSSIAN = 0;
@@ -534,28 +629,31 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             switch (compositePrior[i])
             {
-            case priorTypes::UNIFORM:
+            case umuq::priorTypes::UNIFORM:
                 uparam1[nUNIFORM] = Param1[i];
                 uparam2[nUNIFORM] = Param2[i];
                 uniformIndex[nUNIFORM] = i;
                 nUNIFORM++;
                 break;
-            case priorTypes::GAUSSIAN:
+            case umuq::priorTypes::GAUSSIAN:
                 nparam1[nGAUSSIAN] = Param1[i];
                 nparam2[nGAUSSIAN] = Param2[i];
                 gaussianIndex[nGAUSSIAN] = i;
                 nGAUSSIAN++;
                 break;
-            case priorTypes::EXPONENTIAL:
+            case umuq::priorTypes::EXPONENTIAL:
                 eparam1[nEXPONENTIAL] = Param1[i];
                 exponentialIndex[nEXPONENTIAL] = i;
                 nEXPONENTIAL++;
                 break;
-            case priorTypes::GAMMA:
+            case umuq::priorTypes::GAMMA:
                 gparam1[nGAMMA] = Param1[i];
                 gparam2[nGAMMA] = Param2[i];
                 gammaIndex[nGAMMA] = i;
                 nGAMMA++;
+                break;
+            default:
+                UMUQFAILRETURN("Unknown prior distribution type!");
                 break;
             };
         }
@@ -564,7 +662,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                uniformDist.reset(new uniformDistribution<T>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
+                uniformDist.reset(new umuq::density::uniformDistribution<RealType>(uparam1.data(), uparam2.data(), nUNIFORM * 2));
             }
             catch (...)
             {
@@ -582,7 +680,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                gaussianDist.reset(new gaussianDistribution<T>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
+                gaussianDist.reset(new umuq::density::gaussianDistribution<RealType>(nparam1.data(), nparam2.data(), nGAUSSIAN * 2));
             }
             catch (...)
             {
@@ -597,7 +695,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                exponentialDist.reset(new exponentialDistribution<T>(eparam1.data(), nEXPONENTIAL));
+                exponentialDist.reset(new umuq::density::exponentialDistribution<RealType>(eparam1.data(), nEXPONENTIAL));
             }
             catch (...)
             {
@@ -615,7 +713,7 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
         {
             try
             {
-                gammaDist.reset(new gammaDistribution<T>(gparam1.data(), gparam2.data(), nGAMMA * 2));
+                gammaDist.reset(new umuq::density::gammaDistribution<RealType>(gparam1.data(), gparam2.data(), nGAMMA * 2));
             }
             catch (...)
             {
@@ -640,165 +738,67 @@ bool priorDistribution<T>::set(T const *Param1, T const *Param2, int const *comp
     return true;
 }
 
-template <typename T>
-bool priorDistribution<T>::set(std::vector<T> const &Param1, std::vector<T> const &Param2, std::vector<int> const &compositeprior)
+template <typename RealType>
+bool priorDistribution<RealType>::set(RealType const *Param1, RealType const *Param2, int const *compositeprior)
 {
-    return set(Param1.data(), Param2.data(), compositeprior.data());
-}
-
-template <typename T>
-bool priorDistribution<T>::setRandomGenerator(psrandom<T> *PRNG)
-{
-    if (PRNG)
+    if (compositeprior)
     {
-        if (PRNG_initialized)
-        {
-            switch (priorType)
-            {
-            case priorTypes::UNIFORM:
-                if (uniformDist)
-                {
-                    return uniformDist->setRandomGenerator(PRNG);
-                }
-                break;
-            case priorTypes::GAUSSIAN:
-                if (multivariategaussianDist)
-                {
-                    return multivariategaussianDist->setRandomGenerator(PRNG);
-                }
-                break;
-            case priorTypes::EXPONENTIAL:
-                if (exponentialDist)
-                {
-                    return exponentialDist->setRandomGenerator(PRNG);
-                }
-                break;
-            case priorTypes::GAMMA:
-                if (gammaDist)
-                {
-                    return gammaDist->setRandomGenerator(PRNG);
-                }
-                break;
-            case priorTypes::COMPOSITE:
-            {
-                bool cstatus = true;
-                bool unfmstatus = false;
-                bool gausstatus = false;
-                bool expostatus = false;
-                bool gammstatus = false;
-                for (int i = 0; i < nDim; i++)
-                {
-                    switch (compositePrior[i])
-                    {
-                    case priorTypes::UNIFORM:
-                        if (!unfmstatus)
-                        {
-                            if (uniformDist)
-                            {
-                                cstatus = cstatus && uniformDist->setRandomGenerator(PRNG);
-                                unfmstatus = cstatus;
-                            }
-                            else
-                            {
-                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                            }
-                        }
-                        break;
-                    case priorTypes::GAUSSIAN:
-                        if (!gausstatus)
-                        {
-                            if (gaussianDist)
-                            {
-                                cstatus = cstatus && gaussianDist->setRandomGenerator(PRNG);
-                                gausstatus = cstatus;
-                            }
-                            else
-                            {
-                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                            }
-                        }
-                        break;
-                    case priorTypes::EXPONENTIAL:
-                        if (!expostatus)
-                        {
-                            if (exponentialDist)
-                            {
-                                cstatus = cstatus && exponentialDist->setRandomGenerator(PRNG);
-                                expostatus = cstatus;
-                            }
-                            else
-                            {
-                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                            }
-                        }
-                        break;
-                    case priorTypes::GAMMA:
-                        if (!gammstatus)
-                        {
-                            if (gammaDist)
-                            {
-                                cstatus = cstatus && gammaDist->setRandomGenerator(PRNG);
-                                gammstatus = cstatus;
-                            }
-                            else
-                            {
-                                UMUQFAILRETURN("PriorDistribution parameters are not set!");
-                            }
-                        }
-                        break;
-                    };
-                }
-                return cstatus;
-            }
-            break;
-            default:
-                UMUQFAILRETURN("Unknown prior distribution type!");
-                break;
-            };
-            UMUQFAILRETURN("Prior Distribution is not set!");
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to any prior distribution!");
+        std::vector<umuq::priorTypes> CompositePrior(nDim);
+        std::transform(compositeprior, compositeprior + nDim, CompositePrior.begin(), [](int const c) -> umuq::priorTypes { return static_cast<umuq::priorTypes>(c); });
+        return set(Param1, Param2, CompositePrior.data());
     }
-    UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
+    return set(Param1, Param2);
 }
 
-template <typename T>
-inline int priorDistribution<T>::getDim()
+template <typename RealType>
+bool priorDistribution<RealType>::set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<umuq::priorTypes> const &compositeprior)
+{
+    return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
+}
+
+template <typename RealType>
+bool priorDistribution<RealType>::set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<int> const &compositeprior)
+{
+    return compositeprior.size() ? set(Param1.data(), Param2.data(), compositeprior.data()) : set(Param1.data(), Param2.data());
+}
+
+template <typename RealType>
+inline int priorDistribution<RealType>::getDim()
 {
     return nDim;
 }
 
-template <typename T>
-inline int priorDistribution<T>::getpriorType()
+template <typename RealType>
+inline umuq::priorTypes priorDistribution<RealType>::getpriorType()
 {
     return priorType;
 }
 
-template <typename T>
-inline int *priorDistribution<T>::getPriorTypes()
+template <typename RealType>
+inline umuq::priorTypes *priorDistribution<RealType>::getPriorTypes()
 {
     return compositePrior.get();
 }
 
-template <typename T>
-T priorDistribution<T>::pdf(T const *x)
+template <typename RealType>
+RealType priorDistribution<RealType>::pdf(RealType const *x)
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         return uniformDist->f(x);
         break;
-    case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->f(x);
+    case umuq::priorTypes::GAUSSIAN:
+        return multivariateGaussianDist->f(x);
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         return exponentialDist->f(x);
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         return gammaDist->f(x);
         break;
-    case priorTypes::COMPOSITE:
-        T sum(1);
+    case umuq::priorTypes::COMPOSITE:
+        RealType sum(1);
         if (uniformDist)
         {
             int j(0);
@@ -841,31 +841,31 @@ T priorDistribution<T>::pdf(T const *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-T priorDistribution<T>::pdf(std::vector<T> const &x)
+template <typename RealType>
+RealType priorDistribution<RealType>::pdf(std::vector<RealType> const &x)
 {
     return pdf(x.data());
 }
 
-template <typename T>
-T priorDistribution<T>::logpdf(T const *x)
+template <typename RealType>
+RealType priorDistribution<RealType>::logpdf(RealType const *x)
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
+    case umuq::priorTypes::UNIFORM:
         return uniformDist->lf(x);
         break;
-    case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->lf(x);
+    case umuq::priorTypes::GAUSSIAN:
+        return multivariateGaussianDist->lf(x);
         break;
-    case priorTypes::EXPONENTIAL:
+    case umuq::priorTypes::EXPONENTIAL:
         return exponentialDist->lf(x);
         break;
-    case priorTypes::GAMMA:
+    case umuq::priorTypes::GAMMA:
         return gammaDist->lf(x);
         break;
-    case priorTypes::COMPOSITE:
-        T sum(0);
+    case umuq::priorTypes::COMPOSITE:
+        RealType sum(0);
         if (uniformDist)
         {
             int j(0);
@@ -908,33 +908,37 @@ T priorDistribution<T>::logpdf(T const *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-T priorDistribution<T>::logpdf(std::vector<T> const &x)
+template <typename RealType>
+RealType priorDistribution<RealType>::logpdf(std::vector<RealType> const &x)
 {
     return logpdf(x.data());
 }
 
-template <typename T>
-bool priorDistribution<T>::sample(T *x)
+template <typename RealType>
+bool priorDistribution<RealType>::sample(RealType *x)
 {
     switch (priorType)
     {
-    case priorTypes::UNIFORM:
-        return uniformDist->sample(x);
+    case umuq::priorTypes::UNIFORM:
+        uniformDist->sample(x);
+        return true;
         break;
-    case priorTypes::GAUSSIAN:
-        return multivariategaussianDist->sample(x);
+    case umuq::priorTypes::GAUSSIAN:
+        multivariateGaussianDist->sample(x);
+        return true;
         break;
-    case priorTypes::EXPONENTIAL:
-        return exponentialDist->sample(x);
+    case umuq::priorTypes::EXPONENTIAL:
+        exponentialDist->sample(x);
+        return true;
         break;
-    case priorTypes::GAMMA:
-        return gammaDist->sample(x);
+    case umuq::priorTypes::GAMMA:
+        gammaDist->sample(x);
+        return true;
         break;
-    case priorTypes::COMPOSITE:
+    case umuq::priorTypes::COMPOSITE:
         if (uniformDist)
         {
-            if (uniformDist->sample(uniformPoints.data()))
+            uniformDist->sample(uniformPoints);
             {
                 int j(0);
                 for (auto i : uniformIndex)
@@ -945,7 +949,7 @@ bool priorDistribution<T>::sample(T *x)
         }
         if (gaussianDist)
         {
-            if (gaussianDist->sample(gaussianPoints.data()))
+            gaussianDist->sample(gaussianPoints);
             {
                 int j(0);
                 for (auto i : gaussianIndex)
@@ -956,7 +960,7 @@ bool priorDistribution<T>::sample(T *x)
         }
         if (exponentialDist)
         {
-            if (exponentialDist->sample(exponentialPoints.data()))
+            exponentialDist->sample(exponentialPoints);
             {
                 int j(0);
                 for (auto i : exponentialIndex)
@@ -967,7 +971,7 @@ bool priorDistribution<T>::sample(T *x)
         }
         if (gammaDist)
         {
-            if (gammaDist->sample(gammaPoints.data()))
+            gammaDist->sample(gammaPoints);
             {
                 int j(0);
                 for (auto i : gammaIndex)
@@ -982,8 +986,8 @@ bool priorDistribution<T>::sample(T *x)
     UMUQFAIL("Unknown Prior type!");
 }
 
-template <typename T>
-bool priorDistribution<T>::sample(std::vector<T> &x)
+template <typename RealType>
+bool priorDistribution<RealType>::sample(std::vector<RealType> &x)
 {
     return sample(x.data());
 }

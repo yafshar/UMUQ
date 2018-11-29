@@ -25,7 +25,7 @@ It should contain the following files:
     |-- psrandom_gammadistribution.hpp
     |-- psrandom.hpp
     |-- psrandom_lognormaldistribution.hpp
-    |-- psrandom_multinomial.hpp
+    |-- psrandom_multinomialdistribution.hpp
     |-- psrandom_multivariatenormaldistribution.hpp
     |-- psrandom_normaldistribution.hpp
     `-- saruprng.hpp

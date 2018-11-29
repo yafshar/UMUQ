@@ -11,13 +11,13 @@
 umuq::pyplot plt;
 
 #ifdef HAVE_PYTHON
-//! TEST for Basic functionality
+// TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)
 {
     std::string fileName = "./basic.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int n = 5000;
 
     std::vector<double> x(n);
@@ -37,41 +37,41 @@ TEST(Pyplot_test, HandlesBasic)
 
     std::cout << plt.get_backend() << std::endl;
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 1200x780 pixels
+    // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    //! Plot line from given x and y data. Color is selected automatically.
+    // Plot line from given x and y data. Color is selected automatically.
     EXPECT_TRUE(plt.plot<double>(x, y, "", "cos(x)"));
 
-    //! Plot a red dashed line from given x and z data and show up as "log(x)" in the legend
+    // Plot a red dashed line from given x and z data and show up as "log(x)" in the legend
     EXPECT_TRUE(plt.plot<double>(x, z, "r--", "sin(x) + cos(x)"));
 
-    //! Set x-axis to interval \f$ \[0,4\pi\] \f$
+    // Set x-axis to interval \f$ \[0,4\pi\] \f$
     EXPECT_TRUE(plt.xlim<double>(0., 4 * M_PI));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Basic functionality"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
-//! TEST for fill_between functionality
+// TEST for fill_between functionality
 TEST(Pyplot_test, HandlesFill_Between)
 {
     std::string fileName = "./fill_between.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int n = 5000;
 
     std::vector<double> x(n);
@@ -89,44 +89,44 @@ TEST(Pyplot_test, HandlesFill_Between)
         t += dx;
     }
 
-    //! Prepare keywords to pass to PolyCollection. See
+    // Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
     keywords["alpha"] = "0.4";
     keywords["color"] = "grey";
     keywords["hatch"] = "-";
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 1200x780 pixels
+    // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Fill_between"));
 
-    //! Plot line from given x and y data. Color is selected automatically.
+    // Plot line from given x and y data. Color is selected automatically.
     EXPECT_TRUE(plt.plot<double>(x, y, "b:", "cos(x)"));
 
-    //! Plot a red dashed line from given x and z data and show up as "log(x)" in the legend
+    // Plot a red dashed line from given x and z data and show up as "log(x)" in the legend
     EXPECT_TRUE(plt.plot<double>(x, z, "r--", "sin(x) + cos(x)"));
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.fill_between<double>(x, y, z, keywords));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
-// //! TEST for animation functionality
+// // TEST for animation functionality
 // TEST(Pyplot_test, HandlesAnimation)
 // {
-//     //! Prepare data.
+//     // Prepare data.
 //     int n = 50;
 
 //     std::vector<double> x(n);
@@ -144,28 +144,28 @@ TEST(Pyplot_test, HandlesFill_Between)
 
 //         if (i % 5 == 0)
 //         {
-//             //! Clear previous plot
+//             // Clear previous plot
 //             EXPECT_TRUE(plt.clf());
 
-//             //! Plot line from given x and y data. Color is selected automatically.
+//             // Plot line from given x and y data. Color is selected automatically.
 //             EXPECT_TRUE(plt.plot<double>(x, y, "", "cos(x)"));
 
-//             //! Plot a line whose name will show up as "sin(x) + cos(x)" in the legend.
+//             // Plot a line whose name will show up as "sin(x) + cos(x)" in the legend.
 //             EXPECT_TRUE(plt.plot<double>(x, z, "r--", "sin(x) + cos(x)"));
 
-//             //! Set x-axis to interval \f$ \[0,4\pi\] \f$
+//             // Set x-axis to interval \f$ \[0,4\pi\] \f$
 //             EXPECT_TRUE(plt.xlim<double>(0, 4 * M_PI));
 
-//             //! Set y-axis to interval \f$ \[-2,2\] \f$
+//             // Set y-axis to interval \f$ \[-2,2\] \f$
 //             EXPECT_TRUE(plt.ylim<double>(-2.0, 2.0));
 
-//             //! Add graph title
+//             // Add graph title
 //             EXPECT_TRUE(plt.title("Animation figure"));
 
-//             //! Enable legend.
+//             // Enable legend.
 //             EXPECT_TRUE(plt.legend());
 
-//             //! Display plot continuously
+//             // Display plot continuously
 //             EXPECT_TRUE(plt.draw());
 
 //             EXPECT_TRUE(plt.pause(0.0001));
@@ -173,68 +173,68 @@ TEST(Pyplot_test, HandlesFill_Between)
 //         t += dx;
 //     }
 //
-//     //! close figure
+//     // close figure
 //     EXPECT_TRUE(plt.close());
 // }
 
-//! TEST for histogram functionality
+// TEST for histogram functionality
 TEST(Pyplot_test, HandlesHist)
 {
     std::string fileName = "./hist.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int n = 10000;
 
     std::vector<double> x(n);
 
-    //! std::random_device rd;
+    // std::random_device rd;
     std::mt19937 gen(123);
     std::normal_distribution<> d;
 
     std::for_each(x.begin(), x.end(), [&](double &x_i) { x_i = d(gen); });
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 1200x780 pixels
+    // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    //! histogram figure
+    // histogram figure
     EXPECT_TRUE(plt.hist<double>(x, 50, true, "", "Histogram", 1.0, 51, 255, 51));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Histogram"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
-//! TEST for scatter functionality
+// TEST for scatter functionality
 TEST(Pyplot_test, HandlesScatterWithArrayOfColors)
 {
     std::string fileName = "./scatter.svg";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int n = 100;
 
-    //! X coordinates
+    // X coordinates
     std::vector<double> x(n);
-    //! Y coordinates
+    // Y coordinates
     std::vector<double> y(n);
-    //! Marker size in points**2
+    // Marker size in points**2
     std::vector<int> s(1, 1000);
-    // //! Scalar data color
+    // // Scalar data color
     std::vector<double> c(n);
 
-    //! std::random_device rd;
+    // std::random_device rd;
     std::mt19937 gen(123);
     std::uniform_real_distribution<> dis(0, 1.0);
     std::uniform_int_distribution<> idis(250, 255);
@@ -243,29 +243,29 @@ TEST(Pyplot_test, HandlesScatterWithArrayOfColors)
     std::for_each(y.begin(), y.end(), [&](double &y_i) { y_i = dis(gen); });
     std::for_each(c.begin(), c.end(), [&](double &c_i) { c_i = idis(gen); });
 
-    //! Prepare keywords to pass to PolyCollection. See
+    // Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
     keywords["marker"] = "o";
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 1200x780 pixels
+    // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.scatter<double>(x, y, s, c, keywords));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Scatter"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
@@ -274,12 +274,12 @@ TEST(Pyplot_test, HandlesScatterWithFormat)
     std::string fileName = "./scatter.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int n = 11 * 11;
 
-    //! X coordinates
+    // X coordinates
     std::vector<double> x(n);
-    //! Y coordinates
+    // Y coordinates
     std::vector<double> y(n);
 
     double dx = 0.1;
@@ -295,133 +295,133 @@ TEST(Pyplot_test, HandlesScatterWithFormat)
         }
     }
 
-    //! Prepare keywords to pass to PolyCollection. See
+    // Prepare keywords to pass to PolyCollection. See
     std::map<std::string, std::string> keywords;
     keywords["marker"] = "D";
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 1200x780 pixels
+    // Set the size of output image = 1200x780 pixels
     EXPECT_TRUE(plt.figure(1200, 780));
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.scatter<double>(x, y, 200, "b", keywords));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Scatter"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
-//! TEST for contour functionality
+// TEST for contour functionality
 TEST(Pyplot_test, HandlesContour)
 {
     std::string fileName = "./contour.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int nDimX = 20;
     int nDimY = 8;
 
-    //! X coordinates
+    // X coordinates
     std::vector<double> x(nDimX);
     std::iota(x.begin(), x.end(), 1.0);
 
-    //! Y coordinates
+    // Y coordinates
     std::vector<double> y(nDimY);
     std::iota(y.begin(), y.end(), 1.0);
 
-    //! The height values over which the contour is drawn
+    // The height values over which the contour is drawn
     std::vector<double> z(nDimX * nDimY);
 
-    //! std::random_device rd;
+    // std::random_device rd;
     std::mt19937 gen(123);
     std::uniform_real_distribution<> dis(0, 1.0);
 
     std::for_each(z.begin(), z.end(), [&](double &z_i) { z_i = dis(gen); });
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 2000x800 pixels
+    // Set the size of output image = 2000x800 pixels
     EXPECT_TRUE(plt.figure(2000, 800));
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.contour<double>(x, y, z));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Contour"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
-//! TEST for contour functionality
+// TEST for contour functionality
 TEST(Pyplot_test, HandlesContourf)
 {
     std::string fileName = "./contourf.png";
     std::remove(fileName.c_str());
 
-    //! Prepare data.
+    // Prepare data.
     int nDimX = 20;
     int nDimY = 8;
 
-    //! X coordinates
+    // X coordinates
     std::vector<double> x(nDimX);
     std::iota(x.begin(), x.end(), 1.0);
 
-    //! Y coordinates
+    // Y coordinates
     std::vector<double> y(nDimY);
     std::iota(y.begin(), y.end(), 1.0);
 
-    //! The height values over which the contour is drawn
+    // The height values over which the contour is drawn
     std::vector<double> z(nDimX * nDimY);
 
-    //! std::random_device rd;
+    // std::random_device rd;
     std::mt19937 gen(123);
     std::exponential_distribution<> dis(1.0);
 
     std::for_each(z.begin(), z.end(), [&](double &z_i) { z_i = dis(gen); });
 
-    //! Clear previous plot
+    // Clear previous plot
     EXPECT_TRUE(plt.clf());
 
-    //! Set the size of output image = 2000x800 pixels
+    // Set the size of output image = 2000x800 pixels
     EXPECT_TRUE(plt.figure(2000, 800));
 
-    //! Create scatter plot
+    // Create scatter plot
     EXPECT_TRUE(plt.contourf<double>(x, y, z));
 
-    //! Add graph title
+    // Add graph title
     EXPECT_TRUE(plt.title("Contourf"));
 
-    //! Enable legend.
+    // Enable legend.
     EXPECT_TRUE(plt.legend());
 
-    //! save figure
+    // save figure
     EXPECT_TRUE(plt.savefig(fileName));
 
-    //! close figure
+    // close figure
     EXPECT_TRUE(plt.close());
 }
 
 #else
 
-//! TEST for Basic functionality
+// TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)
 {
 }
