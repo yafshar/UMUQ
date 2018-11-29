@@ -10,7 +10,7 @@
  * \brief Get an instance of a seeded double random object
  * 
  */
-umuq::psrandom<double> prng(123);
+umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -180,17 +180,14 @@ TEST(hypercubeSamplingTest, HandlesUniformdistribution)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    // Set the pseudo random number generator
-    EXPECT_TRUE(Domain.setRandomGenerator(&prng));
-
     // Create uniformly random distributed points in the hypercube
-    EXPECT_TRUE(Domain.sample(dataPoints));
+    Domain.sample(dataPoints);
 }
 
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
