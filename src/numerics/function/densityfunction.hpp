@@ -2,11 +2,11 @@
 #define UMUQ_DENSITYFUNCTION_H
 
 #include "misc/arraywrapper.hpp"
-#include "../factorial.hpp"
-#include "../eigenlib.hpp"
-#include "functiontype.hpp"
+#include "numerics/factorial.hpp"
+#include "numerics/eigenlib.hpp"
+#include "datatype/functiontype.hpp"
 #include "umuqfunction.hpp"
-#include "../random/psrandom.hpp"
+#include "numerics/random/psrandom.hpp"
 
 namespace umuq
 {
@@ -32,12 +32,12 @@ inline namespace density
  * \ingroup Density_Module
  * 
  * \brief Density function class
+ *
+ * \tparam DataType     Data type
+ * \tparam FunctionType Function type
  * 
  * Density function or a probability density (PDF), is a function, with a value at any given point (or sample point) 
  * interpreted as a relative likelihood that the value of the random variable would be equal to that sample.
- * 
- * \tparam DataType     Data type
- * \tparam FunctionType Function type
  */
 template <typename DataType, class FunctionType>
 class densityFunction : public umuqFunction<DataType, FunctionType>

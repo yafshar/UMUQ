@@ -108,14 +108,14 @@ protected:
   /*!
    * \brief Delete a umuqFunction object copy construction
    * 
-   * Make it noncopyable.
+   * Avoiding implicit generation of the copy constructor.
    */
   umuqFunction(umuqFunction<DataType, FunctionType> const &) = delete;
 
   /*!
    * \brief Delete a umuqFunction object assignment
    * 
-   * Make it nonassignable
+   * Avoiding implicit copy assignment.
    * 
    * \returns umuqFunction<DataType, FunctionType>& 
    */
