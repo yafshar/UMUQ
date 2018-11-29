@@ -238,15 +238,6 @@ class hypercubeSampling
     bool sample(std::vector<DataType> &points, int const nPoints, priorTypes const PriorType = priorTypes::UNIFORM,
                 std::vector<DataType> const &Param1 = EmptyVector<DataType>, std::vector<DataType> const &Param2 = EmptyVector<DataType>, std::vector<priorTypes> const &compositeprior = EmptyVector<priorTypes>);
 
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
-     * 
-     * \return false If it encounters an unexpected problem
-     */
-    bool setRandomGenerator(psrandom<double> *PRNG);
-
   private:
     /*!
      * \brief Delete a hypercubeSampling object default construction
@@ -306,7 +297,17 @@ hypercubeSampling<DataType>::hypercubeSampling(int const TotalNumPoints, int con
 
     isItUnitCube = !(LowerBound && UpperBound);
 
-    if (!isItUnitCube)
+    if (isItUnitCube)
+    {
+        std::vector<double> Lb(numDimensions, 0.);
+        std::vector<double> Ub(numDimensions, 1.);
+        // Set the distribution parameters
+        if (!prior.set(Lb, Ub))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
+    }
+    else
     {
         lowerBound.resize(numDimensions);
         std::copy(LowerBound, LowerBound + numDimensions, lowerBound.data());
@@ -320,6 +321,11 @@ hypercubeSampling<DataType>::hypercubeSampling(int const TotalNumPoints, int con
                 UMUQFAIL("Wrong domain size with lowerbound ", *lowerIt, " > upperbound of ", *upperIt, " !");
             }
         }
+        // Set the distribution parameters
+        if (!prior.set(lowerBound, upperBound))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
     }
 }
 
@@ -328,7 +334,6 @@ hypercubeSampling<DataType>::hypercubeSampling(int const *NumPointsInEachDirecti
                                                                                                                                                                    numPointsInEachDirection(NumPointsInEachDirection, NumPointsInEachDirection + NumDimensions),
                                                                                                                                                                    numDimensions(NumDimensions),
                                                                                                                                                                    prior(numDimensions)
-
 {
     {
         umuq::stats s;
@@ -340,7 +345,17 @@ hypercubeSampling<DataType>::hypercubeSampling(int const *NumPointsInEachDirecti
 
     isItUnitCube = !(LowerBound && UpperBound);
 
-    if (!isItUnitCube)
+    if (isItUnitCube)
+    {
+        std::vector<double> Lb(numDimensions, 0.);
+        std::vector<double> Ub(numDimensions, 1.);
+        // Set the distribution parameters
+        if (!prior.set(Lb, Ub))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
+    }
+    else
     {
         lowerBound.resize(numDimensions);
         std::copy(LowerBound, LowerBound + numDimensions, lowerBound.data());
@@ -354,6 +369,11 @@ hypercubeSampling<DataType>::hypercubeSampling(int const *NumPointsInEachDirecti
                 UMUQFAIL("Wrong domain size with lowerbound ", *lowerIt, " > upperbound of ", *upperIt, " !");
             }
         }
+        // Set the distribution parameters
+        if (!prior.set(lowerBound, upperBound))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
     }
 }
 
@@ -362,7 +382,6 @@ hypercubeSampling<DataType>::hypercubeSampling(std::vector<int> const &NumPoints
                                                                                                                                                                                  numPointsInEachDirection(NumPointsInEachDirection),
                                                                                                                                                                                  numDimensions(NumPointsInEachDirection.size()),
                                                                                                                                                                                  prior(numDimensions)
-
 {
     {
         umuq::stats s;
@@ -374,7 +393,17 @@ hypercubeSampling<DataType>::hypercubeSampling(std::vector<int> const &NumPoints
 
     isItUnitCube = !(LowerBound.size() && UpperBound.size());
 
-    if (!isItUnitCube)
+    if (isItUnitCube)
+    {
+        std::vector<double> Lb(numDimensions, 0.);
+        std::vector<double> Ub(numDimensions, 1.);
+        // Set the distribution parameters
+        if (!prior.set(Lb, Ub))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
+    }
+    else
     {
         if (LowerBound.size() != UpperBound.size())
         {
@@ -398,8 +427,13 @@ hypercubeSampling<DataType>::hypercubeSampling(std::vector<int> const &NumPoints
                 UMUQFAIL("Wrong domain size with lowerbound ", *lowerIt, " > upperbound of ", *upperIt, " !");
             }
         }
+        // Set the distribution parameters
+        if (!prior.set(lowerBound, upperBound))
+        {
+            UMUQFAIL("Failed to set the distribution!");
+        }
     }
-}
+} // namespace umuq
 
 template <typename DataType>
 hypercubeSampling<DataType>::hypercubeSampling(hypercubeSampling<DataType> &&other)
@@ -1017,39 +1051,6 @@ bool hypercubeSampling<DataType>::gridInUnitCube(std::vector<DataType> &gridPoin
 }
 
 template <typename DataType>
-bool hypercubeSampling<DataType>::setRandomGenerator(psrandom<double> *PRNG)
-{
-    if (PRNG)
-    {
-        if (PRNG_initialized)
-        {
-            if (isItUnitCube)
-            {
-                std::vector<double> Lb(numDimensions, 0.);
-                std::vector<double> Ub(numDimensions, 1.);
-
-                // Set the distribution parameters
-                if (!prior.set(Lb, Ub))
-                {
-                    UMUQFAILRETURN("Failed to set the distribution!");
-                }
-            }
-            else
-            {
-                // Set the distribution parameters
-                if (!prior.set(lowerBound, upperBound))
-                {
-                    UMUQFAILRETURN("Failed to set the distribution!");
-                }
-            }
-            return prior.setRandomGenerator(PRNG);
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to any prior distribution!");
-    }
-    UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
-}
-
-template <typename DataType>
 bool hypercubeSampling<DataType>::sample(DataType *&points, priorTypes const PriorType, DataType const *Param1, DataType const *Param2, priorTypes const *compositeprior)
 {
     if (totalNumPoints < 1)
@@ -1059,14 +1060,6 @@ bool hypercubeSampling<DataType>::sample(DataType *&points, priorTypes const Pri
 
     if (prior.getpriorType() != PriorType)
     {
-        // Pseudo-random number generator
-        auto *prng = prior.getRandomGenerator();
-
-        if (!prng)
-        {
-            UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
-        }
-
         // Construct a prior Distribution object
         prior = std::move(priorDistribution<DataType>(numDimensions, PriorType));
 
@@ -1074,12 +1067,6 @@ bool hypercubeSampling<DataType>::sample(DataType *&points, priorTypes const Pri
         if (!prior.set(Param1, Param2, compositeprior))
         {
             UMUQFAILRETURN("Failed to set the prior distribution!");
-        }
-
-        // Set the Random Number Generator object in the prior
-        if (!prior.setRandomGenerator(prng))
-        {
-            UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
         }
     }
 
@@ -1114,14 +1101,6 @@ bool hypercubeSampling<DataType>::sample(DataType *&points, int const nPoints, p
 
     if (prior.getpriorType() != PriorType)
     {
-        // Pseudo-random number generator
-        auto *prng = prior.getRandomGenerator();
-
-        if (!prng)
-        {
-            UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
-        }
-
         // Construct a prior Distribution object
         prior = std::move(priorDistribution<DataType>(numDimensions, PriorType));
 
@@ -1129,12 +1108,6 @@ bool hypercubeSampling<DataType>::sample(DataType *&points, int const nPoints, p
         if (!prior.set(Param1, Param2, compositeprior))
         {
             UMUQFAILRETURN("Failed to set the prior distribution!");
-        }
-
-        // Set the Random Number Generator object in the prior
-        if (!prior.setRandomGenerator(prng))
-        {
-            UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
         }
     }
 
@@ -1169,14 +1142,6 @@ bool hypercubeSampling<DataType>::sample(std::vector<DataType> &points, priorTyp
 
     if (prior.getpriorType() != PriorType)
     {
-        // Pseudo-random number generator
-        auto *prng = prior.getRandomGenerator();
-
-        if (!prng)
-        {
-            UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
-        }
-
         // Construct a prior Distribution object
         prior = std::move(priorDistribution<DataType>(numDimensions, PriorType));
 
@@ -1184,12 +1149,6 @@ bool hypercubeSampling<DataType>::sample(std::vector<DataType> &points, priorTyp
         if (!prior.set(Param1, Param2, compositeprior))
         {
             UMUQFAILRETURN("Failed to set the prior distribution!");
-        }
-
-        // Set the Random Number Generator object in the prior
-        if (!prior.setRandomGenerator(prng))
-        {
-            UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
         }
     }
 
@@ -1217,14 +1176,6 @@ bool hypercubeSampling<DataType>::sample(std::vector<DataType> &points, int cons
 
     if (prior.getpriorType() != PriorType)
     {
-        // Pseudo-random number generator
-        auto *prng = prior.getRandomGenerator();
-
-        if (!prng)
-        {
-            UMUQFAILRETURN("The pseudo-random number generator is not assigned!");
-        }
-
         // Construct a prior Distribution object
         prior = std::move(priorDistribution<DataType>(numDimensions, PriorType));
 
@@ -1232,12 +1183,6 @@ bool hypercubeSampling<DataType>::sample(std::vector<DataType> &points, int cons
         if (!prior.set(Param1, Param2, compositeprior))
         {
             UMUQFAILRETURN("Failed to set the prior distribution!");
-        }
-
-        // Set the Random Number Generator object in the prior
-        if (!prior.setRandomGenerator(prng))
-        {
-            UMUQFAILRETURN("Failed to set the Random Number Generator object in the prior!");
         }
     }
 
