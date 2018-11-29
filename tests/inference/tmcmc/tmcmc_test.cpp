@@ -99,7 +99,7 @@ TEST(tmcmc_test, HandlesConstruction)
     umuq::tmcmc::tmcmc<> t;
 
     // Set the input file
-    EXPECT_TRUE(t.setInputFileName("./data/test.txt"));
+    EXPECT_TRUE(t.setInputFileName("./inference/tmcmc/test.txt"));
 
     std::cout << t.inputFilename << std::endl;
 
@@ -119,7 +119,7 @@ TEST(tmcmc_test, HandlesConstruction)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
