@@ -1,50 +1,11 @@
 #ifndef UMUQ_KNEARESTNEIGHBORS_H
 #define UMUQ_KNEARESTNEIGHBORS_H
 
+#include "datatype/neighbordistancetype.hpp"
 #include "knearestneighborbase.hpp"
 
 namespace umuq
 {
-
-/*! \enum NeighborDistance
- * \ingroup Numerics_Module
- * 
- * \brief Nearest neighbors distance types which can be used in %UMUQ
- * 
- */
-enum class NeighborDistance
-{
-    /*! Squared Euclidean distance functor, optimized version. */
-    EUCLIDEAN,
-    /*! Squared Euclidean distance functor, optimized version. */
-    L2 = EUCLIDEAN,
-    /*! Squared Euclidean distance functor. An unrolled simpler version is used which is preferable for very low dimensionality data (eg 3D points) */
-    L2_SIMPLE,
-    /*! Manhattan distance functor, optimized version. */
-    MANHATTAN,
-    /*! Manhattan distance functor, optimized version. */
-    L1 = MANHATTAN,
-    /*! The Minkowsky \f$ (L_p) (\vec{x},\vec{y}) = \left( \sum_{i = 1}^{n} | x_i - y_i |^p \right)^{\frac{1}{p}} \f$ distance between two vectors \f$ \vec{x}~\text{and}~\vec{x}. \f$ */
-    MINKOWSKI,
-    /*! Maximum distance.*/
-    MAX,
-    /*! The histogram intersection distance. */
-    HIST_INTERSECT,
-    /*! The Hellinger distance, quantify the similarity between two probability distributions. */
-    HELLINGER,
-    /*! The distance between two histograms. */
-    CHI_SQUARE,
-    /*! Kullback-Leibler divergence, is a measure of how one probability distribution is different from a second, reference probability distribution.*/
-    KULLBACK_LEIBLER,
-    /*! Hamming distance functor - counts the number of positions at which the corresponding symbols are different. */
-    HAMMING,
-    /*! Hamming distance functor - counts the bit differences between two strings, useful for the brief descriptor bit count of A exclusive \c XOR'ed with B */
-    HAMMING_LUT,
-    /*! Hamming distance functor (pop count between two binary vectors, i.e. xor them and count the number of bits set). */
-    HAMMING_POPCNT,
-    /*! The Mahalanobis distance is a measure of the distance between a point and a distribution. */
-    MAHALANOBIS
-};
 
 /*! \class kNearestNeighbor
  * \ingroup Numerics_Module
@@ -52,11 +13,11 @@ enum class NeighborDistance
  * \brief Finding K nearest neighbors in high dimensional spaces
  * 
  * \tparam DataType      Data type
- * \tparam DistanceType  NeighborDistance type for computing the distances to the nearest neighbors.
+ * \tparam DistanceType  NeighborDistanceTypes type for computing the distances to the nearest neighbors.
  *                       (Default is EUCLIDEAN distance) 
- *                       \sa umuq::NeighborDistance
+ *                       \sa umuq::NeighborDistanceTypes
  */
-template <typename DataType, NeighborDistance DistanceType = NeighborDistance::EUCLIDEAN>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType = umuq::NeighborDistanceTypes::EUCLIDEAN>
 class kNearestNeighbor : public kNearestNeighborBase<DataType, flann::L2<DataType>>
 {
   public:
@@ -110,158 +71,158 @@ class kNearestNeighbor : public kNearestNeighborBase<DataType, flann::L2<DataTyp
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> : public kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> : public kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &operator=(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> : public kNearestNeighborBase<DataType, flann::L1<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> : public kNearestNeighborBase<DataType, flann::L1<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &operator=(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> : public kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> : public kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &operator=(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::MAX> : public kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> : public kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAX> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAX> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::MAX> &operator=(kNearestNeighbor<DataType, NeighborDistance::MAX> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> : public kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> : public kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &operator=(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::HELLINGER> : public kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> : public kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &operator=(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> : public kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> : public kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &operator=(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> : public kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> : public kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &operator=(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::HAMMING> : public kNearestNeighborBase<DataType, flann::Hamming<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> : public kNearestNeighborBase<DataType, flann::Hamming<DataType>>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::HAMMING> &operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING> &&other);
-
-  private:
-    kNearestNeighbor() = delete;
-};
-
-template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> : public kNearestNeighborBase<DataType, flann::HammingLUT>
-{
-  public:
-    kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> : public kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> : public kNearestNeighborBase<DataType, flann::HammingLUT>
 {
   public:
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &&other);
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> const &other);
-    kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &&other);
 
   private:
     kNearestNeighbor() = delete;
 };
 
-/*! \class kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>
+template <typename DataType>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> : public kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>
+{
+  public:
+    kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
+    kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> const &other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &&other);
+
+  private:
+    kNearestNeighbor() = delete;
+};
+
+/*! \class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>
  * \ingroup Numerics_Module
  *
  * \brief Finding K nearest neighbors in high dimensional spaces using Mahalanobis distance.
@@ -320,11 +281,11 @@ class kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> : public kNea
  * \tparam DataType Data type
  */
 template <typename DataType>
-class kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> : public kNearestNeighborBase<DataType, flann::L2<DataType>>
+class kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> : public kNearestNeighborBase<DataType, flann::L2<DataType>>
 {
   public:
     /*!
-     * \brief Construct a new kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \brief Construct a new kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      *
      * \param ndataPoints  Number of data points
      * \param nDim         Dimension of each point
@@ -333,7 +294,7 @@ class kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> : public kNeares
     kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors);
 
     /*!
-     * \brief Construct a new kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \brief Construct a new kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      *
      * \param ndataPoints  Number of data points
      * \param nqueryPoints Number of query points
@@ -343,26 +304,26 @@ class kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> : public kNeares
     kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors);
 
     /*!
-     * \brief Move construct a new kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \brief Move construct a new kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      *
-     * \param other kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \param other kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      */
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &&other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &&other);
 
     /*!
-     * \brief Copy construct a new kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \brief Copy construct a new kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      *
-     * \param other kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
+     * \param other kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
      */
-    kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> const &other);
+    kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> const &other);
 
     /*!
      * \brief Move assignment
      *
-     * \param other kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> object
-     * \returns kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>&
+     * \param other kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> object
+     * \returns kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>&
      */
-    kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &operator=(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &&other);
+    kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &&other);
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
@@ -449,24 +410,24 @@ class kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> : public kNeares
     EMatrixX<DataType> matrixL;
 };
 
-template <typename DataType, NeighborDistance DistanceType>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
-template <typename DataType, NeighborDistance DistanceType>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
-template <typename DataType, NeighborDistance DistanceType>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(kNearestNeighbor<DataType, DistanceType> &&other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(std::move(other))
 {
 }
 
-template <typename DataType, NeighborDistance DistanceType>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(kNearestNeighbor<DataType, DistanceType> const &other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(other)
 {
 }
 
-template <typename DataType, NeighborDistance DistanceType>
+template <typename DataType, umuq::NeighborDistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType> &kNearestNeighbor<DataType, DistanceType>::operator=(kNearestNeighbor<DataType, DistanceType> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
@@ -484,58 +445,24 @@ kNearestNeighbor<DataType, DistanceType> &kNearestNeighbor<DataType, DistanceTyp
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &&other) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> const &other) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &&other) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE>::operator=(kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &&other)
-{
-    this->nDataPoints = std::move(other.nDataPoints);
-    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
-    this->dataDimension = std::move(other.dataDimension);
-    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    this->indices_ptr = std::move(other.indices_ptr);
-    this->dists_ptr = std::move(other.dists_ptr);
-    this->indices = std::move(other.indices);
-    this->dists = std::move(other.dists);
-    this->the_same = std::move(other.the_same);
-    this->withCovariance = std::move(other.withCovariance);
-
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::L2_SIMPLE> &>(kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>::operator=(std::move(other)));
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nDim, kNeighbors)
-{
-}
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MANHATTAN>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &&other) : kNearestNeighborBase<DataType, flann::L1<DataType>>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> const &other) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(other)
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MANHATTAN>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> const &other) : kNearestNeighborBase<DataType, flann::L1<DataType>>(other)
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &kNearestNeighbor<DataType, NeighborDistance::MANHATTAN>::operator=(kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -548,62 +475,28 @@ kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &kNearestNeighbor<DataTy
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::MANHATTAN> &>(kNearestNeighborBase<DataType, flann::L1<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::L2_SIMPLE> &>(kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &&other) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> const &other) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &&other) : kNearestNeighborBase<DataType, flann::L1<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI>::operator=(kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &&other)
-{
-    this->nDataPoints = std::move(other.nDataPoints);
-    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
-    this->dataDimension = std::move(other.dataDimension);
-    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    this->indices_ptr = std::move(other.indices_ptr);
-    this->dists_ptr = std::move(other.dists_ptr);
-    this->indices = std::move(other.indices);
-    this->dists = std::move(other.dists);
-    this->the_same = std::move(other.the_same);
-    this->withCovariance = std::move(other.withCovariance);
-
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::MINKOWSKI> &>(kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>::operator=(std::move(other)));
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAX>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nDim, kNeighbors)
-{
-}
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAX>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAX>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAX> &&other) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> const &other) : kNearestNeighborBase<DataType, flann::L1<DataType>>(other)
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAX>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAX> const &other) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(other)
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAX> &kNearestNeighbor<DataType, NeighborDistance::MAX>::operator=(kNearestNeighbor<DataType, NeighborDistance::MAX> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -616,62 +509,28 @@ kNearestNeighbor<DataType, NeighborDistance::MAX> &kNearestNeighbor<DataType, Ne
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::MAX> &>(kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MANHATTAN> &>(kNearestNeighborBase<DataType, flann::L1<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &&other) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> const &other) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &&other) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT>::operator=(kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &&other)
-{
-    this->nDataPoints = std::move(other.nDataPoints);
-    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
-    this->dataDimension = std::move(other.dataDimension);
-    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    this->indices_ptr = std::move(other.indices_ptr);
-    this->dists_ptr = std::move(other.dists_ptr);
-    this->indices = std::move(other.indices);
-    this->dists = std::move(other.dists);
-    this->the_same = std::move(other.the_same);
-    this->withCovariance = std::move(other.withCovariance);
-
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::HIST_INTERSECT> &>(kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>::operator=(std::move(other)));
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nDim, kNeighbors)
-{
-}
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HELLINGER>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &&other) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> const &other) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(other)
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HELLINGER>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> const &other) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(other)
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &kNearestNeighbor<DataType, NeighborDistance::HELLINGER>::operator=(kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -684,62 +543,28 @@ kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &kNearestNeighbor<DataTy
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::HELLINGER> &>(kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MINKOWSKI> &>(kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &&other) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> const &other) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &&other) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE>::operator=(kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &&other)
-{
-    this->nDataPoints = std::move(other.nDataPoints);
-    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
-    this->dataDimension = std::move(other.dataDimension);
-    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    this->indices_ptr = std::move(other.indices_ptr);
-    this->dists_ptr = std::move(other.dists_ptr);
-    this->indices = std::move(other.indices);
-    this->dists = std::move(other.dists);
-    this->the_same = std::move(other.the_same);
-    this->withCovariance = std::move(other.withCovariance);
-
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::CHI_SQUARE> &>(kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>::operator=(std::move(other)));
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nDim, kNeighbors)
-{
-}
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &&other) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> const &other) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(other)
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> const &other) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(other)
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER>::operator=(kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -752,62 +577,28 @@ kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &kNearestNeighbor
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::KULLBACK_LEIBLER> &>(kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAX> &>(kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING> &&other) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING> const &other) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &&other) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING> &kNearestNeighbor<DataType, NeighborDistance::HAMMING>::operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING> &&other)
-{
-    this->nDataPoints = std::move(other.nDataPoints);
-    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
-    this->dataDimension = std::move(other.dataDimension);
-    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    this->indices_ptr = std::move(other.indices_ptr);
-    this->dists_ptr = std::move(other.dists_ptr);
-    this->indices = std::move(other.indices);
-    this->dists = std::move(other.dists);
-    this->the_same = std::move(other.the_same);
-    this->withCovariance = std::move(other.withCovariance);
-
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::HAMMING> &>(kNearestNeighborBase<DataType, flann::Hamming<DataType>>::operator=(std::move(other)));
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingLUT>(ndataPoints, nDim, kNeighbors)
-{
-}
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingLUT>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &&other) : kNearestNeighborBase<DataType, flann::HammingLUT>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> const &other) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(other)
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> const &other) : kNearestNeighborBase<DataType, flann::HammingLUT>(other)
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT>::operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -820,28 +611,28 @@ kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &kNearestNeighbor<Data
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::HAMMING_LUT> &>(kNearestNeighborBase<DataType, flann::HammingLUT>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HIST_INTERSECT> &>(kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(ndataPoints, nDim, kNeighbors)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &&other) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(std::move(other))
-{
-}
-
-template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> const &other) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &&other) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(std::move(other))
 {
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT>::operator=(kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> const &other) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -854,13 +645,183 @@ kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &kNearestNeighbor<D
     this->the_same = std::move(other.the_same);
     this->withCovariance = std::move(other.withCovariance);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::HAMMING_POPCNT> &>(kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HELLINGER> &>(kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nDim, kNeighbors),
-                                                                                                                                           covariance(EMatrixX<DataType>::Identity(nDim, nDim)),
-                                                                                                                                           matrixL(EMatrixX<DataType>::Identity(nDim, nDim))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nDim, kNeighbors)
+{
+}
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &&other) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(std::move(other))
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> const &other) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &&other)
+{
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
+    this->the_same = std::move(other.the_same);
+    this->withCovariance = std::move(other.withCovariance);
+
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::CHI_SQUARE> &>(kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>::operator=(std::move(other)));
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nDim, kNeighbors)
+{
+}
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &&other) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(std::move(other))
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> const &other) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &&other)
+{
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
+    this->the_same = std::move(other.the_same);
+    this->withCovariance = std::move(other.withCovariance);
+
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::KULLBACK_LEIBLER> &>(kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>::operator=(std::move(other)));
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nDim, kNeighbors)
+{
+}
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &&other) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(std::move(other))
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> const &other) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &&other)
+{
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
+    this->the_same = std::move(other.the_same);
+    this->withCovariance = std::move(other.withCovariance);
+
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING> &>(kNearestNeighborBase<DataType, flann::Hamming<DataType>>::operator=(std::move(other)));
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingLUT>(ndataPoints, nDim, kNeighbors)
+{
+}
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingLUT>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &&other) : kNearestNeighborBase<DataType, flann::HammingLUT>(std::move(other))
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> const &other) : kNearestNeighborBase<DataType, flann::HammingLUT>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &&other)
+{
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
+    this->the_same = std::move(other.the_same);
+    this->withCovariance = std::move(other.withCovariance);
+
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_LUT> &>(kNearestNeighborBase<DataType, flann::HammingLUT>::operator=(std::move(other)));
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(ndataPoints, nDim, kNeighbors)
+{
+}
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &&other) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(std::move(other))
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> const &other) : kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>(other)
+{
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &&other)
+{
+    this->nDataPoints = std::move(other.nDataPoints);
+    this->nQueryDataPoints = std::move(other.nQueryDataPoints);
+    this->dataDimension = std::move(other.dataDimension);
+    this->nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
+    this->indices_ptr = std::move(other.indices_ptr);
+    this->dists_ptr = std::move(other.dists_ptr);
+    this->indices = std::move(other.indices);
+    this->dists = std::move(other.dists);
+    this->the_same = std::move(other.the_same);
+    this->withCovariance = std::move(other.withCovariance);
+
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::HAMMING_POPCNT> &>(kNearestNeighborBase<DataType, flann::HammingPopcnt<DataType>>::operator=(std::move(other)));
+}
+
+template <typename DataType>
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nDim, kNeighbors),
+                                                                                                                                                      covariance(EMatrixX<DataType>::Identity(nDim, nDim)),
+                                                                                                                                                      matrixL(EMatrixX<DataType>::Identity(nDim, nDim))
 {
     if (!(unrolledIncrement == 0 || unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
     {
@@ -870,9 +831,9 @@ kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(int 
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors),
-                                                                                                                                                                   covariance(EMatrixX<DataType>::Identity(nDim, nDim)),
-                                                                                                                                                                   matrixL(EMatrixX<DataType>::Identity(nDim, nDim))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors),
+                                                                                                                                                                              covariance(EMatrixX<DataType>::Identity(nDim, nDim)),
+                                                                                                                                                                              matrixL(EMatrixX<DataType>::Identity(nDim, nDim))
 {
     if (!(unrolledIncrement == 0 || unrolledIncrement == 4 || unrolledIncrement == 6 || unrolledIncrement == 8 || unrolledIncrement == 10 || unrolledIncrement == 12))
     {
@@ -882,21 +843,21 @@ kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(int 
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &&other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(std::move(other))
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &&other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(std::move(other))
 {
     this->covariance = std::move(other.covariance);
     this->matrixL = std::move(other.matrixL);
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::kNearestNeighbor(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> const &other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::kNearestNeighbor(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> const &other) : kNearestNeighborBase<DataType, flann::L2<DataType>>(other)
 {
     this->covariance = other.covariance;
     this->matrixL = other.matrixL;
 }
 
 template <typename DataType>
-kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::operator=(kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &&other)
+kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::operator=(kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &&other)
 {
     this->nDataPoints = std::move(other.nDataPoints);
     this->nQueryDataPoints = std::move(other.nQueryDataPoints);
@@ -911,11 +872,11 @@ kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &kNearestNeighbor<Data
     this->covariance = std::move(other.covariance);
     this->matrixL = std::move(other.matrixL);
 
-    return static_cast<kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS> &>(kNearestNeighborBase<DataType, flann::L2<DataType>>::operator=(std::move(other)));
+    return static_cast<kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS> &>(kNearestNeighborBase<DataType, flann::L2<DataType>>::operator=(std::move(other)));
 }
 
 template <typename DataType>
-void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::buildIndex(DataType *idata)
+void kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::buildIndex(DataType *idata)
 {
     if (covariance.isIdentity(1e-3))
     {
@@ -1063,7 +1024,7 @@ void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::buildIndex(DataT
 }
 
 template <typename DataType>
-void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::buildIndex(DataType *idata, DataType *qdata)
+void kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::buildIndex(DataType *idata, DataType *qdata)
 {
     if (covariance.isIdentity(1e-3))
     {
@@ -1226,7 +1187,7 @@ void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::buildIndex(DataT
 }
 
 template <typename DataType>
-inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovariance(EMatrixX<DataType> const &Covariance)
+inline void kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::setCovariance(EMatrixX<DataType> const &Covariance)
 {
     covariance = Covariance;
     // check to see if the input covariance matrix is positive definite, or not
@@ -1242,7 +1203,7 @@ inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovari
 }
 
 template <typename DataType>
-inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovariance(std::vector<DataType> const &Covariance)
+inline void kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::setCovariance(std::vector<DataType> const &Covariance)
 {
     covariance = EMapType<DataType>(const_cast<DataType *>(Covariance.data()), this->dataDimension, this->dataDimension);
     // check to see if the input covariance matrix is positive definite, or not
@@ -1258,7 +1219,7 @@ inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovari
 }
 
 template <typename DataType>
-inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovariance(DataType const *Covariance)
+inline void kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::setCovariance(DataType const *Covariance)
 {
     covariance = EMapType<DataType>(const_cast<DataType *>(Covariance), this->dataDimension, this->dataDimension);
     // check to see if the input covariance matrix is positive definite, or not
@@ -1274,10 +1235,10 @@ inline void kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::setCovari
 }
 
 template <typename DataType>
-inline EMatrixX<DataType> const &kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::Covariance() const { return this->covariance; }
+inline EMatrixX<DataType> const &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::Covariance() const { return this->covariance; }
 
 template <typename DataType>
-inline EMatrixX<DataType> &kNearestNeighbor<DataType, NeighborDistance::MAHALANOBIS>::Covariance() { return this->covariance; }
+inline EMatrixX<DataType> &kNearestNeighbor<DataType, umuq::NeighborDistanceTypes::MAHALANOBIS>::Covariance() { return this->covariance; }
 
 } // namespace umuq
 
