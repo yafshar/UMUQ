@@ -14,7 +14,7 @@ inline namespace multimin
  * \brief Different available differentiable Function Minimizer available in %UMUQ
  * 
  */
-enum class differentiableFunctionMinimizerTypes
+enum class differentiableFunctionMinimizerTypes : int
 {
     /*! \link umuq::multimin::bfgs The Limited memory Broyden-Fletcher-Goldfarb-Shanno method. */
     BFGS = 10,

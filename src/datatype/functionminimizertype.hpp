@@ -13,7 +13,7 @@ inline namespace multimin
  * \brief Different Function Minimizer, currently available in %UMUQ
  * 
  */
-enum class FunctionMinimizerTypes
+enum class FunctionMinimizerTypes : int
 {
     /*! \link umuq::multimin::simplexNM The Simplex method of Nelder and Mead. \endlink  */
     SIMPLEXNM = 1,
