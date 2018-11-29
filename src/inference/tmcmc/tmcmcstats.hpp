@@ -1,7 +1,7 @@
 #ifndef UMUQ_TMCMCSTATS_H
 #define UMUQ_TMCMCSTATS_H
 
-#include "data/datatype.hpp"
+#include "datatype.hpp"
 #include "numerics/function/fitfunction.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
@@ -71,7 +71,7 @@ double CoefVar(std::vector<double> const &FunValues, double const PJ1, double co
  * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used 
  * in multidimensional minimization \sa umuq::functionMinimizer.
  * 
- * \param x Input p
+ * \param x Input array of plausibility weights
  *  
  * \returns The square of the coefficient of variation (COV) for the choice of input p
  */
@@ -120,7 +120,7 @@ class tmcmcStats
      * \param OptParams               Optimization Parameters
      * \param CoefVarPresetThreshold  A preset threshold for coefficient of variation of the plausibility of weights
      */
-    tmcmcStats(optimizationParameters<double> const &OptParams, double const CoefVarPresetThreshold);
+    tmcmcStats(optimizationParameters const &OptParams, double const CoefVarPresetThreshold);
 
     /*!
      * \brief Move constructor, construct a new tmcmcStats object from an input object
@@ -144,16 +144,6 @@ class tmcmcStats
     ~tmcmcStats();
 
     /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
-     * 
-     * \return true 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<double> *PRNG);
-
-    /*!
      * \brief Find the optimum value of  \f$ p_j \f$
      * 
      * The choice of \f$ p_j : j=1,\cdots,m− 1 \f$ is essential.
@@ -169,7 +159,6 @@ class tmcmcStats
      * \param OptimumP        Optimum value of p
      * \param OptimumCoefVar  Optimum Coef Var
      * 
-     * \return true 
      * \return false If it encounters any problem 
      */
     bool findOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
@@ -177,14 +166,12 @@ class tmcmcStats
     /*!
      * \brief Find the optimum value of  \f$ p_j \f$ through direct search of the \f$ p \in [0, 4] \f$
      * 
-     * 
      * \param FunValues       Function values
      * \param nFunValues      Number of elements in FunValues
      * \param PJ              \f$ p_j \f$
      * \param OptimumP        Optimum value of p
      * \param OptimumCoefVar  Optimum Coef Var
      * 
-     * \return true 
      * \return false If it encounters any problem 
      */
     bool searchOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
@@ -197,10 +184,9 @@ class tmcmcStats
      * \param RunData      Running information data
      * \param Leaders      Leader generation of sample points
      * 
-     * \returns true 
      * \returns false If it encounters any problem
      */
-    bool selectNewGeneration(stdata<double> &StreamData, database<double> &CurrentData, runinfo<double> &RunData, database<double> &Leaders);
+    bool selectNewGeneration(stdata &StreamData, database &CurrentData, runinfo &RunData, database &Leaders);
 
   protected:
     /*!
@@ -221,18 +207,14 @@ class tmcmcStats
 
   private:
     /*! Optimizer information */
-    optimizationParameters<double> optParams;
+    optimizationParameters optParams;
 
     /*! Create an instance of the function minimizer */
     std::unique_ptr<umuq::functionMinimizer<double>> fMinimizer;
-
-    /*! pseudo-random numbers */
-    psrandom<double> *prng;
 };
 
 tmcmcStats::tmcmcStats() : optParams(),
-                           fMinimizer(new umuq::simplexNM2<double>),
-                           prng(nullptr)
+                           fMinimizer(new umuq::simplexNM2<double>)
 {
     // First we have to set the minimizer dimension
     if (!fMinimizer->reset(1))
@@ -244,20 +226,19 @@ tmcmcStats::tmcmcStats() : optParams(),
     coefVarPresetThreshold = double{1};
 }
 
-tmcmcStats::tmcmcStats(optimizationParameters<double> const &OptParams, double const CoefVarPresetThreshold) : optParams(OptParams),
-                                                                                                               prng(nullptr)
+tmcmcStats::tmcmcStats(optimizationParameters const &OptParams, double const CoefVarPresetThreshold) : optParams(OptParams)
 {
     // Get the correct instance of the minimizer
     switch (optParams.FunctionMinimizerType)
     {
-    case (FunctionMinimizerTypes::SIMPLEXNM):
-        fMinimizer.reset(new umuq::simplexNM<double>);
+    case (umuq::multimin::FunctionMinimizerTypes::SIMPLEXNM):
+        fMinimizer.reset(new umuq::multimin::simplexNM<double>);
         break;
-    case (FunctionMinimizerTypes::SIMPLEXNM2):
-        fMinimizer.reset(new umuq::simplexNM2<double>);
+    case (umuq::multimin::FunctionMinimizerTypes::SIMPLEXNM2):
+        fMinimizer.reset(new umuq::multimin::simplexNM2<double>);
         break;
-    case (FunctionMinimizerTypes::SIMPLEXNM2RND):
-        fMinimizer.reset(new umuq::simplexNM2Rnd<double>);
+    case (umuq::multimin::FunctionMinimizerTypes::SIMPLEXNM2RND):
+        fMinimizer.reset(new umuq::multimin::simplexNM2Rnd<double>);
         break;
     default:
         UMUQFAIL("Unknown function minimizer type!");
@@ -275,32 +256,16 @@ tmcmcStats::tmcmcStats(optimizationParameters<double> const &OptParams, double c
 }
 
 tmcmcStats::tmcmcStats(tmcmcStats &&other) : optParams(std::move(other.optParams)),
-                                             fMinimizer(std::move(other.fMinimizer)),
-                                             prng(other.prng) {}
+                                             fMinimizer(std::move(other.fMinimizer)) {}
 
 tmcmcStats &tmcmcStats::operator=(tmcmcStats &&other)
 {
     optParams = std::move(other.optParams);
     fMinimizer = std::move(other.fMinimizer);
-    prng = other.prng;
     return *this;
 }
 
 tmcmcStats::~tmcmcStats(){};
-
-inline bool tmcmcStats::setRandomGenerator(psrandom<double> *PRNG)
-{
-    if (PRNG)
-    {
-        if (PRNG_initialized)
-        {
-            prng = PRNG;
-            return true;
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-}
 
 bool tmcmcStats::findOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar)
 {
@@ -456,7 +421,7 @@ bool tmcmcStats::searchOptimumP(double const *FunValues, int const nFunValues, d
     UMUQFAILRETURN("Could not find the optimum value of p through search!");
 }
 
-bool tmcmcStats::selectNewGeneration(stdata<double> &StreamData, database<double> &CurrentData, runinfo<double> &RunData, database<double> &Leaders)
+bool tmcmcStats::selectNewGeneration(stdata &StreamData, database &CurrentData, runinfo &RunData, database &Leaders)
 {
     // current generation
     int const currentGeneration = RunData.currentGeneration;
@@ -566,109 +531,104 @@ bool tmcmcStats::selectNewGeneration(stdata<double> &StreamData, database<double
         f.printMatrix("CoefVar matrix", RunData.CoefVar.data(), 1, newGeneration);
     }
 
-    if (prng)
+    // Dimension of the sampling points
+    int const nDimSamplePoints = CurrentData.nDimSamplePoints;
+
     {
-        // Dimension of the sampling points
-        int const nDimSamplePoints = CurrentData.nDimSamplePoints;
-
+        if (Leaders.nDimSamplePoints != nDimSamplePoints)
         {
-            if (Leaders.nDimSamplePoints != nDimSamplePoints)
-            {
-                UMUQFAILRETURN("Sampling data dimension does not match with the leaders database!");
-            }
-
-            if (Leaders.nSamplePoints < nCurrentSamplePoints)
-            {
-                UMUQFAILRETURN("Leader database size is not large enough!");
-            }
-
-            // Get the total number of samples at the current generation
-            int const nSamples = StreamData.eachPopulationSize[currentGeneration];
-
-            // Get the pointer
-            int *nSelection = Leaders.nSelection.data();
-
-            // Get the number of selection based on the probability
-            prng->multinomial(weight.data(), nCurrentSamplePoints, nSamples, nSelection);
-
-            if (optParams.Display)
-            {
-                io f;
-                f.printMatrix("Number of selection = [", nSelection, 1, nCurrentSamplePoints, "]\n----------------------------------------\n");
-            }
+            UMUQFAILRETURN("Sampling data dimension does not match with the leaders database!");
         }
 
-        // Total size of the sampling points array
-        int const nSize = nCurrentSamplePoints * nDimSamplePoints;
-
-        // Compute vectors of mean and standard deviation for each dimension
-        std::vector<double> thetaMean(nDimSamplePoints);
-
-        for (int i = 0; i < nDimSamplePoints; i++)
+        if (Leaders.nSamplePoints < nCurrentSamplePoints)
         {
-            arrayWrapper<double> Parray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
-            thetaMean[i] = std::inner_product(weight.begin(), weight.end(), Parray.begin(), double{});
+            UMUQFAILRETURN("Leader database size is not large enough!");
         }
 
-        std::copy(thetaMean.begin(), thetaMean.end(), RunData.meantheta.data() + currentGeneration * nDimSamplePoints);
+        // Get the total number of samples at the current generation
+        int const nSamples = StreamData.eachPopulationSize[currentGeneration];
+
+        // Get the number of selection based on the probability
+        umuq::randomdist::multinomialDistribution<double> multinomial(weight.data(), nCurrentSamplePoints, nSamples);
+
+        multinomial.dist(Leaders.nSelection);
 
         if (optParams.Display)
         {
             io f;
-            f.printMatrix("Mean of theta = [", thetaMean.data(), 1, nDimSamplePoints, "]\n----------------------------------------\n");
+            f.printMatrix("Number of selection = [", Leaders.nSelection, 1, nCurrentSamplePoints, "]\n----------------------------------------\n");
         }
-
-        {
-            double *Covariance = RunData.covariance.data();
-
-            for (int i = 0; i < nDimSamplePoints; i++)
-            {
-                arrayWrapper<double> iArray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
-
-                double const iMean = thetaMean[i];
-
-                for (int j = i; j < nDimSamplePoints; j++)
-                {
-                    arrayWrapper<double> jArray(CurrentData.samplePoints.data() + j, nSize, nDimSamplePoints);
-
-                    double const jMean = thetaMean[j];
-
-                    double S(0);
-                    auto k = weight.begin();
-                    for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++, k++)
-                    {
-                        double const d1 = *i - iMean;
-                        double const d2 = *j - jMean;
-                        S += *k * d1 * d2;
-                    }
-                    Covariance[i * nDimSamplePoints + j] = S;
-                }
-            }
-
-            for (int i = 0; i < nDimSamplePoints; i++)
-            {
-                for (int j = 0; j < i; j++)
-                {
-                    Covariance[i * nDimSamplePoints + j] = Covariance[j * nDimSamplePoints + i];
-                }
-            }
-
-            // If the covariance matrix is not positive definite
-            if (!isSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints))
-            {
-                // We force it to be positive definite
-                forceSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints);
-            }
-
-            if (optParams.Display)
-            {
-                io f;
-                f.printMatrix("Covariance = [", Covariance, nDimSamplePoints, nDimSamplePoints, "]\n----------------------------------------\n");
-            }
-        }
-        return true;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+
+    // Total size of the sampling points array
+    int const nSize = nCurrentSamplePoints * nDimSamplePoints;
+
+    // Compute vectors of mean and standard deviation for each dimension
+    std::vector<double> thetaMean(nDimSamplePoints);
+
+    for (int i = 0; i < nDimSamplePoints; i++)
+    {
+        arrayWrapper<double> Parray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
+        thetaMean[i] = std::inner_product(weight.begin(), weight.end(), Parray.begin(), double{});
+    }
+
+    std::copy(thetaMean.begin(), thetaMean.end(), RunData.meantheta.data() + currentGeneration * nDimSamplePoints);
+
+    if (optParams.Display)
+    {
+        io f;
+        f.printMatrix("Mean of theta = [", thetaMean.data(), 1, nDimSamplePoints, "]\n----------------------------------------\n");
+    }
+
+    {
+        double *Covariance = RunData.covariance.data();
+
+        for (int i = 0; i < nDimSamplePoints; i++)
+        {
+            arrayWrapper<double> iArray(CurrentData.samplePoints.data() + i, nSize, nDimSamplePoints);
+
+            double const iMean = thetaMean[i];
+
+            for (int j = i; j < nDimSamplePoints; j++)
+            {
+                arrayWrapper<double> jArray(CurrentData.samplePoints.data() + j, nSize, nDimSamplePoints);
+
+                double const jMean = thetaMean[j];
+
+                double S(0);
+                auto k = weight.begin();
+                for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++, k++)
+                {
+                    double const d1 = *i - iMean;
+                    double const d2 = *j - jMean;
+                    S += *k * d1 * d2;
+                }
+                Covariance[i * nDimSamplePoints + j] = S;
+            }
+        }
+
+        for (int i = 0; i < nDimSamplePoints; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                Covariance[i * nDimSamplePoints + j] = Covariance[j * nDimSamplePoints + i];
+            }
+        }
+
+        // If the covariance matrix is not positive definite
+        if (!umuq::linearalgebra::isSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints))
+        {
+            // We force it to be positive definite
+            umuq::linearalgebra::forceSelfAdjointMatrixPositiveDefinite(Covariance, nDimSamplePoints);
+        }
+
+        if (optParams.Display)
+        {
+            io f;
+            f.printMatrix("Covariance = [", Covariance, nDimSamplePoints, nDimSamplePoints, "]\n----------------------------------------\n");
+        }
+    }
+    return true;
 }
 
 double CoefVar(double const *FunValues, int const nFunValues, int const Stride, double const PJ1, double const PJ, double const Tolerance)
