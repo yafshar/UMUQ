@@ -499,10 +499,10 @@ template <typename DataType, class FlannDistanceType>
 void kNearestNeighborBase<DataType, FlannDistanceType>::setCovariance(std::vector<DataType> const &Covariance) {}
 
 template <typename DataType, class FlannDistanceType>
-EMatrixX<DataType> const &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() const {}
+EMatrixX<DataType> const &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() const { return EmptyMatrixX<DataType>; }
 
 template <typename DataType, class FlannDistanceType>
-EMatrixX<DataType> &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() {}
+EMatrixX<DataType> &kNearestNeighborBase<DataType, FlannDistanceType>::Covariance() { return EmptyMatrixX<DataType>; }
 
 } // namespace umuq
 
