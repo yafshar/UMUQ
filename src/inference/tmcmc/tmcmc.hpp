@@ -1,7 +1,7 @@
 #ifndef UMUQ_TMCMC_H
 #define UMUQ_TMCMC_H
 
-#include "data/datatype.hpp"
+#include "datatype.hpp"
 #include "numerics/function/fitfunction.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
@@ -308,26 +308,26 @@ public:
   std::string inputFilename;
 
   //! Stream data for getting the problem size and variables from the input file
-  stdata<double> Data;
+  stdata Data;
 
   //! Current data
-  database<double> currentData;
+  database currentData;
 
   //! Full data
-  database<double> fullData;
+  database fullData;
 
   //! Experimental data
-  database<double> expData;
+  database expData;
 
   //! Running data
-  runinfo<double> runData;
+  runinfo runData;
 
   //! Fitting function
   fitFunction<double, FunctionType> fitfun;
 
 private:
   //! Next generation data
-  database<double> leadersData;
+  database leadersData;
 
   //! TMCMC statistical
   tmcmcStats tStats;
@@ -335,9 +335,6 @@ private:
 public:
   //! Prior distribution object
   priorDistribution<double> prior;
-
-  //! Pseudo-random number generator
-  psrandom<double> prng;
 
 private:
   //! Sample points
@@ -359,15 +356,15 @@ private:
 template <class FunctionType>
 tmcmc<FunctionType>::tmcmc() : inputFilename("input.par")
 {
-  Torc<double>.reset(nullptr);
+  Torc.reset(nullptr);
 }
 
 template <class FunctionType>
 tmcmc<FunctionType>::~tmcmc()
 {
-  if (Torc<double>)
+  if (Torc)
   {
-    Torc<double>->TearDown();
+    Torc->TearDown();
   }
 }
 
@@ -400,16 +397,13 @@ bool tmcmc<FunctionType>::reset(char const *fileName)
     if (Data.load(inputFilename))
     {
       // Creating a database based on the read information
-      currentData = std::move(database<double>(Data.nDim, Data.lastPopulationSize));
+      currentData = std::move(database(Data.nDim, Data.lastPopulationSize));
 
       // Creating the running information data
-      runData = std::move(runinfo<double>(Data.nDim, Data.maxGenerations));
+      runData = std::move(runinfo(Data.nDim, Data.maxGenerations));
 
-      // Seed the PRNG
-      if (!prng.setSeed(Data.seed))
-      {
-        UMUQWARNING("The Pseudo random number generator has been seeded & initialized before!")
-      }
+      // Pseudo-random number generator
+      psrandom prng(Data.seed);
 
       // Assign the correct size
       samplePoints.resize(Data.nDim);
@@ -489,7 +483,7 @@ bool tmcmc<FunctionType>::init(char const *fileName)
       fitfun.init();
 
       // Create a torc environment object
-      Torc<double>.reset(new torcEnvironment<double>);
+      Torc.reset(new torcEnvironment);
 
       // Register tasks
       {
@@ -505,16 +499,14 @@ bool tmcmc<FunctionType>::init(char const *fileName)
         }
       }
 
+      // Pseudo-random number generator
+      umuq::psrandom prng;
+
       // Set up the TORC environemnt
-      Torc<double>->SetUp();
+      umuq::Torc->SetUp();
 
       // Set the State of pseudo random number generator
-      if (prng.setState())
-      {
-        // Set the Random Number Generator object in the prior
-        return prior.setRandomGenerator(&prng);
-      }
-      UMUQFAILRETURN("Failed to initialize the PRNG or set the state of that!");
+      return prng.setState();
     }
     UMUQFAILRETURN("Input file for the input TMCMC parameter does not exist in the current PATH!!");
   }
@@ -795,7 +787,7 @@ bool tmcmc<FunctionType>::prepareNewGeneration()
 #endif
 
   // Create database for leaders selection
-  leadersData = std::move(database<double>(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
+  leadersData = std::move(database(nDimSamplePoints, Data.eachPopulationSize[runData.currentGeneration]));
 
   // Select the new generaion leaders and update the statistics
   if (tStats.selectNewGeneration(Data, currentData, runData, leadersData))
@@ -931,7 +923,7 @@ void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int con
   std::vector<double> candidateFvalue(nFunvals);
 
   return;
-  
+
   // Map the data to the Eigen vector format without memory copy
   umuq::EVectorMapType<double> EcandidateSamplePoints(candidateSamplePoints.data(), nSamples);
 
@@ -941,6 +933,9 @@ void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int con
   // Sample mean for the first step
   std::vector<double> chainMean{SamplePoints, SamplePoints + nSamples};
 
+  // Create an instance of the pseudo random number generator
+  psrandom prng;
+
   for (int step = 0; step < nSteps + nBurnSteps; step++)
   {
     if (step > 0)
@@ -948,13 +943,10 @@ void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int con
       std::copy(leaderSamplePoints.begin(), leaderSamplePoints.end(), chainMean.begin());
     }
 
-    if (!tmcmcObj->prng.set_mvnormal(chainMean.data(), Covariance, nSamples))
-    {
-      UMUQFAIL("The pseudo-random number generator failed to set mvnormal object!");
-    }
+    umuq::randomdist::multivariateNormalDistribution<double> mvnormal(chainMean.data(), Covariance, nSamples);
 
     // Generate a candidate
-    EcandidateSamplePoints = tmcmcObj->prng.mvnormal->dist();
+    EcandidateSamplePoints = mvnormal.dist();
 
     // Check the candidate
     bool isCandidateSamplePointBounded(true);
@@ -1005,9 +997,7 @@ void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int con
       }
 
       // Generate a uniform random number uniformRandomNumber on [0,1]
-      double uniformRandomNumber = tmcmcObj->prng.unirnd();
-
-      if (uniformRandomNumber < acceptanceRatio)
+      if (prng.unirnd() < acceptanceRatio)
       {
         // Accept the candidate
 
