@@ -1060,6 +1060,7 @@ typename umuq::tmcmc::database::sortType &umuq::tmcmc::database::sortType::opera
 {
     nSel = other.nSel;
     idx = other.idx;
+    return *this;
 }
 
 } // namespace tmcmc
