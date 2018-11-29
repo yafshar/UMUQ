@@ -384,14 +384,14 @@ class arrayWrapper
     /*!
      * \brief Delete a arrayWrapper object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     arrayWrapper(arrayWrapper const &) = delete;
 
     /*!
      * \brief Delete a arrayWrapper object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns arrayWrapper& 
      */
