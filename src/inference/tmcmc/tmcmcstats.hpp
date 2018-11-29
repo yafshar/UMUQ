@@ -227,7 +227,7 @@ tmcmcStats::tmcmcStats() : optParams(),
 tmcmcStats::tmcmcStats(optimizationParameters const &OptParams, double const CoefVarPresetThreshold) : optParams(OptParams)
 {
     // Get the correct instance of the minimizer
-    switch (optParams.FunctionMinimizerType)
+    switch (static_cast<umuq::multimin::FunctionMinimizerTypes>(optParams.FunctionMinimizerType))
     {
     case (umuq::multimin::FunctionMinimizerTypes::SIMPLEXNM):
         fMinimizer.reset(new umuq::multimin::simplexNM<double>);
