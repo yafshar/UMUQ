@@ -1,7 +1,7 @@
 #ifndef UMUQ_OPTIMIZATIONTESTFUNCTIONS_H
 #define UMUQ_OPTIMIZATIONTESTFUNCTIONS_H
 
-/*!
+/*! \file optimizationtestfunctions.hpp
  * \ingroup Numerics_Module
  * 
  * \brief The Rosenbrock function
