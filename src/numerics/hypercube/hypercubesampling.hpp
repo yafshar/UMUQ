@@ -2,7 +2,7 @@
 #define UMUQ_HYPERCUBESAMPLING_H
 
 #include "inference/prior/priordistribution.hpp"
-#include "../stats.hpp"
+#include "numerics/stats.hpp"
 
 namespace umuq
 {
@@ -248,14 +248,14 @@ class hypercubeSampling
     /*!
      * \brief Delete a hypercubeSampling object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     hypercubeSampling(hypercubeSampling<DataType> const &) = delete;
 
     /*!
      * \brief Delete a hypercubeSampling object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns hypercubeSampling<DataType>& 
      */
