@@ -71,14 +71,14 @@ class torcEnvironment
     /*!
      * \brief Delete a torcEnvironment object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     torcEnvironment(torcEnvironment const &) = delete;
 
     /*!
      * \brief Delete a torcEnvironment object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns torcEnvironment& 
      */
