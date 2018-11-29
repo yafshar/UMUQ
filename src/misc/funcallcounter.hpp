@@ -103,7 +103,7 @@ funcallcounter::funcallcounter()
 {
     std::lock_guard<std::mutex> lock(functionCounter_m);
 
-    // Check if psrandom is already initialized
+    // Check if function counter is already initialized
     if (!isFuncallcounterTaskRegistered)
     {
         torc_register_task((void *)funcallcounter::resetTask);
