@@ -105,10 +105,9 @@ TESTS = polynomial_test$(EXEEXT) legendrepolynomial_test$(EXEEXT) \
 	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) timer_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
-	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
-	database_test$(EXEEXT) datatype_test$(EXEEXT) \
-	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
-	torc_test$(EXEEXT)
+	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
+	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
+	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) torc_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) \
 	legendrepolynomial_test$(EXEEXT) \
 	hermitepolynomial_test$(EXEEXT) \
@@ -127,10 +126,9 @@ check_PROGRAMS = polynomial_test$(EXEEXT) \
 	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) timer_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
-	stdata_test$(EXEEXT) runinfo_test$(EXEEXT) \
-	database_test$(EXEEXT) datatype_test$(EXEEXT) \
-	priordistribution_test$(EXEEXT) tmcmc_test$(EXEEXT) \
-	torc_test$(EXEEXT)
+	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
+	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
+	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) torc_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -180,10 +178,10 @@ am_conjugatepr_test_OBJECTS =  \
 	numerics/multimin/conjugatepr_test.$(OBJEXT)
 conjugatepr_test_OBJECTS = $(am_conjugatepr_test_OBJECTS)
 conjugatepr_test_LDADD = $(LDADD)
-am_database_test_OBJECTS = data/database_test.$(OBJEXT)
+am_database_test_OBJECTS = inference/tmcmc/database_test.$(OBJEXT)
 database_test_OBJECTS = $(am_database_test_OBJECTS)
 database_test_LDADD = $(LDADD)
-am_datatype_test_OBJECTS = data/datatype_test.$(OBJEXT)
+am_datatype_test_OBJECTS = inference/tmcmc/datatype_test.$(OBJEXT)
 datatype_test_OBJECTS = $(am_datatype_test_OBJECTS)
 datatype_test_LDADD = $(LDADD)
 am_dcpse_test_OBJECTS = numerics/dcpse_test.$(OBJEXT)
@@ -263,7 +261,7 @@ psrandom_test_LDADD = $(LDADD)
 am_pyplot_test_OBJECTS = io/pyplot_test.$(OBJEXT)
 pyplot_test_OBJECTS = $(am_pyplot_test_OBJECTS)
 pyplot_test_LDADD = $(LDADD)
-am_runinfo_test_OBJECTS = data/runinfo_test.$(OBJEXT)
+am_runinfo_test_OBJECTS = inference/tmcmc/runinfo_test.$(OBJEXT)
 runinfo_test_OBJECTS = $(am_runinfo_test_OBJECTS)
 runinfo_test_LDADD = $(LDADD)
 am_simplexnm2_test_OBJECTS =  \
@@ -281,7 +279,7 @@ simplexnm_test_LDADD = $(LDADD)
 am_stats_test_OBJECTS = numerics/stats_test.$(OBJEXT)
 stats_test_OBJECTS = $(am_stats_test_OBJECTS)
 stats_test_LDADD = $(LDADD)
-am_stdata_test_OBJECTS = data/stdata_test.$(OBJEXT)
+am_stdata_test_OBJECTS = inference/tmcmc/stdata_test.$(OBJEXT)
 stdata_test_OBJECTS = $(am_stdata_test_OBJECTS)
 stdata_test_LDADD = $(LDADD)
 am_steepestdescent_test_OBJECTS =  \
@@ -796,11 +794,11 @@ timer_test_SOURCES = misc/timer_test.cpp
 io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
 pyplot_test_SOURCES = io/pyplot_test.cpp
-stdata_test_SOURCES = data/stdata_test.cpp
-runinfo_test_SOURCES = data/runinfo_test.cpp
-database_test_SOURCES = data/database_test.cpp
-datatype_test_SOURCES = data/datatype_test.cpp
 priordistribution_test_SOURCES = inference/prior/priordistribution_test.cpp
+stdata_test_SOURCES = inference/tmcmc/stdata_test.cpp
+runinfo_test_SOURCES = inference/tmcmc/runinfo_test.cpp
+database_test_SOURCES = inference/tmcmc/database_test.cpp
+datatype_test_SOURCES = inference/tmcmc/datatype_test.cpp
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
 torc_test_SOURCES = torc/torc_test.cpp
 all: all-am
@@ -904,20 +902,22 @@ numerics/multimin/conjugatepr_test.$(OBJEXT):  \
 conjugatepr_test$(EXEEXT): $(conjugatepr_test_OBJECTS) $(conjugatepr_test_DEPENDENCIES) $(EXTRA_conjugatepr_test_DEPENDENCIES) 
 	@rm -f conjugatepr_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(conjugatepr_test_OBJECTS) $(conjugatepr_test_LDADD) $(LIBS)
-data/$(am__dirstamp):
-	@$(MKDIR_P) data
-	@: > data/$(am__dirstamp)
-data/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) data/$(DEPDIR)
-	@: > data/$(DEPDIR)/$(am__dirstamp)
-data/database_test.$(OBJEXT): data/$(am__dirstamp) \
-	data/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/$(am__dirstamp):
+	@$(MKDIR_P) inference/tmcmc
+	@: > inference/tmcmc/$(am__dirstamp)
+inference/tmcmc/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) inference/tmcmc/$(DEPDIR)
+	@: > inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/database_test.$(OBJEXT):  \
+	inference/tmcmc/$(am__dirstamp) \
+	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 
 database_test$(EXEEXT): $(database_test_OBJECTS) $(database_test_DEPENDENCIES) $(EXTRA_database_test_DEPENDENCIES) 
 	@rm -f database_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(database_test_OBJECTS) $(database_test_LDADD) $(LIBS)
-data/datatype_test.$(OBJEXT): data/$(am__dirstamp) \
-	data/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/datatype_test.$(OBJEXT):  \
+	inference/tmcmc/$(am__dirstamp) \
+	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 
 datatype_test$(EXEEXT): $(datatype_test_OBJECTS) $(datatype_test_DEPENDENCIES) $(EXTRA_datatype_test_DEPENDENCIES) 
 	@rm -f datatype_test$(EXEEXT)
@@ -1105,8 +1105,9 @@ io/pyplot_test.$(OBJEXT): io/$(am__dirstamp) \
 pyplot_test$(EXEEXT): $(pyplot_test_OBJECTS) $(pyplot_test_DEPENDENCIES) $(EXTRA_pyplot_test_DEPENDENCIES) 
 	@rm -f pyplot_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pyplot_test_OBJECTS) $(pyplot_test_LDADD) $(LIBS)
-data/runinfo_test.$(OBJEXT): data/$(am__dirstamp) \
-	data/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/runinfo_test.$(OBJEXT):  \
+	inference/tmcmc/$(am__dirstamp) \
+	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 
 runinfo_test$(EXEEXT): $(runinfo_test_OBJECTS) $(runinfo_test_DEPENDENCIES) $(EXTRA_runinfo_test_DEPENDENCIES) 
 	@rm -f runinfo_test$(EXEEXT)
@@ -1138,8 +1139,9 @@ numerics/stats_test.$(OBJEXT): numerics/$(am__dirstamp) \
 stats_test$(EXEEXT): $(stats_test_OBJECTS) $(stats_test_DEPENDENCIES) $(EXTRA_stats_test_DEPENDENCIES) 
 	@rm -f stats_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(stats_test_OBJECTS) $(stats_test_LDADD) $(LIBS)
-data/stdata_test.$(OBJEXT): data/$(am__dirstamp) \
-	data/$(DEPDIR)/$(am__dirstamp)
+inference/tmcmc/stdata_test.$(OBJEXT):  \
+	inference/tmcmc/$(am__dirstamp) \
+	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 
 stdata_test$(EXEEXT): $(stdata_test_OBJECTS) $(stdata_test_DEPENDENCIES) $(EXTRA_stdata_test_DEPENDENCIES) 
 	@rm -f stdata_test$(EXEEXT)
@@ -1157,12 +1159,6 @@ misc/timer_test.$(OBJEXT): misc/$(am__dirstamp) \
 timer_test$(EXEEXT): $(timer_test_OBJECTS) $(timer_test_DEPENDENCIES) $(EXTRA_timer_test_DEPENDENCIES) 
 	@rm -f timer_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(timer_test_OBJECTS) $(timer_test_LDADD) $(LIBS)
-inference/tmcmc/$(am__dirstamp):
-	@$(MKDIR_P) inference/tmcmc
-	@: > inference/tmcmc/$(am__dirstamp)
-inference/tmcmc/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) inference/tmcmc/$(DEPDIR)
-	@: > inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 inference/tmcmc/tmcmc_test.$(OBJEXT): inference/tmcmc/$(am__dirstamp) \
 	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
 
@@ -1190,7 +1186,6 @@ utility_test$(EXEEXT): $(utility_test_OBJECTS) $(utility_test_DEPENDENCIES) $(EX
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f data/*.$(OBJEXT)
 	-rm -f inference/prior/*.$(OBJEXT)
 	-rm -f inference/tmcmc/*.$(OBJEXT)
 	-rm -f io/*.$(OBJEXT)
@@ -1207,11 +1202,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/database_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/datatype_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/runinfo_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@data/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@inference/prior/$(DEPDIR)/priordistribution_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/database_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/datatype_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/runinfo_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/stdata_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@inference/tmcmc/$(DEPDIR)/tmcmc_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/eigen_io_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/io_test.Po@am__quote@
@@ -1710,6 +1705,13 @@ pyplot_test.log: pyplot_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+priordistribution_test.log: priordistribution_test$(EXEEXT)
+	@p='priordistribution_test$(EXEEXT)'; \
+	b='priordistribution_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 stdata_test.log: stdata_test$(EXEEXT)
 	@p='stdata_test$(EXEEXT)'; \
 	b='stdata_test'; \
@@ -1734,13 +1736,6 @@ database_test.log: database_test$(EXEEXT)
 datatype_test.log: datatype_test$(EXEEXT)
 	@p='datatype_test$(EXEEXT)'; \
 	b='datatype_test'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-priordistribution_test.log: priordistribution_test$(EXEEXT)
-	@p='priordistribution_test$(EXEEXT)'; \
-	b='priordistribution_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1839,8 +1834,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f data/$(DEPDIR)/$(am__dirstamp)
-	-rm -f data/$(am__dirstamp)
 	-rm -f inference/prior/$(DEPDIR)/$(am__dirstamp)
 	-rm -f inference/prior/$(am__dirstamp)
 	-rm -f inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
@@ -1875,7 +1868,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1921,7 +1914,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf data/$(DEPDIR) inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
