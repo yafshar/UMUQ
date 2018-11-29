@@ -1,7 +1,7 @@
 #ifndef UMUQ_EIGENLIB_H
 #define UMUQ_EIGENLIB_H
 
-#include "data/eigendatatype.hpp"
+#include "datatype/eigendatatype.hpp"
 
 namespace umuq
 {
@@ -34,7 +34,9 @@ inline namespace linearalgebra
  * \code 
  * double A[12];
  * for(int i = 0; i < 12; ++i) A[i] = (double)i;
+ * 
  * EMapType<double, Eigen::ColMajor> B(A, 3, 4); 
+ * 
  * std::cout << B << std::endl;
  * \endcode
  * 
@@ -50,7 +52,9 @@ inline namespace linearalgebra
  * \code 
  * double A[12];
  * for(int i = 0; i < 12; ++i) A[i] = (double)i;
+ * 
  * EMapType<double> B(A, 3, 4); 
+ * 
  * std::cout << B << std::endl;
  * \endcode
  * 
@@ -66,6 +70,7 @@ inline namespace linearalgebra
  * \code 
  * using EMd = Eigen::Matrix<double, 3, 4>;
  * EMapType<EMd> C(A, 3, 4); 
+ * 
  * std::cout << C << std::endl;
  * \endcode
  * 
