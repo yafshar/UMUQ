@@ -1419,16 +1419,14 @@ class pyplot
     /*!
      * \brief Delete a pyplot object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns pyplot& 
+     * Avoiding implicit copy assignment.
      */
     pyplot &operator=(pyplot const &) = delete;
 
@@ -1476,14 +1474,14 @@ class pyplot
         /*!
          * \brief Delete a matplotlib object copy construction
          * 
-         * Make it noncopyable.
+         * Avoiding implicit generation of the copy constructor.
          */
         matplotlib(matplotlib const &) = delete;
 
         /*!
          * \brief Delete a matplotlib object assignment
          * 
-         * Make it nonassignable
+         * Avoiding implicit copy assignment.
          * 
          * \returns matplotlib& 
          */
@@ -4733,14 +4731,14 @@ class pyplot
     /*!
      * \brief Delete a pyplot object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns pyplot& 
      */
