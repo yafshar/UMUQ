@@ -13,11 +13,11 @@ namespace randomdist
  * \brief Generates random positive values x, distributed according to probability density function \f$ \frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.\f$ 
  * where \f$ \alpha > 0 \f$ is known as the shape parameter and \f$ \beta > 0 \f$ is known as the scale parameter.
  * 
+ * \tparam RealType Floating-point data type 
+ * 
  * \note 
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$
- *
- * \tparam RealType Data type 
  */
 template <typename RealType = double>
 class gammaDistribution
@@ -96,10 +96,18 @@ class gammaDistribution
      inline void dist(std::vector<RealType> &idata);
 
    private:
-     // Make it noncopyable
+     /*!
+      * \brief Delete a gammaDistribution object copy construction
+      * 
+      * Avoiding implicit generation of the copy constructor.
+      */
      gammaDistribution(gammaDistribution<RealType> const &) = delete;
-
-     // Make it not assignable
+     
+     /*!
+      * \brief Delete a gammaDistribution object assignment
+      * 
+      * Avoiding implicit copy assignment.
+      */
      gammaDistribution<RealType> &operator=(gammaDistribution<RealType> const &) = delete;
 
    private:
