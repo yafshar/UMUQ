@@ -3,8 +3,8 @@
 
 #include "core/core.hpp"
 #include "misc/funcallcounter.hpp"
-#include "data/database.hpp"
-#include "data/runinfo.hpp"
+#include "inference/tmcmc/database.hpp"
+#include "inference/tmcmc/runinfo.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
 
@@ -23,10 +23,7 @@ namespace umuq
  * An Environment object is capable of setting up and tearing down an
  * environment. It does the set-up and tear-down in virtual methods 
  * SetUp() and TearDown() instead of the constructor and the destructor.
- * 
- * \tparam DataType Data type (default is double) 
  */
-template <typename DataType = double>
 class torcEnvironment
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
     : public ::testing::Environment
@@ -76,16 +73,16 @@ class torcEnvironment
      * 
      * Make it noncopyable.
      */
-    torcEnvironment(torcEnvironment<DataType> const &) = delete;
+    torcEnvironment(torcEnvironment const &) = delete;
 
     /*!
      * \brief Delete a torcEnvironment object assignment
      * 
      * Make it nonassignable
      * 
-     * \returns torcEnvironment<DataType>& 
+     * \returns torcEnvironment& 
      */
-    torcEnvironment<DataType> &operator=(torcEnvironment<DataType> const &) = delete;
+    torcEnvironment &operator=(torcEnvironment const &) = delete;
 
 #if HAVE_MPI == 1
     /*!
@@ -98,17 +95,15 @@ class torcEnvironment
 #endif
 };
 
-template <typename DataType>
-torcEnvironment<DataType>::torcEnvironment()
+torcEnvironment::torcEnvironment()
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
     : ::testing::Environment()
 #endif
 {
 }
 
-template <typename DataType>
 template <class FunctionType>
-void torcEnvironment<DataType>::register_task(FunctionType f)
+void torcEnvironment::register_task(FunctionType f)
 {
     if (f)
     {
@@ -116,36 +111,31 @@ void torcEnvironment<DataType>::register_task(FunctionType f)
     }
 }
 
-template <typename DataType>
-void torcEnvironment<DataType>::SetUp()
+void torcEnvironment::SetUp()
 {
-    if (!isPrngTaskRegistered<DataType>)
+    if (!umuq::isPrngTaskRegistered)
     {
-        torc_register_task((void *)psrandom<DataType>::initTask);
-
-        isPrngTaskRegistered<DataType> = true;
+        torc_register_task((void *)psrandom::initTask);
+        umuq::isPrngTaskRegistered = true;
     }
 
-    if (!isFuncallcounterTaskRegistered)
+    if (!umuq::isFuncallcounterTaskRegistered)
     {
         torc_register_task((void *)funcallcounter::resetTask);
         torc_register_task((void *)funcallcounter::countTask);
-
-        isFuncallcounterTaskRegistered = true;
+        umuq::isFuncallcounterTaskRegistered = true;
     }
 
-    if (!umuq::tmcmc::isUpdateTaskRegistered<DataType>)
+    if (!umuq::tmcmc::isUpdateTaskRegistered)
     {
-        torc_register_task((void *)umuq::tmcmc::updateDataTask<DataType>);
-
-        umuq::tmcmc::isUpdateTaskRegistered<DataType> = true;
+        torc_register_task((void *)umuq::tmcmc::updateDataTask);
+        umuq::tmcmc::isUpdateTaskRegistered = true;
     }
 
-    if (!umuq::tmcmc::isBroadcastTaskRegistered<DataType>)
+    if (!umuq::tmcmc::isBroadcastTaskRegistered)
     {
-        torc_register_task((void *)umuq::tmcmc::broadcastTask<DataType>);
-
-        umuq::tmcmc::isBroadcastTaskRegistered<DataType> = true;
+        torc_register_task((void *)umuq::tmcmc::broadcastTask);
+        umuq::tmcmc::isBroadcastTaskRegistered = true;
     }
 
     char **argv = NULL;
@@ -154,47 +144,42 @@ void torcEnvironment<DataType>::SetUp()
     torc_init(argc, argv);
 }
 
-template <typename DataType>
-void torcEnvironment<DataType>::SetUp(int argc, char **argv)
+void torcEnvironment::SetUp(int argc, char **argv)
 {
-    if (!isPrngTaskRegistered<DataType>)
+    if (!umuq::isPrngTaskRegistered)
     {
-        torc_register_task((void *)psrandom<DataType>::initTask);
-        isPrngTaskRegistered<DataType> = true;
+        torc_register_task((void *)psrandom::initTask);
+        umuq::isPrngTaskRegistered = true;
     }
 
-    if (!isFuncallcounterTaskRegistered)
+    if (!umuq::isFuncallcounterTaskRegistered)
     {
         torc_register_task((void *)funcallcounter::resetTask);
         torc_register_task((void *)funcallcounter::countTask);
-
-        isFuncallcounterTaskRegistered = true;
+        umuq::isFuncallcounterTaskRegistered = true;
     }
 
-    if (umuq::tmcmc::isUpdateTaskRegistered<DataType>)
+    if (!umuq::tmcmc::isUpdateTaskRegistered)
     {
-        torc_register_task((void *)umuq::tmcmc::updateDataTask<DataType>);
-        umuq::tmcmc::isUpdateTaskRegistered<DataType> = true;
+        torc_register_task((void *)umuq::tmcmc::updateDataTask);
+        umuq::tmcmc::isUpdateTaskRegistered = true;
     }
 
-    if (!umuq::tmcmc::isBroadcastTaskRegistered<DataType>)
+    if (!umuq::tmcmc::isBroadcastTaskRegistered)
     {
-        torc_register_task((void *)umuq::tmcmc::broadcastTask<DataType>);
-
-        umuq::tmcmc::isBroadcastTaskRegistered<DataType> = true;
+        torc_register_task((void *)umuq::tmcmc::broadcastTask);
+        umuq::tmcmc::isBroadcastTaskRegistered = true;
     }
 
     torc_init(argc, argv);
 }
 
-template <typename DataType>
-void torcEnvironment<DataType>::TearDown()
+void torcEnvironment::TearDown()
 {
     torc_finalize();
 }
 
-template <typename DataType>
-torcEnvironment<DataType>::~torcEnvironment() {}
+torcEnvironment::~torcEnvironment() {}
 
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
 /*! \class UMUQEventListener
@@ -276,11 +261,8 @@ void UMUQEventListener::OnTestEnd(::testing::TestInfo const &test_info)
  * \ingroup Core_Module
  * 
  * \brief TORC environemnt object
- * 
- * \tparam DataType Data type
  */
-template <typename DataType = double>
-std::unique_ptr<torcEnvironment<DataType>> Torc;
+std::unique_ptr<torcEnvironment> Torc;
 
 } // namespace umuq
 
