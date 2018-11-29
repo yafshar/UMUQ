@@ -12,6 +12,8 @@ inline namespace polynomials
  *
  * \brief Hermite Polynomials 
  * 
+ * \tparam RealType Floating-point data type 
+ * 
  * \f$ H_n(x) \f$ is the physicist's Hermite polynomial of degree \f$ n \f$ and argument \f$ x. \f$
  * 
  * 
@@ -167,16 +169,14 @@ class HermitePolynomial : public polynomialBase<RealType>
     /*!
      * \brief Delete a HermitePolynomial object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     HermitePolynomial(HermitePolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a HermitePolynomial object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns HermitePolynomial<RealType>& 
+     * Avoiding implicit copy assignment.
      */
     HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> const &) = delete;
 };

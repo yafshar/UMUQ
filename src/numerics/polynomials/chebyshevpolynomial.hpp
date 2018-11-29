@@ -12,6 +12,8 @@ inline namespace polynomials
  *
  * \brief Chebyshev Polynomials 
  * 
+ * \tparam RealType Floating-point data type 
+ * 
  * Chebyshev polynomials, are a sequence of orthogonal polynomials. 
  * Chebyshev polynomials of the first kind are denoted \f$ T_n(x) \f$ and 
  * Chebyshev polynomials of the second kind are denoted \f$ U_n(x) \f$.
@@ -69,11 +71,11 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
 {
   public:
     /*!
-	 * \brief Construct a new Chebyshev Polynomial object
-	 * 
+     * \brief Construct a new Chebyshev Polynomial object
+     * 
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
-	 */
+     */
     ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
 
     /*! 
@@ -157,7 +159,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$ 
@@ -175,7 +177,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$ 
@@ -189,16 +191,14 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
     /*!
      * \brief Delete a ChebyshevPolynomial object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     ChebyshevPolynomial(ChebyshevPolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a ChebyshevPolynomial object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns ChebyshevPolynomial<RealType>& 
+     * Avoiding implicit copy assignment.
      */
     ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> const &) = delete;
 };

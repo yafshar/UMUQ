@@ -15,6 +15,8 @@ inline namespace polynomials
  * \brief This is the base class for different multivariate monomials with the degree of \b r in a space of \b d dimensions.
  * \sa umuq::polynomials::polynomial
  *
+ * \tparam DataType Data type 
+ * 
  * In %UMUQ we consider a monomial, as a power product, which is a product of powers of variables 
  * with nonnegative integer exponents.<br>
  * 
@@ -39,7 +41,6 @@ inline namespace polynomials
  * 
  * If we replace the monomials in the Vandermonde matrix by different polynomials, the resulting matrix is a
  * Vandermonde-like matrix.
- *  
  */
 template <typename DataType>
 class polynomialBase
@@ -169,16 +170,14 @@ class polynomialBase
 	/*!
      * \brief Delete a polynomialBase object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
 	polynomialBase(polynomialBase<DataType> const &) = delete;
 
 	/*!
      * \brief Delete a polynomialBase object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns polynomialBase<DataType>& 
+     * Avoiding implicit copy assignment.
      */
 	polynomialBase<DataType> &operator=(polynomialBase<DataType> const &) = delete;
 
