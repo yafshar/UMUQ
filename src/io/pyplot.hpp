@@ -2,9 +2,20 @@
 #define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
+#include "datatype/npydatatype.hpp"
+#include "misc/arraywrapper.hpp"
+
 namespace umuq
 {
 
+/*! \namespace umuq::matplotlib_223
+ * \ingroup IO_Module
+ * 
+ * \brief It contains several common approaches to plotting with Matplotlib python 2D library
+ * 
+ * It contains several common approaches to plotting with Matplotlib python 2D library from Matplotlib version 2.2.3
+ * 
+ */
 inline namespace matplotlib_223
 {
 
@@ -87,25 +98,12 @@ inline namespace matplotlib_223
  * Agreement.
  * \endverbatim
  */
-
-#include "../data/npydatatype.hpp"
-
 } // namespace matplotlib_223
 } // namespace umuq
-
-#include "../misc/arraywrapper.hpp"
 
 namespace umuq
 {
 
-/*! \namespace umuq::matplotlib_223
- * \ingroup IO_Module
- * 
- * \brief It contains several common approaches to plotting with Matplotlib python 2D library
- * 
- * It contains several common approaches to plotting with Matplotlib python 2D library from Matplotlib version 2.2.3
- * 
- */
 inline namespace matplotlib_223
 {
 
