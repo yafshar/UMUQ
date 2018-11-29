@@ -8,9 +8,8 @@
  * \ingroup Test_Module
  * 
  * \brief An instance of a seeded pseudo-random object
- * 
  */
-umuq::psrandom<double> prng(123);
+umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -77,9 +76,6 @@ TEST(priorDistribution_test, HandlesConstruction)
     // Initialize the PRNG or set the state of the PRNG
     EXPECT_TRUE(prng.setState());
 
-    // Set the PRNG
-    EXPECT_TRUE(prior.setRandomGenerator(&prng));
-
     for (int i = 0; i < 1000; i++)
     {
         // Sampling from this prior distribution
@@ -123,9 +119,6 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
         // Initialize the PRNG or set the state of the PRNG
         EXPECT_TRUE(prng.setState());
 
-        // Set the PRNG
-        EXPECT_TRUE(prior.setRandomGenerator(&prng));
-
         // Sampling from this prior distribution
         EXPECT_TRUE(prior.sample(x));
 
@@ -160,9 +153,6 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
         // Initialize the PRNG or set the state of the PRNG
         EXPECT_TRUE(prng.setState());
 
-        // Set the PRNG
-        EXPECT_TRUE(prior.setRandomGenerator(&prng));
-
         // Sampling from this prior distribution
         EXPECT_TRUE(prior.sample(x));
 
@@ -173,7 +163,7 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment<>);
+    ::testing::AddGlobalTestEnvironment(new umuq::torcEnvironment);
 
     // Get the event listener list.
     ::testing::TestEventListeners &listeners =
