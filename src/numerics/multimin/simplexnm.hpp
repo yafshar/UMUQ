@@ -14,12 +14,12 @@ inline namespace multimin
  * It uses fixed coordinate axes around the starting point x to initialize the simplex.
  * The size of simplex is calculated as the mean distance of each vertex from the center.
  * 
+ * \tparam DataType  Data type
+ * 
  * Ref:
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
  * This implementation uses n+1 corner points in the simplex.
- * 
- * \tparam DataType  Data type
  */
 template <typename DataType>
 class simplexNM : public functionMinimizer<DataType>

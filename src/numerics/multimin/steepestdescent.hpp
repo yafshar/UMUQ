@@ -12,15 +12,15 @@ inline namespace multimin
  * 
  * \brief steepestDescent for differentiable function minimizer type
  * 
+ * \tparam DataType Data type
+ * 
  * The steepest descent algorithm follows the downhill gradient of the function at each step. 
  * When a downhill step is successful the step-size is increased by a factor of two. 
  * If the downhill step leads to a higher function value then the algorithm backtracks 
  * and the step size is decreased using the parameter tol. 
  * 
  * A suitable value of tol for most applications is 0.1. 
- * The steepest descent method is inefficient and is included only for demonstration purposes. 
- * 
- * \tparam DataType Data type
+ * The steepest descent method is inefficient and is included only for demonstration purposes.
  */
 template <typename DataType>
 class steepestDescent : public differentiableFunctionMinimizer<DataType>

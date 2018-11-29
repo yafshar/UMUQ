@@ -14,6 +14,8 @@ inline namespace multimin
  * 
  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
  * 
+ * \tparam DataType  Data type
+ * 
  * Fletcher's implementation of the BFGS method, using the line minimization algorithm from 
  * 
  * The original BFGS is a quasi-Newton method which builds up an approximation to the second 
@@ -29,11 +31,8 @@ inline namespace multimin
  * Reference:<br>
  * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
  * Algorithms 2.6.2 and 2.6.4.
- * 
- * 
- * \tparam DataType  Data type
+ *
  */
-
 template <typename DataType>
 class bfgs2 : public differentiableFunctionMinimizer<DataType>
 {

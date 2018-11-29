@@ -12,11 +12,11 @@ inline namespace multimin
  * 
  * \brief Conjugate Polak-Ribiere gradient algorithm.
  * 
+ * \tparam DataType Data type
+ * 
  * It differs from the Fletcher-Reeves method, only in the choice of the coefficient \f$ \beta \f$.
  * It works well when the evaluation point is close enough to the minimum of the objective function 
  * that it is well approximated by a quadratic hypersurface. 
- * 
- * \tparam DataType Data type
  */
 template <typename DataType>
 class conjugatePr : public differentiableFunctionMinimizer<DataType>
