@@ -169,14 +169,14 @@ class runinfo
     /*!
      * \brief Delete a runinfo object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     runinfo(runinfo const &) = delete;
 
     /*!
      * \brief Delete a runinfo object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns runinfo& 
      */

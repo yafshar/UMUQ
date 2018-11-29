@@ -192,16 +192,14 @@ class tmcmcStats
     /*!
      * \brief Delete a tmcmcStats object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.  
      */
     tmcmcStats(tmcmcStats const &) = delete;
 
     /*!
      * \brief Delete a tmcmcStats object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns tmcmcStats& 
+     * Avoiding implicit copy assignment.  
      */
     tmcmcStats &operator=(tmcmcStats const &) = delete;
 
