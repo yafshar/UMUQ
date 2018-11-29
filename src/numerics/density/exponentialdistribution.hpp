@@ -12,6 +12,9 @@ inline namespace density
  * 
  * \brief The exponential distribution
  * 
+ * \tparam RealType     Data type
+ * \tparam FunctionType Function type
+ * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 
  * exponential distribution of:
  * 
@@ -29,17 +32,14 @@ inline namespace density
  * 
  * where \f$ \lambda > 0 \f$ is rate.
  * 
- * It also provides random non-negative values x, distributed according to the exponential 
- * distribution probability density function. 
+ * This class also provides random non-negative values x, distributed according to the exponential 
+ * distribution probability density function. \sa sample
  * 
  * \note
- * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
- * - Requires that \f$ \mu > 0 \f$. 
- * 
- * \tparam DataType Data type
+ * - Requires that \f$ \mu > 0 \f$.
  */
-template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
-class exponentialDistribution : public densityFunction<DataType, FunctionType>
+template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
+class exponentialDistribution : public densityFunction<RealType, FunctionType>
 {
   public:
     /*!
@@ -47,7 +47,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \param mu Mean, \f$ \mu \f$
      */
-    explicit exponentialDistribution(DataType const mu);
+    explicit exponentialDistribution(RealType const mu);
 
     /*!
      * \brief Construct a new exponential Distribution object
@@ -55,13 +55,13 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      * \param mu Mean, \f$ \mu \f$
      * \param n  Number of input
      */
-    explicit exponentialDistribution(DataType const *mu, int const n);
+    explicit exponentialDistribution(RealType const *mu, int const n);
 
     /*!
      * \brief Destroy the exponential distribution object
      * 
      */
-    ~exponentialDistribution() {}
+    ~exponentialDistribution();
 
     /*!
      * \brief Exponential distribution density function
@@ -70,7 +70,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \returns Density function value 
      */
-    inline DataType exponentialDistribution_f(DataType const *x);
+    inline RealType exponentialDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of exponential distribution density function
@@ -79,23 +79,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \returns  Log of density function value 
      */
-    inline DataType exponentialDistribution_lf(DataType const *x);
-
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
-     * 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
-
-    /*!
-     * \brief Get the Random Number Generator object 
-     * 
-     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
-     */
-    inline psrandom<DataType> *getRandomGenerator();
+    inline RealType exponentialDistribution_lf(RealType const *x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -104,7 +88,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(DataType *x);
+    void sample(RealType *x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -113,7 +97,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<DataType> &x);
+    void sample(std::vector<RealType> &x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -122,7 +106,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<DataType> &x);
+    void sample(EVectorX<RealType> &x);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -132,7 +116,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(DataType *x, int const nSamples);
+    void sample(RealType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the exponential distribution object
@@ -142,7 +126,7 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<DataType> &x, int const nSamples);
+    void sample(std::vector<RealType> &x, int const nSamples);
 
     /*!
      * \brief  Create samples of the exponential distribution object
@@ -151,52 +135,79 @@ class exponentialDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<DataType> &x);
+    void sample(EMatrixX<RealType> &x);
 
   private:
     /*!
      * \brief Delete an empty exponentialDistribution object construction
      */
     exponentialDistribution() = delete;
+
+  private:
+    /*! Exponential random number distribution of RealType type */
+    std::unique_ptr<randomdist::exponentialDistribution<RealType>> expn;
+
+    /*! Exponential random number distributions of RealType type */
+    std::unique_ptr<randomdist::exponentialDistribution<RealType>[]> expns;
+
+    /*! Number of Exponential distributions \sa expns */
+    int nexpns;
 };
 
-/*!
- * \brief Construct a new exponential distribution object
- * 
- * \param mu Mean, \f$ \mu \f$
- */
-template <typename DataType, class FunctionType>
-exponentialDistribution<DataType, FunctionType>::exponentialDistribution(DataType const mu) : densityFunction<DataType, FunctionType>(&mu, 1, "exponential")
+template <typename RealType, class FunctionType>
+exponentialDistribution<RealType, FunctionType>::exponentialDistribution(RealType const mu) : densityFunction<RealType, FunctionType>(&mu, 1, "exponential"),
+                                                                                              expn(nullptr),
+                                                                                              expns(nullptr),
+                                                                                              nexpns(0)
 {
-    this->f = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&exponentialDistribution<RealType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&exponentialDistribution<RealType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        expn.reset(new randomdist::exponentialDistribution<RealType>(mu));
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
 }
 
-template <typename DataType, class FunctionType>
-exponentialDistribution<DataType, FunctionType>::exponentialDistribution(DataType const *mu, int const n) : densityFunction<DataType, FunctionType>(mu, n, "exponential")
+template <typename RealType, class FunctionType>
+exponentialDistribution<RealType, FunctionType>::exponentialDistribution(RealType const *mu, int const n) : densityFunction<RealType, FunctionType>(mu, n, "exponential"),
+                                                                                                            expn(nullptr),
+                                                                                                            expns(nullptr),
+                                                                                                            nexpns(n)
 {
-    this->f = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&exponentialDistribution<RealType, FunctionType>::exponentialDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&exponentialDistribution<RealType, FunctionType>::exponentialDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        expns.reset(new randomdist::exponentialDistribution<RealType>[nexpns]);
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
+    for (int i = 0; i < nexpns; i++)
+    {
+        expns[i] = std::move(randomdist::exponentialDistribution<RealType>(mu[i]));
+    }
 }
 
-/*!
- * \brief Exponential distribution density function
- * 
- * \param x Input value
- * 
- * \returns Density function value 
- */
-template <typename DataType, class FunctionType>
-inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDistribution_f(DataType const *x)
+template <typename RealType, class FunctionType>
+exponentialDistribution<RealType, FunctionType>::~exponentialDistribution() {}
+
+template <typename RealType, class FunctionType>
+inline RealType exponentialDistribution<RealType, FunctionType>::exponentialDistribution_f(RealType const *x)
 {
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        if (x[i] < DataType{})
+        if (x[i] < RealType{})
         {
-            return DataType{};
+            return RealType{};
         }
     }
-    DataType sum(1);
+    RealType sum(1);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
         sum *= std::exp(-x[i] / this->params[i]) / this->params[i];
@@ -204,24 +215,17 @@ inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDist
     return sum;
 }
 
-/*!
- * \brief Log of exponential distribution density function
- * 
- * \param x Input value
- * 
- * \returns  Log of density function value 
- */
-template <typename DataType, class FunctionType>
-inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDistribution_lf(DataType const *x)
+template <typename RealType, class FunctionType>
+inline RealType exponentialDistribution<RealType, FunctionType>::exponentialDistribution_lf(RealType const *x)
 {
     for (std::size_t i = 0; i < this->numParams; i++)
     {
-        if (x[i] < DataType{})
+        if (x[i] < RealType{})
         {
-            return std::numeric_limits<DataType>::infinity();
+            return std::numeric_limits<RealType>::infinity();
         }
     }
-    DataType sum(0);
+    RealType sum(0);
     for (std::size_t i = 0; i < this->numParams; i++)
     {
         sum -= (std::log(this->params[i]) + x[i] / this->params[i]);
@@ -229,203 +233,123 @@ inline DataType exponentialDistribution<DataType, FunctionType>::exponentialDist
     return sum;
 }
 
-template <typename DataType, class FunctionType>
-inline bool exponentialDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(RealType *x)
 {
-    if (PRNG)
+    if (expn)
     {
-        if (PRNG_initialized)
-        {
-            this->prng = PRNG;
-            if (this->numParams > 1)
-            {
-                return this->prng->set_expns(this->params.data(), this->numParams);
-            }
-            return this->prng->set_expn(this->params[0]);
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        x[0] = expn->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    for (int i = 0; i < nexpns; i++)
+    {
+        x[i] = expns[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-inline psrandom<DataType> *exponentialDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
-
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(DataType *x)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (expn)
     {
-#endif
-        if (this->numParams > 1)
-        {
-            for (std::size_t i = 0; i < this->numParams; i++)
-            {
-                x[i] = this->prng->expns[i].dist();
-            }
-            return true;
-        }
-        *x = this->prng->expn->dist();
-        return true;
-#ifdef DEBUG
+        x[0] = expn->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    for (int i = 0; i < nexpns; i++)
+    {
+        x[i] = expns[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(EVectorX<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (expn)
     {
-#endif
-        if (this->numParams > 1)
-        {
-            for (std::size_t i = 0; i < this->numParams; i++)
-            {
-                x[i] = this->prng->expns[i].dist();
-            }
-            return true;
-        }
-        x[0] = this->prng->expn->dist();
-        return true;
-#ifdef DEBUG
+        x[0] = expn->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    for (int i = 0; i < nexpns; i++)
+    {
+        x[i] = expns[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(RealType *x, int const nSamples)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (expn)
     {
-#endif
-        if (this->numParams > 1)
-        {
-            for (std::size_t i = 0; i < this->numParams; i++)
-            {
-                x[i] = this->prng->expns[i].dist();
-            }
-            return true;
-        }
-        x[0] = this->prng->expn->dist();
-        return true;
-#ifdef DEBUG
+        expn->dist(x, nSamples);
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    std::size_t const nSizeArray = nexpns * static_cast<std::size_t>(nSamples);
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nexpns; i++)
+    {
+        arrayWrapper<RealType> xArray(x + i, nSizeArray, nexpns);
+        expns[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x, int const nSamples)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (expn)
     {
-#endif
-        if (this->numParams > 1)
-        {
-            std::size_t const nSizeArray = this->numParams * nSamples;
-            for (std::size_t i = 0; i < this->numParams; i++)
-            {
-                for (std::size_t l = i; l < nSizeArray; l += this->numParams)
-                {
-                    x[l] = this->prng->expns[i].dist();
-                }
-            }
-            return true;
-        }
-        for (int i = 0; i < nSamples; i++)
-        {
-            x[i] = this->prng->expn->dist();
-        }
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        if (this->numParams > 1)
-        {
-            std::size_t const nSizeArray = this->numParams * nSamples;
-#ifdef DEBUG
-            if (nSizeArray > x.size())
-            {
-                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSizeArray, " !");
-            }
-#endif
-            for (std::size_t i = 0; i < this->numParams; i++)
-            {
-                for (std::size_t l = i; l < nSizeArray; l += this->numParams)
-                {
-                    x[l] = this->prng->expns[i].dist();
-                }
-            }
-            return true;
-        }
 #ifdef DEBUG
         if (static_cast<std::size_t>(nSamples) > x.size())
         {
-            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples, " !");
+            UMUQFAIL("The input array size of ", x.size(), " < requested number of ", nSamples, " samples!");
         }
 #endif
-        for (int i = 0; i < nSamples; i++)
-        {
-            x[i] = this->prng->expn->dist();
-        }
-        return true;
-#ifdef DEBUG
+        expn->dist(x);
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    std::size_t const nSizeArray = nexpns * static_cast<std::size_t>(nSamples);
+#ifdef DEBUG
+    if (nSizeArray > x.size())
+    {
+        UMUQFAIL("The input array size of ", x.size(), " < requested samples size of ", nSizeArray, " !");
+    }
 #endif
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < nexpns; i++)
+    {
+        arrayWrapper<RealType> xArray(x.data() + i, nSizeArray, nexpns);
+        expns[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool exponentialDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
+template <typename RealType, class FunctionType>
+void exponentialDistribution<RealType, FunctionType>::sample(EMatrixX<RealType> &x)
 {
 #ifdef DEBUG
-    if (this->prng)
+    if (this->numParams != x.rows())
     {
-#endif
-        if (this->numParams > 1)
-        {
-            std::size_t const nDim = this->numParams;
-#ifdef DEBUG
-            if (nDim != x.rows())
-            {
-                UMUQFAILRETURN("The input dimension =", x.rows(), " != samples dimension of ", nDim, " !");
-            }
-#endif
-            for (auto l = 0; l < x.cols(); ++l)
-            {
-                for (std::size_t i = 0; i < nDim; i++)
-                {
-                    x(i, l) = this->prng->expns[i].dist();
-                }
-            }
-            return true;
-        }
-        for (auto i = 0; i < x.cols(); i++)
-        {
-            x(0, i) = this->prng->expn->dist();
-        }
-        return true;
-#ifdef DEBUG
+        UMUQFAIL("The input dimension =", x.rows(), " != samples dimension of ", this->numParams, " !");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
+    std::vector<RealType> X(x.cols());
+    if (expn)
+    {
+        expn->dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(0, j) = X[j];
+        }
+        return;
+    }
+    for (int i = 0; i < nexpns; ++i)
+    {
+        expns[i].dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(i, j) = X[j];
+        }
+    }
 }
 
 } // namespace density

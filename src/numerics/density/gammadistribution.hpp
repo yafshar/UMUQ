@@ -12,10 +12,13 @@ inline namespace density
  * 
  * \brief The Gamma distribution
  * 
+ * \tparam RealType     Data type
+ * \tparam FunctionType Function type
+ * 
  * This class provides probability density \f$ p(x) \f$ and it's Log at x for a 
  * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$. <br>
  * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$. <br>
- * using:
+ * using:<br>
  * 
  * \f$
  * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.
@@ -26,19 +29,16 @@ inline namespace density
  * when encoding arrival times for sets of events. A Gamma distribution with a large value for \f$\alpha\f$ 
  * is also useful when you wish to use a bell-shaped curve for a positive-only quantity.
  * 
- * It also provides random non-negative values x, distributed according to the Gamma distribution 
- * probability density function. 
+ * This class also provides random non-negative values x, distributed according to the Gamma distribution 
+ * probability density function. \sa sample
  * 
  * \note
- * - For using sample member function, setting the the Random Number Generator is required, otherwise, it fails.
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$
- * 
- * \tparam DataType Data type
  */
 
-template <typename DataType, class FunctionType = std::function<DataType(DataType const *)>>
-class gammaDistribution : public densityFunction<DataType, FunctionType>
+template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
+class gammaDistribution : public densityFunction<RealType, FunctionType>
 {
   public:
     /*!
@@ -47,7 +47,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      */
-    gammaDistribution(DataType const alpha, DataType const beta = DataType{1});
+    gammaDistribution(RealType const alpha, RealType const beta = RealType{1});
 
     /*!
      * \brief Construct a new gamma Distribution object
@@ -56,13 +56,13 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      * \param beta   Scale parameter \f$ beta\f$
      * \param n      Total number of alpha + beta inputs
      */
-    gammaDistribution(DataType const *alpha, DataType const *beta, int const n);
+    gammaDistribution(RealType const *alpha, RealType const *beta, int const n);
 
     /*!
      * \brief Destroy the Gamma distribution object
      * 
      */
-    ~gammaDistribution() {}
+    ~gammaDistribution();
 
     /*!
      * \brief Gamma distribution density function
@@ -71,7 +71,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \returns Density function value 
      */
-    inline DataType gammaDistribution_f(DataType const *x);
+    inline RealType gammaDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Gamma distribution density function
@@ -80,23 +80,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      * 
      * \returns  Log of density function value 
      */
-    inline DataType gammaDistribution_lf(DataType const *x);
-
-    /*!
-     * \brief Set the Random Number Generator object 
-     * 
-     * \param PRNG  Pseudo-random number object. \sa umuq::random::psrandom.
-     * 
-     * \return false If it encounters an unexpected problem
-     */
-    inline bool setRandomGenerator(psrandom<DataType> *PRNG);
-
-    /*!
-     * \brief Get the Random Number Generator object 
-     * 
-     * \returns Pseudo-random number object. \sa umuq::random::psrandom.
-     */
-    inline psrandom<DataType> *getRandomGenerator();
+    inline RealType gammaDistribution_lf(RealType const *x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -105,7 +89,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(DataType *x);
+    void sample(RealType *x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -114,7 +98,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<DataType> &x);
+    void sample(std::vector<RealType> &x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -123,7 +107,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EVectorX<DataType> &x);
+    void sample(EVectorX<RealType> &x);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -133,7 +117,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(DataType *x, int const nSamples);
+    void sample(RealType *x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -143,7 +127,7 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(std::vector<DataType> &x, int const nSamples);
+    void sample(std::vector<RealType> &x, int const nSamples);
 
     /*!
      * \brief Create samples of the Gamma distribution object
@@ -152,278 +136,235 @@ class gammaDistribution : public densityFunction<DataType, FunctionType>
      *
      * \return false If Random Number Generator object is not assigned
      */
-    bool sample(EMatrixX<DataType> &x);
+    void sample(EMatrixX<RealType> &x);
+
+  private:
+    /*! \brief Gamma random number distribution of RealType type */
+    std::unique_ptr<randomdist::gammaDistribution<RealType>> gamma;
+
+    /*! \brief Gamma random number distributions of RealType type  */
+    std::unique_ptr<randomdist::gammaDistribution<RealType>[]> gammas;
+
+    /*! Number of Gamma distributions \sa gammas */
+    int ngammas;
 };
 
-template <typename DataType, class FunctionType>
-gammaDistribution<DataType, FunctionType>::gammaDistribution(DataType const alpha, DataType const beta) : densityFunction<DataType, FunctionType>(&alpha, &beta, 2, "gamma")
+template <typename RealType, class FunctionType>
+gammaDistribution<RealType, FunctionType>::gammaDistribution(RealType const alpha, RealType const beta) : densityFunction<RealType, FunctionType>(&alpha, &beta, 2, "gamma"),
+                                                                                                          gamma(nullptr),
+                                                                                                          gammas(nullptr),
+                                                                                                          ngammas(0)
 {
-    this->f = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gammaDistribution<RealType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<RealType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        gamma.reset(new randomdist::gammaDistribution<RealType>(alpha, beta));
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
 }
 
-template <typename DataType, class FunctionType>
-gammaDistribution<DataType, FunctionType>::gammaDistribution(DataType const *alpha, DataType const *beta, int const n) : densityFunction<DataType, FunctionType>(alpha, beta, n, "gamma")
+template <typename RealType, class FunctionType>
+gammaDistribution<RealType, FunctionType>::gammaDistribution(RealType const *alpha, RealType const *beta, int const n) : densityFunction<RealType, FunctionType>(alpha, beta, n, "gamma"),
+                                                                                                                         gamma(nullptr),
+                                                                                                                         gammas(nullptr),
+                                                                                                                         ngammas(n / 2)
 {
     if (n & 1)
     {
         UMUQFAIL("Wrong number of inputs!")
     }
-    this->f = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
-    this->lf = std::bind(&gammaDistribution<DataType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
+    this->f = std::bind(&gammaDistribution<RealType, FunctionType>::gammaDistribution_f, this, std::placeholders::_1);
+    this->lf = std::bind(&gammaDistribution<RealType, FunctionType>::gammaDistribution_lf, this, std::placeholders::_1);
+    try
+    {
+        gammas.reset(new randomdist::gammaDistribution<RealType>[ngammas]);
+    }
+    catch (...)
+    {
+        UMUQFAIL("Failed to allocate memory!");
+    }
+    for (int i = 0; i < ngammas; i++)
+    {
+        gammas[i] = std::move(randomdist::gammaDistribution<RealType>(alpha[i], beta[i]));
+    }
 }
 
-template <typename DataType, class FunctionType>
-inline DataType gammaDistribution<DataType, FunctionType>::gammaDistribution_f(DataType const *x)
+template <typename RealType, class FunctionType>
+gammaDistribution<RealType, FunctionType>::~gammaDistribution() {}
+
+template <typename RealType, class FunctionType>
+inline RealType gammaDistribution<RealType, FunctionType>::gammaDistribution_f(RealType const *x)
 {
-    DataType sum(1);
+    RealType sum(1);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        if (x[i] < DataType{})
+        if (x[i] < RealType{})
         {
-            return DataType{};
+            return RealType{};
         }
-        else if (x[i] == DataType{})
+        else if (x[i] == RealType{})
         {
-            if (this->params[k] == static_cast<DataType>(1))
+            if (this->params[k] == static_cast<RealType>(1))
             {
-                sum *= static_cast<DataType>(1) / this->params[k + 1];
+                sum *= static_cast<RealType>(1) / this->params[k + 1];
                 continue;
             }
             else
             {
-                return DataType{};
+                return RealType{};
             }
         }
-        else if (this->params[k] == static_cast<DataType>(1))
+        else if (this->params[k] == static_cast<RealType>(1))
         {
             sum *= std::exp(-x[i] / this->params[k + 1]) / this->params[k + 1];
         }
         else
         {
-            sum *= std::exp((this->params[k] - static_cast<DataType>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
+            sum *= std::exp((this->params[k] - static_cast<RealType>(1)) * std::log(x[i] / this->params[k + 1]) - x[i] / this->params[k + 1] - std::lgamma(this->params[k])) / this->params[k + 1];
         }
     }
     return sum;
 }
 
-template <typename DataType, class FunctionType>
-inline DataType gammaDistribution<DataType, FunctionType>::gammaDistribution_lf(DataType const *x)
+template <typename RealType, class FunctionType>
+inline RealType gammaDistribution<RealType, FunctionType>::gammaDistribution_lf(RealType const *x)
 {
     for (std::size_t i = 0; i < this->numParams / 2; i++)
     {
-        if (x[i] < DataType{})
+        if (x[i] < RealType{})
         {
-            return -std::numeric_limits<DataType>::infinity();
+            return -std::numeric_limits<RealType>::infinity();
         }
     }
-    DataType sum(0);
+    RealType sum(0);
     for (std::size_t i = 0, k = 0; k < this->numParams; i++, k += 2)
     {
-        sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<DataType>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
+        sum += -std::lgamma(this->params[k]) - this->params[k] * std::log(this->params[k + 1]) + (this->params[k] - static_cast<RealType>(1)) * std::log(x[i]) - x[i] / this->params[k + 1];
     }
     return sum;
 }
 
-template <typename DataType, class FunctionType>
-inline bool gammaDistribution<DataType, FunctionType>::setRandomGenerator(psrandom<DataType> *PRNG)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(RealType *x)
 {
-    if (PRNG)
+    if (gamma)
     {
-        if (PRNG_initialized)
-        {
-            this->prng = PRNG;
-            if (this->numParams > 2)
-            {
-                return this->prng->set_gammas(this->params.data(), this->numParams);
-            }
-            return this->prng->set_gamma(this->params[0], this->params[1]);
-        }
-        UMUQFAILRETURN("One should set the state of the pseudo random number generator before setting it to this distribution!");
+        x[0] = gamma->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    for (int i = 0; i < ngammas; i++)
+    {
+        x[i] = gammas[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-inline psrandom<DataType> *gammaDistribution<DataType, FunctionType>::getRandomGenerator() { return this->prng; }
-
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(DataType *x)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (gamma)
     {
-#endif
-        if (this->numParams > 2)
-        {
-            for (std::size_t i = 0; i < this->numParams / 2; i++)
-            {
-                x[i] = this->prng->gammas[i].dist();
-            }
-            return true;
-        }
-        *x = this->prng->gamma->dist();
-        return true;
-#ifdef DEBUG
+        x[0] = gamma->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    for (int i = 0; i < ngammas; i++)
+    {
+        x[i] = gammas[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(EVectorX<RealType> &x)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (gamma)
     {
-#endif
-        if (this->numParams > 2)
-        {
-            for (std::size_t i = 0; i < this->numParams / 2; i++)
-            {
-                x[i] = this->prng->gammas[i].dist();
-            }
-            return true;
-        }
-        x[0] = this->prng->gamma->dist();
-        return true;
-#ifdef DEBUG
+        x[0] = gamma->dist();
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    for (int i = 0; i < ngammas; i++)
+    {
+        x[i] = gammas[i].dist();
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(EVectorX<DataType> &x)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(RealType *x, int const nSamples)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (gamma)
     {
-#endif
-        if (this->numParams > 2)
-        {
-            for (std::size_t i = 0; i < this->numParams / 2; i++)
-            {
-                x[i] = this->prng->gammas[i].dist();
-            }
-            return true;
-        }
-        x[0] = this->prng->gamma->dist();
-        return true;
-#ifdef DEBUG
+        gamma->dist(x, nSamples);
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
+    std::size_t const nSizeArray = ngammas * static_cast<std::size_t>(nSamples);
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < ngammas; i++)
+    {
+        arrayWrapper<RealType> xArray(x + i, nSizeArray, ngammas);
+        gammas[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(DataType *x, int const nSamples)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(std::vector<RealType> &x, int const nSamples)
 {
-#ifdef DEBUG
-    if (this->prng)
+    if (gamma)
     {
-#endif
-        if (this->numParams > 2)
-        {
-            std::size_t const nDim = this->numParams / 2;
-            for (std::size_t j = 0, l = 0; j < nSamples; j++)
-            {
-                for (std::size_t i = 0; i < nDim; i++)
-                {
-                    x[l++] = this->prng->gammas[i].dist();
-                }
-            }
-            return true;
-        }
-        for (int i = 0; i < nSamples; i++)
-        {
-            x[i] = this->prng->gamma->dist();
-        }
-        return true;
-#ifdef DEBUG
-    }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
-#endif
-}
-
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
-{
-#ifdef DEBUG
-    if (this->prng)
-    {
-#endif
-        if (this->numParams > 2)
-        {
-            std::size_t const nDim = this->numParams / 2;
-
-#ifdef DEBUG
-            if (nDim * nSamples > x.size())
-            {
-                UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nDim * nSamples, " !");
-            }
-#endif
-            for (std::size_t j = 0, l = 0; j < nSamples; j++)
-            {
-                for (std::size_t i = 0; i < nDim; i++)
-                {
-                    x[l++] = this->prng->gammas[i].dist();
-                }
-            }
-            return true;
-        }
 #ifdef DEBUG
         if (static_cast<std::size_t>(nSamples) > x.size())
         {
-            UMUQFAILRETURN("The input size =", x.size(), " < requested samples size of ", nSamples, " !");
+            UMUQFAIL("The input array size of ", x.size(), " < requested number of ", nSamples, " samples!");
         }
 #endif
-        for (int i = 0; i < nSamples; i++)
-        {
-            x[i] = this->prng->gamma->dist();
-        }
-        return true;
-#ifdef DEBUG
+        gamma->dist(x);
+        return;
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
+    std::size_t const nSizeArray = ngammas * static_cast<std::size_t>(nSamples);
+#ifdef DEBUG
+    if (nSizeArray > x.size())
+    {
+        UMUQFAIL("The input array size of ", x.size(), " < requested samples size of ", nSizeArray, " !");
+    }
 #endif
+    std::vector<RealType> X(nSamples);
+    for (int i = 0; i < ngammas; i++)
+    {
+        arrayWrapper<RealType> xArray(x.data() + i, nSizeArray, ngammas);
+        gammas[i].dist(X);
+        std::copy(X.begin(), X.end(), xArray.begin());
+    }
 }
 
-template <typename DataType, class FunctionType>
-bool gammaDistribution<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
+template <typename RealType, class FunctionType>
+void gammaDistribution<RealType, FunctionType>::sample(EMatrixX<RealType> &x)
 {
 #ifdef DEBUG
-    if (this->prng)
+    if (this->numParams / 2 != x.rows())
     {
-#endif
-        if (this->numParams > 2)
-        {
-#ifdef DEBUG
-            if (this->numParams / 2 != x.rows())
-            {
-                UMUQFAILRETURN("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
-            }
-#endif
-            std::size_t const nDim = this->numParams / 2;
-
-            for (auto j = 0; j < x.cols(); ++j)
-            {
-                for (std::size_t i = 0; i < nDim; ++i)
-                {
-                    x(i, j) = this->prng->gammas[i].dist();
-                }
-            }
-            return true;
-        }
-        for (auto i = 0; i < x.cols(); ++i)
-        {
-            x(0, i) = this->prng->gamma->dist();
-        }
-        return true;
-#ifdef DEBUG
+        UMUQFAIL("The input dimension =", x.rows(), " != samples dimension of ", this->numParams / 2, " !");
     }
-    UMUQFAILRETURN("The pseudo-random number generator object is not assigned!");
 #endif
+    std::vector<RealType> X(x.cols());
+    if (gamma)
+    {
+        gamma->dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(0, j) = X[j];
+        }
+        return;
+    }
+    for (int i = 0; i < ngammas; ++i)
+    {
+        gammas[i].dist(X);
+        for (auto j = 0; j < x.cols(); ++j)
+        {
+            x(i, j) = X[j];
+        }
+    }
 }
 
 } // namespace density
