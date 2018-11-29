@@ -1178,7 +1178,7 @@ bool io::readLine(const char comment)
         if (fs.good())
         {
             const std::string::size_type linePos = linetmp.find_first_not_of(" \t\n");
-            
+
             // See if we found a valid line
             if (linetmp.length() > 0 && linePos < linetmp.size())
             {
