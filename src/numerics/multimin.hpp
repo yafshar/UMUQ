@@ -31,6 +31,11 @@
  * \endverbatim
  */
 
+
+#include "datatype/functionminimizertype.hpp"
+#include "datatype/differentiablefunctionminimizertype.hpp"
+#include "datatype/functiontype.hpp"
+
 #include "function/functionminimizer.hpp"
 #include "function/differentiablefunctionminimizer.hpp"
 
