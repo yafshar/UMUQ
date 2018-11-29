@@ -2,30 +2,13 @@
 #ifndef UMUQ_FITNESS_H
 #define UMUQ_FITNESS_H
 
+#include "datatype/errorfitnesstype.hpp"
 #include "../misc/parser.hpp"
 #include "residual.hpp"
 #include "stats.hpp"
 
 namespace umuq
 {
-
-/*! \enum ErrorFitnessTypes
- * \ingroup Numerics_Module
- * 
- * \brief Available Error Fitness type, currently available in %UMUQ
- * 
- */
-enum class ErrorFitnessTypes
-{
-    /*! Sum of the absolute difference between observed and predicted data. */
-    errorFitSum,
-    /*! Average of the absolute difference between observed and predicted data. */
-    errorFitMean,
-    /*! Squared root of the average of the absolute difference between observed and predicted data. */
-    errorFitRootMean,
-    /*! Maximum value of the absolute difference between observed and predicted data. */
-    errorFitMax
-};
 
 /*! \class fitness
  * \ingroup Numerics_Module
@@ -174,16 +157,14 @@ class fitness
     /*!
      * \brief Delete a fitness object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     fitness(fitness<DataType> const &) = delete;
 
     /*!
      * \brief Delete a fitness object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns fitness<DataType>& 
+     * Avoiding implicit copy assignment.
      */
     fitness<DataType> &operator=(fitness<DataType> const &) = delete;
 
