@@ -542,52 +542,26 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
  * \tparam DataType       Data type
  * \tparam OutputDataType Data type of the return output result (default is double)
  *
- * \param inMatrix   The input matrix to calculate the squared distance between its rows
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \param eMatrix  The input matrix to calculate the squared distance between its rows
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  */
 template <typename DataType, typename OutputDataType = double>
-void calculateRowsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+EMatrixX<OutputDataType> calculateRowsSquaredDistance(EMatrixX<DataType> const &eMatrix)
 {
-    auto const nRows = inMatrix.rows();
-    if (outMatrix.rows() != nRows || outMatrix.cols() != nRows)
-    {
-        outMatrix.resize(nRows, nRows);
-    }
+    auto const nRows = eMatrix.rows();
+    EMatrixX<OutputDataType> rowsSquaredDistanceMatrix(nRows, nRows);
     /*!
      * \todo
      * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
-     * Profiling is needed to decide whether we should copy cast the inMatrix to the new matrix first or 
+     * Profiling is needed to decide whether we should copy cast the eMatrix to the new matrix first or 
      * continue the current procedure and do casting in operations
      */
-    EVectorX<OutputDataType> vecX = inMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
-    outMatrix.colwise() = vecX;
-    outMatrix.rowwise() += vecX.transpose();
-    outMatrix -= 2 * inMatrix.template cast<OutputDataType>() * inMatrix.transpose().template cast<OutputDataType>();
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Calculate the squared distance between the columns of a matrix
- * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- *
- * \param inMatrix   The input matrix to calculate the squared distance between its columns
- * \param outMatrix  The output matrix to hold the results of the calculation
- */
-template <typename DataType, typename OutputDataType = double>
-void calculateColumnsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
-{
-    auto const nCols = inMatrix.cols();
-    if (outMatrix.rows() != nCols || outMatrix.cols() != nCols)
-    {
-        outMatrix.resize(nCols, nCols);
-    }
-    ERowVectorX<OutputDataType> vecX = inMatrix.array().square().colwise().sum().template cast<OutputDataType>();
-    outMatrix.rowwise() = vecX;
-    outMatrix.colwise() += vecX.transpose();
-    outMatrix -= 2 * inMatrix.transpose().template cast<OutputDataType>() * inMatrix.template cast<OutputDataType>();
+    EVectorX<OutputDataType> vecX = eMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
+    rowsSquaredDistanceMatrix.colwise() = vecX;
+    rowsSquaredDistanceMatrix.rowwise() += vecX.transpose();
+    rowsSquaredDistanceMatrix -= 2 * eMatrix.template cast<OutputDataType>() * eMatrix.transpose().template cast<OutputDataType>();
+    return rowsSquaredDistanceMatrix;
 }
 
 /*!
@@ -598,14 +572,40 @@ void calculateColumnsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrix
  * \tparam DataType       Input data type
  * \tparam OutputDataType Output data type (default is double)
  * 
- * \param inMatrix   The input matrix to calculate the distance between its rows
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \param eMatrix  The input matrix to calculate the distance between its rows
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  */
 template <typename DataType, typename OutputDataType = double>
-void calculateRowsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+EMatrixX<OutputDataType> calculateRowsDistance(EMatrixX<DataType> const &eMatrix)
 {
-    calculateRowsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    outMatrix = outMatrix.cwiseSqrt();
+    EMatrixX<OutputDataType> rowsDistanceMatrix = calculateRowsSquaredDistance<DataType, OutputDataType>(eMatrix);
+    rowsDistanceMatrix = rowsDistanceMatrix.cwiseSqrt();
+    return rowsDistanceMatrix;
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the squared distance between the columns of a matrix
+ * 
+ * \tparam DataType       Input data type
+ * \tparam OutputDataType Output data type (default is double)
+ *
+ * \param eMatrix  The input matrix to calculate the squared distance between its columns
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
+ */
+template <typename DataType, typename OutputDataType = double>
+EMatrixX<OutputDataType> calculateSquaredDistance(EMatrixX<DataType> const &eMatrix)
+{
+    auto const nCols = eMatrix.cols();
+    EMatrixX<OutputDataType> columnsSquaredDistanceMatrix(nCols, nCols);
+    ERowVectorX<OutputDataType> vecX = eMatrix.array().square().colwise().sum().template cast<OutputDataType>();
+    columnsSquaredDistanceMatrix.rowwise() = vecX;
+    columnsSquaredDistanceMatrix.colwise() += vecX.transpose();
+    columnsSquaredDistanceMatrix -= 2 * eMatrix.transpose().template cast<OutputDataType>() * eMatrix.template cast<OutputDataType>();
+    return columnsSquaredDistanceMatrix;
 }
 
 /*!
@@ -616,14 +616,100 @@ void calculateRowsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDa
  * \tparam DataType       Input data type
  * \tparam OutputDataType Output data type (default is double)
  *
- * \param inMatrix   The input matrix to calculate the distance between its columns
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \param eMatrix  The input matrix to calculate the distance between its columns
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  */
 template <typename DataType, typename OutputDataType = double>
-void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+EMatrixX<OutputDataType> calculateDistance(EMatrixX<DataType> const &eMatrix)
 {
-    calculateColumnsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    outMatrix = outMatrix.cwiseSqrt();
+    EMatrixX<OutputDataType> columnsDistanceMatrix = calculateSquaredDistance<DataType, OutputDataType>(eMatrix);
+    columnsDistanceMatrix = columnsDistanceMatrix.cwiseSqrt();
+    return columnsDistanceMatrix;
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the squared distance between one point (as an input vector) and a set of points (as an input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * 
+ * \param eVector  The input point (input vector) that we want to compute its distance from a set of points
+ * \param eMatrix  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EVectorX<DataType> Vector of squared distances between point and a set of points
+ */
+template <typename DataType>
+inline EVectorX<DataType> calculateSquaredDistance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
+{
+    EVectorX<DataType> vectorMatrixSquaredDistance(eMatrix.cols());
+    vectorMatrixSquaredDistance.fill(eVector.squaredNorm());
+    return (vectorMatrixSquaredDistance + eMatrix.cwiseProduct(eMatrix).colwise().sum().transpose() - 2 * eMatrix.transpose() * eVector).cwiseAbs();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between one point (as an input vector) and a set of points (as an input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * 
+ * \param eVector  The input point (input vector) that we want to compute its distance from a set of points
+ * \param eMatrix  The set of points as an input matrix where we want to calculate the distance between input point and matrix columns
+ * 
+ * \returns EVectorX<DataType> Vector of distances between point and a set of points
+ */
+template <typename DataType>
+inline EVectorX<DataType> calculateDistance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
+{
+    EVectorX<DataType> vectorMatrixDistance = calculateSquaredDistance<DataType>(eVector, eMatrix);
+    vectorMatrixDistance = vectorMatrixDistance.cwiseSqrt();
+    return vectorMatrixDistance;
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the squared distance between set of points (as an input matrix) and a set of points (as a second input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * 
+ * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
+ * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
+ */
+template <typename DataType>
+inline EMatrixX<DataType> calculateSquaredDistance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+{
+    EMatrixX<DataType> squaredDistanceMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    squaredDistanceMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    squaredDistanceMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    squaredDistanceMatrix = squaredDistanceMatrix.cwiseAbs();
+    return squaredDistanceMatrix;
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between set of points (as an input matrix) and a set of points (as a second input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * 
+ * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
+ * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
+ */
+template <typename DataType>
+inline EMatrixX<DataType> calculateDistance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+{
+    EMatrixX<DataType> distanceMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    distanceMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    distanceMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    distanceMatrix = distanceMatrix.cwiseAbs().cwiseSqrt();
+    return distanceMatrix;
 }
 
 /*!
@@ -634,7 +720,7 @@ void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<Outpu
  * \tparam DataType       Input data type
  * \tparam OutputDataType Output data type (default is double)
  * 
- * \param inMatrix The matrix to calculate its row wise S-optimality 
+ * \param eMatrix The matrix to calculate its row wise S-optimality 
  * 
  * \returns OutputDataType The S-optimality measure
  * 
@@ -651,11 +737,11 @@ void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<Outpu
  * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
  */
 template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &inMatrix)
+OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &eMatrix)
 {
-    EMatrixX<OutputDataType> outMatrix;
-    calculateRowsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    return 1. / outMatrix.cwiseInverse().sum();
+    EMatrixX<OutputDataType> rowWiseSOptimalityMatrix;
+    calculateRowsDistance<DataType, OutputDataType>(eMatrix, rowWiseSOptimalityMatrix);
+    return 1. / rowWiseSOptimalityMatrix.cwiseInverse().sum();
 }
 
 /*!
@@ -666,7 +752,7 @@ OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &inMatrix)
  * \tparam DataType       Input data type
  * \tparam OutputDataType Output data type (default is double)
  * 
- * \param inMatrix The matrix to calculate its row wise S-optimality 
+ * \param eMatrix The matrix to calculate its row wise S-optimality 
  * 
  * \returns OutputDataType The S-optimality measure
  * 
@@ -683,11 +769,11 @@ OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &inMatrix)
  * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
  */
 template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateColumnWiseSOptimality(EMatrixX<DataType> const &inMatrix)
+OutputDataType calculateColumnWiseSOptimality(EMatrixX<DataType> const &eMatrix)
 {
-    EMatrixX<OutputDataType> outMatrix;
-    calculateColumnsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    return 1. / outMatrix.cwiseInverse().sum();
+    EMatrixX<OutputDataType> columnWiseSOptimalityMatrix;
+    calculateDistance<DataType, OutputDataType>(eMatrix, columnWiseSOptimalityMatrix);
+    return 1. / columnWiseSOptimalityMatrix.cwiseInverse().sum();
 }
 
 /*!
@@ -729,6 +815,74 @@ void columnWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataTy
     EVectorX<DataType> const col = EVectorX<DataType>::LinSpaced(eMatrix.rows(), low, high);
     eMatrix.colwise() = col;
 }
+
+/*!
+ * \brief Map a vector in space \f$ [low, high]^n \f$ to the unit box \f$ [0, 1]^n \f$
+ * 
+ * \tparam RealType Floating point data type
+ * 
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
+ * 
+ * \returns EVectorX<RealType> Scaled vector mapped to the unit box
+ */
+template <typename RealType>
+inline EVectorX<RealType> scaleToUnitBox(const EVectorX<RealType> &eVector, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+{
+    return (eVector - low).cwiseProduct((high - low).cwiseInverse());
+};
+
+/*!
+ * \brief Map a matrix from a space of \f$ [low, high]^n \f$ to the unit box of \f$ [0, 1]^n \f$
+ * 
+ * \tparam RealType Floating point data type
+ * 
+ * \param eMatrix  Input matrix      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds 
+ * 
+ * \returns EMatrixX<RealType> Scaled matrix mapped to the unit box
+ */
+template <typename RealType>
+inline EMatrixX<RealType> scaleToUnitBox(const EMatrixX<RealType> &eMatrix, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+{
+    return (eMatrix.colwise() - low).array().colwise() * (high - low).cwiseInverse().array();
+};
+
+/*!
+ * \brief Map a vector from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
+ *  
+ * \tparam RealType Floating point data type
+ * 
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
+ * 
+ * \returns EVectorX<RealType> Scaled vector mapped to the hypercube space
+ */
+template <typename RealType>
+inline EVectorX<RealType> scaleToHyperCube(const EVectorX<RealType> &eVector, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+{
+    return low + (high - low).cwiseProduct(eVector);
+};
+
+/*!
+ * \brief Map a matrix (multiple points) from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
+ *  
+ * \tparam RealType Floating point data type
+ * 
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
+ * 
+ * \returns  EMatrixX<RealType> Scaled matrix mapped the hypercube space
+ */
+template <typename RealType>
+inline EMatrixX<RealType> scaleToHyperCube(const EMatrixX<RealType> &eMatrix, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+{
+    return (eMatrix.array().colwise() * (high - low).array()).matrix().colwise() + low;
+};
 
 } // namespace linearalgebra
 } // namespace umuq
