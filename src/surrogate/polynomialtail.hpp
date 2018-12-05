@@ -110,7 +110,7 @@ class polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    virtual inline EVectorXd eval(const EVectorXd &point) const = 0;
+    virtual inline EVectorXd evaluate(const EVectorXd &point) const = 0;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -119,7 +119,7 @@ class polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    virtual inline EMatrixXd eval(const EMatrixXd &points) const = 0;
+    virtual inline EMatrixXd evaluate(const EMatrixXd &points) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -184,7 +184,7 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    inline EVectorXd eval(const EVectorXd &x) const;
+    inline EVectorXd evaluate(const EVectorXd &x) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -193,7 +193,7 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    inline EMatrixXd eval(const EMatrixXd &X) const;
+    inline EMatrixXd evaluate(const EMatrixXd &X) const;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -217,14 +217,14 @@ inline int linearPolynomialTail::degree() const { return mDegree; }
 
 inline int linearPolynomialTail::dimTail(int dim) const { return 1 + dim; }
 
-inline EVectorXd linearPolynomialTail::eval(const EVectorXd &x) const
+inline EVectorXd linearPolynomialTail::evaluate(const EVectorXd &x) const
 {
     EVectorXd tail(x.rows() + 1);
     tail << double{1}, x;
     return tail;
 }
 
-inline EMatrixXd linearPolynomialTail::eval(const EMatrixXd &X) const
+inline EMatrixXd linearPolynomialTail::evaluate(const EMatrixXd &X) const
 {
     EMatrixXd Y(X.rows() + 1, X.cols());
     Y << ERowVectorXd::Ones(X.cols()), X;
@@ -287,7 +287,7 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    inline EVectorXd eval(const EVectorXd &x) const;
+    inline EVectorXd evaluate(const EVectorXd &x) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -296,7 +296,7 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    inline EMatrixXd eval(const EMatrixXd &X) const;
+    inline EMatrixXd evaluate(const EMatrixXd &X) const;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -320,9 +320,9 @@ inline int constantPolynomialTail::degree() const { return mDegree; }
 
 inline int constantPolynomialTail::dimTail(int dim) const { return 1; }
 
-inline EVectorXd constantPolynomialTail::eval(const EVectorXd &x) const { return EMatrixXd::Ones(1, 1); }
+inline EVectorXd constantPolynomialTail::evaluate(const EVectorXd &x) const { return EMatrixXd::Ones(1, 1); }
 
-inline EMatrixXd constantPolynomialTail::eval(const EMatrixXd &X) const { return EMatrixXd::Ones(1, X.cols()); }
+inline EMatrixXd constantPolynomialTail::evaluate(const EMatrixXd &X) const { return EMatrixXd::Ones(1, X.cols()); }
 
 inline EMatrixXd constantPolynomialTail::deriv(const EVectorXd &x) const { return EMatrixXd::Zero(1, x.rows()); }
 

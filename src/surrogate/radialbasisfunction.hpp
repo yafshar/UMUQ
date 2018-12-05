@@ -243,7 +243,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    double eval(EVectorXd const &Point) const;
+    double evaluate(EVectorXd const &Point) const;
 
     /*!
      * \brief Method for evaluating the surrogate model at a point with known distances
@@ -255,7 +255,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    double eval(EVectorXd const &Point, EVectorXd const &Distances) const;
+    double evaluate(EVectorXd const &Point, EVectorXd const &Distances) const;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points
@@ -266,7 +266,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    EVectorXd evals(EMatrixXd const &Points) const;
+    EVectorXd evaluate(EMatrixXd const &Points) const;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points with known distances
@@ -278,7 +278,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    EVectorXd evals(EMatrixXd const &Points, EMatrixXd const &Distances) const;
+    EVectorXd evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const;
 
     /*!
      * \brief Method for evaluating the derivative of the surrogate model at a point
@@ -399,9 +399,9 @@ void radialBasisFunction<kernelType, polynomialTailType>::setPoints(EMatrixXd co
 
     functionValues.segment(polynomialSpaceDimension, currentNumPoints) = FunctionValues;
 
-    EMatrixXd px = tail.eval(points);
+    EMatrixXd px = tail.evaluate(points);
 
-    EMatrixXd phi = kernel.eval(calculateDistance(points));
+    EMatrixXd phi = kernel.evaluate(L2Distance(points));
 
     auto const n = currentNumPoints + polynomialSpaceDimension;
 
@@ -492,7 +492,7 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoint(EVectorXd con
     int const n = polynomialSpaceDimension + currentNumPoints;
 
     EVectorXd vx(n);
-    vx << tail.eval(point), kernel.eval(calculateDistance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    vx << tail.evaluate(point), kernel.evaluate(L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
 
     // Step 1
     EVectorXd u12 = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.segment(0, n)) * vx;
@@ -556,14 +556,14 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
         UMUQFAIL("Capacity exceeded");
     }
 
-    auto px = tail.eval(points);
+    auto px = tail.evaluate(points);
 
     EMatrixXd B = EMatrixXd::Zero(n, newNumPoints);
 
     B.block(0, 0, polynomialSpaceDimension, newNumPoints).rowwise() = px.transpose();
-    B.block(polynomialSpaceDimension, 0, currentNumPoints, newNumPoints) = kernel.eval(calculateDistance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    B.block(polynomialSpaceDimension, 0, currentNumPoints, newNumPoints) = kernel.evaluate(L2Distance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
 
-    EMatrixXd K = kernel.eval(calculateDistance(points));
+    EMatrixXd K = kernel.evaluate(L2Distance(points));
 
     // REGULARIZATION
     K += dampingCoefficient * EMatrixXd::Identity(newNumPoints, newNumPoints);
@@ -620,7 +620,7 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
 }
 
 template <class kernelType, class polynomialTailType>
-double radialBasisFunction<kernelType, polynomialTailType>::eval(EVectorXd const &Point) const
+double radialBasisFunction<kernelType, polynomialTailType>::evaluate(EVectorXd const &Point) const
 {
     if (shouldRecomputeCoefficients)
     {
@@ -629,13 +629,13 @@ double radialBasisFunction<kernelType, polynomialTailType>::eval(EVectorXd const
 
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
-    EVectorXd px = tail.eval(point);
-    EVectorXd phi = kernel.eval(calculateDistance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    EVectorXd px = tail.evaluate(point);
+    EVectorXd phi = kernel.evaluate(L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
     return coefficientVector.segment(0, polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, currentNumPoints).dot(phi);
 }
 
 template <class kernelType, class polynomialTailType>
-double radialBasisFunction<kernelType, polynomialTailType>::eval(EVectorXd const &Point, EVectorXd const &Distances) const
+double radialBasisFunction<kernelType, polynomialTailType>::evaluate(EVectorXd const &Point, EVectorXd const &Distances) const
 {
     if (shouldRecomputeCoefficients)
     {
@@ -644,18 +644,18 @@ double radialBasisFunction<kernelType, polynomialTailType>::eval(EVectorXd const
     if ((lowerBounds.array() != 0).any() || (upperBounds.array() != 1).any())
     {
         UMUQWARNING("RBF uses internal scaling so distances have to be recomputed");
-        return eval(Point);
+        return evaluate(Point);
     }
 
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
-    EVectorXd px = tail.eval(point);
-    EVectorXd phi = kernel.eval(Distances);
+    EVectorXd px = tail.evaluate(point);
+    EVectorXd phi = kernel.evaluate(Distances);
     return coefficientVector.segment(0, polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, currentNumPoints).dot(phi);
 }
 
 template <class kernelType, class polynomialTailType>
-EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evals(EMatrixXd const &Points) const
+EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evaluate(EMatrixXd const &Points) const
 {
     if (shouldRecomputeCoefficients)
     {
@@ -664,13 +664,13 @@ EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evals(EMatrixXd c
 
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
-    EMatrixXd px = tail.eval(points);
-    EMatrixXd phi = kernel.eval(calculateDistance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    EMatrixXd px = tail.evaluate(points);
+    EMatrixXd phi = kernel.evaluate(L2Distance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
     return px.transpose() * coefficientVector.segment(0, polynomialSpaceDimension) + phi.transpose() * coefficientVector.segment(polynomialSpaceDimension, currentNumPoints);
 }
 
 template <class kernelType, class polynomialTailType>
-EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evals(EMatrixXd const &Points, EMatrixXd const &Distances) const
+EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const
 {
     if (shouldRecomputeCoefficients)
     {
@@ -679,13 +679,13 @@ EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evals(EMatrixXd c
     if ((lowerBounds.array() != 0).any() || (upperBounds.array() != 1).any())
     {
         UMUQWARNING("RBF uses internal scaling so distances have to be recomputed");
-        return evals(Point);
+        return evaluate(Point);
     }
 
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
-    EMatrixXd px = tail.eval(points);
-    EMatrixXd phi = kernel.eval(Distances);
+    EMatrixXd px = tail.evaluate(points);
+    EMatrixXd phi = kernel.evaluate(Distances);
     return px.transpose() * coefficientVector.segment(0, polynomialSpaceDimension) + phi.transpose() * coefficientVector.segment(polynomialSpaceDimension, currentNumPoints);
 }
 
@@ -701,7 +701,7 @@ EVectorXd radialBasisFunction<kernelType, polynomialTailType>::deriv(EVectorXd c
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
 
     EMatrixXd dpx = tail.deriv(point);
-    EVectorXd Distances = calculateDistance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints));
+    EVectorXd Distances = L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints));
 
     // Better safe than sorry
     for (int i = 0; i < currentNumPoints; ++i)

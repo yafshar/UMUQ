@@ -57,6 +57,11 @@ namespace umuq
  * That is  \f$ f: \mathbb{R}^n \rightarrow \mathbb{R} \f$. 
  */
 
+
+
+
+
+
 /*! \class surrogate
  * \ingroup Surrogate_Module
  *
@@ -155,7 +160,7 @@ public:
    * 
    * \returns double Value of the surrogate model at the point
    */
-  virtual double eval(EVectorXd const &Point) const = 0;
+  virtual double evaluate(EVectorXd const &Point) const = 0;
 
   /*!
    * \brief Method for evaluating the surrogate at multiple points
@@ -165,7 +170,7 @@ public:
    * 
    * \returns double Values of the surrogate model at the points
    */
-  virtual double eval(EVectorXd const &Point, EVectorXd const &Distance) const = 0;
+  virtual double evaluate(EVectorXd const &Point, EVectorXd const &Distance) const = 0;
 
   /*!
    * \brief Method for evaluating the surrogate at multiple points
@@ -174,7 +179,7 @@ public:
    * 
    * \returns double Values of the surrogate model at the points
    */
-  virtual EVectorXd evals(EMatrixXd const &Points) const = 0;
+  virtual EVectorXd evaluate(EMatrixXd const &Points) const = 0;
 
   /*!
    * \brief Method for evaluating the surrogate at multiple points
@@ -184,7 +189,7 @@ public:
    * 
    * \returns EVectorXd Values of the surrogate model at the points
    */
-  virtual EVectorXd evals(EMatrixXd const &Points, EMatrixXd const &Distances) const = 0;
+  virtual EVectorXd evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const = 0;
 
   /*!
    * \brief Method for evaluating the derivative of the surrogate model at a point
