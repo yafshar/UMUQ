@@ -15,18 +15,18 @@ inline namespace linearalgebra
  * \brief Eigen map type \c #EMapType is a new type to map the existing C++ memory buffer to an Eigen Matrix object.
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T         Data type or \b Eigen::Matrix type
- * \tparam _Options  optional parameter, a combination of either 
- *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br> 
- *                     or one of either <br>
- *                   - \b Eigen::AutoAlign, or \b Eigen::DontAlign. <br>
- *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
- *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
+ * \tparam T        Data type or \b Eigen::Matrix type
+ * \tparam Options  optional parameter, a combination of either 
+ *                  - \b Eigen::RowMajor or \b Eigen::ColMajor, <br> 
+ *                    or one of either <br>
+ *                  - \b Eigen::AutoAlign, or \b Eigen::DontAlign. <br>
+ *                  The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                  for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  *
  * 
  * \note 
- * 	- Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *    to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ * 	- Use of template is flexible enough that one can use directly the arithmetic data type and Options 
+ *    to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options> or one can directly
  *    pass only the \c Eigen::Matrix as template parameters
  * 
  * Example: <br>
@@ -83,8 +83,8 @@ inline namespace linearalgebra
  * \end{matrix}
  * \f$
  */
-template <class T, int _Options = Eigen::RowMajor>
-using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;
+template <class T, int Options = Eigen::RowMajor>
+using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options>, T>::type>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -92,22 +92,22 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T         Data type or \b Eigen::Matrix type
- * \tparam _Options  optional parameter, a combination of either 
- *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
- *                     or one of either <br>
- *                   - \b Eigen::AutoAlign or \b Eigen::DontAlign. <br>
- *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
- *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
+ * \tparam T        Data type or \b Eigen::Matrix type
+ * \tparam Options  optional parameter, a combination of either 
+ *                  - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
+ *                    or one of either <br>
+ *                  - \b Eigen::AutoAlign or \b Eigen::DontAlign. <br>
+ *                  The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                  for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
  * \note 
- * - Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *   to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ * - Use of template is flexible enough that one can use directly the arithmetic data type and Options 
+ *   to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options> or one can directly
  *   pass only the \c Eigen::Matrix as template parameters
  * 
  */
-template <typename T, int _Options = Eigen::RowMajor>
-using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type const>;
+template <typename T, int Options = Eigen::RowMajor>
+using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options>, T>::type const>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -535,97 +535,76 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
 }
 
 /*!
- * \ingroup LinearAlgebra_Module
+ * \brief Calculate the squared L2 distance between the \c columns or \c rows of a matrix
  * 
- * \brief Calculate the squared distance between the rows of a matrix
+ * \tparam DataType            Data type
+ * \tparam OutputDataType      Data type of the return output result (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
  * 
- * \tparam DataType       Data type
- * \tparam OutputDataType Data type of the return output result (default is double)
- *
- * \param eMatrix  The input matrix to calculate the squared distance between its rows
+ * \param eMatrix  Input matrix to calculate the squared distance between its \c columns or \c rows
  * 
  * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
+ *
  */
-template <typename DataType, typename OutputDataType = double>
-EMatrixX<OutputDataType> calculateRowsSquaredDistance(EMatrixX<DataType> const &eMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+EMatrixX<OutputDataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix)
 {
-    auto const nRows = eMatrix.rows();
-    EMatrixX<OutputDataType> rowsSquaredDistanceMatrix(nRows, nRows);
+    switch (Direction)
+    {
+    case VectorwiseOperation::ColWise:
+    {
+        auto const nCols = eMatrix.cols();
+        EMatrixX<OutputDataType> columnsSquaredDistanceMatrix(nCols, nCols);
+        ERowVectorX<OutputDataType> vecC = eMatrix.array().square().colwise().sum().template cast<OutputDataType>();
+        columnsSquaredDistanceMatrix.rowwise() = vecC;
+        columnsSquaredDistanceMatrix.colwise() += vecC.transpose();
+        columnsSquaredDistanceMatrix -= 2 * eMatrix.transpose().template cast<OutputDataType>() * eMatrix.template cast<OutputDataType>();
+        return columnsSquaredDistanceMatrix;
+    }
+    break;
+    case VectorwiseOperation::RowWise:
+    {
+        auto const nRows = eMatrix.rows();
+        EMatrixX<OutputDataType> rowsSquaredDistanceMatrix(nRows, nRows);
+        EVectorX<OutputDataType> vecR = eMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
+        rowsSquaredDistanceMatrix.colwise() = vecR;
+        rowsSquaredDistanceMatrix.rowwise() += vecR.transpose();
+        rowsSquaredDistanceMatrix -= 2 * eMatrix.template cast<OutputDataType>() * eMatrix.transpose().template cast<OutputDataType>();
+        return rowsSquaredDistanceMatrix;
+    }
+    break;
+    default:
+        UMUQFAIL("Unknown direction!");
+        break;
+    };
     /*!
      * \todo
      * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
      * Profiling is needed to decide whether we should copy cast the eMatrix to the new matrix first or 
      * continue the current procedure and do casting in operations
      */
-    EVectorX<OutputDataType> vecX = eMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
-    rowsSquaredDistanceMatrix.colwise() = vecX;
-    rowsSquaredDistanceMatrix.rowwise() += vecX.transpose();
-    rowsSquaredDistanceMatrix -= 2 * eMatrix.template cast<OutputDataType>() * eMatrix.transpose().template cast<OutputDataType>();
-    return rowsSquaredDistanceMatrix;
 }
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
- * \brief Calculate the distance between the rows of a matrix
+ * \brief Calculate the L2 distance between the \c columns or \c rows of a matrix
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
+ * \tparam DataType            Data type
+ * \tparam OutputDataType      Data type of the return output result (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
  * 
- * \param eMatrix  The input matrix to calculate the distance between its rows
- * 
- * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
- */
-template <typename DataType, typename OutputDataType = double>
-EMatrixX<OutputDataType> calculateRowsDistance(EMatrixX<DataType> const &eMatrix)
-{
-    EMatrixX<OutputDataType> rowsDistanceMatrix = calculateRowsSquaredDistance<DataType, OutputDataType>(eMatrix);
-    rowsDistanceMatrix = rowsDistanceMatrix.cwiseSqrt();
-    return rowsDistanceMatrix;
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Calculate the squared distance between the columns of a matrix
- * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- *
- * \param eMatrix  The input matrix to calculate the squared distance between its columns
+ * \param eMatrix  The input matrix to calculate the distance between its \c columns or \c rows
  * 
  * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  */
-template <typename DataType, typename OutputDataType = double>
-EMatrixX<OutputDataType> calculateSquaredDistance(EMatrixX<DataType> const &eMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+EMatrixX<OutputDataType> L2Distance(EMatrixX<DataType> const &eMatrix)
 {
-    auto const nCols = eMatrix.cols();
-    EMatrixX<OutputDataType> columnsSquaredDistanceMatrix(nCols, nCols);
-    ERowVectorX<OutputDataType> vecX = eMatrix.array().square().colwise().sum().template cast<OutputDataType>();
-    columnsSquaredDistanceMatrix.rowwise() = vecX;
-    columnsSquaredDistanceMatrix.colwise() += vecX.transpose();
-    columnsSquaredDistanceMatrix -= 2 * eMatrix.transpose().template cast<OutputDataType>() * eMatrix.template cast<OutputDataType>();
-    return columnsSquaredDistanceMatrix;
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Calculate the distance between the columns of a matrix
- * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- *
- * \param eMatrix  The input matrix to calculate the distance between its columns
- * 
- * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
- */
-template <typename DataType, typename OutputDataType = double>
-EMatrixX<OutputDataType> calculateDistance(EMatrixX<DataType> const &eMatrix)
-{
-    EMatrixX<OutputDataType> columnsDistanceMatrix = calculateSquaredDistance<DataType, OutputDataType>(eMatrix);
-    columnsDistanceMatrix = columnsDistanceMatrix.cwiseSqrt();
-    return columnsDistanceMatrix;
+    EMatrixX<OutputDataType> dMatrix = squaredL2Distance<DataType, OutputDataType, Direction>(eMatrix);
+    return dMatrix.cwiseSqrt();
 }
 
 /*!
@@ -641,11 +620,11 @@ EMatrixX<OutputDataType> calculateDistance(EMatrixX<DataType> const &eMatrix)
  * \returns EVectorX<DataType> Vector of squared distances between point and a set of points
  */
 template <typename DataType>
-inline EVectorX<DataType> calculateSquaredDistance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
+inline EVectorX<DataType> squaredL2Distance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
 {
-    EVectorX<DataType> vectorMatrixSquaredDistance(eMatrix.cols());
-    vectorMatrixSquaredDistance.fill(eVector.squaredNorm());
-    return (vectorMatrixSquaredDistance + eMatrix.cwiseProduct(eMatrix).colwise().sum().transpose() - 2 * eMatrix.transpose() * eVector).cwiseAbs();
+    EVectorX<DataType> dVector(eMatrix.cols());
+    dVector.fill(eVector.squaredNorm());
+    return (dVector + eMatrix.cwiseProduct(eMatrix).colwise().sum().transpose() - 2 * eMatrix.transpose() * eVector).cwiseAbs();
 }
 
 /*!
@@ -661,11 +640,10 @@ inline EVectorX<DataType> calculateSquaredDistance(EVectorX<DataType> const &eVe
  * \returns EVectorX<DataType> Vector of distances between point and a set of points
  */
 template <typename DataType>
-inline EVectorX<DataType> calculateDistance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
+inline EVectorX<DataType> L2Distance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
 {
-    EVectorX<DataType> vectorMatrixDistance = calculateSquaredDistance<DataType>(eVector, eMatrix);
-    vectorMatrixDistance = vectorMatrixDistance.cwiseSqrt();
-    return vectorMatrixDistance;
+    EVectorX<DataType> dVector = squaredL2Distance<DataType>(eVector, eMatrix);
+    return dVector.cwiseSqrt();
 }
 
 /*!
@@ -681,13 +659,12 @@ inline EVectorX<DataType> calculateDistance(EVectorX<DataType> const &eVector, E
  * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
  */
 template <typename DataType>
-inline EMatrixX<DataType> calculateSquaredDistance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+inline EMatrixX<DataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
 {
-    EMatrixX<DataType> squaredDistanceMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
-    squaredDistanceMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
-    squaredDistanceMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
-    squaredDistanceMatrix = squaredDistanceMatrix.cwiseAbs();
-    return squaredDistanceMatrix;
+    EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    dMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    dMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    return dMatrix.cwiseAbs();
 }
 
 /*!
@@ -703,13 +680,12 @@ inline EMatrixX<DataType> calculateSquaredDistance(EMatrixX<DataType> const &eMa
  * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
  */
 template <typename DataType>
-inline EMatrixX<DataType> calculateDistance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+inline EMatrixX<DataType> L2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
 {
-    EMatrixX<DataType> distanceMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
-    distanceMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
-    distanceMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
-    distanceMatrix = distanceMatrix.cwiseAbs().cwiseSqrt();
-    return distanceMatrix;
+    EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    dMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    dMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    return dMatrix.cwiseAbs().cwiseSqrt();
 }
 
 /*!
@@ -717,10 +693,12 @@ inline EMatrixX<DataType> calculateDistance(EMatrixX<DataType> const &eMatrix1, 
  * 
  * \brief Calculate the S-optimality measure
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
+ * \tparam DataType            Input data type
+ * \tparam OutputDataType      Output data type (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
  * 
- * \param eMatrix The matrix to calculate its row wise S-optimality 
+ * \param eMatrix The matrix to calculate its column or row wise S-optimality 
  * 
  * \returns OutputDataType The S-optimality measure
  * 
@@ -736,84 +714,12 @@ inline EMatrixX<DataType> calculateDistance(EMatrixX<DataType> const &eMatrix1, 
  * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
  * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &eMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+OutputDataType SOptimality(EMatrixX<DataType> const &eMatrix)
 {
-    EMatrixX<OutputDataType> rowWiseSOptimalityMatrix;
-    calculateRowsDistance<DataType, OutputDataType>(eMatrix, rowWiseSOptimalityMatrix);
-    return 1. / rowWiseSOptimalityMatrix.cwiseInverse().sum();
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Calculate the S-optimality measure
- * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- * 
- * \param eMatrix The matrix to calculate its row wise S-optimality 
- * 
- * \returns OutputDataType The S-optimality measure
- * 
- * The S-optimality measure: <br>
- * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
- * each design point to all the other points in the design. Mathematically, an S–optimal design maximizes 
- * \f$ \frac{N_D}{ \sum_{y \in D} {1/d(y, D-y)}}. \f$ where D is the set of design points, and \f$ N_D \f$ 
- * is the number of points in \f$ D \f$, the distances \f$ d(y, D-y) \f$ are large, so the points are as 
- * spread out as possible. This measures how spread out the design points are; therefore, an S–optimal 
- * design is also called a maximum spread design. 
- * 
- * Reference: <br>
- * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
- * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
- */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateColumnWiseSOptimality(EMatrixX<DataType> const &eMatrix)
-{
-    EMatrixX<OutputDataType> columnWiseSOptimalityMatrix;
-    calculateDistance<DataType, OutputDataType>(eMatrix, columnWiseSOptimalityMatrix);
-    return 1. / columnWiseSOptimalityMatrix.cwiseInverse().sum();
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Fills the rows of the matrix with the specified size whose coefficients are equally spaced between low and high.
- * 
- * The function generates equally spaced values in each row of the matrix with the closed interval of \f$ [low, high].\f$
- * 
- * \tparam DataType Input data type
- * 
- * \param eMatrix  The Eigen matrix
- * \param low      Lower bound of the interval
- * \param high     Upperbound of the interval
- */
-template <typename DataType>
-void rowWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
-{
-    ERowVectorX<DataType> const row = ERowVectorX<DataType>::LinSpaced(eMatrix.cols(), low, high);
-    eMatrix.rowwise() = row;
-}
-
-/*!
- * \ingroup LinearAlgebra_Module
- * 
- * \brief Fills the columns of the matrix with the specified size whose coefficients are equally spaced between low and high.
- * 
- * The function generates equally spaced values in each column of the matrix with the closed interval of \f$ [low, high].\f$
- * 
- * \tparam DataType Input data type
- * 
- * \param eMatrix  The Eigen matrix
- * \param low      Lower bound of the interval
- * \param high     Upperbound of the interval
- */
-template <typename DataType>
-void columnWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
-{
-    EVectorX<DataType> const col = EVectorX<DataType>::LinSpaced(eMatrix.rows(), low, high);
-    eMatrix.colwise() = col;
+    EMatrixX<OutputDataType> dMatrix;
+    dMatrix = L2Distance<DataType, OutputDataType, Direction>(eMatrix);
+    return 1. / dMatrix.cwiseInverse().sum();
 }
 
 /*!

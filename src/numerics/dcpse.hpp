@@ -29,7 +29,7 @@ namespace umuq
  * \tparam RealType        Floating-point data type
  * \tparam DistanceType    Distance type for finding k nearest neighbors. 
  *                         (Default is a specialized class - \b kNearestNeighbor<RealType> with L2 distance)<br>
- *                         \sa umuq::NeighborDistanceTypes
+ *                         \sa umuq::DistanceTypes
  *                         \sa umuq::kNearestNeighbor.<br>
  * \tparam PolynomialType  Polynomial type used in building the vandermonde & vandermonde-like matrix
  *                         (Default is - \b polynomial<RealType> with monomials)<br>
@@ -41,7 +41,7 @@ namespace umuq
  * \todo
  * Currently the class works only for one term and it should be extended to multi terms
  */
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType = umuq::NeighborDistanceTypes::L2, class PolynomialType = polynomial<RealType>>
+template <typename RealType, umuq::DistanceTypes DistanceType = umuq::DistanceTypes::L2, class PolynomialType = polynomial<RealType>>
 class dcpse
 {
   public:
@@ -286,7 +286,7 @@ class dcpse
     RealType rhscoeff;
 };
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 dcpse<RealType, DistanceType, PolynomialType>::dcpse(int ndim, int nterms) : nDim(ndim),
                                                                              nTerms(nterms),
                                                                              dcMonomialSize(0),
@@ -299,7 +299,7 @@ dcpse<RealType, DistanceType, PolynomialType>::dcpse(int ndim, int nterms) : nDi
     }
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 dcpse<RealType, DistanceType, PolynomialType>::dcpse(dcpse<RealType, DistanceType, PolynomialType> &&other)
 {
     nDim = other.nDim;
@@ -313,7 +313,7 @@ dcpse<RealType, DistanceType, PolynomialType>::dcpse(dcpse<RealType, DistanceTyp
     rhscoeff = other.rhscoeff;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 dcpse<RealType, DistanceType, PolynomialType> &dcpse<RealType, DistanceType, PolynomialType>::operator=(dcpse<RealType, DistanceType, PolynomialType> &&other)
 {
     nDim = other.nDim;
@@ -329,10 +329,10 @@ dcpse<RealType, DistanceType, PolynomialType> &dcpse<RealType, DistanceType, Pol
     return *this;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 dcpse<RealType, DistanceType, PolynomialType>::~dcpse() {}
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dataPoints, int const nDataPoints, int *beta, int order, int nENN, RealType ratio)
 {
     if (nDataPoints < 1)
@@ -861,7 +861,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
     return true;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dataPoints, int const nDataPoints, RealType *queryDataPoints, int const nQueryDataPoints, int *beta, int order, int nENN, RealType ratio)
 {
     if (nDataPoints < 1)
@@ -1384,7 +1384,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
     return true;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(RealType *dataPoints, int const nDataPoints, int order, int nENN, RealType ratio)
 {
     if (nDataPoints < 1)
@@ -1872,7 +1872,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     return true;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(RealType *dataPoints, int const nDataPoints, RealType *queryDataPoints, int const nQueryDataPoints, int order, int nENN, RealType ratio)
 {
     if (nDataPoints < 1)
@@ -2488,7 +2488,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     return true;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::compute(RealType *dataFunctionValues, int const nDataPoints, RealType *queryFunctionValues, int const nQueryDataPoints)
 {
     if (KNN->numInputdata() != nDataPoints)
@@ -2517,7 +2517,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::compute(RealType *dataFuncti
     }
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::interpolate(RealType const *dataFunctionValues, int const nDataPoints, RealType *queryFunctionValues, int const nQueryDataPoints)
 {
     if (KNN->numInputdata() != nDataPoints)
@@ -2560,31 +2560,31 @@ bool dcpse<RealType, DistanceType, PolynomialType>::interpolate(RealType const *
     return true;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline RealType *dcpse<RealType, DistanceType, PolynomialType>::neighborhoodKernel(int const index) const
 {
     return dcKernel.data() + index * dcMonomialSize;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline RealType *dcpse<RealType, DistanceType, PolynomialType>::neighborhoodKernel() const
 {
     return dcKernel.data();
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline int dcpse<RealType, DistanceType, PolynomialType>::neighborhoodKernelSize() const
 {
     return dcMonomialSize;
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline int dcpse<RealType, DistanceType, PolynomialType>::orderofAccuracy(int const index) const
 {
     return Order[index];
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline void dcpse<RealType, DistanceType, PolynomialType>::printInfo() const
 {
     for (int i = 0; i < nTerms; i++)
@@ -2594,13 +2594,13 @@ inline void dcpse<RealType, DistanceType, PolynomialType>::printInfo() const
     }
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline RealType dcpse<RealType, DistanceType, PolynomialType>::averageSpace(int const index) const
 {
     return h_average[index];
 }
 
-template <typename RealType, umuq::NeighborDistanceTypes DistanceType, class PolynomialType>
+template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 inline RealType *dcpse<RealType, DistanceType, PolynomialType>::averageSpace() const
 {
     return h_average.data();

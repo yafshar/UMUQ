@@ -191,7 +191,7 @@ class kNearestNeighborBase
     /*!
      * \brief Check to see whether it requires the covariance for finding the neighbors. (Default is no)
      * 
-     * \returns true If the NeighborDistanceTypes type is the Mahalanobis distance
+     * \returns true If the DistanceTypes type is the Mahalanobis distance
      */
     inline bool needsCovariance() const;
 
