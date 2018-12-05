@@ -9,137 +9,137 @@
  */
 TEST(eigen_test, HandlesMap)
 {
-	// Create an array of data
-	std::vector<double> A(12);
+    // Create an array of data
+    std::vector<double> A(12);
 
-	// Initialize the array
-	std::iota(A.begin(), A.end(), double{});
+    // Initialize the array
+    std::iota(A.begin(), A.end(), double{});
 
-	// Copy the buffer to the new Eigen object
-	umuq::EMatrixXd ACopy = umuq::EMapType<double>(A.data(), 3, 4);
+    // Copy the buffer to the new Eigen object
+    umuq::EMatrixXd ACopy = umuq::EMapType<double>(A.data(), 3, 4);
 
-	// Check to make sure the values are the same
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 4; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(A[l], ACopy(i, j));
-		}
-	}
+    // Check to make sure the values are the same
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 4; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(A[l], ACopy(i, j));
+        }
+    }
 
-	// Map the buffer to an Eigen object format no copy
-	umuq::EMapType<double> AMap(A.data(), 3, 4);
+    // Map the buffer to an Eigen object format no copy
+    umuq::EMapType<double> AMap(A.data(), 3, 4);
 
-	// Change some of the values in the original buffer
-	A[0] = -100.;
-	A[1] = 200.0;
-	A[5] = 500.0;
-	A[9] = 900.0;
-	A[11] = -23.;
+    // Change some of the values in the original buffer
+    A[0] = -100.;
+    A[1] = 200.0;
+    A[5] = 500.0;
+    A[9] = 900.0;
+    A[11] = -23.;
 
-	// Compare the Copied buffer and original data
-	EXPECT_NE(AMap(0, 0), ACopy(0, 0));
-	EXPECT_NE(AMap(0, 1), ACopy(0, 1));
-	EXPECT_NE(AMap(1, 1), ACopy(1, 1));
-	EXPECT_NE(AMap(2, 1), ACopy(2, 1));
-	EXPECT_NE(AMap(2, 3), ACopy(2, 3));
+    // Compare the Copied buffer and original data
+    EXPECT_NE(AMap(0, 0), ACopy(0, 0));
+    EXPECT_NE(AMap(0, 1), ACopy(0, 1));
+    EXPECT_NE(AMap(1, 1), ACopy(1, 1));
+    EXPECT_NE(AMap(2, 1), ACopy(2, 1));
+    EXPECT_NE(AMap(2, 3), ACopy(2, 3));
 
-	// Make sure that the mapped data is the same as original buffer
-	EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
-	EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
-	EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
-	EXPECT_DOUBLE_EQ(AMap(0, 3), 3.);
-	EXPECT_DOUBLE_EQ(AMap(1, 0), 4.);
-	EXPECT_DOUBLE_EQ(AMap(1, 1), 500.);
-	EXPECT_DOUBLE_EQ(AMap(1, 2), 6.);
-	EXPECT_DOUBLE_EQ(AMap(1, 3), 7.);
-	EXPECT_DOUBLE_EQ(AMap(2, 0), 8.);
-	EXPECT_DOUBLE_EQ(AMap(2, 1), 900.);
-	EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
-	EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
+    // Make sure that the mapped data is the same as original buffer
+    EXPECT_DOUBLE_EQ(AMap(0, 0), -100.);
+    EXPECT_DOUBLE_EQ(AMap(0, 1), 200.);
+    EXPECT_DOUBLE_EQ(AMap(0, 2), 2.);
+    EXPECT_DOUBLE_EQ(AMap(0, 3), 3.);
+    EXPECT_DOUBLE_EQ(AMap(1, 0), 4.);
+    EXPECT_DOUBLE_EQ(AMap(1, 1), 500.);
+    EXPECT_DOUBLE_EQ(AMap(1, 2), 6.);
+    EXPECT_DOUBLE_EQ(AMap(1, 3), 7.);
+    EXPECT_DOUBLE_EQ(AMap(2, 0), 8.);
+    EXPECT_DOUBLE_EQ(AMap(2, 1), 900.);
+    EXPECT_DOUBLE_EQ(AMap(2, 2), 10.);
+    EXPECT_DOUBLE_EQ(AMap(2, 3), -23.);
 
-	// Check the mutual exclusive
-	AMap(0, 0) = 200.0;
-	EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
+    // Check the mutual exclusive
+    AMap(0, 0) = 200.0;
+    EXPECT_DOUBLE_EQ(AMap(0, 0), A[0]);
 
-	// Destroy the buffer
-	A.clear();
-	A.shrink_to_fit();
+    // Destroy the buffer
+    A.clear();
+    A.shrink_to_fit();
 
-	EXPECT_EQ(nullptr, A.data());
+    EXPECT_EQ(nullptr, A.data());
 
-	// Allocate memory and initialize to 0
-	A.resize(625, double{});
+    // Allocate memory and initialize to 0
+    A.resize(625, double{});
 
-	// Create a new 25*25 Eigen Matrix C and initialize to random values
-	umuq::EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
+    // Create a new 25*25 Eigen Matrix C and initialize to random values
+    umuq::EMatrixXd C = Eigen::Matrix<double, 25, 25>::Random();
 
-	// Copy the matrix C into A
-	umuq::EMap<umuq::EMatrixXd>(A.data(), C);
+    // Copy the matrix C into A
+    umuq::EMap<umuq::EMatrixXd>(A.data(), C);
 
-	// Check to see if the copy process has been done correctly
-	for (int i = 0, l = 0; i < 25; i++)
-	{
-		for (int j = 0; j < 25; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(A[l], C(i, j));
-		}
-	}
+    // Check to see if the copy process has been done correctly
+    for (int i = 0, l = 0; i < 25; i++)
+    {
+        for (int j = 0; j < 25; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(A[l], C(i, j));
+        }
+    }
 
-	// Change one value in the array
-	A[624] = 100.0;
+    // Change one value in the array
+    A[624] = 100.0;
 
-	// Check to make sure that the matrix C is a copy of the array buffer
-	EXPECT_NE(A[624], C(24, 24));
+    // Check to make sure that the matrix C is a copy of the array buffer
+    EXPECT_NE(A[624], C(24, 24));
 
-	// Destroy the buffer
-	A.clear();
-	A.shrink_to_fit();
+    // Destroy the buffer
+    A.clear();
+    A.shrink_to_fit();
 
-	auto *Apointer = C.data();
-	Apointer[0] = 10000.0;
-	EXPECT_DOUBLE_EQ(C(0, 0), 10000.0);
+    auto *Apointer = C.data();
+    Apointer[0] = 10000.0;
+    EXPECT_DOUBLE_EQ(C(0, 0), 10000.0);
 
-	double **D;
-	D = new double *[3];
-	for (int i = 0; i < 3; i++)
-	{
-		D[i] = new double[3];
-	}
+    double **D;
+    D = new double *[3];
+    for (int i = 0; i < 3; i++)
+    {
+        D[i] = new double[3];
+    }
 
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++, l++)
-		{
-			D[i][j] = (double)l;
-		}
-	}
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            D[i][j] = (double)l;
+        }
+    }
 
-	umuq::EMatrixXd DCopy = umuq::EMap<umuq::EMatrixXd>(D, 3, 3);
+    umuq::EMatrixXd DCopy = umuq::EMap<umuq::EMatrixXd>(D, 3, 3);
 
-	for (int j = 0; j < 3; j++)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			EXPECT_DOUBLE_EQ(DCopy(i, j), D[i][j]);
-		}
-	}
+    for (int j = 0; j < 3; j++)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            EXPECT_DOUBLE_EQ(DCopy(i, j), D[i][j]);
+        }
+    }
 
-	// Converts them to an array, which uses to multiply them coefficient-wise
-	DCopy = DCopy.array() * DCopy.array();
+    // Converts them to an array, which uses to multiply them coefficient-wise
+    DCopy = DCopy.array() * DCopy.array();
 
-	umuq::EMap<umuq::EMatrixXd>(D, DCopy);
+    umuq::EMap<umuq::EMatrixXd>(D, DCopy);
 
-	for (int i = 0, l = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++, l++)
-		{
-			EXPECT_DOUBLE_EQ(D[i][j], (double)l * l);
-		}
-	}
+    for (int i = 0, l = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++, l++)
+        {
+            EXPECT_DOUBLE_EQ(D[i][j], (double)l * l);
+        }
+    }
 
-	delete[] * D;
-	delete[] D;
+    delete[] * D;
+    delete[] D;
 }
 
 /*!
@@ -149,30 +149,30 @@ TEST(eigen_test, HandlesMap)
  */
 TEST(eigen_la_test, HandlesSolver)
 {
-	umuq::EMatrix6d A;
-	A << 1, 1, 0, 1, 0, 0,
-		1, 0, 1, 0, 0, 1,
-		1, -1, 0, 1, -0, 0,
-		1, 0, -1, 0, -0, 1,
-		1, 0.70710678118654752440, 0.70710678118654752440, 0.5, 0.5, 0.5,
-		1, -0.70710678118654752440, -0.70710678118654752440, 0.5, 0.5, 0.5;
+    umuq::EMatrix6d A;
+    A << 1, 1, 0, 1, 0, 0,
+        1, 0, 1, 0, 0, 1,
+        1, -1, 0, 1, -0, 0,
+        1, 0, -1, 0, -0, 1,
+        1, 0.70710678118654752440, 0.70710678118654752440, 0.5, 0.5, 0.5,
+        1, -0.70710678118654752440, -0.70710678118654752440, 0.5, 0.5, 0.5;
 
-	umuq::EVector6d B = umuq::EVector6d::Ones();
+    umuq::EVector6d B = umuq::EVector6d::Ones();
 
-	// LU decomposition of a matrix with complete pivoting
-	// Eigen::FullPivLU<EMatrix6d> lu(A);
+    // LU decomposition of a matrix with complete pivoting
+    // Eigen::FullPivLU<EMatrix6d> lu(A);
 
-	umuq::EVector6d X = A.fullPivLu().solve(B);
+    umuq::EVector6d X = A.fullPivLu().solve(B);
 
-	auto relative_error = (A * X - B).norm() / B.norm();
+    auto relative_error = (A * X - B).norm() / B.norm();
 
-	EXPECT_DOUBLE_EQ(relative_error, 0);
+    EXPECT_DOUBLE_EQ(relative_error, 0);
 
-	X = A.partialPivLu().solve(B);
+    X = A.partialPivLu().solve(B);
 
-	relative_error = (A * X - B).norm() / B.norm();
+    relative_error = (A * X - B).norm() / B.norm();
 
-	EXPECT_TRUE(std::isnan(relative_error));
+    EXPECT_TRUE(std::isnan(relative_error));
 }
 
 /*! 
@@ -183,22 +183,22 @@ TEST(eigen_la_test, HandlesSolver)
  */
 TEST(eigen_svd_test, HandlesSVD)
 {
-	// This is the example from wikipedia
-	// https://en.wikipedia.org/wiki/Singular-value_decomposition
-	Eigen::Matrix<double, 4, 5> A;
-	A << 1, 0, 0, 0, 2,
-		0, 0, 3, 0, 0,
-		0, 0, 0, 0, 0,
-		0, 2, 0, 0, 0;
+    // This is the example from wikipedia
+    // https://en.wikipedia.org/wiki/Singular-value_decomposition
+    Eigen::Matrix<double, 4, 5> A;
+    A << 1, 0, 0, 0, 2,
+        0, 0, 3, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 2, 0, 0, 0;
 
-	//Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
-	Eigen::JacobiSVD<Eigen::Matrix<double, 4, 5>> svd(A);
-	umuq::EVector4<double> B(svd.singularValues());
+    //Two-sided Jacobi iterations is numerically very accurate, fast for small matrices, but very slow for larger ones.
+    Eigen::JacobiSVD<Eigen::Matrix<double, 4, 5>> svd(A);
+    umuq::EVector4<double> B(svd.singularValues());
 
-	EXPECT_DOUBLE_EQ(3, B(0));
-	EXPECT_DOUBLE_EQ(std::sqrt((double)(5)), B(1));
-	EXPECT_DOUBLE_EQ(2, B(2));
-	EXPECT_DOUBLE_EQ(0, B(3));
+    EXPECT_DOUBLE_EQ(3, B(0));
+    EXPECT_DOUBLE_EQ(std::sqrt((double)(5)), B(1));
+    EXPECT_DOUBLE_EQ(2, B(2));
+    EXPECT_DOUBLE_EQ(0, B(3));
 }
 
 /*!
@@ -209,52 +209,52 @@ TEST(eigen_svd_test, HandlesSVD)
  */
 TEST(eigen_lu_test, HandlesLU)
 {
-	typedef umuq::EMatrix3<double> EMatrix3d;
-	typedef umuq::EVector3<double> EVector3d;
+    typedef umuq::EMatrix3<double> EMatrix3d;
+    typedef umuq::EVector3<double> EVector3d;
 
-	// A 3*3 matrix with rank 2 which is not invertible
-	EMatrix3d m;
-	m << 1, 1, 0,
-		1, 3, 1,
-		0, 2, 1;
+    // A 3*3 matrix with rank 2 which is not invertible
+    EMatrix3d m;
+    m << 1, 1, 0,
+        1, 3, 1,
+        0, 2, 1;
 
-	// LU decomposition of a matrix with complete pivoting, and related features.
-	Eigen::FullPivLU<EMatrix3d> lu(m);
+    // LU decomposition of a matrix with complete pivoting, and related features.
+    Eigen::FullPivLU<EMatrix3d> lu(m);
 
-	// The rank of the matrix m with lu decomposition.
-	EXPECT_EQ(lu.rank(), 2);
+    // The rank of the matrix m with lu decomposition.
+    EXPECT_EQ(lu.rank(), 2);
 
-	// False as the matrix m with lu decomposition is not invertible.
-	EXPECT_FALSE(lu.isInvertible());
+    // False as the matrix m with lu decomposition is not invertible.
+    EXPECT_FALSE(lu.isInvertible());
 
-	// Column vector
-	EVector3d n;
-	n << 5, 5, 5;
+    // Column vector
+    EVector3d n;
+    n << 5, 5, 5;
 
-	// NOTE :
-	// On travis ci OSX system there is this trange bug which would break this code so this is the temporary hack
-	{
-		Eigen::Matrix<double, 3, 2> p = lu.image(m);
+    // NOTE :
+    // On travis ci OSX system there is this trange bug which would break this code so this is the temporary hack
+    {
+        Eigen::Matrix<double, 3, 2> p = lu.image(m);
 
-		std::cout << std::endl;
-		std::cout << p << std::endl;
+        std::cout << std::endl;
+        std::cout << p << std::endl;
 
-		// Creating the new matrix from image (also called its column-space) of it and a new vector.
-		m << p, n;
+        // Creating the new matrix from image (also called its column-space) of it and a new vector.
+        m << p, n;
 
-		std::cout << std::endl;
-		std::cout << m << std::endl;
-		std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << m << std::endl;
+        std::cout << std::endl;
 
-		// LU decomposition of a matrix with complete pivoting, and related features.
-		lu.compute(m);
+        // LU decomposition of a matrix with complete pivoting, and related features.
+        lu.compute(m);
 
-		// The rank of the matrix m with lu decomposition.
-		EXPECT_EQ(lu.rank(), 3);
+        // The rank of the matrix m with lu decomposition.
+        EXPECT_EQ(lu.rank(), 3);
 
-		// True as the matrix m with lu decomposition is invertible.
-		EXPECT_TRUE(lu.isInvertible());
-	}
+        // True as the matrix m with lu decomposition is invertible.
+        EXPECT_TRUE(lu.isInvertible());
+    }
 }
 
 /*!
@@ -265,32 +265,32 @@ TEST(eigen_lu_test, HandlesLU)
  */
 TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 {
-	// Matrix A is selfadjoint
-	umuq::EMatrix2d A;
-	A << 2, 2, 2, 2;
+    // Matrix A is selfadjoint
+    umuq::EMatrix2d A;
+    A << 2, 2, 2, 2;
 
-	// Matrix A is not positive definite
-	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
+    // Matrix A is not positive definite
+    EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
 
-	// Force the matrix to be positive definite
-	umuq::forceSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A);
+    // Force the matrix to be positive definite
+    umuq::forceSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A);
 
-	// Check to see if it is positive definite
-	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
+    // Check to see if it is positive definite
+    EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<umuq::EMatrix2d>(A));
 
-	// Matrix B is selfadjoint
-	std::vector<double> B{1, 1, 3,
-						  1, 3, 1,
-						  3, 1, 1};
+    // Matrix B is selfadjoint
+    std::vector<double> B{1, 1, 3,
+                          1, 3, 1,
+                          3, 1, 1};
 
-	// Matrix B is not positive definite
-	EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
+    // Matrix B is not positive definite
+    EXPECT_FALSE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
 
-	// Force the matrix to be positive definite
-	umuq::forceSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3);
+    // Force the matrix to be positive definite
+    umuq::forceSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3);
 
-	// Check to see if it is positive definite
-	EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
+    // Check to see if it is positive definite
+    EXPECT_TRUE(umuq::isSelfAdjointMatrixPositiveDefinite<double>(B.data(), 3));
 }
 
 /*!
@@ -301,56 +301,54 @@ TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
  */
 TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
 {
-	// Construct two simple matrices
-	umuq::EMatrixX<int> X(3, 4);
-	X << 1, 2, 3, 4,
-		4, 5, 6, 4,
-		7, 8, -9, 4;
+    // Construct two simple matrices
+    umuq::EMatrixX<int> X(3, 4);
+    X << 1, 2, 3, 4,
+        4, 5, 6, 4,
+        7, 8, -9, 4;
 
-	umuq::EMatrixX<double> Y;
+    // Calculate the squared distance between the rows of X
+    umuq::EMatrixXd Y = umuq::squaredL2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
 
-	// Calculate the squared distance between the rows of X
-	umuq::calculateRowsSquaredDistance<int, double>(X, Y);
+    EXPECT_TRUE(Y.rows() == X.rows());
+    EXPECT_TRUE(Y.cols() == X.rows());
+    EXPECT_TRUE((Y.diagonal().array() == 0).all());
+    EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4));
+    EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4));
+    EXPECT_DOUBLE_EQ(Y(1, 2), (4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4));
+    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
 
-	EXPECT_TRUE(Y.rows() == X.rows());
-	EXPECT_TRUE(Y.cols() == X.rows());
-	EXPECT_TRUE((Y.diagonal().array() == 0).all());
-	EXPECT_DOUBLE_EQ(Y(0,1), (1-4)*(1-4)+(2-5)*(2-5)+(3-6)*(3-6)+(4-4)*(4-4));
-	EXPECT_DOUBLE_EQ(Y(0,2), (1-7)*(1-7)+(2-8)*(2-8)+(3+9)*(3+9)+(4-4)*(4-4));
-	EXPECT_DOUBLE_EQ(Y(1,2), (4-7)*(4-7)+(5-8)*(5-8)+(6+9)*(6+9)+(4-4)*(4-4));
-	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
-	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
+    // Calculate the squared distance between the columns of X
+    Y = umuq::squaredL2Distance<int>(X);
 
-	// Calculate the squared distance between the columns of X
-	umuq::calculateColumnsSquaredDistance<int, double>(X, Y);
+    EXPECT_TRUE(Y.rows() == X.cols());
+    EXPECT_TRUE(Y.cols() == X.cols());
 
-	EXPECT_TRUE(Y.rows() == X.cols());
-	EXPECT_TRUE(Y.cols() == X.cols());
+    EXPECT_TRUE((Y.diagonal().array() == 0).all());
+    EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 2) * (1 - 2) + (4 - 5) * (4 - 5) + (7 - 8) * (7 - 8));
+    EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 3) * (1 - 3) + (4 - 6) * (4 - 6) + (7 + 9) * (7 + 9));
+    EXPECT_DOUBLE_EQ(Y(0, 3), (1 - 4) * (1 - 4) + (4 - 4) * (4 - 4) + (7 - 4) * (7 - 4));
+    EXPECT_DOUBLE_EQ(Y(1, 3), (2 - 4) * (2 - 4) + (5 - 4) * (5 - 4) + (8 - 4) * (8 - 4));
 
-	EXPECT_TRUE((Y.diagonal().array() == 0).all());
-	EXPECT_DOUBLE_EQ(Y(0,1), (1-2)*(1-2)+(4-5)*(4-5)+(7-8)*(7-8));
-	EXPECT_DOUBLE_EQ(Y(0,2), (1-3)*(1-3)+(4-6)*(4-6)+(7+9)*(7+9));
-	EXPECT_DOUBLE_EQ(Y(0,3), (1-4)*(1-4)+(4-4)*(4-4)+(7-4)*(7-4));
-	EXPECT_DOUBLE_EQ(Y(1,3), (2-4)*(2-4)+(5-4)*(5-4)+(8-4)*(8-4));
+    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
 
-	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
-	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
+    // Calculate the distance between the rows of X
+    Y = umuq::L2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
 
-	// Calculate the distance between the rows of X
-	umuq::calculateRowsDistance<int, double>(X, Y);
-
-	EXPECT_TRUE(Y.rows() == X.rows());
-	EXPECT_TRUE(Y.cols() == X.rows());
-	EXPECT_TRUE((Y.diagonal().array() == 0).all());
-	EXPECT_DOUBLE_EQ(Y(0,1), std::sqrt((1-4)*(1-4)+(2-5)*(2-5)+(3-6)*(3-6)+(4-4)*(4-4)));
-	EXPECT_DOUBLE_EQ(Y(0,2), std::sqrt((1-7)*(1-7)+(2-8)*(2-8)+(3+9)*(3+9)+(4-4)*(4-4)));
-	EXPECT_DOUBLE_EQ(Y(1,2), std::sqrt((4-7)*(4-7)+(5-8)*(5-8)+(6+9)*(6+9)+(4-4)*(4-4)));
-	EXPECT_DOUBLE_EQ(Y(0,1), Y(1,0));
-	EXPECT_DOUBLE_EQ(Y(0,2), Y(2,0));
+    EXPECT_TRUE(Y.rows() == X.rows());
+    EXPECT_TRUE(Y.cols() == X.rows());
+    EXPECT_TRUE((Y.diagonal().array() == 0).all());
+    EXPECT_DOUBLE_EQ(Y(0, 1), std::sqrt((1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4)));
+    EXPECT_DOUBLE_EQ(Y(0, 2), std::sqrt((1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4)));
+    EXPECT_DOUBLE_EQ(Y(1, 2), std::sqrt((4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4)));
+    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
 }
 
 int main(int argc, char **argv)
 {
-	::testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
