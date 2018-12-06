@@ -107,7 +107,10 @@ TESTS = polynomial_test$(EXEEXT) legendrepolynomial_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
-	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) torc_test$(EXEEXT)
+	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) \
+	polynomialtail_test$(EXEEXT) \
+	radialbasisfunctionkernel_test$(EXEEXT) \
+	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) \
 	legendrepolynomial_test$(EXEEXT) \
 	hermitepolynomial_test$(EXEEXT) \
@@ -128,7 +131,10 @@ check_PROGRAMS = polynomial_test$(EXEEXT) \
 	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
-	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) torc_test$(EXEEXT)
+	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) \
+	polynomialtail_test$(EXEEXT) \
+	radialbasisfunctionkernel_test$(EXEEXT) \
+	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -251,6 +257,10 @@ am_polynomial_test_OBJECTS =  \
 	numerics/polynomials/polynomial_test.$(OBJEXT)
 polynomial_test_OBJECTS = $(am_polynomial_test_OBJECTS)
 polynomial_test_LDADD = $(LDADD)
+am_polynomialtail_test_OBJECTS =  \
+	surrogate/polynomialtail_test.$(OBJEXT)
+polynomialtail_test_OBJECTS = $(am_polynomialtail_test_OBJECTS)
+polynomialtail_test_LDADD = $(LDADD)
 am_priordistribution_test_OBJECTS =  \
 	inference/prior/priordistribution_test.$(OBJEXT)
 priordistribution_test_OBJECTS = $(am_priordistribution_test_OBJECTS)
@@ -261,6 +271,16 @@ psrandom_test_LDADD = $(LDADD)
 am_pyplot_test_OBJECTS = io/pyplot_test.$(OBJEXT)
 pyplot_test_OBJECTS = $(am_pyplot_test_OBJECTS)
 pyplot_test_LDADD = $(LDADD)
+am_radialbasisfunction_test_OBJECTS =  \
+	surrogate/radialbasisfunction_test.$(OBJEXT)
+radialbasisfunction_test_OBJECTS =  \
+	$(am_radialbasisfunction_test_OBJECTS)
+radialbasisfunction_test_LDADD = $(LDADD)
+am_radialbasisfunctionkernel_test_OBJECTS =  \
+	surrogate/radialbasisfunctionkernel_test.$(OBJEXT)
+radialbasisfunctionkernel_test_OBJECTS =  \
+	$(am_radialbasisfunctionkernel_test_OBJECTS)
+radialbasisfunctionkernel_test_LDADD = $(LDADD)
 am_runinfo_test_OBJECTS = inference/tmcmc/runinfo_test.$(OBJEXT)
 runinfo_test_OBJECTS = $(am_runinfo_test_OBJECTS)
 runinfo_test_LDADD = $(LDADD)
@@ -347,13 +367,16 @@ SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(legendrepolynomial_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(polynomialtail_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(pyplot_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(simplexnm2_test_SOURCES) $(simplexnm2rnd_test_SOURCES) \
-	$(simplexnm_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(steepestdescent_test_SOURCES) \
-	$(timer_test_SOURCES) $(tmcmc_test_SOURCES) \
-	$(torc_test_SOURCES) $(utility_test_SOURCES)
+	$(pyplot_test_SOURCES) $(radialbasisfunction_test_SOURCES) \
+	$(radialbasisfunctionkernel_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
+	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(steepestdescent_test_SOURCES) $(timer_test_SOURCES) \
+	$(tmcmc_test_SOURCES) $(torc_test_SOURCES) \
+	$(utility_test_SOURCES)
 DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(bfgs_test_SOURCES) $(chebyshevpolynomial_test_SOURCES) \
 	$(conjugatefr_test_SOURCES) $(conjugatepr_test_SOURCES) \
@@ -369,13 +392,16 @@ DIST_SOURCES = $(arraywrapper_test_SOURCES) $(bfgs2_test_SOURCES) \
 	$(legendrepolynomial_test_SOURCES) \
 	$(linearregression_test_SOURCES) $(multimin_test_SOURCES) \
 	$(parser_test_SOURCES) $(polynomial_test_SOURCES) \
+	$(polynomialtail_test_SOURCES) \
 	$(priordistribution_test_SOURCES) $(psrandom_test_SOURCES) \
-	$(pyplot_test_SOURCES) $(runinfo_test_SOURCES) \
-	$(simplexnm2_test_SOURCES) $(simplexnm2rnd_test_SOURCES) \
-	$(simplexnm_test_SOURCES) $(stats_test_SOURCES) \
-	$(stdata_test_SOURCES) $(steepestdescent_test_SOURCES) \
-	$(timer_test_SOURCES) $(tmcmc_test_SOURCES) \
-	$(torc_test_SOURCES) $(utility_test_SOURCES)
+	$(pyplot_test_SOURCES) $(radialbasisfunction_test_SOURCES) \
+	$(radialbasisfunctionkernel_test_SOURCES) \
+	$(runinfo_test_SOURCES) $(simplexnm2_test_SOURCES) \
+	$(simplexnm2rnd_test_SOURCES) $(simplexnm_test_SOURCES) \
+	$(stats_test_SOURCES) $(stdata_test_SOURCES) \
+	$(steepestdescent_test_SOURCES) $(timer_test_SOURCES) \
+	$(tmcmc_test_SOURCES) $(torc_test_SOURCES) \
+	$(utility_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -800,6 +826,9 @@ runinfo_test_SOURCES = inference/tmcmc/runinfo_test.cpp
 database_test_SOURCES = inference/tmcmc/database_test.cpp
 datatype_test_SOURCES = inference/tmcmc/datatype_test.cpp
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
+polynomialtail_test_SOURCES = surrogate/polynomialtail_test.cpp
+radialbasisfunctionkernel_test_SOURCES = surrogate/radialbasisfunctionkernel_test.cpp
+radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
 torc_test_SOURCES = torc/torc_test.cpp
 all: all-am
 
@@ -1073,6 +1102,18 @@ numerics/polynomials/polynomial_test.$(OBJEXT):  \
 polynomial_test$(EXEEXT): $(polynomial_test_OBJECTS) $(polynomial_test_DEPENDENCIES) $(EXTRA_polynomial_test_DEPENDENCIES) 
 	@rm -f polynomial_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(polynomial_test_OBJECTS) $(polynomial_test_LDADD) $(LIBS)
+surrogate/$(am__dirstamp):
+	@$(MKDIR_P) surrogate
+	@: > surrogate/$(am__dirstamp)
+surrogate/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) surrogate/$(DEPDIR)
+	@: > surrogate/$(DEPDIR)/$(am__dirstamp)
+surrogate/polynomialtail_test.$(OBJEXT): surrogate/$(am__dirstamp) \
+	surrogate/$(DEPDIR)/$(am__dirstamp)
+
+polynomialtail_test$(EXEEXT): $(polynomialtail_test_OBJECTS) $(polynomialtail_test_DEPENDENCIES) $(EXTRA_polynomialtail_test_DEPENDENCIES) 
+	@rm -f polynomialtail_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(polynomialtail_test_OBJECTS) $(polynomialtail_test_LDADD) $(LIBS)
 inference/prior/$(am__dirstamp):
 	@$(MKDIR_P) inference/prior
 	@: > inference/prior/$(am__dirstamp)
@@ -1105,6 +1146,18 @@ io/pyplot_test.$(OBJEXT): io/$(am__dirstamp) \
 pyplot_test$(EXEEXT): $(pyplot_test_OBJECTS) $(pyplot_test_DEPENDENCIES) $(EXTRA_pyplot_test_DEPENDENCIES) 
 	@rm -f pyplot_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pyplot_test_OBJECTS) $(pyplot_test_LDADD) $(LIBS)
+surrogate/radialbasisfunction_test.$(OBJEXT):  \
+	surrogate/$(am__dirstamp) surrogate/$(DEPDIR)/$(am__dirstamp)
+
+radialbasisfunction_test$(EXEEXT): $(radialbasisfunction_test_OBJECTS) $(radialbasisfunction_test_DEPENDENCIES) $(EXTRA_radialbasisfunction_test_DEPENDENCIES) 
+	@rm -f radialbasisfunction_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(radialbasisfunction_test_OBJECTS) $(radialbasisfunction_test_LDADD) $(LIBS)
+surrogate/radialbasisfunctionkernel_test.$(OBJEXT):  \
+	surrogate/$(am__dirstamp) surrogate/$(DEPDIR)/$(am__dirstamp)
+
+radialbasisfunctionkernel_test$(EXEEXT): $(radialbasisfunctionkernel_test_OBJECTS) $(radialbasisfunctionkernel_test_DEPENDENCIES) $(EXTRA_radialbasisfunctionkernel_test_DEPENDENCIES) 
+	@rm -f radialbasisfunctionkernel_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(radialbasisfunctionkernel_test_OBJECTS) $(radialbasisfunctionkernel_test_LDADD) $(LIBS)
 inference/tmcmc/runinfo_test.$(OBJEXT):  \
 	inference/tmcmc/$(am__dirstamp) \
 	inference/tmcmc/$(DEPDIR)/$(am__dirstamp)
@@ -1197,6 +1250,7 @@ mostlyclean-compile:
 	-rm -f numerics/multimin/*.$(OBJEXT)
 	-rm -f numerics/polynomials/*.$(OBJEXT)
 	-rm -f numerics/random/*.$(OBJEXT)
+	-rm -f surrogate/*.$(OBJEXT)
 	-rm -f torc/*.$(OBJEXT)
 
 distclean-compile:
@@ -1242,6 +1296,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/polynomials/$(DEPDIR)/legendrepolynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/polynomials/$(DEPDIR)/polynomial_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/random/$(DEPDIR)/psrandom_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@surrogate/$(DEPDIR)/polynomialtail_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@surrogate/$(DEPDIR)/radialbasisfunction_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@surrogate/$(DEPDIR)/radialbasisfunctionkernel_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@torc/$(DEPDIR)/torc_test.Po@am__quote@
 
 .cpp.o:
@@ -1747,6 +1804,27 @@ tmcmc_test.log: tmcmc_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+polynomialtail_test.log: polynomialtail_test$(EXEEXT)
+	@p='polynomialtail_test$(EXEEXT)'; \
+	b='polynomialtail_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+radialbasisfunctionkernel_test.log: radialbasisfunctionkernel_test$(EXEEXT)
+	@p='radialbasisfunctionkernel_test$(EXEEXT)'; \
+	b='radialbasisfunctionkernel_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+radialbasisfunction_test.log: radialbasisfunction_test$(EXEEXT)
+	@p='radialbasisfunction_test$(EXEEXT)'; \
+	b='radialbasisfunction_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 torc_test.log: torc_test$(EXEEXT)
 	@p='torc_test$(EXEEXT)'; \
 	b='torc_test'; \
@@ -1856,6 +1934,8 @@ distclean-generic:
 	-rm -f numerics/polynomials/$(am__dirstamp)
 	-rm -f numerics/random/$(DEPDIR)/$(am__dirstamp)
 	-rm -f numerics/random/$(am__dirstamp)
+	-rm -f surrogate/$(DEPDIR)/$(am__dirstamp)
+	-rm -f surrogate/$(am__dirstamp)
 	-rm -f torc/$(DEPDIR)/$(am__dirstamp)
 	-rm -f torc/$(am__dirstamp)
 
@@ -1868,7 +1948,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) surrogate/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1914,7 +1994,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) torc/$(DEPDIR)
+	-rm -rf inference/prior/$(DEPDIR) inference/tmcmc/$(DEPDIR) io/$(DEPDIR) misc/$(DEPDIR) numerics/$(DEPDIR) numerics/density/$(DEPDIR) numerics/function/$(DEPDIR) numerics/hypercube/$(DEPDIR) numerics/multimin/$(DEPDIR) numerics/polynomials/$(DEPDIR) numerics/random/$(DEPDIR) surrogate/$(DEPDIR) torc/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
