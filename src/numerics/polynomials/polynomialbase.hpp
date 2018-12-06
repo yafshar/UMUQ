@@ -97,7 +97,7 @@ class polynomialBase
      * 
      * \param  x      The abscissa values. (The coordinates of the evaluation points)
      * \param  value  The (monomial value) array value of the monomial at point x
-     * 
+	 *  
      * \returns The size of the monomial array
      */
 	virtual int monomialValue(DataType const *x, DataType *&value);
