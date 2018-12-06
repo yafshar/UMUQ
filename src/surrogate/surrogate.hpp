@@ -57,11 +57,6 @@ namespace umuq
  * That is  \f$ f: \mathbb{R}^n \rightarrow \mathbb{R} \f$. 
  */
 
-
-
-
-
-
 /*! \class surrogate
  * \ingroup Surrogate_Module
  *
@@ -80,10 +75,32 @@ public:
   surrogate();
 
   /*!
+   * \brief Move constructor, construct a new surrogate object
+   * 
+   * \param other surrogate object
+   */
+  explicit surrogate(surrogate &&other);
+
+  /*!
+   * \brief Move assignment operator
+   * 
+   * \param other surrogate object
+   * 
+   * \returns surrogate& surrogate object
+   */
+  surrogate &operator=(surrogate &&other);
+
+  /*!
    * \brief Destroy the surrogate object
    * 
    */
   ~surrogate();
+
+  /*!
+   * \brief Method for resetting the surrogate model
+   * 
+   */
+  virtual void reset() = 0;
 
   /*!
    * \brief Method for getting the current number of points
@@ -93,17 +110,25 @@ public:
   virtual int numPoints() const = 0;
 
   /*!
+   * \brief Method for getting the current number of points
+   * 
+   * \returns int Current number of points
+   */
+  virtual int getNumPoints() const = 0;
+
+  /*!
+   * \brief Get the Number of Dimensions 
+   * 
+   * \returns int Number of dimensions
+   */
+  virtual int dim() const = 0;
+
+  /*!
    * \brief Get the Number of Dimensions 
    * 
    * \returns int Number of dimensions
    */
   virtual int getNumDimensions() const = 0;
-
-  /*!
-   * \brief Method for resetting the surrogate model
-   * 
-   */
-  virtual void reset() = 0;
 
   /*!
    * \brief Method for getting the current points
@@ -143,7 +168,7 @@ public:
    * \param Point          Point to be added
    * \param FunctionValue  Function value at point
    */
-  virtual void addPoint(EVectorXd const &Point, double FunctionValue) = 0;
+  virtual bool addPoint(EVectorXd const &Point, double FunctionValue) = 0;
 
   /*!
    * \brief  Method for adding multiple points with known values
@@ -151,7 +176,7 @@ public:
    * \param Points          Points to be added
    * \param FunctionValues  Function values at the points
    */
-  virtual void addPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues) = 0;
+  virtual bool addPoint(EMatrixXd const &Points, EVectorXd const &FunctionValues) = 0;
 
   /*!
    * \brief Method for evaluating the surrogate model at a point
@@ -204,10 +229,29 @@ public:
    * \brief Method for fitting the surrogate model
    * 
    */
-  virtual void fit() = 0;
+  virtual bool fit() = 0;
+
+protected:
+  /*!
+   * \brief Delete a surrogate object copy construction
+   * 
+   * Avoiding implicit generation of the copy constructor.
+   */
+  surrogate(surrogate const &) = delete;
+
+  /*!
+   * \brief Delete a surrogate object assignment
+   * 
+   * Avoiding implicit copy assignment.
+   */
+  surrogate &operator=(surrogate const &) = delete;
 };
 
 surrogate::surrogate() {}
+
+surrogate::surrogate(surrogate &&other){};
+
+surrogate &surrogate::operator=(surrogate &&other) { return *this; };
 
 surrogate::~surrogate() {}
 
