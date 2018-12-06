@@ -71,8 +71,6 @@ enum class radialBasisFunctionKernelTypes
  * \brief Abstract class for a radial basis function kernel
  * 
  * This is the abstract class that should be used as a Base class for all RBF kernels
- *
- * \author David Eriksson, dme65@cornell.edu
  */
 class radialBasisFunctionKernel
 {
@@ -99,9 +97,9 @@ class radialBasisFunctionKernel
     /*!
      * \brief Method for getting the value of the kernel at 0
      * 
-     * \returns int Value of kernel at 0
+     * \returns double Value of kernel at 0
      */
-    virtual inline int phiZero() const = 0;
+    virtual inline double phiZero() const = 0;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
@@ -110,16 +108,25 @@ class radialBasisFunctionKernel
      * 
      * \returns double Value of kernel at Distance
      */
-    virtual inline double evaluate(double Distance) const = 0;
+    virtual inline double evaluate(double const Distance) const = 0;
+
+    /*!
+     * \brief Method for evaluating the kernel for a vector of distances
+     * 
+     * \param Distance  Distances for which to evaluate the kernel
+     * 
+     * \returns EVectorXd Values of kernel at Distance
+     */
+    virtual inline EVectorXd evaluate(EVectorXd const &Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
      * 
-     * \param dists  Distances for which to evaluate the derivative of the kernel
+     * \param Distance  Distances for which to evaluate the kernel
      * 
-     * \returns EMatrixXd Values of kernel at dists
+     * \returns EMatrixXd Values of kernel at Distance
      */
-    virtual inline EMatrixXd evaluate(const EMatrixXd &dists) const = 0;
+    virtual inline EMatrixXd evaluate(EMatrixXd const &Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a given Distance 
@@ -128,16 +135,25 @@ class radialBasisFunctionKernel
      * 
      * \returns double Derivative of kernel at Distance
      */
-    virtual inline double deriv(double Distance) const = 0;
+    virtual inline double deriv(double const Distance) const = 0;
+
+    /*!
+     * \brief Method for evaluating the derivative of the kernel for a vector of distances
+     * 
+     * \param Distance Distances for which to evaluate the derivative of the kernel
+     * 
+     * \returns EVectorXd Values of the derivative of the kernel at Distance
+     */
+    virtual inline EVectorXd deriv(EVectorXd const &Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
      * 
-     * \param dists Distances for which to evaluate the derivative of the kernel
+     * \param Distance Distances for which to evaluate the derivative of the kernel
      * 
-     * \returns EMatrixXd Values of the derivative of the kernel at dists
+     * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
-    virtual inline EMatrixXd deriv(const EMatrixXd &dists) const = 0;
+    virtual inline EMatrixXd deriv(EMatrixXd const &Distance) const = 0;
 };
 
 radialBasisFunctionKernel::radialBasisFunctionKernel() {}
@@ -150,20 +166,18 @@ radialBasisFunctionKernel::~radialBasisFunctionKernel() {}
  * \brief Linear kernel
  * 
  * This is an implementation of the linear kernel \f$\varphi(r)=r\,\log(r)\f$ which is of order 1.
- *
- * \author David Eriksson, dme65@cornell.edu
  */
 class linearKernel : public radialBasisFunctionKernel
 {
   public:
     /*!
-     * \brief Construct a new linear Kernel object
+     * \brief Construct a new linearKernel object
      * 
      */
     linearKernel();
 
     /*!
-     * \brief Destroy the linear Kernel object
+     * \brief Destroy the linearKernel object
      * 
      */
     ~linearKernel();
@@ -178,9 +192,9 @@ class linearKernel : public radialBasisFunctionKernel
     /*!
      * \brief Method for getting the value of the kernel at 0
      * 
-     * \returns int Value of kernel at 0
+     * \returns double Value of kernel at 0
      */
-    inline int phiZero() const;
+    inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
@@ -189,16 +203,25 @@ class linearKernel : public radialBasisFunctionKernel
      * 
      * \returns double Value of kernel at Distance
      */
-    inline double evaluate(double Distance) const;
+    inline double evaluate(double const Distance) const;
+
+    /*!
+     * \brief Method for evaluating the kernel for a vector of distances
+     * 
+     * \param Distance  Distances for which to evaluate the kernel
+     * 
+     * \returns EVectorXd Values of kernel at Distance
+     */
+    inline EVectorXd evaluate(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
      * 
-     * \param dists  Distances for which to evaluate the derivative of the kernel
+     * \param Distance  Distances for which to evaluate the kernel
      * 
-     * \returns EMatrixXd Values of kernel at dists
+     * \returns EMatrixXd Values of kernel at Distance
      */
-    inline EMatrixXd evaluate(const EMatrixXd &dists) const;
+    inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a given Distance 
@@ -207,42 +230,55 @@ class linearKernel : public radialBasisFunctionKernel
      * 
      * \returns double Derivative of kernel at Distance
      */
-    inline double deriv(double Distance) const;
+    inline double deriv(double const Distance) const;
+
+    /*!
+     * \brief Method for evaluating the derivative of the kernel for a vector of distances
+     * 
+     * \param Distance Distances for which to evaluate the derivative of the kernel
+     * 
+     * \returns EVectorXd Values of the derivative of the kernel at Distance
+     */
+    inline EVectorXd deriv(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
      * 
-     * \param dists Distances for which to evaluate the derivative of the kernel
+     * \param Distance Distances for which to evaluate the derivative of the kernel
      * 
-     * \returns EMatrixXd Values of the derivative of the kernel at dists
+     * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
-    inline EMatrixXd deriv(const EMatrixXd &dists) const;
+    inline EMatrixXd deriv(EMatrixXd const &Distance) const;
 
   private:
-    /*! Value of the cubic kernel at 0 */
-    int mPhiZero;
-
-    /*! Order of the cubic kernel */
-    int mOrder;
+    /*! Order of the Linear kernel */
+    int kernelOrder;
 };
 
-linearKernel::linearKernel() : mPhiZero(0), mOrder(1) {}
+linearKernel::linearKernel() : kernelOrder(1) {}
 
 linearKernel::~linearKernel() {}
 
-inline int linearKernel::order() const { return mOrder; }
+inline int linearKernel::order() const { return kernelOrder; }
 
-inline int linearKernel::phiZero() const { return mPhiZero; }
+inline double linearKernel::phiZero() const { return 0; }
 
-inline double linearKernel::evaluate(double Distance) const { return Distance; }
+inline double linearKernel::evaluate(double const Distance) const { return Distance; }
 
-inline EMatrixXd linearKernel::evaluate(const EMatrixXd &dists) const { return dists; }
+inline EVectorXd linearKernel::evaluate(EVectorXd const &Distance) const { return Distance; }
 
-inline double linearKernel::deriv(double Distance) const { return 1.0; }
+inline EMatrixXd linearKernel::evaluate(EMatrixXd const &Distance) const { return Distance; }
 
-inline EMatrixXd linearKernel::deriv(const EMatrixXd &dists) const
+inline double linearKernel::deriv(double const Distance) const { return 1.0; }
+
+inline EVectorXd linearKernel::deriv(EVectorXd const &Distance) const
 {
-    return EMatrixXd::Ones(dists.rows(), dists.cols());
+    return EVectorXd::Ones(Distance.rows());
+}
+
+inline EMatrixXd linearKernel::deriv(EMatrixXd const &Distance) const
+{
+    return EMatrixXd::Ones(Distance.rows(), Distance.cols());
 }
 
 /*! \class cubicKernel
@@ -251,8 +287,6 @@ inline EMatrixXd linearKernel::deriv(const EMatrixXd &dists) const
  * \brief Cubic kernel for a radial basis function
  *
  * This is an implementation of the popular cubic kernel \f$\varphi(r)=r^3\f$ which is of order 2.
- * 
- * \author David Eriksson, dme65@cornell.edu 
  */
 class cubicKernel : public radialBasisFunctionKernel
 {
@@ -279,9 +313,9 @@ class cubicKernel : public radialBasisFunctionKernel
     /*!
      * \brief Method for getting the value of the kernel at 0
      * 
-     * \returns int Value of kernel at 0
+     * \returns double Value of kernel at 0
      */
-    inline int phiZero() const;
+    inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
@@ -290,7 +324,25 @@ class cubicKernel : public radialBasisFunctionKernel
      * 
      * \returns double Value of kernel at Distance
      */
-    inline double evaluate(double Distance) const;
+    inline double evaluate(double const Distance) const;
+    
+    /*!
+     * \brief Method for evaluating the kernel for a vector of distances
+     * 
+     * \param Distance  Distances for which to evaluate the kernel
+     * 
+     * \returns EVectorXd Values of kernel at Distance
+     */
+    inline EVectorXd evaluate(EVectorXd const &Distance) const;
+
+    /*!
+     * \brief Method for evaluating the kernel for a matrix of distances
+     * 
+     * \param Distance  Distances for which to evaluate the kernel
+     * 
+     * \returns EMatrixXd Values of kernel at Distance
+     */
+    inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a given Distance 
@@ -299,54 +351,61 @@ class cubicKernel : public radialBasisFunctionKernel
      * 
      * \returns double Derivative of kernel at Distance
      */
-    inline double deriv(double Distance) const;
+    inline double deriv(double const Distance) const;
 
     /*!
-     * \brief Method for evaluating the kernel for a matrix of distances
+     * \brief Method for evaluating the derivative of the kernel for a vector of distances
      * 
-     * \param dists  Distances for which to evaluate the derivative of the kernel
+     * \param Distance Distances for which to evaluate the derivative of the kernel
      * 
-     * \returns EMatrixXd Values of kernel at dists
+     * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
-    inline EMatrixXd evaluate(const EMatrixXd &dists) const;
+    inline EVectorXd deriv(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
      * 
-     * \param dists Distances for which to evaluate the derivative of the kernel
+     * \param Distance Distances for which to evaluate the derivative of the kernel
      * 
-     * \returns EMatrixXd Values of the derivative of the kernel at dists
+     * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
-    inline EMatrixXd deriv(const EMatrixXd &dists) const;
+    inline EMatrixXd deriv(EMatrixXd const &Distance) const;
 
   private:
-    /*! Value of the cubic kernel at 0 */
-    int mPhiZero;
-
     /*! Order of the cubic kernel */
-    int mOrder;
+    int kernelOrder;
 };
 
-cubicKernel::cubicKernel() : mPhiZero(0), mOrder(2) {}
+cubicKernel::cubicKernel() : kernelOrder(2) {}
 
 cubicKernel::~cubicKernel() {}
 
-inline int cubicKernel::order() const { return mOrder; }
+inline int cubicKernel::order() const { return kernelOrder; }
 
-inline int cubicKernel::phiZero() const { return mPhiZero; }
+inline double cubicKernel::phiZero() const { return 0; }
 
-inline double cubicKernel::evaluate(double Distance) const { return Distance * Distance * Distance; }
+inline double cubicKernel::evaluate(double const Distance) const { return Distance * Distance * Distance; }
 
-inline EMatrixXd cubicKernel::evaluate(const EMatrixXd &dists) const
+inline EVectorXd cubicKernel::evaluate(EVectorXd const &Distance) const
 {
-    return dists.cwiseProduct(dists.cwiseProduct(dists));
+    return Distance.cwiseProduct(Distance.cwiseProduct(Distance)).matrix();
 }
 
-inline double cubicKernel::deriv(double Distance) const { return 3 * Distance * Distance; }
-
-inline EMatrixXd cubicKernel::deriv(const EMatrixXd &dists) const
+inline EMatrixXd cubicKernel::evaluate(EMatrixXd const &Distance) const
 {
-    return 3 * dists.cwiseProduct(dists);
+    return Distance.cwiseProduct(Distance.cwiseProduct(Distance)).matrix();
+}
+
+inline double cubicKernel::deriv(double const Distance) const { return 3 * Distance * Distance; }
+
+inline EVectorXd cubicKernel::deriv(EVectorXd const &Distance) const
+{
+    return 3 * Distance.cwiseProduct(Distance).matrix();
+}
+
+inline EMatrixXd cubicKernel::deriv(EMatrixXd const &Distance) const
+{
+    return 3 * Distance.cwiseProduct(Distance).matrix();
 }
 
 /*! \class thinPlateKernel
@@ -355,8 +414,6 @@ inline EMatrixXd cubicKernel::deriv(const EMatrixXd &dists) const
  * \brief Thin-plate spline kernel 
  * 
  * This is an implementation of the popular thin-plate spline kernel \f$\varphi(r)=r^2\,\log(r)\f$ which is of order 2.
- *
- * \author David Eriksson, dme65@cornell.edu
  */
 class thinPlateKernel : public radialBasisFunctionKernel
 {
@@ -376,16 +433,16 @@ class thinPlateKernel : public radialBasisFunctionKernel
     /*!
      * \brief Method for getting the order of the kernel
      * 
-     * \returns int  Order of the kernel 
+     * \returns int Order of the kernel 
      */
     inline int order() const;
 
     /*!
      * \brief Method for getting the value of the kernel at 0
      * 
-     * \returns int Value of kernel at 0
+     * \returns double Value of kernel at 0
      */
-    inline int phiZero() const;
+    inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
@@ -394,16 +451,25 @@ class thinPlateKernel : public radialBasisFunctionKernel
      * 
      * \returns double Value of kernel at Distance
      */
-    inline double evaluate(double Distance) const;
+    inline double evaluate(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
      * 
-     * \param dists  Distances for which to evaluate the derivative of the kernel
+     * \param Distance  Distances for which to evaluate the kernel
      * 
-     * \returns EMatrixXd Values of kernel at dists
+     * \returns EVectorXd Values of kernel at Distance
      */
-    inline EMatrixXd evaluate(const EMatrixXd &dists) const;
+    inline EVectorXd evaluate(EVectorXd const &Distance) const;
+
+    /*!
+     * \brief Method for evaluating the kernel for a matrix of distances
+     * 
+     * \param Distance  Distances for which to evaluate the kernel
+     * 
+     * \returns EMatrixXd Values of kernel at Distance
+     */
+    inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a given Distance 
@@ -412,51 +478,67 @@ class thinPlateKernel : public radialBasisFunctionKernel
      * 
      * \returns double Derivative of kernel at Distance
      */
-    inline double deriv(double Distance) const;
+    inline double deriv(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
      * 
-     * \param dists Distances for which to evaluate the derivative of the kernel
+     * \param Distance Distances for which to evaluate the derivative of the kernel
      * 
-     * \returns EMatrixXd Values of the derivative of the kernel at dists
+     * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
-    inline EMatrixXd deriv(const EMatrixXd &dists) const;
+    inline EVectorXd deriv(EVectorXd const &Distance) const;
+
+    /*!
+     * \brief Method for evaluating the derivative of the kernel for a matrix of distances
+     * 
+     * \param Distance Distances for which to evaluate the derivative of the kernel
+     * 
+     * \returns EMatrixXd Values of the derivative of the kernel at Distance
+     */
+    inline EMatrixXd deriv(EMatrixXd const &Distance) const;
 
   private:
-    /*! Value of the cubic kernel at 0 */
-    int mPhiZero;
-
-    /*! Order of the cubic kernel */
-    int mOrder;
+    /*! Order of the Thin-plate spline kernel */
+    int kernelOrder;
 };
 
-thinPlateKernel::thinPlateKernel() : mPhiZero(0), mOrder(2) {}
+thinPlateKernel::thinPlateKernel() : kernelOrder(2) {}
 
 thinPlateKernel::~thinPlateKernel() {}
 
-inline int thinPlateKernel::order() const { return mOrder; }
+inline int thinPlateKernel::order() const { return kernelOrder; }
 
-inline int thinPlateKernel::phiZero() const { return mPhiZero; }
+inline double thinPlateKernel::phiZero() const { return 0; }
 
-inline double thinPlateKernel::evaluate(double Distance) const
+inline double thinPlateKernel::evaluate(double const Distance) const
 {
-    return Distance * Distance * std::log(Distance + 1e-12);
+    return Distance * Distance * std::log(Distance + machinePrecision<double>);
 }
 
-inline EMatrixXd thinPlateKernel::evaluate(const EMatrixXd &dists) const
+inline EVectorXd thinPlateKernel::evaluate(EVectorXd const &Distance) const
 {
-    return dists.cwiseProduct(dists.cwiseProduct((dists.array() + 1e-12).log().matrix()));
+    return Distance.cwiseProduct(Distance.cwiseProduct((Distance.array() + machinePrecision<double>).log().matrix())).matrix();
 }
 
-inline double thinPlateKernel::deriv(double Distance) const
+inline EMatrixXd thinPlateKernel::evaluate(EMatrixXd const &Distance) const
 {
-    return Distance * (1.0 + 2.0 * std::log(Distance + 1e-12));
+    return Distance.cwiseProduct(Distance.cwiseProduct((Distance.array() + machinePrecision<double>).log().matrix())).matrix();
 }
 
-inline EMatrixXd thinPlateKernel::deriv(const EMatrixXd &dists) const
+inline double thinPlateKernel::deriv(double const Distance) const
 {
-    return dists.cwiseProduct((1 + 2.0 * (dists.array() + 1e-12).log()).matrix());
+    return Distance * (1.0 + 2.0 * std::log(Distance + machinePrecision<double>));
+}
+
+inline EVectorXd thinPlateKernel::deriv(EVectorXd const &Distance) const
+{
+    return Distance.cwiseProduct((1 + 2.0 * (Distance.array() + machinePrecision<double>).log()).matrix()).matrix();
+}
+
+inline EMatrixXd thinPlateKernel::deriv(EMatrixXd const &Distance) const
+{
+    return Distance.cwiseProduct((1 + 2.0 * (Distance.array() + machinePrecision<double>).log()).matrix()).matrix();
 }
 
 } // namespace umuq
