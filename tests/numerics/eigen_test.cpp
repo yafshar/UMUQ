@@ -307,44 +307,58 @@ TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
         4, 5, 6, 4,
         7, 8, -9, 4;
 
-    // Calculate the squared distance between the rows of X
-    umuq::EMatrixXd Y = umuq::squaredL2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
+    {
+        // Calculate the squared distance between the rows of X
+        umuq::EMatrixXd Y = umuq::squaredL2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
 
-    EXPECT_TRUE(Y.rows() == X.rows());
-    EXPECT_TRUE(Y.cols() == X.rows());
-    EXPECT_TRUE((Y.diagonal().array() == 0).all());
-    EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4));
-    EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4));
-    EXPECT_DOUBLE_EQ(Y(1, 2), (4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4));
-    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
-    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+        EXPECT_TRUE(Y.rows() == X.rows());
+        EXPECT_TRUE(Y.cols() == X.rows());
+        EXPECT_TRUE((Y.diagonal().array() == 0).all());
+        EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4));
+        EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4));
+        EXPECT_DOUBLE_EQ(Y(1, 2), (4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4));
+        EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+        EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+    }
+    {
+        // Calculate the squared distance between the columns of X
+        umuq::EMatrixXd Y = umuq::squaredL2Distance<int>(X);
 
-    // Calculate the squared distance between the columns of X
-    Y = umuq::squaredL2Distance<int>(X);
+        EXPECT_TRUE(Y.rows() == X.cols());
+        EXPECT_TRUE(Y.cols() == X.cols());
 
-    EXPECT_TRUE(Y.rows() == X.cols());
-    EXPECT_TRUE(Y.cols() == X.cols());
+        EXPECT_TRUE((Y.diagonal().array() == 0).all());
+        EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 2) * (1 - 2) + (4 - 5) * (4 - 5) + (7 - 8) * (7 - 8));
+        EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 3) * (1 - 3) + (4 - 6) * (4 - 6) + (7 + 9) * (7 + 9));
+        EXPECT_DOUBLE_EQ(Y(0, 3), (1 - 4) * (1 - 4) + (4 - 4) * (4 - 4) + (7 - 4) * (7 - 4));
+        EXPECT_DOUBLE_EQ(Y(1, 3), (2 - 4) * (2 - 4) + (5 - 4) * (5 - 4) + (8 - 4) * (8 - 4));
 
-    EXPECT_TRUE((Y.diagonal().array() == 0).all());
-    EXPECT_DOUBLE_EQ(Y(0, 1), (1 - 2) * (1 - 2) + (4 - 5) * (4 - 5) + (7 - 8) * (7 - 8));
-    EXPECT_DOUBLE_EQ(Y(0, 2), (1 - 3) * (1 - 3) + (4 - 6) * (4 - 6) + (7 + 9) * (7 + 9));
-    EXPECT_DOUBLE_EQ(Y(0, 3), (1 - 4) * (1 - 4) + (4 - 4) * (4 - 4) + (7 - 4) * (7 - 4));
-    EXPECT_DOUBLE_EQ(Y(1, 3), (2 - 4) * (2 - 4) + (5 - 4) * (5 - 4) + (8 - 4) * (8 - 4));
+        EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+        EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+    }
+    {
+        // Calculate the distance between the rows of X
+        umuq::EMatrixXd Y = umuq::L2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
 
-    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
-    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+        EXPECT_TRUE(Y.rows() == X.rows());
+        EXPECT_TRUE(Y.cols() == X.rows());
+        EXPECT_TRUE((Y.diagonal().array() == 0).all());
+        EXPECT_DOUBLE_EQ(Y(0, 1), std::sqrt((1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4)));
+        EXPECT_DOUBLE_EQ(Y(0, 2), std::sqrt((1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4)));
+        EXPECT_DOUBLE_EQ(Y(1, 2), std::sqrt((4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4)));
+        EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
+        EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+    }
 
-    // Calculate the distance between the rows of X
-    Y = umuq::L2Distance<int, double, umuq::VectorwiseOperation::RowWise>(X);
+    {
+        umuq::EMatrixXd M = umuq::EMatrixXd::Random(5, 5);
+        umuq::EVectorXd V = M.col(2);
 
-    EXPECT_TRUE(Y.rows() == X.rows());
-    EXPECT_TRUE(Y.cols() == X.rows());
-    EXPECT_TRUE((Y.diagonal().array() == 0).all());
-    EXPECT_DOUBLE_EQ(Y(0, 1), std::sqrt((1 - 4) * (1 - 4) + (2 - 5) * (2 - 5) + (3 - 6) * (3 - 6) + (4 - 4) * (4 - 4)));
-    EXPECT_DOUBLE_EQ(Y(0, 2), std::sqrt((1 - 7) * (1 - 7) + (2 - 8) * (2 - 8) + (3 + 9) * (3 + 9) + (4 - 4) * (4 - 4)));
-    EXPECT_DOUBLE_EQ(Y(1, 2), std::sqrt((4 - 7) * (4 - 7) + (5 - 8) * (5 - 8) + (6 + 9) * (6 + 9) + (4 - 4) * (4 - 4)));
-    EXPECT_DOUBLE_EQ(Y(0, 1), Y(1, 0));
-    EXPECT_DOUBLE_EQ(Y(0, 2), Y(2, 0));
+        umuq::EVectorXd Y = umuq::L2Distance<double>(V, M.block(0, 0, 5, 3));
+
+        EXPECT_TRUE(Y.rows() == 3);
+        EXPECT_DOUBLE_EQ(Y(2), 0);
+    }
 }
 
 int main(int argc, char **argv)
