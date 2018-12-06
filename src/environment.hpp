@@ -7,6 +7,7 @@
 #include "inference/tmcmc/runinfo.hpp"
 #include "numerics/eigenlib.hpp"
 #include "numerics/random/psrandom.hpp"
+#include "global.hpp"
 
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
 #include "gtest/gtest.h"
@@ -14,6 +15,10 @@
 
 namespace umuq
 {
+
+#ifdef DEBUG
+extern umuqTimer gTimer;
+#endif
 
 /*! \class torcEnvironment
  * \ingroup Core_Module
@@ -176,6 +181,9 @@ void torcEnvironment::SetUp(int argc, char **argv)
 
 void torcEnvironment::TearDown()
 {
+#ifdef DEBUG
+    gTimer.print();
+#endif
     torc_finalize();
 }
 
