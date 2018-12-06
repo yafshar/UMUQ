@@ -390,8 +390,11 @@ void forceSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
     DataType const fixedRate(1.01);
 
 #ifdef DEBUG
-    std::cout << "eMatrix=" << eMatrix << std::endl;
     std::size_t iter(0);
+    if (nDim < 20)
+    {
+        std::cout << "eMatrix=" << eMatrix << std::endl;
+    }
 #endif
 
     // Vector for diagonal elements
@@ -440,7 +443,10 @@ void forceSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
 #ifdef DEBUG
         iter++;
         std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-        std::cout << "eMatrix=" << eMatrix << std::endl;
+        if (nDim < 20)
+        {
+            std::cout << "eMatrix=" << eMatrix << std::endl;
+        }
 #endif
         for (int i = 0; i < nDim; i++)
         {
@@ -474,8 +480,11 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
     auto const nDim = eMatrix.rows();
 
 #ifdef DEBUG
-    std::cout << "eMatrix=" << eMatrix << std::endl;
     std::size_t iter(0);
+    if (nDim < 20)
+    {
+        std::cout << "eMatrix=" << eMatrix << std::endl;
+    }
 #endif
 
     // Vector for diagonal elements
@@ -523,14 +532,16 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
 #ifdef DEBUG
         iter++;
         std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-        std::cout << "eMatrix=" << eMatrix << std::endl;
+        if (nDim < 20)
+        {
+            std::cout << "eMatrix=" << eMatrix << std::endl;
+        }
 #endif
         for (Eigen::Index i = 0; i < nDim; i++)
         {
             eMatrix(i, i) *= fixedRate;
         }
     }
-
     return;
 }
 
