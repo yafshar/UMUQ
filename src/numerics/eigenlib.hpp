@@ -652,13 +652,14 @@ inline EVectorX<DataType> L2Distance(EVectorX<DataType> const &eVector, EMatrixX
  * \brief Calculate the squared distance between set of points (as an input matrix) and a set of points (as a second input matrix)
  * 
  * \tparam DataType  Input data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
  * 
  * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
  * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
  * 
- * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
+ * \returns EMatrixX<DataType> Matrix of squared distances between set of points and another set of points (size of \c eMatrix1.cols()*eMatrix2.cols())
  */
-template <typename DataType>
+template <typename DataType, bool BlockWise = false>
 inline EMatrixX<DataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
 {
     EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
@@ -673,13 +674,14 @@ inline EMatrixX<DataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix1, 
  * \brief Calculate the distance between set of points (as an input matrix) and a set of points (as a second input matrix)
  * 
  * \tparam DataType  Input data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
  * 
  * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
  * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
  * 
- * \returns EMatrixX<DataType> Vector of squared distances between set of points and another set of points
+ * \returns EMatrixX<DataType> Matrix of distances between set of points and another set of points (size of \c eMatrix1.cols()*eMatrix2.cols())
  */
-template <typename DataType>
+template <typename DataType, bool BlockWise = false>
 inline EMatrixX<DataType> L2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
 {
     EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
@@ -734,15 +736,17 @@ OutputDataType SOptimality(EMatrixX<DataType> const &eMatrix)
  * \returns EVectorX<RealType> Scaled vector mapped to the unit box
  */
 template <typename RealType>
-inline EVectorX<RealType> scaleToUnitBox(const EVectorX<RealType> &eVector, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EVectorX<RealType>>
+scaleToUnitBox(EVectorX<RealType> const &eVector, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
     return (eVector - low).cwiseProduct((high - low).cwiseInverse());
-};
+}
 
 /*!
  * \brief Map a matrix from a space of \f$ [low, high]^n \f$ to the unit box of \f$ [0, 1]^n \f$
  * 
- * \tparam RealType Floating point data type
+ * \tparam RealType  Floating point data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
  * 
  * \param eMatrix  Input matrix      
  * \param low      Vector of lower bounds
@@ -750,11 +754,12 @@ inline EVectorX<RealType> scaleToUnitBox(const EVectorX<RealType> &eVector, cons
  * 
  * \returns EMatrixX<RealType> Scaled matrix mapped to the unit box
  */
-template <typename RealType>
-inline EMatrixX<RealType> scaleToUnitBox(const EMatrixX<RealType> &eMatrix, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+template <typename RealType, bool BlockWise = false>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EMatrixX<RealType>>
+scaleToUnitBox(EMatrixX<RealType> const &eMatrix, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
     return (eMatrix.colwise() - low).array().colwise() * (high - low).cwiseInverse().array();
-};
+}
 
 /*!
  * \brief Map a vector from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
@@ -768,27 +773,30 @@ inline EMatrixX<RealType> scaleToUnitBox(const EMatrixX<RealType> &eMatrix, cons
  * \returns EVectorX<RealType> Scaled vector mapped to the hypercube space
  */
 template <typename RealType>
-inline EVectorX<RealType> scaleToHyperCube(const EVectorX<RealType> &eVector, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EVectorX<RealType>>
+scaleToHyperCube(EVectorX<RealType> const &eVector, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
     return low + (high - low).cwiseProduct(eVector);
-};
+}
 
 /*!
  * \brief Map a matrix (multiple points) from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
  *  
- * \tparam RealType Floating point data type
+ * \tparam RealType  Floating point data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
  * 
  * \param eVector  Input vector      
  * \param low      Vector of lower bounds
  * \param high     Vector of upper bounds
  * 
- * \returns  EMatrixX<RealType> Scaled matrix mapped the hypercube space
+ * \returns EMatrixX<RealType> Scaled matrix mapped the hypercube space
  */
-template <typename RealType>
-inline EMatrixX<RealType> scaleToHyperCube(const EMatrixX<RealType> &eMatrix, const EVectorX<RealType> &low, const EVectorX<RealType> &high)
+template <typename RealType, bool BlockWise = false>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EMatrixX<RealType>>
+scaleToHyperCube(EMatrixX<RealType> const &eMatrix, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
     return (eMatrix.array().colwise() * (high - low).array()).matrix().colwise() + low;
-};
+}
 
 } // namespace linearalgebra
 } // namespace umuq
