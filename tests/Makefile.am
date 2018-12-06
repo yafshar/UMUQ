@@ -177,6 +177,19 @@ TESTS += tmcmc_test
 check_PROGRAMS += tmcmc_test
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
 
+#surrogate
+TESTS += polynomialtail_test
+check_PROGRAMS += polynomialtail_test
+polynomialtail_test_SOURCES = surrogate/polynomialtail_test.cpp
+
+TESTS += radialbasisfunctionkernel_test
+check_PROGRAMS += radialbasisfunctionkernel_test
+radialbasisfunctionkernel_test_SOURCES = surrogate/radialbasisfunctionkernel_test.cpp
+
+TESTS += radialbasisfunction_test
+check_PROGRAMS += radialbasisfunction_test
+radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
+
 #torc
 TESTS += torc_test
 check_PROGRAMS += torc_test
