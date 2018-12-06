@@ -1,6 +1,7 @@
 #ifndef UMUQ_RADIALBASISFUNCTION_H
 #define UMUQ_RADIALBASISFUNCTION_H
 
+#include "global.hpp"
 #include "surrogate.hpp"
 #include "radialbasisfunctionkernel.hpp"
 #include "polynomialtail.hpp"
@@ -52,6 +53,10 @@ namespace umuq
  * \endverbatim
  */
 
+#ifdef DEBUG
+extern umuqTimer gTimer;
+#endif
+
 /*! \class radialBasisFunction
  * \ingroup Surrogate_Module
  * 
@@ -73,7 +78,7 @@ namespace umuq
  * where \f$ y_i\f$ are the n centers and \f$ \{\pi_i\}_{i=1}^m\f$ is a basis
  * of the polynomial space of the tail. Given a set of points 
  * \f$ X=\{x_1,\ldots,x_n\}\f$ with values \f$ f_X = \{f(x_1),\ldots,f(x_n)\}\f$
- * the interpolation conditions are
+ * the interpolation conditions are:<br>
  * 
  * \f$ s(x_i) = f(x_i)\f$ for \f$ i=1,\ldots,n\f$
  * 
@@ -118,28 +123,70 @@ class radialBasisFunction : public surrogate
     /*!
      * \brief Construct a new radialBasisFunction object
      * 
-     * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param NumDimensions       Number of dimensions
+     * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param DampingCoefficient  Damping coefficient (non-negative)
      */
-    radialBasisFunction(int MaxNumPoints, int NumDimensions, double DampingCoefficient = 1e-8);
+    radialBasisFunction(int const NumDimensions, int const MaxNumPoints, double const DampingCoefficient = 1e-8);
 
     /*!
      * \brief Construct a new radialBasisFunction object
      * 
-     * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param NumDimensions       Number of dimensions
+     * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param LowerBounds         Lower variable bounds
      * \param UpperBounds         Upper variable bounds
      * \param DampingCoefficient  Damping coefficient (non-negative)
      */
-    radialBasisFunction(int MaxNumPoints, int NumDimensions, EVectorXd const &LowerBounds, EVectorXd const &UpperBounds, double DampingCoefficient = 1e-8);
+    radialBasisFunction(int const NumDimensions, int const MaxNumPoints, EVectorXd const &LowerBounds, EVectorXd const &UpperBounds, double const DampingCoefficient = 1e-8);
+
+    /*!
+     * \brief Move constructor, construct a new radialBasisFunction object
+     * 
+     * \param other radialBasisFunction object
+     */
+    explicit radialBasisFunction(radialBasisFunction<kernelType, polynomialTailType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param other radialBasisFunction object
+     * 
+     * \returns radialBasisFunction& radialBasisFunction object
+     */
+    radialBasisFunction<kernelType, polynomialTailType> &operator=(radialBasisFunction<kernelType, polynomialTailType> &&other);
 
     /*!
      * \brief Destroy the radialBasisFunction object
      * 
      */
     ~radialBasisFunction();
+
+    /*!
+     * \brief Method for resetting the surrogate model
+     * 
+     */
+    inline void reset() override;
+
+    /*!
+     * \brief Method for resetting the surrogate model
+     * 
+     * \param NumDimensions       Number of dimensions
+     * \param MaxNumPoints        Capacity Maximum number of possible points
+     * \param DampingCoefficient  Damping coefficient (non-negative)
+     */
+    inline void reset(int const NumDimensions, int const MaxNumPoints, double const DampingCoefficient = 1e-8);
+
+    /*!
+     * \brief Method for resetting the surrogate model
+     * 
+     * \param NumDimensions       Number of dimensions
+     * \param MaxNumPoints        Capacity Maximum number of possible points
+     * \param LowerBounds         Lower variable bounds
+     * \param UpperBounds         Upper variable bounds
+     * \param DampingCoefficient  Damping coefficient (non-negative)
+     */
+    inline void reset(int const NumDimensions, int const MaxNumPoints, EVectorXd const &LowerBounds, EVectorXd const &UpperBounds, double const DampingCoefficient = 1e-8);
 
   protected:
     /*!
@@ -150,7 +197,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if the number of points are less than the dimension of the polynomial space
      */
-    void setPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues);
+    bool setPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues);
 
   public:
     /*!
@@ -158,27 +205,35 @@ class radialBasisFunction : public surrogate
      * 
      * \returns int Current number of points
      */
-    inline int numPoints() const;
+    inline int numPoints() const override;
+
+    /*!
+     * \brief Method for getting the current number of points
+     * 
+     * \returns int Current number of points
+     */
+    inline int getNumPoints() const override;
 
     /*!
      * \brief Get the Number of Dimensions 
      * 
      * \returns int Number of dimensions
      */
-    inline int getNumDimensions() const;
+    inline int dim() const override;
 
     /*!
-     * \brief Method for resetting the surrogate model
+     * \brief Get the Number of Dimensions 
      * 
+     * \returns int Number of dimensions
      */
-    inline void reset();
+    inline int getNumDimensions() const override;
 
     /*!
      * \brief Method for getting the current points
      * 
      * \returns EMatrixXd Current points
      */
-    inline EMatrixXd getCurrentPoints() const;
+    inline EMatrixXd getCurrentPoints() const override;
 
     /*!
      * \brief Method for getting current point number i (0 is the first)
@@ -187,14 +242,14 @@ class radialBasisFunction : public surrogate
      * 
      * \returns EVectorXd Point at index number i
      */
-    inline EVectorXd getCurrentPoints(int i) const;
+    inline EVectorXd getCurrentPoints(int i) const override;
 
     /*!
      * \brief Method for getting the values of the current points
      * 
      * \returns EVectorXd Values of current points 
      */
-    inline EVectorXd getFunctionValues() const;
+    inline EVectorXd getFunctionValues() const override;
 
     /*!
      * \brief Method for getting the value of current point number i (0 is the first)
@@ -203,7 +258,7 @@ class radialBasisFunction : public surrogate
      * 
      * \returns double Value of point at index number i 
      */
-    inline double getFunctionValues(int i) const;
+    inline double getFunctionValues(int i) const override;
 
     /*!
      * \brief Get the Interpolation Coefficients object
@@ -222,7 +277,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if capacity is exceeded
      */
-    void addPoint(EVectorXd const &Point, double const FunctionValue);
+    bool addPoint(EVectorXd const &Point, double const FunctionValue) override;
 
     /*!
      * \brief Method for adding multiple points with known values
@@ -232,7 +287,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if one point is supplied or if capacity is exceeded
      */
-    void addPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues);
+    bool addPoint(EMatrixXd const &Points, EVectorXd const &FunctionValues) override;
 
     /*!
      * \brief Method for evaluating the surrogate model at a point
@@ -243,7 +298,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    double evaluate(EVectorXd const &Point) const;
+    double evaluate(EVectorXd const &Point) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at a point with known distances
@@ -255,7 +310,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    double evaluate(EVectorXd const &Point, EVectorXd const &Distances) const;
+    double evaluate(EVectorXd const &Point, EVectorXd const &Distances) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points
@@ -266,7 +321,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    EVectorXd evaluate(EMatrixXd const &Points) const;
+    EVectorXd evaluate(EMatrixXd const &Points) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points with known distances
@@ -278,7 +333,7 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    EVectorXd evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const;
+    EVectorXd evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const override;
 
     /*!
      * \brief Method for evaluating the derivative of the surrogate model at a point
@@ -289,23 +344,38 @@ class radialBasisFunction : public surrogate
      * 
      * \throws std::runtime_error if coefficients aren't updated
      */
-    EVectorXd deriv(EVectorXd const &Point) const;
+    EVectorXd deriv(EVectorXd const &Point) const override;
 
     /*!
      * \brief Method for fitting the surrogate model
      * 
      */
-    void fit();
+    bool fit() override;
 
   protected:
+    /*!
+     * \brief Delete a radialBasisFunction object copy construction
+     * 
+     * Avoiding implicit generation of the copy constructor.
+     */
+    radialBasisFunction(radialBasisFunction<kernelType, polynomialTailType> const &) = delete;
+
+    /*!
+     * \brief Delete a radialBasisFunction object assignment
+     * 
+     * Avoiding implicit copy assignment.
+     */
+    radialBasisFunction<kernelType, polynomialTailType> &operator=(radialBasisFunction<kernelType, polynomialTailType> const &) = delete;
+
+  protected:
+    /*! Number of dimensions */
+    int nDimensions;
+
     /*! Capacity */
     int maxNumPoints;
 
-    /*! Number of dimensions */
-    int numDimensions;
-
     /*! Current number of points */
-    int currentNumPoints;
+    int nPoints;
 
     /*! Lower variable bounds */
     EVectorXd lowerBounds;
@@ -341,34 +411,39 @@ class radialBasisFunction : public surrogate
     EVectorXd functionValues;
 
     /*! Interpolation nodes (centers) */
-    EMatrixXd interpolationNodesCenters;
+    EMatrixXd interpolationNodes;
 
     /*! True if the coefficients need to be recomputed */
     bool shouldRecomputeCoefficients;
 };
 
 template <class kernelType, class polynomialTailType>
-radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(int MaxNumPoints,
-                                                                         int NumDimensions,
-                                                                         double DampingCoefficient) : radialBasisFunction(MaxNumPoints,
-                                                                                                                          NumDimensions,
-                                                                                                                          EVectorXd::Zero(NumDimensions),
-                                                                                                                          EVectorXd::Ones(NumDimensions),
-                                                                                                                          DampingCoefficient) {}
+radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(int const NumDimensions,
+                                                                         int const MaxNumPoints,
+                                                                         double const DampingCoefficient) : radialBasisFunction(NumDimensions,
+                                                                                                                                MaxNumPoints,
+                                                                                                                                EVectorXd::Zero(NumDimensions),
+                                                                                                                                EVectorXd::Ones(NumDimensions),
+                                                                                                                                DampingCoefficient)
+{
+}
 
 template <class kernelType, class polynomialTailType>
-radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(int MaxNumPoints,
-                                                                         int NumDimensions,
+radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(int const NumDimensions,
+                                                                         int const MaxNumPoints,
                                                                          EVectorXd const &LowerBounds,
                                                                          EVectorXd const &UpperBounds,
-                                                                         double DampingCoefficient) : maxNumPoints(MaxNumPoints),
-                                                                                                      numDimensions(NumDimensions),
-                                                                                                      currentNumPoints(0),
-                                                                                                      lowerBounds(LowerBounds),
-                                                                                                      upperBounds(UpperBounds),
-                                                                                                      dampingCoefficient(DampingCoefficient)
+                                                                         double const DampingCoefficient) : nDimensions(NumDimensions),
+                                                                                                            maxNumPoints(MaxNumPoints),
+                                                                                                            nPoints(0),
+                                                                                                            lowerBounds(LowerBounds),
+                                                                                                            upperBounds(UpperBounds),
+                                                                                                            dampingCoefficient(DampingCoefficient)
 {
-    polynomialSpaceDimension = tail.dimTail(numDimensions);
+#ifdef DEBUG
+    gTimer.tic();
+#endif
+    polynomialSpaceDimension = tail.dimTail(nDimensions);
     if ((kernel.order() - 1) > tail.degree())
     {
         UMUQFAIL("Kernel and tail mismatch!");
@@ -377,39 +452,86 @@ radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(int Max
     permutationP = EVectorX<int>::Zero(maxNumPoints + polynomialSpaceDimension);
     coefficientVector = EVectorXd::Zero(maxNumPoints + polynomialSpaceDimension);
     functionValues = EVectorXd::Zero(maxNumPoints + polynomialSpaceDimension);
-    interpolationNodesCenters = EMatrixXd::Zero(numDimensions, maxNumPoints);
+    interpolationNodes = EMatrixXd::Zero(nDimensions, maxNumPoints);
     shouldRecomputeCoefficients = false;
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunction->construction");
+#endif
+}
+
+template <class kernelType, class polynomialTailType>
+radialBasisFunction<kernelType, polynomialTailType>::radialBasisFunction(radialBasisFunction<kernelType, polynomialTailType> &&other)
+{
+    nDimensions = other.nDimensions;
+    maxNumPoints = other.maxNumPoints;
+    nPoints = other.nPoints;
+    lowerBounds = std::move(other.lowerBounds);
+    upperBounds = std::move(other.upperBounds);
+    dampingCoefficient = other.dampingCoefficient;
+    polynomialSpaceDimension = other.polynomialSpaceDimension;
+    matrixLU = std::move(other.matrixLU);
+    permutationP = std::move(other.permutationP);
+    coefficientVector = std::move(other.coefficientVector);
+    functionValues = std::move(other.functionValues);
+    interpolationNodes = std::move(other.interpolationNodes);
+    shouldRecomputeCoefficients = other.shouldRecomputeCoefficients;
+}
+
+template <class kernelType, class polynomialTailType>
+radialBasisFunction<kernelType, polynomialTailType> &radialBasisFunction<kernelType, polynomialTailType>::operator=(radialBasisFunction<kernelType, polynomialTailType> &&other)
+{
+    nDimensions = other.nDimensions;
+    maxNumPoints = other.maxNumPoints;
+    nPoints = other.nPoints;
+    lowerBounds = std::move(other.lowerBounds);
+    upperBounds = std::move(other.upperBounds);
+    dampingCoefficient = other.dampingCoefficient;
+    polynomialSpaceDimension = other.polynomialSpaceDimension;
+    matrixLU = std::move(other.matrixLU);
+    permutationP = std::move(other.permutationP);
+    coefficientVector = std::move(other.coefficientVector);
+    functionValues = std::move(other.functionValues);
+    interpolationNodes = std::move(other.interpolationNodes);
+    shouldRecomputeCoefficients = other.shouldRecomputeCoefficients;
+    return *this;
 }
 
 template <class kernelType, class polynomialTailType>
 radialBasisFunction<kernelType, polynomialTailType>::~radialBasisFunction() {}
 
 template <class kernelType, class polynomialTailType>
-void radialBasisFunction<kernelType, polynomialTailType>::setPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues)
+inline void radialBasisFunction<kernelType, polynomialTailType>::reset() { nPoints = 0; }
+
+template <class kernelType, class polynomialTailType>
+bool radialBasisFunction<kernelType, polynomialTailType>::setPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues)
 {
+#ifdef DEBUG
+    gTimer.tic();
+#endif
+
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
 
-    currentNumPoints = static_cast<int>(points.cols());
+    nPoints = static_cast<int>(points.cols());
 
-    if (currentNumPoints < polynomialSpaceDimension)
+    if (nPoints < polynomialSpaceDimension)
     {
-        UMUQFAIL("Not enough points!");
+        UMUQFAILRETURN("Current number of points = ", nPoints, " < ", polynomialSpaceDimension, " (polynomial dimension), Not enough points!");
     }
 
-    functionValues.segment(polynomialSpaceDimension, currentNumPoints) = FunctionValues;
+    functionValues.segment(polynomialSpaceDimension, nPoints) = FunctionValues;
 
     EMatrixXd px = tail.evaluate(points);
 
     EMatrixXd phi = kernel.evaluate(L2Distance(points));
 
-    auto const n = currentNumPoints + polynomialSpaceDimension;
+    auto const n = nPoints + polynomialSpaceDimension;
 
     EMatrixXd A = EMatrixXd::Zero(n, n);
 
-    A.block(polynomialSpaceDimension, 0, currentNumPoints, polynomialSpaceDimension) = px.transpose();
-    A.block(0, polynomialSpaceDimension, polynomialSpaceDimension, currentNumPoints) = px;
-    A.block(polynomialSpaceDimension, polynomialSpaceDimension, currentNumPoints, currentNumPoints) = phi;
+    A.block(polynomialSpaceDimension, 0, nPoints, polynomialSpaceDimension) = px.transpose();
+    A.block(0, polynomialSpaceDimension, polynomialSpaceDimension, nPoints) = px;
+    A.block(polynomialSpaceDimension, polynomialSpaceDimension, nPoints, nPoints) = phi;
 
     // REGULARIZATION
     A += dampingCoefficient * EMatrixXd::Identity(n, n);
@@ -421,36 +543,44 @@ void radialBasisFunction<kernelType, polynomialTailType>::setPoints(EMatrixXd co
 
     permutationP.segment(0, n) = lu.permutationP().indices();
 
-    interpolationNodesCenters.block(0, 0, points.rows(), points.cols()) = points;
+    interpolationNodes.block(0, 0, points.rows(), points.cols()) = points;
 
     shouldRecomputeCoefficients = true;
+
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunction->setPoints");
+#endif
+    return true;
 }
 
 template <class kernelType, class polynomialTailType>
-inline int radialBasisFunction<kernelType, polynomialTailType>::numPoints() const { return currentNumPoints; }
+inline int radialBasisFunction<kernelType, polynomialTailType>::numPoints() const { return nPoints; }
 
 template <class kernelType, class polynomialTailType>
-inline int radialBasisFunction<kernelType, polynomialTailType>::getNumDimensions() const { return numDimensions; }
+inline int radialBasisFunction<kernelType, polynomialTailType>::getNumPoints() const { return nPoints; }
 
 template <class kernelType, class polynomialTailType>
-inline void radialBasisFunction<kernelType, polynomialTailType>::reset() { currentNumPoints = 0; }
+inline int radialBasisFunction<kernelType, polynomialTailType>::dim() const { return nDimensions; }
+
+template <class kernelType, class polynomialTailType>
+inline int radialBasisFunction<kernelType, polynomialTailType>::getNumDimensions() const { return nDimensions; }
 
 template <class kernelType, class polynomialTailType>
 inline EMatrixXd radialBasisFunction<kernelType, polynomialTailType>::getCurrentPoints() const
 {
-    return scaleToHyperCube(interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints), lowerBounds, upperBounds);
+    return scaleToHyperCube<double, true>(interpolationNodes.block(0, 0, nDimensions, nPoints), lowerBounds, upperBounds);
 }
 
 template <class kernelType, class polynomialTailType>
 inline EVectorXd radialBasisFunction<kernelType, polynomialTailType>::getCurrentPoints(int i) const
 {
-    return scaleToHyperCube(interpolationNodesCenters.col(i), lowerBounds, upperBounds);
+    return scaleToHyperCube<double>(static_cast<EVectorXd>(interpolationNodes.col(i)), lowerBounds, upperBounds);
 }
 
 template <class kernelType, class polynomialTailType>
 inline EVectorXd radialBasisFunction<kernelType, polynomialTailType>::getFunctionValues() const
 {
-    return functionValues.segment(polynomialSpaceDimension, currentNumPoints);
+    return functionValues.segment(polynomialSpaceDimension, nPoints);
 }
 
 template <class kernelType, class polynomialTailType>
@@ -470,32 +600,32 @@ inline EVectorXd radialBasisFunction<kernelType, polynomialTailType>::getInterpo
 }
 
 template <class kernelType, class polynomialTailType>
-void radialBasisFunction<kernelType, polynomialTailType>::addPoint(EVectorXd const &Point, double const FunctionValue)
+bool radialBasisFunction<kernelType, polynomialTailType>::addPoint(EVectorXd const &Point, double const FunctionValue)
 {
-    if (currentNumPoints == 0)
+    if (!nPoints)
     {
         EVectorXd fVal(1);
         fVal << FunctionValue;
-        EMatrixXd point = Point;
-        setPoints(point, fVal);
-        return;
+        return setPoints(static_cast<EMatrixXd>(Point), fVal);
     }
-
-    if (currentNumPoints + 1 > maxNumPoints)
+    if (nPoints + 1 > maxNumPoints)
     {
-        UMUQFAIL("Capacity exceeded");
+        UMUQFAILRETURN("Capacity exceeded");
     }
+#ifdef DEBUG
+    gTimer.tic();
+#endif
 
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
 
-    int const n = polynomialSpaceDimension + currentNumPoints;
+    int const n = polynomialSpaceDimension + nPoints;
 
     EVectorXd vx(n);
-    vx << tail.evaluate(point), kernel.evaluate(L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    vx << tail.evaluate(point), kernel.evaluate(L2Distance<double>(point, interpolationNodes.block(0, 0, nDimensions, nPoints)));
 
     // Step 1
-    EVectorXd u12 = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.segment(0, n)) * vx;
+    EVectorXd u12 = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.head(n)) * vx;
     EVectorXd l21 = vx;
 
     // Step 2
@@ -504,64 +634,68 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoint(EVectorXd con
     // Step 3
     matrixLU.block(0, 0, n, n).template triangularView<Eigen::Upper>().solveInPlace(l21);
 
-    double u22 = kernel.phiZero() + dampingCoefficient - u12.cwiseProduct(l21);
+    double u22 = kernel.phiZero() + dampingCoefficient - u12.dot(l21);
 
-    matrixLU.block(n, 0, 0, n) = l21.transpose();
-    matrixLU(0, n, n, 0) = u12;
+    matrixLU.block(n, 0, 1, n) = l21.transpose();
+    matrixLU.block(0, n, n, 1) = u12;
     matrixLU(n, n) = u22;
     permutationP(n) = n;
 
     // Update F and add the centers
     functionValues(n) = FunctionValue;
 
-    interpolationNodesCenters.col(currentNumPoints) = point;
+    interpolationNodes.col(nPoints) = point;
 
-    currentNumPoints++;
+    nPoints++;
 
     shouldRecomputeCoefficients = true;
+
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunction->addPoint");
+#endif
+    return true;
 }
 
 template <class kernelType, class polynomialTailType>
-void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues)
+bool radialBasisFunction<kernelType, polynomialTailType>::addPoint(EMatrixXd const &Points, EVectorXd const &FunctionValues)
 {
     // check for the correct number of points and function values at those points
     UMUQ_assert(Points.cols() == FunctionValues.rows());
 
-    if (currentNumPoints == 0)
+    if (!nPoints)
     {
-        setPoints(Points, FunctionValues);
-        return;
+        return setPoints(Points, FunctionValues);
     }
 
-    int const newNumPoints = FunctionValues.rows();
-
+    int const newNumPoints = static_cast<int>(FunctionValues.rows());
     if (newNumPoints < 2)
     {
         if (newNumPoints)
         {
-            addPoint(Points.col(0), FunctionValues(0));
-            return;
+            return addPoint(Points.col(0), FunctionValues(0));
         }
-        UMUQWARNING("There is no input data!");
-        return;
+        UMUQFAILRETURN("There is no input data!");
     }
+
+    if (nPoints + newNumPoints > maxNumPoints)
+    {
+        UMUQFAILRETURN("Capacity exceeded ! \n Number of current points ", nPoints, " + number of new points ", newNumPoints, " > the available capacity ", maxNumPoints);
+    }
+
+#ifdef DEBUG
+    gTimer.tic();
+#endif
 
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
 
-    int const n = polynomialSpaceDimension + currentNumPoints;
+    int const n = polynomialSpaceDimension + nPoints;
 
-    if (currentNumPoints + newNumPoints > maxNumPoints)
-    {
-        UMUQFAIL("Capacity exceeded");
-    }
-
-    auto px = tail.evaluate(points);
-
+    EMatrixXd px = tail.evaluate(points);
     EMatrixXd B = EMatrixXd::Zero(n, newNumPoints);
 
-    B.block(0, 0, polynomialSpaceDimension, newNumPoints).rowwise() = px.transpose();
-    B.block(polynomialSpaceDimension, 0, currentNumPoints, newNumPoints) = kernel.evaluate(L2Distance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
+    B.block(0, 0, polynomialSpaceDimension, newNumPoints) = px;
+    B.block(polynomialSpaceDimension, 0, nPoints, newNumPoints) = kernel.evaluate(L2Distance<double, true>(interpolationNodes.block(0, 0, nDimensions, nPoints), points));
 
     EMatrixXd K = kernel.evaluate(L2Distance(points));
 
@@ -570,7 +704,7 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
 
     // Update the LU factorization
     // Step 1
-    EMatrixXd U12 = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.segment(0, n)) * B;
+    EMatrixXd U12 = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.head(n)) * B;
     EMatrixXd L21 = U12;
 
     // Step 2
@@ -582,7 +716,7 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
     EMatrixXd C;
 
     // Standard Cholesky decomposition (LL^T)
-    Eigen::LLT<EMatrixXd> llt(K - L21 * U12);
+    Eigen::LLT<EMatrixXd> llt(K - L21.transpose() * U12);
 
     if (llt.info() == Eigen::Success)
     {
@@ -595,11 +729,10 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
 
         // Add new points
         functionValues.segment(n, newNumPoints) = FunctionValues;
-        interpolationNodesCenters.block(0, currentNumPoints, numDimensions, newNumPoints) = points;
-        currentNumPoints += newNumPoints;
+        interpolationNodes.block(0, nPoints, nDimensions, newNumPoints) = points;
+        nPoints += newNumPoints;
         // Build LU from scratch
-        setPoints(getCurrentPoints(), functionValues.segment(polynomialSpaceDimension, currentNumPoints));
-        return;
+        return setPoints(getCurrentPoints(), functionValues.segment(polynomialSpaceDimension, nPoints));
     }
 
     matrixLU.block(n, 0, newNumPoints, n).template triangularView<Eigen::UnitLower>() = L21;
@@ -612,11 +745,17 @@ void radialBasisFunction<kernelType, polynomialTailType>::addPoints(EMatrixXd co
     // Update F and add the centers
     functionValues.segment(n, newNumPoints) = FunctionValues;
 
-    interpolationNodesCenters.block(0, currentNumPoints, numDimensions, newNumPoints) = points;
+    interpolationNodes.block(0, nPoints, nDimensions, newNumPoints) = points;
 
-    currentNumPoints += newNumPoints;
+    nPoints += newNumPoints;
 
     shouldRecomputeCoefficients = true;
+
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunction->addPoint");
+#endif
+
+    return true;
 }
 
 template <class kernelType, class polynomialTailType>
@@ -624,14 +763,13 @@ double radialBasisFunction<kernelType, polynomialTailType>::evaluate(EVectorXd c
 {
     if (shouldRecomputeCoefficients)
     {
-        UMUQFAIL("RBF not updated. You need to call fit() first");
+        UMUQFAIL("radialBasisFunction is not updated. You need to call fit() first");
     }
-
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
     EVectorXd px = tail.evaluate(point);
-    EVectorXd phi = kernel.evaluate(L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
-    return coefficientVector.segment(0, polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, currentNumPoints).dot(phi);
+    EVectorXd phi = kernel.evaluate(L2Distance<double>(point, interpolationNodes.block(0, 0, nDimensions, nPoints)));
+    return coefficientVector.head(polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, nPoints).dot(phi);
 }
 
 template <class kernelType, class polynomialTailType>
@@ -639,54 +777,57 @@ double radialBasisFunction<kernelType, polynomialTailType>::evaluate(EVectorXd c
 {
     if (shouldRecomputeCoefficients)
     {
-        UMUQFAIL("RBF not updated. You need to call fit() first");
+        UMUQFAIL("radialBasisFunction is not updated. You need to call fit() first");
     }
     if ((lowerBounds.array() != 0).any() || (upperBounds.array() != 1).any())
     {
-        UMUQWARNING("RBF uses internal scaling so distances have to be recomputed");
+        UMUQWARNING("radialBasisFunction uses internal scaling so distances have to be recomputed");
         return evaluate(Point);
     }
-
+    // check for the correct number of points and distances vector
+    UMUQ_assert(nPoints == Distances.rows());
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
     EVectorXd px = tail.evaluate(point);
     EVectorXd phi = kernel.evaluate(Distances);
-    return coefficientVector.segment(0, polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, currentNumPoints).dot(phi);
+    return coefficientVector.head(polynomialSpaceDimension).dot(px) + coefficientVector.segment(polynomialSpaceDimension, nPoints).dot(phi);
 }
 
 template <class kernelType, class polynomialTailType>
 EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evaluate(EMatrixXd const &Points) const
 {
+    // Check for the correct dimensionality
+    UMUQ_assert(Points.rows() == nDimensions);
     if (shouldRecomputeCoefficients)
     {
-        UMUQFAIL("RBF not updated. You need to call fit() first");
+        UMUQFAIL("radialBasisFunction is not updated. You need to call fit() first");
     }
-
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
     EMatrixXd px = tail.evaluate(points);
-    EMatrixXd phi = kernel.evaluate(L2Distance(points, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints)));
-    return px.transpose() * coefficientVector.segment(0, polynomialSpaceDimension) + phi.transpose() * coefficientVector.segment(polynomialSpaceDimension, currentNumPoints);
+    EMatrixXd phi = kernel.evaluate(L2Distance<double, true>(points, interpolationNodes.block(0, 0, nDimensions, nPoints)));
+    return px.transpose() * coefficientVector.head(polynomialSpaceDimension) + phi * coefficientVector.segment(polynomialSpaceDimension, nPoints);
 }
 
 template <class kernelType, class polynomialTailType>
 EVectorXd radialBasisFunction<kernelType, polynomialTailType>::evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const
 {
+    // Check for the correct dimensions
+    UMUQ_assert(Points.cols() == Distances.rows());
     if (shouldRecomputeCoefficients)
     {
-        UMUQFAIL("RBF not updated. You need to call fit() first");
+        UMUQFAIL("radialBasisFunction is not updated. You need to call fit() first");
     }
     if ((lowerBounds.array() != 0).any() || (upperBounds.array() != 1).any())
     {
-        UMUQWARNING("RBF uses internal scaling so distances have to be recomputed");
-        return evaluate(Point);
+        UMUQWARNING("radialBasisFunction uses internal scaling so distances have to be recomputed");
+        return evaluate(Points);
     }
-
     // Map point to be in the unit box
     EMatrixXd points = scaleToUnitBox(Points, lowerBounds, upperBounds);
     EMatrixXd px = tail.evaluate(points);
     EMatrixXd phi = kernel.evaluate(Distances);
-    return px.transpose() * coefficientVector.segment(0, polynomialSpaceDimension) + phi.transpose() * coefficientVector.segment(polynomialSpaceDimension, currentNumPoints);
+    return px.transpose() * coefficientVector.head(polynomialSpaceDimension) + phi * coefficientVector.segment(polynomialSpaceDimension, nPoints);
 }
 
 template <class kernelType, class polynomialTailType>
@@ -694,63 +835,63 @@ EVectorXd radialBasisFunction<kernelType, polynomialTailType>::deriv(EVectorXd c
 {
     if (shouldRecomputeCoefficients)
     {
-        UMUQFAIL("RBF not updated. You need to call fit() first");
+        UMUQFAIL("radialBasisFunction is not updated. You need to call fit() first");
     }
-
     // Map point to be in the unit box
     EVectorXd point = scaleToUnitBox(Point, lowerBounds, upperBounds);
 
     EMatrixXd dpx = tail.deriv(point);
-    EVectorXd Distances = L2Distance(point, interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints));
-
+    EVectorXd Distances = L2Distance<double>(point, interpolationNodes.block(0, 0, nDimensions, nPoints));
     // Better safe than sorry
-    for (int i = 0; i < currentNumPoints; ++i)
+    for (int i = 0; i < nPoints; ++i)
     {
         if (Distances(i) < 1e-10)
         {
             Distances(i) = 1e-10;
         }
     }
-
-    EMatrixXd dsx = -interpolationNodesCenters.block(0, 0, numDimensions, currentNumPoints);
+    EMatrixXd dsx = -interpolationNodes.block(0, 0, nDimensions, nPoints);
     dsx.colwise() += point;
-    {
-        EMatrixXd temp = coefficientVector.segment(polynomialSpaceDimension, currentNumPoints).cwiseProduct(kernel.deriv(Distances)).cwiseProduct(Distances.cwiseInverse());
-        dsx = dsx.array().rowwise() * temp.transpose().array();
-    }
-
-    return dsx.rowwise().sum() + dpx.transpose() * coefficientVector.segment(0, polynomialSpaceDimension);
+    dsx.array().rowwise() *= coefficientVector.segment(polynomialSpaceDimension, nPoints).cwiseProduct(kernel.deriv(Distances)).cwiseProduct(Distances.cwiseInverse()).array().transpose();
+    return dsx.rowwise().sum() + dpx.transpose() * coefficientVector.head(polynomialSpaceDimension);
 }
 
 template <class kernelType, class polynomialTailType>
-void radialBasisFunction<kernelType, polynomialTailType>::fit()
+bool radialBasisFunction<kernelType, polynomialTailType>::fit()
 {
-    if (currentNumPoints < polynomialSpaceDimension)
+    if (nPoints < polynomialSpaceDimension)
     {
-        UMUQFAIL("Current number of points = ", currentNumPoints, " < ", polynomialSpaceDimension, " (polynomial dimension), Not enough points!");
+        UMUQFAILRETURN("Current number of points = ", nPoints, " < ", polynomialSpaceDimension, " (polynomial dimension), Not enough points!");
     }
+#ifdef DEBUG
+    gTimer.tic();
+#endif
     if (shouldRecomputeCoefficients)
     {
         shouldRecomputeCoefficients = false;
 
-        int const n = currentNumPoints + polynomialSpaceDimension;
+        int const n = nPoints + polynomialSpaceDimension;
 
         /* The decomposition PA = LU.
-             * So we proceed as follows:
-             * Step 1: compute c = Pb.
-             * Step 2: replace c by the solution x to Lx = c.
-             * Step 3: replace c by the solution x to Ux = c.
-             */
+         * So we proceed as follows:
+         * Step 1: compute c = Pb.
+         * Step 2: replace c by the solution x to Lx = c.
+         * Step 3: replace c by the solution x to Ux = c.
+         */
 
         // Step 1
-        coefficientVector.segment(0, n) = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.segment(0, n)) * functionValues.segment(0, n);
+        coefficientVector.head(n) = Eigen::PermutationWrapper<EVectorX<int>>(permutationP.head(n)) * functionValues.head(n);
 
         // Step 2
-        matrixLU.block(0, 0, n, n).template triangularView<Eigen::UnitLower>().solveInPlace(coefficientVector.segment(0, n));
+        matrixLU.block(0, 0, n, n).template triangularView<Eigen::UnitLower>().solveInPlace(coefficientVector.head(n));
 
         // Step 3
-        matrixLU.block(0, 0, n, n).template triangularView<Eigen::Upper>().solveInPlace(coefficientVector.segment(0, n));
+        matrixLU.block(0, 0, n, n).template triangularView<Eigen::Upper>().solveInPlace(coefficientVector.head(n));
     }
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunction->fit");
+#endif
+    return true;
 }
 
 /*! \class radialBasisFunctionCap
@@ -777,12 +918,23 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
      * 
      * \param MaxNumPoints        Capacity, maximum number of points
      * \param NumDimensions       Number of dimensions
+     * \param DampingCoefficient  Damping coefficient (non-negative)
+     */
+    radialBasisFunctionCap(int const NumDimensions,
+                           int const MaxNumPoints,
+                           double const DampingCoefficient = 1e-8);
+
+    /*!
+     * \brief Construct a new radialBasisFunctionCap object
+     * 
+     * \param MaxNumPoints        Capacity, maximum number of points
+     * \param NumDimensions       Number of dimensions
      * \param LowerBounds         Lower variable bounds
      * \param UpperBounds         Upper variable bounds
      * \param DampingCoefficient  Damping coefficient (non-negative)
      */
-    radialBasisFunctionCap(int const MaxNumPoints,
-                           int const NumDimensions,
+    radialBasisFunctionCap(int const NumDimensions,
+                           int const MaxNumPoints,
                            EVectorXd const &LowerBounds,
                            EVectorXd const &UpperBounds,
                            double const DampingCoefficient = 1e-8);
@@ -797,30 +949,43 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
      * \brief Method for fitting the surrogate model
      * 
      */
-    void fit();
+    bool fit();
 };
 
 template <class kernelType, class polynomialTailType>
-radialBasisFunctionCap<kernelType, polynomialTailType>::radialBasisFunctionCap(int const MaxNumPoints,
-                                                                               int const NumDimensions,
+radialBasisFunctionCap<kernelType, polynomialTailType>::radialBasisFunctionCap(int const NumDimensions,
+                                                                               int const MaxNumPoints,
+                                                                               double const DampingCoefficient) : radialBasisFunction<kernelType, polynomialTailType>(NumDimensions,
+                                                                                                                                                                      MaxNumPoints,
+                                                                                                                                                                      DampingCoefficient) {}
+
+template <class kernelType, class polynomialTailType>
+radialBasisFunctionCap<kernelType, polynomialTailType>::radialBasisFunctionCap(int const NumDimensions,
+                                                                               int const MaxNumPoints,
                                                                                EVectorXd const &LowerBounds,
                                                                                EVectorXd const &UpperBounds,
-                                                                               double const DampingCoefficient) : radialBasisFunction<kernelType, polynomialTailType>(MaxNumPoints,
-                                                                                                                                                                      NumDimensions,
+                                                                               double const DampingCoefficient) : radialBasisFunction<kernelType, polynomialTailType>(NumDimensions,
+                                                                                                                                                                      MaxNumPoints,
                                                                                                                                                                       LowerBounds,
                                                                                                                                                                       UpperBounds,
                                                                                                                                                                       DampingCoefficient) {}
 
 template <class kernelType, class polynomialTailType>
-void radialBasisFunctionCap<kernelType, polynomialTailType>::fit()
+radialBasisFunctionCap<kernelType, polynomialTailType>::~radialBasisFunctionCap() {}
+
+template <class kernelType, class polynomialTailType>
+bool radialBasisFunctionCap<kernelType, polynomialTailType>::fit()
 {
-    if (this->currentNumPoints < this->polynomialSpaceDimension)
+    if (this->nPoints < this->polynomialSpaceDimension)
     {
-        UMUQFAIL("Not enough points");
+        UMUQFAILRETURN("Current number of points = ", this->nPoints, " < ", this->polynomialSpaceDimension, " (polynomial dimension), Not enough points!");
     }
+#ifdef DEBUG
+    gTimer.tic();
+#endif
     if (this->shouldRecomputeCoefficients)
     {
-        int const n = this->currentNumPoints + this->polynomialSpaceDimension;
+        int const n = this->nPoints + this->polynomialSpaceDimension;
 
         double functionValuesMedian;
 
@@ -829,7 +994,7 @@ void radialBasisFunctionCap<kernelType, polynomialTailType>::fit()
             // We do partial sorting algorithm that rearranges elements
             std::vector<double> functionValuesVector(n);
             // Copy the function values to the std vector
-            EMap<EVectorXd>(functionValuesVector.data(), this->functionValues.segment(0, n));
+            EMap<EVectorXd>(functionValuesVector.data(), this->functionValues.head(n));
             std::nth_element(functionValuesVector.begin(), functionValuesVector.begin() + n / 2, functionValuesVector.end());
             functionValuesMedian = functionValuesVector[n / 2];
         }
@@ -851,16 +1016,20 @@ void radialBasisFunctionCap<kernelType, polynomialTailType>::fit()
          */
 
         // Step 1
-        this->coefficientVector.segment(0, n) = Eigen::PermutationWrapper<EVectorX<int>>(this->permutationP.segment(0, n)) * this->functionValues.segment(0, n);
+        this->coefficientVector.head(n) = Eigen::PermutationWrapper<EVectorX<int>>(this->permutationP.head(n)) * this->functionValues.head(n);
 
         // Step 2
-        this->matrixLU.block(0, 0, n, n).template triangularView<Eigen::UnitLower>().solveInPlace(this->coefficientVector.segment(0, n));
+        this->matrixLU.block(0, 0, n, n).template triangularView<Eigen::UnitLower>().solveInPlace(this->coefficientVector.head(n));
 
         // Step 3
-        this->matrixLU.block(0, 0, n, n).template triangularView<Eigen::Upper>().solveInPlace(this->coefficientVector.segment(0, n));
+        this->matrixLU.block(0, 0, n, n).template triangularView<Eigen::Upper>().solveInPlace(this->coefficientVector.head(n));
 
         this->shouldRecomputeCoefficients = false;
     }
+#ifdef DEBUG
+    gTimer.toc("radialBasisFunctionCap->fit");
+#endif
+    return true;
 }
 
 } // namespace umuq
