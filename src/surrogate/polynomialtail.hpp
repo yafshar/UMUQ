@@ -7,7 +7,7 @@ namespace umuq
 {
 
 /*! \file polynomialtail.hpp
- * \ingroup 
+ * \ingroup Surrogate_Module
  * 
  * \brief Implementation of the polynomial tail.
  *
@@ -69,8 +69,6 @@ enum class polynomialTailTypes
  * \brief Abstract class for a polynomial tail
  * 
  * This is the abstract class that should be used as a Base class for all Polynomial tails 
- * 
- * \author David Eriksson, dme65@cornell.edu
  */
 class polynomialTail
 {
@@ -101,7 +99,7 @@ class polynomialTail
      * 
      * \returns int Dimensionality of the polynomial space (number of basis functions)
      */
-    virtual inline int dimTail(int dim) const = 0;
+    virtual inline int dimTail(int const dim) const = 0;
 
     /*!
      * \brief Method for evaluating the monomial basis function for a given point
@@ -110,7 +108,7 @@ class polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    virtual inline EVectorXd evaluate(const EVectorXd &point) const = 0;
+    virtual inline EVectorXd evaluate(EVectorXd const &point) const = 0;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -119,7 +117,7 @@ class polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    virtual inline EMatrixXd evaluate(const EMatrixXd &points) const = 0;
+    virtual inline EMatrixXd evaluate(EMatrixXd const &points) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -128,7 +126,7 @@ class polynomialTail
      * 
      * \returns EMatrixXd Values of the derivative of the monomial basis functions at the point
      */
-    virtual inline EMatrixXd deriv(const EVectorXd &point) const = 0;
+    virtual inline EMatrixXd deriv(EVectorXd const &point) const = 0;
 };
 
 polynomialTail::polynomialTail() {}
@@ -143,8 +141,6 @@ polynomialTail::~polynomialTail() {}
  * This is an implementation of the linear polynomial tail with basis 
  * \f$\{1,x_1,x_2,\dots,x_d\}\f$ of degree 1. Popular to use with the
  * Cubic or the TPS kernel.
- *
- * \author David Eriksson, dme65@cornell.edu
  */
 class linearPolynomialTail : public polynomialTail
 {
@@ -175,7 +171,7 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns int Dimensionality of the polynomial space (number of basis functions)
      */
-    inline int dimTail(int dim) const;
+    inline int dimTail(int const dim) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for a given point
@@ -184,7 +180,7 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    inline EVectorXd evaluate(const EVectorXd &x) const;
+    inline EVectorXd evaluate(EVectorXd const &x) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -193,7 +189,7 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    inline EMatrixXd evaluate(const EMatrixXd &X) const;
+    inline EMatrixXd evaluate(EMatrixXd const &X) const;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -202,36 +198,36 @@ class linearPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the derivative of the monomial basis functions at the point
      */
-    inline EMatrixXd deriv(const EVectorXd &x) const;
+    inline EMatrixXd deriv(EVectorXd const &x) const;
 
   private:
     /*! Degree of the polynomial tail */
-    int mDegree;
+    int polynomialTailDegree;
 };
 
-linearPolynomialTail::linearPolynomialTail() : mDegree(1) {}
+linearPolynomialTail::linearPolynomialTail() : polynomialTailDegree(1) {}
 
 linearPolynomialTail::~linearPolynomialTail() {}
 
-inline int linearPolynomialTail::degree() const { return mDegree; }
+inline int linearPolynomialTail::degree() const { return polynomialTailDegree; }
 
-inline int linearPolynomialTail::dimTail(int dim) const { return 1 + dim; }
+inline int linearPolynomialTail::dimTail(int const dim) const { return 1 + dim; }
 
-inline EVectorXd linearPolynomialTail::evaluate(const EVectorXd &x) const
+inline EVectorXd linearPolynomialTail::evaluate(EVectorXd const &x) const
 {
-    EVectorXd tail(x.rows() + 1);
-    tail << double{1}, x;
-    return tail;
+    EVectorXd y(x.rows() + 1);
+    y << double{1}, x;
+    return y;
 }
 
-inline EMatrixXd linearPolynomialTail::evaluate(const EMatrixXd &X) const
+inline EMatrixXd linearPolynomialTail::evaluate(EMatrixXd const &X) const
 {
     EMatrixXd Y(X.rows() + 1, X.cols());
     Y << ERowVectorXd::Ones(X.cols()), X;
     return Y;
 }
 
-inline EMatrixXd linearPolynomialTail::deriv(const EVectorXd &x) const
+inline EMatrixXd linearPolynomialTail::deriv(EVectorXd const &x) const
 {
     auto const nSize = x.rows();
     EMatrixXd Y(nSize + 1, nSize);
@@ -246,8 +242,6 @@ inline EMatrixXd linearPolynomialTail::deriv(const EVectorXd &x) const
  * 
  * This is an implementation of the constant polynomial tail with basis 
  * \f$\{1\}\f$ of degree 0. Popular to use with the linear kernel.
- *
- * \author David Eriksson, dme65@cornell.edu
  */
 class constantPolynomialTail : public polynomialTail
 {
@@ -278,7 +272,7 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns int Dimensionality of the polynomial space (number of basis functions)
      */
-    inline int dimTail(int dim) const;
+    inline int dimTail(int const dim) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for a given point
@@ -287,7 +281,7 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns EVectorXd Value of the monomial basis functions at the point
      */
-    inline EVectorXd evaluate(const EVectorXd &x) const;
+    inline EVectorXd evaluate(EVectorXd const &x) const;
 
     /*!
      * \brief Method for evaluating the monomial basis function for multiple points
@@ -296,7 +290,7 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the monomial basis functions at the points
      */
-    inline EMatrixXd evaluate(const EMatrixXd &X) const;
+    inline EMatrixXd evaluate(EMatrixXd const &X) const;
 
     /*!
      * \brief Method for evaluating the derivative of the monomial basis function for a given point
@@ -305,26 +299,26 @@ class constantPolynomialTail : public polynomialTail
      * 
      * \returns EMatrixXd Values of the derivative of the monomial basis functions at the point
      */
-    inline EMatrixXd deriv(const EVectorXd &x) const;
+    inline EMatrixXd deriv(EVectorXd const &x) const;
 
   private:
     /*! Degree of the polynomial tail */
-    int mDegree;
+    int polynomialTailDegree;
 };
 
-constantPolynomialTail::constantPolynomialTail() : mDegree(0) {}
+constantPolynomialTail::constantPolynomialTail() : polynomialTailDegree(0) {}
 
 constantPolynomialTail::~constantPolynomialTail() {}
 
-inline int constantPolynomialTail::degree() const { return mDegree; }
+inline int constantPolynomialTail::degree() const { return polynomialTailDegree; }
 
-inline int constantPolynomialTail::dimTail(int dim) const { return 1; }
+inline int constantPolynomialTail::dimTail(int const dim) const { return 1; }
 
-inline EVectorXd constantPolynomialTail::evaluate(const EVectorXd &x) const { return EMatrixXd::Ones(1, 1); }
+inline EVectorXd constantPolynomialTail::evaluate(EVectorXd const &x) const { return EVectorXd::Ones(1); }
 
-inline EMatrixXd constantPolynomialTail::evaluate(const EMatrixXd &X) const { return EMatrixXd::Ones(1, X.cols()); }
+inline EMatrixXd constantPolynomialTail::evaluate(EMatrixXd const &X) const { return EMatrixXd::Ones(1, X.cols()); }
 
-inline EMatrixXd constantPolynomialTail::deriv(const EVectorXd &x) const { return EMatrixXd::Zero(1, x.rows()); }
+inline EMatrixXd constantPolynomialTail::deriv(EVectorXd const &x) const { return EMatrixXd::Zero(1, x.rows()); }
 
 } // namespace umuq
 
