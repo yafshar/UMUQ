@@ -1,15 +1,8 @@
 #include "core/core.hpp"
 #include "environment.hpp"
-#include "numerics/random/psrandom.hpp"
+#include "global.hpp"
 #include "inference/prior/priordistribution.hpp"
 #include "gtest/gtest.h"
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief An instance of a seeded pseudo-random object
- */
-umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -74,7 +67,7 @@ TEST(priorDistribution_test, HandlesConstruction)
     EXPECT_DOUBLE_EQ(prior.logpdf(x), logpriorpdf(lowerbound, upperbound));
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(prng.setState());
+    EXPECT_TRUE(umuq::prng.setState());
 
     for (int i = 0; i < 1000; i++)
     {
@@ -117,7 +110,7 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
         EXPECT_DOUBLE_EQ(prior.logpdf(x), -0.5 * M_L2PI - x[0] * x[0] / 2. + logpriorpdf(std::vector<double>{param1[1]}, std::vector<double>{param2[1]}));
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Sampling from this prior distribution
         EXPECT_TRUE(prior.sample(x));
@@ -151,7 +144,7 @@ TEST(priorDistribution_test, HandlesCompositePriorConstruction)
         EXPECT_DOUBLE_EQ(prior.logpdf(x), -0.5 * M_L2PI - x[0] * x[0] / 2. + logpriorpdf(std::vector<double>{param1[1]}, std::vector<double>{param2[1]}));
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Sampling from this prior distribution
         EXPECT_TRUE(prior.sample(x));
