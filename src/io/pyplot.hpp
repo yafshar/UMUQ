@@ -4711,7 +4711,8 @@ PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
 
 namespace umuq
 {
-
+inline namespace matplotlib_223
+{
 class pyplot
 {
   public:
@@ -4744,7 +4745,7 @@ class pyplot
      */
     pyplot &operator=(pyplot const &) = delete;
 };
-
+} // namespace matplotlib_223
 } // namespace umuq
 
 #endif // HAVEPYTHON
