@@ -83,7 +83,7 @@ TEST(radialBasisFunction_test, HandlesFunctions)
         for (auto i = 0; i < nQueryPoints; ++i)
         {
             umuq::EVectorXd Derivative = RBF.deriv(QPoints.col(i));
-            EXPECT_FALSE((DerivativeValues.col(i) - Derivative).norm() >= 1e-3);
+            EXPECT_FALSE((DerivativeValues.col(i) - Derivative).norm() >= 1e-2);
         }
     }
 
