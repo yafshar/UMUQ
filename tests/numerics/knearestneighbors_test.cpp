@@ -176,9 +176,6 @@ TEST(knearestneighbors_test, HandlesKNN)
  */
 TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 {
-	// Get an instance of a seeded double random object
-	umuq::psrandom prng(123);
-
 	// This dataPoints type has two dimensions
 	int const nDim = 2;
 
