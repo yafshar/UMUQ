@@ -1,27 +1,7 @@
 #include "core/core.hpp"
 #include "environment.hpp"
-#include "numerics/eigenlib.hpp"
-#include "numerics/random/psrandom.hpp"
-#include "numerics/stats.hpp"
-#include "io/io.hpp"
-#include "io/pyplot.hpp"
+#include "global.hpp"
 #include "gtest/gtest.h"
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief  Create a global instance of the Pyplot from Pyplot library
- * 
- */
-umuq::pyplot plt;
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief Get an instance of a seeded double random object
- * 
- */
-umuq::psrandom prng(123);
 
 /*! 
  * \ingroup Test_Module
@@ -31,7 +11,7 @@ umuq::psrandom prng(123);
 TEST(random_test, HandlesRandoms)
 {
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(prng.setState());
+    EXPECT_TRUE(umuq::prng.setState());
 
     // Create a matrix
     umuq::EMatrix2d M2d;
@@ -74,19 +54,19 @@ TEST(random_test, HandlesRandoms)
     keywords["marker"] = "s";
 
     //! Clear previous plot
-    EXPECT_TRUE(plt.clf());
+    EXPECT_TRUE(umuq::plt.clf());
 
     //! Create scatter plot
-    EXPECT_TRUE(plt.scatter<double>(x, y, 800, "lime", keywords));
+    EXPECT_TRUE(umuq::plt.scatter<double>(x, y, 800, "lime", keywords));
 
     //! Add graph title
-    EXPECT_TRUE(plt.title("Sample points from a multivariate normal distribution"));
+    EXPECT_TRUE(umuq::plt.title("Sample points from a multivariate normal distribution"));
 
     //! save figure
-    EXPECT_TRUE(plt.savefig(fileName));
+    EXPECT_TRUE(umuq::plt.savefig(fileName));
 
     //! close figure
-    EXPECT_TRUE(plt.close());
+    EXPECT_TRUE(umuq::plt.close());
 #endif
 }
 
@@ -103,7 +83,7 @@ TEST(random_test, HandlesMultivariate)
     // cov(samples) # 19.03539 11.91384 \n 11.91384  9.28796
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(prng.setState());
+    EXPECT_TRUE(umuq::prng.setState());
 
     std::vector<double> Mean{3., 2.};
     std::vector<double> Covariance{10., 5., 5., 5.};
