@@ -241,73 +241,73 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     std::vector<int> s(n * n, 1000);
 
     // Clear previous plot
-    EXPECT_TRUE(plt.clf());
+    EXPECT_TRUE(umuq::plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(plt.scatter<double>(x, y, s, pdf, keywords));
+    EXPECT_TRUE(umuq::plt.scatter<double>(x, y, s, pdf, keywords));
 
     // Add graph title
-    EXPECT_TRUE(plt.title("multivariate normal distribution PDF"));
+    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution PDF"));
 
     // save figure
-    EXPECT_TRUE(plt.savefig(fileName));
+    EXPECT_TRUE(umuq::plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(plt.close());
+    EXPECT_TRUE(umuq::plt.close());
 
     fileName = "./multivariatecontourpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(plt.clf());
+    EXPECT_TRUE(umuq::plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(plt.contourf<double>(x2, y2, pdf));
+    EXPECT_TRUE(umuq::plt.contourf<double>(x2, y2, pdf));
 
     // Add graph title
-    EXPECT_TRUE(plt.title("multivariate normal distribution PDF contour"));
+    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution PDF contour"));
 
     // save figure
-    EXPECT_TRUE(plt.savefig(fileName));
+    EXPECT_TRUE(umuq::plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(plt.close());
+    EXPECT_TRUE(umuq::plt.close());
 
     fileName = "./multivariatescatterlogpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(plt.clf());
+    EXPECT_TRUE(umuq::plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(plt.scatter<double>(x, y, s, lpdf, keywords));
+    EXPECT_TRUE(umuq::plt.scatter<double>(x, y, s, lpdf, keywords));
 
     // Add graph title
-    EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF"));
+    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution Log of PDF"));
 
     // save figure
-    EXPECT_TRUE(plt.savefig(fileName));
+    EXPECT_TRUE(umuq::plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(plt.close());
+    EXPECT_TRUE(umuq::plt.close());
 
     fileName = "./multivariatecontourlogpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(plt.clf());
+    EXPECT_TRUE(umuq::plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(plt.contourf<double>(x2, y2, lpdf));
+    EXPECT_TRUE(umuq::plt.contourf<double>(x2, y2, lpdf));
 
     // Add graph title
-    EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF contour"));
+    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution Log of PDF contour"));
 
     // save figure
-    EXPECT_TRUE(plt.savefig(fileName));
+    EXPECT_TRUE(umuq::plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(plt.close());
+    EXPECT_TRUE(umuq::plt.close());
 #endif
 
     {
