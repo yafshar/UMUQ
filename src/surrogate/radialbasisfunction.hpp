@@ -16,7 +16,7 @@ namespace umuq
  *
  * \author David Eriksson, dme65@cornell.edu
  * 
- * This file contains minor addition to the original rbf.h
+ * This file contains modification and addition to the original rbf.h
  * source code made available under the following license:
  *
  * \verbatim
@@ -113,8 +113,6 @@ extern umuqTimer gTimer;
  * 
  * The domain is automatically scaled to the unit box to avoid scaling
  * issues since the kernel and polynomial tail scale differently.
- * 
- * \author David Eriksson, dme65@cornell.edu
  */
 template <class kernelType = cubicKernel, class polynomialTailType = linearPolynomialTail>
 class radialBasisFunction : public surrogate
@@ -167,26 +165,6 @@ class radialBasisFunction : public surrogate
      * 
      */
     inline void reset() override;
-
-    /*!
-     * \brief Method for resetting the surrogate model
-     * 
-     * \param NumDimensions       Number of dimensions
-     * \param MaxNumPoints        Capacity Maximum number of possible points
-     * \param DampingCoefficient  Damping coefficient (non-negative)
-     */
-    inline void reset(int const NumDimensions, int const MaxNumPoints, double const DampingCoefficient = 1e-8);
-
-    /*!
-     * \brief Method for resetting the surrogate model
-     * 
-     * \param NumDimensions       Number of dimensions
-     * \param MaxNumPoints        Capacity Maximum number of possible points
-     * \param LowerBounds         Lower variable bounds
-     * \param UpperBounds         Upper variable bounds
-     * \param DampingCoefficient  Damping coefficient (non-negative)
-     */
-    inline void reset(int const NumDimensions, int const MaxNumPoints, EVectorXd const &LowerBounds, EVectorXd const &UpperBounds, double const DampingCoefficient = 1e-8);
 
   protected:
     /*!
@@ -610,7 +588,7 @@ bool radialBasisFunction<kernelType, polynomialTailType>::addPoint(EVectorXd con
     }
     if (nPoints + 1 > maxNumPoints)
     {
-        UMUQFAILRETURN("Capacity exceeded");
+        UMUQFAILRETURN("Capacity exceeded ! \n Number of current points ", nPoints, " + number of new points ", 1, " > the available capacity ", maxNumPoints);
     }
 #ifdef DEBUG
     gTimer.tic();
@@ -902,8 +880,6 @@ bool radialBasisFunction<kernelType, polynomialTailType>::fit()
  * \tparam kernelType         Radial basis function kernel type (Cubic is default)
  * \tparam polynomialTailType Polynomial tail type (Linear is default)
  * 
- * \author David Eriksson, dme65@cornell.edu
- * 
  * This is a capped version of the RBF interpolant that is useful in cases
  * where there are large function values. This version replaces all of the
  * function values that are above the median of the function values by
@@ -940,6 +916,22 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
                            double const DampingCoefficient = 1e-8);
 
     /*!
+     * \brief Move constructor, construct a new radialBasisFunctionCap object
+     * 
+     * \param other radialBasisFunctionCap object
+     */
+    explicit radialBasisFunctionCap(radialBasisFunctionCap<kernelType, polynomialTailType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * \param other radialBasisFunctionCap object
+     * 
+     * \returns radialBasisFunctionCap& radialBasisFunctionCap object
+     */
+    radialBasisFunctionCap<kernelType, polynomialTailType> &operator=(radialBasisFunctionCap<kernelType, polynomialTailType> &&other);
+
+    /*!
      * \brief Destroy the radialBasisFunctionCap object
      * 
      */
@@ -950,6 +942,21 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
      * 
      */
     bool fit();
+
+  protected:
+    /*!
+     * \brief Delete a radialBasisFunctionCap object copy construction
+     * 
+     * Avoiding implicit generation of the copy constructor.
+     */
+    radialBasisFunctionCap(radialBasisFunctionCap<kernelType, polynomialTailType> const &) = delete;
+
+    /*!
+     * \brief Delete a radialBasisFunctionCap object assignment
+     * 
+     * Avoiding implicit copy assignment.
+     */
+    radialBasisFunctionCap<kernelType, polynomialTailType> &operator=(radialBasisFunctionCap<kernelType, polynomialTailType> const &) = delete;
 };
 
 template <class kernelType, class polynomialTailType>
@@ -971,6 +978,43 @@ radialBasisFunctionCap<kernelType, polynomialTailType>::radialBasisFunctionCap(i
                                                                                                                                                                       DampingCoefficient) {}
 
 template <class kernelType, class polynomialTailType>
+radialBasisFunctionCap<kernelType, polynomialTailType>::radialBasisFunctionCap(radialBasisFunctionCap<kernelType, polynomialTailType> &&other)
+{
+    this->nDimensions = other.nDimensions;
+    this->maxNumPoints = other.maxNumPoints;
+    this->nPoints = other.nPoints;
+    this->lowerBounds = std::move(other.lowerBounds);
+    this->upperBounds = std::move(other.upperBounds);
+    this->dampingCoefficient = other.dampingCoefficient;
+    this->polynomialSpaceDimension = other.polynomialSpaceDimension;
+    this->matrixLU = std::move(other.matrixLU);
+    this->permutationP = std::move(other.permutationP);
+    this->coefficientVector = std::move(other.coefficientVector);
+    this->functionValues = std::move(other.functionValues);
+    this->interpolationNodes = std::move(other.interpolationNodes);
+    this->shouldRecomputeCoefficients = other.shouldRecomputeCoefficients;
+}
+
+template <class kernelType, class polynomialTailType>
+radialBasisFunctionCap<kernelType, polynomialTailType> &radialBasisFunctionCap<kernelType, polynomialTailType>::operator=(radialBasisFunctionCap<kernelType, polynomialTailType> &&other)
+{
+    this->nDimensions = other.nDimensions;
+    this->maxNumPoints = other.maxNumPoints;
+    this->nPoints = other.nPoints;
+    this->lowerBounds = std::move(other.lowerBounds);
+    this->upperBounds = std::move(other.upperBounds);
+    this->dampingCoefficient = other.dampingCoefficient;
+    this->polynomialSpaceDimension = other.polynomialSpaceDimension;
+    this->matrixLU = std::move(other.matrixLU);
+    this->permutationP = std::move(other.permutationP);
+    this->coefficientVector = std::move(other.coefficientVector);
+    this->functionValues = std::move(other.functionValues);
+    this->interpolationNodes = std::move(other.interpolationNodes);
+    this->shouldRecomputeCoefficients = other.shouldRecomputeCoefficients;
+    return *this;
+}
+
+template <class kernelType, class polynomialTailType>
 radialBasisFunctionCap<kernelType, polynomialTailType>::~radialBasisFunctionCap() {}
 
 template <class kernelType, class polynomialTailType>
@@ -985,19 +1029,19 @@ bool radialBasisFunctionCap<kernelType, polynomialTailType>::fit()
 #endif
     if (this->shouldRecomputeCoefficients)
     {
-        int const n = this->nPoints + this->polynomialSpaceDimension;
-
         double functionValuesMedian;
-
         // Computes the median
         {
             // We do partial sorting algorithm that rearranges elements
-            std::vector<double> functionValuesVector(n);
+            std::vector<double> functionValuesVector(this->nPoints);
             // Copy the function values to the std vector
-            EMap<EVectorXd>(functionValuesVector.data(), this->functionValues.head(n));
-            std::nth_element(functionValuesVector.begin(), functionValuesVector.begin() + n / 2, functionValuesVector.end());
-            functionValuesMedian = functionValuesVector[n / 2];
+            EMap<EVectorXd>(functionValuesVector.data(), this->functionValues.segment(this->polynomialSpaceDimension, this->nPoints));
+            std::nth_element(functionValuesVector.begin(), functionValuesVector.begin() + this->nPoints / 2, functionValuesVector.end());
+            functionValuesMedian = functionValuesVector[this->nPoints / 2];
+            std::cout << functionValuesMedian << std::endl;
         }
+
+        int const n = this->nPoints + this->polynomialSpaceDimension;
 
         for (int i = this->polynomialSpaceDimension; i < n; ++i)
         {
