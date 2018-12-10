@@ -2,6 +2,7 @@
 #include "environment.hpp"
 #include "surrogate/radialbasisfunction.hpp"
 #include "gtest/gtest.h"
+#include "io/io.hpp"
 
 /*!
  * \ingroup Test_Module
@@ -122,14 +123,14 @@ TEST(radialBasisFunctionCap_test, HandlesCapFunctions)
     umuq::EMatrixXd QPoints = (umuq::EMatrixXd::Random(nDimensions, nQueryPoints) + umuq::EMatrixXd::Ones(nDimensions, nQueryPoints)) / 2;
     umuq::EVectorXd QFunctionValues = (QPoints.row(1).array() * QPoints.row(0).array().sin() + QPoints.row(0).array() * QPoints.row(1).array().cos()).matrix().transpose();
 
-    umuq::radialBasisFunctionCap<umuq::cubicKernel, umuq::linearPolynomialTail> CRBF(nDimensions, maxNumPoints, 0);
+    umuq::radialBasisFunctionCap<umuq::cubicKernel, umuq::linearPolynomialTail> RBF(nDimensions, maxNumPoints, 0);
 
-    EXPECT_TRUE(CRBF.addPoint(Points, FunctionValues));
-    EXPECT_TRUE(CRBF.fit());
+    EXPECT_TRUE(RBF.addPoint(Points, FunctionValues));
+    EXPECT_TRUE(RBF.fit());
 
     // Evaluate at some other points
     {
-        umuq::EVectorXd PointsEvaluation = CRBF.evaluate(QPoints);
+        umuq::EVectorXd PointsEvaluation = RBF.evaluate(QPoints);
         EXPECT_FALSE((PointsEvaluation - QFunctionValues).cwiseAbs().maxCoeff() > 2);
     }
 }
