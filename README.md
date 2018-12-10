@@ -1,5 +1,4 @@
-UMUQ
-====
+<img src="./docs/umuq.png?raw=true" width="100">
 
 [![Build Status](https://travis-ci.com/yafshar/UMUQ.svg?token=aY1dW9PfH9SMySdB6Pzy&branch=develop)](https://travis-ci.com/yafshar/UMUQ)
 [![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](LICENSE)
