@@ -37,7 +37,7 @@ TEST(ChebyshevBasis_test, HandlesInput)
     EXPECT_DOUBLE_EQ(CPolynomial.chebyshev(25, -0.5, true), -1.0);
     EXPECT_DOUBLE_EQ(CPolynomial.chebyshev(28, 0.75, true), 1.297556120902300);
     EXPECT_DOUBLE_EQ(CPolynomial.chebyshev(28, -0.1, true), -0.977005625121864);
-    EXPECT_DOUBLE_EQ(CPolynomial.chebyshev(500, 1.0/3.0, true), 0.86797529488884995);
+    EXPECT_NEAR(CPolynomial.chebyshev(500, 1.0/3.0, true), 0.86797529488884995, 1e-14);
 
     double *PolynomialArray = nullptr;
 
