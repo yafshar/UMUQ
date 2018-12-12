@@ -155,12 +155,19 @@ TEST(knearestneighbors_test, HandlesKNN)
 	{
 		int const IdI = i * nDim;
 		int *p = KNN.NearestNeighbors(i);
-		for (int j = 0; j < nNearestNeighbors; j++)
+		{
+			int j = 0;
+			int const IdJ = p[j] * nDim;
+			double const dd[] = {dataPoints[IdJ] - dataPoints[IdI], dataPoints[IdJ + 1] - dataPoints[IdI + 1]};
+			double const d = dd[0] * dd[0] + dd[1] * dd[1];
+			EXPECT_NEAR(dists[i], d, 1e-18);
+		}
+		for (int j = 1; j < nNearestNeighbors; j++)
 		{
 			int const IdJ = p[j] * nDim;
 			double const dd[] = {dataPoints[IdJ] - dataPoints[IdI], dataPoints[IdJ + 1] - dataPoints[IdI + 1]};
 			double const d = dd[0] * dd[0] + dd[1] * dd[1];
-			EXPECT_TRUE((dists[i] <= d));
+			EXPECT_TRUE((dists[i] < d));
 		}
 	}
 
