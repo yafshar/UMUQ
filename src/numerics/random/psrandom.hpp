@@ -437,10 +437,12 @@ void psrandom::initTask()
 
     std::size_t const n = nlocalworkers * (node_id + 1);
 
+    rSeed[0] = PRNG_seed;
+    rSeed[1] = n;
+
     for (std::size_t i = 0; i < nlocalworkers; i++)
     {
-        std::size_t const j = PRNG_seed + n + i;
-        std::iota(rSeed.begin(), rSeed.end(), j);
+        std::iota(rSeed.begin() + 2, rSeed.end(), i);
 
         // Seed the engine with unsigned ints
         std::seed_seq sSeq(rSeed.begin(), rSeed.end());
@@ -448,8 +450,7 @@ void psrandom::initTask()
         // For each thread feed the RNG
         NumberGenerator[i].seed(sSeq);
 
-        Saru s(PRNG_seed, n, i);
-        saru[i] = std::move(s);
+        saru[i].seed(rSeed[0], rSeed[1], rSeed[2]);
     }
 }
 
