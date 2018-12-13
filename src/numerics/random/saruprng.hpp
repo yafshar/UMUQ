@@ -198,6 +198,42 @@ class Saru
     void setstate(unsigned int istate, unsigned int iwstate);
 
     /*!
+     * \brief Reinitializes the internal state of the random-number engine using new seed value
+     * 
+     * \param seed PRNG seed
+     *
+     * This seeding was carefully tested for good churning with 1, 2, and
+     * 3 bit flips.  All 32 incrementing counters (each of the circular
+     * shifts) pass the TestU01 Crush tests.  
+     */
+    void seed(unsigned int seed);
+
+    /*!
+     * \brief Reinitializes the internal state of the random-number engine using two new seed values
+     * 
+     * \param seed1 PRNG seed1
+     * \param seed2 PRNG seed2
+     * 
+     * seeding from 2 samples. We lose one bit of entropy since our input
+     * seeds have 64 bits but at the end, after mixing, we have just 63. 
+     */
+    void seed(unsigned int seed1, unsigned int seed2);
+
+    /*!
+     * \brief Reinitializes the internal state of the random-number engine using three new seed values
+     * 
+     * \param seed1 PRNG seed1
+     * \param seed2 PRNG seed2
+     * \param seed3 PRNG seed3
+     *
+     * 3 seeds. We have to premix the seeds before dropping to 64 bits.
+     * 
+     * \todo
+     * this may be better optimized in a future version 
+     */
+    void seed(unsigned int seed1, unsigned int seed2, unsigned int seed3);
+
+    /*!
      * \brief Fork the PRNG, creating a new independent stream, seeded using
      * current generator's state. Template seeding allows multiple
      * independent children forks.
@@ -503,6 +539,49 @@ void Saru::setstate(unsigned int istate, unsigned int iwstate)
 {
     state = istate;
     wstate = iwstate;
+}
+
+void Saru::seed(unsigned int seed)
+{
+    state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
+    wstate = seed ^ (static_cast<signed int>(state) >> 8);
+    state = state + (wstate * (wstate ^ 0xdddf97f5));
+    wstate = 0xABCB96F7 + (wstate >> 1);
+}
+
+void Saru::seed(unsigned int seed1, unsigned int seed2)
+{
+    seed2 += seed1 << 16;
+    seed1 += seed2 << 11;
+    seed2 += static_cast<signed int>(seed1) >> 7;
+    seed1 ^= static_cast<signed int>(seed2) >> 3;
+    seed2 *= 0xA5366B4D;
+    seed2 ^= seed2 >> 10;
+    seed2 ^= static_cast<signed int>(seed2) >> 19;
+    seed1 += seed2 ^ 0x6d2d4e11;
+
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
+    state = state + (wstate * (wstate ^ 0xdddf97f5));
+    wstate = 0xABCB96F7 + (wstate >> 1);
+}
+
+void Saru::seed(unsigned int seed1, unsigned int seed2, unsigned int seed3)
+{
+    seed3 ^= (seed1 << 7) ^ (seed2 >> 6);
+    seed2 += (seed1 >> 4) ^ (seed3 >> 15);
+    seed1 ^= (seed2 << 9) + (seed3 << 8);
+    seed3 ^= 0xA5366B4D * ((seed2 >> 11) ^ (seed1 << 1));
+    seed2 += 0x72BE1579 * ((seed1 << 4) ^ (seed3 >> 16));
+    seed1 ^= 0X3F38A6ED * ((seed3 >> 5) ^ (static_cast<signed int>(seed2) >> 22));
+    seed2 += seed1 * seed3;
+    seed1 += seed3 ^ (seed2 >> 2);
+    seed2 ^= static_cast<signed int>(seed2) >> 17;
+
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
+    state = state + (wstate * (wstate ^ 0xdddf97f5));
+    wstate = 0xABCB96F7 + (wstate >> 1);
 }
 
 template <unsigned int steps>
