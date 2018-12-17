@@ -118,13 +118,13 @@ class Saru
     /*!
      * \brief Construct a new Saru object (One-seed constructor)
      * 
-     * \param seed PRNG seed
+     * \param seed1 PRNG seed
      *
      * This seeding was carefully tested for good churning with 1, 2, and
      * 3 bit flips.  All 32 incrementing counters (each of the circular
      * shifts) pass the TestU01 Crush tests.  
      */
-    explicit Saru(unsigned int seed);
+    explicit Saru(unsigned int seed1);
 
     /*!
      * \brief Construct a new Saru object (Two-seeds constructor)
@@ -200,13 +200,13 @@ class Saru
     /*!
      * \brief Reinitializes the internal state of the random-number engine using new seed value
      * 
-     * \param seed PRNG seed
+     * \param seed1 PRNG seed
      *
      * This seeding was carefully tested for good churning with 1, 2, and
      * 3 bit flips.  All 32 incrementing counters (each of the circular
      * shifts) pass the TestU01 Crush tests.  
      */
-    void seed(unsigned int seed);
+    void seed(unsigned int seed1);
 
     /*!
      * \brief Reinitializes the internal state of the random-number engine using two new seed values
@@ -238,11 +238,11 @@ class Saru
      * current generator's state. Template seeding allows multiple
      * independent children forks.
      * 
-     * \tparam seed Template seeding
+     * \tparam seed1 Template seeding
      * 
      * \returns Saru New forked PRNG
      */
-    template <unsigned int seed>
+    template <unsigned int seed1>
     inline Saru fork() const;
 
     /*!
@@ -473,10 +473,10 @@ class Saru
 
 Saru::Saru() : state(0x12345678), wstate(12345678) {}
 
-Saru::Saru(unsigned int seed)
+Saru::Saru(unsigned int seed1)
 {
-    state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
-    wstate = seed ^ (static_cast<signed int>(state) >> 8);
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = seed1 ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
@@ -541,10 +541,10 @@ void Saru::setstate(unsigned int istate, unsigned int iwstate)
     wstate = iwstate;
 }
 
-void Saru::seed(unsigned int seed)
+void Saru::seed(unsigned int seed1)
 {
-    state = 0x79dedea3 * (seed ^ (static_cast<signed int>(seed) >> 14));
-    wstate = seed ^ (static_cast<signed int>(state) >> 8);
+    state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
+    wstate = seed1 ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
     wstate = 0xABCB96F7 + (wstate >> 1);
 }
@@ -559,7 +559,6 @@ void Saru::seed(unsigned int seed1, unsigned int seed2)
     seed2 ^= seed2 >> 10;
     seed2 ^= static_cast<signed int>(seed2) >> 19;
     seed1 += seed2 ^ 0x6d2d4e11;
-
     state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
     wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
@@ -577,7 +576,6 @@ void Saru::seed(unsigned int seed1, unsigned int seed2, unsigned int seed3)
     seed2 += seed1 * seed3;
     seed1 += seed3 ^ (seed2 >> 2);
     seed2 ^= static_cast<signed int>(seed2) >> 17;
-
     state = 0x79dedea3 * (seed1 ^ (static_cast<signed int>(seed1) >> 14));
     wstate = (state + seed2) ^ (static_cast<signed int>(state) >> 8);
     state = state + (wstate * (wstate ^ 0xdddf97f5));
@@ -656,12 +654,12 @@ inline void Saru::advance(unsigned int steps)
     wstate += (wstate - oWeylOffset < oWeylPeriod - netDelta) ? netDelta : netDelta - oWeylPeriod;
 }
 
-template <unsigned int seed>
+template <unsigned int seed1>
 inline Saru Saru::fork() const
 {
     /* These lines are FREE since they'll be precomputed at compile time. They
        take user values like 1 2 3 and hash them to become roughly uncorrelated. */
-    static const unsigned int churned1 = 0xDEADBEEF ^ (0x1fc4ce47 * (seed ^ (seed >> 13)));
+    static const unsigned int churned1 = 0xDEADBEEF ^ (0x1fc4ce47 * (seed1 ^ (seed1 >> 13)));
     static const unsigned int churned2 = 0x1234567 + (0x82948463 * (churned1 ^ (churned1 >> 20)));
     static const unsigned int churned3 = 0x87654321 ^ (0x87655677 * (churned2 ^ (churned2 >> 16)));
     Saru z;
