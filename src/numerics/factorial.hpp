@@ -9,7 +9,7 @@ namespace umuq
  * 
  */
 
-/*! \class max_factorial
+/*! \class maxFactorial
  * \ingroup Numerics_Module
  * 
  * \brief Predefined max factorial
@@ -17,40 +17,40 @@ namespace umuq
  * \tparam DataType data type one of float, double, int
  */
 template <class DataType>
-struct max_factorial
+struct maxFactorial
 {
     static unsigned int const value = 0;
 };
 
-/*! \class max_factorial
+/*! \class maxFactorial
  * \ingroup Numerics_Module
  * 
  * \brief Predefined max factorial (specialized for float)
  */
 template <>
-struct max_factorial<float>
+struct maxFactorial<float>
 {
     static unsigned int const value = 34;
 };
 
-/*! \class max_factorial
+/*! \class maxFactorial
  * \ingroup Numerics_Module
  * 
  * \brief Predefined max factorial (specialized for double)
  */
 template <>
-struct max_factorial<double>
+struct maxFactorial<double>
 {
     static unsigned int const value = 170;
 };
 
-/*! \class max_factorial
+/*! \class maxFactorial
  * \ingroup Numerics_Module
  * 
  * \brief Predefined max factorial (specialized for int)
  */
 template <>
-struct max_factorial<int>
+struct maxFactorial<int>
 {
     static unsigned int const value = 11;
 };
@@ -67,9 +67,9 @@ struct max_factorial<int>
  * \returns The factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
 template <class DataType>
-inline DataType unchecked_factorial(unsigned int n)
+inline DataType uncheckedFactorial(unsigned int n)
 {
-    UMUQFAIL("The unchecked_factorial is not implemented for this type!");
+    UMUQFAIL("The uncheckedFactorial is not implemented for this type!");
 }
 
 /*!
@@ -82,7 +82,7 @@ inline DataType unchecked_factorial(unsigned int n)
  * \returns The float type factorial of n
  */
 template <>
-inline float unchecked_factorial<float>(unsigned int const n)
+inline float uncheckedFactorial<float>(unsigned int const n)
 {
     static float const factorials[] =
         {
@@ -134,7 +134,7 @@ inline float unchecked_factorial<float>(unsigned int const n)
  * \returns The long double type factorial of n
  */
 template <>
-inline long double unchecked_factorial<long double>(unsigned int const n)
+inline long double uncheckedFactorial<long double>(unsigned int const n)
 {
     static long double const factorials[] =
         {
@@ -322,9 +322,9 @@ inline long double unchecked_factorial<long double>(unsigned int const n)
  * \returns The double type factorial of n
  */
 template <>
-inline double unchecked_factorial<double>(unsigned int const n)
+inline double uncheckedFactorial<double>(unsigned int const n)
 {
-    return static_cast<double>(unchecked_factorial<long double>(n));
+    return static_cast<double>(uncheckedFactorial<long double>(n));
 }
 
 /*!
@@ -337,7 +337,7 @@ inline double unchecked_factorial<double>(unsigned int const n)
  * \returns The int type factorial of n
  */
 template <>
-inline int unchecked_factorial<int>(unsigned int const n)
+inline int uncheckedFactorial<int>(unsigned int const n)
 {
     static int const factorials[] =
         {
@@ -366,7 +366,7 @@ inline int unchecked_factorial<int>(unsigned int const n)
  * \returns The unsigned int type factorial of n
  */
 template <>
-inline unsigned int unchecked_factorial<unsigned int>(unsigned int const n)
+inline unsigned int uncheckedFactorial<unsigned int>(unsigned int const n)
 {
     static unsigned int const factorials[] =
         {
@@ -395,7 +395,7 @@ inline unsigned int unchecked_factorial<unsigned int>(unsigned int const n)
  * \returns The long int type factorial of n
  */
 template <>
-inline long int unchecked_factorial<long int>(unsigned int const n)
+inline long int uncheckedFactorial<long int>(unsigned int const n)
 {
     static long int const factorials[] =
         {
@@ -424,7 +424,7 @@ inline long int unchecked_factorial<long int>(unsigned int const n)
  * \returns The long unsigned int type factorial of n
  */
 template <>
-inline long unsigned int unchecked_factorial<long unsigned int>(unsigned int const n)
+inline long unsigned int uncheckedFactorial<long unsigned int>(unsigned int const n)
 {
     static long unsigned int const factorials[] =
         {
@@ -472,9 +472,9 @@ inline DataType factorial(unsigned int const n)
 template <>
 inline float factorial(unsigned int const i)
 {
-    if (i <= max_factorial<float>::value)
+    if (i <= maxFactorial<float>::value)
     {
-        return unchecked_factorial<float>(i);
+        return uncheckedFactorial<float>(i);
     }
 
     double const result = std::tgamma(static_cast<double>(i + 1));
@@ -500,9 +500,9 @@ inline float factorial(unsigned int const i)
 template <>
 inline double factorial(unsigned int const i)
 {
-    if (i <= max_factorial<double>::value)
+    if (i <= maxFactorial<double>::value)
     {
-        return unchecked_factorial<double>(i);
+        return uncheckedFactorial<double>(i);
     }
 
     long double const result = std::tgamma(static_cast<long double>(i + 1));
@@ -528,7 +528,7 @@ inline double factorial(unsigned int const i)
 template <>
 inline long unsigned int factorial(unsigned int const i)
 {
-    return (i <= max_factorial<int>::value ? unchecked_factorial<long unsigned int>(i) : static_cast<long unsigned int>(i) * factorial<long unsigned int>(i - 1));
+    return (i <= maxFactorial<int>::value ? uncheckedFactorial<long unsigned int>(i) : static_cast<long unsigned int>(i) * factorial<long unsigned int>(i - 1));
 }
 
 /*!
@@ -543,9 +543,9 @@ inline long unsigned int factorial(unsigned int const i)
 template <>
 inline int factorial(unsigned int const i)
 {
-    if (i <= max_factorial<int>::value)
+    if (i <= maxFactorial<int>::value)
     {
-        return unchecked_factorial<int>(i);
+        return uncheckedFactorial<int>(i);
     }
 
     long unsigned int const result = i * factorial<long unsigned int>(i - 1);
@@ -569,9 +569,9 @@ inline int factorial(unsigned int const i)
 template <>
 inline unsigned int factorial(unsigned int const i)
 {
-    if (i <= max_factorial<int>::value)
+    if (i <= maxFactorial<int>::value)
     {
-        return unchecked_factorial<unsigned int>(i);
+        return uncheckedFactorial<unsigned int>(i);
     }
 
     long unsigned int const result = i * factorial<long unsigned int>(i - 1);
@@ -595,9 +595,9 @@ inline unsigned int factorial(unsigned int const i)
 template <>
 inline long int factorial(unsigned int const i)
 {
-    if (i <= max_factorial<int>::value)
+    if (i <= maxFactorial<int>::value)
     {
-        return unchecked_factorial<long int>(i);
+        return uncheckedFactorial<long int>(i);
     }
 
     long unsigned int const result = i * factorial<long unsigned int>(i - 1);
