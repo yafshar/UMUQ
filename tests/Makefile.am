@@ -194,3 +194,10 @@ radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
 TESTS += torc_test
 check_PROGRAMS += torc_test
 torc_test_SOURCES = torc/torc_test.cpp
+
+#examples
+TESTS += species_test
+check_PROGRAMS += species_test
+species_test_SOURCES = examples/species_test.cpp
+
+
