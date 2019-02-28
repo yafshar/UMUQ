@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <limits>
+#include <algorithm>
+
+#include "../src/misc/parser.hpp"
 
 namespace umuq
 {
@@ -12,7 +16,7 @@ namespace umuq
  * \enum SpeciesID
  * \brief Different species name 
  * 
- * \note Uder defined species are for compatibility with [OpenKIM](https://openkim.org/) 
+ * \note User defined species are for compatibility with [OpenKIM](https://openkim.org/) 
  * 
  */
 enum class SpeciesID : int
@@ -391,41 +395,41 @@ class species
 	inline std::string getSpeciesName(SpeciesID const index);
 
 	/*!
-	 * \brief Get the Species ID
-	 * 
-	 * \param SpeciesName The species name
-	 * 
-	 * \return int Zero-based index uniquely labeling each defined standard species name.
-	 */
+     * \brief Get the Species ID
+     * 
+     * \param SpeciesName The species name
+     * 
+     * \return int Zero-based index uniquely labeling each defined standard species name.
+     */
 	int getSpeciesID(std::string const &SpeciesName);
 
 	/*!
-	 * \brief Get the speciesAttribute object
-	 * 
+     * \brief Get the speciesAttribute object
+     * 
      * \param index  Zero-based index uniquely labeling each defined standard               
      *               speciesName. \sa SpeciesID
-	 * 
-	 * \return speciesAttribute A speciesAttribute object
-	 */
+     * 
+     * \return speciesAttribute A speciesAttribute object
+     */
 	inline speciesAttribute getSpecies(int const index);
 
 	/*!
-	 * \brief Get the speciesAttribute object
-	 * 
-	 * \param index Zero-based index uniquely labeling each defined standard               
+     * \brief Get the speciesAttribute object
+     * 
+     * \param index Zero-based index uniquely labeling each defined standard               
      *               speciesName. \sa SpeciesID
-	 * 
-	 * \return speciesAttribute A speciesAttribute object
-	 */
+     * 
+     * \return speciesAttribute A speciesAttribute object
+     */
 	inline speciesAttribute getSpecies(SpeciesID const index);
 
 	/*!
-	 * \brief Get the speciesAttribute object
-	 * 
-	 * \param SpeciesName   The species name
-	 * 
-	 * \return speciesAttribute  A speciesAttribute object
-	 */
+     * \brief Get the speciesAttribute object
+     * 
+     * \param SpeciesName   The species name
+     * 
+     * \return speciesAttribute  A speciesAttribute object
+     */
 	speciesAttribute getSpecies(std::string const &SpeciesName);
 
   private:
@@ -737,19 +741,12 @@ inline std::string species::getSpeciesName(SpeciesID const index) { return getSp
 
 int species::getSpeciesID(std::string const &SpeciesName)
 {
-	std::string speciesName(SpeciesName);
-
-	std::transform(speciesName.begin(), speciesName.end(), speciesName.begin(), [](unsigned char c) {
-		unsigned char const l = std::tolower(c);
-		return (l != c) ? l : c;
-	});
+	umuq::parser p;
+	auto speciesName = p.tolower(SpeciesName);
 
 	if (speciesName.size() < 4 || speciesName.substr(0, 4) != "user")
 	{
-		std::transform(speciesName.begin(), speciesName.begin() + 1, speciesName.begin(), [](unsigned char c) {
-			unsigned char const u = std::toupper(c);
-			return (u != c) ? u : c;
-		});
+		speciesName = p.toupper(speciesName, 0, 1);
 	}
 
 	auto search = speciesMap.find(speciesName);
