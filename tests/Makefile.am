@@ -135,6 +135,14 @@ TESTS += timer_test
 check_PROGRAMS += timer_test
 timer_test_SOURCES = misc/timer_test.cpp
 
+TESTS += species_test
+check_PROGRAMS += species_test
+species_test_SOURCES = misc/species_test.cpp
+
+TESTS += units_test
+check_PROGRAMS += units_test
+units_test_SOURCES = misc/units_test.cpp
+
 #io
 TESTS += io_test
 check_PROGRAMS += io_test
@@ -196,8 +204,3 @@ check_PROGRAMS += torc_test
 torc_test_SOURCES = torc/torc_test.cpp
 
 #examples
-TESTS += species_test
-check_PROGRAMS += species_test
-species_test_SOURCES = examples/species_test.cpp
-
-
