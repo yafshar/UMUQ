@@ -20,7 +20,7 @@ TEST(parse_test, HandlesZeroInput)
 
     EXPECT_EQ(word, "");
 
-    //!checking for tab and next line
+    // Checking for tab and next line
     p.parse("\t  \n");
 
     word = p.at<std::string>(0);
@@ -112,6 +112,24 @@ TEST(parse_cmd, HandlesCmd)
 
     EXPECT_DOUBLE_EQ(p.at<double>(1), 1.0);
     EXPECT_DOUBLE_EQ(p.at<double>(2), 0.1);
+}
+
+/*! 
+ * \ingroup Test_Module
+ * 
+ * \brief Tests parse class lower and upper functiinality
+ */
+TEST(parse_test, HandlesUpperLowerCase)
+{
+	umuq::parser p;
+	EXPECT_EQ(p.toupper("SUM_squared"), "SUM_SQUARED");
+	EXPECT_EQ(p.toupper("sum_squared"), "SUM_SQUARED");
+	EXPECT_EQ(p.toupper("sum_squared", 0, 1), "Sum_squared");
+	EXPECT_EQ(p.toupper("sum_squared", 4, 5), "sum_Squared");
+	EXPECT_EQ(p.tolower("SUM_squared"), "sum_squared");
+	EXPECT_EQ(p.tolower("SUM_SQUARED"), "sum_squared");
+	EXPECT_EQ(p.tolower("SUM_SQUARED", 0, 1), "sUM_SQUARED");
+	EXPECT_EQ(p.tolower("SUM_SQUARED", 4, 5), "SUM_sQUARED");
 }
 
 int main(int argc, char **argv)
