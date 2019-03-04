@@ -135,13 +135,6 @@ TESTS += timer_test
 check_PROGRAMS += timer_test
 timer_test_SOURCES = misc/timer_test.cpp
 
-TESTS += species_test
-check_PROGRAMS += species_test
-species_test_SOURCES = misc/species_test.cpp
-
-TESTS += units_test
-check_PROGRAMS += units_test
-units_test_SOURCES = misc/units_test.cpp
 
 #io
 TESTS += io_test
@@ -202,5 +195,14 @@ radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
 TESTS += torc_test
 check_PROGRAMS += torc_test
 torc_test_SOURCES = torc/torc_test.cpp
+
+#units
+TESTS += species_test
+check_PROGRAMS += species_test
+species_test_SOURCES = units/species_test.cpp
+
+TESTS += units_test
+check_PROGRAMS += units_test
+units_test_SOURCES = units/units_test.cpp
 
 #examples

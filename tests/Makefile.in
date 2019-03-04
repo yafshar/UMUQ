@@ -104,14 +104,14 @@ TESTS = polynomial_test$(EXEEXT) legendrepolynomial_test$(EXEEXT) \
 	bfgs_test$(EXEEXT) bfgs2_test$(EXEEXT) utility_test$(EXEEXT) \
 	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) timer_test$(EXEEXT) \
-	species_test$(EXEEXT) units_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
 	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) \
 	polynomialtail_test$(EXEEXT) \
 	radialbasisfunctionkernel_test$(EXEEXT) \
-	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT)
+	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT) \
+	species_test$(EXEEXT) units_test$(EXEEXT)
 check_PROGRAMS = polynomial_test$(EXEEXT) \
 	legendrepolynomial_test$(EXEEXT) \
 	hermitepolynomial_test$(EXEEXT) \
@@ -129,14 +129,14 @@ check_PROGRAMS = polynomial_test$(EXEEXT) \
 	bfgs_test$(EXEEXT) bfgs2_test$(EXEEXT) utility_test$(EXEEXT) \
 	parser_test$(EXEEXT) arraywrapper_test$(EXEEXT) \
 	funcallcounter_test$(EXEEXT) timer_test$(EXEEXT) \
-	species_test$(EXEEXT) units_test$(EXEEXT) io_test$(EXEEXT) \
-	eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
+	io_test$(EXEEXT) eigen_io_test$(EXEEXT) pyplot_test$(EXEEXT) \
 	priordistribution_test$(EXEEXT) stdata_test$(EXEEXT) \
 	runinfo_test$(EXEEXT) database_test$(EXEEXT) \
 	datatype_test$(EXEEXT) tmcmc_test$(EXEEXT) \
 	polynomialtail_test$(EXEEXT) \
 	radialbasisfunctionkernel_test$(EXEEXT) \
-	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT)
+	radialbasisfunction_test$(EXEEXT) torc_test$(EXEEXT) \
+	species_test$(EXEEXT) units_test$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -298,7 +298,7 @@ am_simplexnm_test_OBJECTS =  \
 	numerics/multimin/simplexnm_test.$(OBJEXT)
 simplexnm_test_OBJECTS = $(am_simplexnm_test_OBJECTS)
 simplexnm_test_LDADD = $(LDADD)
-am_species_test_OBJECTS = misc/species_test.$(OBJEXT)
+am_species_test_OBJECTS = units/species_test.$(OBJEXT)
 species_test_OBJECTS = $(am_species_test_OBJECTS)
 species_test_LDADD = $(LDADD)
 am_stats_test_OBJECTS = numerics/stats_test.$(OBJEXT)
@@ -320,7 +320,7 @@ tmcmc_test_LDADD = $(LDADD)
 am_torc_test_OBJECTS = torc/torc_test.$(OBJEXT)
 torc_test_OBJECTS = $(am_torc_test_OBJECTS)
 torc_test_LDADD = $(LDADD)
-am_units_test_OBJECTS = misc/units_test.$(OBJEXT)
+am_units_test_OBJECTS = units/units_test.$(OBJEXT)
 units_test_OBJECTS = $(am_units_test_OBJECTS)
 units_test_LDADD = $(LDADD)
 am_utility_test_OBJECTS = misc/utility_test.$(OBJEXT)
@@ -352,8 +352,7 @@ am__depfiles_remade =  \
 	io/$(DEPDIR)/pyplot_test.Po \
 	misc/$(DEPDIR)/arraywrapper_test.Po \
 	misc/$(DEPDIR)/funcallcounter_test.Po \
-	misc/$(DEPDIR)/parser_test.Po misc/$(DEPDIR)/species_test.Po \
-	misc/$(DEPDIR)/timer_test.Po misc/$(DEPDIR)/units_test.Po \
+	misc/$(DEPDIR)/parser_test.Po misc/$(DEPDIR)/timer_test.Po \
 	misc/$(DEPDIR)/utility_test.Po \
 	numerics/$(DEPDIR)/dcpse_test.Po \
 	numerics/$(DEPDIR)/eigen_test.Po \
@@ -384,7 +383,8 @@ am__depfiles_remade =  \
 	surrogate/$(DEPDIR)/polynomialtail_test.Po \
 	surrogate/$(DEPDIR)/radialbasisfunction_test.Po \
 	surrogate/$(DEPDIR)/radialbasisfunctionkernel_test.Po \
-	torc/$(DEPDIR)/torc_test.Po
+	torc/$(DEPDIR)/torc_test.Po units/$(DEPDIR)/species_test.Po \
+	units/$(DEPDIR)/units_test.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -870,8 +870,6 @@ parser_test_SOURCES = misc/parser_test.cpp
 arraywrapper_test_SOURCES = misc/arraywrapper_test.cpp
 funcallcounter_test_SOURCES = misc/funcallcounter_test.cpp
 timer_test_SOURCES = misc/timer_test.cpp
-species_test_SOURCES = misc/species_test.cpp
-units_test_SOURCES = misc/units_test.cpp
 io_test_SOURCES = io/io_test.cpp
 eigen_io_test_SOURCES = io/eigen_io_test.cpp
 pyplot_test_SOURCES = io/pyplot_test.cpp
@@ -885,6 +883,8 @@ polynomialtail_test_SOURCES = surrogate/polynomialtail_test.cpp
 radialbasisfunctionkernel_test_SOURCES = surrogate/radialbasisfunctionkernel_test.cpp
 radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
 torc_test_SOURCES = torc/torc_test.cpp
+species_test_SOURCES = units/species_test.cpp
+units_test_SOURCES = units/units_test.cpp
 all: all-am
 
 .SUFFIXES:
@@ -1241,8 +1241,14 @@ numerics/multimin/simplexnm_test.$(OBJEXT):  \
 simplexnm_test$(EXEEXT): $(simplexnm_test_OBJECTS) $(simplexnm_test_DEPENDENCIES) $(EXTRA_simplexnm_test_DEPENDENCIES) 
 	@rm -f simplexnm_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(simplexnm_test_OBJECTS) $(simplexnm_test_LDADD) $(LIBS)
-misc/species_test.$(OBJEXT): misc/$(am__dirstamp) \
-	misc/$(DEPDIR)/$(am__dirstamp)
+units/$(am__dirstamp):
+	@$(MKDIR_P) units
+	@: > units/$(am__dirstamp)
+units/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) units/$(DEPDIR)
+	@: > units/$(DEPDIR)/$(am__dirstamp)
+units/species_test.$(OBJEXT): units/$(am__dirstamp) \
+	units/$(DEPDIR)/$(am__dirstamp)
 
 species_test$(EXEEXT): $(species_test_OBJECTS) $(species_test_DEPENDENCIES) $(EXTRA_species_test_DEPENDENCIES) 
 	@rm -f species_test$(EXEEXT)
@@ -1291,8 +1297,8 @@ torc/torc_test.$(OBJEXT): torc/$(am__dirstamp) \
 torc_test$(EXEEXT): $(torc_test_OBJECTS) $(torc_test_DEPENDENCIES) $(EXTRA_torc_test_DEPENDENCIES) 
 	@rm -f torc_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(torc_test_OBJECTS) $(torc_test_LDADD) $(LIBS)
-misc/units_test.$(OBJEXT): misc/$(am__dirstamp) \
-	misc/$(DEPDIR)/$(am__dirstamp)
+units/units_test.$(OBJEXT): units/$(am__dirstamp) \
+	units/$(DEPDIR)/$(am__dirstamp)
 
 units_test$(EXEEXT): $(units_test_OBJECTS) $(units_test_DEPENDENCIES) $(EXTRA_units_test_DEPENDENCIES) 
 	@rm -f units_test$(EXEEXT)
@@ -1319,6 +1325,7 @@ mostlyclean-compile:
 	-rm -f numerics/random/*.$(OBJEXT)
 	-rm -f surrogate/*.$(OBJEXT)
 	-rm -f torc/*.$(OBJEXT)
+	-rm -f units/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -1335,9 +1342,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/arraywrapper_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/funcallcounter_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/parser_test.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/species_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/timer_test.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/units_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@misc/$(DEPDIR)/utility_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/dcpse_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@numerics/$(DEPDIR)/eigen_test.Po@am__quote@ # am--include-marker
@@ -1369,6 +1374,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@surrogate/$(DEPDIR)/radialbasisfunction_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@surrogate/$(DEPDIR)/radialbasisfunctionkernel_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@torc/$(DEPDIR)/torc_test.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@units/$(DEPDIR)/species_test.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@units/$(DEPDIR)/units_test.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1816,20 +1823,6 @@ timer_test.log: timer_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-species_test.log: species_test$(EXEEXT)
-	@p='species_test$(EXEEXT)'; \
-	b='species_test'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-units_test.log: units_test$(EXEEXT)
-	@p='units_test$(EXEEXT)'; \
-	b='units_test'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 io_test.log: io_test$(EXEEXT)
 	@p='io_test$(EXEEXT)'; \
 	b='io_test'; \
@@ -1917,6 +1910,20 @@ radialbasisfunction_test.log: radialbasisfunction_test$(EXEEXT)
 torc_test.log: torc_test$(EXEEXT)
 	@p='torc_test$(EXEEXT)'; \
 	b='torc_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+species_test.log: species_test$(EXEEXT)
+	@p='species_test$(EXEEXT)'; \
+	b='species_test'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+units_test.log: units_test$(EXEEXT)
+	@p='units_test$(EXEEXT)'; \
+	b='units_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2030,6 +2037,8 @@ distclean-generic:
 	-rm -f surrogate/$(am__dirstamp)
 	-rm -f torc/$(DEPDIR)/$(am__dirstamp)
 	-rm -f torc/$(am__dirstamp)
+	-rm -f units/$(DEPDIR)/$(am__dirstamp)
+	-rm -f units/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -2052,9 +2061,7 @@ distclean: distclean-am
 	-rm -f misc/$(DEPDIR)/arraywrapper_test.Po
 	-rm -f misc/$(DEPDIR)/funcallcounter_test.Po
 	-rm -f misc/$(DEPDIR)/parser_test.Po
-	-rm -f misc/$(DEPDIR)/species_test.Po
 	-rm -f misc/$(DEPDIR)/timer_test.Po
-	-rm -f misc/$(DEPDIR)/units_test.Po
 	-rm -f misc/$(DEPDIR)/utility_test.Po
 	-rm -f numerics/$(DEPDIR)/dcpse_test.Po
 	-rm -f numerics/$(DEPDIR)/eigen_test.Po
@@ -2086,6 +2093,8 @@ distclean: distclean-am
 	-rm -f surrogate/$(DEPDIR)/radialbasisfunction_test.Po
 	-rm -f surrogate/$(DEPDIR)/radialbasisfunctionkernel_test.Po
 	-rm -f torc/$(DEPDIR)/torc_test.Po
+	-rm -f units/$(DEPDIR)/species_test.Po
+	-rm -f units/$(DEPDIR)/units_test.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -2143,9 +2152,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f misc/$(DEPDIR)/arraywrapper_test.Po
 	-rm -f misc/$(DEPDIR)/funcallcounter_test.Po
 	-rm -f misc/$(DEPDIR)/parser_test.Po
-	-rm -f misc/$(DEPDIR)/species_test.Po
 	-rm -f misc/$(DEPDIR)/timer_test.Po
-	-rm -f misc/$(DEPDIR)/units_test.Po
 	-rm -f misc/$(DEPDIR)/utility_test.Po
 	-rm -f numerics/$(DEPDIR)/dcpse_test.Po
 	-rm -f numerics/$(DEPDIR)/eigen_test.Po
@@ -2177,6 +2184,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f surrogate/$(DEPDIR)/radialbasisfunction_test.Po
 	-rm -f surrogate/$(DEPDIR)/radialbasisfunctionkernel_test.Po
 	-rm -f torc/$(DEPDIR)/torc_test.Po
+	-rm -f units/$(DEPDIR)/species_test.Po
+	-rm -f units/$(DEPDIR)/units_test.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
