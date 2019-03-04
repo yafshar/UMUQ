@@ -465,6 +465,10 @@ class units
     static constexpr double const fsTs = 1.0E-15;
     static constexpr double const fsTps = 1.0E-03;
 
+    // Mass:
+    /*! 1 atomic mass unit */
+    static constexpr double const amuTkg = 1.660540E-27;
+
   private:
     /*! System unit style */
     UnitStyle unitStyle;
