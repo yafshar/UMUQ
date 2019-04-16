@@ -11,11 +11,15 @@ namespace umuq
 {
 
 /*! 
- * \defgroup 3rdparty Interfaces to the 3rd party codes e.g. DFT-FE, LAMMPS, ...
+ * \defgroup 3rdparty_Module 3rdparty module
+ *
+ * This is the 3rdparty Module of UMUQ providing all necessary classes 
+ * for an interface to the 3rd party codes like DFT-FE, LAMMPS, ... 
+ * currently supported in UMUQ.
  */
 
 /*! \class dftfe
- * \ingroup 3rdparty
+ * \ingroup 3rdparty_Module
  * 
  * \brief General class for an interface to the \c DFT-FE code output
  * 
