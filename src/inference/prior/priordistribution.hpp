@@ -22,6 +22,7 @@ namespace umuq
  * <tr><td> 2       <td> EXPONENTIAL     
  * <tr><td> 3       <td> GAMMA 
  * <tr><td> 4       <td> COMPOSITE
+ * <tr>
  * </table>
  * 
  * \tparam RealType Data type 

@@ -267,6 +267,7 @@ inline void setbackend(std::string const &WXbackends)
  * <tr><td> 'y'       <td> yellow
  * <tr><td> 'k'       <td> black
  * <tr><td> 'w'       <td> white
+ * <tr>
  * </table>
  */
 constexpr char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
@@ -352,6 +353,7 @@ int const DefaultColorsSize = 8;
  * <tr><td> 'd'       <td> thin_diamond marker
  * <tr><td> '|'       <td> vline marker
  * <tr><td> '_'       <td> hline marker
+ * <tr>
  * </table>
  * 
  * Reference:<br>

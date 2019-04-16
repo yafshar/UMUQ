@@ -22,11 +22,11 @@ namespace umuq
  */
 enum class ChargeUnit
 {
-    /*! The Coulomb unit of charge. */
+    /*! The \b Coulomb unit of charge. */
     Coulomb,
-    /*! The electron unit of charge. */
+    /*! The \b electron unit of charge. */
     electron,
-    /*! The statcoulomb unit of charge. */
+    /*! The \b stat-coulomb unit of charge. */
     statCoulomb
 };
 
@@ -39,17 +39,17 @@ enum class ChargeUnit
  */
 enum class EnergyUnit
 {
-    /*! The `amu*A`\f$^2\f$`/ps`\f$^2\f$ unit of energy. */
+    /*! The \b `amu*A`\b\f$^2\f$\b`/ps`\b\f$^2\f$ unit of energy. */
     amu_A2_per_ps2,
-    /*! The erg unit of energy. */
+    /*! The \b erg unit of energy. */
     erg,
-    /*! The electron-volt unit of energy. */
+    /*! The \b electron-volt unit of energy. */
     eV,
-    /*! The Hartree unit of energy.*/
+    /*! The \b Hartree unit of energy.*/
     Hartree,
-    /*! The Joule unit of energy. */
+    /*! The \b Joule unit of energy. */
     J,
-    /*! The kilocalorie per mole unit of energy. */
+    /*! The \b kilocalorie per mole unit of energy. */
     kcal_mol
 };
 
@@ -62,15 +62,15 @@ enum class EnergyUnit
  */
 enum class LengthUnit
 {
-    /*! The angstrom unit of length. */
+    /*! The \b angstrom unit of length. */
     A,
-    /*! The Bohr unit of length.*/
+    /*! The \b Bohr unit of length.*/
     Bohr,
-    /*! The centimeter unit of length.*/
+    /*! The \b centimeter unit of length.*/
     cm,
-    /*! The meter unit of length. */
+    /*! The \b meter unit of length. */
     m,
-    /*! The nanometer unit of length. */
+    /*! The \b nano-meter unit of length. */
     nm
 };
 
@@ -83,7 +83,7 @@ enum class LengthUnit
  */
 enum class TemperatureUnit
 {
-    /*! The Kelvin unit of temperature. */
+    /*! The \b Kelvin unit of temperature. */
     K
 };
 
@@ -96,13 +96,13 @@ enum class TemperatureUnit
  */
 enum class TimeUnit
 {
-    /*! The femto-second unit of time. */
+    /*! The \b femto-second unit of time. */
     fs,
-    /*! The picosecond unit of time. */
+    /*! The \b pico-second unit of time. */
     ps,
-    /*! The nanosecond unit of time. */
+    /*! The \b nano-second unit of time. */
     ns,
-    /*! The second unit of time. */
+    /*! The \b second unit of time. */
     s
 };
 
@@ -144,20 +144,21 @@ enum class UnitStyle
      * <table>
      * <caption id="multi_row">REAL style</caption>
      * <tr><th> Units             <th> Description        
-     * <tr><td> mass              <th> grams/mole
-     * <tr><td> distance          <th> Angstroms
-     * <tr><td> time              <th> femtoseconds
-     * <tr><td> energy            <th> Kcal/mole
-     * <tr><td> velocity          <th> Angstroms/femtosecond
-     * <tr><td> force             <th> Kcal/mole-Angstrom
-     * <tr><td> torque            <th> Kcal/mole
-     * <tr><td> temperature       <th> Kelvin
-     * <tr><td> pressure          <th> atmospheres
-     * <tr><td> dynamic viscosity <th> Poise
-     * <tr><td> charge            <th> multiple of electron charge (1.0 is a proton)
-     * <tr><td> dipole            <th> charge*Angstroms
-     * <tr><td> electric field    <th> volts/Angstrom
-     * <tr><td> density           <th> gram/cm^dim
+     * <tr><td> mass              <td> grams/mole
+     * <tr><td> distance          <td> Angstroms
+     * <tr><td> time              <td> femto-seconds
+     * <tr><td> energy            <td> Kcal/mole
+     * <tr><td> velocity          <td> Angstroms/femto-second
+     * <tr><td> force             <td> Kcal/mole-Angstrom
+     * <tr><td> torque            <td> Kcal/mole
+     * <tr><td> temperature       <td> Kelvin
+     * <tr><td> pressure          <td> atmospheres
+     * <tr><td> dynamic viscosity <td> Poise
+     * <tr><td> charge            <td> multiple of electron charge (1.0 is a proton)
+     * <tr><td> dipole            <td> charge*Angstroms
+     * <tr><td> electric field    <td> volts/Angstrom
+     * <tr><td> density           <td> gram/cm^dim
+     * <tr>
      * </table>
      */
     REAL,
@@ -167,20 +168,21 @@ enum class UnitStyle
      * <table>
      * <caption id="multi_row">REAL style</caption>
      * <tr><th> Units             <th> Description        
-     * <tr><td> mass              <th> grams/mole
-     * <tr><td> distance          <th> Angstroms
-     * <tr><td> time              <th> picoseconds
-     * <tr><td> energy            <th> eV
-     * <tr><td> velocity          <th> Angstroms/picosecond
-     * <tr><td> force             <th> eV/Angstrom
-     * <tr><td> torque            <th> eV
-     * <tr><td> temperature       <th> Kelvin
-     * <tr><td> pressure          <th> bars
-     * <tr><td> dynamic viscosity <th> Poise
-     * <tr><td> charge            <th> multiple of electron charge (1.0 is a proton)
-     * <tr><td> dipole            <th> charge*Angstroms
-     * <tr><td> electric field    <th> volts/Angstrom
-     * <tr><td> density           <th> gram/cm^dim
+     * <tr><td> mass              <td> grams/mole
+     * <tr><td> distance          <td> Angstroms
+     * <tr><td> time              <td> pico-seconds
+     * <tr><td> energy            <td> eV
+     * <tr><td> velocity          <td> Angstroms/pico-second
+     * <tr><td> force             <td> eV/Angstrom
+     * <tr><td> torque            <td> eV
+     * <tr><td> temperature       <td> Kelvin
+     * <tr><td> pressure          <td> bars
+     * <tr><td> dynamic viscosity <td> Poise
+     * <tr><td> charge            <td> multiple of electron charge (1.0 is a proton)
+     * <tr><td> dipole            <td> charge*Angstroms
+     * <tr><td> electric field    <td> volts/Angstrom
+     * <tr><td> density           <td> gram/cm^dim
+     * <tr>
      * </table>
      */
     METAL,
@@ -190,20 +192,21 @@ enum class UnitStyle
      * <table>
      * <caption id="multi_row">REAL style</caption>
      * <tr><th> Units             <th> Description        
-     * <tr><td> mass              <th> kilograms
-     * <tr><td> distance          <th> meters
-     * <tr><td> time              <th> seconds
-     * <tr><td> energy            <th> Joules
-     * <tr><td> velocity          <th> meters/second
-     * <tr><td> force             <th> Newtons
-     * <tr><td> torque            <th> Newton-meters
-     * <tr><td> temperature       <th> Kelvin
-     * <tr><td> pressure          <th> Pascals
-     * <tr><td> dynamic viscosity <th> Pascal*second
-     * <tr><td> charge            <th> Coulombs (1.6021765e-19 is a proton)
-     * <tr><td> dipole            <th> Coulombs*meters
-     * <tr><td> electric field    <th> volts/meter
-     * <tr><td> density           <th> kilograms/meter^dim
+     * <tr><td> mass              <td> kilograms
+     * <tr><td> distance          <td> meters
+     * <tr><td> time              <td> seconds
+     * <tr><td> energy            <td> Joules
+     * <tr><td> velocity          <td> meters/second
+     * <tr><td> force             <td> Newtons
+     * <tr><td> torque            <td> Newton-meters
+     * <tr><td> temperature       <td> Kelvin
+     * <tr><td> pressure          <td> Pascals
+     * <tr><td> dynamic viscosity <td> Pascal*second
+     * <tr><td> charge            <td> Coulombs (1.6021765e-19 is a proton)
+     * <tr><td> dipole            <td> Coulombs*meters
+     * <tr><td> electric field    <td> volts/meter
+     * <tr><td> density           <td> kilograms/meter^dim
+     * <tr>
      * </table>
      */
     SI,
@@ -213,20 +216,21 @@ enum class UnitStyle
      * <table>
      * <caption id="multi_row">REAL style</caption>
      * <tr><th> Units             <th> Description        
-     * <tr><td> mass              <th> grams
-     * <tr><td> distance          <th> centimeters
-     * <tr><td> time              <th> seconds
-     * <tr><td> energy            <th> ergs
-     * <tr><td> velocity          <th> centimeters/second
-     * <tr><td> force             <th> dynes
-     * <tr><td> torque            <th> dyne-centimeters
-     * <tr><td> temperature       <th> Kelvin
-     * <tr><td> pressure          <th> dyne/cm^2 or barye = 1.0e-6 bars
-     * <tr><td> dynamic viscosity <th> Poise
-     * <tr><td> charge            <th> statcoulombs or esu (4.8032044e-10 is a proton)
-     * <tr><td> dipole            <th> statcoul-cm = 10^18 debye
-     * <tr><td> electric field    <th> statvolt/cm or dyne/esu
-     * <tr><td> density           <th> grams/cm^dim
+     * <tr><td> mass              <td> grams
+     * <tr><td> distance          <td> centimeters
+     * <tr><td> time              <td> seconds
+     * <tr><td> energy            <td> ergs
+     * <tr><td> velocity          <td> centimeters/second
+     * <tr><td> force             <td> dynes
+     * <tr><td> torque            <td> dyne-centimeters
+     * <tr><td> temperature       <td> Kelvin
+     * <tr><td> pressure          <td> dyne/cm^2 or barye = 1.0e-6 bars
+     * <tr><td> dynamic viscosity <td> Poise
+     * <tr><td> charge            <td> statcoulombs or esu (4.8032044e-10 is a proton)
+     * <tr><td> dipole            <td> stat-coul-cm = 10^18 debye
+     * <tr><td> electric field    <td> statvolt/cm or dyne/esu
+     * <tr><td> density           <td> grams/cm^dim
+     * <tr>
      * </table>
      */
     CGS,
@@ -236,17 +240,18 @@ enum class UnitStyle
      * <table>
      * <caption id="multi_row">REAL style</caption>
      * <tr><th> Units             <th> Description        
-     * <tr><td> mass              <th> atomic mass units
-     * <tr><td> distance          <th> Bohr
-     * <tr><td> time              <th> femtoseconds
-     * <tr><td> energy            <th> Hartrees
-     * <tr><td> velocity          <th> Bohr/atomic time units [1.03275e-15 seconds]
-     * <tr><td> force             <th> Hartrees/Bohr
-     * <tr><td> temperature       <th> Kelvin
-     * <tr><td> pressure          <th> Pascals
-     * <tr><td> charge            <th> multiple of electron charge (1.0 is a proton)
-     * <tr><td> dipole            <th> Debye
-     * <tr><td> electric field    <th> volts/cm
+     * <tr><td> mass              <td> atomic mass units
+     * <tr><td> distance          <td> Bohr
+     * <tr><td> time              <td> femto-seconds
+     * <tr><td> energy            <td> Hartrees
+     * <tr><td> velocity          <td> Bohr/atomic time units [1.03275e-15 seconds]
+     * <tr><td> force             <td> Hartrees/Bohr
+     * <tr><td> temperature       <td> Kelvin
+     * <tr><td> pressure          <td> Pascals
+     * <tr><td> charge            <td> multiple of electron charge (1.0 is a proton)
+     * <tr><td> dipole            <td> Debye
+     * <tr><td> electric field    <td> volts/cm
+     * <tr>
      * </table>
      */
     ELECTRON
