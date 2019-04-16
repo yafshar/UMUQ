@@ -178,6 +178,12 @@ TESTS += tmcmc_test
 check_PROGRAMS += tmcmc_test
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
 
+#3rdparty interface
+#interface
+TESTS += dftfe_test
+check_PROGRAMS += dftfe_test
+dftfe_test_SOURCES = interface/dftfe_test.cpp
+
 #surrogate
 TESTS += polynomialtail_test
 check_PROGRAMS += polynomialtail_test
