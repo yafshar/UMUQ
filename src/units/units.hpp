@@ -39,7 +39,7 @@ enum class ChargeUnit
  */
 enum class EnergyUnit
 {
-    /*! The \b `amu*A`\b\f$^2\f$\b`/ps`\b\f$^2\f$ unit of energy. */
+    /*! The \f$ {\frac{\textbf{amu}~\textbf{A}^2}{\textbf{ps}^2}} \f$ unit of energy. */
     amu_A2_per_ps2,
     /*! The \b erg unit of energy. */
     erg,
