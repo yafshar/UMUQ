@@ -72,7 +72,7 @@ struct ioFormat
      */
     inline bool operator!=(ioFormat const &rhs) const;
 
-  public:
+public:
     /*! String printed between two coefficients */
     std::string coeffSeparator;
     /*! String printed between two rows */
@@ -121,7 +121,7 @@ struct ioFormat
  */
 class io
 {
-  public:
+public:
     /*! \var static const std::ios_base::openmode app
      * \brief Seeks to the end of stream before each write
      */
@@ -1058,7 +1058,7 @@ class io
                      ioFormat const &dataIOFormat,
                      ioFormat const &functionValuesIOFormat);
 
-  private:
+private:
     //! Input/output file based stream
     std::fstream fs;
 
@@ -1132,15 +1132,13 @@ inline bool io::isFileExist(const char *fileName)
     struct stat buffer;
     if (stat(fileName, &buffer))
     {
-        UMUQFAILRETURN(std::string("The requested file [") + std::string(fileName) + std::string("] does not exist in the current PATH!!"));
+        UMUQWARNING("The requested file [", fileName, "] does not exist in the current PATH!!");
+        return false;
     }
     return true;
 }
 
-inline bool io::isFileExist(std::string const &fileName)
-{
-    return io::isFileExist(&fileName[0]);
-}
+inline bool io::isFileExist(std::string const &fileName) { return io::isFileExist(&fileName[0]); }
 
 bool io::openFile(const char *fileName, const std::ios_base::openmode mode)
 {
@@ -1164,10 +1162,7 @@ bool io::openFile(const char *fileName, const std::ios_base::openmode mode)
     return true;
 }
 
-bool io::openFile(std::string const &fileName, const std::ios_base::openmode mode)
-{
-    return openFile(&fileName[0], mode);
-}
+bool io::openFile(std::string const &fileName, const std::ios_base::openmode mode) { return openFile(&fileName[0], mode); }
 
 bool io::readLine(const char comment)
 {
