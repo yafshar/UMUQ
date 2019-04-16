@@ -21,7 +21,7 @@ namespace umuq
  */
 class parser
 {
-  public:
+public:
 	/*!
      * \brief Construct a new parser object
      * 
@@ -58,7 +58,7 @@ class parser
      */
 	void parse(const char *inputLine);
 
-  private:
+private:
 	/*!
      * \brief Takes an input line and parse it into tokens
      * 
@@ -77,7 +77,7 @@ class parser
      */
 	void parse(char *inputLine, char **inputArgv);
 
-  public:
+public:
 	/*!
      * \brief Parses element 
      * 
@@ -144,6 +144,13 @@ class parser
 	inline void getLineArg(char **argv, std::size_t &LineArgNum);
 
 	/*!
+	 * \brief Get the number of line arguments 
+	 * 
+	 * \returns std::size_t 
+	 */
+	inline std::size_t getLineArgNum();
+
+	/*!
      * \brief Converts the given string to uppercase according to the 
      * character conversion rules defined by the currently installed C locale. 
      * 
@@ -167,7 +174,7 @@ class parser
      */
 	inline std::string tolower(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
 
-  private:
+private:
 	//! The number of last argument in the parsed line into different words
 	std::size_t lineArgNum;
 
@@ -333,10 +340,9 @@ std::string &parser::operator[]<std::string>(std::size_t const id)
 	return parse<std::string>(parser::lineArg[id], parser::stringValue);
 }
 
-inline char **parser::getLineArg()
-{
-	return lineArg;
-}
+inline char **parser::getLineArg() { return lineArg; }
+
+inline std::size_t parser::getLineArgNum() { return lineArgNum; }
 
 inline void parser::getLineArg(char **argv, std::size_t &LineArgNum)
 {
