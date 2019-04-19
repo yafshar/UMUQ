@@ -147,7 +147,7 @@ AC_DEFUN([AX_PYTHON], [
 		if test $? == 0; then
 			AC_MSG_RESULT(found)
 			ax_numpy_ok=yes
-			AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON_BIN -c "import numpy; numpypath=numpy.__path__[[0]]; print '%s/core/include' % numpypath"`])
+			AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON_BIN -c "import numpy; numpypath=numpy.__path__[[0]]; print('%s/core/include' % numpypath)"`])
 			AC_SUBST([NUMPY_INCLUDE_DIR], [$_cv_numpy_header])
 		else
 			AC_MSG_WARN([ Unable to find NUMPY !])
