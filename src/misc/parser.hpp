@@ -81,13 +81,13 @@ public:
 	/*!
      * \brief Parses element 
      * 
-     * \param  inputLineArg  Input string which we want to parse
-     * \param  parsedValue   Parsed value
+     * \param inputLineArg Input string which we want to parse
+     * \param parsedValue  Parsed value
      *  
      * \returns Parsed value of type T
      */
 	template <typename T>
-	inline T &parse(const char *inputLineArg, T &parsedValue);
+	inline T parse(const char *inputLineArg, T &parsedValue);
 
 	/*!
      * \brief Parses element
@@ -97,7 +97,30 @@ public:
      * \returns Parsed value of type T
      */
 	template <typename T>
-	inline T &parse(const char *inputLineArg);
+	inline T parse(const char *inputLineArg);
+
+	/*!
+     * \brief Parses element 
+     * 
+     * \param inputLineArgBegin  Begin of the string which we want to parse
+	 * \param inputLineArgEnd    End of the string which we want to parse
+     * \param parsedValue        Parsed value
+     *  
+     * \returns Parsed value of type T
+     */
+	template <typename T>
+	inline T parse(const char *inputLineArgBegin, const char *inputLineArgEnd, T &parsedValue);
+
+	/*!
+     * \brief Parses element 
+     * 
+     * \param inputLineArgBegin  Begin of the string which we want to parse
+	 * \param inputLineArgEnd    End of the string which we want to parse
+     *  
+     * \returns Parsed value of type T
+     */
+	template <typename T>
+	inline T parse(const char *inputLineArgBegin, const char *inputLineArgEnd);
 
 	/*!
      * \brief Access element at provided index id with checking bounds
@@ -107,7 +130,7 @@ public:
      * \returns Element (id)
      */
 	template <typename T>
-	inline T &at(std::size_t const id);
+	inline T at(std::size_t const id);
 
 	/*!
      * \brief Access element at provided index id with no check
@@ -117,7 +140,7 @@ public:
      * returns Element (id)
      */
 	template <typename T>
-	inline T &operator()(std::size_t const id);
+	inline T operator()(std::size_t const id);
 
 	/*!
      * \brief Access element at provided index id with no check
@@ -127,7 +150,7 @@ public:
      * returns Element (id)
      */
 	template <typename T>
-	inline T &operator[](std::size_t const id);
+	inline T operator[](std::size_t const id);
 
 	/*!
      * \brief Get the pointer to lineArg
@@ -275,7 +298,7 @@ void parser::parse(char *inputLine, char **inputArgv)
 }
 
 template <typename T>
-inline T &parser::parse(const char *inputLineArg, T &parsedValue)
+inline T parser::parse(const char *inputLineArg, T &parsedValue)
 {
 	std::stringstream str(inputLineArg);
 	str >> parsedValue;
@@ -283,51 +306,51 @@ inline T &parser::parse(const char *inputLineArg, T &parsedValue)
 }
 
 template <typename T>
-inline T &parser::parse(const char *inputLineArg)
+inline T parser::parse(const char *inputLineArg)
 {
 	T parsedValue;
 	return parse<T>(inputLineArg, parsedValue);
 }
 
 template <typename T>
-inline T &parser::at(std::size_t const id)
+inline T parser::parse(const char *inputLineArgBegin, const char *inputLineArgEnd, T &parsedValue)
 {
-	if (id >= lineArgNum)
-	{
-		throw(std::runtime_error("Wrong argument index number!"));
-	}
-
-	T rvalue;
-	return parse<T>(lineArg[id], rvalue);
-}
-
-// Template specialization for string input
-template <>
-std::string &parser::at<std::string>(std::size_t const id)
-{
-	if (id >= lineArgNum)
-	{
-		throw(std::runtime_error("Wrong argument index number!"));
-	}
-	return parse<std::string>(parser::lineArg[id], parser::stringValue);
+	std::stringstream str(std::string(inputLineArgBegin, inputLineArgEnd));
+	str >> parsedValue;
+	return parsedValue;
 }
 
 template <typename T>
-inline T &parser::operator()(std::size_t const id)
+inline T parser::parse(const char *inputLineArgBegin, const char *inputLineArgEnd)
 {
-	T rvalue;
-	return parse<T>(lineArg[id], rvalue);
-}
-
-// Template specialization for string input
-template <>
-std::string &parser::operator()<std::string>(std::size_t const id)
-{
-	return parse<std::string>(parser::lineArg[id], parser::stringValue);
+	T parsedValue;
+	return parse<T>(inputLineArgBegin, inputLineArgEnd, parsedValue);
 }
 
 template <typename T>
-inline T &parser::operator[](std::size_t const id)
+inline T parser::at(std::size_t const id)
+{
+	if (id >= lineArgNum)
+	{
+		UMUQFAIL("Wrong argument index number ", id, " > ", lineArgNum - 1, " arguments!");
+	}
+	T rvalue;
+	return lineArg[id + 1] ? parse<T>(lineArg[id], lineArg[id + 1] - 1, rvalue) : parse<T>(lineArg[id], rvalue);
+}
+
+// Template specialization for string input
+template <>
+inline std::string parser::at<std::string>(std::size_t const id)
+{
+	if (id >= lineArgNum)
+	{
+		UMUQFAIL("Wrong argument index number ", id, " > ", lineArgNum - 1, " arguments!");
+	}
+	return lineArg[id + 1] ? parse<std::string>(lineArg[id], lineArg[id + 1] - 1, stringValue) : parse<std::string>(lineArg[id], stringValue);
+}
+
+template <typename T>
+inline T parser::operator()(std::size_t const id)
 {
 	T rvalue;
 	return parse<T>(lineArg[id], rvalue);
@@ -335,9 +358,23 @@ inline T &parser::operator[](std::size_t const id)
 
 // Template specialization for string input
 template <>
-std::string &parser::operator[]<std::string>(std::size_t const id)
+inline std::string parser::operator()<std::string>(std::size_t const id)
 {
-	return parse<std::string>(parser::lineArg[id], parser::stringValue);
+	return parse<std::string>(lineArg[id], stringValue);
+}
+
+template <typename T>
+inline T parser::operator[](std::size_t const id)
+{
+	T rvalue;
+	return parse<T>(lineArg[id], rvalue);
+}
+
+// Template specialization for string input
+template <>
+inline std::string parser::operator[]<std::string>(std::size_t const id)
+{
+	return parse<std::string>(lineArg[id], stringValue);
 }
 
 inline char **parser::getLineArg() { return lineArg; }
