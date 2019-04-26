@@ -462,9 +462,11 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
 				std::size_t Id = 0;
 				std::size_t dumpFlag = 0;
 
+				std::cout << fileName << std::endl;
+
 				while (file.readLine())
 				{
-					if (dumpFlag == 2)
+					if (dumpFlag == 3)
 					{
 						// Get an instance of the io object
 						umuq::io outputFile;
@@ -559,8 +561,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
 							{
 								UMUQFAILRETURN("There is a mismatch in the number of force data points = ", Id / 3, "!= ", nSpecies, " !");
 							}
-#endif
-
+#endif					
 							// Convert from DFT-FE style to the output METAL style
 							mdUnits.convertForce(force);
 							dumpFlag++;
