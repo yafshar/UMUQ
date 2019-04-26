@@ -51,7 +51,7 @@ TEST(parse_test, HandlesInput)
         EXPECT_EQ(word[i], p.at<std::string>(i));
     }
 
-    //!testing space at the start of line
+    // testing space at the start of line
     sprintf(line, "   sh doall.sh");
     p.parse(line);
     for (int i = 0; i < 2; i++)
