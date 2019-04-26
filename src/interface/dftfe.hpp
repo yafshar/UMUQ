@@ -81,9 +81,12 @@ public:
 	inline std::string getFullFileName();
 
 	/*!
-	 * \brief Get the Total Number Run Files 
+	 * \brief Get the Total Number Run Files exist on the PATH
 	 * 
 	 * \returns std::size_t 
+	 * 
+	 * \note
+	 * This function search the path which is set by the \b setFullFileName function \sa umuq::dftfe::setFullFileName
 	 */
 	std::size_t getTotalNumberRunFiles();
 
