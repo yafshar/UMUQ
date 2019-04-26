@@ -81,8 +81,8 @@ public:
 	/*!
      * \brief Parses element 
      * 
-     * \param inputLineArg Input string which we want to parse
-     * \param parsedValue  Parsed value
+     * \param  inputLineArg  Input string which we want to parse
+     * \param  parsedValue   Parsed value
      *  
      * \returns Parsed value of type T
      */
@@ -98,29 +98,6 @@ public:
      */
 	template <typename T>
 	inline T parse(const char *inputLineArg);
-
-	/*!
-     * \brief Parses element 
-     * 
-     * \param inputLineArgBegin  Begin of the string which we want to parse
-	 * \param inputLineArgEnd    End of the string which we want to parse
-     * \param parsedValue        Parsed value
-     *  
-     * \returns Parsed value of type T
-     */
-	template <typename T>
-	inline T parse(const char *inputLineArgBegin, const char *inputLineArgEnd, T &parsedValue);
-
-	/*!
-     * \brief Parses element 
-     * 
-     * \param inputLineArgBegin  Begin of the string which we want to parse
-	 * \param inputLineArgEnd    End of the string which we want to parse
-     *  
-     * \returns Parsed value of type T
-     */
-	template <typename T>
-	inline T parse(const char *inputLineArgBegin, const char *inputLineArgEnd);
 
 	/*!
      * \brief Access element at provided index id with checking bounds
@@ -198,16 +175,16 @@ public:
 	inline std::string tolower(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
 
 private:
-	//! The number of last argument in the parsed line into different words
+	/*! The number of last argument in the parsed line into different words */
 	std::size_t lineArgNum;
 
-	//! Array of pointers to each word in the parsed line
+	/*! Array of pointers to each word in the parsed line */
 	char *lineArg[LINESIZE];
 
-	//! Word as an rvalue in parsing string
+	/*! Word as an rvalue in parsing string */
 	std::string stringValue;
 
-	//! Temporary string
+	/*! Temporary string */
 	std::string lineTmp;
 };
 
@@ -313,29 +290,14 @@ inline T parser::parse(const char *inputLineArg)
 }
 
 template <typename T>
-inline T parser::parse(const char *inputLineArgBegin, const char *inputLineArgEnd, T &parsedValue)
-{
-	std::stringstream str(std::string(inputLineArgBegin, inputLineArgEnd));
-	str >> parsedValue;
-	return parsedValue;
-}
-
-template <typename T>
-inline T parser::parse(const char *inputLineArgBegin, const char *inputLineArgEnd)
-{
-	T parsedValue;
-	return parse<T>(inputLineArgBegin, inputLineArgEnd, parsedValue);
-}
-
-template <typename T>
 inline T parser::at(std::size_t const id)
 {
 	if (id >= lineArgNum)
 	{
-		UMUQFAIL("Wrong argument index number ", id, " > ", lineArgNum - 1, " arguments!");
+		throw(std::runtime_error("Wrong argument index number!"));
 	}
 	T rvalue;
-	return lineArg[id + 1] ? parse<T>(lineArg[id], lineArg[id + 1] - 1, rvalue) : parse<T>(lineArg[id], rvalue);
+	return parse<T>(lineArg[id], rvalue);
 }
 
 // Template specialization for string input
@@ -344,9 +306,9 @@ inline std::string parser::at<std::string>(std::size_t const id)
 {
 	if (id >= lineArgNum)
 	{
-		UMUQFAIL("Wrong argument index number ", id, " > ", lineArgNum - 1, " arguments!");
+		throw(std::runtime_error("Wrong argument index number!"));
 	}
-	return lineArg[id + 1] ? parse<std::string>(lineArg[id], lineArg[id + 1] - 1, stringValue) : parse<std::string>(lineArg[id], stringValue);
+	return parse<std::string>(lineArg[id], stringValue);
 }
 
 template <typename T>
