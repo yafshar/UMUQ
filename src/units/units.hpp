@@ -6,19 +6,19 @@
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Units_Module Units module
  *
- * This is the Units Module of UMUQ providing all necessary classes 
+ * This is the Units Module of UMUQ providing all necessary classes
  * for physical units and their conversion currently supported in UMUQ.
  */
 
 /*!
  * \enum ChargeUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The ChargeUnit class
- * 
+ *
  */
 enum class ChargeUnit
 {
@@ -30,12 +30,12 @@ enum class ChargeUnit
     statCoulomb
 };
 
-/*! 
+/*!
  * \enum  EnergyUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The EnergyUnit class
- * 
+ *
  */
 enum class EnergyUnit
 {
@@ -53,12 +53,12 @@ enum class EnergyUnit
     kcal_mol
 };
 
-/*! 
+/*!
  * \enum LengthUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The LengthUnit class
- * 
+ *
  */
 enum class LengthUnit
 {
@@ -74,12 +74,12 @@ enum class LengthUnit
     nm
 };
 
-/*! 
+/*!
  * \enum TemperatureUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The TemperatureUnit class
- * 
+ *
  */
 enum class TemperatureUnit
 {
@@ -87,12 +87,12 @@ enum class TemperatureUnit
     K
 };
 
-/*! 
+/*!
  * \enum TimeUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The TimeUnit class
- * 
+ *
  */
 enum class TimeUnit
 {
@@ -106,12 +106,12 @@ enum class TimeUnit
     s
 };
 
-/*! 
+/*!
  * \enum ForceUnit
  * \ingroup Units_Module
- * 
+ *
  * \brief The ForceUnit class
- * 
+ *
  */
 enum class ForceUnit
 {
@@ -129,10 +129,10 @@ enum class ForceUnit
     Rydberg_Bohr
 };
 
-/*! 
+/*!
  * \enum UnitStyle
  * \ingroup Units_Module
- * 
+ *
  * \brief The unit system style
  * It determines the units of all quantities.
  */
@@ -140,10 +140,10 @@ enum class UnitStyle
 {
     /*!
      * \brief \b REAL style
-     * 
+     *
      * <table>
      * <caption id="multi_row">REAL style</caption>
-     * <tr><th> Units             <th> Description        
+     * <tr><th> Units             <th> Description
      * <tr><td> mass              <td> grams/mole
      * <tr><td> distance          <td> Angstroms
      * <tr><td> time              <td> femto-seconds
@@ -164,10 +164,10 @@ enum class UnitStyle
     REAL,
     /*!
      * \brief \b METAL style
-     * 
+     *
      * <table>
      * <caption id="multi_row">REAL style</caption>
-     * <tr><th> Units             <th> Description        
+     * <tr><th> Units             <th> Description
      * <tr><td> mass              <td> grams/mole
      * <tr><td> distance          <td> Angstroms
      * <tr><td> time              <td> pico-seconds
@@ -188,10 +188,10 @@ enum class UnitStyle
     METAL,
     /*!
      * \brief \b SI style
-     * 
+     *
      * <table>
      * <caption id="multi_row">REAL style</caption>
-     * <tr><th> Units             <th> Description        
+     * <tr><th> Units             <th> Description
      * <tr><td> mass              <td> kilograms
      * <tr><td> distance          <td> meters
      * <tr><td> time              <td> seconds
@@ -212,10 +212,10 @@ enum class UnitStyle
     SI,
     /*!
      * \brief \b CGS style
-     * 
+     *
      * <table>
      * <caption id="multi_row">REAL style</caption>
-     * <tr><th> Units             <th> Description        
+     * <tr><th> Units             <th> Description
      * <tr><td> mass              <td> grams
      * <tr><td> distance          <td> centimeters
      * <tr><td> time              <td> seconds
@@ -236,10 +236,10 @@ enum class UnitStyle
     CGS,
     /*!
      * \brief \b ELECTRON style
-     * 
+     *
      * <table>
      * <caption id="multi_row">REAL style</caption>
-     * <tr><th> Units             <th> Description        
+     * <tr><th> Units             <th> Description
      * <tr><td> mass              <td> atomic mass units
      * <tr><td> distance          <td> Bohr
      * <tr><td> time              <td> femto-seconds
@@ -257,10 +257,10 @@ enum class UnitStyle
     ELECTRON
 };
 
-/*! 
+/*!
  * \enum LatticeType
  * \ingroup Units_Module
- * 
+ *
  * \brief The LatticeType
  */
 enum class LatticeType
@@ -291,9 +291,9 @@ enum class LatticeType
  *
  * \brief Get the Unit Style Name object
  * \ingroup Units_Module
- * 
+ *
  * \param style  The unit system style \sa umuq::UnitStyle
- * 
+ *
  * \return std::string The unit name in string format
  */
 inline std::string getUnitStyleName(UnitStyle const &style)
@@ -305,12 +305,12 @@ inline std::string getUnitStyleName(UnitStyle const &style)
 
 /*! \class units
  * \ingroup Units_Module
- * 
- * \brief This is a class which creates units of the system 
- * 
- * Working with different simulations codes one can create a units of the system 
+ *
+ * \brief This is a class which creates units of the system
+ *
+ * Working with different simulations codes one can create a units of the system
  * which working with and convert from other units to this.
- * 
+ *
  * \todo
  * Currently only \c UnitStyle of METAL and conversion from \c ELECTRON are supported.
  * It should be extended for all available systems
@@ -320,92 +320,92 @@ class units
   public:
     /*!
      * \brief Construct a new units object
-     * 
+     *
      * The default unit system is [METAL](umuq::UnitStyle::METAL)
      */
     units();
 
     /*!
      * \brief Construct a new units object
-     * 
+     *
      * \param style  The unit system style \sa umuq::UnitStyle
      */
     explicit units(UnitStyle const &style);
 
     /*!
      * \brief Construct a new units object
-     * 
+     *
      * \param style  The unit system style \sa umuq::UnitStyle
      */
     units(std::string const &style);
 
     /*!
      * \brief Destroy the units object
-     * 
+     *
      */
     ~units();
 
     /*!
      * \brief Move constructor, construct a new units object
-     * 
+     *
      * \param other units object
      */
     explicit units(units &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other units object
-     * 
+     *
      * \returns units& units object
      */
     units &operator=(units &&other);
 
     /*!
      * \brief Get the Unit Style object
-     * 
-     * \return UnitStyle 
+     *
+     * \return UnitStyle
      */
     inline UnitStyle getUnitStyle();
 
     /*!
      * \brief Get the Unit Style Name object
-     * 
-     * \return std::string 
+     *
+     * \return std::string
      */
     inline std::string getUnitStyleName();
 
     /*!
-     * \brief Convert the input style (\c fromStyle) to the constrcuted style 
-     * 
+     * \brief Convert the input style (\c fromStyle) to the constrcuted style
+     *
      * \param fromStyle The unit system style which needs to be converted to the current constrcuted style \sa umuq::UnitStyle
      */
     bool convertFromStyle(UnitStyle const &fromStyle);
 
     /*!
      * \brief Convert the input style (\c fromStyle) to the constrcuted style
-     * 
+     *
      * \param fromStyle The unit system style which needs to be converted to the current constrcuted style \sa umuq::UnitStyle
      */
     bool convertFromStyle(std::string const &fromStyle);
 
     /*!
      * \brief Convert the constrcuted style to the input style (\c toStyle)
-     * 
+     *
      * \param toStyle The unit system style which the current constrcuted style needs to be converted \sa umuq::UnitStyle
      */
     bool convertToStyle(UnitStyle const &toStyle);
 
     /*!
      * \brief Convert the constrcuted style to the input style (\c toStyle)
-     * 
+     *
      * \param toStyle The unit system style which the current constrcuted style needs to be converted to that \sa umuq::UnitStyle
      */
     bool convertToStyle(std::string const &toStyle);
 
     /*!
      * \brief Convert length
-     * 
+     *
      * \param value Input length
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -415,8 +415,8 @@ class units
     inline void convertLength(double *value, int const nSize);
 
     /*!
-     * \brief Convert energy 
-     * 
+     * \brief Convert energy
+     *
      * \param value Input energy
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -427,7 +427,7 @@ class units
 
     /*!
      * \brief Convert charge
-     * 
+     *
      * \param value Input charge
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -438,7 +438,7 @@ class units
 
     /*!
      * \brief Convert temperature
-     * 
+     *
      * \param value Input temperature
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -449,7 +449,7 @@ class units
 
     /*!
      * \brief Convert time
-     * 
+     *
      * \param value Input time
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -460,7 +460,7 @@ class units
 
     /*!
      * \brief Convert force
-     * 
+     *
      * \param value Input force
      * \note
      * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
@@ -468,18 +468,18 @@ class units
     inline void convertForce(double &value);
     inline void convertForce(std::vector<double> &value);
     inline void convertForce(double *value, int const nSize);
-  
+
   private:
     /*!
      * \brief Delete a units object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     units(units const &) = delete;
 
     /*!
      * \brief Delete a units object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     units &operator=(units const &) = delete;
@@ -932,8 +932,8 @@ inline void units::convertForce(double *value, int const nSize)
 /*! \fn bool convert(std::vector<double> &value, UnitStyle const &fromStyle, UnitStyle const &toStyle)
  *
  * \ingroup Units_Module
- * \brief this is a general convert functionality 
- * 
+ * \brief this is a general convert functionality
+ *
  * \tparam UNIT the physical unit which we want to convert, it could be any of :
  * \b EnergyUnit \sa umuq::EnergyUnit
  * \b LengthUnit \sa umuq::LengthUnit
@@ -941,13 +941,13 @@ inline void units::convertForce(double *value, int const nSize)
  * \b TemperatureUnit \sa umuq::TemperatureUnit
  * \b TimeUnit \sa umuq::TimeUnit
  * \b ForceUnit \sa umuq::ForceUnit
- * 
+ *
  * \param value      Array of values which we want to convert from \c fromStyle to \c toStyle style
  * \param fromStyle  The input style
  * \param toStyle    The output style
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 template <class UNIT>
 bool convert(std::vector<double> &value, UnitStyle const &fromStyle, UnitStyle const &toStyle)
@@ -1060,21 +1060,21 @@ bool convert<umuq::ForceUnit>(std::vector<double> &value, UnitStyle const &fromS
 /*! \fn bool convert(std::vector<double> &value,  std::string const &fromStyle,  std::string const &toStyle)
  *
  * \ingroup Units_Module
- * \brief this is a general convert functionality 
- * 
+ * \brief this is a general convert functionality
+ *
  * \tparam UNIT the physical unit which we want to convert, it could be any of :
  * \b EnergyUnit \sa umuq::EnergyUnit
  * \b LengthUnit \sa umuq::LengthUnit
  * \b ChargeUnit \sa umuq::ChargeUnit
  * \b TemperatureUnit \sa umuq::TemperatureUnit
  * \b TimeUnit \sa umuq::TimeUnit
- * 
+ *
  * \param value      Array of values which we want to convert from \c fromStyle to \c toStyle style
  * \param fromStyle  The input style
  * \param toStyle    The output style
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 template <class UNIT>
 bool convert(std::vector<double> &value, std::string const &fromStyle, std::string const &toStyle)
@@ -1204,7 +1204,7 @@ bool convert<umuq::ForceUnit>(std::vector<double> &value, std::string const &fro
 
 /*! \fn void convertFractionalToCartesianCoordinates(std::vector<double> const &unitCells, std::vector<double> &fractionalCoordinates)
  * \ingroup Units_Module
- * 
+ *
  * \brief Function to convert fractional species coordinates to cartesian coordinates
  *
  * \param unitCells              Unit cell definition using parallelepiped
@@ -1213,7 +1213,7 @@ bool convert<umuq::ForceUnit>(std::vector<double> &value, std::string const &fro
 void convertFractionalToCartesianCoordinates(std::vector<double> const &unitCells, std::vector<double> &fractionalCoordinates)
 {
     // The number of species times dimensions
-    std::size_t nSpecies = fractionalCoordinates.size();
+    std::size_t const nSpecies = fractionalCoordinates.size();
 
     {
         // Cartesian coordinates
@@ -1229,18 +1229,17 @@ void convertFractionalToCartesianCoordinates(std::vector<double> const &unitCell
 
         std::copy(xyz.begin(), xyz.end(), fractionalCoordinates.begin());
     }
+    // // Define cell centroid (confirm whether it will work for non-orthogonal lattice vectors)
+    // double centroid[] = {0.5 * (unitCells[0] + unitCells[3] + unitCells[6]),
+    //                      0.5 * (unitCells[1] + unitCells[4] + unitCells[7]),
+    //                      0.5 * (unitCells[2] + unitCells[5] + unitCells[8])};
 
-    // Define cell centroid (confirm whether it will work for non-orthogonal lattice vectors)
-    double centroid[] = {0.5 * (unitCells[0] + unitCells[3] + unitCells[6]),
-                         0.5 * (unitCells[1] + unitCells[4] + unitCells[7]),
-                         0.5 * (unitCells[2] + unitCells[5] + unitCells[8])};
-
-    for (std::size_t i = 0; i < nSpecies; i += 3)
-    {
-        fractionalCoordinates[i] -= centroid[0];
-        fractionalCoordinates[i + 1] -= centroid[1];
-        fractionalCoordinates[i + 2] -= centroid[2];
-    }
+    // for (std::size_t i = 0; i < nSpecies; i += 3)
+    // {
+    //     fractionalCoordinates[i] += centroid[0];
+    //     fractionalCoordinates[i + 1] += centroid[1];
+    //     fractionalCoordinates[i + 2] += centroid[2];
+    // }
 }
 
 } // namespace umuq
