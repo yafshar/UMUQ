@@ -211,4 +211,8 @@ TESTS += units_test
 check_PROGRAMS += units_test
 units_test_SOURCES = units/units_test.cpp
 
+TESTS += lattice_test
+check_PROGRAMS += lattice_test
+lattice_test_SOURCES = units/lattice_test.cpp
+
 #examples
