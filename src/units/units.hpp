@@ -2,6 +2,7 @@
 #define UMUQ_UNITS_H
 
 #include "misc/parser.hpp"
+#include "lattice.hpp"
 
 namespace umuq
 {
@@ -317,7 +318,7 @@ inline std::string getUnitStyleName(UnitStyle const &style)
  */
 class units
 {
-  public:
+public:
     /*!
      * \brief Construct a new units object
      *
@@ -469,7 +470,7 @@ class units
     inline void convertForce(std::vector<double> &value);
     inline void convertForce(double *value, int const nSize);
 
-  private:
+private:
     /*!
      * \brief Delete a units object copy construction
      *
@@ -484,7 +485,7 @@ class units
      */
     units &operator=(units const &) = delete;
 
-  protected:
+protected:
     /*! The length scaling factor */
     double lengthUnitScale;
     /*! The energy scaling factor */
@@ -498,7 +499,7 @@ class units
     /*! The force scaling factor */
     double forceUnitScale;
 
-  private:
+private:
     // Pressure:
     /*! \f$ 1 \frac{eV}{Angstrom^3} = 160.21766208 GPa \f$ */
     static constexpr double const eV_Angstrom3TGPa = 160.21766208;
@@ -544,7 +545,7 @@ class units
     /*! 1 atomic mass unit */
     static constexpr double const amuTkg = 1.660540E-27;
 
-  private:
+private:
     /*! System unit style */
     UnitStyle unitStyle;
     /*! Length unit of the specified system style */
@@ -928,7 +929,6 @@ inline void units::convertForce(double *value, int const nSize)
     std::for_each(value, value + nSize, [&](double &v) { v *= forceUnitScale; });
 }
 
-
 /*! \fn bool convert(std::vector<double> &value, UnitStyle const &fromStyle, UnitStyle const &toStyle)
  *
  * \ingroup Units_Module
@@ -1202,44 +1202,19 @@ bool convert<umuq::ForceUnit>(std::vector<double> &value, std::string const &fro
     return false;
 }
 
-/*! \fn void convertFractionalToCartesianCoordinates(std::vector<double> const &unitCells, std::vector<double> &fractionalCoordinates)
+/*! \fn void convertFractionalToCartesianCoordinates(std::vector<double> const &boundingVectors, std::vector<double> &fractionalCoordinates)
  * \ingroup Units_Module
  *
  * \brief Function to convert fractional species coordinates to cartesian coordinates
  *
- * \param unitCells              Unit cell definition using parallelepiped
+ * \param boundingVectors        Definition using parallelepiped
  * \param fractionalCoordinates  Fractional species coordinates on input and cartesian coordinates on return
  */
-void convertFractionalToCartesianCoordinates(std::vector<double> const &unitCells, std::vector<double> &fractionalCoordinates)
+void convertFractionalToCartesianCoordinates(std::vector<double> const &boundingVectors, std::vector<double> &fractionalCoordinates)
 {
-    // The number of species times dimensions
-    std::size_t const nSpecies = fractionalCoordinates.size();
-
-    {
-        // Cartesian coordinates
-        std::vector<double> xyz(nSpecies);
-
-        // Convert fractional coordinates to cartesian coordinates
-        for (std::size_t i = 0; i < nSpecies; i += 3)
-        {
-            xyz[i] = fractionalCoordinates[i] * unitCells[0] + fractionalCoordinates[i + 1] * unitCells[3] + fractionalCoordinates[i + 2] * unitCells[6];
-            xyz[i + 1] = fractionalCoordinates[i] * unitCells[1] + fractionalCoordinates[i + 1] * unitCells[4] + fractionalCoordinates[i + 2] * unitCells[7];
-            xyz[i + 2] = fractionalCoordinates[i] * unitCells[2] + fractionalCoordinates[i + 1] * unitCells[5] + fractionalCoordinates[i + 2] * unitCells[8];
-        }
-
-        std::copy(xyz.begin(), xyz.end(), fractionalCoordinates.begin());
-    }
-    // // Define cell centroid (confirm whether it will work for non-orthogonal lattice vectors)
-    // double centroid[] = {0.5 * (unitCells[0] + unitCells[3] + unitCells[6]),
-    //                      0.5 * (unitCells[1] + unitCells[4] + unitCells[7]),
-    //                      0.5 * (unitCells[2] + unitCells[5] + unitCells[8])};
-
-    // for (std::size_t i = 0; i < nSpecies; i += 3)
-    // {
-    //     fractionalCoordinates[i] += centroid[0];
-    //     fractionalCoordinates[i + 1] += centroid[1];
-    //     fractionalCoordinates[i + 2] += centroid[2];
-    // }
+    // Creat an instance of a lattice object with the input bounding vectors
+    umuq::lattice l(boundingVectors);
+    fractionalCoordinates = l.fractionalToCartesian(fractionalCoordinates);
 }
 
 } // namespace umuq
