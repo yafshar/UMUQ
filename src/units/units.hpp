@@ -2,7 +2,6 @@
 #define UMUQ_UNITS_H
 
 #include "misc/parser.hpp"
-#include "lattice.hpp"
 
 namespace umuq
 {
@@ -256,36 +255,6 @@ enum class UnitStyle
      * </table>
      */
     ELECTRON
-};
-
-/*!
- * \enum LatticeType
- * \ingroup Units_Module
- *
- * \brief The LatticeType
- */
-enum class LatticeType
-{
-    /*! */
-    NONE,
-    /*! Simple Cubic Lattice */
-    SC,
-    /*! Body-Centred Cubic Lattice */
-    BCC,
-    /*! Face-Centred Cubic Lattice */
-    FCC,
-    /*! Hexagonal Close-Packed Lattice */
-    HCP,
-    /*!  Lattice */
-    DIAMOND,
-    /*!  Lattice */
-    SQ,
-    /*!  Lattice */
-    SQ2,
-    /*!  Lattice */
-    HEX,
-    /*!  Lattice */
-    CUSTOM
 };
 
 /*! \fn std::string getUnitStyleName(UnitStyle const &style)
@@ -1200,21 +1169,6 @@ bool convert<umuq::ForceUnit>(std::vector<double> &value, std::string const &fro
         return true;
     }
     return false;
-}
-
-/*! \fn void convertFractionalToCartesianCoordinates(std::vector<double> const &boundingVectors, std::vector<double> &fractionalCoordinates)
- * \ingroup Units_Module
- *
- * \brief Function to convert fractional species coordinates to cartesian coordinates
- *
- * \param boundingVectors        Definition using parallelepiped
- * \param fractionalCoordinates  Fractional species coordinates on input and cartesian coordinates on return
- */
-void convertFractionalToCartesianCoordinates(std::vector<double> const &boundingVectors, std::vector<double> &fractionalCoordinates)
-{
-    // Creat an instance of a lattice object with the input bounding vectors
-    umuq::lattice l(boundingVectors);
-    fractionalCoordinates = l.fractionalToCartesian(fractionalCoordinates);
 }
 
 } // namespace umuq
