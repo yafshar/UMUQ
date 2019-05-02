@@ -9,12 +9,41 @@
 namespace umuq
 {
 
+/*!
+ * \enum LatticeType
+ * \ingroup Species_Module
+ *
+ * \brief The LatticeType
+ *
+ * The LatticeType in UMUQ are the ones for 3d problems.
+ * Exception is the custom style which can be used for both 2d and 3d problems.
+ */
+enum class LatticeType
+{
+    /*! A style none lattice */
+    NONE,
+    /*! Simple Cubic lattice */
+    SC,
+    /*! Body-Centred Cubic lattice */
+    BCC,
+    /*! Face-Centred Cubic lattice */
+    FCC,
+    /*! Hexagonal Close-Packed lattice */
+    HCP,
+    /*! The diamond lattice */
+    DIAMOND,
+    /*! A style custom lattice */
+    CUSTOM
+};
+
 /*! \class lattice
  * \ingroup Species_Module
  *
  * \brief General lattice class
  *
- * General lattice class with coordinate conversions
+ * General lattice class with coordinate conversions.
+ * A lattice is simply a set of points in space, determined by a unit cell,
+ * that is replicated infinitely in all dimensions.
  */
 class lattice
 {
@@ -61,7 +90,7 @@ public:
      *
      * \param other lattice object
      */
-    explicit lattice(lattice &&other) = default;
+    explicit lattice(lattice &&other);
 
     /*!
      * \brief Move assignment operator
@@ -70,13 +99,27 @@ public:
      *
      * \returns lattice& lattice object
      */
-    lattice &operator=(lattice &&other) = default;
+    lattice &operator=(lattice &&other);
 
     /*!
      * \brief Initialize the lattice components
      *
      */
     void init();
+
+    /*!
+     * \brief Get the Lattice Type object
+     *
+     * \returns LatticeType
+     */
+    inline LatticeType getLatticeType();
+
+    /*!
+     * \brief Set the Lattice Type object
+     *
+     * \param inLatticeType
+     */
+    inline void setLatticeType(LatticeType const &inLatticeType);
 
     /*!
      * \brief Get the Basis Vector Length
@@ -210,6 +253,9 @@ private:
     lattice &operator=(lattice const &) = delete;
 
 public:
+    /*! Lattice type */
+    LatticeType latticeType;
+
     /*! Basis vectors lengths in Cartesian space */
     EVector3d basisVectorLength;
 
@@ -229,7 +275,8 @@ public:
     double volume;
 };
 
-lattice::lattice() : basisVectorLength(EVector3d::Ones()),
+lattice::lattice() : latticeType(LatticeType::NONE),
+                     basisVectorLength(EVector3d::Ones()),
                      basisVectorAngle(EVector3d::Ones() * static_cast<double>(M_PI / 2.0)),
                      realSpaceBasisVector(EVectorXd::Zero(9)),
                      reciprocalSpaceBasisVector(EVectorXd::Zero(9))
@@ -237,7 +284,7 @@ lattice::lattice() : basisVectorLength(EVector3d::Ones()),
     init();
 }
 
-lattice::lattice(std::vector<double> const &boundingVectors)
+lattice::lattice(std::vector<double> const &boundingVectors) : latticeType(LatticeType::NONE)
 {
     if (boundingVectors.size() != 9)
     {
@@ -279,7 +326,8 @@ lattice::lattice(std::vector<double> const &boundingVectors)
     init();
 }
 
-lattice::lattice(EVector3d const &BasisVectorLength, EVector3d const &BasisVectorAngle) : basisVectorLength(BasisVectorLength),
+lattice::lattice(EVector3d const &BasisVectorLength, EVector3d const &BasisVectorAngle) : latticeType(LatticeType::NONE),
+                                                                                          basisVectorLength(BasisVectorLength),
                                                                                           basisVectorAngle(BasisVectorAngle),
                                                                                           realSpaceBasisVector(EVectorXd::Zero(9)),
                                                                                           reciprocalSpaceBasisVector(EVectorXd::Zero(9))
@@ -299,7 +347,8 @@ lattice::lattice(EVector3d const &BasisVectorLength, EVector3d const &BasisVecto
     init();
 }
 
-lattice::lattice(std::vector<double> const &BasisVectorLength, std::vector<double> const &BasisVectorAngle) : basisVectorLength(BasisVectorLength.data()),
+lattice::lattice(std::vector<double> const &BasisVectorLength, std::vector<double> const &BasisVectorAngle) : latticeType(LatticeType::NONE),
+                                                                                                              basisVectorLength(BasisVectorLength.data()),
                                                                                                               basisVectorAngle(BasisVectorAngle.data()),
                                                                                                               realSpaceBasisVector(EVectorXd::Zero(9)),
                                                                                                               reciprocalSpaceBasisVector(EVectorXd::Zero(9))
@@ -317,6 +366,30 @@ lattice::lattice(std::vector<double> const &BasisVectorLength, std::vector<doubl
         UMUQFAIL("The input vector angle should be smaller than 180!");
     }
     init();
+}
+
+lattice::lattice(lattice &&other)
+{
+    latticeType = other.latticeType;
+    basisVectorLength = std::move(other.basisVectorLength);
+    basisVectorAngle = std::move(other.basisVectorAngle);
+    realSpaceBasisVector = std::move(other.realSpaceBasisVector);
+    reciprocalSpaceBasisVector = std::move(other.reciprocalSpaceBasisVector);
+    metricTensor = std::move(other.metricTensor);
+    volume = other.volume;
+}
+
+lattice &lattice::operator=(lattice &&other)
+{
+    latticeType = other.latticeType;
+    basisVectorLength = std::move(other.basisVectorLength);
+    basisVectorAngle = std::move(other.basisVectorAngle);
+    realSpaceBasisVector = std::move(other.realSpaceBasisVector);
+    reciprocalSpaceBasisVector = std::move(other.reciprocalSpaceBasisVector);
+    metricTensor = std::move(other.metricTensor);
+    volume = other.volume;
+
+    return *this;
 }
 
 void lattice::init()
@@ -372,7 +445,10 @@ void lattice::init()
     }
 }
 
-//  lattice dimension accessors:
+inline LatticeType lattice::getLatticeType() { return latticeType; }
+
+inline void lattice::setLatticeType(LatticeType const &inLatticeType) { latticeType = inLatticeType; }
+
 inline EVector3d lattice::getBasisVectorLength() { return basisVectorLength; }
 
 inline void lattice::setBasisVectorLength(EVector3d const &BasisVectorLength)
