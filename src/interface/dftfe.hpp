@@ -7,6 +7,7 @@
 #include "misc/utility.hpp"
 #include "units/speciesname.hpp"
 #include "units/units.hpp"
+#include "units/lattice.hpp"
 
 namespace umuq
 {
@@ -155,12 +156,26 @@ public:
     bool dump(std::string const &baseCoordinatesFileName = "COORDS", std::string const &baseForcesFileName = "FORCE", std::string const &format = "");
 
     /*!
-     * \brief To calculate mean square displacement for each species
+     * \brief Calculate the mean squared displacement for the requested species
      *
-     * \return true
-     * \return false
+     * \param speciesTypeId  Index of the requested species for computing msd (default is 0)
+     * \param timeStep       Time step (default is 0.5)
+     *
+     * \returns true
+     * \returns false If the speciesTypeId index is not available
      */
-    bool calculateMeanSquareDisplacement();
+    bool calculateMeanSquareDisplacement(std::size_t const speciesTypeId = 0, double const timeStep = 0.5);
+
+    /*!
+     * \brief Calculate the mean squared displacement for the requested species
+     *
+     * \param speciesTypeName   Name of the requested species for computing msd
+     * \param timeStep       Time step (default is 0.5)
+     *
+     * \returns true
+     * \returns false If the speciesTypeName index is not available
+     */
+    bool calculateMeanSquareDisplacement(std::string const &speciesTypeName, double const timeStep = 0.5);
 
 private:
     /*!
@@ -780,8 +795,13 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
                             mdUnits.convertLength(fractionalCoordinates);
                             dumpFlag++;
 
-                            // Convert the fractional coordinates to the Cartesian coordinates
-                            umuq::convertFractionalToCartesianCoordinates(boundingVectors, fractionalCoordinates);
+                            {
+                                // Creat an instance of a lattice object with the input bounding vectors
+                                umuq::lattice l(boundingVectors);
+
+                                // Convert the fractional coordinates to the Cartesian coordinates
+                                fractionalCoordinates = l.fractionalToCartesian(fractionalCoordinates);
+                            }
 
                             continue;
                         }
@@ -806,7 +826,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
     }
 }
 
-bool dftfe::calculateMeanSquareDisplacement()
+bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, double const timeStep)
 {
     if (!totalNumberSteps)
     {
@@ -816,27 +836,19 @@ bool dftfe::calculateMeanSquareDisplacement()
         }
     }
 
-    std::size_t index = 0;
-    std::size_t ltype = 0;
+    if (speciesTypeId > nSpeciesTypes)
+    {
+        UMUQFAILRETURN("The requested species index (", speciesTypeId, ") does not exist!");
+    }
 
-    // Initialize msd arrays
-    std::size_t lsr = 0;
-    std::size_t msr = 0;
-    std::size_t nsmsd = 0;
+    // Count the number of species of the requested type
+    auto nSpeciesOfRequestedType = 0;
+    std::for_each(speciesTypes.begin(), speciesTypes.end(), [&](int const st) { if (st == speciesTypeId) nSpeciesOfRequestedType++; });
 
-    // Unit cell coordinates
-    std::vector<double> boundingVectors(9);
-
-    // Species coordinates
-    std::vector<double> inCoordinates(nSpecies * 3, 0);
-    std::vector<double> toCoordinates(nSpecies * 3, 0);
-    std::vector<double> diffCoordinates(nSpecies * 3);
-    std::vector<double> msd0(nSpecies * 3 * totalNumberSteps, 0);
-    std::vector<double> msd(nSpecies * totalNumberSteps, 0);
-    std::vector<double> rr2(totalNumberSteps, 0);
-
-    std::vector<int> msm(totalNumberSteps, 0);
-    std::vector<int> imd(totalNumberSteps, 0);
+    if (!nSpeciesOfRequestedType)
+    {
+        UMUQFAILRETURN("The is no species of the requested type in the data!");
+    }
 
     {
         // Get an instance of the io object
@@ -845,138 +857,239 @@ bool dftfe::calculateMeanSquareDisplacement()
         // File name
         char fileName[LINESIZE];
 
-        // Get an instance of the units class with METAL style
-        umuq::units mdUnits("METAL");
+        // Initialize msd arrays for computing msd
+        std::vector<double> msd(nSpeciesOfRequestedType * totalNumberSteps, 0.0);
+        std::vector<double> rr2(totalNumberSteps, 0.0);
+        std::vector<int> msm(totalNumberSteps, 0);
 
-        // Set the unit style for conversion from DFT-FE ELECTRON style to METAL
-        if (!mdUnits.convertFromStyle("ELECTRON"))
         {
-            UMUQFAILRETURN("Can not set the conversion factors!");
-        }
+            // Get an instance of the units class with METAL style
+            umuq::units mdUnits("METAL");
 
-        // Number of steps counter
-        std::size_t numberSteps = 0;
-
-        // Loop through all the files
-        for (std::size_t fileID = startIndexRunFiles; fileID < startIndexRunFiles + getTotalNumberRunFiles(); fileID++)
-        {
-            sprintf(fileName, fullFileName.c_str(), fileID);
-            if (file.openFile(fileName))
+            // Set the unit style for conversion from DFT-FE ELECTRON style to METAL
+            if (!mdUnits.convertFromStyle("ELECTRON"))
             {
-                // An instance of a parser object to parse
-                umuq::parser p;
+                UMUQFAILRETURN("Can not set the conversion factors!");
+            }
 
-                // Set an index indicator for coordinates and forces
-                std::size_t Id = 0;
+            // Creat an instance of a lattice object with the input bounding vectors
+            umuq::lattice dftLattice;
 
-                // Set the dumping flag
-                std::size_t dumpFlag = 0;
+            // Number of steps counter
+            std::size_t numberSteps = 0;
 
-                while (file.readLine())
+            // Bounding vectors
+            std::vector<double> boundingVectors(9);
+
+            // Temporary arrays
+            std::vector<double> inCoordinates(nSpeciesOfRequestedType * 3);
+            std::vector<double> toCoordinates(nSpeciesOfRequestedType * 3);
+            std::vector<double> diffCoordinates(nSpeciesOfRequestedType * 3);
+            std::vector<double> msd0(nSpeciesOfRequestedType * 3 * totalNumberSteps, 0.0);
+            std::vector<int> imd(totalNumberSteps, 0);
+
+            // Loop through all the files
+            for (std::size_t fileID = startIndexRunFiles; fileID < startIndexRunFiles + getTotalNumberRunFiles(); fileID++)
+            {
+                sprintf(fileName, fullFileName.c_str(), fileID);
+                if (file.openFile(fileName))
                 {
-                    if (dumpFlag == 3)
+                    // An instance of a parser object to parse
+                    umuq::parser p;
+
+                    // Set an index indicator for coordinates and forces
+                    std::size_t Id = 0;
+
+                    // Set the dumping flag
+                    std::size_t dumpFlag = 0;
+
+                    while (file.readLine())
                     {
-                        if (numberSteps)
+                        // It means that one step is done and we have the correct coordinates read from the
+                        // DFT-FE output file
+                        if (dumpFlag == 3)
                         {
-                            auto toIt = toCoordinates.begin();
-                            auto inIt = inCoordinates.begin();
-                            // Calculate mean square displacement
-                            std::for_each(diffCoordinates.begin(), diffCoordinates.end(), [&](auto &diff) { diff = *toIt++ - *inIt++; });
+                            if (numberSteps)
+                            {
+                                {
+                                    auto toIt = toCoordinates.begin();
+                                    auto inIt = inCoordinates.begin();
+                                    // Update the coordinates difference
+                                    std::for_each(diffCoordinates.begin(), diffCoordinates.end(), [&](auto &diff) { diff = *toIt++ - *inIt++; });
+                                }
+
+                                // Imposing the parallelepiped boundary conditions
+                                diffCoordinates = dftLattice.cartesianToFractional(diffCoordinates);
+
+                                std::for_each(diffCoordinates.begin(), diffCoordinates.end(), [&](auto &diff) { diff -= std::round(diff); });
+
+                                diffCoordinates = dftLattice.fractionalToCartesian(diffCoordinates);
+
+                                for (auto j = 0; j < numberSteps; j++)
+                                {
+                                    auto const m = imd[j];
+                                    imd[j]++;
+                                    msm[m]++;
+                                    auto const k = nSpeciesOfRequestedType * 3 * j;
+                                    auto const l = nSpeciesOfRequestedType * m;
+                                    for (auto i = 0; i < nSpeciesOfRequestedType * 3; i += 3)
+                                    {
+                                        msd0[k + i] += diffCoordinates[i];
+                                        msd0[k + i + 1] += diffCoordinates[i + 1];
+                                        msd0[k + i + 2] += diffCoordinates[i + 2];
+                                        msd[l + i] += msd0[k + i] * msd0[k + i] + msd0[k + i + 1] * msd0[k + i + 1] + msd0[k + i + 2] * msd0[k + i + 2];
+                                    }
+                                }
+                            }
+
+                            std::copy(toCoordinates.begin(), toCoordinates.end(), inCoordinates.begin());
+
+                            numberSteps++;
+                            dumpFlag = 0;
                         }
 
-                        std::copy(toCoordinates.begin(), toCoordinates.end(), inCoordinates.begin());
-
-                        numberSteps++;
-                        dumpFlag = 0;
-                    }
-
-                    // Parse the line into line arguments
-                    p.parse(file.getLine());
-                    if (p.at<std::string>(0) == "v1")
-                    {
-                        boundingVectors[0] = p.at<double>(1);
-                        boundingVectors[1] = p.at<double>(2);
-                        boundingVectors[2] = p.at<double>(3);
-                        if (file.readLine())
+                        // Parse the line into line arguments
+                        p.parse(file.getLine());
+                        if (p.at<std::string>(0) == "v1")
                         {
-                            // Parse the line into line arguments
-                            p.parse(file.getLine());
-                            boundingVectors[3] = p.at<double>(1);
-                            boundingVectors[4] = p.at<double>(2);
-                            boundingVectors[5] = p.at<double>(3);
+                            boundingVectors[0] = p.at<double>(1);
+                            boundingVectors[1] = p.at<double>(2);
+                            boundingVectors[2] = p.at<double>(3);
                             if (file.readLine())
                             {
                                 // Parse the line into line arguments
                                 p.parse(file.getLine());
-                                boundingVectors[6] = p.at<double>(1);
-                                boundingVectors[7] = p.at<double>(2);
-                                boundingVectors[8] = p.at<double>(3);
-                            }
-                        }
-
-                        // Convert from DFT-FE style to the output METAL style
-                        mdUnits.convertLength(boundingVectors);
-
-                        dumpFlag = 1;
-                        Id = 0;
-                        continue;
-                    }
-                    if (p.at<std::string>(0) == "AtomId")
-                    {
-                        if (Id)
-                        {
-                            Id = 1;
-                            while (file.readLine())
-                            {
-                                // Parse the line into line arguments
-                                p.parse(file.getLine());
-                                if (p.at<std::string>(0) == "AtomId")
+                                boundingVectors[3] = p.at<double>(1);
+                                boundingVectors[4] = p.at<double>(2);
+                                boundingVectors[5] = p.at<double>(3);
+                                if (file.readLine())
                                 {
-                                    Id++;
-                                    continue;
-                                }
-                                if (Id == nSpecies)
-                                {
-                                    break;
+                                    // Parse the line into line arguments
+                                    p.parse(file.getLine());
+                                    boundingVectors[6] = p.at<double>(1);
+                                    boundingVectors[7] = p.at<double>(2);
+                                    boundingVectors[8] = p.at<double>(3);
                                 }
                             }
-                            dumpFlag++;
+
+                            // Convert from DFT-FE style to the output METAL style
+                            mdUnits.convertLength(boundingVectors);
+
+                            // Get the new lattice instance
+                            dftLattice = std::move(umuq::lattice(boundingVectors));
+
+                            dumpFlag = 1;
+                            Id = 0;
                             continue;
                         }
-                        else
+                        if (p.at<std::string>(0) == "AtomId")
                         {
-                            toCoordinates[Id++] = p.at<double>(2);
-                            toCoordinates[Id++] = p.at<double>(3);
-                            toCoordinates[Id++] = p.at<double>(4);
-                            while (file.readLine())
+                            // Scape the force values
+                            if (Id)
                             {
-                                // Parse the line into line arguments
-                                p.parse(file.getLine());
-                                if (p.at<std::string>(0) == "AtomId")
+                                Id = 1;
+                                while (file.readLine())
                                 {
-                                    toCoordinates[Id++] = p.at<double>(2);
-                                    toCoordinates[Id++] = p.at<double>(3);
-                                    toCoordinates[Id++] = p.at<double>(4);
-                                    continue;
+                                    // Parse the line into line arguments
+                                    p.parse(file.getLine());
+                                    if (p.at<std::string>(0) == "AtomId")
+                                    {
+                                        Id++;
+                                        continue;
+                                    }
+                                    if (Id == nSpecies)
+                                    {
+                                        break;
+                                    }
                                 }
-                                if (Id / 3 == nSpecies)
-                                {
-                                    break;
-                                }
+                                dumpFlag++;
+                                continue;
                             }
-                            // Convert from DFT-FE style to the output style
-                            mdUnits.convertLength(toCoordinates);
-                            dumpFlag++;
-                            // Convert the fractional coordinates to the Cartesian coordinates
-                            umuq::convertFractionalToCartesianCoordinates(boundingVectors, toCoordinates);
-                            continue;
+                            else
+                            {
+                                std::size_t toId = 0;
+                                if (speciesTypes[Id++] == speciesTypeId)
+                                {
+                                    toCoordinates[toId++] = p.at<double>(2);
+                                    toCoordinates[toId++] = p.at<double>(3);
+                                    toCoordinates[toId++] = p.at<double>(4);
+                                }
+
+                                while (file.readLine())
+                                {
+                                    // Parse the line into line arguments
+                                    p.parse(file.getLine());
+                                    if (p.at<std::string>(0) == "AtomId")
+                                    {
+                                        if (speciesTypes[Id++] == speciesTypeId)
+                                        {
+                                            toCoordinates[toId++] = p.at<double>(2);
+                                            toCoordinates[toId++] = p.at<double>(3);
+                                            toCoordinates[toId++] = p.at<double>(4);
+                                        }
+                                        continue;
+                                    }
+                                    if (Id == nSpecies)
+                                    {
+                                        break;
+                                    }
+                                }
+                                // Convert from DFT-FE style to the output style
+                                mdUnits.convertLength(toCoordinates);
+                                dumpFlag++;
+
+                                // Convert the fractional coordinates to the Cartesian coordinates
+                                toCoordinates = dftLattice.fractionalToCartesian(toCoordinates);
+
+                                continue;
+                            }
                         }
                     }
+                    file.closeFile();
                 }
-                file.closeFile();
             }
         }
+
+        // Normalise the mean square displacement
+        for (auto i = 0; i < totalNumberSteps; i++)
+        {
+            auto const j = i * nSpeciesOfRequestedType;
+            auto const k = j + nSpeciesOfRequestedType;
+            rr2[i] = std::accumulate(msd.data() + j, msd.data() + k, 0.0);
+            rr2[i] /= static_cast<double>(msm[i]);
+            rr2[i] /= static_cast<double>(nSpeciesOfRequestedType);
+        }
+
+        // Print out final mean square displacement function
+        sprintf(fileName, "msd_%s.txt", Species[speciesTypeId].name.c_str());
+        if (file.openFile(fileName, file.out))
+        {
+            file.setWidth(file.getWidth(rr2, totalNumberSteps, 1, std::cout));
+            auto &fs = file.getFstream();
+            for (auto i = 0; i < totalNumberSteps - 1; i++)
+            {
+                fs << timeStep * i << "\t";
+                fs << rr2[i] << "\n";
+            }
+            file.closeFile();
+        }
     }
+}
+
+bool dftfe::calculateMeanSquareDisplacement(std::string const &speciesTypeName, double const timeStep)
+{
+    // Create an instance of the species object
+    umuq::species s;
+    auto sp = s.getSpecies(speciesTypeName);
+    for (auto i = 0; i < nSpeciesTypes; i++)
+    {
+        if (sp.name == Species[i].name)
+        {
+            return calculateMeanSquareDisplacement(i, timeStep);
+            break;
+        }
+    }
+    UMUQFAILRETURN("Can not find the requested species (", sp.name, ") !");
 }
 
 } // namespace umuq
