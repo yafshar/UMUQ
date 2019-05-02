@@ -843,7 +843,7 @@ bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, dou
 
     // Count the number of species of the requested type
     auto nSpeciesOfRequestedType = 0;
-    std::for_each(speciesTypes.begin(), speciesTypes.end(), [&](int const st) { if (st == speciesTypeId) nSpeciesOfRequestedType++; });
+    std::for_each(speciesTypes.begin(), speciesTypes.end(), [&](int const s_i) { if (s_i == speciesTypeId) nSpeciesOfRequestedType++; });
 
     if (!nSpeciesOfRequestedType)
     {
@@ -1074,6 +1074,7 @@ bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, dou
             file.closeFile();
         }
     }
+    return true;
 }
 
 bool dftfe::calculateMeanSquareDisplacement(std::string const &speciesTypeName, double const timeStep)
