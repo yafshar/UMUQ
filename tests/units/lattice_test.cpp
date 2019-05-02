@@ -13,6 +13,8 @@ TEST(lattice_test, HandlesConstruction)
     // Create an instance of the lattice class
     umuq::lattice l;
 
+    EXPECT_TRUE(l.getLatticeType() == umuq::LatticeType::NONE);
+
     auto BasisVectorLength = l.getBasisVectorLength();
     EXPECT_TRUE((BasisVectorLength.array() == 1.0).all());
 
