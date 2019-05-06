@@ -1,7 +1,8 @@
 #ifndef UMUQ_FUNCTIONMINIMIZER_H
 #define UMUQ_FUNCTIONMINIMIZER_H
 
-#include "functiontype.hpp"
+#include "datatype/functiontype.hpp"
+#include "datatype/differentiablefunctionminimizertype.hpp"
 #include "umuqfunction.hpp"
 
 namespace umuq
@@ -27,43 +28,22 @@ namespace umuq
  */
 inline namespace multimin
 {
-
-/*!
- * \ingroup Multimin_Module
- * 
- * \brief Different Function Minimizer, currently available in %UMUQ
- * 
- */
-enum FunctionMinimizerTypes
-{
-  /*! \link umuq::multimin::simplexNM The Simplex method of Nelder and Mead. \endlink  */
-  SIMPLEXNM = 1,
-  /*! \link umuq::multimin::simplexNM2 The Simplex method of Nelder and Mead (order N operations). \endlink  */
-  SIMPLEXNM2 = 2,
-  /*! \link umuq::multimin::simplexNM2Rnd The Simplex method of Nelder and Mead (Uses a randomly-oriented set of basis vectors).  \endlink */
-  SIMPLEXNM2RND = 3
-};
-
-/*!
- * \ingroup Multimin_Module
- *  
- * \brief The goal is finding minima of arbitrary multidimensional functions.
- * 
- */
-
 /*! \class functionMinimizer
  * \ingroup Multimin_Module
  * 
- * \brief The base class which is for finding minima of arbitrary multidimensional functions.<br>
- * This is the low level component for a variety of iterative minimizers
+ * \brief The goal is finding minima of arbitrary multidimensional functions.<br> 
+ * This is the base class which is for finding minima of arbitrary multidimensional functions.
  * 
- * This class is the base class for algorithms which do not require the gradient of the function. <br>
+ * \tparam DataType Data type
+ * 
+ * 
+ * This is the low level component for a variety of iterative minimizers and the base class 
+ * suitable for algorithms which do not require the gradient of the function. <br>
  * For example, the Nelder-Mead Simplex algorithm.
  * 
  * \note
  * - It is important to note that the minimization algorithms find local minima; there is 
  *   no way to determine whether a minimum is a global minimum of the function in question.
- * 
  * 
  * To use the Minimizer: <br>
  * - First, set the minimizer dimension \sa reset
@@ -71,7 +51,6 @@ enum FunctionMinimizerTypes
  * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
  * 
- * \tparam DataType Data type
  */
 template <typename DataType>
 class functionMinimizer
@@ -312,14 +291,14 @@ protected:
   /*!
    * \brief Delete a functionMinimizer object copy construction
    * 
-   * Make it noncopyable.
+   * Avoiding implicit generation of the copy constructor.
    */
   functionMinimizer(functionMinimizer<DataType> const &) = delete;
 
   /*!
    * \brief Delete a functionMinimizer object assignment
    * 
-   * Make it nonassignable
+   * Avoiding implicit copy assignment.
    * 
    * \returns functionMinimizer<DataType>& 
    */

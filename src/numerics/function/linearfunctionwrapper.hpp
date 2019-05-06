@@ -1,8 +1,8 @@
 #ifndef UMUQ_LINEARFUNCTIONWRAPPER_H
 #define UMUQ_LINEARFUNCTIONWRAPPER_H
 
-#include "../function/functiontype.hpp"
-#include "../function/umuqdifferentiablefunction.hpp"
+#include "datatype/functiontype.hpp"
+#include "umuqdifferentiablefunction.hpp"
 
 namespace umuq
 {
@@ -121,14 +121,14 @@ class linearFunctionWrapper
     /*!
      * \brief Delete a linearFunctionWrapper object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     linearFunctionWrapper(linearFunctionWrapper<DataType> const &) = delete;
 
     /*!
      * \brief Delete a linearFunctionWrapper object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns linearFunctionWrapper<DataType>& 
      */

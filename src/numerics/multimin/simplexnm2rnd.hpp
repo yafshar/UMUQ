@@ -14,13 +14,12 @@ inline namespace multimin
  * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
  * around the starting point x to initialize the simplex.
  *  
+ * \tparam DataType Data type
+ * 
  * Reference:<br> 
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
  * 
  * This implementation uses \f$ n+1 \f$ corner points in the simplex.
- * 
- * \tparam DataType   Data type
- * \tparam TMF Multimin function type
  */
 template <typename DataType>
 class simplexNM2Rnd : public functionMinimizer<DataType>

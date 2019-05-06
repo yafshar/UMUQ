@@ -12,6 +12,8 @@ inline namespace polynomials
  *
  * \brief Chebyshev Polynomials 
  * 
+ * \tparam RealType Floating-point data type 
+ * 
  * Chebyshev polynomials, are a sequence of orthogonal polynomials. 
  * Chebyshev polynomials of the first kind are denoted \f$ T_n(x) \f$ and 
  * Chebyshev polynomials of the second kind are denoted \f$ U_n(x) \f$.
@@ -33,6 +35,7 @@ inline namespace polynomials
  * <tr><td> 5 <td> \f$ ~~16~x^5~-~~~20~x^3~+~~~~5~x~~~~~~~~~~~~ \f$ 
  * <tr><td> 6 <td> \f$ ~~32~x^6~-~~~48~x^4~+~~~~18~x^2~-~~~~1~~ \f$ 
  * <tr><td> 7 <td> \f$ ~~64~x^7~-~~~112~x^5~+~~~56~x^3~-~~~~7~x \f$ 
+ * <tr>
  * </table>
  * 
  * 
@@ -49,6 +52,7 @@ inline namespace polynomials
  * <tr><td> 5 <td> \f$ ~~32~x^5~-~~~32~x^3~+~~~~6~x~~~~~~~~~~~~ \f$ 
  * <tr><td> 6 <td> \f$ ~~64~x^6~-~~~80~x^4~+~~~~24~x^2~-~~~~1~~ \f$ 
  * <tr><td> 7 <td> \f$ ~~128~x^7~-~~192~x^5~+~~~80~x^3~-~~~~8~x \f$ 
+ * <tr>
  * </table>
  * 
  * 
@@ -69,11 +73,11 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
 {
   public:
     /*!
-	 * \brief Construct a new Chebyshev Polynomial object
-	 * 
+     * \brief Construct a new Chebyshev Polynomial object
+     * 
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
-	 */
+     */
     ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
 
     /*! 
@@ -157,7 +161,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$ 
@@ -175,7 +179,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      * 
      * \copyright
      * Boost Software License, Version 1.0. <br>
-	 * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
+     * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
      * 
      * 
      * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$ 
@@ -189,16 +193,14 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
     /*!
      * \brief Delete a ChebyshevPolynomial object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     ChebyshevPolynomial(ChebyshevPolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a ChebyshevPolynomial object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns ChebyshevPolynomial<RealType>& 
+     * Avoiding implicit copy assignment.
      */
     ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> const &) = delete;
 };

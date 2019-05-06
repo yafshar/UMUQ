@@ -1,7 +1,7 @@
 #ifndef UMUQ_FUNCTIONTYPE_H
 #define UMUQ_FUNCTIONTYPE_H
 
-/*! 
+/*! \file functiontype.hpp
  * \brief Collection of Function types for convenience
  */
 
@@ -10,6 +10,7 @@ namespace umuq
    
 inline namespace multimin
 {
+
 /*!
  * \brief Function type that can be used in multidimensional minimization as \f$ f(x) \f$
  * 

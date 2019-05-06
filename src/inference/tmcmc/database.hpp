@@ -278,14 +278,14 @@ class database
     /*!
      * \brief Delete a database object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     database(database const &) = delete;
 
     /*!
      * \brief Delete a database object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns database& 
      */
@@ -1060,6 +1060,7 @@ typename umuq::tmcmc::database::sortType &umuq::tmcmc::database::sortType::opera
 {
     nSel = other.nSel;
     idx = other.idx;
+    return *this;
 }
 
 } // namespace tmcmc

@@ -135,6 +135,7 @@ TESTS += timer_test
 check_PROGRAMS += timer_test
 timer_test_SOURCES = misc/timer_test.cpp
 
+
 #io
 TESTS += io_test
 check_PROGRAMS += io_test
@@ -177,7 +178,41 @@ TESTS += tmcmc_test
 check_PROGRAMS += tmcmc_test
 tmcmc_test_SOURCES = inference/tmcmc/tmcmc_test.cpp
 
+#3rdparty interface
+#interface
+TESTS += dftfe_test
+check_PROGRAMS += dftfe_test
+dftfe_test_SOURCES = interface/dftfe_test.cpp
+
+#surrogate
+TESTS += polynomialtail_test
+check_PROGRAMS += polynomialtail_test
+polynomialtail_test_SOURCES = surrogate/polynomialtail_test.cpp
+
+TESTS += radialbasisfunctionkernel_test
+check_PROGRAMS += radialbasisfunctionkernel_test
+radialbasisfunctionkernel_test_SOURCES = surrogate/radialbasisfunctionkernel_test.cpp
+
+TESTS += radialbasisfunction_test
+check_PROGRAMS += radialbasisfunction_test
+radialbasisfunction_test_SOURCES = surrogate/radialbasisfunction_test.cpp
+
 #torc
 TESTS += torc_test
 check_PROGRAMS += torc_test
 torc_test_SOURCES = torc/torc_test.cpp
+
+#units
+TESTS += species_test
+check_PROGRAMS += species_test
+species_test_SOURCES = units/species_test.cpp
+
+TESTS += units_test
+check_PROGRAMS += units_test
+units_test_SOURCES = units/units_test.cpp
+
+TESTS += lattice_test
+check_PROGRAMS += lattice_test
+lattice_test_SOURCES = units/lattice_test.cpp
+
+#examples

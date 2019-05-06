@@ -2,6 +2,7 @@
 #define UMUQ_STATS_H
 
 #include "../misc/arraywrapper.hpp"
+#include "eigenlib.hpp"
 
 namespace umuq
 {
@@ -27,6 +28,7 @@ namespace umuq
  * - \b zscoreNormal       Scales the numeric data using the Z-score normalization method
  * - \b robustzscoreNormal Scales the numeric data using the robust Z-score normalization method
  * - \b covariance         Compute the covariance
+ * - \b correlation        Compute the correlation coefficient (The population Pearson correlation coefficient.)
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
  *                         Find the unique n-dimensions sample points in an array of nRows * nCols data 
  */
@@ -313,43 +315,46 @@ struct stats
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
      * 
-     * \returns OutputDataType The mean of the elements in the array of data
+     * \returns RealType The mean of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType mean(DataType const *idata, int const nSize, int const Stride = 1) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    mean(DataType const *idata, int const nSize, int const Stride = 1) const;
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata   Array of data
      * 
-     * \returns OutputDataType The mean of the elements in the array of data
+     * \returns RealType The mean of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType mean(std::vector<DataType> const &idata) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    mean(std::vector<DataType> const &idata) const;
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param iArray  Array of data
      * 
-     * \returns OutputDataType The mean of the elements in the array of data
+     * \returns RealType The mean of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType mean(arrayWrapper<DataType> const &iArray) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    mean(arrayWrapper<DataType> const &iArray) const;
 
     /*!
      * \brief Computes the median of the elements in the array of data with Stride
@@ -439,95 +444,101 @@ struct stats
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata      Array of data
      * \param nSize      Size of the array
      * \param Stride     Element stride (optional, default is 1)
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The standard deviation of the elements in the array of data
+     * \returns RealType The standard deviation of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType stddev(DataType const *idata, int const nSize, int const Stride = 1, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    stddev(DataType const *idata, int const nSize, int const Stride = 1, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
 
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata      Array of data
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The standard deviation of the elements in the array of data
+     * \returns RealType The standard deviation of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType stddev(std::vector<DataType> const &idata, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    stddev(std::vector<DataType> const &idata, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param iArray     Array of data
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The standard deviation of the elements in the array of data
+     * \returns RealType The standard deviation of the elements in the array of data
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType stddev(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    stddev(arrayWrapper<DataType> const &iArray, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
 
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
      * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata      Array of data
      * \param nSize      Size of the array
      * \param Stride     Element stride (optional, default is 1)
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The coefficient of variation (CV)
+     * \returns RealType The coefficient of variation (CV)
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType coefvar(DataType const *idata, int const nSize, int const Stride = 1, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    coefvar(DataType const *idata, int const nSize, int const Stride = 1, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
 
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
      * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata      Array of data
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The coefficient of variation (CV)
+     * \returns RealType The coefficient of variation (CV)
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType coefvar(std::vector<DataType> const &idata, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    coefvar(std::vector<DataType> const &idata, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
 
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
      * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
      * 
-     * \tparam DataType       Data type
-     * \tparam OutputDataType Data type of return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param iArray     Array of data
      * \param idataMean  Mean of the elements in idata (optional)
      * 
-     * \returns OutputDataType The coefficient of variation (CV)
+     * \returns RealType The coefficient of variation (CV)
      */
-    template <typename DataType, typename OutputDataType = double>
-    inline OutputDataType coefvar(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean = std::numeric_limits<OutputDataType>::max()) const;
+    template <typename DataType, typename RealType = double>
+    inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    coefvar(arrayWrapper<DataType> const &iArray, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
@@ -667,8 +678,8 @@ struct stats
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize <br>
      * \f$ \text{covariance}(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata  Array of data 
      * \param jdata  Array of data
@@ -693,14 +704,15 @@ struct stats
      * 2.26667
      * \endcode   
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(DataType const *idata, DataType const *jdata, int const nSize, DataType const iMean, DataType const jMean);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(DataType const *idata, DataType const *jdata, int const nSize, RealType const iMean, RealType const jMean);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param iArray  Array of data 
      * \param jArray  Array of data
@@ -709,14 +721,15 @@ struct stats
      * 
      * \returns Covariance (scaler value) between idata and jdata vectors     
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, DataType const iMean, DataType const jMean);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, RealType const iMean, RealType const jMean);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata   Array of data 
      * \param jdata   Array of data
@@ -741,14 +754,15 @@ struct stats
      * \endcode  
      *    
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, DataType const iMean, DataType const jMean);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, RealType const iMean, RealType const jMean);
 
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length \c nSize
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata   Array of data 
      * \param jdata   Array of data
@@ -773,28 +787,30 @@ struct stats
      * \endcode 
      * 
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride = 1);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride = 1);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param iArray  Array of data 
      * \param jArray  Array of data
      * 
      * \returns Covariance (scaler value) between idata and jdata vectors
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray);
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata  Array of data 
      * \param jdata  Array of data
@@ -816,14 +832,15 @@ struct stats
      * 3
      * \endcode
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata);
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata  Array of N-dimensional data 
      * \param nSize  Total size of the array
@@ -864,14 +881,15 @@ struct stats
      * \end{matrix}
      * \f$
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType *covariance(DataType const *idata, int const nSize, int const nDim, int const Stride = 1);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+        *covariance(DataType const *idata, int const nSize, int const nDim, int const Stride = 1);
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
      * 
-     * \tparam DataType       Data type (should be double or long double) 
-     * \tparam OutputDataType Data type of the return output result (default is double)
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
      * 
      * \param idata  Array of N-dimensional data with size of [nSize/nDim][nDim]
      * \param nSize  Total size of the array
@@ -880,8 +898,279 @@ struct stats
      * 
      * \returns Covariance (array of [nDim * nDim]) from N-dimensional idata
      */
-    template <typename DataType, typename OutputDataType = double>
-    OutputDataType *covariance(DataType const *idata, int const nSize, int const nDim, DataType const *iMean);
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+        *covariance(DataType const *idata, int const nSize, int const nDim, RealType const *iMean);
+
+    /*!
+     * \brief Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
+     * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data 
+     * \param jdata  Array of data
+     * \param nSize  Size of array
+     * \param iMean  Mean of idata array
+     * \param jMean  Mean of jdata array
+     * 
+     * \returns Correlation (scaler value) between idata and jdata vectors  
+     *
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double X[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * double Y[] = {8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.correlation<double, double>(X, Y, 4, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 0.977431
+     * \endcode
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(DataType const *idata, DataType const *jdata, int const nSize, RealType const iMean, RealType const jMean);
+
+    /*!
+     * \brief Compute the correlation between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data 
+     * \param jArray  Array of data
+     * \param iMean   Mean of iArray 
+     * \param jMean   Mean of jArray
+     * 
+     * \returns Correlation (scaler value) between idata and jdata vectors     
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, RealType const iMean, RealType const jMean);
+
+    /*!
+     * \brief Compute the correlation between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data 
+     * \param jdata   Array of data
+     * \param iMean   Mean of iArray 
+     * \param jMean   Mean of jArray
+     * 
+     * \returns Correlation (scaler value) between idata and jdata vectors
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<double> X{2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
+     * std::vector<double> Y{8, 10, 12, 14};	  // (mean = 11)
+     * 
+     * std::cout << s.correlation<double, double>(X, Y, 3.1, 11) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 0.977431
+     * \endcode    
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, RealType const iMean, RealType const jMean);
+
+    /*!
+     * \brief Compute the correlation between idata and jdata vectors which must both be of the same length \c nSize
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata   Array of data 
+     * \param jdata   Array of data
+     * \param nSize   Size of array
+     * \param Stride  Stride of the data in the array (default is 1)
+     * 
+     * \returns Correlation (scaler value) between idata and jdata vectors
+     * 
+     * Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
+     * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
+     * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
+     * where it uses a numerically stable recurrence to compute a sum of products:<br>
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br> 
+     * with the relation <br>
+     * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{idata}_{n-1}) * (jdata_n - \overline{jdata}_{n-1}). \f$
+     * 
+     * Reference:<br>
+     * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
+     *
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * double X[] = {2.1, 2.5, 3.6, 4.0};
+     * double Y[] = {8, 10, 12, 14};
+     * 
+     * std::cout << s.correlation<double, double>(X, Y, 4) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 0.979457
+     * \endcode 
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(DataType const *idata, DataType const *jdata, int const nSize, int const Stride = 1);
+
+    /*!
+     * \brief Compute the correlation between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param iArray  Array of data 
+     * \param jArray  Array of data
+     * 
+     * \returns Correlation (scaler value) between iArray and jArray vectors
+     * 
+     * Compute the correlation between iArray and jArray vectors which must both be of the same length nSize <br>
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
+     * \f$ \rho (iArray, jArray) = correlation (iArray, jArray) = \frac{covariance (iArray, jArray) }{stddev(iArray) stddev(jArray) } \f$
+     * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
+     * where it uses a numerically stable recurrence to compute a sum of products:<br>
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{iArray}) \times (jdata_i - \overline{jArray})  ]}, \f$ <br> 
+     * with the relation <br>
+     * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{iArray}_{n-1}) * (jdata_n - \overline{jArray}_{n-1}). \f$
+     * 
+     * Reference:<br>
+     * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray);
+
+    /*!
+     * \brief Compute the correlation between two arrays of data which must both be of the same length
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata  Array of data 
+     * \param jdata  Array of data
+     * 
+     * \returns Correlation (scaler value) between idata and jdata vectors
+     * 
+     * Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
+     * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
+     * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
+     * where it uses a numerically stable recurrence to compute a sum of products:<br>
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br> 
+     * with the relation <br>
+     * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{idata}_{n-1}) * (jdata_n - \overline{jdata}_{n-1}). \f$
+     * 
+     * Reference:<br>
+     * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * std::vector<int> X{17, 18, 16, 18, 12, 20, 18, 20, 20, 22, 20, 10, 8, 12, 16, 16, 18, 20, 18, 21};
+     * std::vector<int> Y{19, 20, 22, 24, 10, 25, 20, 22, 21, 23, 20, 10, 12, 14, 12, 20, 22, 24, 23, 17};   
+     * 
+     * std::cout << s.correlation<int, double>(X, Y) << std::endl;
+     * \endcode
+     * 
+     * Output:<br>
+     * \code
+     * 0.79309
+     * \endcode
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    correlation(std::vector<DataType> const &idata, std::vector<DataType> const &jdata);
+
+    /*!
+     * \brief Compute the correlation array of N-dimensional idata
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata  Array of N-dimensional data 
+     * \param nSize  Total size of the array
+     * \param nDim   Data dimension
+     * \param Stride Stride of the data in the array (default is 1). 
+     * 
+     * The reason for having parameter stride is the case where we have coordinates and function value 
+     * and would like to avoid unnecessary copying the data 
+     * 
+     * \returns Correlation (array of N by N) from N-dimensional idata
+     * 
+     * Example:<br>
+     * \code 
+     * umuq::stats s;
+     * 
+     * // X 3-by-4 matrix
+     * double X[] = {5,  0, 3, 7,
+     *               1, -5, 7, 3,
+     *               4,  9, 8, 10};
+     * 
+     * double *Correlation = s.correlation<double, double>(X, 12, 4, 4);
+     * 
+     * for (int i = 0, l = 0; i < 4; i++)
+     * {
+     *      for (int j = 0; j < 4; j++)
+     *          std::cout << Correlation[l++] << " ";
+     *      std::cout << std::endl;
+     * }
+     * \endcode
+     * 
+     * Output:<br>
+     * \f$
+     * \begin{matrix}
+     * 1 & 0.598116 & -0.544705 & 0.775133 \\ 
+     * 0.598116 & 1 & 0.346287 & 0.969948 \\
+     * -0.544705 & 0.346287 & 1 & 0.107624 \\
+     * 0.775133 & 0.969948 & 0.107624  & 1 
+     * \end{matrix}
+     * \f$
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+        *correlation(DataType const *idata, int const nSize, int const nDim, int const Stride = 1);
+
+    /*!
+     * \brief Compute the correlation array of N-dimensional idata
+     * 
+     * \tparam DataType Data type
+     * \tparam RealType Floating point data type of the return output result (default is double)
+     * 
+     * \param idata  Array of N-dimensional data with size of [nSize/nDim][nDim]
+     * \param nSize  Total size of the array
+     * \param nDim   Data dimension
+     * \param iMean  Mean of each column or dimension of the array idata with size of [nDim]
+     * 
+     * \returns Correlation (array of [nDim * nDim]) from N-dimensional idata
+     */
+    template <typename DataType, typename RealType = double>
+    std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+        *correlation(DataType const *idata, int const nSize, int const nDim, RealType const *iMean);
 
     /*!
      * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
@@ -1183,8 +1472,9 @@ inline OutputDataType stats::sumAbs(arrayWrapper<DataType> const &iArray) const
     return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{}, [](DataType const &lhs, DataType const &rhs) { return lhs + std::abs(rhs); }))) : OutputDataType{};
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::mean(DataType const *idata, int const nSize, int const Stride) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::mean(DataType const *idata, int const nSize, int const Stride) const
 {
     if (nSize <= 0)
     {
@@ -1193,21 +1483,23 @@ inline OutputDataType stats::mean(DataType const *idata, int const nSize, int co
     if (Stride > 1)
     {
         arrayWrapper<DataType> iArray(idata, nSize, Stride);
-        return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+        return (iArray.size() > 0) ? (static_cast<RealType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
     }
-    return sum<DataType, OutputDataType>(idata, nSize) / static_cast<OutputDataType>(nSize);
+    return sum<DataType, RealType>(idata, nSize) / static_cast<RealType>(nSize);
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::mean(std::vector<DataType> const &idata) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::mean(std::vector<DataType> const &idata) const
 {
-    return (idata.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(idata.begin(), idata.end(), DataType{})) / idata.size()) : throw(std::runtime_error("Wrong input size!"));
+    return (idata.size() > 0) ? (static_cast<RealType>(std::accumulate(idata.begin(), idata.end(), DataType{})) / idata.size()) : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::mean(arrayWrapper<DataType> const &iArray) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::mean(arrayWrapper<DataType> const &iArray) const
 {
-    return (iArray.size() > 0) ? (static_cast<OutputDataType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
+    return (iArray.size() > 0) ? (static_cast<RealType>(std::accumulate(iArray.begin(), iArray.end(), DataType{})) / iArray.size()) : throw(std::runtime_error("Wrong input size!"));
 }
 
 template <typename DataType, typename OutputDataType>
@@ -1299,11 +1591,12 @@ inline OutputDataType stats::medianAbs(arrayWrapper<DataType> const &iArray, Out
     return (iArray.size() > 0) ? data[data.size() / 2] : throw(std::runtime_error("Wrong input size!"));
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::stddev(DataType const *idata, int const nSize, int const Stride, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::stddev(DataType const *idata, int const nSize, int const Stride, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata, nSize, Stride);
-    OutputDataType s(0);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(idata, nSize, Stride);
+    RealType s(0);
     if (Stride != 1)
     {
         arrayWrapper<DataType> iArray(idata, nSize, Stride);
@@ -1323,43 +1616,43 @@ inline OutputDataType stats::stddev(DataType const *idata, int const nSize, int 
     }
     for (int i = n; i < nSize; i += unrolledIncrement)
     {
-        OutputDataType const diff0 = idata[i] - Mean;
-        OutputDataType const diff1 = idata[i + 1] - Mean;
-        OutputDataType const diff2 = idata[i + 2] - Mean;
-        OutputDataType const diff3 = idata[i + 3] - Mean;
+        RealType const diff0 = idata[i] - Mean;
+        RealType const diff1 = idata[i + 1] - Mean;
+        RealType const diff2 = idata[i + 2] - Mean;
+        RealType const diff3 = idata[i + 3] - Mean;
 #if unrolledIncrement == 4
         s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
 #endif
 #if unrolledIncrement == 6
-        OutputDataType const diff4 = idata[i + 4] - Mean;
-        OutputDataType const diff5 = idata[i + 5] - Mean;
+        RealType const diff4 = idata[i + 4] - Mean;
+        RealType const diff5 = idata[i + 5] - Mean;
         s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5;
 #endif
 #if unrolledIncrement == 8
-        OutputDataType const diff4 = idata[i + 4] - Mean;
-        OutputDataType const diff5 = idata[i + 5] - Mean;
-        OutputDataType const diff6 = idata[i + 6] - Mean;
-        OutputDataType const diff7 = idata[i + 7] - Mean;
+        RealType const diff4 = idata[i + 4] - Mean;
+        RealType const diff5 = idata[i + 5] - Mean;
+        RealType const diff6 = idata[i + 6] - Mean;
+        RealType const diff7 = idata[i + 7] - Mean;
         s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7;
 #endif
 #if unrolledIncrement == 10
-        OutputDataType const diff4 = idata[i + 4] - Mean;
-        OutputDataType const diff5 = idata[i + 5] - Mean;
-        OutputDataType const diff6 = idata[i + 6] - Mean;
-        OutputDataType const diff7 = idata[i + 7] - Mean;
-        OutputDataType const diff8 = idata[i + 8] - Mean;
-        OutputDataType const diff9 = idata[i + 9] - Mean;
+        RealType const diff4 = idata[i + 4] - Mean;
+        RealType const diff5 = idata[i + 5] - Mean;
+        RealType const diff6 = idata[i + 6] - Mean;
+        RealType const diff7 = idata[i + 7] - Mean;
+        RealType const diff8 = idata[i + 8] - Mean;
+        RealType const diff9 = idata[i + 9] - Mean;
         s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9;
 #endif
 #if unrolledIncrement == 12
-        OutputDataType const diff4 = idata[i + 4] - Mean;
-        OutputDataType const diff5 = idata[i + 5] - Mean;
-        OutputDataType const diff6 = idata[i + 6] - Mean;
-        OutputDataType const diff7 = idata[i + 7] - Mean;
-        OutputDataType const diff8 = idata[i + 8] - Mean;
-        OutputDataType const diff9 = idata[i + 9] - Mean;
-        OutputDataType const diff10 = idata[i + 10] - Mean;
-        OutputDataType const diff11 = idata[i + 11] - Mean;
+        RealType const diff4 = idata[i + 4] - Mean;
+        RealType const diff5 = idata[i + 5] - Mean;
+        RealType const diff6 = idata[i + 6] - Mean;
+        RealType const diff7 = idata[i + 7] - Mean;
+        RealType const diff8 = idata[i + 8] - Mean;
+        RealType const diff9 = idata[i + 9] - Mean;
+        RealType const diff10 = idata[i + 10] - Mean;
+        RealType const diff11 = idata[i + 11] - Mean;
         s += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3 + diff4 * diff4 + diff5 * diff5 + diff6 * diff6 + diff7 * diff7 + diff8 * diff8 + diff9 * diff9 + diff10 * diff10 + diff11 * diff11;
 #endif
     }
@@ -1367,46 +1660,51 @@ inline OutputDataType stats::stddev(DataType const *idata, int const nSize, int 
     return (nSize > 1) ? std::sqrt(s / (nSize - 1)) : std::sqrt(s);
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::stddev(std::vector<DataType> const &idata, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::stddev(std::vector<DataType> const &idata, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata);
-    OutputDataType s(0);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(idata);
+    RealType s(0);
     std::for_each(idata.begin(), idata.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (idata.size() > 1) ? std::sqrt(s / (idata.size() - 1)) : std::sqrt(s);
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::stddev(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::stddev(arrayWrapper<DataType> const &iArray, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(iArray);
-    OutputDataType s(0);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(iArray);
+    RealType s(0);
     std::for_each(iArray.begin(), iArray.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) : std::sqrt(s);
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::coefvar(DataType const *idata, int const nSize, int const Stride, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::coefvar(DataType const *idata, int const nSize, int const Stride, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata, nSize, Stride);
-    OutputDataType const s = stddev<DataType, OutputDataType>(idata, nSize, Stride, Mean);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(idata, nSize, Stride);
+    RealType const s = stddev<DataType, RealType>(idata, nSize, Stride, Mean);
     return s / Mean;
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::coefvar(std::vector<DataType> const &idata, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::coefvar(std::vector<DataType> const &idata, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(idata);
-    OutputDataType s(0);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(idata);
+    RealType s(0);
     std::for_each(idata.begin(), idata.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (idata.size() > 1) ? std::sqrt(s / (idata.size() - 1)) / Mean : std::sqrt(s) / Mean;
 }
 
-template <typename DataType, typename OutputDataType>
-inline OutputDataType stats::coefvar(arrayWrapper<DataType> const &iArray, OutputDataType const idataMean) const
+template <typename DataType, typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::coefvar(arrayWrapper<DataType> const &iArray, RealType const idataMean) const
 {
-    OutputDataType const Mean = idataMean < std::numeric_limits<OutputDataType>::max() ? idataMean : mean<DataType, OutputDataType>(iArray);
-    OutputDataType s(0);
+    RealType const Mean = idataMean < std::numeric_limits<RealType>::max() ? idataMean : mean<DataType, RealType>(iArray);
+    RealType s(0);
     std::for_each(iArray.begin(), iArray.end(), [&](DataType const d) { s += (d - Mean) * (d - Mean); });
     return (iArray.size() > 1) ? std::sqrt(s / (iArray.size() - 1)) / Mean : std::sqrt(s) / Mean;
 }
@@ -1833,67 +2131,67 @@ inline void stats::robustzscoreNormal(std::vector<DataType> &idata)
     return;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, DataType const iMean, DataType const jMean)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, RealType const iMean, RealType const jMean)
 {
     /*!
      * \todo
      * If the data size is too big, maybe we should force long double
      */
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
     for (int i = 0; i < nSize; i++)
     {
-        OutputDataType const d1 = idata[i] - iMean;
-        OutputDataType const d2 = jdata[i] - jMean;
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(i + 1);
+        RealType const d1 = idata[i] - iMean;
+        RealType const d2 = jdata[i] - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(i + 1);
     }
-
-    return (nSize > 1) ? Covariance * static_cast<OutputDataType>(nSize) / static_cast<OutputDataType>(nSize - 1) : Covariance;
+    return (nSize > 1) ? Covariance * static_cast<RealType>(nSize) / static_cast<RealType>(nSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, DataType const iMean, DataType const jMean)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, RealType const iMean, RealType const jMean)
 {
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
     int iSize = 1;
     for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
     {
-        OutputDataType const d1 = *i - iMean;
-        OutputDataType const d2 = *j - jMean;
-
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
+        RealType const d1 = *i - iMean;
+        RealType const d2 = *j - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(iSize);
+        iSize++;
     }
-
     --iSize;
-
-    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<RealType>(iSize) / static_cast<RealType>(iSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, DataType const iMean, DataType const jMean)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, RealType const iMean, RealType const jMean)
 {
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
     int iSize = 1;
     for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
     {
-        OutputDataType const d1 = *i - iMean;
-        OutputDataType const d2 = *j - jMean;
-
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
+        RealType const d1 = *i - iMean;
+        RealType const d2 = *j - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(iSize);
+        iSize++;
     }
-
     --iSize;
-
-    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<RealType>(iSize) / static_cast<RealType>(iSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(DataType const *idata, DataType const *jdata, int const nSize, int const Stride)
 {
-    DataType const iMean = mean<DataType, DataType>(idata, nSize, Stride);
-    DataType const jMean = mean<DataType, DataType>(jdata, nSize, Stride);
+    RealType const iMean = mean<DataType, RealType>(idata, nSize, Stride);
+    RealType const jMean = mean<DataType, RealType>(jdata, nSize, Stride);
 
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
+
     if (Stride != 1)
     {
         arrayWrapper<DataType> iArray(idata, nSize, Stride);
@@ -1902,84 +2200,82 @@ OutputDataType stats::covariance(DataType const *idata, DataType const *jdata, i
         int iSize = 1;
         for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
         {
-            OutputDataType const d1 = *i - iMean;
-            OutputDataType const d2 = *j - jMean;
-
-            Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
+            RealType const d1 = *i - iMean;
+            RealType const d2 = *j - jMean;
+            Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(iSize);
+            iSize++;
         }
-
         --iSize;
-
-        return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
+        return (iSize > 1) ? Covariance * static_cast<RealType>(iSize) / static_cast<RealType>(iSize - 1) : Covariance;
     }
 
     for (int i = 0; i < nSize; i++)
     {
-        OutputDataType const d1 = idata[i] - iMean;
-        OutputDataType const d2 = jdata[i] - jMean;
-
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(i + 1);
+        RealType const d1 = idata[i] - iMean;
+        RealType const d2 = jdata[i] - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(i + 1);
     }
 
-    return (nSize > 1) ? Covariance * static_cast<OutputDataType>(nSize) / static_cast<OutputDataType>(nSize - 1) : Covariance;
+    return (nSize > 1) ? Covariance * static_cast<RealType>(nSize) / static_cast<RealType>(nSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray)
 {
-    DataType const iMean = mean<DataType, DataType>(iArray);
-    DataType const jMean = mean<DataType, DataType>(jArray);
+    RealType const iMean = mean<DataType, RealType>(iArray);
+    RealType const jMean = mean<DataType, RealType>(jArray);
 
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
+
     int iSize = 1;
     for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
     {
-        OutputDataType const d1 = *i - iMean;
-        OutputDataType const d2 = *j - jMean;
-
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
+        RealType const d1 = *i - iMean;
+        RealType const d2 = *j - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(iSize);
+        iSize++;
     }
-
     --iSize;
-
-    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<RealType>(iSize) / static_cast<RealType>(iSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::covariance(std::vector<DataType> const &idata, std::vector<DataType> const &jdata)
 {
-    DataType const iMean = mean<DataType, DataType>(idata);
-    DataType const jMean = mean<DataType, DataType>(jdata);
+    RealType const iMean = mean<DataType, RealType>(idata);
+    RealType const jMean = mean<DataType, RealType>(jdata);
 
-    OutputDataType Covariance(0);
+    RealType Covariance(0);
+
     int iSize = 1;
     for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
     {
-        OutputDataType const d1 = *i - iMean;
-        OutputDataType const d2 = *j - jMean;
-
-        Covariance += (d1 * d2 - Covariance) / static_cast<OutputDataType>(iSize++);
+        RealType const d1 = *i - iMean;
+        RealType const d2 = *j - jMean;
+        Covariance += (d1 * d2 - Covariance) / static_cast<RealType>(iSize);
+        iSize++;
     }
-
     --iSize;
-
-    return (iSize > 1) ? Covariance * static_cast<OutputDataType>(iSize) / static_cast<OutputDataType>(iSize - 1) : Covariance;
+    return (iSize > 1) ? Covariance * static_cast<RealType>(iSize) / static_cast<RealType>(iSize - 1) : Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType *stats::covariance(DataType const *idata, int const nSize, int const nDim, int const Stride)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    *stats::covariance(DataType const *idata, int const nSize, int const nDim, int const Stride)
 {
-    OutputDataType *Covariance = nullptr;
+    RealType *Covariance = nullptr;
     try
     {
-        Covariance = new OutputDataType[nDim * nDim]();
+        Covariance = new RealType[nDim * nDim]();
     }
     catch (std::bad_alloc &e)
     {
         UMUQFAILRETURNNULL("Failed to allocate memory!");
     }
 
-    std::vector<DataType> iMean(nDim);
+    std::vector<RealType> iMean(nDim);
 
     // We should make sure of the correct stride
     int const stride = Stride > nDim ? Stride : nDim;
@@ -1987,7 +2283,7 @@ OutputDataType *stats::covariance(DataType const *idata, int const nSize, int co
     // Compute the mean for each dimension
     for (int i = 0; i < nDim; i++)
     {
-        iMean[i] = mean<DataType, DataType>(idata + i, nSize, stride);
+        iMean[i] = mean<DataType, RealType>(idata + i, nSize, stride);
     }
 
     for (int i = 0; i < nDim; i++)
@@ -1998,7 +2294,7 @@ OutputDataType *stats::covariance(DataType const *idata, int const nSize, int co
         {
             arrayWrapper<DataType> jArray(idata + j, nSize, stride);
 
-            Covariance[i * nDim + j] = covariance<DataType, OutputDataType>(iArray, jArray, iMean[i], iMean[j]);
+            Covariance[i * nDim + j] = covariance<DataType, RealType>(iArray, jArray, iMean[i], iMean[j]);
         }
     }
 
@@ -2009,17 +2305,17 @@ OutputDataType *stats::covariance(DataType const *idata, int const nSize, int co
             Covariance[i * nDim + j] = Covariance[j * nDim + i];
         }
     }
-
     return Covariance;
 }
 
-template <typename DataType, typename OutputDataType>
-OutputDataType *stats::covariance(DataType const *idata, int const nSize, int const nDim, DataType const *iMean)
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    *stats::covariance(DataType const *idata, int const nSize, int const nDim, RealType const *iMean)
 {
-    OutputDataType *Covariance = nullptr;
+    RealType *Covariance = nullptr;
     try
     {
-        Covariance = new OutputDataType[nDim * nDim]();
+        Covariance = new RealType[nDim * nDim]();
     }
     catch (std::bad_alloc &e)
     {
@@ -2034,7 +2330,7 @@ OutputDataType *stats::covariance(DataType const *idata, int const nSize, int co
         {
             arrayWrapper<DataType> jArray(idata + j, nSize, nDim);
 
-            Covariance[i * nDim + j] = covariance<DataType, OutputDataType>(iArray, jArray, iMean[i], iMean[j]);
+            Covariance[i * nDim + j] = covariance<DataType, RealType>(iArray, jArray, iMean[i], iMean[j]);
         }
     }
 
@@ -2047,6 +2343,194 @@ OutputDataType *stats::covariance(DataType const *idata, int const nSize, int co
     }
 
     return Covariance;
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(DataType const *idata, DataType const *jdata, int const nSize, RealType const iMean, RealType const jMean)
+{
+    RealType const iStddev = stddev<DataType, RealType>(idata, nSize, 1, iMean);
+    RealType const jStddev = stddev<DataType, RealType>(jdata, nSize, 1, jMean);
+    RealType const Covariance = covariance<DataType, RealType>(idata, jdata, nSize, iMean, jMean);
+    return Covariance / (iStddev * jStddev);
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray, RealType const iMean, RealType const jMean)
+{
+    RealType const iStddev = stddev<DataType, RealType>(iArray, iMean);
+    RealType const jStddev = stddev<DataType, RealType>(jArray, jMean);
+    RealType const Covariance = covariance<DataType, RealType>(iArray, jArray, iMean, jMean);
+    return Covariance / (iStddev * jStddev);
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(std::vector<DataType> const &idata, std::vector<DataType> const &jdata, RealType const iMean, RealType const jMean)
+{
+    RealType const iStddev = stddev<DataType, RealType>(idata, iMean);
+    RealType const jStddev = stddev<DataType, RealType>(jdata, jMean);
+    RealType const Covariance = covariance<DataType, RealType>(idata, jdata, iMean, jMean);
+    return Covariance / (iStddev * jStddev);
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(DataType const *idata, DataType const *jdata, int const nSize, int const Stride)
+{
+    if (Stride != 1)
+    {
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        if (iArray.size())
+        {
+            RealType idataSumSquare(0);
+            RealType jdataSumSquare(0);
+            RealType idatajdataCross(0);
+
+            arrayWrapper<DataType> jArray(jdata, nSize, Stride);
+
+            RealType iMean = iArray[0];
+            RealType jMean = jArray[0];
+
+            int iSize = 1;
+            for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
+            {
+                RealType const ratio = iSize / (iSize + 1.0);
+                RealType const d1 = *i - iMean;
+                RealType const d2 = *j - jMean;
+                idataSumSquare += d1 * d1 * ratio;
+                jdataSumSquare += d2 * d2 * ratio;
+                idatajdataCross += d1 * d2 * ratio;
+                iMean += d1 / (iSize + 1.0);
+                jMean += d2 / (iSize + 1.0);
+                iSize++;
+            }
+            return idatajdataCross / (std::sqrt(idataSumSquare) * std::sqrt(jdataSumSquare));
+        }
+        UMUQFAIL("The input idata with the requested stride ", Stride, " is empty!");
+    }
+    else
+    {
+        RealType idataSumSquare(0);
+        RealType jdataSumSquare(0);
+        RealType idatajdataCross(0);
+        RealType iMean = idata[0];
+        RealType jMean = jdata[0];
+
+        for (int i = 1; i < nSize; i++)
+        {
+            RealType const ratio = i / (i + 1.0);
+            RealType const d1 = idata[i] - iMean;
+            RealType const d2 = jdata[i] - jMean;
+            idataSumSquare += d1 * d1 * ratio;
+            jdataSumSquare += d2 * d2 * ratio;
+            idatajdataCross += d1 * d2 * ratio;
+            iMean += d1 / (i + 1.0);
+            jMean += d2 / (i + 1.0);
+        }
+        return idatajdataCross / (std::sqrt(idataSumSquare) * std::sqrt(jdataSumSquare));
+    }
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(arrayWrapper<DataType> const &iArray, arrayWrapper<DataType> const &jArray)
+{
+    if (iArray.size())
+    {
+        if (iArray.size() != jArray.size())
+        {
+            UMUQFAIL("Input arrays have different sizes!");
+        }
+
+        RealType idataSumSquare(0);
+        RealType jdataSumSquare(0);
+        RealType idatajdataCross(0);
+        RealType iMean = iArray[0];
+        RealType jMean = jArray[0];
+
+        int iSize = 1;
+        for (auto i = iArray.begin(), j = jArray.begin(); i != iArray.end(); i++, j++)
+        {
+            RealType const ratio = iSize / (iSize + 1.0);
+            RealType const d1 = *i - iMean;
+            RealType const d2 = *j - jMean;
+            idataSumSquare += d1 * d1 * ratio;
+            jdataSumSquare += d2 * d2 * ratio;
+            idatajdataCross += d1 * d2 * ratio;
+            iMean += d1 / (iSize + 1.0);
+            jMean += d2 / (iSize + 1.0);
+            iSize++;
+        }
+        return idatajdataCross / (std::sqrt(idataSumSquare) * std::sqrt(jdataSumSquare));
+    }
+    UMUQFAIL("The input array is empty!");
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+stats::correlation(std::vector<DataType> const &idata, std::vector<DataType> const &jdata)
+{
+    if (idata.size())
+    {
+        if (idata.size() != jdata.size())
+        {
+            UMUQFAIL("Input vectors have different sizes!");
+        }
+
+        RealType idataSumSquare(0);
+        RealType jdataSumSquare(0);
+        RealType idatajdataCross(0);
+        RealType iMean = idata[0];
+        RealType jMean = jdata[0];
+
+        int iSize = 1;
+        for (auto i = idata.begin(), j = jdata.begin(); i != idata.end(); i++, j++)
+        {
+            RealType const ratio = iSize / (iSize + 1.0);
+            RealType const d1 = *i - iMean;
+            RealType const d2 = *j - jMean;
+            idataSumSquare += d1 * d1 * ratio;
+            jdataSumSquare += d2 * d2 * ratio;
+            idatajdataCross += d1 * d2 * ratio;
+            iMean += d1 / (iSize + 1.0);
+            jMean += d2 / (iSize + 1.0);
+            iSize++;
+        }
+        return idatajdataCross / (std::sqrt(idataSumSquare) * std::sqrt(jdataSumSquare));
+    }
+    UMUQFAIL("The input vector is empty!");
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    *stats::correlation(DataType const *idata, int const nSize, int const nDim, int const Stride)
+{
+    RealType *Covariance = covariance<DataType, RealType>(idata, nSize, nDim, Stride);
+    if (Covariance)
+    {
+        EMapType<RealType> CovarianceMatrix(Covariance, nDim, nDim);
+        EVectorX<RealType> CovarianceMatrixDiagonal = CovarianceMatrix.diagonal().cwiseSqrt().cwiseInverse();
+        CovarianceMatrix = CovarianceMatrixDiagonal.asDiagonal() * CovarianceMatrix * CovarianceMatrixDiagonal.asDiagonal();
+        return Covariance;
+    }
+    UMUQFAILRETURNNULL("Failed to compute the covariance!");
+}
+
+template <typename DataType, typename RealType>
+std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
+    *stats::correlation(DataType const *idata, int const nSize, int const nDim, RealType const *iMean)
+{
+    RealType *Covariance = covariance<DataType, RealType>(idata, nSize, nDim, iMean);
+    if (Covariance)
+    {
+        EMapType<RealType> CovarianceMatrix(Covariance, nDim, nDim);
+        EVectorX<RealType> CovarianceMatrixDiagonal = CovarianceMatrix.diagonal().cwiseSqrt().cwiseInverse();
+        CovarianceMatrix = CovarianceMatrixDiagonal.asDiagonal() * CovarianceMatrix * CovarianceMatrixDiagonal.asDiagonal();
+        return Covariance;
+    }
+    UMUQFAILRETURNNULL("Failed to compute the covariance!");
 }
 
 template <typename DataType>

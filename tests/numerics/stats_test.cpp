@@ -345,7 +345,7 @@ TEST(stats_test, HandlesCovariance)
 					   -3.0, 6.50, 7.0, 1.0,
 					   5.666666666666667, 24.166666666666668, 1.0, 12.333333333333334};
 
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 16; i++)
 		{
 			EXPECT_DOUBLE_EQ(Covariance[i], c1[i]);
 		}
@@ -400,6 +400,75 @@ TEST(stats_test, HandlesCovariance)
 		{
 			EXPECT_DOUBLE_EQ(Covariance[i], c2[i]);
 		}
+	}
+}
+
+/*!
+ * \ingroup Test_Module
+ * 
+ * \brief Construct a new TEST object for correlation
+ * 
+ */
+TEST(stats_test, HandlesCorrelation)
+{
+	// Create an instance of stats object
+	umuq::stats s;
+
+	// Create two vectors and compute their covariance.
+	{
+		double idata[] = {1, 2, 3, 5, 8};
+		double jdata[] = {0.11, 0.12, 0.13, 0.15, 0.18};
+
+		double Correlation = s.correlation(idata, jdata, 5);
+
+		EXPECT_DOUBLE_EQ(Correlation, 1);
+	}
+
+	{
+		std::vector<double> idata{1, 2, 3, 5, 8};
+		std::vector<double> jdata{0.11, 0.12, 0.13, 0.15, 0.18};
+
+		double Correlation = s.correlation(idata, jdata);
+
+		EXPECT_DOUBLE_EQ(Correlation, 1);
+	}
+
+	// Create a 3-by-4 matrix and compute its covariance.
+	{
+		double idata1[] = {5, 0, 3, 7,
+						   1, -5, 7, 3,
+						   4, 9, 8, 10};
+
+		// Correlation using pointers
+		double *Correlation;
+
+		// Compute the covariance
+		Correlation = s.correlation<double, double>(idata1, 12, 4, 4);
+
+		// Covariance computed with MATLAB
+		double c1[] = {1, 0.59811641854020026, -0.54470477940192208, 0.77513327939884036,
+					   0.59811641854020026, 1, 0.34628724111431247, 0.96994848914505427,
+					   -0.54470477940192208, 0.34628724111431247, 1, 0.10762440050012634,
+					   0.77513327939884036, 0.96994848914505427, 0.10762440050012634, 1};
+
+		for (int i = 0; i < 16; i++)
+		{
+			std::cout << i << std::endl;
+			EXPECT_DOUBLE_EQ(Correlation[i], c1[i]);
+		}
+
+		// Free memory
+		delete[] Correlation;
+		Correlation = nullptr;
+	}
+
+	{
+		std::vector<int> X{17, 18, 16, 18, 12, 20, 18, 20, 20, 22, 20, 10, 8, 12, 16, 16, 18, 20, 18, 21};
+		std::vector<int> Y{19, 20, 22, 24, 10, 25, 20, 22, 21, 23, 20, 10, 12, 14, 12, 20, 22, 24, 23, 17};
+
+		double const c = s.correlation<int, double>(X, Y);
+
+		EXPECT_DOUBLE_EQ(c, 0.79309035071010037);
 	}
 }
 

@@ -267,6 +267,7 @@ inline void setbackend(std::string const &WXbackends)
  * <tr><td> 'y'       <td> yellow
  * <tr><td> 'k'       <td> black
  * <tr><td> 'w'       <td> white
+ * <tr>
  * </table>
  */
 constexpr char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
@@ -352,6 +353,7 @@ int const DefaultColorsSize = 8;
  * <tr><td> 'd'       <td> thin_diamond marker
  * <tr><td> '|'       <td> vline marker
  * <tr><td> '_'       <td> hline marker
+ * <tr>
  * </table>
  * 
  * Reference:<br>
@@ -1419,16 +1421,14 @@ class pyplot
     /*!
      * \brief Delete a pyplot object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns pyplot& 
+     * Avoiding implicit copy assignment.
      */
     pyplot &operator=(pyplot const &) = delete;
 
@@ -1476,14 +1476,14 @@ class pyplot
         /*!
          * \brief Delete a matplotlib object copy construction
          * 
-         * Make it noncopyable.
+         * Avoiding implicit generation of the copy constructor.
          */
         matplotlib(matplotlib const &) = delete;
 
         /*!
          * \brief Delete a matplotlib object assignment
          * 
-         * Make it nonassignable
+         * Avoiding implicit copy assignment.
          * 
          * \returns matplotlib& 
          */
@@ -4713,7 +4713,8 @@ PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
 
 namespace umuq
 {
-
+inline namespace matplotlib_223
+{
 class pyplot
 {
   public:
@@ -4733,20 +4734,20 @@ class pyplot
     /*!
      * \brief Delete a pyplot object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns pyplot& 
      */
     pyplot &operator=(pyplot const &) = delete;
 };
-
+} // namespace matplotlib_223
 } // namespace umuq
 
 #endif // HAVEPYTHON

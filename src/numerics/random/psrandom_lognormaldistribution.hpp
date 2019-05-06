@@ -11,6 +11,8 @@ namespace randomdist
  * \ingroup Random_Module
  * 
  * \brief Generates random numbers x > 0 according to the lognormal_distribution
+ * 
+ * \tparam RealType Floating-point data type 
  */
 template <typename RealType = double>
 class lognormalDistribution
@@ -83,10 +85,18 @@ class lognormalDistribution
      inline void dist(std::vector<RealType> &idata);
 
    private:
-     // Make it noncopyable
+     /*!
+      * \brief Delete a lognormalDistribution object copy construction
+      * 
+      * Avoiding implicit generation of the copy constructor.
+      */
      lognormalDistribution(lognormalDistribution<RealType> const &) = delete;
 
-     // Make it not assignable
+     /*!
+      * \brief Delete a lognormalDistribution object assignment
+      * 
+      * Avoiding implicit copy assignment.
+      */
      lognormalDistribution<RealType> &operator=(lognormalDistribution<RealType> const &) = delete;
 
    private:

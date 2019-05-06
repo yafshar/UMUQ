@@ -1,37 +1,26 @@
 #ifndef UMUQ_RESIDUAL_H
 #define UMUQ_RESIDUAL_H
 
-#include "../misc/parser.hpp"
+#include "datatype/errortype.hpp"
+#include "misc/parser.hpp"
 
 namespace umuq
 {
-
-/*! \enum ErrorTypes
- * \ingroup Numerics_Module
- * 
- * \brief Different residuals Error types, currently available in %UMUQ
- * 
- */
-enum class ErrorTypes
-{
-    /*! Absolute difference between observed and predicted data. */
-    AbsoluteError,
-    /*! A ratio of absolute difference between observed and predicted data to the absolute value of observed data. */
-    ScaledError,
-    /*! Squared value of the difference between observed and predicted data. */
-    SquaredError
-};
 
 /*! \class residual
  * \ingroup Numerics_Module
  *
  * \brief Computes residuals of observation and predicted data based on different Error type
  *
+ * \tparam DataType Data type 
+ * 
  * List of available Error types:<br>
  *  - \b AbsoluteError Absolute difference between observed and predicted data
  *  - \b ScaledError   It is a ratio of absolute difference between observed and predicted data  
  *                     to the absolute value of observed data
  *  - \b SquaredError  Squared value of the difference between observed and predicted data
+ * 
+ * \sa umuq::ErrorTypes
  */
 template <typename DataType>
 class residual
@@ -83,16 +72,14 @@ class residual
     /*!
      * \brief Delete a residual object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     residual(residual<DataType> const &) = delete;
 
     /*!
      * \brief Delete a residual object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns residual<DataType>& 
+     * Avoiding implicit copy assignment.
      */
     residual<DataType> &operator=(residual<DataType> const &) = delete;
 

@@ -10,7 +10,7 @@ namespace umuq
  * \brief Prior distribution types currently supported in %UMUQ
  * 
  */
-enum class priorTypes
+enum class priorTypes : int
 {
 	/*! \link umuq::density::uniformDistribution UNIFORM \endlink */
 	UNIFORM = 0,

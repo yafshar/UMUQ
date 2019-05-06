@@ -192,16 +192,14 @@ class tmcmcStats
     /*!
      * \brief Delete a tmcmcStats object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.  
      */
     tmcmcStats(tmcmcStats const &) = delete;
 
     /*!
      * \brief Delete a tmcmcStats object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns tmcmcStats& 
+     * Avoiding implicit copy assignment.  
      */
     tmcmcStats &operator=(tmcmcStats const &) = delete;
 
@@ -229,7 +227,7 @@ tmcmcStats::tmcmcStats() : optParams(),
 tmcmcStats::tmcmcStats(optimizationParameters const &OptParams, double const CoefVarPresetThreshold) : optParams(OptParams)
 {
     // Get the correct instance of the minimizer
-    switch (optParams.FunctionMinimizerType)
+    switch (static_cast<umuq::multimin::FunctionMinimizerTypes>(optParams.FunctionMinimizerType))
     {
     case (umuq::multimin::FunctionMinimizerTypes::SIMPLEXNM):
         fMinimizer.reset(new umuq::multimin::simplexNM<double>);

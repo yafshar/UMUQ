@@ -14,7 +14,6 @@ It should contain the following files:
     |-- differentiablefunctionminimizer.hpp
     |-- fitfunction.hpp
     |-- functionminimizer.hpp
-    |-- functiontype.hpp
     |-- linearfunctionwrapper.hpp
     |-- umuqdifferentiablefunction.hpp
     |-- umuqfunction.hpp
@@ -27,7 +26,6 @@ densityFunction                 | A density function or a probability density (P
 differentiableFunctionMinimizer | A base class which is for finding minima of arbitrary multidimensional functions with derivative
 fitFunction                     | A base class which is for fitting function in the inference process
 functionMinimizer               | A base class which is for finding minima of arbitrary multidimensional functions
-functiontype                    | A collection of Function types for convenience use
 linearFunctionWrapper           | Wrapper for an external Multidimensional function
 umuqDifferentiableFunction      | A general-purpose polymorphic differentiable function wrapper of n variables
 umuqFunction                    | A general-purpose polymorphic function wrapper of n variables

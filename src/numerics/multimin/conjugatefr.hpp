@@ -12,13 +12,13 @@ inline namespace multimin
  * 
  * \brief Conjugate gradient Fletcher-Reeve algorithm
  * 
+ * \tparam DataType Data type
+ * 
  * This is a succession of line minimization. In this algorithm we use the value of the function 
  * and its gradient at each evaluation point. The sequence of search directions is used to 
  * build up an approximation to the curvature of the function in the neighborhood of the minimum.
  * An initial search direction is chosen using the gradient, and line minimization is carried 
- * out in that direction. 
- * 
- * \tparam DataType Data type
+ * out in that direction.
  */
 template <typename DataType>
 class conjugateFr : public differentiableFunctionMinimizer<DataType>

@@ -36,7 +36,7 @@ bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE
         UMUQFAILRETURN("Failed to set the minimizer!");
     }
 
-    //! Third, initilize the minimizer
+    //! Third, initialize the minimizer
     if (!fMinimizer.init())
     {
         UMUQFAILRETURN("Failed to initialize the minimizer!");
@@ -150,7 +150,7 @@ bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T
         UMUQFAILRETURN("Failed to set the minimizer!");
     }
 
-    //! Third, initilize the minimizer
+    //! Third, initialize the minimizer
     if (!fMinimizer.init())
     {
         UMUQFAILRETURN("Failed to initialize the minimizer!");
@@ -287,7 +287,7 @@ bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T
         UMUQFAILRETURN("Failed to set the minimizer!");
     }
 
-    //! Third, initilize the minimizer
+    //! Third, initialize the minimizer
     if (!fMinimizer.init())
     {
         UMUQFAILRETURN("Failed to initialize the minimizer!");

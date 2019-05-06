@@ -191,7 +191,7 @@ class kNearestNeighborBase
     /*!
      * \brief Check to see whether it requires the covariance for finding the neighbors. (Default is no)
      * 
-     * \returns true If the NeighborDistance type is the Mahalanobis distance
+     * \returns true If the DistanceTypes type is the Mahalanobis distance
      */
     inline bool needsCovariance() const;
 
@@ -234,6 +234,7 @@ class kNearestNeighborBase
     /*!
      * \brief Explicitly prevent the default construct of a new kNearestNeighborBase object
      * 
+     * Avoiding implicit default construction.
      */
     kNearestNeighborBase() = delete;
 

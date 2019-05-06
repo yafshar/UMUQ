@@ -56,7 +56,7 @@ TEST(knearestneighbors_test, HandlesKNN)
 	// Close the file
 	f.closeFile();
 
-	// Create an instance of the kNearestNeighbor object with DistanceType = NeighborDistance::EUCLIDEAN as default
+	// Create an instance of the kNearestNeighbor object with DistanceType = DistanceTypes::EUCLIDEAN as default
 	umuq::kNearestNeighbor<double> KNN(nRows, nDim, nNearestNeighbors);
 
 	// Check number of neighbors
@@ -155,12 +155,19 @@ TEST(knearestneighbors_test, HandlesKNN)
 	{
 		int const IdI = i * nDim;
 		int *p = KNN.NearestNeighbors(i);
-		for (int j = 0; j < nNearestNeighbors; j++)
+		{
+			int j = 0;
+			int const IdJ = p[j] * nDim;
+			double const dd[] = {dataPoints[IdJ] - dataPoints[IdI], dataPoints[IdJ + 1] - dataPoints[IdI + 1]};
+			double const d = dd[0] * dd[0] + dd[1] * dd[1];
+			EXPECT_NEAR(dists[i], d, 1e-18);
+		}
+		for (int j = 1; j < nNearestNeighbors; j++)
 		{
 			int const IdJ = p[j] * nDim;
 			double const dd[] = {dataPoints[IdJ] - dataPoints[IdI], dataPoints[IdJ + 1] - dataPoints[IdI + 1]};
 			double const d = dd[0] * dd[0] + dd[1] * dd[1];
-			EXPECT_TRUE((dists[i] <= d));
+			EXPECT_TRUE((dists[i] < d));
 		}
 	}
 
@@ -176,9 +183,6 @@ TEST(knearestneighbors_test, HandlesKNN)
  */
 TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 {
-	// Get an instance of a seeded double random object
-	umuq::psrandom prng(123);
-
 	// This dataPoints type has two dimensions
 	int const nDim = 2;
 
@@ -226,7 +230,7 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	}
 
 	// Finding K nearest neighbors with the Mahalanobis distance
-	umuq::kNearestNeighbor<double, umuq::NeighborDistance::MAHALANOBIS> KNN(nSPoints, nQPoints, nDim, nNearestNeighbors);
+	umuq::kNearestNeighbor<double, umuq::DistanceTypes::MAHALANOBIS> KNN(nSPoints, nQPoints, nDim, nNearestNeighbors);
 
 	// set the covariance
 	KNN.setCovariance(M2d);

@@ -16,7 +16,7 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
 
 /*!
  * Explicit instantiation for the given C++ types of <br>
- * 	- \b bool
+ * - \b bool
  * - \b char
  * - \b std::string
  * - \b int8_t

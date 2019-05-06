@@ -1,8 +1,8 @@
 #ifndef UMUQ_PSRANDOM_H
 #define UMUQ_PSRANDOM_H
 
-#include "../../core/core.hpp"
-#include "../factorial.hpp"
+#include "core/core.hpp"
+#include "numerics/factorial.hpp"
 
 /*! 
  * \defgroup Random_Module Random distribution module
@@ -181,111 +181,109 @@ class psrandom
     /*!
      * \brief Delete a psrandom object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     psrandom(psrandom const &) = delete;
 
     /*!
      * \brief Delete a psrandom object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns psrandom& 
+     * Avoiding implicit copy assignment.
      */
     psrandom &operator=(psrandom const &) = delete;
 
   public:
     /*!
-	 * \brief Uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [0, 1) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \return double A uniform random number between \f$ [0, 1) \f$
-	 */
+     * \brief Uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [0, 1) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \return double A uniform random number between \f$ [0, 1) \f$
+     */
     inline double unirnd();
 
     /*!
-	 * \brief Uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param low  Lower bound of the interval (default is 0)
-	 * \param high  Upper bound of theinterval  (default is 1)
-	 * 
-	 * \return double A uniform random number between \f$ [low, high) \f$
-	 */
+     * \brief Uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param low  Lower bound of the interval (default is 0)
+     * \param high  Upper bound of theinterval  (default is 1)
+     * 
+     * \return double A uniform random number between \f$ [low, high) \f$
+     */
     inline double unirnd(double const low, double const high);
 
     /*!
-	 * \brief Uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param low  Lower bound of the interval (default is 0)
-	 * \param high  Upper bound of theinterval  (default is 1)
-	 * 
-	 * \return float A uniform random number between \f$ [low, high) \f$
-	 */
+     * \brief Uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param low  Lower bound of the interval (default is 0)
+     * \param high  Upper bound of theinterval  (default is 1)
+     * 
+     * \return float A uniform random number between \f$ [low, high) \f$
+     */
     inline float unirnd(float const low, float const high);
 
     /*!
-	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of type double
-	 * \param nSize  Size of the array 
-	 * \param low    Lower bound of the interval (default is 0)
-	 * \param high   Upper bound of theinterval  (default is 1)
-	 */
+     * \brief Vector of uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of type double
+     * \param nSize  Size of the array 
+     * \param low    Lower bound of the interval (default is 0)
+     * \param high   Upper bound of theinterval  (default is 1)
+     */
     void unirnd(double *idata, int const nSize, double const low = double{}, double const high = double{1});
 
     /*!
-	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of type float
-	 * \param nSize  Size of the array 
-	 * \param low    Lower bound of the interval (default is 0)
-	 * \param high   Upper bound of theinterval  (default is 1)
-	 */
+     * \brief Vector of uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of type float
+     * \param nSize  Size of the array 
+     * \param low    Lower bound of the interval (default is 0)
+     * \param high   Upper bound of theinterval  (default is 1)
+     */
     void unirnd(float *idata, int const nSize, float const low = float{}, float const high = float{1});
 
     /*!
-	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of type double
-	 * \param low    Lower bound of the interval (default is 0)
-	 * \param high   Upper bound of theinterval  (default is 1)
-	 */
+     * \brief Vector of uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of type double
+     * \param low    Lower bound of the interval (default is 0)
+     * \param high   Upper bound of theinterval  (default is 1)
+     */
     void unirnd(std::vector<double> &idata, double const low = double{}, double const high = double{1});
 
     /*!
-	 * \brief Vector of uniform random of floating-point values uniformly distributed on 
-	 * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of type float
-	 * \param low    Lower bound of the interval (default is 0)
-	 * \param high   Upper bound of theinterval  (default is 1)
-	 */
+     * \brief Vector of uniform random of floating-point values uniformly distributed on 
+     * the interval \f$ [low, high) \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of type float
+     * \param low    Lower bound of the interval (default is 0)
+     * \param high   Upper bound of theinterval  (default is 1)
+     */
     void unirnd(std::vector<float> &idata, float const low = float{}, float const high = float{1});
 
     /*!
-	 * \brief Vector of uniform of integer values uniformly distributed on the closed interval
-	 * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of integers
-	 * \param nSize  Size of the array 
-	 * \param low    Lower bound of the interval 
-	 * \param high   Upper bound of theinterval
-	 */
+     * \brief Vector of uniform of integer values uniformly distributed on the closed interval
+     * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of integers
+     * \param nSize  Size of the array 
+     * \param low    Lower bound of the interval 
+     * \param high   Upper bound of theinterval
+     */
     void u32rnd(int *idata, int const nSize, int const low, int const high);
 
     /*!
-	 * \brief Vector of uniform of integer values uniformly distributed on the closed interval
-	 * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
-	 * 
-	 * \param idata  Array of input data of integers
-	 * \param low    Lower bound of the interval 
-	 * \param high   Upper bound of theinterval
-	 */
+     * \brief Vector of uniform of integer values uniformly distributed on the closed interval
+     * \f$ [low, high] \f$ using a random number engine based on Mersenne Twister
+     * 
+     * \param idata  Array of input data of integers
+     * \param low    Lower bound of the interval 
+     * \param high   Upper bound of theinterval
+     */
     void u32rnd(std::vector<int> &idata, int const low, int const high);
 
     /*!
@@ -301,10 +299,10 @@ class psrandom
     /*!
      * \brief Advance the Saru PRNG state by 1, and output a double precision \f$ [0, 1) \f$ floating point
      * 
-	 * \param low   Lower bound of the interval (default is 0)
-	 * \param high  Upper bound of theinterval  (default is 1)
-	 * 
-	 * \return double A uniform random number between \f$ [low, high) \f$
+     * \param low   Lower bound of the interval (default is 0)
+     * \param high  Upper bound of theinterval  (default is 1)
+     * 
+     * \return double A uniform random number between \f$ [low, high) \f$
      * 
      * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
@@ -325,9 +323,9 @@ class psrandom
      * \brief Advance the Saru PRNG  state by 1, and output a single precision \f$ [0, 1) \f$ floating point
      *  
      * \param low   Lower bound of the interval (default is 0)
-	 * \param high  Upper bound of theinterval  (default is 1)
-	 * 
-	 * \return float A uniform random number between \f$ [low, high) \f$
+     * \param high  Upper bound of theinterval  (default is 1)
+     * 
+     * \return float A uniform random number between \f$ [low, high) \f$
      * 
      * Reference:<br>
      * Y. Afshar, F. Schmid, A. Pishevar, S. Worley, [Comput. Phys. Commun. 184, 1119-1128 (2013)](https://www.sciencedirect.com/science/article/pii/S0010465512003992).
@@ -366,7 +364,7 @@ class psrandom
      *
      * \note 
      * - This should be called after setting the State of psrandom object for use 
-	 * in multi processes or multi threaded applications, \sa setState
+     * in multi processes or multi threaded applications, \sa setState
      * 
      * The permutations generated by this algorithm occur with the same probability.
      *
@@ -385,7 +383,7 @@ class psrandom
      * 
      * \note 
      * - This should be called after setting the State of psrandom object for use
-	 *  in multi processes or multi threaded applications, \sa setState
+     *  in multi processes or multi threaded applications, \sa setState
      * 
      * 
      * The permutations generated by this algorithm occur with the same probability.
@@ -439,10 +437,12 @@ void psrandom::initTask()
 
     std::size_t const n = nlocalworkers * (node_id + 1);
 
+    rSeed[0] = PRNG_seed;
+    rSeed[1] = n;
+
     for (std::size_t i = 0; i < nlocalworkers; i++)
     {
-        std::size_t const j = PRNG_seed + n + i;
-        std::iota(rSeed.begin(), rSeed.end(), j);
+        std::iota(rSeed.begin() + 2, rSeed.end(), i);
 
         // Seed the engine with unsigned ints
         std::seed_seq sSeq(rSeed.begin(), rSeed.end());
@@ -450,8 +450,7 @@ void psrandom::initTask()
         // For each thread feed the RNG
         NumberGenerator[i].seed(sSeq);
 
-        Saru s(PRNG_seed, n, i);
-        saru[i] = std::move(s);
+        saru[i].seed(rSeed[0], rSeed[1], rSeed[2]);
     }
 }
 

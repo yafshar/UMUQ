@@ -11,10 +11,10 @@
  */
 TEST(simplexNM_test, HandlesMinimizerConstruction)
 {
-    //! Create an instance of the minimizer
+    // Create an instance of the minimizer
     umuq::simplexNM<double> fMinimizer;
 
-    //! First we have to set the minimizer dimension
+    // First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
 }
 
@@ -26,22 +26,22 @@ TEST(simplexNM_test, HandlesMinimizerConstruction)
  */
 TEST(simplexNM_test, HandlesRosenbrockFunction)
 {
-    //! Starting point
+    // Starting point
     std::vector<double> X = {-1.2, 1.0};
 
-    //! By default we consider stepSize 1
+    // By default we consider stepSize 1
     std::vector<double> stepSize(2, 1);
 
-    //! Create an instance of the minimizer
+    // Create an instance of the minimizer
     umuq::simplexNM<double> fMinimizer;
 
-    //! First we have to set the minimizer dimension
+    // First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
 
-    //! Second, we have to set the function, input vector and stepsize
+    // Second, we have to set the function, input vector and stepsize
     EXPECT_TRUE(fMinimizer.set(rosenbrock_f, X, stepSize));
 
-    //! Third, initilize the minimizer
+    // Third, initialize the minimizer
     EXPECT_TRUE(fMinimizer.init());
 
     // Forth, iterate until we reach the absolute tolerance of 1e-3
@@ -56,7 +56,7 @@ TEST(simplexNM_test, HandlesRosenbrockFunction)
         status = fMinimizer.testSize(1e-3);
     }
 
-    //! Check to see if we succeeded
+    // Check to see if we succeeded
     EXPECT_TRUE(status == 0);
 
     std::cout << fMinimizer.getName() << ", on Rosenbrock function : " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;
@@ -78,22 +78,22 @@ TEST(simplexNM_test, HandlesRosenbrockFunction)
  */
 TEST(simplexNM_test, HandlesRothFunction)
 {
-    //! Starting point
+    // Starting point
     std::vector<double> X = {4.5, 3.5};
 
-    //! By default we consider stepSize 1
+    // By default we consider stepSize 1
     std::vector<double> stepSize(2, 1);
 
-    //! Create an instance of the minimizer
+    // Create an instance of the minimizer
     umuq::simplexNM<double> fMinimizer;
 
-    //! First we have to set the minimizer dimension
+    // First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
 
-    //! Second, we have to set the function, input vector, stepsize and tolerance
+    // Second, we have to set the function, input vector, stepsize and tolerance
     EXPECT_TRUE(fMinimizer.set(roth_f, X, stepSize));
 
-    //! Third, initilize the minimizer
+    // Third, initialize the minimizer
     EXPECT_TRUE(fMinimizer.init());
 
     // Forth, iterate until we reach the absolute tolerance of 1e-3
@@ -108,7 +108,7 @@ TEST(simplexNM_test, HandlesRothFunction)
         status = fMinimizer.testSize(1e-3);
     }
 
-    //! Check to see if we succeeded
+    // Check to see if we succeeded
     EXPECT_TRUE(status == 0);
 
     std::cout << fMinimizer.getName() << ", on Roth function : " << iter << " iters, f(x)=" << fMinimizer.getMin() << std::endl;

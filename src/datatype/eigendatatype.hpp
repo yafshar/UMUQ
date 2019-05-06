@@ -500,6 +500,20 @@ using EVector6d = EVector6<double>;
  */
 Eigen::IOFormat eigenIOFormat(Eigen::FullPrecision);
 
+/*! \enum VectorwiseOperation
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Containing possible values for the direction of the 
+ * vector operations in a matrix.
+ */
+enum class VectorwiseOperation : int
+{
+	/*! Operation between columns of a matrix.*/
+	ColWise = 0,
+	/*! Operation between rows of a matrix. */
+	RowWise = 1
+};
+
 } // namespace linearalgebra
 } // namespace umuq
 

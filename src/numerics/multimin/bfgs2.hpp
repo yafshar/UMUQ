@@ -14,26 +14,24 @@ inline namespace multimin
  * 
  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
  * 
- * Fletcher's implementation of the BFGS method, using the line minimization algorithm from 
+ * \tparam DataType  Data type
  * 
- * The original BFGS is a quasi-Newton method which builds up an approximation to the second 
+ * Fletcher's implementation of the BFGS method, using the line minimization algorithm from 
+ * the original BFGS, which is a quasi-Newton method which builds up an approximation to the second 
  * derivatives of the function f using the difference between successive gradient vectors. 
  * By combining the first and second derivatives the algorithm is able to take Newton-type steps 
  * towards the function minimum, assuming quadratic behavior in that region.
  * 
- * BFGS2 minimizer is the most efficient version available. 
+ * BFGS2 minimizer is the \b most \b efficient version available. 
  * It supersedes the bfgs algorithm and requires fewer function and gradient evaluations. 
  * The user-supplied tolerance tol corresponds to the parameter \f$ \sigma \f$ used by Fletcher. 
  * A value of 0.1 is recommended for typical use (larger values correspond to less accurate line searches).
  *
  * Reference:<br>
- * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
+ * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.<br>
  * Algorithms 2.6.2 and 2.6.4.
- * 
- * 
- * \tparam DataType  Data type
+ *
  */
-
 template <typename DataType>
 class bfgs2 : public differentiableFunctionMinimizer<DataType>
 {
@@ -88,9 +86,9 @@ class bfgs2 : public differentiableFunctionMinimizer<DataType>
 
   private:
     //! Iteration
-    int iter;
+    int iteration;
 
-    //! f'(0) for f(x-alpha*p)
+    //! \f$ f'(0) \f$ for \f$ f(x-\alpha p) \f$
     DataType fp0;
     //!
     std::vector<DataType> p;
@@ -137,7 +135,7 @@ bool bfgs2<DataType>::reset(int const nDim) noexcept
 {
     if (nDim <= 0)
     {
-        UMUQFAILRETURN("Invalid number of parameters specified!");
+        UMUQFAILRETURN("Invalid number of dimensions (parameters) ", nDim, " specified!");
     }
 
     this->x.resize(nDim);
@@ -158,7 +156,7 @@ bool bfgs2<DataType>::reset(int const nDim) noexcept
 template <typename DataType>
 bool bfgs2<DataType>::init()
 {
-    iter = 0;
+    iteration = 0;
 
     delta_f = DataType{};
 
@@ -392,7 +390,7 @@ bool bfgs2<DataType>::iterate()
 template <typename DataType>
 inline bool bfgs2<DataType>::restart()
 {
-    iter = 0;
+    iteration = 0;
     return true;
 }
 

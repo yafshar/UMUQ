@@ -15,7 +15,7 @@ namespace umuq
  * - \b toc displays the elapsed time so that you can record time for simultaneous time spans.
  * 
  * \note
- * Consecutive tic overwrites the previous recorded time.
+ * - Consecutive tic overwrites the previous recorded time.
  */
 class umuqTimer
 {
@@ -56,46 +56,33 @@ class umuqTimer
     inline void toc(std::string const &functionName);
 
     /*!
-     * \brief If \c coutFlag is false, it would print the measured elapsed interval times and corresponding function names
+     * \brief It would print the measured elapsed interval times and corresponding function names
      * 
      */
-    void print();
+    inline void print();
 
   public:
-    /*!
-     * \brief Indicator flag whether we should print output to a stream buffer or not
-     * 
-     */
+    /*! Indicator flag whether we should print output to a stream buffer or not */
     bool coutFlag;
 
-  public:
-    /*!
-     * \brief If \c coutFlag is false, it would keep the measured elapsed interval times
-     * 
-     */
+    /*! If \c coutFlag is false, it would keep the measured elapsed interval times */
     std::vector<double> timeInetrval;
 
-    /*!
-     * \brief If \c coutFlag is false, it would keep the name of the function for each measrued interval
-     * 
-     */
+    /*! If \c coutFlag is false, it would keep the name of the function for each measrued interval */
     std::vector<std::string> timeInetrvalFunctionNames;
 
   private:
-    /*!
-     * \brief Time point 1 
-     * 
-     */
+    /*! The first time point. Time point 1 */
     std::chrono::system_clock::time_point timePoint1;
 
-    /*!
-     * \brief Time point 2
-     * 
-     */
+    /*! The second time point. Time point 2 */
     std::chrono::system_clock::time_point timePoint2;
+
+    /*! Counter for the cases where we do not pass function names */
+    std::size_t callCounter;
 };
 
-umuqTimer::umuqTimer(bool const CoutFlag) : coutFlag(CoutFlag) { tic(); }
+umuqTimer::umuqTimer(bool const CoutFlag) : coutFlag(CoutFlag), callCounter(0) { tic(); }
 
 umuqTimer::~umuqTimer() {}
 
@@ -111,6 +98,7 @@ inline void umuqTimer::toc()
         return;
     }
     timeInetrval.push_back(elapsedTime.count());
+    timeInetrvalFunctionNames.push_back(std::to_string(callCounter++));
 }
 
 inline void umuqTimer::toc(std::string const &functionName)
@@ -126,26 +114,12 @@ inline void umuqTimer::toc(std::string const &functionName)
     timeInetrvalFunctionNames.push_back(functionName);
 }
 
-void umuqTimer::print()
+inline void umuqTimer::print()
 {
-    if (!coutFlag)
+    auto functionIt = timeInetrvalFunctionNames.begin();
+    for (auto timerIt = timeInetrval.begin(); timerIt != timeInetrval.end(); timerIt++, functionIt++)
     {
-        if (timeInetrvalFunctionNames.size() > 0)
-        {
-            auto functionIt = timeInetrvalFunctionNames.begin();
-            for (auto timerIt = timeInetrval.begin(); timerIt != timeInetrval.end(); timerIt++, functionIt++)
-            {
-                std::cout << *functionIt << " took " << std::to_string(*timerIt) << " seconds" << std::endl;
-            }
-        }
-        else
-        {
-            int Counter(0);
-            for (auto timerIt = timeInetrval.begin(); timerIt != timeInetrval.end(); timerIt++)
-            {
-                std::cout << Counter++ << " took " << std::to_string(*timerIt) << " seconds" << std::endl;
-            }
-        }
+        std::cout << *functionIt << " took " << std::to_string(*timerIt) << " seconds" << std::endl;
     }
 }
 

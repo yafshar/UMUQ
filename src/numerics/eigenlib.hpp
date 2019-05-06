@@ -15,18 +15,18 @@ inline namespace linearalgebra
  * \brief Eigen map type \c #EMapType is a new type to map the existing C++ memory buffer to an Eigen Matrix object.
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T         Data type or \b Eigen::Matrix type
- * \tparam _Options  optional parameter, a combination of either 
- *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br> 
- *                     or one of either <br>
- *                   - \b Eigen::AutoAlign, or \b Eigen::DontAlign. <br>
- *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
- *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
+ * \tparam T        Data type or \b Eigen::Matrix type
+ * \tparam Options  optional parameter, a combination of either 
+ *                  - \b Eigen::RowMajor or \b Eigen::ColMajor, <br> 
+ *                    or one of either <br>
+ *                  - \b Eigen::AutoAlign, or \b Eigen::DontAlign. <br>
+ *                  The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                  for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  *
  * 
  * \note 
- * 	- Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *    to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ * 	- Use of template is flexible enough that one can use directly the arithmetic data type and Options 
+ *    to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options> or one can directly
  *    pass only the \c Eigen::Matrix as template parameters
  * 
  * Example: <br>
@@ -83,8 +83,8 @@ inline namespace linearalgebra
  * \end{matrix}
  * \f$
  */
-template <class T, int _Options = Eigen::RowMajor>
-using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type>;
+template <class T, int Options = Eigen::RowMajor>
+using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options>, T>::type>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -92,22 +92,22 @@ using EMapType = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::val
  * \brief Eigen map type constant is a new read-only map type to map the existing C++ memory buffer to an Eigen Matrix object 
  * The Map operation maps the existing memory region into the Eigen’s data structures.
  * 
- * \tparam T         Data type or \b Eigen::Matrix type
- * \tparam _Options  optional parameter, a combination of either 
- *                   - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
- *                     or one of either <br>
- *                   - \b Eigen::AutoAlign or \b Eigen::DontAlign. <br>
- *                   The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
- *                   for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
+ * \tparam T        Data type or \b Eigen::Matrix type
+ * \tparam Options  optional parameter, a combination of either 
+ *                  - \b Eigen::RowMajor or \b Eigen::ColMajor, <br>
+ *                    or one of either <br>
+ *                  - \b Eigen::AutoAlign or \b Eigen::DontAlign. <br>
+ *                  The former controls storage order, and defaults to column-major. The latter controls alignment, which is required
+ *                  for vectorization. It defaults to aligning matrices except for fixed sizes that aren't a multiple of the packet size.
  * 
  * \note 
- * - Use of template is flexible enough that one can use directly the arithmetic data type and _Options 
- *   to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options> or one can directly
+ * - Use of template is flexible enough that one can use directly the arithmetic data type and Options 
+ *   to be used as an \c Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options> or one can directly
  *   pass only the \c Eigen::Matrix as template parameters
  * 
  */
-template <typename T, int _Options = Eigen::RowMajor>
-using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, _Options>, T>::type const>;
+template <typename T, int Options = Eigen::RowMajor>
+using EMapTypeConst = Eigen::Map<typename std::conditional<std::is_arithmetic<T>::value, Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Options>, T>::type const>;
 
 /*!
  * \ingroup LinearAlgebra_Module
@@ -390,8 +390,11 @@ void forceSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
     DataType const fixedRate(1.01);
 
 #ifdef DEBUG
-    std::cout << "eMatrix=" << eMatrix << std::endl;
     std::size_t iter(0);
+    if (nDim < 20)
+    {
+        std::cout << "eMatrix=" << eMatrix << std::endl;
+    }
 #endif
 
     // Vector for diagonal elements
@@ -440,7 +443,10 @@ void forceSelfAdjointMatrixPositiveDefinite(DataType *dataPtr, int const nDim)
 #ifdef DEBUG
         iter++;
         std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-        std::cout << "eMatrix=" << eMatrix << std::endl;
+        if (nDim < 20)
+        {
+            std::cout << "eMatrix=" << eMatrix << std::endl;
+        }
 #endif
         for (int i = 0; i < nDim; i++)
         {
@@ -474,8 +480,11 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
     auto const nDim = eMatrix.rows();
 
 #ifdef DEBUG
-    std::cout << "eMatrix=" << eMatrix << std::endl;
     std::size_t iter(0);
+    if (nDim < 20)
+    {
+        std::cout << "eMatrix=" << eMatrix << std::endl;
+    }
 #endif
 
     // Vector for diagonal elements
@@ -523,107 +532,173 @@ void forceSelfAdjointMatrixPositiveDefinite(EigenMatrixType &eMatrix)
 #ifdef DEBUG
         iter++;
         std::cout << "Iteration number " << iter << " to force the Covariance Matrix Positive Definite" << std::endl;
-        std::cout << "eMatrix=" << eMatrix << std::endl;
+        if (nDim < 20)
+        {
+            std::cout << "eMatrix=" << eMatrix << std::endl;
+        }
 #endif
         for (Eigen::Index i = 0; i < nDim; i++)
         {
             eMatrix(i, i) *= fixedRate;
         }
     }
-
     return;
 }
 
 /*!
- * \ingroup LinearAlgebra_Module
+ * \brief Calculate the squared L2 distance between the \c columns or \c rows of a matrix
  * 
- * \brief Calculate the squared distance between the rows of a matrix
+ * \tparam DataType            Data type
+ * \tparam OutputDataType      Data type of the return output result (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
  * 
- * \tparam DataType       Data type
- * \tparam OutputDataType Data type of the return output result (default is double)
+ * \param eMatrix  Input matrix to calculate the squared distance between its \c columns or \c rows
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  *
- * \param inMatrix   The input matrix to calculate the squared distance between its rows
- * \param outMatrix  The output matrix to hold the results of the calculation
  */
-template <typename DataType, typename OutputDataType = double>
-void calculateRowsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+EMatrixX<OutputDataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix)
 {
-    auto const nRows = inMatrix.rows();
-    if (outMatrix.rows() != nRows || outMatrix.cols() != nRows)
+    switch (Direction)
     {
-        outMatrix.resize(nRows, nRows);
+    case VectorwiseOperation::ColWise:
+    {
+        auto const nCols = eMatrix.cols();
+        EMatrixX<OutputDataType> columnsSquaredDistanceMatrix(nCols, nCols);
+        ERowVectorX<OutputDataType> vecC = eMatrix.array().square().colwise().sum().template cast<OutputDataType>();
+        columnsSquaredDistanceMatrix.rowwise() = vecC;
+        columnsSquaredDistanceMatrix.colwise() += vecC.transpose();
+        columnsSquaredDistanceMatrix -= 2 * eMatrix.transpose().template cast<OutputDataType>() * eMatrix.template cast<OutputDataType>();
+        return columnsSquaredDistanceMatrix;
     }
+    break;
+    case VectorwiseOperation::RowWise:
+    {
+        auto const nRows = eMatrix.rows();
+        EMatrixX<OutputDataType> rowsSquaredDistanceMatrix(nRows, nRows);
+        EVectorX<OutputDataType> vecR = eMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
+        rowsSquaredDistanceMatrix.colwise() = vecR;
+        rowsSquaredDistanceMatrix.rowwise() += vecR.transpose();
+        rowsSquaredDistanceMatrix -= 2 * eMatrix.template cast<OutputDataType>() * eMatrix.transpose().template cast<OutputDataType>();
+        return rowsSquaredDistanceMatrix;
+    }
+    break;
+    default:
+        UMUQFAIL("Unknown direction!");
+        break;
+    };
     /*!
      * \todo
      * Since we do casting at 3 places, it is necessary to do profiling to make sure of the efficiency.
-     * Profiling is needed to decide whether we should copy cast the inMatrix to the new matrix first or 
+     * Profiling is needed to decide whether we should copy cast the eMatrix to the new matrix first or 
      * continue the current procedure and do casting in operations
      */
-    EVectorX<OutputDataType> vecX = inMatrix.array().square().rowwise().sum().template cast<OutputDataType>();
-    outMatrix.colwise() = vecX;
-    outMatrix.rowwise() += vecX.transpose();
-    outMatrix -= 2 * inMatrix.template cast<OutputDataType>() * inMatrix.transpose().template cast<OutputDataType>();
 }
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
- * \brief Calculate the squared distance between the columns of a matrix
+ * \brief Calculate the L2 distance between the \c columns or \c rows of a matrix
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- *
- * \param inMatrix   The input matrix to calculate the squared distance between its columns
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \tparam DataType            Data type
+ * \tparam OutputDataType      Data type of the return output result (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
+ * 
+ * \param eMatrix  The input matrix to calculate the distance between its \c columns or \c rows
+ * 
+ * \returns EMatrixX<OutputDataType> The output matrix to hold the results of the calculation
  */
-template <typename DataType, typename OutputDataType = double>
-void calculateColumnsSquaredDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+EMatrixX<OutputDataType> L2Distance(EMatrixX<DataType> const &eMatrix)
 {
-    auto const nCols = inMatrix.cols();
-    if (outMatrix.rows() != nCols || outMatrix.cols() != nCols)
-    {
-        outMatrix.resize(nCols, nCols);
-    }
-    ERowVectorX<OutputDataType> vecX = inMatrix.array().square().colwise().sum().template cast<OutputDataType>();
-    outMatrix.rowwise() = vecX;
-    outMatrix.colwise() += vecX.transpose();
-    outMatrix -= 2 * inMatrix.transpose().template cast<OutputDataType>() * inMatrix.template cast<OutputDataType>();
+    EMatrixX<OutputDataType> dMatrix = squaredL2Distance<DataType, OutputDataType, Direction>(eMatrix);
+    return dMatrix.cwiseSqrt();
 }
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
- * \brief Calculate the distance between the rows of a matrix
+ * \brief Calculate the squared distance between one point (as an input vector) and a set of points (as an input matrix)
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
+ * \tparam DataType  Input data type
  * 
- * \param inMatrix   The input matrix to calculate the distance between its rows
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \param eVector  The input point (input vector) that we want to compute its distance from a set of points
+ * \param eMatrix  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EVectorX<DataType> Vector of squared distances between point and a set of points
  */
-template <typename DataType, typename OutputDataType = double>
-void calculateRowsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+template <typename DataType>
+inline EVectorX<DataType> squaredL2Distance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
 {
-    calculateRowsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    outMatrix = outMatrix.cwiseSqrt();
+    EVectorX<DataType> dVector(eMatrix.cols());
+    dVector.fill(eVector.squaredNorm());
+    return (dVector + eMatrix.cwiseProduct(eMatrix).colwise().sum().transpose() - 2 * eMatrix.transpose() * eVector).cwiseAbs();
 }
 
 /*!
  * \ingroup LinearAlgebra_Module
  * 
- * \brief Calculate the distance between the columns of a matrix
+ * \brief Calculate the distance between one point (as an input vector) and a set of points (as an input matrix)
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
- *
- * \param inMatrix   The input matrix to calculate the distance between its columns
- * \param outMatrix  The output matrix to hold the results of the calculation
+ * \tparam DataType  Input data type
+ * 
+ * \param eVector  The input point (input vector) that we want to compute its distance from a set of points
+ * \param eMatrix  The set of points as an input matrix where we want to calculate the distance between input point and matrix columns
+ * 
+ * \returns EVectorX<DataType> Vector of distances between point and a set of points
  */
-template <typename DataType, typename OutputDataType = double>
-void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<OutputDataType> &outMatrix)
+template <typename DataType>
+inline EVectorX<DataType> L2Distance(EVectorX<DataType> const &eVector, EMatrixX<DataType> const &eMatrix)
 {
-    calculateColumnsSquaredDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    outMatrix = outMatrix.cwiseSqrt();
+    EVectorX<DataType> dVector = squaredL2Distance<DataType>(eVector, eMatrix);
+    return dVector.cwiseSqrt();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the squared distance between set of points (as an input matrix) and a set of points (as a second input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
+ * 
+ * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
+ * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EMatrixX<DataType> Matrix of squared distances between set of points and another set of points (size of \c eMatrix1.cols()*eMatrix2.cols())
+ */
+template <typename DataType, bool BlockWise = false>
+inline EMatrixX<DataType> squaredL2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+{
+    EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    dMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    dMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    return dMatrix.cwiseAbs();
+}
+
+/*!
+ * \ingroup LinearAlgebra_Module
+ * 
+ * \brief Calculate the distance between set of points (as an input matrix) and a set of points (as a second input matrix)
+ * 
+ * \tparam DataType  Input data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
+ * 
+ * \param eMatrix1  The set of point (input matrix) that we want to compute it distances from a set of points
+ * \param eMatrix2  The set of points as an input matrix where we want to calculate the squared distance between input point and matrix columns
+ * 
+ * \returns EMatrixX<DataType> Matrix of distances between set of points and another set of points (size of \c eMatrix1.cols()*eMatrix2.cols())
+ */
+template <typename DataType, bool BlockWise = false>
+inline EMatrixX<DataType> L2Distance(EMatrixX<DataType> const &eMatrix1, EMatrixX<DataType> const &eMatrix2)
+{
+    EMatrixX<DataType> dMatrix = -2 * (eMatrix1.transpose() * eMatrix2);
+    dMatrix.rowwise() += eMatrix2.cwiseProduct(eMatrix2).colwise().sum();
+    dMatrix.colwise() += eMatrix1.cwiseProduct(eMatrix1).colwise().sum().transpose();
+    return dMatrix.cwiseAbs().cwiseSqrt();
 }
 
 /*!
@@ -631,10 +706,12 @@ void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<Outpu
  * 
  * \brief Calculate the S-optimality measure
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
+ * \tparam DataType            Input data type
+ * \tparam OutputDataType      Output data type (default is double)
+ * \tparam VectorwiseOperation Direction of the vector operations in a matrix. (default is \b #ColWise) 
+ *                             \sa umuq::VectorwiseOperation
  * 
- * \param inMatrix The matrix to calculate its row wise S-optimality 
+ * \param eMatrix The matrix to calculate its column or row wise S-optimality 
  * 
  * \returns OutputDataType The S-optimality measure
  * 
@@ -650,84 +727,86 @@ void calculateColumnsDistance(EMatrixX<DataType> const &inMatrix, EMatrixX<Outpu
  * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
  * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateRowWiseSOptimality(EMatrixX<DataType> const &inMatrix)
+template <typename DataType, typename OutputDataType = double, VectorwiseOperation Direction = VectorwiseOperation::ColWise>
+OutputDataType SOptimality(EMatrixX<DataType> const &eMatrix)
 {
-    EMatrixX<OutputDataType> outMatrix;
-    calculateRowsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    return 1. / outMatrix.cwiseInverse().sum();
+    EMatrixX<OutputDataType> dMatrix;
+    dMatrix = L2Distance<DataType, OutputDataType, Direction>(eMatrix);
+    return 1. / dMatrix.cwiseInverse().sum();
 }
 
 /*!
- * \ingroup LinearAlgebra_Module
+ * \brief Map a vector in space \f$ [low, high]^n \f$ to the unit box \f$ [0, 1]^n \f$
  * 
- * \brief Calculate the S-optimality measure
+ * \tparam RealType Floating point data type
  * 
- * \tparam DataType       Input data type
- * \tparam OutputDataType Output data type (default is double)
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
  * 
- * \param inMatrix The matrix to calculate its row wise S-optimality 
- * 
- * \returns OutputDataType The S-optimality measure
- * 
- * The S-optimality measure: <br>
- * The S-optimality is presented by L{\"a}uter (1974). It aims to maximize the harmonic mean distance from 
- * each design point to all the other points in the design. Mathematically, an S–optimal design maximizes 
- * \f$ \frac{N_D}{ \sum_{y \in D} {1/d(y, D-y)}}. \f$ where D is the set of design points, and \f$ N_D \f$ 
- * is the number of points in \f$ D \f$, the distances \f$ d(y, D-y) \f$ are large, so the points are as 
- * spread out as possible. This measures how spread out the design points are; therefore, an S–optimal 
- * design is also called a maximum spread design. 
- * 
- * Reference: <br>
- * E. L{\"a}uter, "Experimental design in a class of models," Optimization: A Journal of 
- * Mathematical Programming and Operations Research, 5 (1964), p. 379--398
+ * \returns EVectorX<RealType> Scaled vector mapped to the unit box
  */
-template <typename DataType, typename OutputDataType = double>
-OutputDataType calculateColumnWiseSOptimality(EMatrixX<DataType> const &inMatrix)
+template <typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EVectorX<RealType>>
+scaleToUnitBox(EVectorX<RealType> const &eVector, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
-    EMatrixX<OutputDataType> outMatrix;
-    calculateColumnsDistance<DataType, OutputDataType>(inMatrix, outMatrix);
-    return 1. / outMatrix.cwiseInverse().sum();
+    return (eVector - low).cwiseProduct((high - low).cwiseInverse());
 }
 
 /*!
- * \ingroup LinearAlgebra_Module
+ * \brief Map a matrix from a space of \f$ [low, high]^n \f$ to the unit box of \f$ [0, 1]^n \f$
  * 
- * \brief Fills the rows of the matrix with the specified size whose coefficients are equally spaced between low and high.
+ * \tparam RealType  Floating point data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
  * 
- * The function generates equally spaced values in each row of the matrix with the closed interval of \f$ [low, high].\f$
+ * \param eMatrix  Input matrix      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds 
  * 
- * \tparam DataType Input data type
- * 
- * \param eMatrix  The Eigen matrix
- * \param low      Lower bound of the interval
- * \param high     Upperbound of the interval
+ * \returns EMatrixX<RealType> Scaled matrix mapped to the unit box
  */
-template <typename DataType>
-void rowWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
+template <typename RealType, bool BlockWise = false>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EMatrixX<RealType>>
+scaleToUnitBox(EMatrixX<RealType> const &eMatrix, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
-    ERowVectorX<DataType> const row = ERowVectorX<DataType>::LinSpaced(eMatrix.cols(), low, high);
-    eMatrix.rowwise() = row;
+    return (eMatrix.colwise() - low).array().colwise() * (high - low).cwiseInverse().array();
 }
 
 /*!
- * \ingroup LinearAlgebra_Module
+ * \brief Map a vector from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
+ *  
+ * \tparam RealType Floating point data type
  * 
- * \brief Fills the columns of the matrix with the specified size whose coefficients are equally spaced between low and high.
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
  * 
- * The function generates equally spaced values in each column of the matrix with the closed interval of \f$ [low, high].\f$
- * 
- * \tparam DataType Input data type
- * 
- * \param eMatrix  The Eigen matrix
- * \param low      Lower bound of the interval
- * \param high     Upperbound of the interval
+ * \returns EVectorX<RealType> Scaled vector mapped to the hypercube space
  */
-template <typename DataType>
-void columnWiseLinSpaced(EMatrixX<DataType> &eMatrix, DataType const low, DataType const high)
+template <typename RealType>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EVectorX<RealType>>
+scaleToHyperCube(EVectorX<RealType> const &eVector, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
 {
-    EVectorX<DataType> const col = EVectorX<DataType>::LinSpaced(eMatrix.rows(), low, high);
-    eMatrix.colwise() = col;
+    return low + (high - low).cwiseProduct(eVector);
+}
+
+/*!
+ * \brief Map a matrix (multiple points) from the unit box space \f$ [0, 1]^n \f$ to the hypercube space of \f$ [low, high]^n \f$ 
+ *  
+ * \tparam RealType  Floating point data type
+ * \tparam BlockWise Flag to indicate the block of a matrix as an input
+ * 
+ * \param eVector  Input vector      
+ * \param low      Vector of lower bounds
+ * \param high     Vector of upper bounds
+ * 
+ * \returns EMatrixX<RealType> Scaled matrix mapped the hypercube space
+ */
+template <typename RealType, bool BlockWise = false>
+inline std::enable_if_t<std::is_floating_point<RealType>::value, EMatrixX<RealType>>
+scaleToHyperCube(EMatrixX<RealType> const &eMatrix, EVectorX<RealType> const &low, EVectorX<RealType> const &high)
+{
+    return (eMatrix.array().colwise() * (high - low).array()).matrix().colwise() + low;
 }
 
 } // namespace linearalgebra

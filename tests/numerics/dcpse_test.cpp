@@ -1,5 +1,6 @@
 #include "core/core.hpp"
 #include "environment.hpp"
+#include "global.hpp"
 #include "io/io.hpp"
 #include "numerics/hypercube/hypercubesampling.hpp"
 #include "numerics/dcpse.hpp"
@@ -9,14 +10,6 @@
 #include "gtest/gtest.h"
 
 #define WRITE_TO_FILE 0
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief Get an instance of a seeded double random object
- * 
- */
-umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -62,7 +55,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed input points
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -339,7 +332,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -493,7 +486,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         umuq::hypercubeSampling<double> Domain(numDataPoints, numDimensions, LowerBounds.data(), UpperBounds.data());
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(dataPoints));
@@ -647,7 +640,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -774,7 +767,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         umuq::hypercubeSampling<double> Domain(numDataPoints, numDimensions);
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(dataPoints));
@@ -927,7 +920,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(prng.setState());
+        EXPECT_TRUE(umuq::prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));

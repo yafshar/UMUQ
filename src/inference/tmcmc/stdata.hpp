@@ -210,14 +210,14 @@ class stdata
     /*!
      * \brief Delete a stdata object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     stdata(stdata const &) = delete;
 
     /*!
      * \brief Delete a stdata object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns stdata& 
      */

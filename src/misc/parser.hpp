@@ -5,6 +5,9 @@
 #ifdef toupper
 #undef toupper
 #endif
+#ifdef tolower
+#undef tolower
+#endif
 #endif
 
 namespace umuq
@@ -18,7 +21,7 @@ namespace umuq
  */
 class parser
 {
-  public:
+public:
     /*!
      * \brief Construct a new parser object
      * 
@@ -34,8 +37,12 @@ class parser
     /*!
      * \brief Parses the input line into tokens
      * 
+     * Word separators (delimiters)
+     * Characters that will be used as word separators when parsing
+     * White spaces, tabs, \f$:\f$ and \f$,\f$.
+     * 
      * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until 
-     * it hits different character which indicates the beginning of an argument.  
+     * it hits different character which indicates the beginning of an argument.
      * It saves the address to argv[], and increase the line argument number and skips
      * all characters of this argument. 
      * 
@@ -45,9 +52,13 @@ class parser
 
     /*!
      * \brief Parses the input line into tokens
-     * 
+     *
+     * Word separators (delimiters)
+     * Characters that will be used as word separators when parsing
+     * White spaces, tabs, \f$:\f$ and \f$,\f$.
+     *
      * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until 
-     * it hits different character which indicates the beginning of an argument.  
+     * it hits different character which indicates the beginning of an argument.
      * It saves the address to argv[], and increase the line argument number and skips
      * all characters of this argument. 
      * 
@@ -55,7 +66,7 @@ class parser
      */
     void parse(const char *inputLine);
 
-  private:
+private:
     /*!
      * \brief Takes an input line and parse it into tokens
      * 
@@ -74,7 +85,7 @@ class parser
      */
     void parse(char *inputLine, char **inputArgv);
 
-  public:
+public:
     /*!
      * \brief Parses element 
      * 
@@ -84,7 +95,7 @@ class parser
      * \returns Parsed value of type T
      */
     template <typename T>
-    inline T &parse(const char *inputLineArg, T &parsedValue);
+    inline T parse(const char *inputLineArg, T &parsedValue);
 
     /*!
      * \brief Parses element
@@ -94,7 +105,7 @@ class parser
      * \returns Parsed value of type T
      */
     template <typename T>
-    inline T &parse(const char *inputLineArg);
+    inline T parse(const char *inputLineArg);
 
     /*!
      * \brief Access element at provided index id with checking bounds
@@ -104,7 +115,7 @@ class parser
      * \returns Element (id)
      */
     template <typename T>
-    inline T &at(std::size_t const id);
+    inline T at(std::size_t const id);
 
     /*!
      * \brief Access element at provided index id with no check
@@ -114,7 +125,7 @@ class parser
      * returns Element (id)
      */
     template <typename T>
-    inline T &operator()(std::size_t const id);
+    inline T operator()(std::size_t const id);
 
     /*!
      * \brief Access element at provided index id with no check
@@ -124,7 +135,7 @@ class parser
      * returns Element (id)
      */
     template <typename T>
-    inline T &operator[](std::size_t const id);
+    inline T operator[](std::size_t const id);
 
     /*!
      * \brief Get the pointer to lineArg
@@ -141,26 +152,47 @@ class parser
     inline void getLineArg(char **argv, std::size_t &LineArgNum);
 
     /*!
+     * \brief Get the number of line arguments 
+     * 
+     * \returns std::size_t 
+     */
+    inline std::size_t getLineArgNum();
+
+    /*!
      * \brief Converts the given string to uppercase according to the 
      * character conversion rules defined by the currently installed C locale. 
      * 
-     * \param inputLineArg Input argument
+     * \param InputLineArg  Input argument
+     * \param startIndex    The starting index of the character in the string to convert to uppercase
+     * \param endIndex      The ending index of the character in the string to convert to uppercase
      * 
      * \returns Uppercase string 
      */
-    inline std::string toupper(std::string inputLineArg);
+    inline std::string toupper(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
 
-  private:
-    //! The number of last argument in the parsed line into different words
+    /*!
+     * \brief Converts the given string to lowercase according to the 
+     * character conversion rules defined by the currently installed C locale. 
+     * 
+     * \param InputLineArg Input argument
+     * \param startIndex   The starting index of the character in the string to convert to lowercase
+     * \param endIndex     The ending index of the character in the string to convert to lowercase
+     * 
+     * \returns Lowercase string 
+     */
+    inline std::string tolower(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
+
+private:
+    /*! The number of last argument in the parsed line into different words */
     std::size_t lineArgNum;
 
-    //! Array of pointers to each word in the parsed line
+    /*! Array of pointers to each word in the parsed line */
     char *lineArg[LINESIZE];
 
-    //! Word as an rvalue in parsing string
+    /*! Word as an rvalue in parsing string */
     std::string stringValue;
 
-    //! Temporary string
+    /*! Temporary string */
     std::string lineTmp;
 };
 
@@ -251,7 +283,7 @@ void parser::parse(char *inputLine, char **inputArgv)
 }
 
 template <typename T>
-inline T &parser::parse(const char *inputLineArg, T &parsedValue)
+inline T parser::parse(const char *inputLineArg, T &parsedValue)
 {
     std::stringstream str(inputLineArg);
     str >> parsedValue;
@@ -259,37 +291,36 @@ inline T &parser::parse(const char *inputLineArg, T &parsedValue)
 }
 
 template <typename T>
-inline T &parser::parse(const char *inputLineArg)
+inline T parser::parse(const char *inputLineArg)
 {
     T parsedValue;
     return parse<T>(inputLineArg, parsedValue);
 }
 
 template <typename T>
-inline T &parser::at(std::size_t const id)
+inline T parser::at(std::size_t const id)
 {
     if (id >= lineArgNum)
     {
-        throw(std::runtime_error("Wrong argument index number!"));
+        UMUQFAIL("Requested index number ", id, " > ", lineArgNum - 1, " number of arguments!");
     }
-
     T rvalue;
     return parse<T>(lineArg[id], rvalue);
 }
 
 // Template specialization for string input
 template <>
-std::string &parser::at<std::string>(std::size_t const id)
+inline std::string parser::at<std::string>(std::size_t const id)
 {
     if (id >= lineArgNum)
     {
-        throw(std::runtime_error("Wrong argument index number!"));
+        UMUQFAIL("Requested index number ", id, " > ", lineArgNum - 1, " number of arguments!");
     }
-    return parse<std::string>(parser::lineArg[id], parser::stringValue);
+    return parse<std::string>(lineArg[id], stringValue);
 }
 
 template <typename T>
-inline T &parser::operator()(std::size_t const id)
+inline T parser::operator()(std::size_t const id)
 {
     T rvalue;
     return parse<T>(lineArg[id], rvalue);
@@ -297,13 +328,13 @@ inline T &parser::operator()(std::size_t const id)
 
 // Template specialization for string input
 template <>
-std::string &parser::operator()<std::string>(std::size_t const id)
+inline std::string parser::operator()<std::string>(std::size_t const id)
 {
-    return parse<std::string>(parser::lineArg[id], parser::stringValue);
+    return parse<std::string>(lineArg[id], stringValue);
 }
 
 template <typename T>
-inline T &parser::operator[](std::size_t const id)
+inline T parser::operator[](std::size_t const id)
 {
     T rvalue;
     return parse<T>(lineArg[id], rvalue);
@@ -311,15 +342,14 @@ inline T &parser::operator[](std::size_t const id)
 
 // Template specialization for string input
 template <>
-std::string &parser::operator[]<std::string>(std::size_t const id)
+inline std::string parser::operator[]<std::string>(std::size_t const id)
 {
-    return parse<std::string>(parser::lineArg[id], parser::stringValue);
+    return parse<std::string>(lineArg[id], stringValue);
 }
 
-inline char **parser::getLineArg()
-{
-    return lineArg;
-}
+inline char **parser::getLineArg() { return lineArg; }
+
+inline std::size_t parser::getLineArgNum() { return lineArgNum; }
 
 inline void parser::getLineArg(char **argv, std::size_t &LineArgNum)
 {
@@ -328,11 +358,26 @@ inline void parser::getLineArg(char **argv, std::size_t &LineArgNum)
     parse(const_cast<char *>(lineTmp.c_str()), argv);
 }
 
-inline std::string parser::toupper(std::string inputLineArg)
+inline std::string parser::toupper(std::string const &InputLineArg, std::size_t const startIndex, std::size_t const endIndex)
 {
-    std::transform(inputLineArg.begin(), inputLineArg.end(), inputLineArg.begin(), [](unsigned char c) {
+    std::string inputLineArg(InputLineArg);
+    auto begin = startIndex > 0 ? inputLineArg.begin() + startIndex : inputLineArg.begin();
+    auto end = endIndex > 0 ? (endIndex > startIndex) ? inputLineArg.begin() + endIndex : inputLineArg.end() : inputLineArg.end();
+    std::transform(begin, end, begin, [](unsigned char c) {
         unsigned char const u = std::toupper(c);
         return (u != c) ? u : c;
+    });
+    return inputLineArg;
+}
+
+inline std::string parser::tolower(std::string const &InputLineArg, std::size_t const startIndex, std::size_t const endIndex)
+{
+    std::string inputLineArg(InputLineArg);
+    auto begin = startIndex > 0 ? inputLineArg.begin() + startIndex : inputLineArg.begin();
+    auto end = endIndex > 0 ? (endIndex > startIndex) ? inputLineArg.begin() + endIndex : inputLineArg.end() : inputLineArg.end();
+    std::transform(begin, end, begin, [](unsigned char c) {
+        unsigned char const l = std::tolower(c);
+        return (l != c) ? l : c;
     });
     return inputLineArg;
 }

@@ -17,49 +17,10 @@
 #include <sys/types.h> // waitpid
 #include <sys/wait.h>  // waitpid
 
+#include "../datatype/permissiontype.hpp"
+
 namespace umuq
 {
-
-/*! \enum permissions
- * \brief This class represents file access permissions.
- * Access permissions model based on POSIX permission bits.
- * 
- */
-enum class permissions : mode_t
-{
-    /*! No permission bits are set. */
-    none = 0,
-    /*! File owner has read permission. */
-    owner_read = S_IRUSR,
-    /*! File owner has write permission. */
-    owner_write = S_IWUSR,
-    /*! File owner has execute/search permission. */
-    owner_exec = S_IXUSR,
-    /*! File owner has read, write, and execute/search permissions. <br> Equivalent to `owner_read  | owner_write | owner_exec` */
-    owner_all = S_IRWXU,
-    /*! The file's user group has read permission. */
-    group_read = S_IRGRP,
-    /*! The file's user group has write permission. */
-    group_write = S_IWGRP,
-    /*! The file's user group has execute/search permission. */
-    group_exec = S_IXGRP,
-    /*! The file's user group has read, write, and execute/search permissions. <br> Equivalent to `group_read | group_write | group_exec` */
-    group_all = S_IRWXG,
-    /*! Other users have read permission. */
-    others_read = S_IROTH,
-    /*! Other users have write permission. */
-    others_write = S_IWOTH,
-    /*! Other users have execute/search permission. */
-    others_exec = S_IXOTH,
-    /*! Other users have read, write, and execute/search permissions. <br> Equivalent to `others_read | others_write | others_exec` */
-    others_all = S_IRWXO,
-    /*! All users have read, write, and execute/search permissions. <br> Equivalent to `owner_all | group_all | others_all` */
-    all = S_IRWXU | S_IRWXG | S_IRWXO,
-    /*! Set user ID to file owner user ID on execution. */
-    set_uid = S_ISUID,
-    /*! Set group ID to file's user group ID on execution. */
-    set_gid = S_ISGID
-};
 
 /*!
  * 
@@ -70,7 +31,8 @@ static std::mutex utility_m;
 
 /*! \class utility
  *
- * \brief This class includes some utility helpers.
+ * \brief This class includes some utilities for performing operations on file systems 
+ * and their components, such as paths, regular files, and directories.
  *	
  * Utility class contains functionality for exectuing commands, underneath it uses some functionalities as : <br>
  * 
@@ -143,7 +105,7 @@ class utility
      * 
      * \returns false If it fails to create a directory
      */
-    inline bool createDirectory(std::string const &directoryName, permissions const permissionMode = permissions::owner_all);
+    inline bool createDirectory(std::string const &directoryName, umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief Change the process's working directory to PATH
@@ -166,7 +128,7 @@ class utility
      * \param workingDirectory   Working directory Name
      * \param permissionMode     Permission mode
      */
-    bool createChangeWorkingDirectory(std::string const &workingDirectory, permissions const permissionMode = permissions::owner_all);
+    bool createChangeWorkingDirectory(std::string const &workingDirectory, umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief Change the process's working directory to PATH.
@@ -175,7 +137,7 @@ class utility
      * \param workingDirectory   Working directory Name
      * \param permissionMode     Permission mode
      */
-    bool createChangeWorkingDirectory(char const *workingDirectory, permissions const permissionMode = permissions::owner_all);
+    bool createChangeWorkingDirectory(char const *workingDirectory, umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief On successful lock acquisition of \c utility_m returns true, otherwise suspends execution of 
@@ -216,7 +178,7 @@ class utility
      *                                processor. If a null pointer is given, command processor is checked for existence 
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
-     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissions
+     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
      * 
@@ -225,7 +187,7 @@ class utility
      */
     bool executeCommand(int const spawnerId, std::string const &command,
                         std::string const &workingDirectory = EmptyString, bool const createWorkingDirectory = false,
-                        permissions const permissionMode = permissions::owner_all,
+                        umuq::permissionType const permissionMode = umuq::permissionType::owner_all,
                         int const millisecondsDuration = 100, int const maxNumTrials = umuq::HugeCost);
 
     /*!
@@ -238,7 +200,7 @@ class utility
      *                                processor. If a null pointer is given, command processor is checked for existence 
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
-     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissions
+     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
      * 
@@ -246,7 +208,7 @@ class utility
      */
     bool executeCommand(int const spawnerId, char const *command,
                         char const *workingDirectory = nullptr, bool const createWorkingDirectory = false,
-                        permissions const permissionMode = permissions::owner_all,
+                        umuq::permissionType const permissionMode = umuq::permissionType::owner_all,
                         int const millisecondsDuration = 100, int const maxNumTrials = umuq::HugeCost);
 
     /*!
@@ -257,13 +219,13 @@ class utility
      *                                processor. If a null pointer is given, command processor is checked for existence 
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
-     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissions
+     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * 
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(std::string const &command,
                         std::string const &workingDirectory = EmptyString, bool const createWorkingDirectory = false,
-                        permissions const permissionMode = permissions::owner_all);
+                        umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with 
@@ -273,13 +235,13 @@ class utility
      *                                processor. If a null pointer is given, command processor is checked for existence 
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
-     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissions
+     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * 
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(char const *command,
                         char const *workingDirectory = nullptr, bool const createWorkingDirectory = false,
-                        permissions const permissionMode = permissions::owner_all);
+                        umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief Executing multiple commands from a spawner
@@ -291,7 +253,7 @@ class utility
      *                                processor. If a null pointer is given, command processor is checked for existence 
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
-     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissions
+     * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
      * 
@@ -300,7 +262,7 @@ class utility
      */
     bool executeCommands(int const spawnerId, std::vector<std::string> const &commands,
                          std::string const &workingDirectory = EmptyString, bool const createWorkingDirectory = false,
-                         permissions const permissionMode = permissions::owner_all,
+                         umuq::permissionType const permissionMode = umuq::permissionType::owner_all,
                          int const millisecondsDuration = 100, int const maxNumTrials = umuq::HugeCost);
 };
 
@@ -317,9 +279,9 @@ inline std::string utility::getCurrentWorkingDirectory()
     return std::string(currentWorkingDirectory);
 }
 
-inline bool utility::createDirectory(std::string const &directoryName, permissions const permissionMode)
+inline bool utility::createDirectory(std::string const &directoryName, umuq::permissionType const permissionMode)
 {
-    if (mkdir(directoryName.c_str(), static_cast<std::underlying_type_t<permissions>>(permissionMode)))
+    if (mkdir(directoryName.c_str(), static_cast<std::underlying_type_t<umuq::permissionType>>(permissionMode)))
     {
         UMUQFAILRETURN("Failed to create a directory [", directoryName, "] !");
     }
@@ -344,7 +306,7 @@ inline bool utility::changeWorkingDirectory(char const *workingDirectory)
     return true;
 }
 
-bool utility::createChangeWorkingDirectory(std::string const &workingDirectory, permissions const permissionMode)
+bool utility::createChangeWorkingDirectory(std::string const &workingDirectory, umuq::permissionType const permissionMode)
 {
     // If workingDirectory PATH is given we change to the workingDirectory PATH
     if (workingDirectory.empty())
@@ -363,7 +325,7 @@ bool utility::createChangeWorkingDirectory(std::string const &workingDirectory, 
     return true;
 }
 
-bool utility::createChangeWorkingDirectory(char const *workingDirectory, permissions const permissionMode)
+bool utility::createChangeWorkingDirectory(char const *workingDirectory, umuq::permissionType const permissionMode)
 {
     // If workingDirectory PATH is given we change to the workingDirectory PATH
     if (!workingDirectory)
@@ -425,7 +387,7 @@ inline void utility::syncProcess(pid_t const processorID)
 
 bool utility::executeCommand(int const spawnerId, std::string const &command,
                              std::string const &workingDirectory, bool const createWorkingDirectory,
-                             permissions const permissionMode,
+                             umuq::permissionType const permissionMode,
                              int const millisecondsDuration, int const maxNumTrials)
 {
     if (command.empty())
@@ -484,7 +446,7 @@ bool utility::executeCommand(int const spawnerId, std::string const &command,
 
 bool utility::executeCommand(int const spawnerId, char const *command,
                              char const *workingDirectory, bool const createWorkingDirectory,
-                             permissions const permissionMode,
+                             umuq::permissionType const permissionMode,
                              int const millisecondsDuration, int const maxNumTrials)
 {
     if (!command)
@@ -543,7 +505,7 @@ bool utility::executeCommand(int const spawnerId, char const *command,
 
 bool utility::executeCommand(std::string const &command,
                              std::string const &workingDirectory, bool const createWorkingDirectory,
-                             permissions const permissionMode)
+                             umuq::permissionType const permissionMode)
 {
     if (command.empty())
     {
@@ -586,7 +548,7 @@ bool utility::executeCommand(std::string const &command,
 
 bool utility::executeCommand(char const *command,
                              char const *workingDirectory, bool const createWorkingDirectory,
-                             permissions const permissionMode)
+                             umuq::permissionType const permissionMode)
 {
     if (!command)
     {
@@ -629,7 +591,7 @@ bool utility::executeCommand(char const *command,
 
 bool utility::executeCommands(int const spawnerId, std::vector<std::string> const &commands,
                               std::string const &workingDirectory, bool const createWorkingDirectory,
-                              permissions const permissionMode,
+                              umuq::permissionType const permissionMode,
                               int const millisecondsDuration, int const maxNumTrials)
 {
     if (commands.size() == 0)

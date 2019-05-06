@@ -84,14 +84,14 @@ protected:
   /*!
    * \brief Delete an umuqDifferentiableFunction object copy construction
    * 
-   * Make it noncopyable.
+   * Avoiding implicit generation of the copy constructor.
    */
   umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
 
   /*!
    * \brief Delete a umuqDifferentiableFunction object assignment
    * 
-   * Make it nonassignable
+   * Avoiding implicit copy assignment.
    * 
    * \returns umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>& 
    */

@@ -1,16 +1,9 @@
 #include "core/core.hpp"
 #include "environment.hpp"
+#include "global.hpp"
 #include "io/io.hpp"
 #include "numerics/hypercube/hypercubesampling.hpp"
 #include "gtest/gtest.h"
-
-/*!
- * \ingroup Test_Module
- * 
- * \brief Get an instance of a seeded double random object
- * 
- */
-umuq::psrandom prng(123);
 
 /*!
  * \ingroup Test_Module
@@ -178,7 +171,7 @@ TEST(hypercubeSamplingTest, HandlesUniformdistribution)
     std::vector<double> dataPoints(numDataPoints * numDimensions);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(prng.setState());
+    EXPECT_TRUE(umuq::prng.setState());
 
     // Create uniformly random distributed points in the hypercube
     Domain.sample(dataPoints);

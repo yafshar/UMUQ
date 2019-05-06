@@ -22,6 +22,7 @@ namespace umuq
  * <tr><td> 2       <td> EXPONENTIAL     
  * <tr><td> 3       <td> GAMMA 
  * <tr><td> 4       <td> COMPOSITE
+ * <tr>
  * </table>
  * 
  * \tparam RealType Data type 
@@ -260,14 +261,14 @@ class priorDistribution
     /*!
      * \brief Delete a priorDistribution object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     priorDistribution(priorDistribution<RealType> const &) = delete;
 
     /*!
      * \brief Delete a priorDistribution object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns priorDistribution<RealType>& 
      */

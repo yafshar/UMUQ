@@ -1,7 +1,7 @@
 #ifndef UMUQ_FITFUNCTION_H
 #define UMUQ_FITFUNCTION_H
 
-#include "functiontype.hpp"
+#include "datatype/functiontype.hpp"
 #include "umuqfunction.hpp"
 
 namespace umuq
@@ -128,14 +128,14 @@ class fitFunction : public umuqFunction<DataType, FunctionType>
     /*!
      * \brief Delete a fitFunction object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     fitFunction(fitFunction<DataType, FunctionType> const &) = delete;
 
     /*!
      * \brief Delete a fitFunction object assignment
      * 
-     * Make it nonassignable
+     * Avoiding implicit copy assignment.
      * 
      * \returns fitFunction<DataType, FunctionType>& 
      */

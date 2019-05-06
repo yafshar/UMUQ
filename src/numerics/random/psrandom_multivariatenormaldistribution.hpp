@@ -12,6 +12,8 @@ namespace randomdist
  * 
  * \brief Multivariate normal distribution
  * 
+ * \tparam RealType Floating-point data type 
+ * 
  * The [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution) of a 
  * \f$n \text{-dimensional}\f$ random vector \f$ {\mathbf X} = \left[X_1, \cdots, X_n \right]^T \f$
  * can be written in the following notation:<br>
@@ -102,9 +104,9 @@ class multivariateNormalDistribution
     * \brief Fill the array of dataPoints with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
     * 
     * \param dataPoints          Array of data points, where each point is a \f$n \text{-dimensional}\f$ 
-	 *                            point (dataPointDimension) and we have nDataPoints of them.
-	 *                            On return each data point is a random sample according to the multivariate 
-	 *                            normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
+    *                            point (dataPointDimension) and we have nDataPoints of them.
+    *                            On return each data point is a random sample according to the multivariate 
+    *                            normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
     * \param dataPointDimension  Data point dimension (\f$n \text{-dimensional}\f$ point)
     * \param nDataPoints         Number of data points
     */
@@ -113,18 +115,26 @@ class multivariateNormalDistribution
    /*!
     * \brief Fill the eMatrix with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
     * 
-	 * \param eMatrix  Matrix of random numbers, where each column is an \f$n \text{-dimensional}\f$ point
-	 *                 and there are number of columns of the eMatrix points. <br>
-	 *                 On return each column is a random sample according to the multivariate normal 
+    * \param eMatrix  Matrix of random numbers, where each column is an \f$n \text{-dimensional}\f$ point
+    *                 and there are number of columns of the eMatrix points. <br>
+    *                 On return each column is a random sample according to the multivariate normal 
     *                 distribution \f$ \mathcal{N} (\mu, \Sigma) \f$
     */
    inline void dist(EMatrixX<RealType> &eMatrix);
 
  private:
-   /*! Make it noncopyable */
+   /*!
+    * \brief Delete a multivariateNormalDistribution object copy construction
+    * 
+    * Avoiding implicit generation of the copy constructor.
+    */
    multivariateNormalDistribution(multivariateNormalDistribution<RealType> const &) = delete;
 
-   /*! Make it not assignable */
+   /*!
+    * \brief Delete a multivariateNormalDistribution object assignment
+    * 
+    * Avoiding implicit copy assignment.
+    */
    multivariateNormalDistribution<RealType> &operator=(multivariateNormalDistribution<RealType> const &) = delete;
 
  public:

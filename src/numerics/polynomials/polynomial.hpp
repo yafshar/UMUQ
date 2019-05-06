@@ -14,6 +14,8 @@ inline namespace polynomials
  *
  * \brief Multivariate monomials with the degree of \b r in a space of \b d dimensions.
  *
+ * \tparam DataType Data type 
+ * 
  * A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) 
  * power of \f$ x \f$:<br>
  * 
@@ -112,16 +114,14 @@ class polynomial : public polynomialBase<DataType>
     /*!
      * \brief Delete a polynomial object copy construction
      * 
-     * Make it noncopyable.
+     * Avoiding implicit generation of the copy constructor.
      */
     polynomial(polynomial<DataType> const &) = delete;
 
     /*!
      * \brief Delete a polynomial object assignment
      * 
-     * Make it nonassignable
-     * 
-     * \returns polynomial<DataType>& 
+     * Avoiding implicit copy assignment.
      */
     polynomial<DataType> &operator=(polynomial<DataType> const &) = delete;
 };
