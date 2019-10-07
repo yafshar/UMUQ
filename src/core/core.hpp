@@ -115,32 +115,32 @@ extern "C"
 #endif
 
 /*!
- * \brief Namespace containing all symbols from the %UMUQ library. 
+ * \brief Namespace containing all symbols from the %UMUQ library.
  */
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Core_Module Core module
  * This is the core module of %UMUQ providing internal and core support
  */
 
-/*! 
+/*!
  * \namespace umuq::internal
  * \ingroup Core_Module
- * 
+ *
  * \brief Namespace containing all internal symbols from the %UMUQ library.
- * 
+ *
  */
 namespace internal
 {
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief SIMD instructions
- * 
- * \returns const char* 
+ *
+ * \returns const char*
  */
 inline static const char *SimdInstructionSetsInUse(void)
 {
@@ -164,21 +164,21 @@ inline static const char *SimdInstructionSetsInUse(void)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Default digits10
  */
 #include "digits10.hpp"
 
 #include "constants.hpp"
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * \brief This is the main meta module of UMUQ
  */
 #include "meta.hpp"
 
-/*! 
+/*!
  * \defgroup Test_Module Test module
  * This is the test module of %UMUQ providing functionality and classes for a unit testing.
  */
