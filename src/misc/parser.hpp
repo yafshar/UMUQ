@@ -10,13 +10,15 @@
 #endif
 #endif
 
+#include <cctype>
+
 namespace umuq
 {
 
 /*! \class parser
  *
  * \brief This class parses string of data to seperate words
- * 
+ *
  * It ignores all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters
  */
 class parser
@@ -24,28 +26,28 @@ class parser
 public:
     /*!
      * \brief Construct a new parser object
-     * 
+     *
      */
     parser();
 
     /*!
      * \brief Destroy the parser object
-     * 
+     *
      */
     ~parser();
 
     /*!
      * \brief Parses the input line into tokens
-     * 
+     *
      * Word separators (delimiters)
      * Characters that will be used as word separators when parsing
      * White spaces, tabs, \f$:\f$ and \f$,\f$.
-     * 
-     * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until 
+     *
+     * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until
      * it hits different character which indicates the beginning of an argument.
      * It saves the address to argv[], and increase the line argument number and skips
-     * all characters of this argument. 
-     * 
+     * all characters of this argument.
+     *
      * \param inputLine Input line
      */
     void parse(std::string const &inputLine);
@@ -57,11 +59,11 @@ public:
      * Characters that will be used as word separators when parsing
      * White spaces, tabs, \f$:\f$ and \f$,\f$.
      *
-     * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until 
+     * First, it traverses all white spaces, tabs, \f$ : \f$ and \f$ , \f$ characters until
      * it hits different character which indicates the beginning of an argument.
      * It saves the address to argv[], and increase the line argument number and skips
-     * all characters of this argument. 
-     * 
+     * all characters of this argument.
+     *
      * \param inputLine Input line
      */
     void parse(const char *inputLine);
@@ -69,29 +71,29 @@ public:
 private:
     /*!
      * \brief Takes an input line and parse it into tokens
-     * 
+     *
      * \param inputLine  Input line
-     * \param inputArgv  Input vector of arguments 
-     * 
-     * 
+     * \param inputArgv  Input vector of arguments
+     *
+     *
      * It takes an input line and parse it into tokens.
-     * First, it replaces all white spaces with zeros until it hits a non-white space 
-     * character which indicates the beginning of an argument.  It saves the address 
-     * to argv[], and then skips all non-white spaces which constitute the argument. 
-     * 
+     * First, it replaces all white spaces with zeros until it hits a non-white space
+     * character which indicates the beginning of an argument.  It saves the address
+     * to argv[], and then skips all non-white spaces which constitute the argument.
+     *
      * Reference:<br>
      * http://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/shell.c
-     * 
+     *
      */
     void parse(char *inputLine, char **inputArgv);
 
 public:
     /*!
-     * \brief Parses element 
-     * 
+     * \brief Parses element
+     *
      * \param  inputLineArg  Input string which we want to parse
      * \param  parsedValue   Parsed value
-     *  
+     *
      * \returns Parsed value of type T
      */
     template <typename T>
@@ -99,9 +101,9 @@ public:
 
     /*!
      * \brief Parses element
-     *  
+     *
      * \param inputLineArg  Input string which we want to parse
-     * 
+     *
      * \returns Parsed value of type T
      */
     template <typename T>
@@ -109,9 +111,9 @@ public:
 
     /*!
      * \brief Access element at provided index id with checking bounds
-     * 
-     * \param id  Requested index 
-     * 
+     *
+     * \param id  Requested index
+     *
      * \returns Element (id)
      */
     template <typename T>
@@ -119,9 +121,9 @@ public:
 
     /*!
      * \brief Access element at provided index id with no check
-     * 
+     *
      * param id  Requested id
-     * 
+     *
      * returns Element (id)
      */
     template <typename T>
@@ -129,9 +131,9 @@ public:
 
     /*!
      * \brief Access element at provided index id with no check
-     * 
+     *
      * param id  Requested id
-     * 
+     *
      * returns Element (id)
      */
     template <typename T>
@@ -139,46 +141,46 @@ public:
 
     /*!
      * \brief Get the pointer to lineArg
-     * 
+     *
      */
     inline char **getLineArg();
 
     /*!
      * \brief Get the Line Arg object
-     * 
+     *
      * \param argv         It should have fixed size (char *[])
      * \param LineArgNum   Number of elements in the parsed line
      */
     inline void getLineArg(char **argv, std::size_t &LineArgNum);
 
     /*!
-     * \brief Get the number of line arguments 
-     * 
-     * \returns std::size_t 
+     * \brief Get the number of line arguments
+     *
+     * \returns std::size_t
      */
     inline std::size_t getLineArgNum();
 
     /*!
-     * \brief Converts the given string to uppercase according to the 
-     * character conversion rules defined by the currently installed C locale. 
-     * 
+     * \brief Converts the given string to uppercase according to the
+     * character conversion rules defined by the currently installed C locale.
+     *
      * \param InputLineArg  Input argument
      * \param startIndex    The starting index of the character in the string to convert to uppercase
      * \param endIndex      The ending index of the character in the string to convert to uppercase
-     * 
-     * \returns Uppercase string 
+     *
+     * \returns Uppercase string
      */
     inline std::string toupper(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
 
     /*!
-     * \brief Converts the given string to lowercase according to the 
-     * character conversion rules defined by the currently installed C locale. 
-     * 
+     * \brief Converts the given string to lowercase according to the
+     * character conversion rules defined by the currently installed C locale.
+     *
      * \param InputLineArg Input argument
      * \param startIndex   The starting index of the character in the string to convert to lowercase
      * \param endIndex     The ending index of the character in the string to convert to lowercase
-     * 
-     * \returns Lowercase string 
+     *
+     * \returns Lowercase string
      */
     inline std::string tolower(std::string const &InputLineArg, std::size_t const startIndex = 0, std::size_t const endIndex = 0);
 
@@ -239,7 +241,7 @@ void parser::parse(const char *inputLine)
     // if not the end of line .......
     while (*line != '\0')
     {
-        while (*line == ' ' || *line == '\t' || *line == '\n' || *line == ':' || *line == ',')
+        while (*line == ' ' || *line == '\t' || *line == '\n' || *line == '\r' || *line == ':' || *line == ',')
         {
             line++;
         }
@@ -248,7 +250,7 @@ void parser::parse(const char *inputLine)
         lineArg[lineArgNum++] = line;
 
         // Skip the argument until ...
-        while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != ':' && *line != ',')
+        while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n' && *line != '\r' && *line != ':' && *line != ',')
         {
             line++;
         }
@@ -263,7 +265,7 @@ void parser::parse(char *inputLine, char **inputArgv)
     // if not the end of line .......
     while (*inputLine != '\0')
     {
-        while (*inputLine == ' ' || *inputLine == '\t' || *inputLine == '\n' || *inputLine == ':' || *inputLine == ',')
+        while (*inputLine == ' ' || *inputLine == '\t' || *inputLine == '\n' || *inputLine == '\r' || *inputLine == ':' || *inputLine == ',')
         {
             *inputLine++ = '\0';
         }
@@ -272,7 +274,7 @@ void parser::parse(char *inputLine, char **inputArgv)
         *inputArgv++ = inputLine;
 
         // Skip the argument until ...
-        while (*inputLine != '\0' && *inputLine != ' ' && *inputLine != '\t' && *inputLine != '\n' && *inputLine != ':' && *inputLine != ',')
+        while (*inputLine != '\0' && *inputLine != ' ' && *inputLine != '\t' && *inputLine != '\n' && *inputLine != '\r' && *inputLine != ':' && *inputLine != ',')
         {
             inputLine++;
         }
@@ -285,6 +287,48 @@ void parser::parse(char *inputLine, char **inputArgv)
 template <typename T>
 inline T parser::parse(const char *inputLineArg, T &parsedValue)
 {
+    if (!inputLineArg)
+    {
+        UMUQFAIL("NULL string!");
+    }
+    if (umuq_float<T>::value)
+    {
+        int const n = std::strlen(std::strtok(const_cast<char *>(inputLineArg), " \t\n\r:,"));
+        if (n == 0)
+        {
+            UMUQFAIL("Expected floating type parameter instead of empty string!");
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            if (std::isdigit(inputLineArg[i]) || inputLineArg[i] == '-' || inputLineArg[i] == '+')
+                continue;
+            if (inputLineArg[i] == '.' || inputLineArg[i] == 'e' || inputLineArg[i] == 'E')
+                continue;
+            std::string msg("Expected floating point parameter instead of '");
+            for (int j = 0; j < n; ++j)
+                msg += inputLineArg[j];
+            msg += "'";
+            UMUQFAIL(msg);
+        }
+    }
+    if (umuq_int<T>::value)
+    {
+        int const n = std::strlen(std::strtok(const_cast<char *>(inputLineArg), " \t\n\r:,"));
+        if (n == 0)
+        {
+            UMUQFAIL("Expected integer type parameter instead of empty string!");
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            if (std::isdigit(inputLineArg[i]) || inputLineArg[i] == '-' || inputLineArg[i] == '+')
+                continue;
+            std::string msg("Expected integer parameter instead of '");
+            for (int j = 0; j < n; ++j)
+                msg += inputLineArg[j];
+            msg += "'";
+            UMUQFAIL(msg);
+        }
+    }
     std::stringstream str(inputLineArg);
     str >> parsedValue;
     return parsedValue;
