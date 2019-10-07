@@ -14,8 +14,8 @@
 TEST(knearestneighbors_test, HandlesKNN)
 {
 	umuq::io f;
-	EXPECT_TRUE(f.isFileExist("numerics/knearestneighbors_test.txt"));
-	EXPECT_TRUE(f.openFile("numerics/knearestneighbors_test.txt"));
+	EXPECT_TRUE(f.isFileExist("knearestneighbors_test.txt"));
+	EXPECT_TRUE(f.openFile("knearestneighbors_test.txt"));
 
 	int nRows = 0;
 	while (f.readLine())
@@ -239,19 +239,19 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
 	KNN.buildIndex(xPoints.data(), yPoints.data());
 
 	umuq::io f;
-	if (f.openFile("numerics/Xdata", umuq::io::out))
+	if (f.openFile("Xdata", umuq::io::out))
 	{
 		EXPECT_TRUE(f.saveMatrix<double>(xPoints, nSPoints, nDim));
 		f.closeFile();
 	}
 
-	if (f.openFile("numerics/Qdata", umuq::io::out))
+	if (f.openFile("Qdata", umuq::io::out))
 	{
 		EXPECT_TRUE(f.saveMatrix<double>(yPoints, nQPoints, nDim));
 		f.closeFile();
 	}
 
-	if (f.openFile("numerics/Ndata", umuq::io::out))
+	if (f.openFile("Ndata", umuq::io::out))
 	{
 		for (int i = 0; i < nQPoints; ++i)
 		{

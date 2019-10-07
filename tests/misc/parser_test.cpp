@@ -6,7 +6,7 @@
 
 /*!
  * \ingroup Test_Module
- *  
+ *
  * \brief Tests parse class in case of empty line or line with tabs and spaces
  *
  */
@@ -20,17 +20,17 @@ TEST(parse_test, HandlesZeroInput)
 
     EXPECT_EQ(word, "");
 
-    // Checking for tab and next line
-    p.parse("\t  \n");
+    // Checking for tab and next line and return
+    p.parse("\t  \n \r");
 
     word = p.at<std::string>(0);
 
     EXPECT_EQ(word, "");
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests parse class to make sure it can parse commands correctly
  */
 TEST(parse_test, HandlesInput)
@@ -73,9 +73,9 @@ TEST(parse_test, HandlesInput)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests parse class in translating the text file
  */
 TEST(parse_cmd, HandlesCmd)
@@ -91,8 +91,8 @@ TEST(parse_cmd, HandlesCmd)
         p.parse(line);
 
         EXPECT_EQ(p.at<std::string>(0), "B" + std::to_string(n));
-        EXPECT_DOUBLE_EQ(p.at<double>(1), 0.05 + (double)n);
-        EXPECT_DOUBLE_EQ(p.at<double>(2), 100.012 + (double)n);
+        EXPECT_DOUBLE_EQ(p.at<double>(1), 0.05 + static_cast<double>(n));
+        EXPECT_DOUBLE_EQ(p.at<double>(2), 100.012 + static_cast<double>(n));
     }
 
     n = 8;
@@ -114,22 +114,22 @@ TEST(parse_cmd, HandlesCmd)
     EXPECT_DOUBLE_EQ(p.at<double>(2), 0.1);
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests parse class lower and upper functiinality
  */
 TEST(parse_test, HandlesUpperLowerCase)
 {
-	umuq::parser p;
-	EXPECT_EQ(p.toupper("SUM_squared"), "SUM_SQUARED");
-	EXPECT_EQ(p.toupper("sum_squared"), "SUM_SQUARED");
-	EXPECT_EQ(p.toupper("sum_squared", 0, 1), "Sum_squared");
-	EXPECT_EQ(p.toupper("sum_squared", 4, 5), "sum_Squared");
-	EXPECT_EQ(p.tolower("SUM_squared"), "sum_squared");
-	EXPECT_EQ(p.tolower("SUM_SQUARED"), "sum_squared");
-	EXPECT_EQ(p.tolower("SUM_SQUARED", 0, 1), "sUM_SQUARED");
-	EXPECT_EQ(p.tolower("SUM_SQUARED", 4, 5), "SUM_sQUARED");
+    umuq::parser p;
+    EXPECT_EQ(p.toupper("SUM_squared"), "SUM_SQUARED");
+    EXPECT_EQ(p.toupper("sum_squared"), "SUM_SQUARED");
+    EXPECT_EQ(p.toupper("sum_squared", 0, 1), "Sum_squared");
+    EXPECT_EQ(p.toupper("sum_squared", 4, 5), "sum_Squared");
+    EXPECT_EQ(p.tolower("SUM_squared"), "sum_squared");
+    EXPECT_EQ(p.tolower("SUM_SQUARED"), "sum_squared");
+    EXPECT_EQ(p.tolower("SUM_SQUARED", 0, 1), "sUM_SQUARED");
+    EXPECT_EQ(p.tolower("SUM_SQUARED", 4, 5), "SUM_sQUARED");
 }
 
 int main(int argc, char **argv)

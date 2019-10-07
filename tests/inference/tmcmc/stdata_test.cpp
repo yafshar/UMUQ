@@ -61,7 +61,7 @@ TEST(streamdatatype, HandlesIO)
 {
     umuq::tmcmc::stdata d1;
 
-    std::string fileName = "./inference/tmcmc/test.txt";
+    std::string fileName = "./tmcmc/test.txt";
 
     EXPECT_TRUE(d1.load(fileName));
 

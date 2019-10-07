@@ -10,7 +10,7 @@ TEST(dftfe_test, HandlesConstruction)
     umuq::dftfe dft;
 
     // Set the input file
-    dft.setFullFileName("./interface", "AlDimer_bondlength4d");
+    dft.setFullFileName("./", "AlDimer_bondlength4d");
 
     EXPECT_TRUE(dft.getSpeciesInformation());
 

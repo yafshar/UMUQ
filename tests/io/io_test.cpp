@@ -7,7 +7,7 @@
 TEST(isFileExist_test, HandlesFiles)
 {
     umuq::io f;
-    EXPECT_TRUE(f.isFileExist("./inference/tmcmc/test.txt"));
+    EXPECT_TRUE(f.isFileExist("../inference/tmcmc/test.txt"));
     EXPECT_FALSE(f.isFileExist("utility.txt"));
 }
 
@@ -19,7 +19,7 @@ TEST(openFile_test, HandlesFiles)
 
     EXPECT_FALSE(f.isFileOpened());
 
-    EXPECT_TRUE(f.openFile("./inference/tmcmc/test.txt"));
+    EXPECT_TRUE(f.openFile("../inference/tmcmc/test.txt"));
 
     EXPECT_TRUE(f.isFileOpened());
     
