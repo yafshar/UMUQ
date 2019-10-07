@@ -19,7 +19,7 @@ AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
-# 
+#
 m4_include([m4/m4_ax_prog.m4])
 m4_include([m4/m4_ax_debug.m4])
 m4_include([m4/m4_ax_arch.m4])
@@ -62,7 +62,7 @@ AX_PROG
 LT_INIT
 
 # Checks for libraries.
-AC_MSG_RESULT() 
+AC_MSG_RESULT()
 
 ### Checking for MPI
 AC_MSG_CHECKING([for - MPI Library - ])
@@ -116,8 +116,20 @@ AC_CHECK_FUNCS([pow])
 
 AC_LANG_POP([C++])
 
+AM_EXTRA_RECURSIVE_TARGETS([check-units])
 AC_CONFIG_FILES([Makefile src/Makefile])
-AM_COND_IF([HAVE_GOOGLETEST], [AC_CONFIG_FILES([tests/Makefile])])
+AM_COND_IF([HAVE_GOOGLETEST], [
+  AC_CONFIG_FILES([
+    tests/Makefile
+    tests/numerics/Makefile
+    tests/numerics/multimin/Makefile
+    tests/misc/Makefile
+    tests/io/Makefile
+    tests/inference/Makefile
+    tests/interface/Makefile
+    tests/surrogate/Makefile
+    tests/torc/Makefile
+    tests/units/Makefile])])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Makefile])])
 
 AC_OUTPUT
@@ -141,7 +153,7 @@ Configure Information:
     LDFLAGS         :   $LDFLAGS
     LIBS            :   $LIBS
 
-  Google Test 
+  Google Test
     GTEST_CPPFLAGS  : $GTEST_CPPFLAGS
     GTEST_CXXFLAGS  : $GTEST_CXXFLAGS
     GTEST_LDFLAGS   : $GTEST_LDFLAGS
@@ -156,6 +168,3 @@ AM_COND_IF([HAVE_PYTHON], [
     Include dir     :   $PYTHON_INCLUDE_DIR  $NUMPY_INCLUDE_DIR
   ])
 ])
-
-
-
