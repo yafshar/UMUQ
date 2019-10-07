@@ -30,7 +30,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	./configure CC=clang-5 CXX=clang++-5 FC=gfortran-5 --enable-threads=multiple > out 2>&1 &
 	config_install_mpich_id=$!
 	while kill -0 "$config_install_mpich_id" > /dev/null 2>&1; do
-		sleep 300
+		sleep 100
 		tail ./out
 	done
 	echo "MPICH configuration is finished!"
@@ -38,7 +38,7 @@ if [ "${TRAVIS_SUDO}" = "true" ]; then
 	make -j 4 > out 2>&1 &
 	make_install_mpich_id=$!
 	while kill -0 "$make_install_mpich_id" > /dev/null 2>&1; do
-		sleep 300
+		sleep 100
 		tail ./out
 	done
 	echo "MPICH build is finished!"
