@@ -1,6 +1,8 @@
 #ifndef UMUQ_CONSTANTS_H
 #define UMUQ_CONSTANTS_H
 
+#include "digits10.hpp"
+
 namespace umuq
 {
 

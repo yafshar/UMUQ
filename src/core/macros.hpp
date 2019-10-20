@@ -3,12 +3,12 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Given a version number MAJOR.MINOR.PATCH, increment the:<br>
  * - \b MAJOR version when you make incompatible changes,
  * - \b MINOR version when you add functionality in a backwards-compatible manner, and
- * - \b PATCH version when you make backwards-compatible bug fixes. 
- * 
+ * - \b PATCH version when you make backwards-compatible bug fixes.
+ *
  * Reference:<br>
  * https://semver.org
  */
@@ -19,9 +19,9 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_UNIX set to 1 if the OS is a unix variant
  */
 #if defined(__unix__) || defined(__unix)
@@ -32,9 +32,9 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_LINUX set to 1 if the OS is based on Linux kernel
  */
 #if defined(__linux__)
@@ -45,11 +45,11 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_ANDROID set to 1 if the OS is Android
- * 
+ *
  */
 #if defined(__ANDROID__) || defined(ANDROID)
 #define UMUQ_OS_ANDROID 1
@@ -59,9 +59,9 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_GNULINUX set to 1 if the OS is GNU Linux and not Linux-based OS (e.g., not android)
  */
 #if defined(__gnu_linux__) && !(UMUQ_OS_ANDROID)
@@ -72,9 +72,9 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_BSD set to 1 if the OS is a BSD variant
  */
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__)
@@ -85,9 +85,9 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Operating system identification, \c UMUQ_OS_*
- * 
+ *
  * \c UMUQ_OS_MAC set to 1 if the OS is MacOS
  */
 #if defined(__APPLE__)
@@ -98,7 +98,7 @@
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * A Clang feature extension to determine compiler features.<br>
  * We use it to determine 'cxx_rvalue_references'
  */
@@ -106,9 +106,9 @@
 #define __has_feature(x) 0
 #endif
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Allows to disable some optimizations which might affect the accuracy of the result.<br>
  * Such optimization are enabled by default, and set UMUQ_FAST_MATH to 0 to disable them.<br>
  * They currently include:<br>
@@ -118,84 +118,84 @@
 #define UMUQ_FAST_MATH 1
 #endif
 
-/*! 
+/*!
  * \ingroup Core_Module
  */
 #define UMUQ_DEBUG_VAR(x) std::cerr << #x << " = " << x << std::endl;
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Concatenate two tokens
  */
 #define UMUQ_CAT2(a, b) a##b
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Concatenate three tokens
  */
 #define UMUQ_CAT3(a, b, c) a##b##c
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Concatenate four tokens
  */
 #define UMUQ_CAT4(a, b, c, d) a##b##c##d
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Concatenate five tokens
  */
 #define UMUQ_CAT5(a, b, c, d, e) a##b##c##d##e
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Concatenate six tokens
  */
 #define UMUQ_CAT6(a, b, c, d, e, f) a##b##c##d##e##f
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Convert a token to a string
  */
 #define UMUQ_MAKESTRING2(a) #a
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * Convert a token to a string
  */
 #define UMUQ_MAKESTRING(a) UMUQ_MAKESTRING2(a)
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
- * \brief A macro to select the appropriate override .
- * 
+ *
+ * \brief A macro to select the appropriate override.
+ *
  * A macro that uses the [paired, sliding arg list](https://gist.github.com/dhh1128/0cf088f4f681f619b051) technique to select the appropriate override.
  * It supports the set of 1 to 6 args.
  */
 #define UMUQ_OVERRIDE(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * \brief A macro that concatenates strings
- * 
+ *
  * It is macro that concatenates either 5, 4, 3 or 2 strings together.
  */
 #define UMUQ_CAT(...)                                                                 \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQ_CAT6, UMUQ_CAT5, UMUQ_CAT4, UMUQ_CAT3, UMUQ_CAT2) \
     (__VA_ARGS__)
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * No debug token
  */
 #ifdef NODEBUG
@@ -204,14 +204,14 @@
 #endif
 #endif
 
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  */
 #ifdef UMUQ_NO_DEBUG
-/*! 
+/*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Assertion
  */
 #define UMUQ_plain_assert(x)
@@ -223,9 +223,9 @@ namespace umuq
 {
 /*!
  * \ingroup Core_Module
- * 
- * \brief Copy bool 
- * 
+ *
+ * \brief Copy bool
+ *
  * \param b Input logical
  */
 bool copy_bool(bool b);
@@ -233,9 +233,9 @@ bool copy_bool(bool b) { return b; }
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Assertion
- * 
+ *
  * \param condition Assertion condition
  * \param function  Function name
  * \param file      File name
@@ -251,9 +251,9 @@ bool copy_bool(bool b) { return b; }
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Assertion
- * 
+ *
  */
 #define UMUQ_plain_assert(x)                                                                \
     do                                                                                      \
@@ -265,9 +265,9 @@ bool copy_bool(bool b) { return b; }
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Assertion macro
- * 
+ *
  * \c UMUQ_assert can be overridden
  */
 #ifndef UMUQ_assert
@@ -282,15 +282,15 @@ namespace internal
 {
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief This function formats messages, filename, line number and function name into an std::ostringstream object
- * 
- * \param message1      Starting message 
+ *
+ * \param message1      Starting message
  * \param fileName      File name
  * \param lineNumber    Line number
- * \param functionName  Function name    
+ * \param functionName  Function name
  * \param message2      Ending message
- * 
+ *
  * \returns The combined std::ostringstream object as a string
  */
 std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
@@ -315,9 +315,9 @@ std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
 #if HAVE_MPI == 1
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief MPI safe call
- * 
+ *
  * \param comm          MPI communicator
  * \param errorCode     Error code
  * \returns std::string Error message from input Error code
@@ -349,9 +349,9 @@ std::string MPIErrorMessage(MPI_Comm const &comm, int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief  MPI safe call
- * 
+ *
  * \param errorCode      Error code
  * \returns std::string  Error message from input Error code
  */
@@ -367,9 +367,9 @@ std::string MPIErrorMessage(int const errorCode)
 #if HAVE_MPI == 1
 /*!
  * \ingroup Core_Module
- * 
- * \brief Terminates the execution environment 
- * 
+ *
+ * \brief Terminates the execution environment
+ *
  */
 #define UMUQABORT(ss)              \
     MPI_Abort(MPI_COMM_WORLD, -1); \
@@ -380,11 +380,11 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing one error message 
- * 
+ *
+ * \brief Helper macro for printing one error message
+ *
  * \warning
- * - This is not a stand alone macro to use! 
+ * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
  */
 #define UMUQFAIL_1MSG(msg1)                                                                                                                \
@@ -396,9 +396,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing two combined error messages 
- * 
+ *
+ * \brief Helper macro for printing two combined error messages
+ *
  * \warning
  * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
@@ -412,9 +412,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing three combined error messages 
- * 
+ *
+ * \brief Helper macro for printing three combined error messages
+ *
  * \warning
  * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
@@ -428,9 +428,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing four combined error messages 
- * 
+ *
+ * \brief Helper macro for printing four combined error messages
+ *
  * \warning
  * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
@@ -444,11 +444,11 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing five combined error messages 
- * 
+ *
+ * \brief Helper macro for printing five combined error messages
+ *
  * \warning
- * - This is not a stand alone macro to use! 
+ * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
  */
 #define UMUQFAIL_5MSG(msg1, msg2, msg3, msg4, msg5)                                                                                        \
@@ -460,11 +460,11 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing six combined error messages 
- * 
+ *
+ * \brief Helper macro for printing six combined error messages
+ *
  * \warning
- * - This is not a stand alone macro to use! 
+ * - This is not a stand alone macro to use!
  * - Use \c UMUQFAIL \sa UMUQFAIL
  */
 #define UMUQFAIL_6MSG(msg1, msg2, msg3, msg4, msg5, msg6)                                                                                  \
@@ -476,9 +476,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing one warning message 
- * 
+ *
+ * \brief Helper macro for printing one warning message
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -492,9 +492,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing two combined warning messages 
- * 
+ *
+ * \brief Helper macro for printing two combined warning messages
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -508,9 +508,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing three combined warning messages 
- * 
+ *
+ * \brief Helper macro for printing three combined warning messages
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -524,9 +524,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing four combined warning messages 
- * 
+ *
+ * \brief Helper macro for printing four combined warning messages
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -540,9 +540,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing five combined warning messages 
- * 
+ *
+ * \brief Helper macro for printing five combined warning messages
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -556,9 +556,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
- * \brief Helper macro for printing six combined warning messages 
- * 
+ *
+ * \brief Helper macro for printing six combined warning messages
+ *
  * \warning
  * - Use \c UMUQWARNING \sa UMUQWARNING
  */
@@ -572,9 +572,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Prints one (or up to 6 combined) message(s) and terminates the execution environment
- * 
+ *
  */
 #define UMUQFAIL(...)                                                                                                    \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
@@ -584,9 +584,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Prints one (or up to 6 combined) message(s) and return back as false
- * 
+ *
  */
 #define UMUQFAILRETURN(...)                                                                                              \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
@@ -595,9 +595,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Prints one (or up to 6 combined) message(s) and return back as nullptr
- * 
+ *
  */
 #define UMUQFAILRETURNNULL(...)                                                                                          \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
@@ -606,9 +606,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Prints one (or up to 6 combined) message(s) and return back the failing string
- * 
+ *
  */
 #define UMUQFAILRETURNSTRING(...)                                                                                        \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQFAIL_6MSG, UMUQFAIL_5MSG, UMUQFAIL_4MSG, UMUQFAIL_3MSG, UMUQFAIL_2MSG, UMUQFAIL_1MSG) \
@@ -617,9 +617,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Prints one (or up to 6 combined) warning-message(s)
- * 
+ *
  */
 #define UMUQWARNING(...)                                                                                                                   \
     UMUQ_OVERRIDE(__VA_ARGS__, UMUQWARNING_6MSG, UMUQWARNING_5MSG, UMUQWARNING_4MSG, UMUQWARNING_3MSG, UMUQWARNING_2MSG, UMUQWARNING_1MSG) \
@@ -627,9 +627,9 @@ std::string MPIErrorMessage(int const errorCode)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief Asserts the condition and in case of failure prints one (or up to 6 combined) message(s) and terminates the execution environment
- * 
+ *
  */
 #define UMUQASSERT(condition, ...)                                                                                           \
     if (!(condition))                                                                                                        \
@@ -643,9 +643,9 @@ std::string MPIErrorMessage(int const errorCode)
 #if HAVE_MPI == 1
 /*!
  * \ingroup Core_Module
- * 
- * \brief Simple wrapper for safe MPI call, in case of a failure, it terminates the execution environment 
- * 
+ *
+ * \brief Simple wrapper for safe MPI call, in case of a failure, it terminates the execution environment
+ *
  */
 #define UMUQMPI(MPIcall)                                                            \
     {                                                                               \

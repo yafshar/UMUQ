@@ -1,6 +1,8 @@
 #ifndef UMUQ_META_H
 #define UMUQ_META_H
 
+#include <type_traits>
+
 /*!
  * \ingroup Core_Module
  *
