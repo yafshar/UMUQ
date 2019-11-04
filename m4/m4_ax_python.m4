@@ -57,15 +57,57 @@
 AU_ALIAS([ACX_PYTHON], [AX_PYTHON])
 AC_DEFUN([AX_PYTHON], [
 	AC_ARG_ENABLE([python],
-		AS_HELP_STRING([--enable-python@<:@=ARG@:>@], 
-				[Enable python (default is no) (optional)]), 
+		AS_HELP_STRING([--enable-python@<:@=ARG@:>@],
+				[Enable python (default is no) (optional). it is possible to specify the version, or the root directory for PYTHON]),
 		[
+			PYTHON=
+			PYTHON_VERSION=
 			if test x"${enableval}" = xno ; then
 				ax_python_ok=no
 			elif test x"${enableval}" = xyes ; then
 				ax_python_ok=yes
 			elif test x"${enableval}" != x ; then
-				ax_python_ok=no
+				for python_version in 3.8 3.7 3.6 3.5 3.4 3.3 3.2 3.1 3 3.0 2.7 2; do
+					if test x"${enableval}" = x"${python_version}"; then
+						PYTHON_VERSION=${python_version}
+						AC_PATH_PROG([PYTHON], [python[$PYTHON_VERSION]])
+						if test -z "${PYTHON}"; then
+							PYTHON_VERSION=""
+							AC_MSG_ERROR([Cannot find the requested python version ${PYTHON_VERSION} in system path!])
+						fi
+						break;
+					elif test x"${enableval}" = x"python${python_version}" ; then
+						PYTHON_VERSION=${python_version}
+						AC_PATH_PROG([PYTHON], [python[$PYTHON_VERSION]])
+						if test -z "${PYTHON}"; then
+							PYTHON_VERSION=""
+							AC_MSG_ERROR([Cannot find the requested python version ${PYTHON_VERSION} in system path!])
+						fi
+						break;
+					fi
+				done
+				if test x"${enableval}" = x"python"; then
+					AC_PATH_PROG([PYTHON], [python])
+					if test -z "${PYTHON}"; then
+						PYTHON_VERSION=""
+						AC_MSG_ERROR([Cannot find python in the system path!])
+					fi
+					PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+				fi
+				if test -x "${enableval}"; then
+					# $enableval must be the executable path
+					AC_SUBST([PYTHON], ["${enableval}"])
+					PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+				fi
+				if test -n "${PYTHON}"; then
+					if test -n "${PYTHON_VERSION}"; then
+						ax_python_ok=yes
+					else
+						ax_python_ok=no
+					fi
+				else
+					ax_python_ok=no
+				fi
 			else
 				ax_python_ok=yes
 			fi
@@ -77,91 +119,131 @@ AC_DEFUN([AX_PYTHON], [
 	AS_IF([test x"$ax_python_ok" = xyes], [
 		AC_MSG_CHECKING(for python build information)
 		AC_MSG_RESULT([])
-		for python in python2.7 python python3.7 python3.6 python3.5 python3.4 python3.3 python3.2 python3.1 python3.0; do
-			AC_CHECK_PROGS(PYTHON_BIN, [$python])
-			ax_python_bin=$PYTHON_BIN
-			if test x$ax_python_bin != x; then
-				AC_CHECK_LIB($ax_python_bin, main, 
-				[
-					ax_python_lib=$ax_python_bin
-				], [
-					ax_python_lib=no
-				])
 
-				if test x$ax_python_lib == xno; then
-					AC_CHECK_LIB(${ax_python_bin}m, main, 
-					[
-						ax_python_lib=${ax_python_bin}m
-					], [
-						ax_python_lib=no
-					])
-				fi
+		succeeded=no
 
-				if test x$ax_python_lib != xno; then
-					ax_python_header=`$ax_python_bin -c "from distutils.sysconfig import *; print(get_config_var('CONFINCLUDEPY'))"`
-					
-					if test x$ax_python_header != x; then
-						break;
-					fi
+		PYTHON_LD_LIBRARY_PATH=
+		PYTHON_LDFLAGS=
+		PYTHON_CPPFLAGS=
+		PYTHON_PATH=
+		PYTHON_EXECPATH=
+
+		if test -z "${PYTHON}"; then
+			for python_version in 3.9 3.8 3.7 3.6 3.5 3.4 3.3 3.2 3.1 3 3.0 2.7 2; do
+				AC_PATH_PROG([PYTHON], [python[$python_version]])
+				if test -n "${PYTHON}"; then
+					PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+					break;
 				fi
+			done
+		fi
+
+		if test -z "${PYTHON}"; then
+			AC_MSG_ERROR([Cannot find python in the system path!])
+		fi
+
+		PYTHON_LDVERSION=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LDVERSION'))"`
+		if test x"${PYTHON_LDVERSION}" = x"None"; then
+			PYTHON_LDVERSION="${PYTHON_VERSION}"
+		fi
+
+		PYTHON_PATH=`${PYTHON} -c "import sys; print(sys.prefix)"`
+		if test -z "$PYTHON_PATH"; then
+			AC_MSG_ERROR([Python prefix is not known!])
+		fi
+
+		PYTHON_INCLUDE=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CONFINCLUDEPY'))"`
+		if test -z "${PYTHON_INCLUDE}"; then
+			if test -d "${PYTHON_PATH}/include/python${PYTHON_LDVERSION}" && test -r "${PYTHON_PATH}/include/python${PYTHON_LDVERSION}" ; then
+				PYTHON_CPPFLAGS="-I${PYTHON_PATH}/include/python${PYTHON_LDVERSION}"
 			fi
-		done
-
-		ax_python_ok=yes
-		if test x$ax_python_bin = x; then
-			ax_python_bin=no
-			ax_python_ok=no
-		fi
-		if test x$ax_python_header = x; then
-			ax_python_header=no
-			ax_python_ok=no
-		fi
-		if test x$ax_python_lib = x; then
-			ax_python_lib=no
-			ax_python_ok=no
+		else
+			PYTHON_CPPFLAGS='-I'"${PYTHON_INCLUDE}"
 		fi
 
-		AC_MSG_RESULT([Results of the Python check:])
-		AC_MSG_RESULT([Binary:      $ax_python_bin])
-		AC_MSG_RESULT([Library:     $ax_python_lib])
-		AC_MSG_RESULT([Include Dir: $ax_python_header])
+		PYTHON_EXECPATH=`${PYTHON} -c "import sys; print(sys.exec_prefix)"`
+		if test x"${PYTHON_PATH}" != x"${PYTHON_EXECPATH}"; then
+			if test -d "${PYTHON_EXECPATH}/include/python${PYTHON_LDVERSION}" && test -r "${PYTHON_EXECPATH}/include/python${PYTHON_LDVERSION}" ; then
+				PYTHON_INCLUDE+=" ${PYTHON_EXECPATH}/include/python${PYTHON_LDVERSION}"
+				PYTHON_CPPFLAGS+=" -I${PYTHON_EXECPATH}/include/python${PYTHON_LDVERSION}"
+			fi
+		fi
 
-		if test x$ax_python_bin != xno; then
-			PYTHON_BIN=$ax_python_bin
-			AC_SUBST(PYTHON_BIN)
-		fi
-		if test x$ax_python_lib != xno; then
-			PYTHON_LIB=$ax_python_lib
-			AC_SUBST(PYTHON_LIB)
-		fi
-		if test x$ax_python_header != xno; then
-			PYTHON_INCLUDE_DIR=$ax_python_header
-			AC_SUBST(PYTHON_INCLUDE_DIR)
+		PYTHON_LD_LIBRARY_PATH=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LIBDIR'))"`
+		PYTHON_LDFLAGS=" -L${PYTHON_LD_LIBRARY_PATH}"
+		PYTHON_LIB='python'"${PYTHON_LDVERSION}"
+
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		LDFLAGS_SAVED="$LDFLAGS"
+		LIBS_SAVED="$LIBS"
+
+		CPPFLAGS+=" $PYTHON_CPPFLAGS"
+		LDFLAGS+="${PYTHON_LDFLAGS}"' -l'"${PYTHON_LIB}"
+
+		AC_LANG_PUSH([C++])
+		AC_CHECK_LIB($PYTHON_LIB, PyArg_ParseTuple,
+			[
+				LDFLAGS+=' -Wl,-rpath,'"$PYTHON_LD_LIBRARY_PATH"
+				succeeded=yes
+			], [
+				succeeded=no
+			]
+		)
+		AS_IF([test x"$LIBS" = x"$LIBS_SAVED"], [LIBS='-l'"${PYTHON_LIB}"" $LIBS"])
+
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+				@%:@include <Python.h>
+			]], [[]]
+			)], [
+				AC_MSG_RESULT(checking Python.h usability...  yes)
+				AC_MSG_RESULT(checking Python.h presence... yes)
+				AC_MSG_RESULT(checking for Python.h... yes)
+				succeeded=yes
+			], [
+				AC_MSG_RESULT(checking Python.h usability...  no)
+				AC_MSG_RESULT(checking Python.h presence... no)
+				AC_MSG_RESULT(checking for Python.h... no)
+				succeeded=no
+			]
+		)
+		AC_LANG_POP([C++])
+
+		if test x"$succeeded" = xyes ; then
+			AC_SUBST([PYTHON_BIN], [$PYTHON])
+			AC_SUBST([PYTHON_LIB], [$PYTHON_LIB])
+			AC_SUBST([PYTHON_INCLUDE_DIR], [$PYTHON_INCLUDE])
+			AC_SUBST(PYTHON_LD_LIBRARY_PATH)
+			ax_python_ok="yes"
+			:
+		else
+			ax_python_ok="no"
+			CPPFLAGS="$CPPFLAGS_SAVED"
+			LDFLAGS="$LDFLAGS_SAVED"
+			LIBS="$LIBS_SAVED"
+			:
 		fi
 	])
 
 	ax_numpy_ok=no
 	if test x"$ax_python_ok" = xyes; then
 		AC_MSG_CHECKING(for numpy python module)
-		$PYTHON_BIN -c "import numpy" 2>/dev/null	
+		$PYTHON -c "import numpy" 2>/dev/null
 		if test $? == 0; then
 			AC_MSG_RESULT(found)
 			ax_numpy_ok=yes
-			AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON_BIN -c "import numpy; numpypath=numpy.__path__[[0]]; print('%s/core/include' % numpypath)"`])
+			AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON -c "import numpy; numpypath=numpy.__path__[[0]]; print('%s/core/include' % numpypath)"`])
 			AC_SUBST([NUMPY_INCLUDE_DIR], [$_cv_numpy_header])
 		else
 			AC_MSG_WARN([ Unable to find NUMPY !])
-		fi			
+		fi
 	fi
 
 	AM_CONDITIONAL([HAVE_PYTHON], [test x"$ax_numpy_ok" = xyes])
 	AM_COND_IF([HAVE_PYTHON], [
 			AC_DEFINE(HAVE_PYTHON, 1, [Define if you want to use PYTHON.])
-			CPPFLAGS+=" -I$PYTHON_INCLUDE_DIR"
 			if test x$NUMPY_INCLUDE_DIR != x; then
 				CPPFLAGS+=" -I$NUMPY_INCLUDE_DIR"
 			fi
-			LDFLAGS+=" -l$PYTHON_LIB"
 			AC_SUBST(CPPFLAGS)
 			AC_SUBST(LDFLAGS)
 		], [
@@ -170,6 +252,3 @@ AC_DEFUN([AX_PYTHON], [
 
 	AC_MSG_RESULT()
 ])
-
-
-
