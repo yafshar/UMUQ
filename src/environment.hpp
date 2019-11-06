@@ -13,6 +13,11 @@
 #include "gtest/gtest.h"
 #endif // HAVE_GOOGLETEST
 
+#include <cstddef>
+
+#include <vector>
+#include <memory>
+
 namespace umuq
 {
 
@@ -22,11 +27,11 @@ extern umuqTimer gTimer;
 
 /*! \class torcEnvironment
  * \ingroup Core_Module
- * 
+ *
  * \brief Create a new torc Environment object.
- * 
+ *
  * An Environment object is capable of setting up and tearing down an
- * environment. It does the set-up and tear-down in virtual methods 
+ * environment. It does the set-up and tear-down in virtual methods
  * SetUp() and TearDown() instead of the constructor and the destructor.
  */
 class torcEnvironment
@@ -43,7 +48,7 @@ class torcEnvironment
 
     /*!
      * \brief This would register the function in TORC library
-     * 
+     *
      * \param f function casted to void *
      */
     template <class FunctionType>
@@ -56,9 +61,9 @@ class torcEnvironment
 
     /*!
      * \brief Set up the torc object
-     * 
-     * \param argc 
-     * \param argv 
+     *
+     * \param argc
+     * \param argv
      */
     virtual void SetUp(int argc, char **argv);
 
@@ -75,17 +80,17 @@ class torcEnvironment
   protected:
     /*!
      * \brief Delete a torcEnvironment object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     torcEnvironment(torcEnvironment const &) = delete;
 
     /*!
      * \brief Delete a torcEnvironment object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns torcEnvironment& 
+     *
+     * \returns torcEnvironment&
      */
     torcEnvironment &operator=(torcEnvironment const &) = delete;
 
@@ -192,9 +197,9 @@ torcEnvironment::~torcEnvironment() {}
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
 /*! \class UMUQEventListener
  * \ingroup Test_Module
- * 
+ *
  * \brief New event listener to make sure of Abort in case of failure
- * 
+ *
  * An interface to %UMUQ for tracing execution of tests from [Google Test](https://github.com/google/googletest).<br>
  * The methods are organized in the order the corresponding events are fired.
  */
@@ -203,34 +208,34 @@ class UMUQEventListener : public ::testing::EmptyTestEventListener
   public:
     /*!
      * \brief Construct a new UMUQEventListener object
-     * 
+     *
      */
     UMUQEventListener();
 
     /*!
      * \brief Destroy the UMUQEventListener object
-     * 
+     *
      */
     ~UMUQEventListener();
 
     /*!
      * \brief It is called before a test starts.
-     * 
-     * \param test_info 
+     *
+     * \param test_info
      */
     virtual void OnTestStart(::testing::TestInfo const &test_info);
 
     /*!
      * \brief Called after an assertion failure or an explicit \c SUCCESS() macro.
-     * 
-     * \param test_part_result 
+     *
+     * \param test_part_result
      */
     virtual void OnTestPartResult(::testing::TestPartResult const &test_part_result);
 
     /*!
      * \brief Called after a test ends.
-     * 
-     * \param test_info 
+     *
+     * \param test_info
      */
     virtual void OnTestEnd(::testing::TestInfo const &test_info);
 
@@ -267,7 +272,7 @@ void UMUQEventListener::OnTestEnd(::testing::TestInfo const &test_info)
 
 /*!
  * \ingroup Core_Module
- * 
+ *
  * \brief TORC environemnt object
  */
 std::unique_ptr<torcEnvironment> Torc;

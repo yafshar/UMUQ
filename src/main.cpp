@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "environment.hpp"
 
 int main(int argc, char **argv)
