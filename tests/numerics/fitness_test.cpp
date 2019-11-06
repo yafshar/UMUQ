@@ -2,9 +2,11 @@
 #include "numerics/fitness.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+#include <random>
+
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check fitness and residual functionality
  */
 TEST(fitness_test, HandlesFitness)
@@ -15,7 +17,7 @@ TEST(fitness_test, HandlesFitness)
 
 /*!
  * \ingroup Test_Module
- *  
+ *
  * Test to check fitness and residual functionality in simple linear regression
  */
 TEST(fitness_test, HandlesLinearRegression)

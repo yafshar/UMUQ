@@ -5,6 +5,8 @@
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
 #include "gtest/gtest.h"
 
+#include <random>
+
 #define WRITE_TO_FILE 0
 
 //Data container
@@ -38,17 +40,17 @@ void fillPagebyPage(T *inDataPt, T *coords, int const d, T lx, T ly, T dx, T dy,
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Compute N-D grid coordinates between \f$ [Lb \cdots Ub] \f$
- * 
+ *
  * \tparam T        data type
- * 
- * \param inDataPt  N-D grid coordinates 
+ *
+ * \param inDataPt  N-D grid coordinates
  * \param nDPoints  Number of points in each direction
  * \param nDim      Dimensionality
  * \param Lb        Lower bound in each dimension
  * \param Ub        Upper bound in each dimension
- * 
+ *
  * \return true     if it successfully creates N-D grid coordinates
  */
 template <typename T>
@@ -156,17 +158,17 @@ bool meshgrid(T *&inDataPt, int const *nDPoints, int const nDim, double *Lb, dou
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Compute N-D coordinates randomly distributed between \f$ [Lb \cdots Ub] \f$
- * 
+ *
  * \tparam T        data type
- * 
- * \param inDataPt     N-D coordinates 
+ *
+ * \param inDataPt     N-D coordinates
  * \param nPoints   Total number of points
  * \param nDim      Dimensionality
  * \param Lb        Lower bound in each dimension
  * \param Ub        Upper bound in each dimension
- * 
+ *
  * \return true     if it successfully creates N-D grid coordinates
  */
 template <typename T>
@@ -229,9 +231,9 @@ bool meshgrid(T *&inDataPt, int const nPoints, int const nDim, double *Lb, doubl
     return true;
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check linearregression functionality for Qian function
  */
 TEST(linearregression_1d, HandlesQianFunction)
@@ -486,9 +488,9 @@ TEST(linearregression_1d, HandlesQianFunction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check linearregression functionality for CFD results
  */
 TEST(linearregression_1d, HandlesCFDResults)

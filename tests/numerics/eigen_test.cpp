@@ -2,9 +2,11 @@
 #include "numerics/eigenlib.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+#include <numeric>
+
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check about map type handling is done correctly
  */
 TEST(eigen_test, HandlesMap)
@@ -144,7 +146,7 @@ TEST(eigen_test, HandlesMap)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Linear Algebra test
  */
 TEST(eigen_la_test, HandlesSolver)
@@ -175,11 +177,11 @@ TEST(eigen_la_test, HandlesSolver)
     EXPECT_TRUE(std::isnan(relative_error));
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief SVD test
- * 
+ *
  */
 TEST(eigen_svd_test, HandlesSVD)
 {
@@ -203,9 +205,9 @@ TEST(eigen_svd_test, HandlesSVD)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief LU test
- * 
+ *
  */
 TEST(eigen_lu_test, HandlesLU)
 {
@@ -259,9 +261,9 @@ TEST(eigen_lu_test, HandlesLU)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief test to check if the matrix is positive definite
- * 
+ *
  */
 TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 {
@@ -295,9 +297,9 @@ TEST(eigen_PositiveDefinite_test, HandlesIsPositiveDefinite)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test to check the computation of the distance between the rows or columns of a matrix
- * 
+ *
  */
 TEST(eigen_CalculateDistance_test, HandlesCalculateDistance)
 {
