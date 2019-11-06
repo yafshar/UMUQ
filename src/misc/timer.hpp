@@ -1,42 +1,48 @@
 #ifndef UMUQ_TIMER_H
 #define UMUQ_TIMER_H
 
+#include "core/core.hpp"
+
 #include <iostream>
 #include <sys/time.h>
+
+#include <string>
+#include <vector>
+#include <chrono>
 
 namespace umuq
 {
 
 /*! \class umuqTimer
- * 
+ *
  * \brief Start stopwatch timer class
  *
  * - \b tic starts a stopwatch timer, and stores the internal time at execution of the command.
  * - \b toc displays the elapsed time so that you can record time for simultaneous time spans.
- * 
+ *
  * \note
  * - Consecutive tic overwrites the previous recorded time.
  */
 class umuqTimer
 {
-  public:
+public:
     /*!
      * \brief Construct a new umuqTimer object
-     * 
+     *
      * \param CoutFlag Flag indicator whether it should print output to a stream buffer (default is true)
      */
     umuqTimer(bool const CoutFlag = true);
 
     /*!
      * \brief Destroy the umuqTimer object
-     * 
+     *
      */
     ~umuqTimer();
 
     /*!
-    * \brief tic starts a stopwatch timer, and stores the internal time at execution of the command. 
+    * \brief tic starts a stopwatch timer, and stores the internal time at execution of the command.
     *
-    * It starts a stopwatch timer, and stores the internal time at execution of the command. 
+    * It starts a stopwatch timer, and stores the internal time at execution of the command.
     * Consecutive tic overwrites the previous recorded time.
     */
     inline void tic();
@@ -44,24 +50,24 @@ class umuqTimer
     /*!
     * \brief toc displays the elapsed time so that you can record time for simultaneous time spans.
     *
-    * It displays the elapsed time so that you can record time for simultaneous time spans. 
+    * It displays the elapsed time so that you can record time for simultaneous time spans.
     */
     inline void toc();
 
     /*!
     * \brief toc displays the elapsed time so that you can record time for simultaneous time spans.
     *
-    * It displays the elapsed time so that you can record time for simultaneous time spans. 
+    * It displays the elapsed time so that you can record time for simultaneous time spans.
     */
     inline void toc(std::string const &functionName);
 
     /*!
      * \brief It would print the measured elapsed interval times and corresponding function names
-     * 
+     *
      */
     inline void print();
 
-  public:
+public:
     /*! Indicator flag whether we should print output to a stream buffer or not */
     bool coutFlag;
 
@@ -71,7 +77,7 @@ class umuqTimer
     /*! If \c coutFlag is false, it would keep the name of the function for each measrued interval */
     std::vector<std::string> timeInetrvalFunctionNames;
 
-  private:
+private:
     /*! The first time point. Time point 1 */
     std::chrono::system_clock::time_point timePoint1;
 
@@ -94,7 +100,7 @@ inline void umuqTimer::toc()
     std::chrono::duration<double> elapsedTime = timePoint2 - timePoint1;
     if (coutFlag)
     {
-        std::cout << " It took " << std::to_string(elapsedTime.count()) << " seconds" << std::endl;
+        UMUQMSG(" It took ", std::to_string(elapsedTime.count()), " seconds");
         return;
     }
     timeInetrval.push_back(elapsedTime.count());
@@ -107,7 +113,7 @@ inline void umuqTimer::toc(std::string const &functionName)
     std::chrono::duration<double> elapsedTime = timePoint2 - timePoint1;
     if (coutFlag)
     {
-        std::cout << functionName << " took " << std::to_string(elapsedTime.count()) << " seconds" << std::endl;
+        UMUQMSG(functionName, " took ", std::to_string(elapsedTime.count()), " seconds");
         return;
     }
     timeInetrval.push_back(elapsedTime.count());
@@ -119,7 +125,7 @@ inline void umuqTimer::print()
     auto functionIt = timeInetrvalFunctionNames.begin();
     for (auto timerIt = timeInetrval.begin(); timerIt != timeInetrval.end(); timerIt++, functionIt++)
     {
-        std::cout << *functionIt << " took " << std::to_string(*timerIt) << " seconds" << std::endl;
+        UMUQMSG(*functionIt, " took ", std::to_string(*timerIt), " seconds");
     }
 }
 

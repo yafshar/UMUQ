@@ -1,6 +1,16 @@
 #ifndef UMUQ_PARSER_H
 #define UMUQ_PARSER_H
 
+#include "core/core.hpp"
+
+#include <cctype>
+#include <cstddef>
+#include <cstring>
+
+#include <string>
+#include <sstream>
+#include <algorithm>
+
 #if HAVE_PYTHON == 1
 #ifdef toupper
 #undef toupper
@@ -9,8 +19,6 @@
 #undef tolower
 #endif
 #endif
-
-#include <cctype>
 
 namespace umuq
 {

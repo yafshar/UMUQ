@@ -1,6 +1,8 @@
 #ifndef UMUQ_UTILITY_H
 #define UMUQ_UTILITY_H
 
+#include "core/core.hpp"
+
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 700
 #else
@@ -13,110 +15,118 @@
 #define _BSD_SOURCE 1
 #endif
 
+#include "datatype/permissiontype.hpp"
+
 #include <unistd.h>    // fork, execvp, chdir
 #include <sys/types.h> // waitpid
 #include <sys/wait.h>  // waitpid
+#include <cstdlib>
 
-#include "../datatype/permissiontype.hpp"
+#include <mutex>
+#include <chrono>
+#include <thread>
+#include <string>
+#include <vector>
+#include <type_traits>
 
 namespace umuq
 {
 
 /*!
- * 
+ *
  * \brief Utility mutex object
- * 
+ *
  */
 static std::mutex utility_m;
 
 /*! \class utility
  *
- * \brief This class includes some utilities for performing operations on file systems 
+ * \brief This class includes some utilities for performing operations on file systems
  * and their components, such as paths, regular files, and directories.
- *	
+ *
  * Utility class contains functionality for exectuing commands, underneath it uses some functionalities as : <br>
- * 
- * \c fork and \c execvp are used in sequence to get a new program running as a child 
+ *
+ * \c fork and \c execvp are used in sequence to get a new program running as a child
  * of a current process (spawner with \c spawnerId ID).
- * 
+ *
  * \b fork() : <br>
- * After the system call to \c fork(), Unix will make an exact copy of the 
+ * After the system call to \c fork(), Unix will make an exact copy of the
  * parent's address space and give it to the child. <br>
  * Therefore, the parent and child processes have separate address spaces. <br>
- * \c fork() returns a positive value, the process ID of the child process, to the parent. 
+ * \c fork() returns a positive value, the process ID of the child process, to the parent.
  * If \c fork() returns a negative value, the creation of a child process was unsuccessful
  * otherwise, \c fork() returns a zero to the newly created child process.
- * 
+ *
  * \b chdir() : <br>
- * The \c chdir() function shall cause the directory named by the pathname pointed 
+ * The \c chdir() function shall cause the directory named by the pathname pointed
  * to by the path argument to become the current working directory.<br>
- * 
+ *
  * Reference: <br>
  * https://linux.die.net/man/3/chdir
  *
  * \b execvp() : <br>
  * The \c execvp() system call requires two arguments:
  * - The first argument is a character string that contains the name of a file to be executed. <br>
- * - The second argument is a pointer to an array of character strings. More precisely, its type is char **, 
+ * - The second argument is a pointer to an array of character strings. More precisely, its type is char **,
  *   which is exactly identical to the argv array used in the main program.
- * 
- * When \c execvp() is executed, the program file given by the first argument will be loaded into the caller's 
- * address space and over-write the program there. Then, the second argument will be provided to the program 
- * and starts the execution. As a result, once the specified program file starts its execution, the original 
+ *
+ * When \c execvp() is executed, the program file given by the first argument will be loaded into the caller's
+ * address space and over-write the program there. Then, the second argument will be provided to the program
+ * and starts the execution. As a result, once the specified program file starts its execution, the original
  * program in the caller's address space is gone and is replaced by the new program. <br>
- * It returns a negative value if the execution fails (e.g., the request file does not exist). 
- * 
+ * It returns a negative value if the execution fails (e.g., the request file does not exist).
+ *
  * Reference: <br>
  * https://linux.die.net/man/3/execvp
  *
- * \b waitpid() : <br> 
- * The \c waitpid() system call suspends execution of the calling process until a child specified by pid argument 
+ * \b waitpid() : <br>
+ * The \c waitpid() system call suspends execution of the calling process until a child specified by pid argument
  * has changed state.<br>
  * 0 means wait for any child process whose process group ID is equal to that of the calling process
- * 
- * Reference: <br> 
+ *
+ * Reference: <br>
  * https://linux.die.net/man/2/waitpid
  *
- * 
- * \b sync() : <br> 
- * The \c sync() system call, synchronize data on disk with memory. sync writes any data buffered in memory out to disk. 
+ *
+ * \b sync() : <br>
+ * The \c sync() system call, synchronize data on disk with memory. sync writes any data buffered in memory out to disk.
  * This can include (but is not limited to) modified superblocks, modified inodes, and delayed reads and writes.
- * 
- * Reference: <br> 
+ *
+ * Reference: <br>
  * https://linux.die.net/man/8/sync
- * 
- * 
+ *
+ *
  */
 class utility
 {
-  public:
+public:
     /*!
      * \brief Get the Current Working Directory object
-     * 
+     *
      * \returns std::string Current Working Directory
      */
     inline std::string getCurrentWorkingDirectory();
 
     /*!
      * \brief Create a new directory with name directoryName with permission mode permissionMode
-     * 
+     *
      * \param directoryName   Directory Name
      * \param permissionMode  Permission mode
-     * 
+     *
      * \returns false If it fails to create a directory
      */
     inline bool createDirectory(std::string const &directoryName, umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
      * \brief Change the process's working directory to PATH
-     * 
+     *
      * \param workingDirectory   Working directory Name
      */
     inline bool changeWorkingDirectory(std::string const &workingDirectory);
 
     /*!
      * \brief Change the process's working directory to PATH
-     * 
+     *
      * \param workingDirectory   Working directory Name
      */
     inline bool changeWorkingDirectory(char const *workingDirectory);
@@ -124,7 +134,7 @@ class utility
     /*!
      * \brief Change the process's working directory to PATH.
      * If workingDirectory does not exist first create it and then change to it.
-     * 
+     *
      * \param workingDirectory   Working directory Name
      * \param permissionMode     Permission mode
      */
@@ -133,21 +143,21 @@ class utility
     /*!
      * \brief Change the process's working directory to PATH.
      * If workingDirectory does not exist first create it and then change to it.
-     * 
+     *
      * \param workingDirectory   Working directory Name
      * \param permissionMode     Permission mode
      */
     bool createChangeWorkingDirectory(char const *workingDirectory, umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
-     * \brief On successful lock acquisition of \c utility_m returns true, otherwise suspends execution of 
+     * \brief On successful lock acquisition of \c utility_m returns true, otherwise suspends execution of
      * the calling thread for (at least) \c millisecondsDuration miliseconds and try again lock acquisition .
-     * The sleep may be lengthened slightly by any system activity or by the time spent processing the call 
+     * The sleep may be lengthened slightly by any system activity or by the time spent processing the call
      * or by the granularity of system timers.
      *
-     * \param millisecondsDuration  Sleep duration in milliseconds  
+     * \param millisecondsDuration  Sleep duration in milliseconds
      * \param maxNumTrials          Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
-     * 
+     *
      * \returns true   On successful lock acquisition
      * \returns false  If number of trials exceeds the maxNumTrials
      */
@@ -155,34 +165,34 @@ class utility
 
     /*!
      * \brief Clone the calling process, creating an exact copy.
-     * 
+     *
      * \param spawnerId  Spawner ID
-     * \returns pid_t 0 to the new process, and the process ID of the new process to the old process. 
+     * \returns pid_t 0 to the new process, and the process ID of the new process to the old process.
      */
     inline pid_t cloneProcess(int const spawnerId);
 
     /*!
      * \brief Wait for a child matching processor ID to die and make all changes done to all files actually appear on disk.
-     * 
+     *
      * \param processorID  The processor ID
      */
     inline void syncProcess(pid_t const processorID);
 
     /*!
      * \brief Executing command from a spawner
-     * 
+     *
      * Executing command from a spawner.
-     * 
+     *
      * \param spawnerId               Id of a spawner
-     * \param command                 Input command, character string identifying the command to be run in the command 
-     *                                processor. If a null pointer is given, command processor is checked for existence 
+     * \param command                 Input command, character string identifying the command to be run in the command
+     *                                processor. If a null pointer is given, command processor is checked for existence
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
      * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
-     * 
-     * 
+     *
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(int const spawnerId, std::string const &command,
@@ -192,18 +202,18 @@ class utility
 
     /*!
      * \brief Executing command from a spawner
-     * 
+     *
      * Executing command from a spawner.
-     * 
+     *
      * \param spawnerId               Id of a spawner
-     * \param command                 Input command, character string identifying the command to be run in the command 
-     *                                processor. If a null pointer is given, command processor is checked for existence 
+     * \param command                 Input command, character string identifying the command to be run in the command
+     *                                processor. If a null pointer is given, command processor is checked for existence
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
      * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(int const spawnerId, char const *command,
@@ -212,15 +222,15 @@ class utility
                         int const millisecondsDuration = 100, int const maxNumTrials = umuq::HugeCost);
 
     /*!
-     * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with 
+     * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with
      * the parameter command
-     * 
-     * \param command                 Input command, character string identifying the command to be run in the command 
-     *                                processor. If a null pointer is given, command processor is checked for existence 
+     *
+     * \param command                 Input command, character string identifying the command to be run in the command
+     *                                processor. If a null pointer is given, command processor is checked for existence
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
      * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(std::string const &command,
@@ -228,15 +238,15 @@ class utility
                         umuq::permissionType const permissionMode = umuq::permissionType::owner_all);
 
     /*!
-     * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with 
+     * \brief Calls the host environment's command processor (e.g. /bin/sh, cmd.exe, command.com) with
      * the parameter command
-     * 
-     * \param command                 Input command, character string identifying the command to be run in the command 
-     *                                processor. If a null pointer is given, command processor is checked for existence 
+     *
+     * \param command                 Input command, character string identifying the command to be run in the command
+     *                                processor. If a null pointer is given, command processor is checked for existence
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
      * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommand(char const *command,
@@ -245,19 +255,19 @@ class utility
 
     /*!
      * \brief Executing multiple commands from a spawner
-     * 
+     *
      * Executing multiple commands from a spawner.
-     * 
+     *
      * \param spawnerId               Id of a spawner
-     * \param commands                Input commands, vector of character string identifying the command to be run in the command 
-     *                                processor. If a null pointer is given, command processor is checked for existence 
+     * \param commands                Input commands, vector of character string identifying the command to be run in the command
+     *                                processor. If a null pointer is given, command processor is checked for existence
      * \param workingDirectory        Directory PATH in which to execute the commands
      * \param createWorkingDirectory  Flag indicates whether it should create workingDirectory, when it does not exists
      * \param permissionMode          Permission mode for creating the workingDirectory. \sa umuq::permissionType
      * \param millisecondsDuration    Sleep duration in milliseconds  (default is 100 milli seconds)
      * \param maxNumTrials            Maximum number of trials to acquire lock (per default it is set \c umuq::HugeCost). \sa umuq::HugeCost
-     * 
-     * 
+     *
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool executeCommands(int const spawnerId, std::vector<std::string> const &commands,
@@ -430,11 +440,12 @@ bool utility::executeCommand(int const spawnerId, std::string const &command,
         }
 
 #ifdef DEBUG
-        std::cout << "Spawner(" << spawnerId << ") : running in : \n"
-                  << getCurrentWorkingDirectory() << std::endl;
+        UMUQMSG("Spawner(", spawnerId, ") : running in : \n", getCurrentWorkingDirectory());
 #endif
 
         auto i = std::system(command.c_str());
+        // To avoid compiler warning
+        (void)i;
     }
 
     utility_m.unlock();
@@ -489,11 +500,12 @@ bool utility::executeCommand(int const spawnerId, char const *command,
         }
 
 #ifdef DEBUG
-        std::cout << "Spawner(" << spawnerId << ") : running in : \n"
-                  << getCurrentWorkingDirectory() << std::endl;
+        UMUQMSG("Spawner(", spawnerId, ") : running in : \n", getCurrentWorkingDirectory());
 #endif
 
         auto i = std::system(command);
+        // To avoid compiler warning
+        (void)i;
     }
 
     utility_m.unlock();
@@ -536,11 +548,12 @@ bool utility::executeCommand(std::string const &command,
     }
 
 #ifdef DEBUG
-    std::cout << "Running in : \n"
-              << getCurrentWorkingDirectory() << std::endl;
+    UMUQMSG("Running in : \n", getCurrentWorkingDirectory());
 #endif
 
     auto i = std::system(command.c_str());
+    // To avoid compiler warning
+    (void)i;
 
     // If we changed to the workingDirectory PATH, we need to return back.
     return workingDirectory.empty() ? true : changeWorkingDirectory(currentWorkingDirectory);
@@ -579,11 +592,12 @@ bool utility::executeCommand(char const *command,
     }
 
 #ifdef DEBUG
-    std::cout << "Running in : \n"
-              << getCurrentWorkingDirectory() << std::endl;
+    UMUQMSG("Running in : \n", getCurrentWorkingDirectory());
 #endif
 
     auto i = std::system(command);
+    // To avoid compiler warning
+    (void)i;
 
     // If we changed to the workingDirectory PATH, we need to return back.
     return workingDirectory ? true : changeWorkingDirectory(currentWorkingDirectory);
@@ -634,8 +648,7 @@ bool utility::executeCommands(int const spawnerId, std::vector<std::string> cons
         }
 
 #ifdef DEBUG
-        std::cout << "Spawner(" << spawnerId << ") : running in : \n"
-                  << getCurrentWorkingDirectory() << std::endl;
+        UMUQMSG("Spawner(", spawnerId, ") : running in : \n", getCurrentWorkingDirectory());
 #endif
 
         for (auto c = 0; c < commands.size(); c++)
