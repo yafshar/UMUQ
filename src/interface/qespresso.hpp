@@ -1,5 +1,5 @@
-#ifndef UMUQ_DFTFE_H
-#define UMUQ_DFTFE_H
+#ifndef UMUQ_QESPRESSO_H
+#define UMUQ_QESPRESSO_H
 
 #include "core/core.hpp"
 #include "io/io.hpp"
@@ -18,60 +18,52 @@
 #include <algorithm>
 #include <numeric>
 
+
 namespace umuq
 {
 
-/*!
- * \defgroup 3rdparty_Module 3rdparty module
- *
- * This is the 3rdparty Module of UMUQ providing all necessary classes
- * for an interface to the 3rd party codes like DFT-FE, LAMMPS, ...
- * currently supported in UMUQ.
- */
-
-/*! \class dftfe
+/*! \class qespresso
  * \ingroup 3rdparty_Module
  *
- * \brief General class for an interface to the \c DFT-FE code output
+ * \brief General class for an interface to the \c Quantum ESPRESSO (QE) code output
  *
- * An interface to the \c DFT-FE code. [DFT-FE](https://sites.google.com/umich.edu/dftfe)
- * is a C++ code for material modeling from first principles using Kohn-Sham density
- * functional theory. It handles all-electron and pseudopotential calculations in the same
- * framework while accommodating arbitrary boundary conditions.
+ * An interface to the \c Quantum ESPRESSO (QE) code. Quantum ESPRESSO [(QE)](http://www.quantum-espresso.org)
+ * is an integrated suite of Open-Source computer codes for electronic-structure calculations and materials
+ * modeling at the nanoscale. It is based on density-functional theory, plane waves, and pseudopotentials.
  */
-class dftfe
+class qespresso
 {
 public:
     /*!
-     * \brief Construct a new dftfe object
+     * \brief Construct a new qespresso object
      *
      */
-    dftfe();
+    qespresso();
 
     /*!
-     * \brief Destroy the dftfe object
+     * \brief Destroy the qespresso object
      *
      */
-    ~dftfe();
+    ~qespresso();
 
     /*!
-     * \brief Move constructor, construct a new dftfe object
+     * \brief Move constructor, construct a new qespresso object
      *
-     * \param other dftfe object
+     * \param other qespresso object
      */
-    explicit dftfe(dftfe &&other);
+    explicit qespresso(qespresso &&other);
 
     /*!
      * \brief Move assignment operator
      *
-     * \param other dftfe object
+     * \param other qespresso object
      *
-     * \returns dftfe& dftfe object
+     * \returns qespresso& qespresso object
      */
-    dftfe &operator=(dftfe &&other);
+    qespresso &operator=(qespresso &&other);
 
     /*!
-     * \brief reset the variables in dftfe
+     * \brief reset the variables in qespresso
      *
      */
     void reset();
@@ -105,7 +97,7 @@ public:
      * \returns std::size_t
      *
      * \note
-     * This function search the path which is set by the \b setFullFileName function \sa umuq::dftfe::setFullFileName
+     * This function search the path which is set by the \b setFullFileName function \sa umuq::qespresso::setFullFileName
      */
     std::size_t getTotalNumberRunFiles();
 
@@ -188,18 +180,18 @@ public:
 
 private:
     /*!
-     * \brief Delete a dftfe object copy construction
+     * \brief Delete a qespresso object copy construction
      *
      * Avoiding implicit generation of the copy constructor.
      */
-    dftfe(dftfe const &) = delete;
+    qespresso(qespresso const &) = delete;
 
     /*!
-     * \brief Delete a dftfe object assignment
+     * \brief Delete a qespresso object assignment
      *
      * Avoiding implicit copy assignment.
      */
-    dftfe &operator=(dftfe const &) = delete;
+    qespresso &operator=(qespresso const &) = delete;
 
 private:
     /*! Data root directory*/
@@ -236,11 +228,11 @@ private:
     std::vector<double> msd;
 };
 
-dftfe::dftfe() : dataRootDirectory(), fullFileName(), parameterFileName(), startIndexRunFiles(0), totalNumberRunFiles(0), totalNumberSteps(0), nSpecies(0), nSpeciesTypes(0) {}
+qespresso::qespresso() : dataRootDirectory(), fullFileName(), parameterFileName(), startIndexRunFiles(0), totalNumberRunFiles(0), totalNumberSteps(0), nSpecies(0), nSpeciesTypes(0) {}
 
-dftfe::~dftfe() {}
+qespresso::~qespresso() {}
 
-dftfe::dftfe(dftfe &&other)
+qespresso::qespresso(qespresso &&other)
 {
     dataRootDirectory = std::move(other.dataRootDirectory);
     fullFileName = std::move(other.fullFileName);
@@ -255,7 +247,7 @@ dftfe::dftfe(dftfe &&other)
     msd = std::move(other.msd);
 }
 
-dftfe &dftfe::operator=(dftfe &&other)
+qespresso &qespresso::operator=(qespresso &&other)
 {
     dataRootDirectory = std::move(other.dataRootDirectory);
     fullFileName = std::move(other.fullFileName);
@@ -272,7 +264,7 @@ dftfe &dftfe::operator=(dftfe &&other)
     return *this;
 }
 
-void dftfe::reset()
+void qespresso::reset()
 {
     dataRootDirectory.clear();
     fullFileName.clear();
@@ -290,7 +282,7 @@ void dftfe::reset()
     msd.shrink_to_fit();
 }
 
-inline void dftfe::setFullFileName(std::string const &dataDirectory, std::string const &baseFileName, std::string const &paramFileName)
+inline void qespresso::setFullFileName(std::string const &dataDirectory, std::string const &baseFileName, std::string const &paramFileName)
 {
     umuq::utility u;
     dataRootDirectory = (dataDirectory.size() ? dataDirectory : u.getCurrentWorkingDirectory()) + "/";
@@ -303,11 +295,11 @@ inline void dftfe::setFullFileName(std::string const &dataDirectory, std::string
     UMUQFAIL("No information to set the input file name!");
 }
 
-inline std::string dftfe::getFullFileName() { return fullFileName; }
+inline std::string qespresso::getFullFileName() { return fullFileName; }
 
-inline std::string dftfe::getParameterFileName() { return parameterFileName; }
+inline std::string qespresso::getParameterFileName() { return parameterFileName; }
 
-std::size_t dftfe::getTotalNumberRunFiles()
+std::size_t qespresso::getTotalNumberRunFiles()
 {
     if (totalNumberRunFiles)
     {
@@ -354,17 +346,17 @@ std::size_t dftfe::getTotalNumberRunFiles()
     return totalNumberRunFiles;
 }
 
-inline std::size_t dftfe::getTotalNumberSteps() { return totalNumberSteps; }
+inline std::size_t qespresso::getTotalNumberSteps() { return totalNumberSteps; }
 
-inline std::size_t dftfe::getNumberSpecies() { return nSpecies; }
+inline std::size_t qespresso::getNumberSpecies() { return nSpecies; }
 
-inline std::size_t dftfe::getNumberSpeciesTypes() { return nSpeciesTypes; }
+inline std::size_t qespresso::getNumberSpeciesTypes() { return nSpeciesTypes; }
 
-inline std::vector<umuq::speciesAttribute> dftfe::getSpecies() { return Species; }
+inline std::vector<umuq::speciesAttribute> qespresso::getSpecies() { return Species; }
 
-inline std::vector<int> dftfe::getSpeciesTypes() { return speciesTypes; }
+inline std::vector<int> qespresso::getSpeciesTypes() { return speciesTypes; }
 
-bool dftfe::getSpeciesInformation()
+bool qespresso::getSpeciesInformation()
 {
     if (!getTotalNumberRunFiles())
     {
@@ -578,7 +570,7 @@ bool dftfe::getSpeciesInformation()
     }
 }
 
-bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &baseForcesFileName, std::string const &format)
+bool qespresso::dump(std::string const &baseCoordinatesFileName, std::string const &baseForcesFileName, std::string const &format)
 {
     if (!totalNumberSteps)
     {
@@ -835,7 +827,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
     }
 }
 
-bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, double const timeStep)
+bool qespresso::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, double const timeStep)
 {
     if (!totalNumberSteps)
     {
@@ -1086,7 +1078,7 @@ bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, dou
     return true;
 }
 
-bool dftfe::calculateMeanSquareDisplacement(std::string const &speciesTypeName, double const timeStep)
+bool qespresso::calculateMeanSquareDisplacement(std::string const &speciesTypeName, double const timeStep)
 {
     // Create an instance of the species object
     umuq::species s;
@@ -1104,4 +1096,4 @@ bool dftfe::calculateMeanSquareDisplacement(std::string const &speciesTypeName, 
 
 } // namespace umuq
 
-#endif // UMUQ_DFTFE
+#endif // UMUQ_QESPRESSO_H
