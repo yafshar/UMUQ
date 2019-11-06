@@ -1,6 +1,16 @@
 #ifndef UMUQ_SIMPLEXNM2_H
 #define UMUQ_SIMPLEXNM2_H
 
+#include "core/core.hpp"
+#include "numerics/function/functionminimizer.hpp"
+
+#include <cmath>
+#include <cstddef>
+
+#include <vector>
+#include <algorithm>
+#include <iterator>
+
 namespace umuq
 {
 
@@ -9,16 +19,16 @@ inline namespace multimin
 
 /*! \class simplexNM2
  * \ingroup Multimin_Module
- * 
+ *
  * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
  * It uses fixed coordinate axes around the starting point x to initialize the simplex.
  * The size of simplex is calculated as the RMS distance of each vertex from the center.
- *   
+ *
  * \tparam DataType Data type
- * 
+ *
  * Reference: <br>
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
- * 
+ *
  * This implementation uses \f$ n+1 \f$ corner points in the simplex.
  */
 template <typename DataType>
@@ -27,14 +37,14 @@ class simplexNM2 : public functionMinimizer<DataType>
   public:
     /*!
      * \brief Construct a new simplexNM object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit simplexNM2(const char *Name = "simplexNM2");
 
     /*!
      * \brief Destroy the simplexNM object
-     * 
+     *
      */
     ~simplexNM2();
 
@@ -49,7 +59,7 @@ class simplexNM2 : public functionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool init();
@@ -64,55 +74,55 @@ class simplexNM2 : public functionMinimizer<DataType>
     bool iterate();
 
     /*!
-     * \brief Moves a simplex corner scaled by coeff 
-     * 
+     * \brief Moves a simplex corner scaled by coeff
+     *
      * (negative value represents mirroring by the middle point of the "other" corner points)
      * and gives new corner in X and function value at X as a return value
-     * 
+     *
      * \param coeff   Scaling coefficient
      * \param corner  Corner point
      * \param X       Input point
-     * 
+     *
      * \returns Function value at X
      */
     DataType tryCornerMove(DataType const coeff, int const corner, std::vector<DataType> &X);
 
     /*!
      * \brief Update the point
-     * 
+     *
      * \param i    Point index
-     * \param X    Input point 
-     * \param val  
+     * \param X    Input point
+     * \param val
      */
     void updatePoint(int const i, std::vector<DataType> const &X, DataType const val);
 
     /*!
      * \brief Function contracts the simplex in respect to best valued corner.
-     * 
+     *
      * All corners besides the best corner are moved. The X vector is simply work space here
      * (This function is rarely called in practice, since it is the last choice, hence not optimized)
-     * 
-     * 
+     *
+     *
      * \param best   The best corner
      * \param X      Input point
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool contractByBest(int const best, std::vector<DataType> &X);
 
     /*!
      * \brief Calculates the center of the simplex
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool computeCenter();
 
     /*!
      * \brief Compute the specific characteristic size
-     *  
-     * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
-     * the mean distance, allowing a linear update of this quantity on each step. 
-     * 
+     *
+     * The size of simplex is calculated as the RMS distance of each vertex from the center rather than
+     * the mean distance, allowing a linear update of this quantity on each step.
+     *
      * \returns DataType Computed characteristic size
      */
     DataType computeSize();

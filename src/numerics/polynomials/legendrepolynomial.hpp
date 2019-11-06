@@ -1,6 +1,15 @@
 #ifndef UMUQ_LEGENDREPOLYNOMIAL_H
 #define UMUQ_LEGENDREPOLYNOMIAL_H
 
+#include "core/core.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <type_traits>
+#include <utility>
+
 namespace umuq
 {
 
@@ -10,89 +19,89 @@ inline namespace polynomials
 /*! \class LegendrePolynomial
  * \ingroup Polynomials_Module
  *
- * \brief Legendre Polynomials 
- * 
- * \tparam RealType Floating-point data type 
- * 
+ * \brief Legendre Polynomials
+ *
+ * \tparam RealType Floating-point data type
+ *
  * Legendre Polynomials are the polynomial solutions \f$ P_n(x) \f$ to the Legendre's differential equation<br>
- * 
+ *
  * \f$ \frac{d}{dx} \left[(1-x^2)\frac{dP_n(x)}{dx}\right]+n(n+1)P_n(x)=0, \f$ <br>
- * 
+ *
  * with integer parameter \f$ n \ge 0\f$ and with the convention:<br>
- * 
- * \f$ 
+ *
+ * \f$
  * \begin{align}
  * \nonumber P_n(1) =& 1 \\
  * \nonumber P_n(-1) =& (-1)^n \\
- * \nonumber | P_n(x) | <=& 1, ~x \in [-1, 1]. 
+ * \nonumber | P_n(x) | <=& 1, ~x \in [-1, 1].
  * \end{align}
  * \f$
- * 
- * The n zeroes of \f$ P_n(x) \f$ are the abscissas used for Gauss-Legendre quadrature of 
+ *
+ * The n zeroes of \f$ P_n(x) \f$ are the abscissas used for Gauss-Legendre quadrature of
  * the integral of a function \f$ \int{f(x)dx} \f$ with weight function 1 over the interval \f$ [-1,1]. \f$
- * 
+ *
  * The Legendre polynomials are orthogonal under the inner product defined as integration from -1 to 1: <br>
- * 
+ *
  * \f$
- * \begin{align} 
+ * \begin{align}
  * \nonumber \int_{-1}^{1}{P_i(x)P_j(x)} dX =&~~0  &~\text{if}~ i \neq j \\
- * \nonumber                                =& \frac{2}{2i+1} &~\text{if}~ i = j. 
+ * \nonumber                                =& \frac{2}{2i+1} &~\text{if}~ i = j.
  * \end{align}
  * \f$
- * 
+ *
  * Except for \f$ P_0(x), \f$ the integral of \f$ P_i(x) \f$ from -1 to 1 is 0.
- * 
+ *
  * A function \f$ f(x) \f$ defined on \f$ [-1,1] \f$ may be approximated by the series <br>
- * 
- * \f$ C_0 P_0(x) + C_1 P_1(x) + \cdots + C_n P_n(x) \f$ 
- * 
+ *
+ * \f$ C_0 P_0(x) + C_1 P_1(x) + \cdots + C_n P_n(x) \f$
+ *
  * where <br>
- * 
+ *
  * \f$ C_i = \frac{2i+1}{2} \int_{-1}^{1}{f(x)P_i(x)dx}. \f$
- * 
+ *
  * The formula is:<br>
- * 
+ *
  * \f$ P_n(x) = {(\frac{1}{2})}^n \sum_{m=0}^{n/2} C_n(m) C_{2n-2m}(n) x^{(n-2m)} \f$
- * 
+ *
  * Differential equation: <br>
- * 
+ *
  * \f$ (1-x \times x) {P_n(x)}'' - 2x \times \acute{P_n(x)} + n(n+1) = 0 \f$
- * 
+ *
  * The first few Legendre polynomials are:
- * 
+ *
  * <table>
  * <caption id="multi_row">Legendre polynomials</caption>
- * <tr><th> n <th> \f$ ~~~~~P_n(x) \f$        
- * <tr><td> 0 <td> \f$ (~1~)~~~ \f$ 
- * <tr><td> 1 <td> \f$ (~1~x~)~~~ \f$ 
- * <tr><td> 2 <td> \f$ (~3~x^2~-~~~~~1~)/2~ \f$ 
- * <tr><td> 3 <td> \f$ (~5~x^3~-~~~~~3~x~)/2~ \f$ 
- * <tr><td> 4 <td> \f$ (~35~x^4~-~~~~30~x^2~+~~~~3~)/8~ \f$ 
- * <tr><td> 5 <td> \f$ (~63~x^5~-~~~~70~x^3~+~~~~15~x~)/8~ \f$ 
- * <tr><td> 6 <td> \f$ (~231~x^6~-~~~315~x^4~+~~~105~x^2~-~~~~~5~)/16 \f$ 
- * <tr><td> 7 <td> \f$ (~429~x^7~-~~~693~x^5~+~~~315~x^3~-~~~~35~x)/16 \f$ 
+ * <tr><th> n <th> \f$ ~~~~~P_n(x) \f$
+ * <tr><td> 0 <td> \f$ (~1~)~~~ \f$
+ * <tr><td> 1 <td> \f$ (~1~x~)~~~ \f$
+ * <tr><td> 2 <td> \f$ (~3~x^2~-~~~~~1~)/2~ \f$
+ * <tr><td> 3 <td> \f$ (~5~x^3~-~~~~~3~x~)/2~ \f$
+ * <tr><td> 4 <td> \f$ (~35~x^4~-~~~~30~x^2~+~~~~3~)/8~ \f$
+ * <tr><td> 5 <td> \f$ (~63~x^5~-~~~~70~x^3~+~~~~15~x~)/8~ \f$
+ * <tr><td> 6 <td> \f$ (~231~x^6~-~~~315~x^4~+~~~105~x^2~-~~~~~5~)/16 \f$
+ * <tr><td> 7 <td> \f$ (~429~x^7~-~~~693~x^5~+~~~315~x^3~-~~~~35~x)/16 \f$
  * <tr>
  * </table>
- * 
+ *
  * Recursion:<br>
- * 
- * \f$ 
+ *
+ * \f$
  * \begin{align}
  * \nonumber P_0(x) =& 1 \\
  * \nonumber P_1(x) =& x \\
  * \nonumber P_n(x) =& \frac{(2n-1)~x}{n} P_{n-1}(x)-\frac{(n-1)}{n} P_{n-2}(x)
  * \end{align}
  * \f$
- * 
+ *
  * Reference:<br>
  * https://en.wikipedia.org/wiki/Legendre_polynomials
  *
  * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomials::polynomial
  *
  * A Legendre monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ P_n(x) \f$:<br>
- * 
+ *
  * \f$  P_0(x), P_1(x), P_2(x), P_3(x), \cdots, P_r(x) \f$<br>
- * 
+ *
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Legendre monomial.
  */
 template <typename RealType>
@@ -101,15 +110,15 @@ class LegendrePolynomial : public polynomialBase<RealType>
   public:
     /*!
      * \brief Construct a new Legendre Polynomial object
-     * 
+     *
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
      */
     LegendrePolynomial(int const dim, int const PolynomialOrder = 2);
 
-    /*! 
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Legendre monomials in a d dimensional space, with total degree \b r.
-     *   
+     *
      * For example: <br>
      * \verbatim
      *       d = 2
@@ -125,7 +134,7 @@ class LegendrePolynomial : public polynomialBase<RealType>
      *       monomialBasis_(d=2,r=2)   = {1,   P_1(x), P_1(y), P_2(x), P_1(x)P_1(y),  P_2(y)}
      *                           alpha = {0,0,   1,0,  0,1,      2,0,      1,1,       0,2}
      *
-     * 
+     *
      *       d = 3
      *       r = 2
      *
@@ -146,75 +155,75 @@ class LegendrePolynomial : public polynomialBase<RealType>
      */
     int *monomialBasis();
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x       The coordinates of the evaluation points
      * \param  value   The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns The size of the monomial array
      */
     int monomialValue(RealType const *x, RealType *&value);
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x       The coordinates of the evaluation points
      * \param  value   The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns The size of the monomial array
      */
     int monomialValue(RealType const *x, std::vector<RealType> &value);
 
     /*!
-     * \brief Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
-     * 
-     * Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated. 
+     * \brief Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated.
+     *
+     * Computes the next Legendre polynomial of the degree n and argument x from the last two polynomial calculated.
      * Recurrence relation for legendre P and Q polynomials.
-     * 
-     * \param n     The degree of the last polynomial calculated. 
+     *
+     * \param n     The degree of the last polynomial calculated.
      * \param x     The abscissa value.
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
-     * 
+     *
      * \returns RealType The computed Legendre Polynomial
      */
     inline RealType legendre_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1);
 
     /*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n       The degree of the Legendre polynomial \f$ P_n(x).\f$ 
+     *
+     *
+     * \param n       The degree of the Legendre polynomial \f$ P_n(x).\f$
      * \param x       The abscissa value.
      * \param second  Request for the value of the Legendre polynomial that is the second solution to the Legendre differential equation.
-     * 
-     * \returns RealType The Legendre polynomial of the degree n \f$ P_n(x)~\text{or}~Q_n(x).\f$ 
+     *
+     * \returns RealType The Legendre polynomial of the degree n \f$ P_n(x)~\text{or}~Q_n(x).\f$
      */
     RealType legendre(int const n, RealType const x, bool const second = false);
 
     /*!
      * \brief Implement Legendre P and Q polynomials via recurrence.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n       The degree of the Legendre polynomial \f$ P_n(x).\f$ 
+     *
+     *
+     * \param n       The degree of the Legendre polynomial \f$ P_n(x).\f$
      * \param x       The abscissa value.
      * \param second  Request for the value of the Legendre polynomial that is the second solution to the Legendre differential equation.
-     * 
+     *
      * \returns RealType* All the Legendre polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
     RealType *legendre_array(int const n, RealType const x, bool const second = false);
@@ -222,14 +231,14 @@ class LegendrePolynomial : public polynomialBase<RealType>
   private:
     /*!
      * \brief Delete a LegendrePolynomial object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     LegendrePolynomial(LegendrePolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a LegendrePolynomial object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     LegendrePolynomial<RealType> &operator=(LegendrePolynomial<RealType> const &) = delete;

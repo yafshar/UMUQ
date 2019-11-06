@@ -1,6 +1,16 @@
 #ifndef UMUQ_SIMPLEXNM2RND_H
 #define UMUQ_SIMPLEXNM2RND_H
 
+#include "core/core.hpp"
+#include "numerics/function/functionminimizer.hpp"
+
+#include <cmath>
+#include <cstddef>
+
+#include <vector>
+#include <algorithm>
+#include <iterator>
+
 namespace umuq
 {
 
@@ -9,32 +19,32 @@ inline namespace multimin
 
 /*! \class simplexNM2Rnd
  * \ingroup Multimin_Module
- * 
+ *
  * \brief The Simplex method of Nelder and Mead, also known as the polytope search algorithm.
  * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
  * around the starting point x to initialize the simplex.
- *  
+ *
  * \tparam DataType Data type
- * 
- * Reference:<br> 
+ *
+ * Reference:<br>
  * Nelder, J.A., Mead, R., Computer Journal 7 (1965) pp. 308-313.
- * 
+ *
  * This implementation uses \f$ n+1 \f$ corner points in the simplex.
  */
 template <typename DataType>
 class simplexNM2Rnd : public functionMinimizer<DataType>
 {
-  public:
+public:
     /*!
      * \brief Construct a new simplex N M2 Rnd object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit simplexNM2Rnd(const char *Name = "simplexNM2Rnd");
 
     /*!
      * \brief Destroy the simplexNM2Rnd object
-     * 
+     *
      */
     ~simplexNM2Rnd();
 
@@ -49,18 +59,18 @@ class simplexNM2Rnd : public functionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
+     *
      * It uses a randomly-oriented set of basis vectors instead of the fixed coordinate axes
      * around the starting point x to initialize the simplex.<br>
-     * The final dimensions of the simplex are scaled along the coordinate axes by the 
+     * The final dimensions of the simplex are scaled along the coordinate axes by the
      * vector step_size. <br>
-     * The randomization uses a simple deterministic generator so that repeated calls to 
-     * functionMinimizer set for a given solver object will vary the orientation in a 
+     * The randomization uses a simple deterministic generator so that repeated calls to
+     * functionMinimizer set for a given solver object will vary the orientation in a
      * well-defined way.
-     * 
+     *
      * Reference:<br>
      * https://www.gnu.org/software/gsl/doc/html/multimin.html
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool init();
@@ -76,78 +86,78 @@ class simplexNM2Rnd : public functionMinimizer<DataType>
     bool iterate();
 
     /*!
-     * \brief Moves a simplex corner scaled by coeff 
-     * 
+     * \brief Moves a simplex corner scaled by coeff
+     *
      * (negative value represents mirroring by the middle point of the "other" corner points)
      * and gives new corner in X and function value at X as a return value
-     * 
+     *
      * \param coeff   Scaling coefficient
      * \param corner  Corner point
      * \param X       Input point
-     * 
+     *
      * \returns DataType Function value at X
      */
     DataType tryCornerMove(DataType const coeff, int const corner, std::vector<DataType> &X);
 
     /*!
-     * \brief 
-     * 
+     * \brief
+     *
      * \param i    Index number
-     * \param X    Input point 
-     * \param val  
+     * \param X    Input point
+     * \param val
      */
     void updatePoint(int const i, std::vector<DataType> const &X, DataType const val);
 
     /*!
      * \brief Function contracts the simplex in respect to best valued corner.
-     * 
+     *
      * All corners besides the best corner are moved. The X vector is simply work space here
      * (This function is rarely called in practice, since it is the last choice, hence not optimized)
-     * 
-     * 
+     *
+     *
      * \param best   Best corner
      * \param X      Input point
-     * 
-     * \returns true 
+     *
+     * \returns true
      * \returns false If the iteration encounters an unexpected problem
      */
     bool contractByBest(int const best, std::vector<DataType> &X);
 
     /*!
      * \brief Compute the center of the simplex
-     * 
+     *
      * \returns false If the iteration encounters an unexpected problem
      */
     bool computeCenter();
 
     /*!
      * \brief Compute the specific characteristic size
-     *  
-     * The size of simplex is calculated as the RMS distance of each vertex from the center rather than 
-     * the mean distance, allowing a linear update of this quantity on each step. 
-     * 
+     *
+     * The size of simplex is calculated as the RMS distance of each vertex from the center rather than
+     * the mean distance, allowing a linear update of this quantity on each step.
+     *
      * \returns Computed characteristic size
      */
     DataType computeSize();
 
-  private:
-    /*! 
+private:
+    /*!
      * \class submatrix
-     * 
+     *
      * Returns memory id of an element in a matrix view of a submatrix of the matrix x1.
-     * The upper-left element of the submatrix is the element (k1,k2) of the original 
+     * The upper-left element of the submatrix is the element (k1,k2) of the original
      * matrix. The submatrix has n1 rows and n2 columns.
      * The physical number of columns in memory given by NC is unchanged.
      * Mathematically, the (i,j)-th element of the new matrix is given by,<br>
      * \f$ ID(i, j)_{(NC, k1, k2, n1, n2)} = [(k1 * NC + k2) + i*NC + j ] \f$
-     * 
+     *
      */
     class submatrix
     {
-      public:
+    public:
         /*!
          * \brief Construct a new submatrix object
-         * 
+         *
          * \param NR  number of rows in the original matrix
          * \param NC_ number of columns in the original matrix
          * \param k1_ row number of the upper-left element of the submatrix
@@ -159,12 +169,12 @@ class simplexNM2Rnd : public functionMinimizer<DataType>
 
         /*!
          * \brief memory ID of an element in a matrix view of a submatrix of the matrix x1
-         * 
+         *
          * \Returns memory id of an element in a matrix view of a submatrix of the matrix x1
          */
         inline std::ptrdiff_t ID(int i, int j) const;
 
-      private:
+    private:
         int NC;
         int k1;
         int k2;
@@ -172,12 +182,12 @@ class simplexNM2Rnd : public functionMinimizer<DataType>
         int n2;
     };
 
-  private:
+private:
     /*!
      * \brief Uniform RNG
-     * 
-     * \param seed Seed to initialize the PRNG 
-     * 
+     *
+     * \param seed Seed to initialize the PRNG
+     *
      * \returns DataType Uniform random number
      */
     inline DataType ran_unif(unsigned long *seed);
@@ -187,7 +197,7 @@ class simplexNM2Rnd : public functionMinimizer<DataType>
      */
     inline DataType *operator[](std::size_t const index) const;
 
-  private:
+private:
     //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
     std::vector<DataType> x1;
 
@@ -700,10 +710,10 @@ simplexNM2Rnd<DataType>::submatrix::submatrix(int NR, int NC_, int k1_, int k2_,
 {
     if (k1_ > NR || k2_ > NC_ || n1_ > NR || n2_ > NC_)
     {
-        std::cerr << "Submatrix of size   : " << n1_ << " x " << n2_ << std::endl;
-        std::cerr << "From matrix of size : " << NR << " x " << NC_ << std::endl;
-        std::cerr << "Start index of      : " << k1_ << ", " << k2_ << std::endl;
-        std::cerr << "  " << std::endl;
+        UMUQMSG("Submatrix of size   : ", n1_, " x ", n2_);
+        UMUQMSG("From matrix of size : ", NR, " x ", NC_);
+        UMUQMSG("Start index of      : ", k1_, ", ", k2_);
+        UMUQMSG("");
         UMUQFAIL("Input data overruns the end of the original matrix!");
     }
     NC = NC_;

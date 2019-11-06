@@ -1,7 +1,16 @@
 #ifndef UMUQ_POLYNOMIALBASE_H
 #define UMUQ_POLYNOMIALBASE_H
 
-#include "../factorial.hpp"
+#include "core/core.hpp"
+#include "numerics/factorial.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <type_traits>
+#include <utility>
+#include <numeric>
+#include <memory>
 
 namespace umuq
 {
@@ -15,30 +24,30 @@ inline namespace polynomials
  * \brief This is the base class for different multivariate monomials with the degree of \b r in a space of \b d dimensions.
  * \sa umuq::polynomials::polynomial
  *
- * \tparam DataType Data type 
- * 
- * In %UMUQ we consider a monomial, as a power product, which is a product of powers of variables 
+ * \tparam DataType Data type
+ *
+ * In %UMUQ we consider a monomial, as a power product, which is a product of powers of variables
  * with nonnegative integer exponents.<br>
- * 
- * A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) 
+ *
+ * A (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer)
  * power of \f$ x \f$:<br>
- * 
+ *
  * \f$  1, x, x^2, x^3, \cdots, x^r \f$<br>
- * 
+ *
  * The highest exponent of \f$ x \f$ is termed the \b degree of the monomial.<br>
- * If several variables are considered, say, \f$ x,~y,~\text{and}~z \f$ then each can be given an exponent, 
- * so that any monomial is of the form \f$ x^ay^bz^c\f$ with \f$ a,~b,~\text{and}~c \f$ non-negative integers 
- * (taking note that any exponent 0 makes the corresponding factor equal to 1). 
+ * If several variables are considered, say, \f$ x,~y,~\text{and}~z \f$ then each can be given an exponent,
+ * so that any monomial is of the form \f$ x^ay^bz^c\f$ with \f$ a,~b,~\text{and}~c \f$ non-negative integers
+ * (taking note that any exponent 0 makes the corresponding factor equal to 1).
  * \sa umuq::polynomials::polynomial
- * 
- * In %UMUQ, we replace the monomials by polynomials of different types, especially when polynomial \f$ P_n(x) \f$ 
+ *
+ * In %UMUQ, we replace the monomials by polynomials of different types, especially when polynomial \f$ P_n(x) \f$
  * satisfies a recurrence relation. \sa umuq::polynomials::PolynomialTypes.
- * 
- * This way, a (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ can simply be replacd by a 
+ *
+ * This way, a (univariate) monomial in \f$ 1 \f$ variable \f$ x \f$ can simply be replacd by a
  * (univariate) polynomial of \f$ P_n(x) \f$:
- * 
+ *
  * \f$ P_0(x), P_1(x), P_2(x), P_3(x), \cdots, P_r(x) \f$
- * 
+ *
  * If we replace the monomials in the Vandermonde matrix by different polynomials, the resulting matrix is a
  * Vandermonde-like matrix.
  */
@@ -48,117 +57,117 @@ class polynomialBase
   public:
 	/*!
 	 * \brief Construct a new polynomialBase object
-	 * 
+	 *
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of r in a space of dim dimensions is 2)
 	 */
 	polynomialBase(int const dim, int const PolynomialOrder = 2);
 
-	/*! 
+	/*!
      * \brief Reset the dimension of the problem and rhe desired order
-     * 
+     *
      * Reset the dimension and order values to the new ones
-     * 
+     *
      * \param dim              New Dimension
      * \param PolynomialOrder  New Order (the default order or degree of \b r in a space of \b dim dimensions is 2)
      */
 	void reset(int const dim, int const PolynomialOrder = 2);
 
-	/*! 
-     * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient) 
+	/*!
+     * \brief Computes the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient)
 	 * \f$ C(n, k) \f$.
      *
-     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ x ^ k \f$ in 
+     * -# A binomial coefficient \f$ C(n, k) \f$ can be defined as the coefficient of \f$ x ^ k \f$ in
 	 * the expansion of \f$ (1 + x) ^ n. \f$ <br>
-     * -# A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order, 
+     * -# A binomial coefficient \f$ C(n, k) \f$ also gives the number of ways, disregarding order,
 	 * that k objects can be chosen from among n objects; <br>
      * More formally, the number of k-element subsets (or k-combinations) of an n-element set.
-     * 
+     *
      * The formula used is:
-	 * 
-     * \f$ C(n, k) = \frac{n!}{ n! (n-k)! } \f$ 
-     * 
+	 *
+     * \f$ C(n, k) = \frac{n!}{ n! (n-k)! } \f$
+     *
      * \param n  Input parameter
      * \param k  Input parameter
-     * 
+     *
      * \returns The binomial coefficient \f$ C(n, k) \f$
      */
 	int binomialCoefficient(int const n, int const k);
 
-	/*! 
+	/*!
      * \brief Here, \f$\alpha=\f$ all the monomials in a \b d dimensional space, with total degree \b r.
      *
      * \returns A pointer to monomial sequence
      */
 	virtual int *monomialBasis();
 
-	/*! 
+	/*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x      The abscissa values. (The coordinates of the evaluation points)
      * \param  value  The (monomial value) array value of the monomial at point x
-	 *  
+	 *
      * \returns The size of the monomial array
      */
 	virtual int monomialValue(DataType const *x, DataType *&value);
 
-	/*! 
+	/*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x      The abscissa values. (The coordinates of the evaluation points)
      * \param  value  The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns The size of the monomial array
      */
 	virtual int monomialValue(DataType const *x, std::vector<DataType> &value);
 
 	/*!
 	 * \brief Evaluates monomial derivatives at origin.
-	 * 
+	 *
 	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
 	 *               Notation for partial derivatives:<br>
 	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
 	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
-	 * 
+	 *
 	 * \returns int The size of the monomial array
 	 */
 	virtual int monomialDerivative(int const *beta, DataType *&value);
 
 	/*!
 	 * \brief Evaluates monomial derivatives at origin.
-	 * 
+	 *
 	 * \param beta   In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
 	 *               Notation for partial derivatives:<br>
 	 *               \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
 	 * \param value  The (monomial derivative value) array value of the monomial derivatives at zero point
-	 * 
+	 *
 	 * \returns int The size of the monomial array
 	 */
 	virtual int monomialDerivative(int const *beta, std::vector<DataType> &value);
 
 	/*!
      * \brief Get the monomial size
-     * 
+     *
      * \return Monomial size
      */
 	inline int monomialsize() const;
 
 	/*!
      * \brief Get the dimension
-     * 
+     *
      * \return Dimension
      */
 	inline int dim() const;
 
 	/*!
-     * \brief Polynomial order 
-     * 
+     * \brief Polynomial order
+     *
      * \return Polynomial order
      */
 	inline int order() const;
 
   protected:
-	/*! 
+	/*!
      * \brief Use a reverse lexicographic order for next monomial, degrees between 0 and \b r
      *  all monomials in a \b d dimensional space, with order of accuracy \b r.
      *
@@ -169,14 +178,14 @@ class polynomialBase
   protected:
 	/*!
      * \brief Delete a polynomialBase object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
 	polynomialBase(polynomialBase<DataType> const &) = delete;
 
 	/*!
      * \brief Delete a polynomialBase object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
 	polynomialBase<DataType> &operator=(polynomialBase<DataType> const &) = delete;

@@ -1,6 +1,14 @@
 #ifndef UMUQ_PSRANDOM_MULTIVARIATENORMALDISTRIBUTION_H
 #define UMUQ_PSRANDOM_MULTIVARIATENORMALDISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
+#include "numerics/eigenlib.hpp"
+
+#include <random>
+#include <type_traits>
+#include <utility>
+
 namespace umuq
 {
 
@@ -9,20 +17,20 @@ namespace randomdist
 
 /*! \class multivariateNormalDistribution
  * \ingroup Random_Module
- * 
+ *
  * \brief Multivariate normal distribution
- * 
- * \tparam RealType Floating-point data type 
- * 
- * The [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution) of a 
+ *
+ * \tparam RealType Floating-point data type
+ *
+ * The [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution) of a
  * \f$n \text{-dimensional}\f$ random vector \f$ {\mathbf X} = \left[X_1, \cdots, X_n \right]^T \f$
  * can be written in the following notation:<br>
  * \f$ {\mathbf X} \sim \mathcal{N} (\mu, \Sigma) \f$<br>
  * with \f$n \text{-dimensional}\f$ mean vector <br>
  * \f$ \mu = {\mathbf E}[{\mathbf X}] = [{\mathbf E}[X_1], \cdots, {\mathbf E}[X_n]]^T, \f$
  * and \f$ n \times n \f$ covariance matrix <br>
- * \f$ \Sigma= {\mathbf E}[({\mathbf X}-\mu)({\mathbf X}-\mu)^T] = [\text{Covariance}[X_i, X_j]; 1\le i,j \le n] \f$ 
- * 
+ * \f$ \Sigma= {\mathbf E}[({\mathbf X}-\mu)({\mathbf X}-\mu)^T] = [\text{Covariance}[X_i, X_j]; 1\le i,j \le n] \f$
+ *
  * Reference:<br>
  * https://en.wikipedia.org/wiki/Multivariate_normal_distribution
  */
@@ -32,7 +40,7 @@ class multivariateNormalDistribution
  public:
    /*!
     * \brief Construct a new multivariateNormalDistribution object
-    * 
+    *
     * \param Mean        \f$ n \text{-dimensional}\f$ mean vector
     * \param Covariance  \f$ n \times n \f$ covariance matrix
     */
@@ -40,7 +48,7 @@ class multivariateNormalDistribution
 
    /*!
     * \brief Construct a new multivariateNormalDistribution object
-    * 
+    *
     * \param Mean        \f$ n \text{-dimensional}\f$ mean vector
     * \param Covariance  \f$ n \times n \f$ covariance matrix
     * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)
@@ -49,14 +57,14 @@ class multivariateNormalDistribution
 
    /*!
     * \brief Construct a new multivariateNormalDistribution object
-    * 
+    *
     * \param Covariance  \f$ n \times n \f$ covariance matrix
     */
    explicit multivariateNormalDistribution(EMatrixX<RealType> const &Covariance);
 
    /*!
     * \brief Construct a new multivariateNormalDistribution object
-    * 
+    *
     * \param Covariance  \f$ n \times n \f$ covariance matrix
     * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)
     */
@@ -64,24 +72,24 @@ class multivariateNormalDistribution
 
    /*!
     * \brief Construct a new multivariateNormalDistribution object
-    * 
+    *
     * \param n  Vector size (\f$n \text{-dimensional}\f$ vector)
     */
    explicit multivariateNormalDistribution(int const n);
 
    /*!
-    * \brief Move constructor, construct a new multivariateNormalDistribution object 
-    * 
+    * \brief Move constructor, construct a new multivariateNormalDistribution object
+    *
     * \param other multivariateNormalDistribution object
     */
    multivariateNormalDistribution(multivariateNormalDistribution<RealType> &&other);
 
    /*!
     * \brief Move assignment operator
-    * 
+    *
     * \param other  multivariateNormalDistribution object
-    * 
-    * \return multivariateNormalDistribution& 
+    *
+    * \return multivariateNormalDistribution&
     */
    multivariateNormalDistribution<RealType> &operator=(multivariateNormalDistribution<RealType> &&other);
 
@@ -101,23 +109,23 @@ class multivariateNormalDistribution
    inline EVectorX<RealType> dist();
 
    /*!
-    * \brief Fill the array of dataPoints with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
-    * 
-    * \param dataPoints          Array of data points, where each point is a \f$n \text{-dimensional}\f$ 
+    * \brief Fill the array of dataPoints with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$
+    *
+    * \param dataPoints          Array of data points, where each point is a \f$n \text{-dimensional}\f$
     *                            point (dataPointDimension) and we have nDataPoints of them.
-    *                            On return each data point is a random sample according to the multivariate 
-    *                            normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
+    *                            On return each data point is a random sample according to the multivariate
+    *                            normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$
     * \param dataPointDimension  Data point dimension (\f$n \text{-dimensional}\f$ point)
     * \param nDataPoints         Number of data points
     */
    inline void dist(RealType *dataPoints, int const dataPointDimension, int const nDataPoints);
 
    /*!
-    * \brief Fill the eMatrix with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$ 
-    * 
+    * \brief Fill the eMatrix with random samples from a multivariate normal distribution \f$ \mathcal{N} (\mu, \Sigma) \f$
+    *
     * \param eMatrix  Matrix of random numbers, where each column is an \f$n \text{-dimensional}\f$ point
     *                 and there are number of columns of the eMatrix points. <br>
-    *                 On return each column is a random sample according to the multivariate normal 
+    *                 On return each column is a random sample according to the multivariate normal
     *                 distribution \f$ \mathcal{N} (\mu, \Sigma) \f$
     */
    inline void dist(EMatrixX<RealType> &eMatrix);
@@ -125,14 +133,14 @@ class multivariateNormalDistribution
  private:
    /*!
     * \brief Delete a multivariateNormalDistribution object copy construction
-    * 
+    *
     * Avoiding implicit generation of the copy constructor.
     */
    multivariateNormalDistribution(multivariateNormalDistribution<RealType> const &) = delete;
 
    /*!
     * \brief Delete a multivariateNormalDistribution object assignment
-    * 
+    *
     * Avoiding implicit copy assignment.
     */
    multivariateNormalDistribution<RealType> &operator=(multivariateNormalDistribution<RealType> const &) = delete;

@@ -1,6 +1,16 @@
 #ifndef UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 #define UMUQ_MULTIVARIATEGAUSSIANDISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "numerics/function/densityfunction.hpp"
+
+#include <cmath>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <functional>
+
 namespace umuq
 {
 
@@ -9,28 +19,28 @@ inline namespace density
 
 /*! \class multivariateGaussianDistribution
  * \ingroup Density_Module
- * 
+ *
  * \brief The Multivariate Gaussian Distribution
- * 
+ *
  * \tparam RealType     Data type
  * \tparam FunctionType Function type
- * 
- * The Multivariate Gaussian Distribution is a generalization of the one-dimensional (univariate) Gaussian 
- * distribution to higher dimensions. One definition is that a random vector is said to be k-variate normally 
+ *
+ * The Multivariate Gaussian Distribution is a generalization of the one-dimensional (univariate) Gaussian
+ * distribution to higher dimensions. One definition is that a random vector is said to be k-variate normally
  * distributed if every linear combination of its k components has a univariate Gaussian distribution.
- * 
+ *
  * Reference:<br>
  * https://en.wikipedia.org/wiki/Multivariate_normal_distribution
- * 
+ *
  * This class provides probability density \f$ p(x) \f$ and it's Log at x using mean vector Mean
  * and variance-covariance matrix Covariance. <br>
  * using:<br>
- * 
+ *
  * \f$
  * p(x_1,\cdots,x_k) = \frac{1}{\sqrt{(2 \pi)^k |\Sigma|}} \exp \left(-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)\right).
  * \f$
- * 
- * This class also provides random values x, distributed according to the Multivariate Gaussian Distribution probability 
+ *
+ * This class also provides random values x, distributed according to the Multivariate Gaussian Distribution probability
  * density function. \sa sample
  */
 template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
@@ -47,7 +57,7 @@ class multivariateGaussianDistribution : public densityFunction<RealType, Functi
 
     /*!
      * \brief Construct a new multivariateGaussianDistribution object
-     * 
+     *
      * \param Mean        \f$ n \text{-dimensional}\f$ mean vector
      * \param Covariance  \f$ n \times n \f$ covariance matrix
      * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)
@@ -63,7 +73,7 @@ class multivariateGaussianDistribution : public densityFunction<RealType, Functi
 
     /*!
      * \brief Construct a new multivariateGaussianDistribution object (default mean = 0)
-     * 
+     *
      * \param Covariance  \f$ n \times n \f$ covariance matrix
      * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)
      */
@@ -71,33 +81,33 @@ class multivariateGaussianDistribution : public densityFunction<RealType, Functi
 
     /*!
      * \brief Construct a new multivariateGaussianDistribution object (default mean = 0, covariance=I)
-     * 
-     * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)     
+     *
+     * \param n           Vector size (\f$n \text{-dimensional}\f$ vector)
      */
     explicit multivariateGaussianDistribution(int const n);
 
     /*!
-     * \brief Destroy the multinomial distribution object 
+     * \brief Destroy the multinomial distribution object
      */
     ~multivariateGaussianDistribution();
 
     /*!
      * \brief Multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
-     * 
+     *
      * \param x  Input vector of size \f$ n \f$
-     * 
-     * \returns Density function value 
+     *
+     * \returns Density function value
      */
     inline RealType multivariategaussianDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of multivariate Gaussian distribution density function
      * Computes the probability from the Multivariate Gaussian distribution
-     * 
+     *
      * \param x  Input vector of size \f$ n \f$
-     * 
-     * \returns Log of density function value 
+     *
+     * \returns Log of density function value
      */
     inline RealType multivariategaussianDistribution_lf(RealType const *x);
 
@@ -141,7 +151,7 @@ class multivariateGaussianDistribution : public densityFunction<RealType, Functi
     /*!
      * \brief Create samples of the Gaussian Distribution object
      *
-     * \param x  Matrix of random samples 
+     * \param x  Matrix of random samples
      */
     inline void sample(EMatrixX<RealType> &x);
 

@@ -1,8 +1,11 @@
 #ifndef UMUQ_LINEARFUNCTIONWRAPPER_H
 #define UMUQ_LINEARFUNCTIONWRAPPER_H
 
+#include "core/core.hpp"
 #include "datatype/functiontype.hpp"
 #include "umuqdifferentiablefunction.hpp"
+
+#include <algorithm>
 
 namespace umuq
 {
@@ -12,9 +15,9 @@ inline namespace multimin
 
 /*! \class linearFunctionWrapper
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Wrapper for an external Multidimensional function
- *  
+ *
  * \tparam DataType Data type
  */
 template <typename DataType>
@@ -23,84 +26,84 @@ class linearFunctionWrapper
   public:
     /*!
      * \brief Construct a new linear Function Wrapper object
-     * 
+     *
      */
     linearFunctionWrapper();
 
     /*!
      * \brief Destroy the linear Function Wrapper object
-     * 
+     *
      */
     ~linearFunctionWrapper();
 
     /*!
      * \brief Linear function
-     * 
+     *
      * \param alpha Input data
-     * 
-     * \return DataType 
+     *
+     * \return DataType
      */
     DataType f(DataType const alpha);
 
     /*!
-     * \brief 
-     * 
-     * \param alpha 
+     * \brief
+     *
+     * \param alpha
      * \param DF
-     *  
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool df(DataType const alpha, DataType *DF);
 
     /*!
-     * \brief 
-     * 
-     * \param alpha 
-     * \param F 
+     * \brief
+     *
+     * \param alpha
+     * \param F
      * \param DF
-     *  
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool fdf(DataType const alpha, DataType *F, DataType *DF);
 
     /*!
      * \brief Set the fun object to use the external Multidimensional function
-     * 
+     *
      * \param umFun  Multidimensional function
-     *  
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool set(umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> &umFun);
 
     /*!
-     * \brief 
-     * 
-     * \param n  
-     * \param X 
-     * \param F 
-     * \param G 
-     * \param P 
-     * \param X_alpha 
-     * \param G_alpha 
+     * \brief
+     *
+     * \param n
+     * \param X
+     * \param F
+     * \param G
+     * \param P
+     * \param X_alpha
+     * \param G_alpha
      */
     void prepare(int const n, DataType const *X, DataType const F, DataType const *G, DataType const *P, DataType *X_alpha, DataType *G_alpha);
 
     /*!
-     * \brief 
-     * 
-     * \param alpha 
-     * \param xOut 
-     * \param f 
-     * \param gOut 
+     * \brief
+     *
+     * \param alpha
+     * \param xOut
+     * \param f
+     * \param gOut
      */
     void updatePosition(DataType const alpha, DataType *xOut, DataType *f, DataType *gOut);
 
     /*!
-     * \brief 
-     * 
+     * \brief
+     *
      */
     void changeDirection();
 
@@ -112,25 +115,25 @@ class linearFunctionWrapper
 
     /*!
      * \brief Calculate the slope along the direction p
-     * 
-     * \return DataType 
+     *
+     * \return DataType
      */
     inline DataType slope();
 
   private:
     /*!
      * \brief Delete a linearFunctionWrapper object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     linearFunctionWrapper(linearFunctionWrapper<DataType> const &) = delete;
 
     /*!
      * \brief Delete a linearFunctionWrapper object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns linearFunctionWrapper<DataType>& 
+     *
+     * \returns linearFunctionWrapper<DataType>&
      */
     linearFunctionWrapper<DataType> &operator=(linearFunctionWrapper<DataType> const &) = delete;
 

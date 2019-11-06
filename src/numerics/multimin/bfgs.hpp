@@ -1,6 +1,14 @@
 #ifndef UMUQ_BFGS_H
 #define UMUQ_BFGS_H
 
+#include "core/core.hpp"
+#include "numerics/function/differentiablefunctionminimizer.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <algorithm>
+
 namespace umuq
 {
 
@@ -9,30 +17,30 @@ inline namespace multimin
 
 /*! \class bfgs
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
- * 
- * This is a quasi-Newton method which builds up an approximation to the second derivatives of the 
- * function f using the difference between successive gradient vectors. 
- * By combining the first and second derivatives the algorithm is able to take Newton-type steps 
+ *
+ * This is a quasi-Newton method which builds up an approximation to the second derivatives of the
+ * function f using the difference between successive gradient vectors.
+ * By combining the first and second derivatives the algorithm is able to take Newton-type steps
  * towards the function minimum, assuming quadratic behavior in that region.
- * 
+ *
  * \tparam DataType  Data type
  */
 template <typename DataType>
 class bfgs : public differentiableFunctionMinimizer<DataType>
 {
-  public:
+public:
     /*!
      * \brief Construct a new bfgs object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit bfgs(char const *Name = "bfgs");
 
     /*!
      * \brief Destroy the bfgs object
-     * 
+     *
      */
     ~bfgs();
 
@@ -47,9 +55,9 @@ class bfgs : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool init();
 
@@ -65,13 +73,13 @@ class bfgs : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Restart the iterator
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     inline bool restart();
 
-  private:
+private:
     //! Iteration
     int iter;
 
@@ -201,7 +209,7 @@ bool bfgs<DataType>::iterate()
     }
 
 #ifdef DEBUG
-    std::cout << "Got stepc = " << stepc << " fc = " << fc << std::endl;
+    UMUQMSG("Got stepc = ", stepc, " fc = ", fc);
 #endif
 
     // Do a line minimisation in the region (xa,fa) (xc,fc) to find an
@@ -324,7 +332,7 @@ bool bfgs<DataType>::iterate()
     }
 
 #ifdef DEBUG
-    std::cout << "updated directions" << std::endl;
+    UMUQMSG("updated directions");
     /*!
      * \todo
      * print vector p and g

@@ -1,6 +1,14 @@
 #ifndef UMUQ_HERMITEPOLYNOMIAL_H
 #define UMUQ_HERMITEPOLYNOMIAL_H
 
+#include "core/core.hpp"
+
+#include <cstddef>
+
+#include <vector>
+#include <type_traits>
+#include <utility>
+
 namespace umuq
 {
 
@@ -10,38 +18,38 @@ inline namespace polynomials
 /*! \class HermitePolynomial
  * \ingroup Polynomials_Module
  *
- * \brief Hermite Polynomials 
- * 
- * \tparam RealType Floating-point data type 
- * 
+ * \brief Hermite Polynomials
+ *
+ * \tparam RealType Floating-point data type
+ *
  * \f$ H_n(x) \f$ is the physicist's Hermite polynomial of degree \f$ n \f$ and argument \f$ x. \f$
- * 
- * 
+ *
+ *
  * <table>
  * <caption id="multi_row">The first few physicists' Hermite polynomials are</caption>
- * <tr><th> n <th> \f$ ~~~~~H_n(x) \f$        
- * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 1 <td> \f$ ~~2~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 2 <td> \f$ ~~4~x^2~-~~~~2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 3 <td> \f$ ~~8~x^3~-~~~~12~x~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 4 <td> \f$ ~~16~x^4~-~~~48~x^2~+~~~~12~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 5 <td> \f$ ~~32~x^5~-~~~160~x^3~+~~~120~x~~~~~~~~~~~~~ \f$ 
- * <tr><td> 6 <td> \f$ ~~64~x^6~-~~~480~x^4~+~~~720~x^2~-~~~120~~~ \f$ 
- * <tr><td> 7 <td> \f$ ~~128~x^7~-~~1344~x^5~+~~3360~x^3~-~~1680~x \f$ 
+ * <tr><th> n <th> \f$ ~~~~~H_n(x) \f$
+ * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 1 <td> \f$ ~~2~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 2 <td> \f$ ~~4~x^2~-~~~~2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 3 <td> \f$ ~~8~x^3~-~~~~12~x~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 4 <td> \f$ ~~16~x^4~-~~~48~x^2~+~~~~12~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 5 <td> \f$ ~~32~x^5~-~~~160~x^3~+~~~120~x~~~~~~~~~~~~~ \f$
+ * <tr><td> 6 <td> \f$ ~~64~x^6~-~~~480~x^4~+~~~720~x^2~-~~~120~~~ \f$
+ * <tr><td> 7 <td> \f$ ~~128~x^7~-~~1344~x^5~+~~3360~x^3~-~~1680~x \f$
  * <tr>
  * </table>
- * 
- * 
+ *
+ *
  * Reference:<br>
  * https://en.wikipedia.org/wiki/Hermite_polynomials
- * 
- * 
+ *
+ *
  * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomials::polynomial
  *
  * A Hermite monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ H_n(x) \f$:<br>
- * 
+ *
  * \f$  H_0(x), H_1(x), H_2(x), H_3(x), \cdots, H_r(x) \f$<br>
- * 
+ *
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Hermite monomial.
  */
 template <typename RealType>
@@ -50,15 +58,15 @@ class HermitePolynomial : public polynomialBase<RealType>
   public:
     /*!
      * \brief Construct a new Hermite Polynomial object
-     * 
+     *
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
      */
     HermitePolynomial(int const dim, int const PolynomialOrder = 2);
 
-    /*! 
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Hermite monomials in a d dimensional space, with total degree \b r.
-     *   
+     *
      * For example: <br>
      * \verbatim
      *       d = 2
@@ -74,7 +82,7 @@ class HermitePolynomial : public polynomialBase<RealType>
      *       monomialBasis_(d=2,r=2)   = {1,   H_1(x), H_1(y), H_2(x), H_1(x)H_1(y),  H_2(y)}
      *                           alpha = {0,0,   1,0,  0,1,      2,0,      1,1,       0,2}
      *
-     * 
+     *
      *       d = 3
      *       r = 2
      *
@@ -95,73 +103,73 @@ class HermitePolynomial : public polynomialBase<RealType>
      */
     int *monomialBasis();
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x       The coordinates of the evaluation points
      * \param  value   The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns The size of the monomial array
      */
     int monomialValue(RealType const *x, RealType *&value);
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x       The coordinates of the evaluation points
      * \param  value   The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns The size of the monomial array
      */
     int monomialValue(RealType const *x, std::vector<RealType> &value);
 
     /*!
-     * \brief Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated. 
-     * 
-     * Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated. 
+     * \brief Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated.
+     *
+     * Computes the next Hermite polynomial of the degree n and argument x from the last two polynomial calculated.
      * Recurrence relation for Hermite P and Q polynomials.
-     * 
-     * \param n     The degree of the last polynomial calculated. 
+     *
+     * \param n     The degree of the last polynomial calculated.
      * \param x     The abscissa value.
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
-     * 
-     * \returns RealType The computed Hermite Polynomial 
+     *
+     * \returns RealType The computed Hermite Polynomial
      */
     inline RealType hermite_next(int const n, RealType const x, RealType const Pn, RealType const Pnm1);
 
     /*!
      * \brief Implement Hermite polynomials.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
+     *
+     *
+     * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$
      * \param x  The abscissa value.
-     * 
-     * \returns RealType The Hermite polynomial of the degree n of x. 
+     *
+     * \returns RealType The Hermite polynomial of the degree n of x.
      */
     RealType hermite(int const n, RealType const x);
 
     /*!
      * \brief Implement Hermite polynomials.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$ 
+     *
+     *
+     * \param n  The degree of the Hermite polynomial \f$ H_n(x).\f$
      * \param x  The abscissa value.
-     * 
+     *
      * \returns RealType* All the Hermite polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
     RealType *hermite_array(int const n, RealType const x);
@@ -169,14 +177,14 @@ class HermitePolynomial : public polynomialBase<RealType>
   private:
     /*!
      * \brief Delete a HermitePolynomial object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     HermitePolynomial(HermitePolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a HermitePolynomial object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> const &) = delete;

@@ -1,6 +1,18 @@
 #ifndef UMUQ_GAUSSIANDISTRIBUTION_H
 #define UMUQ_GAUSSIANDISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "numerics/function/densityfunction.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <functional>
+
 namespace umuq
 {
 
@@ -9,21 +21,21 @@ inline namespace density
 
 /*! \class gaussianDistribution
  * \ingroup Density_Module
- * 
+ *
  * \brief The Gaussian distribution
- * 
+ *
  * \tparam RealType     Data type
  * \tparam FunctionType Function type
- * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x for a Gaussian 
+ *
+ * This class provides probability density \f$ p(x) \f$ and it's Log at x for a Gaussian
  * distribution with standard deviation \f$ \sigma \f$ <br>
  * using:<br>
- * 
+ *
  * \f$
  * p(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{\left(-\frac{\left(x - \mu \right)^2}{2\sigma^2}\right)}.
  * \f$
- * 
- * This class also provides random values x, distributed according to the Gaussian distribution probability 
+ *
+ * This class also provides random values x, distributed according to the Gaussian distribution probability
  * density function. \sa sample
  */
 template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
@@ -32,7 +44,7 @@ class gaussianDistribution : public densityFunction<RealType, FunctionType>
   public:
     /*!
      * \brief Construct a new gaussian Distribution object
-     * 
+     *
      * \param mu     Mean, \f$ \mu \f$
      * \param sigma  Standard deviation \f$ \sigma \f$
      */
@@ -40,7 +52,7 @@ class gaussianDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Construct a new gaussian Distribution object
-     * 
+     *
      * \param mu     Mean, \f$ \mu \f$
      * \param sigma  Standard deviation \f$ \sigma \f$
      * \param n      Total number of Mean + Standard deviation inputs
@@ -54,19 +66,19 @@ class gaussianDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Gaussian Distribution density function
-     * 
+     *
      * \param x  Input value
-     * 
-     * \returns Density function value 
+     *
+     * \returns Density function value
      */
     inline RealType gaussianDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Gaussian Distribution density function
-     * 
+     *
      * \param x  Input value
-     * 
-     * \returns  Log of density function value 
+     *
+     * \returns  Log of density function value
      */
     inline RealType gaussianDistribution_lf(RealType const *x);
 
@@ -120,7 +132,7 @@ class gaussianDistribution : public densityFunction<RealType, FunctionType>
     /*!
      * \brief Create samples of the Gaussian Distribution object
      *
-     * \param x  Matrix of random samples 
+     * \param x  Matrix of random samples
      *
      * \return false If Random Number Generator object is not assigned
      */

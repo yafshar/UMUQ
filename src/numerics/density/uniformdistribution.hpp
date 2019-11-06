@@ -1,6 +1,19 @@
 #ifndef UMUQ_UNIFORMDISTRIBUTION_H
 #define UMUQ_UNIFORMDISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "numerics/function/densityfunction.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <utility>
+#include <limits>
+#include <functional>
+
 namespace umuq
 {
 
@@ -9,26 +22,26 @@ inline namespace density
 
 /*! \class uniformDistribution
  * \ingroup Density_Module
- * 
+ *
  * \brief Flat (Uniform) distribution function
- * 
+ *
  * \tparam RealType     Data type
  * \tparam FunctionType Function type
- * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x for a uniform distribution 
+ *
+ * This class provides probability density \f$ p(x) \f$ and it's Log at x for a uniform distribution
  * on the closed interval \f$ [low \cdots high] \f$, <br>
  * using:<br>
- * 
+ *
  * \f$
  * p(x)= \left\{
  * \begin{matrix}
- * 1/(high-low)  &low \leq x < high \\ 
+ * 1/(high-low)  &low \leq x < high \\
  *  0       &otherwise
  * \end{matrix}
  * \right.
  * \f$
- * 
- * This class also provides sample of random values x, distributed according to the uniform distribution 
+ *
+ * This class also provides sample of random values x, distributed according to the uniform distribution
  * probability density function. \sa sample
  */
 template <typename RealType, class FunctionType = std::function<RealType(RealType const *)>>
@@ -37,7 +50,7 @@ class uniformDistribution : public densityFunction<RealType, FunctionType>
   public:
     /*!
      * \brief Construct a new uniform Distribution object
-     * 
+     *
      * \param low  Lower bound
      * \param high  Upper bound
      */
@@ -45,7 +58,7 @@ class uniformDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Construct a new uniform Distribution object
-     * 
+     *
      * \param low   Lower bound
      * \param high  Upper bound
      * \param n     Total number of Lower bound + Upper bound inputs
@@ -54,54 +67,54 @@ class uniformDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Destroy the uniform Distribution object
-     * 
+     *
      */
     ~uniformDistribution();
 
     /*!
      * \brief Uniform distribution density function
-     * 
+     *
      * \param x  Input value
-     * 
-     * \returns  Density function value 
+     *
+     * \returns  Density function value
      */
     inline RealType uniformDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Uniform distribution density function
-     * 
+     *
      * \param x  Input value
-     * 
+     *
      * \returns  Log of density function value
      */
     inline RealType uniformDistribution_lf(RealType const *x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
+     *
      * \param x  Vector of samples
-     * 
+     *
      * \return false If Random Number Generator object is not assigned
      */
     void sample(RealType *x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
+     *
      * \param x  Vector of samples
      */
     void sample(std::vector<RealType> &x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
+     *
      * \param x  Vector of samples
      */
     void sample(EVectorX<RealType> &x);
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      */
@@ -109,7 +122,7 @@ class uniformDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
+     *
      * \param x         Vector of samples
      * \param nSamples  Number of sample vectors
      */
@@ -117,8 +130,8 @@ class uniformDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Create samples of the uniform Distribution object
-     * 
-     * \param x  Matrix of random samples 
+     *
+     * \param x  Matrix of random samples
      */
     void sample(EMatrixX<RealType> &x);
 

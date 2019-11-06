@@ -1,7 +1,12 @@
 #ifndef UMUQ_UMUQDIFFERENTIABLEFUNCTION_H
 #define UMUQ_UMUQDIFFERENTIABLEFUNCTION_H
 
+#include "core/core.hpp"
 #include "umuqfunction.hpp"
+
+#include <vector>
+#include <utility>
+#include <functional>
 
 namespace umuq
 {
@@ -23,31 +28,31 @@ class umuqDifferentiableFunction : public umuqFunction<DataType, FunctionType>
 public:
   /*!
    * \brief Construct a new umuqDifferentiableFunction object
-   * 
+   *
    * \param Name  Function name
    */
   explicit umuqDifferentiableFunction(char const *Name = "");
 
   /*!
    * \brief Construct a new umuqDifferentiableFunction object
-   * 
-   * \param nDim  Number of dimensions (Number of parameters) 
+   *
+   * \param nDim  Number of dimensions (Number of parameters)
    * \param Name  Function name
    */
   umuqDifferentiableFunction(int const nDim, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqDifferentiableFunction object
-   * 
+   *
    * \param Params    Input parameters of the Function object
-   * \param NumParams Number of dimensions (Number of parameters) 
+   * \param NumParams Number of dimensions (Number of parameters)
    * \param Name      Function name
    */
   umuqDifferentiableFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqDifferentiableFunction object
-   *  
+   *
    * \param Params  Input parameters of the Function object
    * \param Name    Function name
    */
@@ -55,60 +60,60 @@ public:
 
   /*!
    * \brief Destroy the umuq Differentiable Function object
-   * 
+   *
    */
   ~umuqDifferentiableFunction();
 
   /*!
    * \brief Move constructor, Construct a new umuqDifferentiableFunction object
-   * 
+   *
    * \param other umuqDifferentiableFunction object
    */
   umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
 
   /*!
    * \brief Move assignment operator
-   * 
+   *
    */
   umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
 
   /*!
-   * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
-   * 
+   * \brief Checks whether *this stores a callable function target, i.e. is not empty.
+   *
    * \return true   If it stores a callable function target at f
-   * \return false 
+   * \return false
    */
   explicit operator bool() const noexcept;
 
 protected:
   /*!
    * \brief Delete an umuqDifferentiableFunction object copy construction
-   * 
+   *
    * Avoiding implicit generation of the copy constructor.
    */
   umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
 
   /*!
    * \brief Delete a umuqDifferentiableFunction object assignment
-   * 
+   *
    * Avoiding implicit copy assignment.
-   * 
-   * \returns umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>& 
+   *
+   * \returns umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>&
    */
   umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
 
 public:
   /*!
    * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function. \sa umuq::umuqFunction::f.
-   * 
+   *
    * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla {f} = \frac{\partial f(x)}{\partial x_i} \f$)
    */
   DerivativeFunctionType df;
 
   /*!
    * \brief A general-purpose polymorphic function wrapper which calculates both the function value and it's derivative together.
-   *  
-   * It uses a provided parametric function of n variables to operate on and also 
+   *
+   * It uses a provided parametric function of n variables to operate on and also
    * a function which calculates the gradient of the function. <br>
    * It is faster to compute the function and its derivative at the same time.
    */

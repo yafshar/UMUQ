@@ -1,6 +1,14 @@
 #ifndef UMUQ_CONJUGATEFR_H
 #define UMUQ_CONJUGATEFR_H
 
+#include "core/core.hpp"
+#include "numerics/function/differentiablefunctionminimizer.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <algorithm>
+
 namespace umuq
 {
 
@@ -9,31 +17,31 @@ inline namespace multimin
 
 /*! \class conjugateFr
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Conjugate gradient Fletcher-Reeve algorithm
- * 
+ *
  * \tparam DataType Data type
- * 
- * This is a succession of line minimization. In this algorithm we use the value of the function 
- * and its gradient at each evaluation point. The sequence of search directions is used to 
+ *
+ * This is a succession of line minimization. In this algorithm we use the value of the function
+ * and its gradient at each evaluation point. The sequence of search directions is used to
  * build up an approximation to the curvature of the function in the neighborhood of the minimum.
- * An initial search direction is chosen using the gradient, and line minimization is carried 
+ * An initial search direction is chosen using the gradient, and line minimization is carried
  * out in that direction.
  */
 template <typename DataType>
 class conjugateFr : public differentiableFunctionMinimizer<DataType>
 {
-  public:
+public:
     /*!
      * \brief Construct a new conjugate Fr object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit conjugateFr(char const *Name = "conjugateFr");
 
     /*!
      * \brief Destroy the conjugate Fr object
-     * 
+     *
      */
     ~conjugateFr();
 
@@ -48,9 +56,9 @@ class conjugateFr : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool init();
 
@@ -66,13 +74,13 @@ class conjugateFr : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Restart the iterator
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     inline bool restart();
 
-  private:
+private:
     //! Iteration
     int iter;
 
@@ -192,7 +200,7 @@ bool conjugateFr<DataType>::iterate()
     }
 
 #ifdef DEBUG
-    std::cout << "Got stepc = " << stepc << "fc = " << fc << std::endl;
+    UMUQMSG("Got stepc = ", stepc, "fc = ", fc);
 #endif
 
     // Do a line minimization in the region (xa,fa) (xc,fc) to find an
@@ -240,7 +248,7 @@ bool conjugateFr<DataType>::iterate()
     std::copy(this->gradient.begin(), this->gradient.end(), g0.begin());
 
 #ifdef DEBUG
-    std::cout << "updated conjugate directions" << std::endl;
+    UMUQMSG("Updated conjugate directions");
     /*!
      * \todo
      * print vector p and g

@@ -1,56 +1,62 @@
 #ifndef UMUQ_FUNCTIONMINIMIZER_H
 #define UMUQ_FUNCTIONMINIMIZER_H
 
+#include "core/core.hpp"
 #include "datatype/functiontype.hpp"
 #include "datatype/differentiablefunctionminimizertype.hpp"
 #include "umuqfunction.hpp"
 
+#include <string>
+#include <vector>
+#include <utility>
+#include <algorithm>
+
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Multimin_Module Multimin module
  * \ingroup Numerics_Module
  *
- * This is the Multidimensional Minimization Module of UMUQ providing all necessary classes 
+ * This is the Multidimensional Minimization Module of UMUQ providing all necessary classes
  * for finding minima of arbitrary multidimensional functions.
  */
 
-/*! 
+/*!
  * \namespace umuq::multimin
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Namespace containing all the functions for Multidimensional Minimization Module
- * 
- * It includes all the functionalities for finding minima of arbitrary multidimensional 
- * functions. It provides low level components for a variety of iterative minimizers 
- * and convergence tests. 
+ *
+ * It includes all the functionalities for finding minima of arbitrary multidimensional
+ * functions. It provides low level components for a variety of iterative minimizers
+ * and convergence tests.
  */
 inline namespace multimin
 {
 /*! \class functionMinimizer
  * \ingroup Multimin_Module
- * 
- * \brief The goal is finding minima of arbitrary multidimensional functions.<br> 
+ *
+ * \brief The goal is finding minima of arbitrary multidimensional functions.<br>
  * This is the base class which is for finding minima of arbitrary multidimensional functions.
- * 
+ *
  * \tparam DataType Data type
- * 
- * 
- * This is the low level component for a variety of iterative minimizers and the base class 
+ *
+ *
+ * This is the low level component for a variety of iterative minimizers and the base class
  * suitable for algorithms which do not require the gradient of the function. <br>
  * For example, the Nelder-Mead Simplex algorithm.
- * 
+ *
  * \note
- * - It is important to note that the minimization algorithms find local minima; there is 
+ * - It is important to note that the minimization algorithms find local minima; there is
  *   no way to determine whether a minimum is a global minimum of the function in question.
- * 
+ *
  * To use the Minimizer: <br>
  * - First, set the minimizer dimension \sa reset
  * - Second, set the function, input vector and stepsize \sa set
  * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
- * 
+ *
  */
 template <typename DataType>
 class functionMinimizer
@@ -58,101 +64,101 @@ class functionMinimizer
 public:
   /*!
    * \brief Construct a new function Minimizer object
-   * 
+   *
    * \param Name Multidimensional function minimizer name
    */
   explicit functionMinimizer(char const *Name = "");
 
   /*!
    * \brief Destroy the function Minimizer object
-   * 
+   *
    */
   ~functionMinimizer();
 
   /*!
    * \brief Move constructor, Construct a new functionMinimizer object
-   * 
+   *
    * \param other functionMinimizer object
    */
   functionMinimizer(functionMinimizer<DataType> &&other);
 
   /*!
    * \brief Move assignment operator
-   * 
+   *
    */
   functionMinimizer<DataType> &operator=(functionMinimizer<DataType> &&other);
 
   /*!
-   * \brief Resizes the x-vector to contain nDim elements 
-   * 
+   * \brief Resizes the x-vector to contain nDim elements
+   *
    * \param nDim  New size of the x-vector
-   * 
-   * \returns true  
+   *
+   * \returns true
    */
   virtual bool reset(int const nDim) noexcept;
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param umFun     umuq Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param umFun     umuq Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(umuqFunction<DataType, F_MTYPE<DataType>> &umFun, DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param Fun       Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param Fun       Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &X, std::vector<DataType> const &stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param Fun       Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, DataType const *X, DataType const *stepSize);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and initial stepSize
-   * 
+   *
    * \param Fun       Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param stepSize  N-dimensional initial step size vector
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, DataType const *X, DataType const *stepSize);
@@ -229,60 +235,60 @@ public:
 
   /*!
    * \brief Initialize the minimizer
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool init();
 
   /*!
    * \brief Drives the iteration of each algorithm
-   * 
+   *
    * It performs one iteration to update the state of the minimizer.
-   * 
+   *
    * \return false If the iteration encounters an unexpected problem
    */
   virtual bool iterate();
 
   /*!
    * \brief Get the Name object
-   * 
-   * \return std::string const 
+   *
+   * \return std::string const
    */
   inline std::string const getName() const;
 
   /*!
    * \brief Return minimizer-specific characteristic size
-   * 
+   *
    * \returns minimizer-specific characteristic size
    */
   inline DataType const size() const;
 
   /*!
    * \brief Helper function to check the specific characteristic size against absolute tolerance
-   * 
+   *
    * \param abstol Absolute tolerance
-   * 
-   * \return -1, 0, and 1 (where -1:Fail, 0:Success, and 1:Continue) 
+   *
+   * \return -1, 0, and 1 (where -1:Fail, 0:Success, and 1:Continue)
    */
   inline int testSize(DataType const abstol);
 
   /*!
    * \brief Get the N-dimensional x vector
-   * 
+   *
    * \return DataType* Get the N-dimensional x vector
    */
   inline DataType *getX();
 
   /*!
    * \brief Get the minimum function value
-   * 
+   *
    * \return the minimum function value
    */
   inline DataType getMin();
 
   /*!
-   * \brief Get the number of Dimensions 
-   * 
+   * \brief Get the number of Dimensions
+   *
    * \return the number of dimensions
    */
   inline int getDimension();
@@ -290,17 +296,17 @@ public:
 protected:
   /*!
    * \brief Delete a functionMinimizer object copy construction
-   * 
+   *
    * Avoiding implicit generation of the copy constructor.
    */
   functionMinimizer(functionMinimizer<DataType> const &) = delete;
 
   /*!
    * \brief Delete a functionMinimizer object assignment
-   * 
+   *
    * Avoiding implicit copy assignment.
-   * 
-   * \returns functionMinimizer<DataType>& 
+   *
+   * \returns functionMinimizer<DataType>&
    */
   functionMinimizer<DataType> &operator=(functionMinimizer<DataType> const &) = delete;
 

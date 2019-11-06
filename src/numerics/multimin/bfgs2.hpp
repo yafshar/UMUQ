@@ -1,7 +1,14 @@
 #ifndef UMUQ_BFGS2_H
 #define UMUQ_BFGS2_H
 
-#include "../function/utilityfunction.hpp"
+#include "core/core.hpp"
+#include "numerics/function/differentiablefunctionminimizer.hpp"
+#include "numerics/function/utilityfunction.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <algorithm>
 
 namespace umuq
 {
@@ -11,20 +18,20 @@ inline namespace multimin
 
 /*! \class bfgs2
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Limited memory Broyden-Fletcher-Goldfarb-Shanno method
- * 
+ *
  * \tparam DataType  Data type
- * 
- * Fletcher's implementation of the BFGS method, using the line minimization algorithm from 
- * the original BFGS, which is a quasi-Newton method which builds up an approximation to the second 
- * derivatives of the function f using the difference between successive gradient vectors. 
- * By combining the first and second derivatives the algorithm is able to take Newton-type steps 
+ *
+ * Fletcher's implementation of the BFGS method, using the line minimization algorithm from
+ * the original BFGS, which is a quasi-Newton method which builds up an approximation to the second
+ * derivatives of the function f using the difference between successive gradient vectors.
+ * By combining the first and second derivatives the algorithm is able to take Newton-type steps
  * towards the function minimum, assuming quadratic behavior in that region.
- * 
- * BFGS2 minimizer is the \b most \b efficient version available. 
- * It supersedes the bfgs algorithm and requires fewer function and gradient evaluations. 
- * The user-supplied tolerance tol corresponds to the parameter \f$ \sigma \f$ used by Fletcher. 
+ *
+ * BFGS2 minimizer is the \b most \b efficient version available.
+ * It supersedes the bfgs algorithm and requires fewer function and gradient evaluations.
+ * The user-supplied tolerance tol corresponds to the parameter \f$ \sigma \f$ used by Fletcher.
  * A value of 0.1 is recommended for typical use (larger values correspond to less accurate line searches).
  *
  * Reference:<br>
@@ -38,14 +45,14 @@ class bfgs2 : public differentiableFunctionMinimizer<DataType>
   public:
     /*!
      * \brief Construct a new bfgs2 object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit bfgs2(char const *Name = "bfgs2");
 
     /*!
      * \brief Destroy the bfgs2 object
-     * 
+     *
      */
     ~bfgs2();
 
@@ -60,9 +67,9 @@ class bfgs2 : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool init();
 
@@ -78,9 +85,9 @@ class bfgs2 : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Restart the iterator
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     inline bool restart();
 

@@ -1,6 +1,14 @@
 #ifndef UMUQ_UMUQFUNCTION_H
 #define UMUQ_UMUQFUNCTION_H
 
+#include "core/core.hpp"
+
+#include <cstddef>
+
+#include <string>
+#include <vector>
+#include <utility>
+
 namespace umuq
 {
 
@@ -16,41 +24,41 @@ class umuqFunction
 public:
   /*!
    * \brief Construct a new umuqFunction object
-   * 
+   *
    * \param Name  Function name
    */
   explicit umuqFunction(char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
-   * 
-   * \param nDim  Number of dimensions (Number of parameters) 
+   *
+   * \param nDim  Number of dimensions (Number of parameters)
    * \param Name  Function name
    */
   umuqFunction(int const nDim, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
-   * 
+   *
    * \param Params    Input parameters of the Function object
-   * \param NumParams Number of dimensions (Number of parameters) 
+   * \param NumParams Number of dimensions (Number of parameters)
    * \param Name      Function name
    */
   umuqFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
-   * 
+   *
    * \param Params1    Input parameters of the Function object
    * \param Params2    Input parameters of the Function object
-   * \param NumParams  Number of dimensions (Number of parameters) 
+   * \param NumParams  Number of dimensions (Number of parameters)
    * \param Name       Function name
    */
   umuqFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name = "");
 
   /*!
    * \brief Construct a new umuqFunction object
-   *  
+   *
    * \param Params  Input parameters of the Function object
    * \param Name    Function name
    */
@@ -58,7 +66,7 @@ public:
 
   /*!
    * \brief Construct a new umuqFunction object
-   *  
+   *
    * \param Params1  Input parameters of the Function object
    * \param Params2  Input parameters of the Function object
    * \param Name    Function name
@@ -67,39 +75,39 @@ public:
 
   /*!
    * \brief Destroy the umuq Function object
-   * 
+   *
    */
   ~umuqFunction();
 
   /*!
    * \brief Move constructor, Construct a new umuqFunction object
-   * 
+   *
    * \param other umuqFunction object
    */
   umuqFunction(umuqFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Move assignment operator
-   * 
+   *
    */
   umuqFunction<DataType, FunctionType> &operator=(umuqFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Get the Name object
-   * 
-   * \return std::string const 
+   *
+   * \return std::string const
    */
   std::string const getName() const;
 
   /*!
    * \brief Set the Name object
-   * 
+   *
    */
   void setName(char const *Name);
 
   /*!
-   * \brief Checks whether *this stores a callable function target, i.e. is not empty. 
-   * 
+   * \brief Checks whether *this stores a callable function target, i.e. is not empty.
+   *
    * \return true If it stores a callable function target at f
    */
   explicit operator bool() const noexcept;
@@ -107,17 +115,17 @@ public:
 protected:
   /*!
    * \brief Delete a umuqFunction object copy construction
-   * 
+   *
    * Avoiding implicit generation of the copy constructor.
    */
   umuqFunction(umuqFunction<DataType, FunctionType> const &) = delete;
 
   /*!
    * \brief Delete a umuqFunction object assignment
-   * 
+   *
    * Avoiding implicit copy assignment.
-   * 
-   * \returns umuqFunction<DataType, FunctionType>& 
+   *
+   * \returns umuqFunction<DataType, FunctionType>&
    */
   umuqFunction<DataType, FunctionType> &operator=(umuqFunction<DataType, FunctionType> const &) = delete;
 
@@ -133,8 +141,8 @@ public:
 
 public:
   /*!
-   * \brief A general-purpose polymorphic function wrapper 
-   * 
+   * \brief A general-purpose polymorphic function wrapper
+   *
    */
   FunctionType f;
 };

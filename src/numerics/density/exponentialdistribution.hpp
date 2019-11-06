@@ -1,6 +1,19 @@
 #ifndef UMUQ_EXPONENTIALDISTRIBUTION_H
 #define UMUQ_EXPONENTIALDISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "numerics/function/densityfunction.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <limits>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <functional>
+
 namespace umuq
 {
 
@@ -9,32 +22,32 @@ inline namespace density
 
 /*! \class exponentialDistribution
  * \ingroup Density_Module
- * 
+ *
  * \brief The exponential distribution
- * 
+ *
  * \tparam RealType     Data type
  * \tparam FunctionType Function type
- * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x for an 
+ *
+ * This class provides probability density \f$ p(x) \f$ and it's Log at x for an
  * exponential distribution of:
- * 
+ *
  * \f$
  * p(x)=\frac{1}{\mu}e^{\left(-\frac{x}{\mu}\right)},
  * \f$<br>
- * 
- * where \f$ \mu > 0 \f$ is mean, standard deviation, and scale parameter of the 
- * distribution, the reciprocal of the rate parameter in an another commonly used 
+ *
+ * where \f$ \mu > 0 \f$ is mean, standard deviation, and scale parameter of the
+ * distribution, the reciprocal of the rate parameter in an another commonly used
  * alternative parametrization of:<br>
- * 
+ *
  * \f$
  * p(x)=\lambda e^{\left(-\lambda x\right)},
  * \f$<br>
- * 
+ *
  * where \f$ \lambda > 0 \f$ is rate.
- * 
- * This class also provides random non-negative values x, distributed according to the exponential 
+ *
+ * This class also provides random non-negative values x, distributed according to the exponential
  * distribution probability density function. \sa sample
- * 
+ *
  * \note
  * - Requires that \f$ \mu > 0 \f$.
  */
@@ -44,14 +57,14 @@ class exponentialDistribution : public densityFunction<RealType, FunctionType>
   public:
     /*!
      * \brief Construct a new exponential distribution object
-     * 
+     *
      * \param mu Mean, \f$ \mu \f$
      */
     explicit exponentialDistribution(RealType const mu);
 
     /*!
      * \brief Construct a new exponential Distribution object
-     * 
+     *
      * \param mu Mean, \f$ \mu \f$
      * \param n  Number of input
      */
@@ -59,25 +72,25 @@ class exponentialDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Destroy the exponential distribution object
-     * 
+     *
      */
     ~exponentialDistribution();
 
     /*!
      * \brief Exponential distribution density function
-     * 
+     *
      * \param x Input value
-     * 
-     * \returns Density function value 
+     *
+     * \returns Density function value
      */
     inline RealType exponentialDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of exponential distribution density function
-     * 
+     *
      * \param x Input value
-     * 
-     * \returns  Log of density function value 
+     *
+     * \returns  Log of density function value
      */
     inline RealType exponentialDistribution_lf(RealType const *x);
 
@@ -130,9 +143,9 @@ class exponentialDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief  Create samples of the exponential distribution object
-     * 
-     * \param x  Matrix of random samples 
-     * 
+     *
+     * \param x  Matrix of random samples
+     *
      * \return false If Random Number Generator object is not assigned
      */
     void sample(EMatrixX<RealType> &x);

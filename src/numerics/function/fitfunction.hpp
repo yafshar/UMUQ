@@ -1,15 +1,20 @@
 #ifndef UMUQ_FITFUNCTION_H
 #define UMUQ_FITFUNCTION_H
 
+#include "core/core.hpp"
 #include "datatype/functiontype.hpp"
 #include "umuqfunction.hpp"
+
+#include <vector>
+#include <utility>
+#include <functional>
 
 namespace umuq
 {
 
 /*! \class fitFunction
  * \brief The base class for fit function which can be used in the inference process
- * 
+ *
  * \tparam DataType     Data type
  * \tparam FunctionType Function type
  */
@@ -19,14 +24,14 @@ class fitFunction : public umuqFunction<DataType, FunctionType>
   public:
     /*!
      * \brief Construct a new fitFunction object
-     * 
+     *
      * \param Name Multidimensional fitFunction name
      */
     explicit fitFunction(char const *Name = "");
 
     /*!
      * \brief Construct a new fitFunction Function object
-     * 
+     *
      * \param Params     Parameters of fitFunction object
      * \param NumParams  Number of parameters
      * \param Name       fitFunction name
@@ -35,7 +40,7 @@ class fitFunction : public umuqFunction<DataType, FunctionType>
 
     /*!
      * \brief Construct a new fitFunction Function object
-     * 
+     *
      * \param Params     Parameters of fitFunction object
      * \param Name       fitFunction name
      */
@@ -43,101 +48,101 @@ class fitFunction : public umuqFunction<DataType, FunctionType>
 
     /*!
      * \brief Move constructor, Construct a new umuqFunction object
-     * 
+     *
      * \param other umuqFunction object
      */
     fitFunction(fitFunction<DataType, FunctionType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      */
     fitFunction<DataType, FunctionType> &operator=(fitFunction<DataType, FunctionType> &&other);
 
     /*!
      * \brief Destroy the fit Function object
-     * 
+     *
      */
     ~fitFunction();
 
     /*!
      * \brief Set the Init Function object
-     * 
-     * \param InitFun Initialization function which has the fixed shape of bool() 
-     * 
+     *
+     * \param InitFun Initialization function which has the fixed shape of bool()
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool setInitFunction(std::function<bool()> &InitFun);
 
     /*!
      * \brief Set the Init Function object
-     * 
-     * \param InitFun Initialization function which has the fixed shape of bool() 
-     * 
+     *
+     * \param InitFun Initialization function which has the fixed shape of bool()
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool setInitFunction(std::function<bool()> const &InitFun);
 
     /*!
      * \brief Set the fitting Function to be used
-     * 
+     *
      * \param Fun  Fitting Function of type (class FunctionType)
-     * 
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool setFitFunction(FunctionType &Fun);
 
     /*!
      * \brief Set the fitting Function to be used
-     * 
+     *
      * \param Fun  Fitting Function of type (class FunctionType)
-     * 
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool setFitFunction(FunctionType const &Fun);
 
     /*!
-     * \brief Setting both the Init Function & fitting Function 
-     * 
+     * \brief Setting both the Init Function & fitting Function
+     *
      * \param InitFun  Initialization function which has the fixed shape of bool()
      * \param Fun      Fitting Function of type (class FunctionType)
-     * 
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool set(std::function<bool()> &InitFun, FunctionType &Fun);
 
     /*!
-     * \brief Setting both the Init Function & fitting Function 
-     * 
+     * \brief Setting both the Init Function & fitting Function
+     *
      * \param InitFun  Initialization function which has the fixed shape of bool()
      * \param Fun      Fitting Function of type (class FunctionType)
-     * 
+     *
      * \return false If it encounters an unexpected problem
      */
     inline bool set(std::function<bool()> const &InitFun, FunctionType const &Fun);
 
     /*!
      * \brief Initialize the fitFunction
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     virtual bool init();
 
   protected:
     /*!
      * \brief Delete a fitFunction object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     fitFunction(fitFunction<DataType, FunctionType> const &) = delete;
 
     /*!
      * \brief Delete a fitFunction object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns fitFunction<DataType, FunctionType>& 
+     *
+     * \returns fitFunction<DataType, FunctionType>&
      */
     fitFunction<DataType, FunctionType> &operator=(fitFunction<DataType, FunctionType> const &) = delete;
 

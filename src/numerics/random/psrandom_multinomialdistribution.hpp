@@ -1,6 +1,15 @@
 #ifndef UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION_H
 #define UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION_H
 
+#include "core/core.hpp"
+
+#include <cstddef>
+
+#include <vector>
+#include <random>
+#include <type_traits>
+#include <numeric>
+
 namespace umuq
 {
 
@@ -9,23 +18,23 @@ namespace randomdist
 
 /*! \class multinomialDistribution
  * \ingroup Random_Module
- * 
+ *
  * \brief Generates random numbers according to a multinomial distribution \f$ M_K\left(N, p\right) \f$
- * 
- * \tparam RealType Floating-point data type 
- * 
+ *
+ * \tparam RealType Floating-point data type
+ *
  * Let \f$ X=\left( X_1, \cdots, X_K \right) \f$ have a multinomial distribution \f$ M_K\left(N, p\right) \f$ <br>
  * The distribution of \f$ X \f$ is given by: <br>
  * \f$
  *     Pr(X_1=n_1, \cdots, X_K=n_K) = \frac{N!}{\left(n_1! n_2! \cdots n_K! \right)}  p_1^{n_1}  p_2^{n_2} \cdots p_K^{n_K}
- * \f$ <br> 
+ * \f$ <br>
  *
  * where \f$ n_1, \cdots n_K \f$ are nonnegative integers satisfying \f$ sum_{i=1}^{K} {n_i} = N\f$, <br>
- * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution. 
+ * and \f$p = \left(p_1, \cdots, p_K\right)\f$ is a probability distribution.
  *
  * Random variates are generated using the conditional binomial method. <br>
  * This scales well with N and does not require a setup step.
- *   
+ *
  * Reference: <br>
  * C.S. David, The computer generation of multinomial random variates, <br>
  * Comp. Stat. Data Anal. 16 (1993) 205-217
@@ -38,30 +47,30 @@ class multinomialDistribution
      * \brief Construct a new multinomialDistribution object with a multinomial distribution \f$ M_K\left(N, p\right) \f$
      *
      * \param p  Vector of probabilities \f$ p_1, \cdots, p_k \f$
-     * \param K  Size of vector which shows K possible mutually exclusive outcomes 
+     * \param K  Size of vector which shows K possible mutually exclusive outcomes
      * \param N  N independent trials
      */
     multinomialDistribution(RealType const *p, int const K, int const N);
 
     /*!
      * \brief Move constructor, construct a new multinomialDistribution object from input multinomialDistribution object
-     * 
+     *
      * \param other  multinomialDistribution object
      */
     multinomialDistribution(multinomialDistribution<RealType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other  multinomialDistribution object
-     * 
-     * \return multinomialDistribution& 
+     *
+     * \return multinomialDistribution&
      */
     multinomialDistribution<RealType> &operator=(multinomialDistribution<RealType> &&other);
 
     /*!
      * \brief Destroy the multinomial Distribution object
-     * 
+     *
      */
     ~multinomialDistribution();
 
@@ -77,24 +86,24 @@ class multinomialDistribution
 
     /*!
      * \brief Vector of random sample from the multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * 
+     *
      * \param mndist  Vector of random sample from the multinomial distribution \f$ M_K\left(N, p\right) \f$
      */
     void dist(int *mndist);
 
     /*!
      * \brief Vector of random sample from the multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * 
+     *
      * \param mndist  Vector of random sample from the multinomial distribution \f$ M_K\left(N, p\right) \f$
      */
     void dist(std::vector<int> &mndist);
 
     /*!
      * \brief Fill the array of dataPoints with random samples from the multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * 
-     * \param dataPoints          Array of data points, where each point is a \f$K \text{-dimensional}\f$ 
+     *
+     * \param dataPoints          Array of data points, where each point is a \f$K \text{-dimensional}\f$
      *                            point (dataPointDimension) and we have nDataPoints of them.
-     *                            On return each data point is a random sample according to the multinomial 
+     *                            On return each data point is a random sample according to the multinomial
      *                            distribution \f$ M_K\left(N, p\right) \f$
      * \param dataPointDimension  Data point dimension (\f$K \text{-dimensional}\f$ point)
      * \param nDataPoints         Number of data points
@@ -103,7 +112,7 @@ class multinomialDistribution
 
     /*!
      * \brief Fill the eMatrix with random samples from the multinomial distribution \f$ M_K\left(N, p\right) \f$
-     * 
+     *
      * \param eMatrix  Matrix of random numbers, where each column is an \f$K \text{-dimensional}\f$ point
      *                 and there are number of columns of the eMatrix points. <br>
      *                 On return each column is a random sample according to the multinomial
@@ -114,14 +123,14 @@ class multinomialDistribution
   private:
     /*!
      * \brief Delete a multinomialDistribution object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     multinomialDistribution(multinomialDistribution<RealType> const &) = delete;
 
     /*!
      * \brief Delete a multinomialDistribution object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     multinomialDistribution<RealType> &operator=(multinomialDistribution<RealType> const &) = delete;

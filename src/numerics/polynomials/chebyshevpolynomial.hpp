@@ -1,6 +1,16 @@
 #ifndef UMUQ_CHEBYSHEVPOLYNOMIAL_H
 #define UMUQ_CHEBYSHEVPOLYNOMIAL_H
 
+#include "core/core.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <type_traits>
+#include <utility>
+#include <algorithm>
+
 namespace umuq
 {
 
@@ -10,62 +20,62 @@ inline namespace polynomials
 /*! \class ChebyshevPolynomial
  * \ingroup Polynomials_Module
  *
- * \brief Chebyshev Polynomials 
- * 
- * \tparam RealType Floating-point data type 
- * 
- * Chebyshev polynomials, are a sequence of orthogonal polynomials. 
- * Chebyshev polynomials of the first kind are denoted \f$ T_n(x) \f$ and 
+ * \brief Chebyshev Polynomials
+ *
+ * \tparam RealType Floating-point data type
+ *
+ * Chebyshev polynomials, are a sequence of orthogonal polynomials.
+ * Chebyshev polynomials of the first kind are denoted \f$ T_n(x) \f$ and
  * Chebyshev polynomials of the second kind are denoted \f$ U_n(x) \f$.
- * Chebyshev polynomials are important in approximation theory because the 
- * roots of the Chebyshev polynomials of the first kind, which are also called 
- * Chebyshev nodes, are used as nodes in polynomial interpolation. 
- * 
- * 
+ * Chebyshev polynomials are important in approximation theory because the
+ * roots of the Chebyshev polynomials of the first kind, which are also called
+ * Chebyshev nodes, are used as nodes in polynomial interpolation.
+ *
+ *
  * The first few Chebyshev polynomials of the first kind are:
- * 
+ *
  * <table>
  * <caption id="multi_row">Chebyshev polynomials of the first kind</caption>
- * <tr><th> n <th> \f$ ~~~~~T_n(x) \f$        
- * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 1 <td> \f$ ~~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 2 <td> \f$ ~~2~x^2~-~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 3 <td> \f$ ~~4~x^3~-~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 4 <td> \f$ ~~8~x^4~-~~~~8~x^2~+~~~~~1~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 5 <td> \f$ ~~16~x^5~-~~~20~x^3~+~~~~5~x~~~~~~~~~~~~ \f$ 
- * <tr><td> 6 <td> \f$ ~~32~x^6~-~~~48~x^4~+~~~~18~x^2~-~~~~1~~ \f$ 
- * <tr><td> 7 <td> \f$ ~~64~x^7~-~~~112~x^5~+~~~56~x^3~-~~~~7~x \f$ 
+ * <tr><th> n <th> \f$ ~~~~~T_n(x) \f$
+ * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 1 <td> \f$ ~~x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 2 <td> \f$ ~~2~x^2~-~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 3 <td> \f$ ~~4~x^3~-~~~~3~x~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 4 <td> \f$ ~~8~x^4~-~~~~8~x^2~+~~~~~1~~~~~~~~~~~~~~ \f$
+ * <tr><td> 5 <td> \f$ ~~16~x^5~-~~~20~x^3~+~~~~5~x~~~~~~~~~~~~ \f$
+ * <tr><td> 6 <td> \f$ ~~32~x^6~-~~~48~x^4~+~~~~18~x^2~-~~~~1~~ \f$
+ * <tr><td> 7 <td> \f$ ~~64~x^7~-~~~112~x^5~+~~~56~x^3~-~~~~7~x \f$
  * <tr>
  * </table>
- * 
- * 
+ *
+ *
  * The first few Chebyshev polynomials of the second kind are:
- * 
+ *
  * <table>
  * <caption id="multi_row">Chebyshev polynomials of the second kind</caption>
- * <tr><th> n <th> \f$ ~~~~~U_n(x) \f$        
- * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 1 <td> \f$ ~~2x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 2 <td> \f$ ~~4~x^2~-~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 3 <td> \f$ ~~8~x^3~-~~~~4~x~~~~~~~~~~~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 4 <td> \f$ ~~16~x^4~-~~~12~x^2~+~~~~1~~~~~~~~~~~~~~ \f$ 
- * <tr><td> 5 <td> \f$ ~~32~x^5~-~~~32~x^3~+~~~~6~x~~~~~~~~~~~~ \f$ 
- * <tr><td> 6 <td> \f$ ~~64~x^6~-~~~80~x^4~+~~~~24~x^2~-~~~~1~~ \f$ 
- * <tr><td> 7 <td> \f$ ~~128~x^7~-~~192~x^5~+~~~80~x^3~-~~~~8~x \f$ 
+ * <tr><th> n <th> \f$ ~~~~~U_n(x) \f$
+ * <tr><td> 0 <td> \f$ ~~1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 1 <td> \f$ ~~2x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 2 <td> \f$ ~~4~x^2~-~~~~1~~~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 3 <td> \f$ ~~8~x^3~-~~~~4~x~~~~~~~~~~~~~~~~~~~~~~~~ \f$
+ * <tr><td> 4 <td> \f$ ~~16~x^4~-~~~12~x^2~+~~~~1~~~~~~~~~~~~~~ \f$
+ * <tr><td> 5 <td> \f$ ~~32~x^5~-~~~32~x^3~+~~~~6~x~~~~~~~~~~~~ \f$
+ * <tr><td> 6 <td> \f$ ~~64~x^6~-~~~80~x^4~+~~~~24~x^2~-~~~~1~~ \f$
+ * <tr><td> 7 <td> \f$ ~~128~x^7~-~~192~x^5~+~~~80~x^3~-~~~~8~x \f$
  * <tr>
  * </table>
- * 
- * 
+ *
+ *
  * Reference:<br>
  * https://en.wikipedia.org/wiki/Chebyshev_polynomials
- * 
- * 
+ *
+ *
  * The results of this class is similar to the multivariate monomials with the degree of \b r in a space of \b d dimensions. \sa umuq::polynomials::polynomial
  *
  * A Chebyshev monomial in \f$ 1 \f$ variable \f$ x \f$ is simply any (non-negative integer) series of \f$ T_n(x) \f$:<br>
- * 
+ *
  * \f$  T_0(x), T_1(x), T_2(x), T_3(x), \cdots, T_r(x) \f$<br>
- * 
+ *
  * The highest exponent of \f$ x \f$ is termed the \b degree of the Chebyshev monomial.
  */
 template <typename RealType>
@@ -74,15 +84,15 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
   public:
     /*!
      * \brief Construct a new Chebyshev Polynomial object
-     * 
+     *
      * \param dim              Dimension
      * \param PolynomialOrder  Polynomial order (the default order or degree of \b r in a space of dim dimensions is 2)
      */
     ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
 
-    /*! 
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Chebyshev monomials in a d dimensional space, with total degree \b r.
-     *   
+     *
      * For example: <br>
      * \verbatim
      *       d = 2
@@ -98,7 +108,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      *       monomialBasis_(d=2,r=2)   = {1,   T_1(x), T_1(y), T_2(x), T_1(x)T_1(y),  T_2(y)}
      *                           alpha = {0,0,  1,0,    0,1,     2,0,      1,1,       0,2}
      *
-     * 
+     *
      *       d = 3
      *       r = 2
      *
@@ -119,72 +129,72 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      */
     int *monomialBasis();
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x      The coordinates of the evaluation points
      * \param  value  The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns int The size of the monomial array
      */
     int monomialValue(RealType const *x, RealType *&value);
 
-    /*! 
+    /*!
      * \brief Evaluates a monomial at a point x.
-     * 
+     *
      * \param  x      The coordinates of the evaluation points
      * \param  value  The (monomial value) array value of the monomial at point x
-     * 
+     *
      * \returns int The size of the monomial array
      */
     int monomialValue(RealType const *x, std::vector<RealType> &value);
 
     /*!
-     * \brief Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
-     * 
-     * Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated. 
+     * \brief Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated.
+     *
+     * Computes the next Chebyshev polynomial of the degree n and argument x from the last two polynomial calculated.
      * Recurrence relation for Chebyshev RealType and U polynomials.
-     * 
+     *
      * \param x     The abscissa value.
      * \param Pn    The value of the polynomial evaluated at degree n.
      * \param Pnm1  The value of the polynomial evaluated at degree n-1.
-     * 
-     * \returns RealType The computed Chebyshev Polynomial 
+     *
+     * \returns RealType The computed Chebyshev Polynomial
      */
     inline RealType chebyshev_next(RealType const x, RealType const Pn, RealType const Pnm1);
 
     /*!
      * \brief Implement Chebyshev polynomials.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$ 
+     *
+     *
+     * \param n  The degree of the Chebyshev polynomial \f$ T_n(x)~\text{or}~U_n(x).\f$
      * \param x  The abscissa value.
-     * 
+     *
      * \returns RealType The Chebyshev polynomial of the degree n of x.
      */
     RealType chebyshev(int const n, RealType const x, bool const second = false);
 
     /*!
      * \brief Implement Chebyshev polynomials.
-     * 
+     *
      * This implementation contains minor change and adaptation to the [boost](https://www.boost.org)
      * source code made available under the following license: <br>
-     * 
+     *
      * \copyright
      * Boost Software License, Version 1.0. <br>
      * See the [LICENSE](http://www.boost.org/LICENSE_1_0.txt)
-     * 
-     * 
-     * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$ 
+     *
+     *
+     * \param n  The degree of the Chebyshev polynomial \f$ T_n(x).\f$
      * \param x  The abscissa value.
-     * 
+     *
      * \returns RealType* All the Chebyshev polynomials of the degrees \f$ 0, \cdots, n. \f$
      */
     RealType *chebyshev_array(int const n, RealType const x, bool const second = false);
@@ -192,14 +202,14 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
   private:
     /*!
      * \brief Delete a ChebyshevPolynomial object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     ChebyshevPolynomial(ChebyshevPolynomial<RealType> const &) = delete;
 
     /*!
      * \brief Delete a ChebyshevPolynomial object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> const &) = delete;

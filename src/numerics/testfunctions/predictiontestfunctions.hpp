@@ -1,36 +1,42 @@
 #ifndef UMUQ_PREDICTIONTESTFUNCTIONS_H
 #define UMUQ_PREDICTIONTESTFUNCTIONS_H
 
+#include "core/core.hpp"
+
+#include <cmath>
+
+#include <algorithm>
+
 /*! \class qian
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Qian's 1-Dimensional Function class
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * Reference:<br>
- * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
- * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments:
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano.
  */
 template <typename DataType>
 struct qian
 {
   /*!
    * \brief Construct a new qian object
-   * 
+   *
    */
   qian() {}
 
-  /*! 
+  /*!
    * \brief Qian's function
-   * 
+   *
    * Qian's function
    * \f[
-   * f(x) = e^{(3x)} \cos \left(\frac{7\pi x}{2}\right),~~ x \in [0 \cdots 1]  
+   * f(x) = e^{(3x)} \cos \left(\frac{7\pi x}{2}\right),~~ x \in [0 \cdots 1]
    * \f]
-   * 
+   *
    * \param  x  input data point
-   * 
+   *
    * \returns f  function value at input data point
    */
   inline DataType f(DataType const *x)
@@ -41,39 +47,39 @@ struct qian
 
 /*! \class franke2d
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Franke's 2-Dimensional Function class
- * 
+ *
  * \tparam DataType data type
- * 
+ *
  * Reference:<br>
- * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
- * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments:
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano.
  */
 template <typename DataType>
 struct franke2d
 {
   /*!
    * \brief Construct a new franke2d object
-   * 
+   *
    */
   franke2d() {}
 
   /*!
    * \brief Franke's bivariate function
-   * 
+   *
    * Franke's bivariate function is a weighted sum of four exponential
    * \f[
-   * \begin{aligned} 
+   * \begin{aligned}
    * \nonumber f(x) &= 0.75 e^{\left(-\frac{(9x_1-2)^2}{4} - \frac{(9x_2-2)^2}{4} \right)} \\
    * \nonumber      &+ 0.75 e^{\left(-\frac{(9x_1+1)^2}{49} - \frac{(9x_2+1)}{10} \right)} \\
    * \nonumber      &+ 0.5 e^{\left(-\frac{(9x_1-7)^2}{4} - \frac{(9x_2-3)^2}{4} \right)} \\
    * \nonumber      &- 0.2 e^{\left(-(9x_1-4)^2 - (9x_2-7)^2 \right)}
    * \end{aligned}
    * \f]
-   * 
+   *
    * \param  x  input data point
-   * 
+   *
    * \returns f  function value at input data point
    */
   inline DataType f(DataType const *x)
@@ -90,15 +96,15 @@ struct franke2d
 
 /*! \class rastrigin
  * \ingroup Numerics_Module
- * 
- * \brief Rastrigin's N-Dimensional Function class 
- * 
+ *
+ * \brief Rastrigin's N-Dimensional Function class
+ *
  * \tparam DataType data type
- * 
- * 
+ *
+ *
  * Reference:<br>
- * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
- * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments:
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano.
  */
 template <typename DataType>
 class rastrigin
@@ -106,20 +112,20 @@ class rastrigin
 public:
   /*!
    * \brief Construct a new Rastrigin's function object
-   * 
+   *
    * \param dim Dimension of the space (default is 2)
    */
   rastrigin(int dim = 2) : nDim(dim) {}
 
-  /*! 
+  /*!
    * \brief Rastrigin function
-   * 
-   * The Rastrigin function has several local minima. 
+   *
+   * The Rastrigin function has several local minima.
    * It is highly multimodal, but locations of the minima are regularly distributed.
    * \f$ f(x) = 10d + \sum_{i=1}^{d} \left[x_i^2 -10 cos \left( 2 \pi x_i\right) \right] \f$
-   * 
+   *
    * \param  x  input data point
-   * 
+   *
    * \returns f  function value at input data point
    */
   inline DataType f(DataType const *x)
@@ -136,14 +142,14 @@ private:
 
 /*! \class ackley
  * \ingroup Numerics_Module
- * 
- * \brief Ackley's N-Dimensional Function class 
- * 
+ *
+ * \brief Ackley's N-Dimensional Function class
+ *
  * \tparam DataType data type
- * 
+ *
  * Reference:<br>
- * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments: 
- * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano. 
+ * Surjanovic, S. & Bingham, D. (2013). Virtual Library of Simulation Experiments:
+ * Test Functions and Datasets. Retrieved May 22, 2018, from http://www.sfu.ca/~ssurjano.
  */
 template <typename DataType>
 class ackley
@@ -151,14 +157,14 @@ class ackley
 public:
   /*!
    * \brief Construct a new Ackley's function object
-   * 
+   *
    * \param dim Dimension of the space (default is 2)
    */
   ackley(int dim = 2) : nDim(dim), a(20), b(0.2), c(M_2PI) {}
 
   /*!
    * \brief Construct a new Ackley's function object
-   * 
+   *
    * \param dim Dimension of the space (default is 2)
    * \param aa  A constant (optional), with default value 20
    * \param bb  A constant (optional), with default value 0.2
@@ -168,16 +174,16 @@ public:
 
   /*!
    * \brief Ackley function
-   * 
-   * The Ackley function has several local minima, in 2-dimensional form it is characterized 
+   *
+   * The Ackley function has several local minima, in 2-dimensional form it is characterized
    * by a nearly flat outer region, and a large hole at the centre.
    * It poses a risk for optimization algorithms, to be trapped in one of its many local minima.
    * \f$ f(x) = -a e^{\left(-b \sqrt{\frac{1}{d}\sum_{i=1}^{d} x_i^2} \right)} - e^{\left(\frac{1}{d}\sum_{i=1}^{d} {\cos (cx_i)}\right)} + a + e^1 \f$
-   * 
-   * Recommended variable values are: \f$ a = 20, b = 0.2 \text{and} c = 2\pi . \f$ 
-   * 
+   *
+   * Recommended variable values are: \f$ a = 20, b = 0.2 \text{and} c = 2\pi . \f$
+   *
    * \param  x  input data point
-   * 
+   *
    * \returns f  function value at input data point
    */
   inline DataType f(DataType const *x)
@@ -206,35 +212,35 @@ private:
 
 /*! \class peaks
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Matlab peaks 2-Dimensional Function class
- * 
+ *
  * Matlab peaks is a function of two variables, obtained by translating and scaling Gaussian distributions
- * 
+ *
  * \tparam DataType data type
- * 
+ *
  * Reference:<br>
- * https://www.mathworks.com/help/matlab/ref/peaks.html 
+ * https://www.mathworks.com/help/matlab/ref/peaks.html
  */
 template <typename DataType>
 struct peaks
 {
   /*!
    * \brief Construct a new qian object
-   * 
+   *
    */
   peaks() {}
 
   /*!
    * \brief Matlab peaks's function
-   * 
+   *
    * Matlab peaks's function <br>
    * \f$
    * f(x) = 3(1-x_1)^2e^{\left(-x_1^2-(x_2+1)^2\right)}-10\left(\frac{x_1}{5}-x_1^3-x_2^5\right)e^{\left(-x_1^2-x_2^2 \right)}-\frac{1}{3}e^{\left(-x_2^2-(x_1+1)^2\right)}
    * \f$
-   * 
+   *
    * \param x  Input data point
-   * 
+   *
    * \returns f Function value at input data point
    */
   inline DataType f(DataType const *x)

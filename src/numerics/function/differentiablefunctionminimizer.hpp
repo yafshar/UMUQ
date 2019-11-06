@@ -1,10 +1,19 @@
 #ifndef UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER_H
 #define UMUQ_DIFFERENTIABLEFUNCTIONMINIMIZER_H
 
+#include "core/core.hpp"
 #include "datatype/differentiablefunctionminimizertype.hpp"
 #include "datatype/functiontype.hpp"
 #include "umuqdifferentiablefunction.hpp"
 #include "utilityfunction.hpp"
+
+#include <cmath>
+
+#include <string>
+#include <vector>
+#include <utility>
+#include <algorithm>
+#include <functional>
 
 namespace umuq
 {
@@ -12,16 +21,16 @@ namespace umuq
 inline namespace multimin
 {
 
-/*! 
+/*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief The goal is finding minima of arbitrary multidimensional functions.
  *
  */
 
 /*! \class differentiableFunctionMinimizer
  * \ingroup Multimin_Module
- * 
+ *
  * \brief The base class which is for finding minima of arbitrary multidimensional functions
  * with derivative. This is the low level component for a variety of iterative minimizers.
  *
@@ -40,7 +49,7 @@ inline namespace multimin
  * - Second, set the function, input vector and stepsize \sa set
  * - Third, initialize the minimizer \sa init
  * - Forth, iterate until reaching the absolute tolerance \sa iterate
- * 
+ *
  * \tparam DataType Data type
  */
 template <typename DataType>
@@ -56,20 +65,20 @@ public:
 
   /*!
    * \brief Destroy the differentiable Function Minimizer object
-   * 
+   *
    */
   ~differentiableFunctionMinimizer();
 
   /*!
    * \brief Move constructor, Construct a new differentiableFunctionMinimizer object
-   * 
+   *
    * \param other differentiableFunctionMinimizer object
    */
   differentiableFunctionMinimizer(differentiableFunctionMinimizer<DataType> &&other);
 
   /*!
    * \brief Move assignment operator
-   * 
+   *
    */
   differentiableFunctionMinimizer<DataType> &operator=(differentiableFunctionMinimizer<DataType> &&other);
 
@@ -84,128 +93,128 @@ public:
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param umFun     umuq Differentiable Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> &umFun, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param umFun     umuq Differentiable Function to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(umuqDifferentiableFunction<DataType, F_MTYPE<DataType>, DF_MTYPE<DataType>, FDF_MTYPE<DataType>> &umFun, DataType const *X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, DF_MTYPE<DataType> &DFun, FDF_MTYPE<DataType> &FDFun, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, DF_MTYPE<DataType> const &DFun, FDF_MTYPE<DataType> const &FDFun, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, DF_MTYPE<DataType> &DFun, FDF_MTYPE<DataType> &FDFun, DataType const *X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param DFun      Function gradient \f$ \nabla \f$ to be used in this minimizer
    * \param FDFun     Function & its gradient to be used in this minimizer
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, DF_MTYPE<DataType> const &DFun, FDF_MTYPE<DataType> const &FDFun, DataType const *X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, DataType const *X, DataType const StepSize, DataType const Tol);
 
   /*!
    * \brief Set the Function to be used in this minimizer, N-dimensional initial vector and step-size
-   * 
+   *
    * \param Fun       Function to be used in this minimizer \f$ f(x) \f$
    * \param X         N-dimensional initial vector
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, DataType const *X, DataType const StepSize, DataType const Tol);
@@ -249,7 +258,7 @@ public:
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
    *
-   * \return false If it encounters an unexpected problem 
+   * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
@@ -262,7 +271,7 @@ public:
    * \param StepSize  Step-size
    * \param Tol       The user-supplied tolerance
    *
-   * \return false If it encounters an unexpected problem 
+   * \return false If it encounters an unexpected problem
    */
   virtual bool set(F_MTYPE<DataType> const &Fun, std::vector<DataType> const &Params, std::vector<DataType> const &X, DataType const StepSize, DataType const Tol);
 
@@ -350,7 +359,7 @@ public:
 
   /*!
    * \brief Initialize the minimizer
-   * 
+   *
    * \return false If the iteration encounters an unexpected problem
    */
   virtual bool init();
@@ -401,20 +410,20 @@ public:
 
   /*!
    * \brief Helper function to test the norm of the gradient against the absolute tolerance, since the gradient goes to zero at a minimum
-   * 
+   *
    * \param G       Input gradient vector
    * \param abstol  Absolute tolerance
-   *  
+   *
    * \return -1, 0, and 1 (where -1:Fail, 0:Success, and 1:Continue)
    */
   int testGradient(DataType const *G, DataType const abstol);
 
   /*!
    * \brief Helper function to test the norm of the gradient against the absolute tolerance, since the gradient goes to zero at a minimum
-   * 
+   *
    * \param G       Input gradient vector
    * \param abstol  Absolute tolerance
-   *  
+   *
    * \return -1, 0, and 1 (where -1:Fail, 0:Success, and 1:Continue)
    */
   int testGradient(std::vector<DataType> const &G, DataType const abstol);
@@ -427,83 +436,83 @@ public:
   inline DataType getMin();
 
   /*!
-   * \brief Get the number of dimensions 
-   * 
+   * \brief Get the number of dimensions
+   *
    * \returns Number of dimensions
    */
   inline int getDimension();
 
   /*!
    * \brief Helper function to compute the gradient of the function f at X, \f$~(\frac{\partial f}{\partial x}) \f$
-   * 
-   * \note 
+   *
+   * \note
    * - Helper function to compute the gradient by a finite-difference approximation in one-dimension.
    * - Using this routine is not advised, you should probably use a derivative-free algorithm instead.
-   * - Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff 
+   * - Finite-difference approximations are not only expensive, but they are also notoriously susceptible to roundoff
    * errors. <br>
-   * - On the other hand, finite-difference approximations are very useful to check that your analytical 
-   * gradient computation is correct—this is always a good idea, because in my experience it is very easy to have 
-   * bugs in your gradient code, and an incorrect gradient will cause weird problems with a gradient-based 
+   * - On the other hand, finite-difference approximations are very useful to check that your analytical
+   * gradient computation is correct—this is always a good idea, because in my experience it is very easy to have
+   * bugs in your gradient code, and an incorrect gradient will cause weird problems with a gradient-based
    * optimization algorithm.
-   * 
+   *
    * \param X  Input point
    * \param G  Gradient of the function f at X, \f$~(\frac{\partial f}{\partial x}) \f$
-   * 
+   *
    * \return false If the iteration encounters an unexpected problem
    */
   bool df(DataType const *X, DataType *G);
 
   /*!
    * \brief Helper function to compute the function value, and its gradient at X, \f$~(\frac{\partial f}{\partial x})\f$
-   * 
+   *
    * \param X  Input point
    * \param F  Function value at X
    * \param G  Function gradient \f$ \nabla \f$ at X
-   * 
+   *
    * \return false If the iteration encounters an unexpected problem
    */
   bool fdf(DataType const *X, DataType *F, DataType *G);
 
   /*!
    * \brief Compute new trial point at \f$ x - step * p \f$, where p is the current direction
-   * 
-   * \param X 
+   *
+   * \param X
    * \param P       Current direction
    * \param Step    step
    * \param lambda  Coefficient
    * \param X1      New trial point
-   * \param DX 
+   * \param DX
    */
   void takeStep(DataType const *X, DataType const *P, DataType const Step, DataType const lambda, DataType *X1, DataType *DX);
 
   /*!
    * \brief Compute new trial point at \f$ x - step * p \f$, where p is the current direction
-   * 
-   * \param X 
+   *
+   * \param X
    * \param P       Current direction
    * \param Step    step
    * \param lambda  Coefficient
    * \param X1      New trial point
-   * \param DX 
+   * \param DX
    */
   void takeStep(std::vector<DataType> const &X, std::vector<DataType> const &P, DataType const Step, DataType const lambda, std::vector<DataType> &X1, std::vector<DataType> &DX);
 
   /*!
-   * \brief 
-   * 
-   * \param X 
-   * \param P 
-   * \param lambda 
-   * \param pg 
-   * \param stepa 
-   * \param stepc 
-   * \param fa 
-   * \param fc 
-   * \param X1 
-   * \param DX 
-   * \param Gradient 
-   * \param Step 
-   * \param Fval 
+   * \brief
+   *
+   * \param X
+   * \param P
+   * \param lambda
+   * \param pg
+   * \param stepa
+   * \param stepc
+   * \param fa
+   * \param fc
+   * \param X1
+   * \param DX
+   * \param Gradient
+   * \param Step
+   * \param Fval
    */
   bool intermediatePoint(DataType const *X, DataType const *P,
                          DataType const lambda, DataType const pg,
@@ -513,21 +522,21 @@ public:
                          DataType *Gradient, DataType *Step, DataType *Fval);
 
   /*!
-   * \brief 
-   * 
-   * \param X 
-   * \param P 
-   * \param lambda 
-   * \param pg 
-   * \param stepa 
-   * \param stepc 
-   * \param fa 
-   * \param fc 
-   * \param X1 
-   * \param DX 
-   * \param Gradient 
-   * \param Step 
-   * \param Fval 
+   * \brief
+   *
+   * \param X
+   * \param P
+   * \param lambda
+   * \param pg
+   * \param stepa
+   * \param stepc
+   * \param fa
+   * \param fc
+   * \param X1
+   * \param DX
+   * \param Gradient
+   * \param Step
+   * \param Fval
    */
   bool intermediatePoint(std::vector<DataType> const &X, std::vector<DataType> const &P,
                          DataType const lambda, DataType const pg,
@@ -540,25 +549,25 @@ public:
    * \brief This function starting at \f$ (x_0, f_0) \f$ move along the direction \f$ p \f$ to find a minimum
    *          \f$ f(x_0 - \lambda * p) \f$, returning the new point \f$ x_1 = x_0-\lambda*p, \f$
    *          \f$ f_1=f(x_1) \f$ and \f$ g_1 = \nabla{f} \f$ at \f$ x_1\f$
-   * 
-   * \param X 
-   * \param P 
-   * \param lambda 
-   * \param stepa 
-   * \param stepb 
-   * \param stepc 
-   * \param fa 
-   * \param fb 
-   * \param fc 
-   * \param Tol 
-   * \param X1 
-   * \param DX1 
-   * \param X2 
-   * \param DX2 
-   * \param Gradient 
-   * \param Step 
-   * \param Fval 
-   * \param Gnorm 
+   *
+   * \param X
+   * \param P
+   * \param lambda
+   * \param stepa
+   * \param stepb
+   * \param stepc
+   * \param fa
+   * \param fb
+   * \param fc
+   * \param Tol
+   * \param X1
+   * \param DX1
+   * \param X2
+   * \param DX2
+   * \param Gradient
+   * \param Step
+   * \param Fval
+   * \param Gnorm
    */
   bool minimize(DataType const *X, DataType const *P,
                 DataType const lambda, DataType const stepa,
@@ -574,25 +583,25 @@ public:
    * \brief This function starting at \f$ (x_0, f_0) \f$ move along the direction \f$ p \f$ to find a minimum
    *          \f$ f(x_0 - \lambda * p) \f$, returning the new point \f$ x_1 = x_0-\lambda*p, \f$
    *          \f$ f_1=f(x_1) \f$ and \f$ g_1 = \nabla{f} \f$ at \f$ x_1\f$
-   * 
-   * \param X 
-   * \param P 
-   * \param lambda 
-   * \param stepa 
-   * \param stepb 
-   * \param stepc 
-   * \param fa 
-   * \param fb 
-   * \param fc 
-   * \param Tol 
-   * \param X1 
-   * \param DX1 
-   * \param X2 
-   * \param DX2 
-   * \param Gradient 
-   * \param Step 
-   * \param Fval 
-   * \param Gnorm 
+   *
+   * \param X
+   * \param P
+   * \param lambda
+   * \param stepa
+   * \param stepb
+   * \param stepc
+   * \param fa
+   * \param fb
+   * \param fc
+   * \param Tol
+   * \param X1
+   * \param DX1
+   * \param X2
+   * \param DX2
+   * \param Gradient
+   * \param Step
+   * \param Fval
+   * \param Gnorm
    */
   bool minimize(std::vector<DataType> const &X, std::vector<DataType> const &P,
                 DataType const lambda, DataType const stepa,
@@ -607,17 +616,17 @@ public:
 protected:
   /*!
    * \brief Delete a differentiableFunctionMinimizer object copy construction
-   * 
+   *
    * Avoiding implicit generation of the copy constructor.
    */
   differentiableFunctionMinimizer(differentiableFunctionMinimizer<DataType> const &) = delete;
 
   /*!
    * \brief Delete a differentiableFunctionMinimizer object assignment
-   * 
+   *
    * Avoiding implicit copy assignment.
-   * 
-   * \returns differentiableFunctionMinimizer<DataType, F>& 
+   *
+   * \returns differentiableFunctionMinimizer<DataType, F>&
    */
   differentiableFunctionMinimizer<DataType> &operator=(differentiableFunctionMinimizer<DataType> const &) = delete;
 
@@ -1848,7 +1857,7 @@ bool differentiableFunctionMinimizer<DataType>::minimize(DataType const *X, Data
     fm = fun.f(X1);
 
 #ifdef DEBUG
-    std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
+    UMUQMSG("Trying stepm = ", stepm, " fm = ", fm);
 #endif
 
     if (fm > fstpb)
@@ -1917,7 +1926,7 @@ bool differentiableFunctionMinimizer<DataType>::minimize(DataType const *X, Data
       if (std::abs(pg * lambda / gnorm1) < Tol)
       {
 #ifdef DEBUG
-        std::cout << "Ok!" << std::endl;
+        UMUQMSG("Ok!");
 #endif
         // SUCCESS
         return true;
@@ -2040,7 +2049,7 @@ bool differentiableFunctionMinimizer<DataType>::minimize(std::vector<DataType> c
     fm = fun.f(X1.data());
 
 #ifdef DEBUG
-    std::cout << "Trying stepm = " << stepm << " fm = " << fm << std::endl;
+    UMUQMSG("Trying stepm = ", stepm, " fm = ", fm);
 #endif
 
     if (fm > fstpb)
@@ -2109,7 +2118,7 @@ bool differentiableFunctionMinimizer<DataType>::minimize(std::vector<DataType> c
       if (std::abs(pg * lambda / gnorm1) < Tol)
       {
 #ifdef DEBUG
-        std::cout << "Ok!" << std::endl;
+        UMUQMSG("Ok!");
 #endif
         // SUCCESS
         return true;

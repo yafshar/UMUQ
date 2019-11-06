@@ -1,7 +1,12 @@
 #ifndef UMUQ_UTILITYFUNCTION_H
 #define UMUQ_UTILITYFUNCTION_H
 
+#include "core/core.hpp"
 #include "linearfunctionwrapper.hpp"
+
+#include <cmath>
+
+#include <limits>
 
 namespace umuq
 {
@@ -11,23 +16,23 @@ inline namespace multimin
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Helper routines
  *
  */
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Finds the real roots of \f$ a x^2 + b x + c = 0 \f$
- * 
- * \tparam DataType 
- * \param a 
- * \param b 
- * \param c 
- * \param x0 
- * \param x1 
- * 
+ *
+ * \tparam DataType
+ * \param a
+ * \param b
+ * \param c
+ * \param x0
+ * \param x1
+ *
  * \returns int Number of found roots
  */
 template <typename DataType>
@@ -100,28 +105,28 @@ int poly_solve_quadratic(DataType const a, DataType const b, DataType const c, D
     }
 }
 
-/*! 
+/*!
  * \ingroup Multimin_Module
- * 
- * 
+ *
+ *
  */
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Find a minimum in \f$ x=[0,1] \f$ of the interpolating quadratic through
- * \f$(0,f0)\f$, and \f$ (1,f1) \f$ with derivative \f$ fp0 \f$ at \f$x = 0. \f$  
+ * \f$(0,f0)\f$, and \f$ (1,f1) \f$ with derivative \f$ fp0 \f$ at \f$x = 0. \f$
  * The interpolating polynomial is \f$ q(x) = f0 + fp0 * z + (f1-f0-fp0) * z^2 \f$
- * 
+ *
  * \tparam DataType Data type
- * 
- * \param f0 
- * \param fp0 
- * \param f1 
- * \param zl 
- * \param zh 
- * 
- * \returns DataType Minimum found value in \f$ x=[0,1] \f$ of the interpolating quadratic 
+ *
+ * \param f0
+ * \param fp0
+ * \param f1
+ * \param zl
+ * \param zh
+ *
+ * \returns DataType Minimum found value in \f$ x=[0,1] \f$ of the interpolating quadratic
  */
 template <typename DataType>
 DataType interp_quad(DataType const f0, DataType const fp0, DataType const f1, DataType const zl, DataType const zh)
@@ -163,33 +168,33 @@ DataType interp_quad(DataType const f0, DataType const fp0, DataType const f1, D
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Find a minimum in \f$ x=[0,1] \f$ of the interpolating cubic through
- * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$ 
+ * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$
  * and \f$ fp1 \f$ at \f$ x=1. \f$
- * 
+ *
  * \tparam DataType Data type
- * 
- * \param c0 
- * \param c1 
- * \param c2 
- * \param c3 
- * \param z 
- * 
+ *
+ * \param c0
+ * \param c1
+ * \param c2
+ * \param c3
+ * \param z
+ *
  * \returns DataType Minimum found value in \f$ x=[0,1] \f$ of the interpolating cubic
- * 
+ *
  *
  * Find a minimum in \f$ x=[0,1] \f$ of the interpolating cubic through
- * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$ 
+ * \f$ (0,f0) \f$, and \f$ (1,f1) \f$ with derivatives \f$ fp0 \f$ at \f$ x=0 \f$
  * and \f$ fp1 \f$ at \f$ x=1. \f$
  *
  * The interpolating polynomial is:<br>
- * 
- * \f$ c(x) = f0 + fp0 * z + \eta * z^2 + xi * z^3 \f$, where 
+ *
+ * \f$ c(x) = f0 + fp0 * z + \eta * z^2 + xi * z^3 \f$, where
  * \f$
  * \begin{aligned}
  * \nonumber \eta=3*(f1-f0)-2*fp0-fp1, \\
- * \nonumber xi=fp0+fp1-2*(f1-f0). 
+ * \nonumber xi=fp0+fp1-2*(f1-f0).
  * \end{aligned}
  * \f$
  */
@@ -201,18 +206,18 @@ inline DataType cubic(DataType const c0, DataType const c1, DataType const c2, D
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Check for the extremum
- * 
+ *
  * \tparam DataType Data type
- *  
- * \param c0 
- * \param c1 
- * \param c2 
- * \param c3 
- * \param z 
- * \param zmin 
- * \param fmin 
+ *
+ * \param c0
+ * \param c1
+ * \param c2
+ * \param c3
+ * \param z
+ * \param zmin
+ * \param fmin
  */
 template <typename DataType>
 inline void check_extremum(DataType const c0, DataType const c1, DataType const c2, DataType const c3, DataType const z, DataType *zmin, DataType *fmin)
@@ -230,18 +235,18 @@ inline void check_extremum(DataType const c0, DataType const c1, DataType const 
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief A cubic polynomial interpolation using \f$ f(\alpha_i), \acute{f}(\alpha_i), f(\alpha_{i-1}), and \acute{f}(\alpha_{i-1}) \f$.
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * \param f0   \f$ f(\alpha_i) \f$
  * \param fp0  \f$ \acute{f}(\alpha_i) \f$
  * \param f1   \f$ f(\alpha_{i-1}) \f$
  * \param fp1  \f$ \acute{f}(\alpha_{i-1}) \f$
- * \param zl   Lower bound 
+ * \param zl   Lower bound
  * \param zh   Higher bound
- * 
+ *
  * \return DataType Interpolation value
  */
 template <typename DataType>
@@ -290,21 +295,21 @@ DataType interp_cubic(DataType const f0, DataType const fp0, DataType const f1, 
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief interpolate
- * 
+ *
  * \tparam DataType Data type
- * 
- * \param a 
- * \param fa 
- * \param fpa 
- * \param b 
- * \param fb 
- * \param fpb 
- * \param xmin 
- * \param xmax 
- * \param order 
- * 
+ *
+ * \param a
+ * \param fa
+ * \param fpa
+ * \param b
+ * \param fb
+ * \param fpb
+ * \param xmin
+ * \param xmax
+ * \param order
+ *
  * \returns DataType Interpolation value
  */
 template <typename DataType>
@@ -334,44 +339,44 @@ DataType interpolate(DataType const a, DataType const fa, DataType const fpa, Da
 
 /*!
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Line search algorithm for general unconstrained minimization
- * 
- * An assumption for this algorithm is that the line search can be restricted to the 
+ *
+ * An assumption for this algorithm is that the line search can be restricted to the
  * interval \f$ (0, \mu] \f$ where \f$ \mu = \frac{\bar{f}-f(0)}{\rho \acute{f}(0)} \f$
  * is the point at which the \f$\rho-\text{line}\f$ intersects the line \f$ f = \bar{f} \f$.
- * 
- * After the bracketing phase has achieved its aim of bracketing an interval of acceptable 
+ *
+ * After the bracketing phase has achieved its aim of bracketing an interval of acceptable
  * points, sectioning phase generates a sequence of brackets whose lengths tend to zero.
- * 
+ *
  * In this algorithm \f$ \tau_1 > 1 \f$ is a preset factor by which the size of the jumps is
- * increased, typically \f$ \tau_1 = 9 \f$. 
+ * increased, typically \f$ \tau_1 = 9 \f$.
  * \f$ \tau_2 \f$ and \f$ \tau_3 \f$ are preset factors \f$  0 < \tau_2  < \tau_3 \le \frac{1}{2} \f$.
- * 
- * Typical values are \f$ \tau_2 = \frac{1}{10} \f$ ( \f$ (\tau_2 \le \sigma \text{is advisable}) \f$  
+ *
+ * Typical values are \f$ \tau_2 = \frac{1}{10} \f$ ( \f$ (\tau_2 \le \sigma \text{is advisable}) \f$
  * and \f$ \tau_3 = \frac{1}{2} \f$, although the algorithm is insensitive to the precise values that
- * are used. 
- * 
- * Recommended values from Fletcher: 
- * \f$ \rho = 0.01, \sigma = 0.1, \tau_1 = 9, \tau_2 = 0.05, \tau_3 = 0.5 \f$ 
- * 
+ * are used.
+ *
+ * Recommended values from Fletcher:
+ * \f$ \rho = 0.01, \sigma = 0.1, \tau_1 = 9, \tau_2 = 0.05, \tau_3 = 0.5 \f$
+ *
  * Ref:
  * R. Fletcher, Practical Methods of Optimization (Second Edition) Wiley (1987), ISBN 0471915475.
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * \param obj     linearFunctionWrapper object
- * \param rho     Fixed parameter defined by \f$ f(\alpha) \ge f(0) + \alpha (1 - \rho) \acute{f}(0) \f$  
+ * \param rho     Fixed parameter defined by \f$ f(\alpha) \ge f(0) + \alpha (1 - \rho) \acute{f}(0) \f$
  * \param sigma   Fixed parameter defined by \f$ \acute{f}(\alpha) \ge \sigma \acute{f}(0), ~~ \sigma \in (\rho,1) \f$
  * \param tau1    Preset factor by which the size of the jumps is increased
  * \param tau2    Preset factor
  * \param tau3    Preset factor
- * \param order   
+ * \param order
  * \param alpha1  \f$ \alpha_1 = \min{(1, -2\Delta f/\acute{f}(0))} \f$
- * \param alpha_new 
- * 
- * \return true 
- * \return false 
+ * \param alpha_new
+ *
+ * \return true
+ * \return false
  */
 template <typename DataType>
 bool minimize(linearFunctionWrapper<DataType> &obj,

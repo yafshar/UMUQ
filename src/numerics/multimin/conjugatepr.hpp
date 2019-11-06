@@ -1,6 +1,14 @@
 #ifndef UMUQ_CONJUGATEPR_H
 #define UMUQ_CONJUGATEPR_H
 
+#include "core/core.hpp"
+#include "numerics/function/differentiablefunctionminimizer.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <algorithm>
+
 namespace umuq
 {
 
@@ -9,29 +17,29 @@ inline namespace multimin
 
 /*! \class conjugatePr
  * \ingroup Multimin_Module
- * 
+ *
  * \brief Conjugate Polak-Ribiere gradient algorithm.
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * It differs from the Fletcher-Reeves method, only in the choice of the coefficient \f$ \beta \f$.
- * It works well when the evaluation point is close enough to the minimum of the objective function 
- * that it is well approximated by a quadratic hypersurface. 
+ * It works well when the evaluation point is close enough to the minimum of the objective function
+ * that it is well approximated by a quadratic hypersurface.
  */
 template <typename DataType>
 class conjugatePr : public differentiableFunctionMinimizer<DataType>
 {
-  public:
+public:
     /*!
      * \brief Construct a new conjugate Pr object
-     * 
+     *
      * \param Name Minimizer name
      */
     explicit conjugatePr(const char *Name = "conjugatePr");
 
     /*!
      * \brief Destroy the conjugate Pr object
-     * 
+     *
      */
     ~conjugatePr();
 
@@ -46,9 +54,9 @@ class conjugatePr : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Initialize the minimizer
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     bool init();
 
@@ -64,13 +72,13 @@ class conjugatePr : public differentiableFunctionMinimizer<DataType>
 
     /*!
      * \brief Restart the iterator
-     * 
-     * \return true 
-     * \return false 
+     *
+     * \return true
+     * \return false
      */
     inline bool restart();
 
-  private:
+private:
     //! Iteration
     int iter;
 
@@ -190,7 +198,7 @@ bool conjugatePr<DataType>::iterate()
     }
 
 #ifdef DEBUG
-    std::cout << "Got stepc = " << stepc << "fc = " << fc << std::endl;
+    UMUQMSG("Got stepc = ", stepc, "fc = ", fc);
 #endif
 
     // Do a line minimisation in the region (xa,fa) (xc,fc) to find an
@@ -253,9 +261,9 @@ bool conjugatePr<DataType>::iterate()
     std::copy(this->gradient.begin(), this->gradient.end(), g0.begin());
 
 #ifdef DEBUG
-    std::cout << "updated conjugate directions" << std::endl;
+    UMUQMSG("updated conjugate directions");
     /*!
-     * \todo 
+     * \todo
      * print vector p and g
      */
 #endif

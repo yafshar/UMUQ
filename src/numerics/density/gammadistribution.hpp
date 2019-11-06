@@ -1,6 +1,19 @@
 #ifndef UMUQ_GAMMADISTRIBUTION_H
 #define UMUQ_GAMMADISTRIBUTION_H
 
+#include "core/core.hpp"
+#include "numerics/function/densityfunction.hpp"
+
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <limits>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <functional>
+
 namespace umuq
 {
 
@@ -9,29 +22,29 @@ inline namespace density
 
 /*! \class gammaDistribution
  * \ingroup Density_Module
- * 
+ *
  * \brief The Gamma distribution
- * 
+ *
  * \tparam RealType     Data type
  * \tparam FunctionType Function type
- * 
- * This class provides probability density \f$ p(x) \f$ and it's Log at x for a 
+ *
+ * This class provides probability density \f$ p(x) \f$ and it's Log at x for a
  * Gamma distribution with shape parameter \f$\alpha > 0\f$ and scale parameter \f$ beta > 0\f$. <br>
  * The scale parameter, \f$ beta\f$, is optional and defaults to \f$ beta = 1\f$. <br>
  * using:<br>
- * 
+ *
  * \f$
  * p(x)=\frac{1}{\Gamma (\alpha) \beta^\alpha}x^{\alpha-1}e^{\frac{-x}{\beta}}.
  * \f$
- * 
- * Use the Gamma distribution with \f$\alpha > 1\f$ if you have a sharp lower bound of zero but no 
- * sharp upper bound, a single mode, and a positive skew. The Gamma distribution is especially appropriate 
- * when encoding arrival times for sets of events. A Gamma distribution with a large value for \f$\alpha\f$ 
+ *
+ * Use the Gamma distribution with \f$\alpha > 1\f$ if you have a sharp lower bound of zero but no
+ * sharp upper bound, a single mode, and a positive skew. The Gamma distribution is especially appropriate
+ * when encoding arrival times for sets of events. A Gamma distribution with a large value for \f$\alpha\f$
  * is also useful when you wish to use a bell-shaped curve for a positive-only quantity.
- * 
- * This class also provides random non-negative values x, distributed according to the Gamma distribution 
+ *
+ * This class also provides random non-negative values x, distributed according to the Gamma distribution
  * probability density function. \sa sample
- * 
+ *
  * \note
  * - \f$ \alpha > 0 \f$
  * - \f$ \beta > 0 \f$
@@ -43,7 +56,7 @@ class gammaDistribution : public densityFunction<RealType, FunctionType>
   public:
     /*!
      * \brief Construct a new Gamma distribution object
-     * 
+     *
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      */
@@ -51,7 +64,7 @@ class gammaDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Construct a new gamma Distribution object
-     * 
+     *
      * \param alpha  Shape parameter \f$\alpha\f$
      * \param beta   Scale parameter \f$ beta\f$
      * \param n      Total number of alpha + beta inputs
@@ -60,25 +73,25 @@ class gammaDistribution : public densityFunction<RealType, FunctionType>
 
     /*!
      * \brief Destroy the Gamma distribution object
-     * 
+     *
      */
     ~gammaDistribution();
 
     /*!
      * \brief Gamma distribution density function
-     * 
+     *
      * \param x Input value
-     * 
-     * \returns Density function value 
+     *
+     * \returns Density function value
      */
     inline RealType gammaDistribution_f(RealType const *x);
 
     /*!
      * \brief Log of Gamma distribution density function
-     * 
+     *
      * \param x Input value
-     * 
-     * \returns  Log of density function value 
+     *
+     * \returns  Log of density function value
      */
     inline RealType gammaDistribution_lf(RealType const *x);
 
@@ -132,7 +145,7 @@ class gammaDistribution : public densityFunction<RealType, FunctionType>
     /*!
      * \brief Create samples of the Gamma distribution object
      *
-     * \param x  Matrix of random samples 
+     * \param x  Matrix of random samples
      *
      * \return false If Random Number Generator object is not assigned
      */

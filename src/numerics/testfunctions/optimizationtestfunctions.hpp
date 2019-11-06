@@ -1,30 +1,34 @@
 #ifndef UMUQ_OPTIMIZATIONTESTFUNCTIONS_H
 #define UMUQ_OPTIMIZATIONTESTFUNCTIONS_H
 
+#include "core/core.hpp"
+
+#include <cmath>
+
 /*! \file optimizationtestfunctions.hpp
  * \ingroup Numerics_Module
- * 
+ *
  * \brief The Rosenbrock function
- * 
- * The Rosenbrock function, also referred to as the Valley or Banana function, is a 
- * popular test problem for gradient-based optimization algorithms. 
- * The function is unimodal, and the global minimum lies in a narrow, parabolic valley. 
- * However, even though this valley is easy to find, convergence to the minimum is 
+ *
+ * The Rosenbrock function, also referred to as the Valley or Banana function, is a
+ * popular test problem for gradient-based optimization algorithms.
+ * The function is unimodal, and the global minimum lies in a narrow, parabolic valley.
+ * However, even though this valley is easy to find, convergence to the minimum is
  * difficult (Picheny et al., 2012).
- * 
- * 
+ *
+ *
  * \f$ f(x,y) = 100(y - x^2)^2 + (1 - x)^2 \f$
  * Minimum: 0 at (1,1)
  */
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Rosenbrock function
- * 
+ *
  * \param x  2-D Input point
- *  
- * \return Function value at x 
+ *
+ * \return Function value at x
  */
 double rosenbrock_f(double const *x)
 {
@@ -38,14 +42,14 @@ double rosenbrock_f(double const *x)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Derivative of Rosenbrock function
- * 
+ *
  * \param x   2-D Input point
  * \param df  Function derivative \f$ \frac{\partial f}{\partial x_0} \text{and} \frac{\partial f}{\partial x_1} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool rosenbrock_df(double const *x, double *df)
 {
@@ -61,15 +65,15 @@ bool rosenbrock_df(double const *x, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Rosenbrock function & it's derivative
- * 
+ *
  * \param x   2-D Input point
  * \param f   Function value at point x
  * \param df  Function derivative \f$ \frac{\partial f}{\partial x_0} \text{and} \frac{\partial f}{\partial x_1} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool rosenbrock_fdf(double const *x, double *f, double *df)
 {
@@ -88,23 +92,23 @@ bool rosenbrock_fdf(double const *x, double *f, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief The Freudenstein-Roth's Function
- * 
+ *
  * The Freudenstein-Roth's Function, also referred to roth function.
- * 
+ *
  * \f$ f(x,y) = (-13 + x + ((5 - y)y - 2)y)^2 + (-29 + x + ((y + 1)y - 14)y)^2 \f$
  * Minimum: 0 at (5,4) and 48.9842 at (11.41, -0.8986)
  */
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Roth function
- * 
+ *
  * \param x  2-D Input point
- *  
- * \return Function value at x 
+ *
+ * \return Function value at x
  */
 double roth_f(double const *x)
 {
@@ -119,14 +123,14 @@ double roth_f(double const *x)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Derivative of Roth function
- * 
+ *
  * \param x   2-D Input point
  * \param df  Function derivative \f$ \frac{\partial f}{\partial x_0} \text{and} \frac{\partial f}{\partial x_1} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool roth_df(double const *x, double *df)
 {
@@ -145,15 +149,15 @@ bool roth_df(double const *x, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Roth function & it's derivative
- * 
+ *
  * \param x   2-D Input point
  * \param f   Function value at point x
  * \param df  Function derivative \f$ \frac{\partial f}{\partial x_0} \text{and} \frac{\partial f}{\partial x_1} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool roth_fdf(double const *x, double *f, double *df)
 {
@@ -174,26 +178,26 @@ bool roth_fdf(double const *x, double *f, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief The Wood's (or Colville's) function
- * 
+ *
  * The Wood's (or Colville's) function, also referred to wood function.
- * 
- * 
+ *
+ *
  * \f$ f = 100*(x_1^2-x_2)^2+(x_1-1)^2+(x_3-1)^2+90*(x_3^2-x_4)^2+10.1*((x_2-1)^2+(x_4-1)^2)+19.8*(x_2^-1)*(x_4-1) \f$
  * Minimum: 0 at (1,1,1,1)
- *  
+ *
  * The function is usually evaluated on the hypercube \f$ x \in [-10, 10]~\text{for all}~i = 1, 2, 3, 4. \f$
  */
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Wood function
- * 
+ *
  * \param x  4-D Input point
- *  
- * \return Function value at x 
+ *
+ * \return Function value at x
  */
 double wood_f(double const *x)
 {
@@ -210,14 +214,14 @@ double wood_f(double const *x)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Derivative of Wood function
- * 
+ *
  * \param x   4-D Input point
  * \param df  Function derivative \f$ \frac{\partial f}{\partial x_0}, \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \text{and} \frac{\partial f}{\partial x_3} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool wood_df(double const *x, double *df)
 {
@@ -239,15 +243,15 @@ bool wood_df(double const *x, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Wood function & it's derivative
- * 
+ *
  * \param x    4-D Input point
  * \param f    Function value at point x
  * \param df   Function derivative \f$ \frac{\partial f}{\partial x_0}, \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \text{and} \frac{\partial f}{\partial x_3} \f$
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 bool wood_fdf(double const *x, double *f, double *df)
 {
@@ -271,19 +275,19 @@ bool wood_fdf(double const *x, double *f, double *df)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief The Spring function
- * 
+ *
  */
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Spring function
- * 
+ *
  * \param x  3-D Input point
- *  
- * \return Function value at x 
+ *
+ * \return Function value at x
  */
 double spring_f(double const *x)
 {

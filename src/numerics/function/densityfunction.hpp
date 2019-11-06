@@ -1,6 +1,7 @@
 #ifndef UMUQ_DENSITYFUNCTION_H
 #define UMUQ_DENSITYFUNCTION_H
 
+#include "core/core.hpp"
 #include "misc/arraywrapper.hpp"
 #include "numerics/factorial.hpp"
 #include "numerics/eigenlib.hpp"
@@ -8,35 +9,38 @@
 #include "umuqfunction.hpp"
 #include "numerics/random/psrandom.hpp"
 
+#include <vector>
+#include <utility>
+
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Density_Module Density module
  * \ingroup Numerics_Module
- * 
+ *
  * This is the density module of %UMUQ providing all necessary classes for probability density computation.
  */
 
-/*! 
+/*!
  * \namespace umuq::density
  * \ingroup Density_Module
- * 
+ *
  * \brief Namespace containing all the functions for probability density computation.
- * 
+ *
  */
 inline namespace density
 {
 
 /*! \class densityFunction
  * \ingroup Density_Module
- * 
+ *
  * \brief Density function class
  *
  * \tparam DataType     Data type
  * \tparam FunctionType Function type
- * 
- * Density function or a probability density (PDF), is a function, with a value at any given point (or sample point) 
+ *
+ * Density function or a probability density (PDF), is a function, with a value at any given point (or sample point)
  * interpreted as a relative likelihood that the value of the random variable would be equal to that sample.
  */
 template <typename DataType, class FunctionType>
@@ -45,14 +49,14 @@ class densityFunction : public umuqFunction<DataType, FunctionType>
 public:
   /*!
    * \brief Construct a new density Function object
-   * 
+   *
    * \param Name Distribution name
    */
   explicit densityFunction(char const *Name = "");
 
   /*!
    * \brief Construct a new density Function object
-   * 
+   *
    * \param Params     Parameters of density Function object
    * \param NumParams  Number of parameters
    * \param Name       Distribution name
@@ -61,7 +65,7 @@ public:
 
   /*!
    * \brief Construct a new density Function object
-   * 
+   *
    * \param Params     Parameters of density Function object
    * \param NumParams  Number of parameters
    * \param Name       Distribution name
@@ -70,7 +74,7 @@ public:
 
   /*!
    * \brief Construct a new density Function object
-   * 
+   *
    * \param Params1     Parameters of density Function object
    * \param Params2     Parameters of density Function object
    * \param NumParams   Number of parameters
@@ -80,7 +84,7 @@ public:
 
   /*!
    * \brief Construct a new density Function object
-   * 
+   *
    * \param Params1     Parameters of density Function object
    * \param Params2     Parameters of density Function object
    * \param NumParams   Number of parameters
@@ -90,63 +94,63 @@ public:
 
   /*!
    * \brief Move constructor, construct a new density Function object
-   * 
+   *
    * \param other densityFunction object
    */
   densityFunction(densityFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Move assignment operator
-   * 
-   * \param other densityFunction object 
+   *
+   * \param other densityFunction object
    */
   densityFunction<DataType, FunctionType> &operator=(densityFunction<DataType, FunctionType> &&other);
 
   /*!
    * \brief Destroy the density Function object
-   * 
+   *
    */
   ~densityFunction();
 
 public:
   /*!
    * \brief Log of density function
-   * 
+   *
    * \returns the function value (Log of density function)
    */
   FunctionType lf;
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x Vector of random samples 
-   * 
+   *
+   * \param x Vector of random samples
+   *
    * \return false If Random Number Generator object is not assigned
    */
   virtual void sample(DataType *x);
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x Vector of random samples 
-   *  
+   *
+   * \param x Vector of random samples
+   *
    * \return false If Random Number Generator object is not assigned
    */
   virtual void sample(std::vector<DataType> &x);
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x Vector of random samples 
-   *  
+   *
+   * \param x Vector of random samples
+   *
    * \return false If Random Number Generator object is not assigned
    */
   virtual void sample(EVectorX<DataType> &x);
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x         Vector of random samples 
+   *
+   * \param x         Vector of random samples
    * \param nSamples  Number of sample vectors
    *
    * \return false If Random Number Generator object is not assigned
@@ -155,19 +159,19 @@ public:
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x Vector of random samples 
+   *
+   * \param x Vector of random samples
    * \param nSamples  Number of sample vectors
-   * 
+   *
    * \return false If Random Number Generator object is not assigned
    */
   virtual void sample(std::vector<DataType> &x, int const nSamples);
 
   /*!
    * \brief Create random samples based on the distribution
-   * 
-   * \param x Matrix of random samples 
-   * 
+   *
+   * \param x Matrix of random samples
+   *
    * \return false If Random Number Generator object is not assigned
    */
   virtual void sample(EMatrixX<DataType> &x);
