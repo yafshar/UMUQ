@@ -4,255 +4,255 @@
 #
 # SYNOPSIS
 #
-#	AX_CXX_COMPILE_STDCXX(VERSION, [ext|noext], [mandatory|optional])
+#  AX_CXX_COMPILE_STDCXX(VERSION, [ext|noext], [mandatory|optional])
 #
 # DESCRIPTION
 #
-#	Check for baseline language coverage in the compiler for the specified
-#	version of the C++ standard.  If necessary, add switches to CXX and
-#	CXXCPP to enable support.  VERSION may be '11' (for the C++11 standard)
-#	or '14' (for the C++14 standard).
+#  Check for baseline language coverage in the compiler for the specified
+#  version of the C++ standard.  If necessary, add switches to CXX and
+#  CXXCPP to enable support.  VERSION may be '11' (for the C++11 standard)
+#  or '14' (for the C++14 standard).
 #
-#	The second argument, if specified, indicates whether you insist on an
-#	extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
-#	-std=c++11).  If neither is specified, you get whatever works, with
-#	preference for an extended mode.
+#  The second argument, if specified, indicates whether you insist on an
+#  extended mode (e.g. -std=gnu++11) or a strict conformance mode (e.g.
+#  -std=c++11).  If neither is specified, you get whatever works, with
+#  preference for an extended mode.
 #
-#	The third argument, if specified 'mandatory' or if left unspecified,
-#	indicates that baseline support for the specified C++ standard is
-#	required and that the macro should error out if no mode with that
-#	support is found.  If specified 'optional', then configuration proceeds
-#	regardless, after defining HAVE_CXX${VERSION} if and only if a
-#	supporting mode is found.
+#  The third argument, if specified 'mandatory' or if left unspecified,
+#  indicates that baseline support for the specified C++ standard is
+#  required and that the macro should error out if no mode with that
+#  support is found.  If specified 'optional', then configuration proceeds
+#  regardless, after defining HAVE_CXX${VERSION} if and only if a
+#  supporting mode is found.
 #
 # LICENSE
 #
-#	Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
-#	Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
-#	Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
-#	Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
-#	Copyright (c) 2015 Paul Norman <penorman@mac.com>
-#	Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
+#  Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
+#  Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
+#  Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
+#  Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+#  Copyright (c) 2015 Paul Norman <penorman@mac.com>
+#  Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
 #
-#	Copying and distribution of this file, with or without modification, are
-#	permitted in any medium without royalty provided the copyright notice
-#	and this notice are preserved.  This file is offered as-is, without any
-#	warranty.
+#  Copying and distribution of this file, with or without modification, are
+#  permitted in any medium without royalty provided the copyright notice
+#  and this notice are preserved.  This file is offered as-is, without any
+#  warranty.
 
-#	serial 8
+#  serial 8
 
 dnl  This macro is based on the code from the AX_CXX_COMPILE_STDCXX_11 macro
 dnl  (serial version number 13).
 #
 # ADAPTED
-#	Yaser Afshar @ ya.afshar@gmail.com
-#	Dept of Aerospace Engineering | University of Michigan
+#  Yaser Afshar @ ya.afshar@gmail.com
+#  Dept of Aerospace Engineering | University of Michigan
 
 AC_DEFUN([AX_CXX_COMPILE_STDCXX], [dnl
-	AC_MSG_NOTICE()
+  AC_MSG_NOTICE()
 
-	m4_if([$1], [11], [],
-				[$1], [14], [],
-				[$1], [17], [m4_fatal([support for C++17 not yet implemented in AX_CXX_COMPILE_STDCXX])],
-				[m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
+  m4_if([$1], [11], [],
+        [$1], [14], [],
+        [$1], [17], [m4_fatal([support for C++17 not yet implemented in AX_CXX_COMPILE_STDCXX])],
+        [m4_fatal([invalid first argument `$1' to AX_CXX_COMPILE_STDCXX])])dnl
 
-	m4_if([$2], [], [],
-				[$2], [ext], [],
-				[$2], [noext], [],
-				[m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
+  m4_if([$2], [], [],
+        [$2], [ext], [],
+        [$2], [noext], [],
+        [m4_fatal([invalid second argument `$2' to AX_CXX_COMPILE_STDCXX])])dnl
 
-	m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
-				[$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
-				[$3], [optional], [ax_cxx_compile_cxx$1_required=false],
-				[m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])dnl
+  m4_if([$3], [], [ax_cxx_compile_cxx$1_required=true],
+        [$3], [mandatory], [ax_cxx_compile_cxx$1_required=true],
+        [$3], [optional], [ax_cxx_compile_cxx$1_required=false],
+        [m4_fatal([invalid third argument `$3' to AX_CXX_COMPILE_STDCXX])])dnl
 
-	AC_LANG_PUSH([C++])dnl
+  AC_LANG_PUSH([C++])dnl
 
-	ac_success=no
-	ac_success_partial=no
+  ac_success=no
+  ac_success_partial=no
 
-	AC_CACHE_CHECK(whether $CXX supports C++$1 features by default, 
-		ax_cv_cxx_compile_cxx$1, [
-			AC_COMPILE_IFELSE(
-				[AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])], 
-				[ax_cv_cxx_compile_cxx$1=yes], 
-				[ax_cv_cxx_compile_cxx$1=no]
-			)
-		]
-	)
-
-
-	if test x"$ax_cv_cxx_compile_cxx$1" = xyes; then
-		ac_success=yes
-	fi
+  AC_CACHE_CHECK(whether $CXX supports C++$1 features by default,
+    ax_cv_cxx_compile_cxx$1, [
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+        [ax_cv_cxx_compile_cxx$1=yes],
+        [ax_cv_cxx_compile_cxx$1=no]
+      )
+    ]
+  )
 
 
-	m4_if([$2], [noext], [], 
-		[
-			if test x"$ac_success" = xno; then
-				for switch in -std=gnu++$1 -std=gnu++0x; do
-					cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-					AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-						$cachevar, [
-							ac_save_CXX="$CXX"
-							CXX="$CXX $switch"
-							AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-								[eval $cachevar=yes],
-								[eval $cachevar=no]
-							)
-							CXX="$ac_save_CXX"
-						]
-					)
-					if eval test x"\$$cachevar" = xyes; then
-						CXX="$CXX $switch"
-						if test -n "$CXXCPP" ; then
-							CXXCPP="$CXXCPP $switch"
-						fi
-						ac_success=yes
-						break
-					fi
-				done
-			fi
-
-			if test x$ac_success = xno; then
-				if test x$1 = x14; then
-					for switch in -std=gnu++$1 -std=gnu++0x; do
-						cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-						AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-						$cachevar, [
-							ac_save_CXX="$CXX"
-							CXX="$CXX $switch"
-							AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1_])],
-								[eval $cachevar=yes],
-								[eval $cachevar=no]
-							)
-						CXX="$ac_save_CXX"]
-						)
-						if eval test x"\$$cachevar" = xyes; then
-							CXX="$CXX $switch"
-							if test -n "$CXXCPP" ; then
-								CXXCPP="$CXXCPP $switch"
-							fi
-							ac_success_partial=yes
-							break
-					fi
-					done
-				fi
-			fi
-		]
-	) dnl
+  if test x"$ax_cv_cxx_compile_cxx$1" = xyes; then
+    ac_success=yes
+  fi
 
 
-	m4_if([$2], [ext], [], 
-		[
-			if test x$ac_success = xno; then
-				dnl HP's aCC needs +std=c++11 according to:
-				dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
-				dnl Cray's crayCC needs "-h std=c++11"
-				for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
-					cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-					AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-					$cachevar, [
-						ac_save_CXX="$CXX"
-						CXX="$CXX $switch"
-						AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
-							[eval $cachevar=yes],
-							[eval $cachevar=no]
-						)
-					CXX="$ac_save_CXX"]
-					)
-					if eval test x"\$$cachevar" = xyes; then
-						CXX="$CXX $switch"
-						if test -n "$CXXCPP" ; then
-							CXXCPP="$CXXCPP $switch"
-						fi
-						ac_success=yes
-						break
-				fi
-				done
-			fi
+  m4_if([$2], [noext], [],
+    [
+      if test x"$ac_success" = xno; then
+        for switch in -std=gnu++$1 -std=gnu++0x; do
+          cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+          AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+            $cachevar, [
+              ac_save_CXX="$CXX"
+              CXX="$CXX $switch"
+              AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+                [eval $cachevar=yes],
+                [eval $cachevar=no]
+              )
+              CXX="$ac_save_CXX"
+            ]
+          )
+          if eval test x"\$$cachevar" = xyes; then
+            CXX="$CXX $switch"
+            if test -n "$CXXCPP" ; then
+              CXXCPP="$CXXCPP $switch"
+            fi
+            ac_success=yes
+            break
+          fi
+        done
+      fi
 
-			if test x$ac_success = xno; then
-				if test x$1 = x14; then
-					for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
-						cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
-						AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch, 
-						$cachevar, [
-							ac_save_CXX="$CXX"
-							CXX="$CXX $switch"
-							AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1_])],
-								[eval $cachevar=yes],
-								[eval $cachevar=no]
-							)
-						CXX="$ac_save_CXX"]
-						)
-						if eval test x"\$$cachevar" = xyes; then
-							CXX="$CXX $switch"
-							if test -n "$CXXCPP" ; then
-								CXXCPP="$CXXCPP $switch"
-							fi
-							ac_success_partial=yes
-							break
-					fi
-					done
-				fi
-			fi
-		]
-	) dnl
+      if test x$ac_success = xno; then
+        if test x$1 = x14; then
+          for switch in -std=gnu++$1 -std=gnu++0x; do
+            cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+            AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+            $cachevar, [
+              ac_save_CXX="$CXX"
+              CXX="$CXX $switch"
+              AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1_])],
+                [eval $cachevar=yes],
+                [eval $cachevar=no]
+              )
+            CXX="$ac_save_CXX"]
+            )
+            if eval test x"\$$cachevar" = xyes; then
+              CXX="$CXX $switch"
+              if test -n "$CXXCPP" ; then
+                CXXCPP="$CXXCPP $switch"
+              fi
+              ac_success_partial=yes
+              break
+          fi
+          done
+        fi
+      fi
+    ]
+  ) dnl
 
 
-	AC_LANG_POP([C++])
-	
-	if test x"$ax_cxx_compile_cxx$1_required" = xtrue; then
-		if test x"$ac_success" = xno; then
-			if test x$ac_success_partial = xyes; then
-				AC_MSG_NOTICE([This compiler only supports variable templates features of C++$1 !])
-			else
-				AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
-			fi
-		fi
-	fi
-	
-	if test x"$ac_success" = xno; then
-		if test x"$ac_success_partial" = xyes; then
-			HAVE_CXX$1=1$
-			AC_MSG_NOTICE([No compiler with full C++$1 support was found])
-			AC_MSG_NOTICE([This compiler only supports variable templates features of C++$1 !])
-			AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports variable templates features of C++$1 syntax])
-		else
-			HAVE_CXX$1=0
-			AC_MSG_NOTICE([No compiler with C++$1 support was found])
-		fi
-	else
-		HAVE_CXX$1=1
-		AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports basic C++$1 syntax])
-	fi
-	
-	AC_SUBST(HAVE_CXX$1)
-	
-	AC_MSG_RESULT()
+  m4_if([$2], [ext], [],
+    [
+      if test x$ac_success = xno; then
+        dnl HP's aCC needs +std=c++11 according to:
+        dnl http://h21007.www2.hp.com/portal/download/files/unprot/aCxx/PDF_Release_Notes/769149-001.pdf
+        dnl Cray's crayCC needs "-h std=c++11"
+        for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
+          cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+          AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+          $cachevar, [
+            ac_save_CXX="$CXX"
+            CXX="$CXX $switch"
+            AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1])],
+              [eval $cachevar=yes],
+              [eval $cachevar=no]
+            )
+          CXX="$ac_save_CXX"]
+          )
+          if eval test x"\$$cachevar" = xyes; then
+            CXX="$CXX $switch"
+            if test -n "$CXXCPP" ; then
+              CXXCPP="$CXXCPP $switch"
+            fi
+            ac_success=yes
+            break
+        fi
+        done
+      fi
+
+      if test x$ac_success = xno; then
+        if test x$1 = x14; then
+          for switch in -std=c++$1 -std=c++0x +std=c++$1 "-h std=c++$1"; do
+            cachevar=AS_TR_SH([ax_cv_cxx_compile_cxx$1_$switch])
+            AC_CACHE_CHECK(whether $CXX supports C++$1 features with $switch,
+            $cachevar, [
+              ac_save_CXX="$CXX"
+              CXX="$CXX $switch"
+              AC_COMPILE_IFELSE([AC_LANG_SOURCE([_AX_CXX_COMPILE_STDCXX_testbody_$1_])],
+                [eval $cachevar=yes],
+                [eval $cachevar=no]
+              )
+            CXX="$ac_save_CXX"]
+            )
+            if eval test x"\$$cachevar" = xyes; then
+              CXX="$CXX $switch"
+              if test -n "$CXXCPP" ; then
+                CXXCPP="$CXXCPP $switch"
+              fi
+              ac_success_partial=yes
+              break
+          fi
+          done
+        fi
+      fi
+    ]
+  ) dnl
+
+
+  AC_LANG_POP([C++])
+
+  if test x"$ax_cxx_compile_cxx$1_required" = xtrue; then
+    if test x"$ac_success" = xno; then
+      if test x$ac_success_partial = xyes; then
+        AC_MSG_NOTICE([This compiler only supports variable templates features of C++$1 !])
+      else
+        AC_MSG_ERROR([*** A compiler with support for C++$1 language features is required.])
+      fi
+    fi
+  fi
+
+  if test x"$ac_success" = xno; then
+    if test x"$ac_success_partial" = xyes; then
+      HAVE_CXX$1=1$
+      AC_MSG_NOTICE([No compiler with full C++$1 support was found])
+      AC_MSG_NOTICE([This compiler only supports variable templates features of C++$1 !])
+      AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports variable templates features of C++$1 syntax])
+    else
+      HAVE_CXX$1=0
+      AC_MSG_NOTICE([No compiler with C++$1 support was found])
+    fi
+  else
+    HAVE_CXX$1=1
+    AC_DEFINE(HAVE_CXX$1, 1, [Define if the compiler supports basic C++$1 syntax])
+  fi
+
+  AC_SUBST(HAVE_CXX$1)
+
+  AC_MSG_RESULT()
 ])
 
 dnl Test body for checking C++11 support
 m4_define([_AX_CXX_COMPILE_STDCXX_testbody_11],
-	_AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
 )
 
 dnl  Test body for checking C++14 support
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14], 
-	_AX_CXX_COMPILE_STDCXX_testbody_new_in_11 
-	_AX_CXX_COMPILE_STDCXX_testbody_new_in_14
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14],
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_14
 )
 
 dnl  Test body for checking C++14 support only variable template
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14_], 
-	_AX_CXX_COMPILE_STDCXX_testbody_new_in_11 
-	_AX_CXX_COMPILE_STDCXX_testbody_new_in_14_
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_14_],
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_11
+  _AX_CXX_COMPILE_STDCXX_testbody_new_in_14_
 )
 
 dnl  Tests for new features in C++11
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11], 
-	[[
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_11],
+  [[
 // If the compiler admits that it is not ready for C++11, why torture it?
 // Hopefully, this will speed up the test.
 
@@ -504,8 +504,8 @@ void test() { func<foo>(0); }
 ) dnl
 
 dnl  Tests for new features in C++14
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14], 
-	[[
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14],
+  [[
 // If the compiler admits that it is not ready for C++14, why torture it?
 // Hopefully, this will speed up the test.
 
@@ -601,13 +601,13 @@ int test()
 } // namespace cxx14
 
 #endif // __cplusplus >= 201402L
-	]]
+  ]]
 ) dnl
 
 
 dnl  Tests for variable_template feature in C++14
-m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14_], 
-	[[
+m4_define([_AX_CXX_COMPILE_STDCXX_testbody_new_in_14_],
+  [[
 // If the compiler admits that it is not ready for C++14, why torture it?
 // Hopefully, this will speed up the test.
 
@@ -636,5 +636,5 @@ int test()
 }
 
 #endif // __cplusplus >= 201402L
-	]]
+  ]]
 ) dnl
