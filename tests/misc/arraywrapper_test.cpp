@@ -2,11 +2,13 @@
 #include "misc/arraywrapper.hpp"
 #include "gtest/gtest.h"
 
+#include <numeric>
+
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for checking arrayWrapper
- * 
+ *
  */
 TEST(arraywrapper_test, HandlesVectors)
 {
@@ -96,9 +98,9 @@ TEST(arraywrapper_test, HandlesVectors)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for checking arrayWrapper when we have stride
- * 
+ *
  */
 TEST(arraywrapper_test, HandlesVectorsWithStride)
 {
@@ -162,9 +164,9 @@ TEST(arraywrapper_test, HandlesVectorsWithStride)
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief Construct a new TEST object for checking arrayWrapper for N dimensional vectors 
- * 
+ *
+ * \brief Construct a new TEST object for checking arrayWrapper for N dimensional vectors
+ *
  */
 TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
 {
@@ -211,9 +213,9 @@ TEST(arraywrapper_test, HandlesNDimVectorsWithStride)
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief Construct a new TEST object for writing at elements 
- * 
+ *
+ * \brief Construct a new TEST object for writing at elements
+ *
  */
 TEST(arraywrapper_test, HandlesWriteInNDimVectorsWithStride)
 {
@@ -261,9 +263,9 @@ TEST(arraywrapper_test, HandlesWriteInNDimVectorsWithStride)
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief Construct a new TEST object for writing at elements 
- * 
+ *
+ * \brief Construct a new TEST object for writing at elements
+ *
  */
 TEST(arraywrapper_test, HandlesStatisticsFunctions)
 {
