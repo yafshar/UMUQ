@@ -1,20 +1,26 @@
 #ifndef UMUQ_KNEARESTNEIGHBORS_H
 #define UMUQ_KNEARESTNEIGHBORS_H
 
+#include "core/core.hpp"
 #include "datatype/distancetype.hpp"
 #include "knearestneighborbase.hpp"
+
+#include <cstddef>
+
+#include <vector>
+#include <utility>
 
 namespace umuq
 {
 
 /*! \class kNearestNeighbor
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Finding K nearest neighbors in high dimensional spaces
- * 
+ *
  * \tparam DataType      Data type
  * \tparam DistanceType  DistanceTypes type for computing the distances to the nearest neighbors.
- *                       (Default is EUCLIDEAN distance) 
+ *                       (Default is EUCLIDEAN distance)
  *                       \sa umuq::DistanceTypes
  */
 template <typename DataType, umuq::DistanceTypes DistanceType = umuq::DistanceTypes::EUCLIDEAN>
@@ -65,7 +71,7 @@ class kNearestNeighbor : public kNearestNeighborBase<DataType, flann::L2<DataTyp
   private:
     /*!
      * \brief Explicitly prevent the default construct a new k Nearest Neighbor object
-     * 
+     *
      */
     kNearestNeighbor() = delete;
 };

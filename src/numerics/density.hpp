@@ -18,7 +18,7 @@
  */
 
 
-#include "function/densityfunction.hpp"
+#include "numerics/function/densityfunction.hpp"
 
 #include "density/uniformdistribution.hpp"
 #include "density/exponentialdistribution.hpp"

@@ -1,19 +1,28 @@
 #ifndef UMUQ_LINEARREGRESSION_H
 #define UMUQ_LINEARREGRESSION_H
 
+#include "core/core.hpp"
 #include "polynomials.hpp"
 #include "eigenlib.hpp"
+
+#include <cstddef>
+
+#include <vector>
+#include <utility>
+#include <memory>
+#include <new>
+#include <algorithm>
 
 namespace umuq
 {
 
 /*! \class linearRegression
  * \ingroup Numerics_Module
- * 
- * \brief linearRegression is a linear approach to modelling the relationship between a 
- * scalar response (or dependent variable) and one or more explanatory variables (or 
+ *
+ * \brief linearRegression is a linear approach to modelling the relationship between a
+ * scalar response (or dependent variable) and one or more explanatory variables (or
  * independent variables).
- * 
+ *
  * \tparam DataType        Data type
  * \tparam PolynomialType  Polynomial type (Default is - \b polynomial<DataType> with monomials)<br>
  *                         \sa umuq::polynomials::PolynomialTypes.<br>
@@ -24,7 +33,7 @@ class linearRegression
   public:
     /*!
      * \brief Construct a new linear Regression object
-     * 
+     *
      * \param ndim             Number of dimensions
      * \param polynomialorder  Polynomial order (default 1 which is a n-dimensional linear polynomial)
      */
@@ -32,44 +41,44 @@ class linearRegression
 
     /*!
      * \brief Move constructor, construct a new linearRegression object from input linearRegression object
-     * 
+     *
      * \param other linearRegression object
      */
     linearRegression(linearRegression<DataType, PolynomialType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other  linearRegression object
-     * 
-     * \return linearRegression<DataType, PolynomialType>& 
+     *
+     * \return linearRegression<DataType, PolynomialType>&
      */
     linearRegression<DataType, PolynomialType> &operator=(linearRegression<DataType, PolynomialType> &&other);
 
     /*!
      * \brief Destroy the linearRegression object
-     * 
+     *
      */
     ~linearRegression();
 
     /*!
-     * \brief Compute the linear regression kernel weights 
-     * 
+     * \brief Compute the linear regression kernel weights
+     *
      * \param idata    Input data points
      * \param iFvalue  Function value at the input points
      * \param nPoints  Number of input points
-     *  
+     *
      * \return false   For wrong number of input points or not having enough memory
      */
     bool computeWeights(DataType *idata, DataType *iFvalue, int const nPoints);
 
     /*!
      * \brief Solution for the new points using the computed Kernel weights
-     * 
+     *
      * \param qdata     N-dimensional input query data points
      * \param qFvalue   [out] Value of the function at the query points
      * \param nqPoints  Number of query points
-     *   
+     *
      * \return false    If polynomialOrder has been changed between computing the kernels and solution
      *                  or not having enough memory
      */
@@ -77,21 +86,21 @@ class linearRegression
 
     /*!
      * \brief Minimum number of points which is required to do the linear regression
-     * 
+     *
      * \return Minimum number of points
      */
     inline int minPointsRequired();
 
     /*!
      * \brief Minimum number of points which is required to do the linear regression
-     * 
-     * \return Recommended number of points 
+     *
+     * \return Recommended number of points
      */
     inline int recommendedNumPoints();
 
     /*!
      * \brief Set the new Polynomial Order object
-     * 
+     *
      * \param polynomialorder new polynomial order
      */
     void resetPolynomialOrder(int const polynomialorder);
@@ -99,14 +108,14 @@ class linearRegression
   private:
     /*!
      * \brief Delete a linearRegression object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     linearRegression(linearRegression<DataType, PolynomialType> const &) = delete;
 
     /*!
      * \brief Delete a linearRegression object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     linearRegression<DataType, PolynomialType> &operator=(linearRegression<DataType, PolynomialType> const &) = delete;
@@ -230,7 +239,7 @@ bool linearRegression<DataType, PolynomialType>::computeWeights(DataType *idata,
         Eigen::JacobiSVD<EMatrixX<DataType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
         /*
-         * SV contains the least-squares solution of 
+         * SV contains the least-squares solution of
          * \f$ {\mathbf A} ({\mathbf X}) ={\mathbf b}, \f$
          * using the current SVD decomposition of A.
          */

@@ -1,19 +1,25 @@
 #ifndef UMUQ_FACTORIAL_H
 #define UMUQ_FACTORIAL_H
 
+#include "core/core.hpp"
+
+#include <cmath>
+
+#include <limits>
+
 namespace umuq
 {
 
 /*!
  * \file numerics/factorial.hpp
- * 
+ *
  */
 
 /*! \class maxFactorial
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined max factorial
- * 
+ *
  * \tparam DataType data type one of float, double, int
  */
 template <class DataType>
@@ -24,7 +30,7 @@ struct maxFactorial
 
 /*! \class maxFactorial
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined max factorial (specialized for float)
  */
 template <>
@@ -35,7 +41,7 @@ struct maxFactorial<float>
 
 /*! \class maxFactorial
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined max factorial (specialized for double)
  */
 template <>
@@ -46,7 +52,7 @@ struct maxFactorial<double>
 
 /*! \class maxFactorial
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined max factorial (specialized for int)
  */
 template <>
@@ -57,13 +63,13 @@ struct maxFactorial<int>
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial
- * 
+ *
  * \tparam DataType Data type one of float, double, long double
- * 
- * \param n  Input number 
- * 
+ *
+ * \param n  Input number
+ *
  * \returns The factorial of n for type float, double, long double, int, unsigned int, long int and Error for anything else
  */
 template <class DataType>
@@ -74,11 +80,11 @@ inline DataType uncheckedFactorial(unsigned int n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for float)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The float type factorial of n
  */
 template <>
@@ -126,11 +132,11 @@ inline float uncheckedFactorial<float>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for long double)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The long double type factorial of n
  */
 template <>
@@ -314,11 +320,11 @@ inline long double uncheckedFactorial<long double>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for double)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The double type factorial of n
  */
 template <>
@@ -329,11 +335,11 @@ inline double uncheckedFactorial<double>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for int)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The int type factorial of n
  */
 template <>
@@ -358,11 +364,11 @@ inline int uncheckedFactorial<int>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for unsigned int)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The unsigned int type factorial of n
  */
 template <>
@@ -387,11 +393,11 @@ inline unsigned int uncheckedFactorial<unsigned int>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for long int)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The long int type factorial of n
  */
 template <>
@@ -416,11 +422,11 @@ inline long int uncheckedFactorial<long int>(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Predefined unchecked factorial (specialized for long unsigned int)
  *
- * \param n  Input number 
- * 
+ * \param n  Input number
+ *
  * \returns The long unsigned int type factorial of n
  */
 template <>
@@ -445,13 +451,13 @@ inline long unsigned int uncheckedFactorial<long unsigned int>(unsigned int cons
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$
- * 
+ *
  * \tparam DataType data type one of float, double, int, unsigned int, long int, and long unsigned int
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The factorial of n : \f$\left(n!\right)\f$ for any types of float, double, int, unsigned int, long int, long unsigned int and Error for anything else
  */
 template <class DataType>
@@ -462,11 +468,11 @@ inline DataType factorial(unsigned int const n)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for float)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The float type factorial of n : \f$\left(n!\right)\f$
  */
 template <>
@@ -490,11 +496,11 @@ inline float factorial(unsigned int const i)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for double)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The double type factorial of n : \f$\left(n!\right)\f$
  */
 template <>
@@ -518,11 +524,11 @@ inline double factorial(unsigned int const i)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for long unsigned int)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The long unsigned int type factorial of n : \f$\left(n!\right)\f$
  */
 template <>
@@ -533,11 +539,11 @@ inline long unsigned int factorial(unsigned int const i)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for int)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The int type factorial of n : \f$\left(n!\right)\f$
  */
 template <>
@@ -559,11 +565,11 @@ inline int factorial(unsigned int const i)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for unsigned int)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The unsigned int type factorial of n : \f$\left(n!\right)\f$
  */
 template <>
@@ -585,11 +591,11 @@ inline unsigned int factorial(unsigned int const i)
 
 /*!
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Compute the factorial of n : \f$\left(n!\right)\f$ (specialized for long int)
- * 
- * \param n Input number 
- * 
+ *
+ * \param n Input number
+ *
  * \returns The long int type factorial of n : \f$\left(n!\right)\f$
  */
 template <>

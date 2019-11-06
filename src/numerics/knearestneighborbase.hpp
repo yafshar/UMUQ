@@ -1,28 +1,38 @@
 #ifndef UMUQ_KNEARESTNEIGHBORBASE_H
 #define UMUQ_KNEARESTNEIGHBORBASE_H
 
+#include "core/core.hpp"
 #include "eigenlib.hpp"
 
 /*!
  * \ingroup Numerics_Module
- * 
- * FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces. 
- * It contains a collection of algorithms we found to work best for nearest neighbor search and a system 
+ *
+ * FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces.
+ * It contains a collection of algorithms we found to work best for nearest neighbor search and a system
  * for automatically choosing the best algorithm and optimum parameters depending on the dataset.
  */
 #include <flann/flann.hpp>
+
+#include <cstddef>
+
+#include <vector>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <new>
+#include <limits>
 
 namespace umuq
 {
 
 /*! \class kNearestNeighborBase
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Finding K nearest neighbors in high dimensional spaces
- * 
+ *
  * \tparam DataType           Data type
  * \tparam FlannDistanceType  Distance type from flann library for computing the distances to the nearest neighbors
- * 
+ *
  * Distance type for computing the distances to the nearest neighbors include below distance types from flann library:
  * - \b flann::L2                        Squared Euclidean distance functor, optimized version.
  * - \b flann::L2_Simple                 Squared Euclidean distance functor.
@@ -34,9 +44,9 @@ namespace umuq
  * - \b flann::ChiSquareDistance         The distance between two histograms.
  * - \b flann::KL_Divergence             The Kullback-Leibler divergence.
  * - \b flann::Hamming                   Hamming distance functor.
- * - \b flann::HammingLUT                Hamming distance functor - counts the bit differences between two strings - 
+ * - \b flann::HammingLUT                Hamming distance functor - counts the bit differences between two strings -
  *                                       useful for the Brief descriptor bit count of A exclusive \c XOR'ed with B.
- * - \b flann::HammingPopcnt             Hamming distance functor (pop count between two binary vectors, i.e. xor them 
+ * - \b flann::HammingPopcnt             Hamming distance functor (pop count between two binary vectors, i.e. xor them
  *                                       and count the number of bits set).
  */
 template <typename DataType, class FlannDistanceType>
@@ -45,7 +55,7 @@ class kNearestNeighborBase
   public:
     /*!
      * \brief Construct a new kNearestNeighborBase object
-     * 
+     *
      * \param ndataPoints  Number of data points
      * \param nDim         Dimension of each point
      * \param kNeighbors   k nearest neighbors to find
@@ -54,7 +64,7 @@ class kNearestNeighborBase
 
     /*!
      * \brief Construct a new kNearestNeighborBase object
-     * 
+     *
      * \param ndataPoints  Number of data points
      * \param nqueryPoints Number of query points
      * \param nDim         Dimension of each point
@@ -88,31 +98,31 @@ class kNearestNeighborBase
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
-     * 
-     * \param idata A pointer to input data 
+     *
+     * \param idata A pointer to input data
      */
     virtual void buildIndex(DataType *idata);
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
-     * 
-     * \param idata A pointer to input data 
-     * \param qdata A pointer to query data 
+     *
+     * \param idata A pointer to input data
+     * \param qdata A pointer to query data
      */
     virtual void buildIndex(DataType *idata, DataType *qdata);
 
     /*!
      * \brief A pointer to nearest neighbors indices
-     * 
+     *
      * \param index Index of a point (from data points) to get its neighbors
-     * 
+     *
      * \returns A (pointer to a) row of the nearest neighbors indices.
      */
     inline int *NearestNeighbors(int const &index) const;
 
     /*!
      * \brief A pointer to all points nearest neighbors indices
-     * 
+     *
      * The function returns a pointer of \c size(nPoints * (kNeighbors+1)) all points neighbors.<br>
      * The returned pointer looks like below:<br>
      * \verbatim
@@ -123,52 +133,52 @@ class kNearestNeighborBase
      *  | .
      *  | nPoints-1        .      .     (nPoints-1)_k
      * \endverbatim
-     * 
-     * 
+     *
+     *
      * Each row has the size of n which is the number of k neighbors + 1 <br>
      * and it has \c nPoints rows. <br>
      * The first column is the indices of points themselves in case of input data and query data are the same.
-     * 
+     *
      * \returns All points nearest neighbors indices (in row order).
      */
     inline int *NearestNeighbors() const;
 
     /*!
      * \brief A pointer to nearest neighbors distances from the point index
-     * 
-     * \param index Index of a point (from data points) 
-     * 
+     *
+     * \param index Index of a point (from data points)
+     *
      * \returns A pointer to nearest neighbors distances from the point index
      */
     inline DataType *NearestNeighborsDistances(int const &index) const;
 
     /*!
      * \brief Distance of a nearest neighbor of index
-     * 
-     * \param index Index of a point (from data points) 
-     * 
+     *
+     * \param index Index of a point (from data points)
+     *
      * \returns Distance of a nearest neighbor point of the index
      */
     inline DataType minDist(int const &index) const;
 
     /*!
-     * \brief Vector of all points' distance of their nearest neighbor 
-     * 
-     * \returns Vector of all points' distance of their nearest neighbor 
+     * \brief Vector of all points' distance of their nearest neighbor
+     *
+     * \returns Vector of all points' distance of their nearest neighbor
      */
     inline DataType *minDist();
 
     /*!
      * \brief Number of each point nearest neighbors
-     * 
+     *
      * \returns number of nearest neighbors
      */
     inline int numNearestNeighbors() const;
 
     /*!
-     * \brief Function to check that we do not compute the nearest neighbors of a 
+     * \brief Function to check that we do not compute the nearest neighbors of a
      * point from itself, in case of different input data and query data
-     * 
+     *
      * \returns true If input points and query points are used correctly
      */
     bool checkNearestNeighbors();
@@ -190,7 +200,7 @@ class kNearestNeighborBase
 
     /*!
      * \brief Check to see whether it requires the covariance for finding the neighbors. (Default is no)
-     * 
+     *
      * \returns true If the DistanceTypes type is the Mahalanobis distance
      */
     inline bool needsCovariance() const;
@@ -233,7 +243,7 @@ class kNearestNeighborBase
   protected:
     /*!
      * \brief Explicitly prevent the default construct of a new kNearestNeighborBase object
-     * 
+     *
      * Avoiding implicit default construction.
      */
     kNearestNeighborBase() = delete;

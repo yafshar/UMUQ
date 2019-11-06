@@ -1,22 +1,35 @@
 #ifndef UMUQ_STATS_H
 #define UMUQ_STATS_H
 
-#include "../misc/arraywrapper.hpp"
+#include "core/core.hpp"
+#include "misc/arraywrapper.hpp"
 #include "eigenlib.hpp"
+
+#include <cmath>
+
+#include <vector>
+#include <type_traits>
+#include <limits>
+#include <memory>
+#include <numeric>
+#include <algorithm>
+#include <stdexcept>
+#include <iterator>
+
 
 namespace umuq
 {
 
 /*! \class stats
  * \ingroup Numerics_Module
- * 
+ *
  * \brief stats is a class which includes some functionality for statistics of the input data
  *
  * It includes:<br>
  * - \b minelement         Finds the smallest element in the array of data
  * - \b maxelement         Finds the greatest element in the array of data
- * - \b minelement_index   Finds the position of the smallest element in the array of data 
- * - \b maxelement_index   Finds the position of the greatest element in the array of data 
+ * - \b minelement_index   Finds the position of the smallest element in the array of data
+ * - \b maxelement_index   Finds the position of the greatest element in the array of data
  * - \b sum                Computes the sum of the elements in the array of data
  * - \b sumAbs             Computes the sum of the absolute value of the elements in the array of data
  * - \b mean               Computes the mean of the elements in the array of data
@@ -30,44 +43,44 @@ namespace umuq
  * - \b covariance         Compute the covariance
  * - \b correlation        Compute the correlation coefficient (The population Pearson correlation coefficient.)
  * - \b unique             Eliminates all but the first element from every consecutive sample points,
- *                         Find the unique n-dimensions sample points in an array of nRows * nCols data 
+ *                         Find the unique n-dimensions sample points in an array of nRows * nCols data
  */
 struct stats
 {
     /*!
      * \brief Construct a new stats object
-     * 
+     *
      */
     stats();
 
     /*!
      * \brief Destroy the stats object
-     * 
+     *
      */
     ~stats();
 
     /*!
      * \brief Finds the smallest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns DataType The smallest element in the array of data
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * int A[] = {2, 3, 5, 7, 1, 6, 8, 10, 9, 4, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
-     * 
+     *
      * std::cout << s.minelement<int>(A, 20) << std::endl;
-     * std::cout << s.minelement<int>(A, 20, 2) << std::endl; // smallest element in A with stride = 2 
-     * std::cout << s.minelement<int>(A, 20, 5) << std::endl; // smallest element in A with stride = 5 
+     * std::cout << s.minelement<int>(A, 20, 2) << std::endl; // smallest element in A with stride = 2
+     * std::cout << s.minelement<int>(A, 20, 5) << std::endl; // smallest element in A with stride = 5
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * -10
@@ -80,22 +93,22 @@ struct stats
 
     /*!
      * \brief Finds the smallest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns DataType The smallest element in the array of data
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * std::vector<double> B{2, 3, 5, 7, 1, 6, 8, 10, 9, 4};
-     * 
+     *
      * std::cout << s.minelement<double>(B) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 1
@@ -106,11 +119,11 @@ struct stats
 
     /*!
      * \brief Finds the smallest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns DataType The smallest element in the array of data
      */
     template <typename DataType>
@@ -118,13 +131,13 @@ struct stats
 
     /*!
      * \brief Finds the greatest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns DataType The greatest element in the array of data
      */
     template <typename DataType>
@@ -132,11 +145,11 @@ struct stats
 
     /*!
      * \brief Finds the greatest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata   Array of data
-     * 
+     *
      * \returns DataType The greatest element in the array of data
      */
     template <typename DataType>
@@ -144,11 +157,11 @@ struct stats
 
     /*!
      * \brief Finds the greatest element in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param iArray Array of data
-     * 
+     *
      * \returns DataType The greatest element in the array of data
      */
     template <typename DataType>
@@ -156,13 +169,13 @@ struct stats
 
     /*!
      * \brief Finds the position of the smallest element in the array of data (idata) with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns int The position of the smallest element
      */
     template <typename DataType>
@@ -170,11 +183,11 @@ struct stats
 
     /*!
      * \brief Finds the position of the smallest element in the array of data (idata) with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns int The position of the smallest element
      */
     template <typename DataType>
@@ -182,11 +195,11 @@ struct stats
 
     /*!
      * \brief Finds the position of the smallest element in the array of data (idata) with stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns int The position of the smallest element
      */
     template <typename DataType>
@@ -194,13 +207,13 @@ struct stats
 
     /*!
      * \brief Finds the position of the greatest element in the array of data (idata) with Stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns int The the position of the greatest element
      */
     template <typename DataType>
@@ -208,11 +221,11 @@ struct stats
 
     /*!
      * \brief Finds the position of the greatest element in the array of data (idata) with Stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns int The the position of the greatest element
      */
     template <typename DataType>
@@ -220,11 +233,11 @@ struct stats
 
     /*!
      * \brief Finds the position of the greatest element in the array of data (idata) with Stride
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns int The the position of the greatest element
      */
     template <typename DataType>
@@ -232,14 +245,14 @@ struct stats
 
     /*!
      * \brief Computes the sum of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns OutputDataType The sum of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -247,12 +260,12 @@ struct stats
 
     /*!
      * \brief Computes the sum of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns OutputDataType The sum of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -260,12 +273,12 @@ struct stats
 
     /*!
      * \brief Computes the sum of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns OutputDataType The sum of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -273,14 +286,14 @@ struct stats
 
     /*!
      * \brief Computes the sum of the absolute value of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns OutputDataType The sum of the absolute value of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -288,12 +301,12 @@ struct stats
 
     /*!
      * \brief Computes the sum of the absolute value of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns OutputDataType The sum of the absolute value of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -301,12 +314,12 @@ struct stats
 
     /*!
      * \brief Computes the sum of the absolute value of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns OutputDataType The sum of the absolute value of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -314,14 +327,14 @@ struct stats
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns RealType The mean of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -330,12 +343,12 @@ struct stats
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
-     * 
+     *
      * \returns RealType The mean of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -344,12 +357,12 @@ struct stats
 
     /*!
      * \brief Computes the mean of the elements in the array of data with stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns RealType The mean of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -358,14 +371,14 @@ struct stats
 
     /*!
      * \brief Computes the median of the elements in the array of data with Stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride (default is 1)
-     * 
+     *
      * \returns OutputDataType The median of the elements in the array of data with Stride
      */
     template <typename DataType, typename OutputDataType = double>
@@ -373,12 +386,12 @@ struct stats
 
     /*!
      * \brief Computes the median of the elements in the array of data with Stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata  Array of data
-     * 
+     *
      * \returns OutputDataType The median of the elements in the array of data with Stride
      */
     template <typename DataType, typename OutputDataType = double>
@@ -386,12 +399,12 @@ struct stats
 
     /*!
      * \brief Computes the median of the elements in the array of data with Stride
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param iArray  Array of data
-     * 
+     *
      * \returns OutputDataType The median of the elements in the array of data with Stride
      */
     template <typename DataType, typename OutputDataType = double>
@@ -399,15 +412,15 @@ struct stats
 
     /*!
      * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param nSize   Size of the array
      * \param Stride  Element stride
      * \param Median  Median of the elements in the array of data
-     * 
+     *
      * \returns OutputDataType The median absolute deviation of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -415,13 +428,13 @@ struct stats
 
     /*!
      * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param idata   Array of data
      * \param Median  Median of the elements in the array of data
-     * 
+     *
      * \returns OutputDataType The median absolute deviation of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -429,13 +442,13 @@ struct stats
 
     /*!
      * \brief Computes the median absolute deviation (MAD) of the elements in the array of data
-     * 
+     *
      * \tparam DataType       Data type
      * \tparam OutputDataType Data type of the return output result (default is double)
-     * 
+     *
      * \param iArray  Array of data
      * \param Median  Median of the elements in the array of data
-     * 
+     *
      * \returns OutputDataType The median absolute deviation of the elements in the array of data
      */
     template <typename DataType, typename OutputDataType = double>
@@ -443,15 +456,15 @@ struct stats
 
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata      Array of data
      * \param nSize      Size of the array
      * \param Stride     Element stride (optional, default is 1)
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The standard deviation of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -460,13 +473,13 @@ struct stats
 
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata      Array of data
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The standard deviation of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -474,13 +487,13 @@ struct stats
     stddev(std::vector<DataType> const &idata, RealType const idataMean = std::numeric_limits<RealType>::max()) const;
     /*!
      * \brief Computes the standard deviation of the elements in the array of data with or without stride
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param iArray     Array of data
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The standard deviation of the elements in the array of data
      */
     template <typename DataType, typename RealType = double>
@@ -490,16 +503,16 @@ struct stats
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
-     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
-     * 
+     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata      Array of data
      * \param nSize      Size of the array
      * \param Stride     Element stride (optional, default is 1)
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The coefficient of variation (CV)
      */
     template <typename DataType, typename RealType = double>
@@ -509,14 +522,14 @@ struct stats
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
-     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
-     * 
+     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata      Array of data
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The coefficient of variation (CV)
      */
     template <typename DataType, typename RealType = double>
@@ -526,14 +539,14 @@ struct stats
     /*!
      * \brief Computes the coefficient of variation (CV), or relative standard deviation (RSD).
      * It is a standardized measure of dispersion of a probability distribution or frequency distribution.
-     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$ 
-     * 
+     * It is defined as the ratio of the standard deviation \f$ \sigma \f$ to the mean \f$ \mu \f$
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param iArray     Array of data
      * \param idataMean  Mean of the elements in idata (optional)
-     * 
+     *
      * \returns RealType The coefficient of variation (CV)
      */
     template <typename DataType, typename RealType = double>
@@ -542,13 +555,13 @@ struct stats
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
-     * 
-     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
-     * Doing so allows to compare values on very different scales to one another by reducing 
+     *
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1.
+     * Doing so allows to compare values on very different scales to one another by reducing
      * the dominance of one dimension over the other.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata     Array of data
      * \param nSize     Size of array
      * \param Stride    Element stride (default is 1)
@@ -560,13 +573,13 @@ struct stats
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
-     * 
-     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
-     * Doing so allows to compare values on very different scales to one another by reducing 
+     *
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1.
+     * Doing so allows to compare values on very different scales to one another by reducing
      * the dominance of one dimension over the other.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata     Array of data
      * \param nSize     Size of array
      * \param MinValue  Output minimum value
@@ -578,13 +591,13 @@ struct stats
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
-     * 
-     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
-     * Doing so allows to compare values on very different scales to one another by reducing 
+     *
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1.
+     * Doing so allows to compare values on very different scales to one another by reducing
      * the dominance of one dimension over the other.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata     Array of data
      * \param MinValue  Input minimum value
      * \param MaxValue  Input maximum value
@@ -594,13 +607,13 @@ struct stats
 
     /*!
      * \brief minmaxNormal scales the numeric data using the MinMax normalization method
-     * 
-     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1. 
-     * Doing so allows to compare values on very different scales to one another by reducing 
+     *
+     * Using the MinMax normalization method, one can normalize the values to be between 0 and 1.
+     * Doing so allows to compare values on very different scales to one another by reducing
      * the dominance of one dimension over the other.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata     Array of data
      * \param MinValue  Output minimum value
      * \param MaxValue  Output maximum value
@@ -610,13 +623,13 @@ struct stats
 
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
-     * 
-     * Using the Z-score normalization method, one can normalize the values to be the number of 
-     * standard deviations an observation is from the mean of each dimension. 
+     *
+     * Using the Z-score normalization method, one can normalize the values to be the number of
+     * standard deviations an observation is from the mean of each dimension.
      * This allows to compare data to a normally distributed random variable.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      * \param nSize  Size of array
      * \param Stride Element stride (default is 1)
@@ -626,13 +639,13 @@ struct stats
 
     /*!
      * \brief zscoreNormal scales the numeric data using the Z-score normalization method
-     * 
-     * Using the Z-score normalization method, one can normalize the values to be the number of 
-     * standard deviations an observation is from the mean of each dimension. 
+     *
+     * Using the Z-score normalization method, one can normalize the values to be the number of
+     * standard deviations an observation is from the mean of each dimension.
      * This allows to compare data to a normally distributed random variable.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      */
     template <typename DataType>
@@ -640,16 +653,16 @@ struct stats
 
     /*!
      * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
-     * 
-     * Using the robust Z-score normalization method, one can lessen the influence of outliers 
-     * on Z-score calculations. Robust Z-score normalization uses the median value as opposed 
+     *
+     * Using the robust Z-score normalization method, one can lessen the influence of outliers
+     * on Z-score calculations. Robust Z-score normalization uses the median value as opposed
      * to the mean value used in Z-score. <br>
-     * By using the median instead of the mean, it helps remove some of the influence of outliers 
+     * By using the median instead of the mean, it helps remove some of the influence of outliers
      * in the data.
-     * 
-     * 
+     *
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      * \param nSize  Size of the array
      * \param Stride Element stride (default is 1)
@@ -659,16 +672,16 @@ struct stats
 
     /*!
      * \brief robustzscoreNormal scales the numeric data using the robust Z-score normalization method
-     * 
-     * Using the robust Z-score normalization method, one can lessen the influence of outliers 
-     * on Z-score calculations. Robust Z-score normalization uses the median value as opposed 
+     *
+     * Using the robust Z-score normalization method, one can lessen the influence of outliers
+     * on Z-score calculations. Robust Z-score normalization uses the median value as opposed
      * to the mean value used in Z-score. <br>
-     * By using the median instead of the mean, it helps remove some of the influence of outliers 
+     * By using the median instead of the mean, it helps remove some of the influence of outliers
      * in the data.
-     * 
-     * 
+     *
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      */
     template <typename DataType>
@@ -677,32 +690,32 @@ struct stats
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length nSize <br>
      * \f$ \text{covariance}(idata, jdata) = \frac{1}{n-1} \sum_{i=1}^n (idata_i-iMean)(jdata_i-jMean) \f$
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of data 
+     *
+     * \param idata  Array of data
      * \param jdata  Array of data
      * \param nSize  Size of array
      * \param iMean  Mean of idata array
      * \param jMean  Mean of jdata array
-     * 
-     * \returns Covariance (scaler value) between idata and jdata vectors  
+     *
+     * \returns Covariance (scaler value) between idata and jdata vectors
      *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * double A[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
      * double B[] = {8, 10, 12, 14};	  // (mean = 11)
-     * 
+     *
      * std::cout << s.covariance<double, double>(A, B, 4, 3.1, 11) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 2.26667
-     * \endcode   
+     * \endcode
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -710,16 +723,16 @@ struct stats
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param iArray  Array of data 
+     *
+     * \param iArray  Array of data
      * \param jArray  Array of data
-     * \param iMean   Mean of iArray 
+     * \param iMean   Mean of iArray
      * \param jMean   Mean of jArray
-     * 
-     * \returns Covariance (scaler value) between idata and jdata vectors     
+     *
+     * \returns Covariance (scaler value) between idata and jdata vectors
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -727,32 +740,32 @@ struct stats
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata   Array of data 
+     *
+     * \param idata   Array of data
      * \param jdata   Array of data
-     * \param iMean   Mean of iArray 
+     * \param iMean   Mean of iArray
      * \param jMean   Mean of jArray
-     * 
+     *
      * \returns Covariance (scaler value) between idata and jdata vectors
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * std::vector<double> A{2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
      * std::vector<double> B{8, 10, 12, 14};	  // (mean = 11)
-     * 
+     *
      * std::cout << s.covariance<double, double>(A, B, 3.1, 11) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 2.26667
-     * \endcode  
-     *    
+     * \endcode
+     *
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -760,32 +773,32 @@ struct stats
 
     /*!
      * \brief Compute the covariance between idata and jdata vectors which must both be of the same length \c nSize
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata   Array of data 
+     *
+     * \param idata   Array of data
      * \param jdata   Array of data
      * \param nSize   Size of array
      * \param Stride  Stride of the data in the array (default is 1)
-     * 
+     *
      * \returns Covariance (scaler value) between idata and jdata vectors
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * double A[] = {2.1, 2.5, 3.6, 4.0}; // (with stride 2 {2.1, 3.6} - mean = 2.85)
      * double B[] = {8, 10, 12, 14};	  // (with stride 2 {8, 12}    - mean = 10)
-     * 
+     *
      * std::cout << s.covariance<double, double>(A, B, 4, 2) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 3
-     * \endcode 
-     * 
+     * \endcode
+     *
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -793,13 +806,13 @@ struct stats
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param iArray  Array of data 
+     *
+     * \param iArray  Array of data
      * \param jArray  Array of data
-     * 
+     *
      * \returns Covariance (scaler value) between idata and jdata vectors
      */
     template <typename DataType, typename RealType = double>
@@ -808,25 +821,25 @@ struct stats
 
     /*!
      * \brief Compute the covariance between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of data 
+     *
+     * \param idata  Array of data
      * \param jdata  Array of data
-     * 
+     *
      * \returns Covariance (scaler value) between idata and jdata vectors
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * std::vector<double> A{2.1, 3.6}; // (mean = 2.85)
      * std::vector<double> B{8, 12};    // (mean = 10)
-     * 
+     *
      * std::cout << s.covariance<double, double>(A, B) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 3
@@ -838,31 +851,31 @@ struct stats
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of N-dimensional data 
+     *
+     * \param idata  Array of N-dimensional data
      * \param nSize  Total size of the array
      * \param nDim   Data dimension
-     * \param Stride Stride of the data in the array (default is 1). 
-     * 
-     * The reason for having parameter stride is the case where we have coordinates and function value 
-     * and would like to avoid unnecessary copying the data 
-     * 
+     * \param Stride Stride of the data in the array (default is 1).
+     *
+     * The reason for having parameter stride is the case where we have coordinates and function value
+     * and would like to avoid unnecessary copying the data
+     *
      * \returns Covariance (array of N by N) from N-dimensional idata
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * // A 3-by-4 matrix
      * double A[] = {5,  0, 3, 7,
      *               1, -5, 7, 3,
      *               4,  9, 8, 10};
-     * 
+     *
      * double *Covariance = s.covariance<double, double>(A, 12, 4, 4);
-     * 
+     *
      * for (int i = 0, l = 0; i < 4; i++)
      * {
      *      for (int j = 0; j < 4; j++)
@@ -870,14 +883,14 @@ struct stats
      *      std::cout << std::endl;
      * }
      * \endcode
-     * 
+     *
      * Output:<br>
      * \f$
      * \begin{matrix}
-     * 4.33333 & 8.83333 & -3 & 5.66667 \\ 
+     * 4.33333 & 8.83333 & -3 & 5.66667 \\
      * 8.83333 & 50.3333 & 6.5 & 24.1667  \\
      * -3 & 6.5 & 7 & 1 \\
-     * 5.66667 & 24.1667 & 1 & 12.3333 
+     * 5.66667 & 24.1667 & 1 & 12.3333
      * \end{matrix}
      * \f$
      */
@@ -887,15 +900,15 @@ struct stats
 
     /*!
      * \brief Compute the covariance array of N-dimensional idata
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata  Array of N-dimensional data with size of [nSize/nDim][nDim]
      * \param nSize  Total size of the array
      * \param nDim   Data dimension
      * \param iMean  Mean of each column or dimension of the array idata with size of [nDim]
-     * 
+     *
      * \returns Covariance (array of [nDim * nDim]) from N-dimensional idata
      */
     template <typename DataType, typename RealType = double>
@@ -904,31 +917,31 @@ struct stats
 
     /*!
      * \brief Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
-     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$
      * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
      * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of data 
+     *
+     * \param idata  Array of data
      * \param jdata  Array of data
      * \param nSize  Size of array
      * \param iMean  Mean of idata array
      * \param jMean  Mean of jdata array
-     * 
-     * \returns Correlation (scaler value) between idata and jdata vectors  
+     *
+     * \returns Correlation (scaler value) between idata and jdata vectors
      *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * double X[] = {2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
      * double Y[] = {8, 10, 12, 14};	  // (mean = 11)
-     * 
+     *
      * std::cout << s.correlation<double, double>(X, Y, 4, 3.1, 11) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 0.977431
@@ -940,16 +953,16 @@ struct stats
 
     /*!
      * \brief Compute the correlation between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param iArray  Array of data 
+     *
+     * \param iArray  Array of data
      * \param jArray  Array of data
-     * \param iMean   Mean of iArray 
+     * \param iMean   Mean of iArray
      * \param jMean   Mean of jArray
-     * 
-     * \returns Correlation (scaler value) between idata and jdata vectors     
+     *
+     * \returns Correlation (scaler value) between idata and jdata vectors
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -957,31 +970,31 @@ struct stats
 
     /*!
      * \brief Compute the correlation between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata   Array of data 
+     *
+     * \param idata   Array of data
      * \param jdata   Array of data
-     * \param iMean   Mean of iArray 
+     * \param iMean   Mean of iArray
      * \param jMean   Mean of jArray
-     * 
+     *
      * \returns Correlation (scaler value) between idata and jdata vectors
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * std::vector<double> X{2.1, 2.5, 3.6, 4.0}; // (mean = 3.1)
      * std::vector<double> Y{8, 10, 12, 14};	  // (mean = 11)
-     * 
+     *
      * std::cout << s.correlation<double, double>(X, Y, 3.1, 11) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 0.977431
-     * \endcode    
+     * \endcode
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -989,45 +1002,45 @@ struct stats
 
     /*!
      * \brief Compute the correlation between idata and jdata vectors which must both be of the same length \c nSize
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata   Array of data 
+     *
+     * \param idata   Array of data
      * \param jdata   Array of data
      * \param nSize   Size of array
      * \param Stride  Stride of the data in the array (default is 1)
-     * 
+     *
      * \returns Correlation (scaler value) between idata and jdata vectors
-     * 
+     *
      * Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
-     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$
      * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
      * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
      * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
      * where it uses a numerically stable recurrence to compute a sum of products:<br>
-     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br> 
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br>
      * with the relation <br>
      * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{idata}_{n-1}) * (jdata_n - \overline{jdata}_{n-1}). \f$
-     * 
+     *
      * Reference:<br>
      * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
-     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962.
      *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * double X[] = {2.1, 2.5, 3.6, 4.0};
      * double Y[] = {8, 10, 12, 14};
-     * 
+     *
      * std::cout << s.correlation<double, double>(X, Y, 4) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 0.979457
-     * \endcode 
+     * \endcode
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -1035,28 +1048,28 @@ struct stats
 
     /*!
      * \brief Compute the correlation between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param iArray  Array of data 
+     *
+     * \param iArray  Array of data
      * \param jArray  Array of data
-     * 
+     *
      * \returns Correlation (scaler value) between iArray and jArray vectors
-     * 
+     *
      * Compute the correlation between iArray and jArray vectors which must both be of the same length nSize <br>
-     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$
      * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
      * \f$ \rho (iArray, jArray) = correlation (iArray, jArray) = \frac{covariance (iArray, jArray) }{stddev(iArray) stddev(jArray) } \f$
      * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
      * where it uses a numerically stable recurrence to compute a sum of products:<br>
-     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{iArray}) \times (jdata_i - \overline{jArray})  ]}, \f$ <br> 
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{iArray}) \times (jdata_i - \overline{jArray})  ]}, \f$ <br>
      * with the relation <br>
      * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{iArray}_{n-1}) * (jdata_n - \overline{jArray}_{n-1}). \f$
-     * 
+     *
      * Reference:<br>
      * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
-     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962.
      */
     template <typename DataType, typename RealType = double>
     std::enable_if_t<std::is_floating_point<RealType>::value, RealType>
@@ -1064,39 +1077,39 @@ struct stats
 
     /*!
      * \brief Compute the correlation between two arrays of data which must both be of the same length
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of data 
+     *
+     * \param idata  Array of data
      * \param jdata  Array of data
-     * 
+     *
      * \returns Correlation (scaler value) between idata and jdata vectors
-     * 
+     *
      * Compute the correlation between idata and jdata vectors which must both be of the same length nSize <br>
-     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$ 
+     * Correlation coefficient when applied to a population is commonly represented by the Greek letter \f$ \rho \f$
      * and may be referred to as the population correlation coefficient or the population Pearson correlation coefficient.
      * \f$ \rho (idata, jdata) = correlation (idata, jdata) = \frac{covariance (idata, jdata) }{stddev(idata) stddev(jdata) } \f$
      * It computes the correlation in one pass of the data and makes use of the algorithm described in Welford~\cite{Welford1962},
      * where it uses a numerically stable recurrence to compute a sum of products:<br>
-     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br> 
+     * \f$ S = \sum_{i=1}^{nSize} {[(idata_i - \overline{idata}) \times (jdata_i - \overline{jdata})  ]}, \f$ <br>
      * with the relation <br>
      * \f$ S_n = S_{n-1} + ((n-1)/n) * (idata_n - \overline{idata}_{n-1}) * (jdata_n - \overline{jdata}_{n-1}). \f$
-     * 
+     *
      * Reference:<br>
      * B. P. Welford, "Note on a Method for Calculating Corrected Sums of
-     * Squares and Products", Technometrics, Vol 4, No 3, 1962. 
-     * 
+     * Squares and Products", Technometrics, Vol 4, No 3, 1962.
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * std::vector<int> X{17, 18, 16, 18, 12, 20, 18, 20, 20, 22, 20, 10, 8, 12, 16, 16, 18, 20, 18, 21};
-     * std::vector<int> Y{19, 20, 22, 24, 10, 25, 20, 22, 21, 23, 20, 10, 12, 14, 12, 20, 22, 24, 23, 17};   
-     * 
+     * std::vector<int> Y{19, 20, 22, 24, 10, 25, 20, 22, 21, 23, 20, 10, 12, 14, 12, 20, 22, 24, 23, 17};
+     *
      * std::cout << s.correlation<int, double>(X, Y) << std::endl;
      * \endcode
-     * 
+     *
      * Output:<br>
      * \code
      * 0.79309
@@ -1108,31 +1121,31 @@ struct stats
 
     /*!
      * \brief Compute the correlation array of N-dimensional idata
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
-     * \param idata  Array of N-dimensional data 
+     *
+     * \param idata  Array of N-dimensional data
      * \param nSize  Total size of the array
      * \param nDim   Data dimension
-     * \param Stride Stride of the data in the array (default is 1). 
-     * 
-     * The reason for having parameter stride is the case where we have coordinates and function value 
-     * and would like to avoid unnecessary copying the data 
-     * 
+     * \param Stride Stride of the data in the array (default is 1).
+     *
+     * The reason for having parameter stride is the case where we have coordinates and function value
+     * and would like to avoid unnecessary copying the data
+     *
      * \returns Correlation (array of N by N) from N-dimensional idata
-     * 
+     *
      * Example:<br>
-     * \code 
+     * \code
      * umuq::stats s;
-     * 
+     *
      * // X 3-by-4 matrix
      * double X[] = {5,  0, 3, 7,
      *               1, -5, 7, 3,
      *               4,  9, 8, 10};
-     * 
+     *
      * double *Correlation = s.correlation<double, double>(X, 12, 4, 4);
-     * 
+     *
      * for (int i = 0, l = 0; i < 4; i++)
      * {
      *      for (int j = 0; j < 4; j++)
@@ -1140,14 +1153,14 @@ struct stats
      *      std::cout << std::endl;
      * }
      * \endcode
-     * 
+     *
      * Output:<br>
      * \f$
      * \begin{matrix}
-     * 1 & 0.598116 & -0.544705 & 0.775133 \\ 
+     * 1 & 0.598116 & -0.544705 & 0.775133 \\
      * 0.598116 & 1 & 0.346287 & 0.969948 \\
      * -0.544705 & 0.346287 & 1 & 0.107624 \\
-     * 0.775133 & 0.969948 & 0.107624  & 1 
+     * 0.775133 & 0.969948 & 0.107624  & 1
      * \end{matrix}
      * \f$
      */
@@ -1157,15 +1170,15 @@ struct stats
 
     /*!
      * \brief Compute the correlation array of N-dimensional idata
-     * 
+     *
      * \tparam DataType Data type
      * \tparam RealType Floating point data type of the return output result (default is double)
-     * 
+     *
      * \param idata  Array of N-dimensional data with size of [nSize/nDim][nDim]
      * \param nSize  Total size of the array
      * \param nDim   Data dimension
      * \param iMean  Mean of each column or dimension of the array idata with size of [nDim]
-     * 
+     *
      * \returns Correlation (array of [nDim * nDim]) from N-dimensional idata
      */
     template <typename DataType, typename RealType = double>
@@ -1176,9 +1189,9 @@ struct stats
      * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
      * of equivalent elements from idata which is an array of size nRows * nCols.
      * Find the unique n-dimensions sample points in an array of nRows * nCols data.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      * \param nRows  Number of rows
      * \param nCols  Number of columns (data dimension)
@@ -1191,9 +1204,9 @@ struct stats
      * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
      * of equivalent elements from idata which is an array of size nRows * nCols.
      * Find the unique n-dimensions sample points in an array of nRows * nCols data.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      * \param nRows  Number of rows
      * \param nCols  Number of columns (data dimension)
@@ -1206,9 +1219,9 @@ struct stats
      * \brief Eliminates all but the first element from every consecutive sample points of dimension n = nCols
      * of equivalent elements from idata which is an array of size nRows * nCols.
      * Find the unique n-dimensions sample points in an array of nRows * nCols data.
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param idata  Input data
      * \param nRows  Number of rows
      * \param nCols  Number of columns (data dimension)

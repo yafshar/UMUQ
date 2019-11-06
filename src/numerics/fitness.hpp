@@ -2,10 +2,21 @@
 #ifndef UMUQ_FITNESS_H
 #define UMUQ_FITNESS_H
 
+#include "core/core.hpp"
 #include "datatype/errorfitnesstype.hpp"
-#include "../misc/parser.hpp"
+#include "misc/parser.hpp"
 #include "residual.hpp"
 #include "stats.hpp"
+
+#include <cmath>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <new>
+#include <algorithm>
+#include <stdexcept>
+#include <limits>
 
 namespace umuq
 {
@@ -13,7 +24,7 @@ namespace umuq
 /*! \class fitness
  * \ingroup Numerics_Module
  *
- * \brief This class evalutes the model fitness 
+ * \brief This class evalutes the model fitness
  *
  * List of available Fitness type:
  *  - \b errorFitSum      Sum of the absolute difference between observed and predicted data.
@@ -27,25 +38,25 @@ class fitness
   public:
     /*!
      * \brief Construct a new fitness object
-     * 
+     *
      * \param MetricName   Metric name for evaluating the model fitness
      * \param NumMetrics   Number of metrics (default  0)
      * \param MetricNames  Names of different metrics (default )
-     * 
+     *
      * List of available metrics:<br>
      *  - \b sum_squared
-     *  - \b mean_squared     
-     *  - \b root_mean_squared     
+     *  - \b mean_squared
+     *  - \b root_mean_squared
      *  - \b max_squared
      *  - \b sum_scaled
-     *  - \b mean_scaled     
-     *  - \b root_mean_scaled    
+     *  - \b mean_scaled
+     *  - \b root_mean_scaled
      *  - \b max_scaled
      *  - \b sum_abs
-     *  - \b mean_abs   
+     *  - \b mean_abs
      *  - \b root_mean_abs
      *  - \b max_abs
-     *  - \b press   
+     *  - \b press
      *  - \b cv
      *  - \b rsquared
      */
@@ -53,14 +64,14 @@ class fitness
 
     /*!
      * \brief Set the Metric object name
-     * 
+     *
      * \param MetricName  Metric name to set for evaluating the model fitness
      */
     bool setMetricName(std::string const &MetricName);
 
     /*!
-     * \brief Compute residuals  
-     * 
+     * \brief Compute residuals
+     *
      * \param observations  Array of observations data
      * \param predictions   Array of predicted data
      * \param nSize         Size of the array
@@ -71,8 +82,8 @@ class fitness
     bool computeResiduals(DataType const *observations, DataType const *predictions, int const nSize, DataType *&results);
 
     /*!
-     * \brief Compute residuals  
-     * 
+     * \brief Compute residuals
+     *
      * \param observations  Array of observations data
      * \param predictions   Array of predicted data
      * \param results       Array of the results
@@ -82,73 +93,73 @@ class fitness
     bool computeResiduals(std::vector<DataType> const &observations, std::vector<DataType> const &predictions, std::vector<DataType> &results);
 
     /*!
-     * \brief Compute residuals  
-     * 
+     * \brief Compute residuals
+     *
      * \param observationspredictions  Array of observations & prediction data
      * \param nSize                    Size of the array
      * \param results                  Array of the results
-     * 
+     *
      * \returns false If there is not enough memory to continue
      */
     bool computeResiduals(DataType const *observationspredictions, int const nSize, DataType *&results);
 
     /*!
-     * \brief Compute residuals  
-     * 
+     * \brief Compute residuals
+     *
      * \param observationspredictions  Array of observations & prediction data
      * \param results                  Array of the results
-     * 
+     *
      * \returns false If there is not enough memory to continue
      */
     bool computeResiduals(std::vector<DataType> const &observationspredictions, std::vector<DataType> &results);
 
     /*!
      * \brief Compute residuals
-     * 
+     *
      * \param observations  Array of observations data
      * \param prediction    A predicted data
      * \param nSize         Size of the array
      * \param results       Array of the results
-     * 
+     *
      * \returns false If there is not enough memory to continue
      */
     bool computeResiduals(DataType const *observations, DataType const prediction, int const nSize, DataType *&results);
 
     /*!
      * \brief Compute residuals
-     * 
+     *
      * \param observations  Array of observations data
      * \param prediction    A predicted data
      * \param results       Array of the results
-     * 
+     *
      * \returns false If there is not enough memory to continue
      */
     bool computeResiduals(std::vector<DataType> const &observations, DataType const prediction, std::vector<DataType> &results);
 
     /*!
      * \brief Get the Fitness value
-     * 
+     *
      * \param observations  Array of observed data
-     * \param predictions   Array of predicted data 
+     * \param predictions   Array of predicted data
      * \param nSize         Size of the array
-     * 
+     *
      * \returns The Fitness value
      */
     DataType getFitness(DataType const *observations, DataType const *predictions, int const nSize);
 
     /*!
      * \brief Get the Fitness value
-     * 
+     *
      * \param observations  Array of observed data
-     * \param predictions   Array of predicted data 
-     * 
+     * \param predictions   Array of predicted data
+     *
      * \returns The Fitness value
      */
     DataType getFitness(std::vector<DataType> const &observations, std::vector<DataType> const &predictions);
 
     /*!
      * \brief Get the Metric object name
-     * 
+     *
      * \return std::string The name of the Metric object
      */
     inline std::string getMetricName();
@@ -156,14 +167,14 @@ class fitness
   protected:
     /*!
      * \brief Delete a fitness object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     fitness(fitness<DataType> const &) = delete;
 
     /*!
      * \brief Delete a fitness object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     fitness<DataType> &operator=(fitness<DataType> const &) = delete;

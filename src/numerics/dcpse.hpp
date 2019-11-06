@@ -1,6 +1,7 @@
 #ifndef UMUQ_DCPSE_H
 #define UMUQ_DCPSE_H
 
+#include "core/core.hpp"
 #include "polynomials.hpp"
 #include "factorial.hpp"
 #include "eigenlib.hpp"
@@ -8,46 +9,56 @@
 #include "primitive.hpp"
 #include "stats.hpp"
 
+#include <cmath>
+#include <cstddef>
+
+#include <string>
+#include <vector>
+#include <memory>
+#include <type_traits>
+#include <utility>
+#include <algorithm>
+
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Numerics_Module Numerics module
  * This is the numerics module of %UMUQ providing all necessary classes of numerical computation.
  */
 
-/*! 
+/*!
  * \defgroup DCPSE Discretization-corrected PSE Operators
- * \ingroup Numerics_Module 
+ * \ingroup Numerics_Module
  */
 
 /*! \class dcpse
  * \ingroup DCPSE
- * 
+ *
  * \brief General class for (DC-PSE) \link DCPSE Discretization-Corrected PSE Operators \endlink
- * 
+ *
  * \tparam RealType        Floating-point data type
- * \tparam DistanceType    Distance type for finding k nearest neighbors. 
+ * \tparam DistanceType    Distance type for finding k nearest neighbors.
  *                         (Default is a specialized class - \b kNearestNeighbor<RealType> with L2 distance)<br>
  *                         \sa umuq::DistanceTypes
  *                         \sa umuq::kNearestNeighbor.<br>
  * \tparam PolynomialType  Polynomial type used in building the vandermonde & vandermonde-like matrix
  *                         (Default is - \b polynomial<RealType> with monomials)<br>
  *                         \sa umuq::polynomials::PolynomialTypes.<br>
- * 
- * 
+ *
+ *
  * It creates a discretized differential operator and interpolators.
- * 
+ *
  * \todo
  * Currently the class works only for one term and it should be extended to multi terms
  */
 template <typename RealType, umuq::DistanceTypes DistanceType = umuq::DistanceTypes::L2, class PolynomialType = polynomial<RealType>>
 class dcpse
 {
-  public:
+public:
     /*!
      * \brief Construct a new dcpse object
-     * 
+     *
      * \param ndim    Dimensionality
      * \param nterms  Number of terms (currently only one term is implemented)
      */
@@ -55,34 +66,34 @@ class dcpse
 
     /*!
      * \brief Move constructor, construct a new dcpse object
-     * 
+     *
      * \param other dcpse object
      */
     explicit dcpse(dcpse<RealType, DistanceType, PolynomialType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other dcpse object
-     * 
+     *
      * \returns dcpse<RealType, DistanceType, PolynomialType>& dcpse object
      */
     dcpse<RealType, DistanceType, PolynomialType> &operator=(dcpse<RealType, DistanceType, PolynomialType> &&other);
 
     /*!
      * \brief Destroy the dcpse object
-     * 
+     *
      */
     ~dcpse();
 
     /*!
      * \brief Computes generalized DC-PSE differential operators on set of input points
      *
-     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     * This function uses one set of points as input data to compute the generalized DC-PSE
      * differential operators.<br>
-     * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one 
-     * should use the interpolator function not this one. 
-     * 
+     * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, suggests one
+     * should use the interpolator function not this one.
+     *
      * \param dataPoints   Input data points
      * \param nDataPoints  Number of data points
      * \param beta         In multi-dimensional notation \f$ \beta=\left(\beta_1, \cdots, \beta_d \right). \f$<br>
@@ -91,19 +102,19 @@ class dcpse
      * \param order        Order of accuracy (default is 2nd order accurate)
      * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
      * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default vale is one
-     * 
+     *
      */
     bool computeWeights(RealType *dataPoints, int const nDataPoints,
                         int *beta, int order = 2, int nENN = 2, RealType ratio = static_cast<RealType>(1));
 
     /*!
      * \brief Computes generalized DC-PSE differential operators on the set of query points.
-     * 
-     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     *
+     * This function uses one set of points as input data to compute the generalized DC-PSE
      * differential opearators on the set of query points.<br>
      * If the degree of the differential operator is zero \f$ | \beta | = 0 \f$, means one should
-     * use the interpolator function not this one. 
-     * 
+     * use the interpolator function not this one.
+     *
      * \param dataPoints        A pointer to input data
      * \param nDataPoints       Number of data points
      * \param queryDataPoints   A pointer to query data
@@ -118,13 +129,13 @@ class dcpse
     bool computeWeights(RealType *dataPoints, int const nDataPoints, RealType *queryDataPoints, int const nQueryDataPoints,
                         int *beta, int order = 2, int nENN = 2, RealType ratio = static_cast<RealType>(1));
 
-    /*! 
+    /*!
      * \brief Computes generalized DC-PSE interpolator operators on the set of points.
-     * 
-     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     *
+     * This function uses one set of points as input data to compute the generalized DC-PSE
      * interpolator operators on them.
-     * 
-     * \param dataPoints   A pointer to input data 
+     *
+     * \param dataPoints   A pointer to input data
      * \param nDataPoints  Number of data points
      * \param order        Order of accuracy (default is 2nd order accurate)
      * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
@@ -135,13 +146,13 @@ class dcpse
 
     /*!
      * \brief Computes generalized DC-PSE interpolator operators on the set of query points.
-     * 
-     * This function uses one set of points as input data to compute the generalized DC-PSE 
+     *
+     * This function uses one set of points as input data to compute the generalized DC-PSE
      * interpolator operators on the set of query points.
-     * 
-     * \param dataPoints        A pointer to input data 
+     *
+     * \param dataPoints        A pointer to input data
      * \param nDataPoints       Number of data points
-     * \param queryDataPoints   A pointer to query data 
+     * \param queryDataPoints   A pointer to query data
      * \param nQueryDataPoints  Number of query data points
      * \param order             Order of accuracy (default is 2nd order accurate)
      * \param nENN              Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
@@ -152,13 +163,13 @@ class dcpse
 
     /*!
      * \brief Evaluate a discretized DC-PSE operator from function values of input data and put the results as the query data function values
-     * 
-     * This function uses function values of input data and the weights of the operator which have 
-     * been previously computed to compute the query values and put the results as the query data 
+     *
+     * This function uses function values of input data and the weights of the operator which have
+     * been previously computed to compute the query values and put the results as the query data
      * function values. <br>
-     * At first it checks the computed kernel size to be equal to the number of query points times the 
+     * At first it checks the computed kernel size to be equal to the number of query points times the
      * size of monomials which has been previously computed for the required degree of the DC-PSE operator.
-     * 
+     *
      * \param dataFunctionValues   Input data function values
      * \param nDataPoints          Number of data points
      * \param queryFunctionValues  Query data function value
@@ -167,16 +178,16 @@ class dcpse
     bool compute(RealType *dataFunctionValues, int const nDataPoints, RealType *queryFunctionValues, int const nQueryDataPoints);
 
     /*!
-     * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the 
+     * \brief Evaluate a discretized DC-PSE interpolation operator from function values of input data and put the
      * interpolation results as the query data values
-     * 
-     * This function uses function values of input data and the weights of the interpolation operator which have 
-     * been previously computed to compute the query values and put the results as the query data 
+     *
+     * This function uses function values of input data and the weights of the interpolation operator which have
+     * been previously computed to compute the query values and put the results as the query data
      * function values. <br>
-     * At first it checks the computed kernel size to be equal to the number of query points times the 
+     * At first it checks the computed kernel size to be equal to the number of query points times the
      * size of monomials which has been previously computed for the required degree of DC-PSE operator
      * or interpolator.
-     * 
+     *
      * \param dataFunctionValues   Input data function values
      * \param nDataPoints          Number of data points
      * \param queryFunctionValues  Query data function values
@@ -186,77 +197,77 @@ class dcpse
 
     /*!
      * \brief A pointer to neighborhood kernel at index
-     * 
+     *
      * \param index Index of a point (from query data points) to get its neighborhood kernel
-     * 
+     *
      * \returns A (pointer to a) row of the nearest neighbors kernel values.
      */
     inline RealType *neighborhoodKernel(int const index) const;
 
     /*!
      * \brief A pointer to kernel array of all query points
-     * 
+     *
      * \returns A pointer to kernel array of all query points
      */
     inline RealType *neighborhoodKernel() const;
 
     /*!
-     * \brief Size of the neighborhood kernel which equals to the monomial size 
-     * 
+     * \brief Size of the neighborhood kernel which equals to the monomial size
+     *
      * \returns Size of the neighborhood kernel
      */
     inline int neighborhoodKernelSize() const;
 
     /*!
      * \brief Order of accuracy of DC-PSE kernel at index
-     * 
+     *
      * \param index Index number in nTerms array
-     * 
+     *
      * \returns Order of accuracy of DC-PSE kernel at index
      */
     inline int orderofAccuracy(int const index = 0) const;
 
     /*!
      * \brief Prints the DC-PSE information
-     * 
+     *
      */
     inline void printInfo() const;
 
     /*!
      * \brief Component-wise average neighbor spacing at index
-     * 
-     * Component-wise average neighbor spacing is defined as:<br> 
+     *
+     * Component-wise average neighbor spacing is defined as:<br>
      * \f$ h = \frac{1}{N} \sum_{p=1}^{N}\left(|x_{1}-x_{p1}| + \cdots |x_{d} -x_{pd}| \right), \f$
-     * 
+     *
      * \param index Index of a point (from data points) to get its average neighbor spacing
-     * 
-     * \returns A component-wise average neighbor spacing at index 
+     *
+     * \returns A component-wise average neighbor spacing at index
      */
     inline RealType averageSpace(int const index) const;
 
     /*!
      * \brief A pointer to component-wise average neighbor spacing
-     * 
+     *
      * \returns A pointer to component-wise average neighbor spacing
      */
     inline RealType *averageSpace() const;
 
-  private:
+private:
     /*!
      * \brief Delete a dcpse object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     dcpse(dcpse<RealType, DistanceType, PolynomialType> const &) = delete;
 
     /*!
      * \brief Delete a dcpse object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     dcpse<RealType, DistanceType, PolynomialType> &operator=(dcpse<RealType, DistanceType, PolynomialType> const &) = delete;
 
-  private:
+private:
     //! Dimension of space
     int nDim;
 
@@ -474,7 +485,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
          * \todo
          * Check this again
          */
-        /* 
+        /*
          * When applicable, and for stability reasons, set the zeroth moment to 5
          */
         if (rhscoeff > RealType{})
@@ -534,16 +545,16 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
         // A pointer to nearest neighbors square distances from the point i
         RealType *nnDist = KNN->NearestNeighborsDistances(i);
 
-        /* 
+        /*
          * For each point \f$ {\mathbf x} \f$ we define:
-         * 
+         *
          * \f$
-         * \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, 
+         * \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\},
          * \f$
-         * 
-         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points 
+         *
+         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
          * \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
-         * 
+         *
          */
         {
             // pointer to query data
@@ -656,9 +667,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                         ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -670,9 +681,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                 }
                 else
                 {
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -735,7 +746,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                 Eigen::JacobiSVD<EMatrixX<RealType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
                 /*
-                 * SV contains the least-squares solution of 
+                 * SV contains the least-squares solution of
                  * \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^RealType({\mathbf x})={\mathbf b} \f$
                  * using the current SVD decomposition of A.
                  */
@@ -818,7 +829,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
         }
         else
         {
-            /* 
+            /*
              * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1008,7 +1019,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
          * \todo
          * Check this again
          */
-        /* 
+        /*
          * At off-particle locations it should be always zero to obtain kernels
          * with a vanishing zeroth-order moment that can be consistently evaluated
          */
@@ -1180,7 +1191,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
 
                     /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1192,9 +1203,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                 }
                 else
                 {
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1239,7 +1250,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                     ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
-                /* 
+                /*
                  * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1257,7 +1268,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
                 Eigen::JacobiSVD<EMatrixX<RealType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
                 /*
-                 * SV contains the least-squares solution of 
+                 * SV contains the least-squares solution of
                  * \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^RealType({\mathbf x})={\mathbf b} \f$
                  * using the current SVD decomposition of A.
                  */
@@ -1341,7 +1352,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dat
         }
         else
         {
-            /* 
+            /*
              * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1405,7 +1416,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
     PolynomialType poly(nDim, order - 1);
 
-    /* 
+    /*
      * Get the monomials size
      * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
      */
@@ -1437,7 +1448,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         {
             try
             {
-                /* 
+                /*
                  * Finding K nearest neighbors
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
@@ -1454,7 +1465,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     {
         try
         {
-            /* 
+            /*
              * Finding K nearest neighbors
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
@@ -1543,9 +1554,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         RealType *nnDist = KNN->NearestNeighborsDistances(iQueryDataPoints);
 
         /*
-         * For each point \f$ {\mathbf x} \f$ we define 
+         * For each point \f$ {\mathbf x} \f$ we define
          * \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
-         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points 
+         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
          * \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
          */
         {
@@ -1662,9 +1673,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                         ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1676,9 +1687,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                 }
                 else
                 {
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1726,7 +1737,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                     ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
-                /* 
+                /*
                  * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                  * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1744,7 +1755,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                 Eigen::JacobiSVD<EMatrixX<RealType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
                 /*
-                 * SV contains the least-squares solution of 
+                 * SV contains the least-squares solution of
                  * \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^RealType({\mathbf x})={\mathbf b} \f$
                  * using the current SVD decomposition of A.
                  */
@@ -1828,7 +1839,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         }
         else
         {
-            /* 
+            /*
              * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
              * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -1898,7 +1909,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     // Create an instance of a polynomial object with polynomial degree of \f$ |\beta| + r - 1 \f$
     PolynomialType poly(nDim, order - 1);
 
-    /* 
+    /*
      * Get the monomials size
      * \f$ \text{monomialSize} = \left(\begin{matrix} r + d -1 \\ d \end{matrix}\right) \f$
      */
@@ -1930,7 +1941,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         {
             try
             {
-                /* 
+                /*
                  * Finding K nearest neighbors
                  * The number of points K in the neighborhood of each point
                  * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
@@ -1947,7 +1958,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
     {
         try
         {
-            /* 
+            /*
              * Finding K nearest neighbors
              * The number of points K in the neighborhood of each point
              * \f$ K = \text{monomial size} + \text{number of extra neighbors} \f$
@@ -2068,9 +2079,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         RealType *nnDist = KNN->NearestNeighborsDistances(iQueryDataPoints);
 
         /*
-         * For each point \f$ {\mathbf x} \f$ we define 
+         * For each point \f$ {\mathbf x} \f$ we define
          * \f$ \left\{{\mathbf z}_p({\mathbf x}) \right\}_{p=1}^{k} = \left\{{\mathbf x}_p - {\mathbf x} \right\}, \f$
-         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points 
+         * as the set of vectors pointing to \f$ {\mathbf x} \f$ from all neighboring points
          * \f${\mathbf x}_p\f$ in the support of \f${\mathbf x}\f$.
          */
         {
@@ -2130,7 +2141,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
             // Neighbor point number
             int const IdJ = NearestNeighbors[j];
 
-            /* 
+            /*
              * Using a smooth correction function that satisfies
              * \f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
              * Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
@@ -2141,15 +2152,15 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
             // Compute the kernel value at the point
             RealType const dckernelV = q.f(&s);
 
-            /* 
+            /*
              * Assemble the right hand side
-             * 
+             *
              * \f[
-             * {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - 
-             * \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} 
-             * {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) 
+             * {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} -
+             * \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)}
+             * {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right)
              * \f]
-             * 
+             *
              */
             RHSB -= dckernelV * columnV;
 
@@ -2228,9 +2239,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                         /*
                          * Assemble the right hand side<br>
                          * \f$
-                         *  {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - 
-                         *  \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} 
-                         *  {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) 
+                         *  {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} -
+                         *  \sum_{p} {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)}
+                         *  {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right)
                          * \f$
                          */
                         RHSB -= dckernelV * columnV;
@@ -2241,9 +2252,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                         ExponentialWindowMatrixImage(j) = std::exp(-nnDist[j] * byEpsilonSqHalf);
                     }
 
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -2255,9 +2266,9 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                 }
                 else
                 {
-                    /* 
+                    /*
                      * \f$
-                     * \begin{matrix} 
+                     * \begin{matrix}
                      * {\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                      * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
                      * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
@@ -2299,7 +2310,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                     // Neighbor point number
                     int const IdJ = NearestNeighbors[k];
 
-                    /* 
+                    /*
                      * Using a smooth correction function that satisfies
                      * \f$ {\mathbf F} \left(\frac{{\mathbf x}_p-{\mathbf x}_q}{c({\mathbf x}_q)} \right) =\delta_{pq} \f$
                      * Choose \f$ c({\mathbf x}) \f$ such that it is smaller than the distance
@@ -2317,11 +2328,11 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
 
                     /*
                      * Assemble the right hand side
-                     * 
+                     *
                      * \f[
-                     *  {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p} 
-                     * {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)} 
-                     * {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right) 
+                     *  {\mathbf b}={\mathbf P}({\mathbf x}) |_{{\mathbf x}=0} - \sum_{p}
+                     * {\mathbf P}{\left(\frac{{\mathbf x}-{\mathbf x}_p}{\epsilon({\mathbf x})}\right)}
+                     * {\mathbf C}\left(\frac{{\mathbf x}-{\mathbf x}_p}{c({\mathbf x}_p)} \right)
                      * \f]
                      */
                     RHSB -= dckernelV * columnV;
@@ -2341,10 +2352,10 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                     ExponentialWindowMatrix(l) = std::exp(-nnDist[k] * byEpsilonSqHalf);
                 }
 
-                /* 
+                /*
                  * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
                  * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
+                 * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
                  * \f}
                  */
                 BMT = VandermondeMatrixTranspose * EMatrixX<RealType>(ExponentialWindowMatrix.asDiagonal());
@@ -2359,7 +2370,7 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
                 Eigen::JacobiSVD<EMatrixX<RealType>> svd(AM, Eigen::DecompositionOptions::ComputeThinU | Eigen::DecompositionOptions::ComputeThinV);
 
                 /*
-                 * SV contains the least-squares solution of 
+                 * SV contains the least-squares solution of
                  * \f$ {\mathbf A} ({\mathbf x}) {\mathbf a}^RealType({\mathbf x})={\mathbf b} \f$
                  * using the current SVD decomposition of A.
                  */
@@ -2443,10 +2454,10 @@ bool dcpse<RealType, DistanceType, PolynomialType>::computeInterpolatorWeights(R
         }
         else
         {
-            /* 
+            /*
              * \f{matrix} {{\mathbf A} ({\mathbf x}) = {\mathbf B}^RealType ({\mathbf x}) {\mathbf B} ({\mathbf x}) & \in \mathbb{R}^{l\times l} \\
              * {\mathbf B} ({\mathbf x}) = {\mathbf E} ({\mathbf x}) {\mathbf V} ({\mathbf x}) & \in \mathbb{R}^{k\times l}\\
-             * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1} 
+             * {\mathbf b} = (-1)^{|\beta|} D^\beta {\mathbf P}({\mathbf x}) |_{{\mathbf x}=0}   & \in \mathbb{R}^{l\times 1}
              * \f}
              */
             BMT = VandermondeMatrixTranspose * EMatrixX<RealType>(ExponentialWindowMatrix.asDiagonal());
@@ -2589,8 +2600,7 @@ inline void dcpse<RealType, DistanceType, PolynomialType>::printInfo() const
 {
     for (int i = 0; i < nTerms; i++)
     {
-        std::cout << Order[i] << (Order[i] % 10 == 1 ? "st " : Order[i] % 10 == 2 ? "nd " : Order[i] % 10 == 3 ? "rd " : "th ") << "order DC-PSE kernel uses \n"
-                  << neighborhoodKernelSize() << " points in the neighborhood of each query point." << std::endl;
+        UMUQMSG(Order[i], (Order[i] % 10 == 1 ? "st " : Order[i] % 10 == 2 ? "nd " : Order[i] % 10 == 3 ? "rd " : "th "), "order DC-PSE kernel uses \n", neighborhoodKernelSize(), " points in the neighborhood of each query point.");
     }
 }
 
