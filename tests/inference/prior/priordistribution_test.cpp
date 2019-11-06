@@ -6,9 +6,9 @@
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief uniform PDF
- * 
+ *
  * \param param1 lower bound
  * \param param2 upper bound
  * \returns  uniform PDF
@@ -25,12 +25,12 @@ double priorpdf(std::vector<double> const &param1, std::vector<double> const &pa
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief uniform Log(PDF)
- * 
+ *
  * \param param1 lower bound
  * \param param2 upper bound
- * \returns uniform Log(PDF) 
+ * \returns uniform Log(PDF)
  */
 double logpriorpdf(std::vector<double> const &param1, std::vector<double> const &param2)
 {
