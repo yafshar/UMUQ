@@ -2,14 +2,31 @@
 #define UMUQ_NPYDATATYPE_H
 #ifdef HAVE_PYTHON
 
+#if HAVE_PYTHON == 1
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+#include <Python.h>
+
+// To avoid the compiler warning
+#ifdef NPY_NO_DEPRECATED_API
+#undef NPY_NO_DEPRECATED_API
+#endif
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+#endif
+
 namespace umuq
 {
 
 /*!
  * \brief Numpy data types variable template wrapper for the given C++ types
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  */
 template <typename DataType>
 constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
@@ -31,11 +48,11 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
  * - \b double
  * - \b long double <br>
  * to Numpy data types.
- * 
- * \todo 
+ *
+ * \todo
  * Complete the list.
  * Any valid data type value must have a corresponding explicit template instantiation below.
- * 
+ *
  */
 template <>
 constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
