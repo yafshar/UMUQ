@@ -2,19 +2,50 @@
 #define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
+#include "core/core.hpp"
 #include "datatype/npydatatype.hpp"
 #include "misc/arraywrapper.hpp"
+
+#if HAVE_PYTHON == 1
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+#include <Python.h>
+
+// To avoid the compiler warning
+#ifdef NPY_NO_DEPRECATED_API
+#undef NPY_NO_DEPRECATED_API
+#endif
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+
+#if PYTHON_MAJOR_VERSION >= 3
+#define PyString_FromString PyUnicode_FromString
+#define PyString_AsString PyUnicode_AsUTF8
+#define PyInt_FromLong PyLong_FromLong
+#endif // PYTHON_MAJOR_VERSION >= 3
+#endif // HAVE_PYTHON
+
+#include <cstddef>
+
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
 
 namespace umuq
 {
 
 /*! \namespace umuq::matplotlib_223
  * \ingroup IO_Module
- * 
+ *
  * \brief It contains several common approaches to plotting with Matplotlib python 2D library
- * 
+ *
  * It contains several common approaches to plotting with Matplotlib python 2D library from Matplotlib version 2.2.3
- * 
+ *
  */
 inline namespace matplotlib_223
 {
@@ -23,38 +54,38 @@ inline namespace matplotlib_223
  * \file io/pyplot.hpp
  * \brief This module contains functions that allows to generate many kinds of plots
  *
- * The pyplot Module contains additions, adaptations and modifications to the 
- * original c++ interface to the matplotlib source codes made available under 
+ * The pyplot Module contains additions, adaptations and modifications to the
+ * original c++ interface to the matplotlib source codes made available under
  * the following LICENSE:
- * 
+ *
  * \verbatim
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014 Benno Evers
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  * \endverbatim
- * 
- * 
+ *
+ *
  * Matplotlib library made available under the following LICENSE:
- * 
+ *
  * \verbatim
  * License agreement for matplotlib versions 1.3.0 and later
  * =========================================================
- * 
+ *
  * 1. This LICENSE AGREEMENT is between the Matplotlib Development Team
  * ("MDT"), and the Individual or Organization ("Licensee") accessing and
  * otherwise using matplotlib software in source or binary form and its
  * associated documentation.
- * 
+ *
  * 2. Subject to the terms and conditions of this License Agreement, MDT
  * hereby grants Licensee a nonexclusive, royalty-free, world-wide license
  * to reproduce, analyze, test, perform and/or display publicly, prepare
@@ -64,35 +95,35 @@ inline namespace matplotlib_223
  * 2012- Matplotlib Development Team; All Rights Reserved" are retained in
  * matplotlib  alone or in any derivative version prepared by
  * Licensee.
- * 
+ *
  * 3. In the event Licensee prepares a derivative work that is based on or
  * incorporates matplotlib or any part thereof, and wants to
  * make the derivative work available to others as provided herein, then
  * Licensee hereby agrees to include in any such work a brief summary of
  * the changes made to matplotlib .
- * 
+ *
  * 4. MDT is making matplotlib available to Licensee on an "AS
  * IS" basis.  MDT MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
  * IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, MDT MAKES NO AND
  * DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
  * FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF MATPLOTLIB
  * WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
- * 
+ *
  * 5. MDT SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF MATPLOTLIB
  *  FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR
  * LOSS AS A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING
  * MATPLOTLIB , OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF
  * THE POSSIBILITY THEREOF.
- * 
+ *
  * 6. This License Agreement will automatically terminate upon a material
  * breach of its terms and conditions.
- * 
+ *
  * 7. Nothing in this License Agreement shall be deemed to create any
  * relationship of agency, partnership, or joint venture between MDT and
  * Licensee.  This License Agreement does not grant permission to use MDT
  * trademarks or trade name in a trademark sense to endorse or promote
  * products or services of Licensee, or any third party.
- * 
+ *
  * 8. By copying, installing or otherwise using matplotlib ,
  * Licensee agrees to be bound by the terms and conditions of this License
  * Agreement.
@@ -107,15 +138,15 @@ namespace umuq
 inline namespace matplotlib_223
 {
 
-/*! 
+/*!
  * \ingroup IO_Module
- * 
+ *
  * \brief Converts a data array idata to Python array
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * \param idata Input array of data
- * 
+ *
  * \return PyObject* Python array
  */
 template <typename DataType>
@@ -124,16 +155,16 @@ PyObject *PyArray(std::vector<DataType> const &idata);
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata);
 
-/*! 
+/*!
  * \ingroup IO_Module
- * 
+ *
  * \brief Converts a data idata to Python array of size nSize
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * \param idata  Input data
  * \param nSize  Size of the requested array
- * 
+ *
  * \return PyObject* Python array
  */
 template <typename DataType>
@@ -144,15 +175,15 @@ PyObject *PyArray(TIn const idata, int const nSize);
 
 /*!
  * \ingroup IO_Module
- * 
+ *
  * \brief Converts a data array idata to Python array
- * 
+ *
  * \tparam DataType Data type
- * 
+ *
  * \param idata   Input array of data
  * \param nSize   Size of the array
  * \param Stride  Element stride (default is 1)
- * 
+ *
  * \return PyObject* Python array
  */
 template <typename DataType>
@@ -161,17 +192,17 @@ PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stri
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
 
-/*! 
+/*!
  * \ingroup IO_Module
- * 
- * \brief Converts a data array idata to the Python 2D array 
- * 
- * \tparam DataType Data type 
- * 
+ *
+ * \brief Converts a data array idata to the Python 2D array
+ *
+ * \tparam DataType Data type
+ *
  * \param idata  Input array of data (with size of nDimX*nDimY)
  * \param nDimX  X size in the 2D array
  * \param nDimY  Y size in the 2D array
- * 
+ *
  * \returns PyObject* Python 2D array
  */
 template <typename DataType>
@@ -185,16 +216,16 @@ PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY);
 
 /*! \var static std::string backend
  * \ingroup IO_Module
- * 
+ *
  * \verbatim
  * To support all of use cases, matplotlib can target different outputs, and each of these capabilities is called a backend;
  * the “frontend” is the user facing code, i.e., the plotting code, whereas the “backend” does all the hard work
  * behind-the-scenes to make the figure.
- * There are two types of backends: user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; 
- * also referred to as “interactive backends”) and hardcopy backends to make image files (PNG, SVG, PDF, PS; also 
+ * There are two types of backends: user interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx;
+ * also referred to as “interactive backends”) and hardcopy backends to make image files (PNG, SVG, PDF, PS; also
  * referred to as “non-interactive backends”).
  * \endverbatim
- * 
+ *
  * Reference:<br>
  * https://matplotlib.org/tutorials/introductory/usage.html
  */
@@ -202,32 +233,32 @@ static std::string backend;
 
 /*!
  * \ingroup IO_Module
- * 
+ *
  * \brief Set the “backend” to any of user interface backends
- * 
+ *
  * \param WXbackends User interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; <br>
- *                   also referred to as “interactive backends”) or hardcopy backends to make image 
+ *                   also referred to as “interactive backends”) or hardcopy backends to make image
  *                   files (PNG, SVG, PDF, PS; also referred to as “non-interactive backends”)
- * 
- * \note 
+ *
+ * \note
  * - Must be called before the first regular call to matplotlib to have any effect.
- * \note 
- * - Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent. 
- * 
+ * \note
+ * - Backend name specifications are not case-sensitive; e.g., ‘GTKAgg’ and ‘gtkagg’ are equivalent.
+ *
  * Reference:<br>
  * https://matplotlib.org/tutorials/introductory/usage.html
- * 
- * 
+ *
+ *
  * \verbatim
- * To make things a little more customizable for graphical user interfaces, matplotlib separates the concept 
- * of the renderer (the thing that actually does the drawing) from the canvas (the place where the drawing goes). 
- * The canonical renderer for user interfaces is Agg which uses the Anti-Grain Geometry C++ library to make a 
- * raster (pixel) image of the figure. All of the user interfaces except macosx can be used with agg rendering, 
- * e.g., WXAgg, GTKAgg, QT4Agg, QT5Agg, TkAgg. In addition, some of the user interfaces support other rendering engines. 
+ * To make things a little more customizable for graphical user interfaces, matplotlib separates the concept
+ * of the renderer (the thing that actually does the drawing) from the canvas (the place where the drawing goes).
+ * The canonical renderer for user interfaces is Agg which uses the Anti-Grain Geometry C++ library to make a
+ * raster (pixel) image of the figure. All of the user interfaces except macosx can be used with agg rendering,
+ * e.g., WXAgg, GTKAgg, QT4Agg, QT5Agg, TkAgg. In addition, some of the user interfaces support other rendering engines.
  * For example, with GTK, you can also select GDK rendering (backend GTK deprecated in 2.0) or Cairo rendering (backend GTKCairo).
- * 
- * 
- * Interactive backends, capable of displaying to the screen and of using appropriate 
+ *
+ *
+ * Interactive backends, capable of displaying to the screen and of using appropriate
  * renderers from the table above to write to a file include:
  * ----------------------------------------------------------
  * GTKAgg       Agg rendering to a GTK 2.x canvas (requires PyGTK and pycairo or cairocffi; Python2 only)
@@ -241,10 +272,10 @@ static std::string backend;
  * macosx       Cocoa rendering in OSX windows (presently lacks blocking show() behavior when matplotlib is in non-interactive mode)
  * ----------------------------------------------------------
  * \endverbatim
- * 
+ *
  * Reference:<br>
  * https://matplotlib.org/faq/usage_faq.html#wx-backends
- * 
+ *
  */
 inline void setbackend(std::string const &WXbackends)
 {
@@ -253,16 +284,16 @@ inline void setbackend(std::string const &WXbackends)
 
 /*! \var constexpr char const DefaultColors
  * \ingroup IO_Module
- * 
+ *
  * \brief The following color abbreviations are supported:
- * 
+ *
  * <table>
  * <caption id="multi_row">Colors</caption>
- * <tr><th> Character <th> Color        
- * <tr><td> 'b'       <td> blue  
- * <tr><td> 'g'       <td> green    
- * <tr><td> 'r'       <td> red     
- * <tr><td> 'c'       <td> cyan 
+ * <tr><th> Character <th> Color
+ * <tr><td> 'b'       <td> blue
+ * <tr><td> 'g'       <td> green
+ * <tr><td> 'r'       <td> red
+ * <tr><td> 'c'       <td> cyan
  * <tr><td> 'm'       <td> magenta
  * <tr><td> 'y'       <td> yellow
  * <tr><td> 'k'       <td> black
@@ -274,9 +305,9 @@ constexpr char const DefaultColors[] = {'b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'};
 
 /*! \var int const DefaultColorsSize
  * \ingroup IO_Module
- * 
+ *
  * \brief Size of the color abbreviations maps
- * 
+ *
  */
 int const DefaultColorsSize = 8;
 
@@ -284,11 +315,11 @@ int const DefaultColorsSize = 8;
 
 /*! \class pyplot
  * \ingroup IO_Module
- * 
+ *
  * \brief This module contains several common approaches to plotting with Matplotlib python 2D library
  *
  * It contains below functions that allow you to generate many kinds of plots quickly:
- * 
+ *
  * - \b annotate      Annotate the point xy with text s
  * - \b axis          Convenience method to get or set axis properties
  * - \b cla           Clear the current axis
@@ -321,12 +352,12 @@ int const DefaultColorsSize = 8;
  * - \b xkcd          Turns on xkcd sketch-style drawing mode
  * - \b ylim          Set/Get the y limits of the current axes
  * - \b ylabel        Set the y-axis label of the current axes
- * 
- * 
+ *
+ *
  * The following format string characters are accepted to control the line style or marker:
  * <table>
  * <caption id="multi_row">Character to control the line style or marker</caption>
- * <tr><th> Character <th> Description        
+ * <tr><th> Character <th> Description
  * <tr><td> '-'       <td> solid line style
  * <tr><td> '--'      <td> dashed line style
  * <tr><td> '-.'      <td> dash-dot line style
@@ -355,31 +386,41 @@ int const DefaultColorsSize = 8;
  * <tr><td> '_'       <td> hline marker
  * <tr>
  * </table>
- * 
+ *
  * Reference:<br>
  * https://matplotlib.org/api/pyplot_summary.html
  */
 class pyplot
 {
-  public:
+public:
     /*!
      * \brief Construct a new pyplot object
      *
      */
-    pyplot() {}
+    pyplot();
 
     /*!
      * \brief Destroy the pyplot object
-     * 
+     *
      */
-    ~pyplot() {}
+    ~pyplot();
 
     /*!
      * \brief Get the name of the current backend
-     * 
+     *
      * \return The name of the current backend
      */
     inline std::string get_backend();
+
+    /*!
+     * \brief Set the backend object
+     *
+     * \param WXbackends User interface backends (for use in pygtk, wxpython, tkinter, qt4, or macosx; <br>
+     *                   also referred to as “interactive backends”) or hardcopy backends to make image
+     *                   files (PNG, SVG, PDF, PS; also referred to as “non-interactive backends”)
+     */
+    inline void set_backend(std::string const &WXbackends);
+    inline void set_backend(char const *WXbackends);
 
     /*!
      * \brief Annotate the point xy with text s
@@ -390,7 +431,7 @@ class pyplot
      * \param x           x point (x,y) to annotate
      * \param y           y point (x,y) to annotate
      *
-     * \return true 
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -399,7 +440,7 @@ class pyplot
     /*!
      * \brief Convenience method to get or set axis properties
      *
-     * \param axisArguments 
+     * \param axisArguments
      */
     inline bool axis(std::string const &axisArguments);
 
@@ -423,22 +464,22 @@ class pyplot
 
     /*!
      * \brief Draw contour lines
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param x         Array-like (1D arrays representing the x coordinates of a grid)
      *                  such that len(x) is the number of columns in z
      * \param y         Array-like (1D arrays representing the y coordinates of a grid)
      *                  such that len(y) is the number of rows in z
-     * \param z         Array-like with size [len(x) * len(y)] grids. 
+     * \param z         Array-like with size [len(x) * len(y)] grids.
      *                  The height values over which the contour is drawn.
      * \param levels    Int scalar value or array-like, optional
-     *                  If array-like, draw contour lines at the specified levels. 
+     *                  If array-like, draw contour lines at the specified levels.
      *                  The values must be in increasing order.
      * \param keywords  All other keyword arguments are passed on to contour. They control it's properties.
-     * 
-     * \returns true 
-     * \returns false 
+     *
+     * \returns true
+     * \returns false
      */
     template <typename DataType>
     inline bool contour(std::vector<DataType> const &x, std::vector<DataType> const &y, std::vector<DataType> const &z, std::vector<DataType> const &levels,
@@ -461,10 +502,10 @@ class pyplot
      *                  such that len(x) is the number of columns in z
      * \param y         Array-like (1D arrays representing the y coordinates of a grid)
      *                  such that len(y) is the number of rows in z
-     * \param z         Array-like with size [len(x) * len(y)] grids. 
+     * \param z         Array-like with size [len(x) * len(y)] grids.
      *                  The height values over which the contour is drawn.
      * \param levels    Int scalar value or array-like, optional
-     *                  If array-like, draw contour lines at the specified levels. 
+     *                  If array-like, draw contour lines at the specified levels.
      *                  The values must be in increasing order.
      * \param keywords  All other keyword arguments are passed on to contour. They control it's properties.
      *
@@ -485,8 +526,8 @@ class pyplot
 
     /*!
      * \brief Redraw the current figure
-     * This is used to update a figure that has been altered, 
-     * but not automatically re-drawn. If interactive mode is 
+     * This is used to update a figure that has been altered,
+     * but not automatically re-drawn. If interactive mode is
      * on (ion()), this should be only rarely needed
      *
      */
@@ -494,15 +535,15 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
-     * 
+     *
      * \tparam DataType      Data type
-     * 
+     *
      * \param x       Scalar or array-like, data positions
      * \param y       Scalar or array-like, data positions
      * \param yerr    Errorbar
      * \param fmt     Plot format string
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -511,21 +552,21 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride   
+     * \param StrideY   Stride element stride
      * \param yerr      Scalar or array-like, data positions
      * \param nSizeE    Size of array
-     * \param StrideE   Stride element stride 
+     * \param StrideE   Stride element stride
      * \param fmt       Plot format string
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -536,16 +577,16 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers with attached errorbars
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param yerr      Scalar or array-like, data positions
      * \param nSize     Size of array
      * \param fmt       Plot format string
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -554,35 +595,35 @@ class pyplot
 
     /*!
      * \brief Creates a new figure
-     * 
+     *
      */
     inline bool figure();
 
     /*!
      * \brief Creates a new figure
-     * 
+     *
      * \param width   width in inches
      * \param height  height in inches
      * \param dpi     resolution of the figure (default is 100)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     bool figure(std::size_t const width, std::size_t const height, std::size_t const dpi = 100);
 
     /*!
      * \brief Fill the area between two horizontal curves
-     * The curves are defined by the points (x, y1) and (x, y2). 
+     * The curves are defined by the points (x, y1) and (x, y2).
      * This creates one or multiple polygons describing the filled area.
-     * 
-     * \tparam DataType 
-     * 
+     *
+     * \tparam DataType
+     *
      * \param x          The x coordinates of the nodes defining the curves.
      * \param y1         The y coordinates of the nodes defining the first curve.
      * \param y2         The y coordinates of the nodes defining the second curve.
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -591,23 +632,23 @@ class pyplot
 
     /*!
      * \brief Fill the area between two horizontal curves
-     * The curves are defined by the points (x, y1) and (x, y2). 
+     * The curves are defined by the points (x, y1) and (x, y2).
      * This creates one or multiple polygons describing the filled area.
-     * 
+     *
      * \tparam DataType         Data type
-     * 
+     *
      * \param x          The x coordinates of the nodes defining the curves.
      * \param nSizeX     Size of array x
-     * \param StrideX    Stride element stride 
+     * \param StrideX    Stride element stride
      * \param y1         The y coordinates of the nodes defining the first curve.
      * \param nSizeY1    Size of array y1
-     * \param StrideY1   Stride element stride  
+     * \param StrideY1   Stride element stride
      * \param y2         The y coordinates of the nodes defining the second curve.
      * \param nSizeY2    Size of array y2
-     * \param StrideY2   Stride element stride   
+     * \param StrideY2   Stride element stride
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -618,18 +659,18 @@ class pyplot
 
     /*!
      * \brief Fill the area between two horizontal curves.
-     * The curves are defined by the points (x, y1) and (x, y2). 
+     * The curves are defined by the points (x, y1) and (x, y2).
      * This creates one or multiple polygons describing the filled area.
-     * 
+     *
      * \tparam DataType         Data type
-     * 
+     *
      * \param x          The x coordinates of the nodes defining the curves.
      * \param y1         The y coordinates of the nodes defining the first curve.
      * \param y2         The y coordinates of the nodes defining the second curve.
-     * \param nSize      Size of arrays  
+     * \param nSize      Size of arrays
      * \param keywords   All other keyword arguments are passed on to PolyCollection. They control the Polygon properties
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -638,33 +679,33 @@ class pyplot
 
     /*!
      * \brief Turn the axes grids on or off
-     * 
-     * \param flag 
+     *
+     * \param flag
      */
     bool grid(bool flag);
 
     /*!
      * \brief Plot a histogram
      * Compute and draw the histogram of x
-     * 
-     * \tparam DataType 
-     * 
+     *
+     * \tparam DataType
+     *
      * \param x        Input values
      * \param bins     The bin specification (The default value is 50)
      * \param density  density (default false)
-     *                 If True, the first element of the return tuple will be the counts 
-     *                 normalized to form a probability density, i.e., the area (or integral) 
-     *                 under the histogram will sum to 1. 
-     *                 This is achieved by dividing the count by the number of observations 
-     *                 times the bin width and not dividing by the total number of observations. 
+     *                 If True, the first element of the return tuple will be the counts
+     *                 normalized to form a probability density, i.e., the area (or integral)
+     *                 under the histogram will sum to 1.
+     *                 This is achieved by dividing the count by the number of observations
+     *                 times the bin width and not dividing by the total number of observations.
      * \param color    Color or None, optional (The default value is "b")
      * \param label    default is None
      * \param alpha    The alpha blending value \f$ 0 <= scalar <= 1 \f$ or None, optional
      * \param Rcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * \param Gcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -675,27 +716,27 @@ class pyplot
     /*!
      * \brief Plot a histogram
      * Compute and draw the histogram of x
-     * 
+     *
      * \tparam DataType       Data type
-     * 
+     *
      * \param x        Input values
      * \param nSizeX   Size of array x
-     * \param StrideX  Stride element stride 
+     * \param StrideX  Stride element stride
      * \param bins     The bin specification (The default value is 50)
      * \param density  density (default false)
-     *                 If True, the first element of the return tuple will be the counts 
-     *                 normalized to form a probability density, i.e., the area (or integral) 
-     *                 under the histogram will sum to 1. 
-     *                 This is achieved by dividing the count by the number of observations 
-     *                 times the bin width and not dividing by the total number of observations. 
+     *                 If True, the first element of the return tuple will be the counts
+     *                 normalized to form a probability density, i.e., the area (or integral)
+     *                 under the histogram will sum to 1.
+     *                 This is achieved by dividing the count by the number of observations
+     *                 times the bin width and not dividing by the total number of observations.
      * \param color    Color or None, optional (The default value is "b")
      * \param label    default is None
      * \param alpha    The alpha blending value \f$ 0 <= scalar <= 1 \f$ or None, optional
      * \param Rcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * \param Gcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
      * \param Bcolor   Color of array_like colors (Rcolor/255, Gcolor/255, Bcolor/255), optional (The default value is 0)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -706,30 +747,30 @@ class pyplot
 
     /*!
      * \brief Turn interactive mode on
-     * 
+     *
      */
     inline bool ion();
 
     /*!
      * \brief Places a legend on the axes
-     * 
+     *
      */
     inline bool legend();
 
     /*!
      * \brief Make a plot with log scaling on both the x and y axis
-     * This is just a thin wrapper around plot which additionally changes 
-     * both the x-axis and the y-axis to log scaling. All of the concepts 
+     * This is just a thin wrapper around plot which additionally changes
+     * both the x-axis and the y-axis to log scaling. All of the concepts
      * and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param fmt    Plot format string
      * \param label  object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -738,22 +779,22 @@ class pyplot
 
     /*!
      * \brief Make a plot with log scaling on both the x and y axis
-     * This is just a thin wrapper around plot which additionally changes 
-     * both the x-axis and the y-axis to log scaling. All of the concepts 
+     * This is just a thin wrapper around plot which additionally changes
+     * both the x-axis and the y-axis to log scaling. All of the concepts
      * and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param fmt       Plot format string
      * \param label     object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -763,19 +804,19 @@ class pyplot
 
     /*!
      * \brief Make a plot with log scaling on both the x and y axis
-     * This is just a thin wrapper around plot which additionally changes 
-     * both the x-axis and the y-axis to log scaling. All of the concepts 
+     * This is just a thin wrapper around plot which additionally changes
+     * both the x-axis and the y-axis to log scaling. All of the concepts
      * and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param nSize     Size of array y
      * \param fmt       Plot format string
      * \param label     object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -784,23 +825,23 @@ class pyplot
 
     /*!
      * \brief Pause for interval seconds
-     * 
-     * \tparam DataType 
-     * 
-     * \param interval 
+     *
+     * \tparam DataType
+     *
+     * \param interval
      */
     bool pause(double const interval);
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -809,18 +850,18 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -830,15 +871,15 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param nSize     Size of arrays
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -847,16 +888,16 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param fmt       A format string, e.g. ‘ro’ for red circles
      *                  Format strings are just an abbreviation for quickly setting basic line properties
      * \param label     object. Set the label to s for auto legend
-     *  
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -865,20 +906,20 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param fmt       A format string, e.g. ‘ro’ for red circles
-     *                  Format strings are just an abbreviation for quickly setting basic line properties 
+     *                  Format strings are just an abbreviation for quickly setting basic line properties
      * \param label     object. Set the label to s for auto legend
-     *  
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -888,17 +929,17 @@ class pyplot
 
     /*!
      * \brief Plot y versus x as lines and/or markers
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param nSize     Size of arrays
      * \param fmt       A format string, e.g. ‘ro’ for red circles
      *                  Format strings are just an abbreviation for quickly setting basic line properties
      * \param label     object. Set the label to s for auto legend
-     *  
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -907,16 +948,16 @@ class pyplot
 
     /*!
      * \brief Save the current figure
-     * 
+     *
      * \param filename A string containing a path to a filename
      */
     bool savefig(std::string const &filename);
 
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar or array-like, marker size in points**2
@@ -926,8 +967,8 @@ class pyplot
      *                      - A sequence of color specifications of length n equals to length of array x.
      *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -942,17 +983,17 @@ class pyplot
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and color
-     * 
-     * \tparam DataType Data type 
-     * 
+     *
+     * \tparam DataType Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar marker size in points**2
      * \param c         The marker color. Possible value:
      *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -962,28 +1003,28 @@ class pyplot
 
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param s         Scalar or array-like, marker size in points**2
      * \param nSizeS    Size of array s
-     * \param StrideS   Stride element stride 
+     * \param StrideS   Stride element stride
      * \param c         Scalar or array-like, data colors
      * \param nSizeC    Size of array c
-     * \param StrideC   Stride element stride 
+     * \param StrideC   Stride element stride
      *                  The marker color. Possible values:
      *                      - A single color format, \sa DefaultColors.
      *                      - A sequence of color specifications of length n equals to length of array x.
      *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1002,21 +1043,21 @@ class pyplot
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and color
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param s         Scalar marker size in points**2
      * \param c         The marker color. Possible value:
      *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1027,9 +1068,9 @@ class pyplot
 
     /*!
      * \brief A scatter plot of y vs x with varying marker size and/or color
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param s         Scalar or array-like, marker size in points**2
@@ -1040,8 +1081,8 @@ class pyplot
      *                      - A sequence of n numbers to be mapped to colors using cmap and norm.
      * \param nSize     Size of arrays
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1056,9 +1097,9 @@ class pyplot
 
     /*!
      * \brief A scatter plot of y vs x with scaler marker size and/or color
-     * 
-     * \tparam DataType        Data type 
-     *  
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param y         Scalar or array-like, data positions
      * \param nSize     Size of arrays
@@ -1066,8 +1107,8 @@ class pyplot
      * \param c         The marker color. Possible value:
      *                      - A single color format, \sa DefaultColors.
      * \param keywords  keywords are used to specify properties like a line label (for auto legends), linewidth, antialiasing, marker face color.
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1079,15 +1120,15 @@ class pyplot
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param fmt    Plot format string
      * \param label  object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1098,19 +1139,19 @@ class pyplot
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling
      * All of the concepts and parameters of plot can be used here as well
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param fmt       Plot format string
      * \param label     Object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1122,16 +1163,16 @@ class pyplot
      * \brief Make a plot with log scaling on the x axis
      * This is just a thin wrapper around plot which additionally changes the x-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param nSize  Size of arrays
      * \param fmt    Plot format string
      * \param label  Object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1140,17 +1181,17 @@ class pyplot
 
     /*!
      * \brief Make a plot with log scaling on the y axis
-     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
+     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param fmt    Plot format string
      * \param label  Object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1159,21 +1200,21 @@ class pyplot
 
     /*!
      * \brief Make a plot with log scaling on the y axis
-     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
+     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         Scalar or array-like, data positions
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         Scalar or array-like, data positions
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride 
+     * \param StrideY   Stride element stride
      * \param fmt       Plot format string
      * \param label     Object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1183,18 +1224,18 @@ class pyplot
 
     /*!
      * \brief Make a plot with log scaling on the y axis
-     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling. 
+     * This is just a thin wrapper around plot which additionally changes the y-axis to log scaling.
      * All of the concepts and parameters of plot can be used here as well.
-     * 
-     * \tparam DataType     Data type 
-     * 
+     *
+     * \tparam DataType     Data type
+     *
      * \param x      Scalar or array-like, data positions
      * \param y      Scalar or array-like, data positions
      * \param nSize  Size of arrays
      * \param fmt    Plot format string
      * \param label  object (Set the label to s for auto legend)
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1203,22 +1244,22 @@ class pyplot
 
     /*!
      * \brief Display a figure
-     * 
-     * \param block 
+     *
+     * \param block
      */
     bool show(bool const block = true);
 
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
-     * 
-     * \tparam DataType 
-     * 
+     *
+     * \tparam DataType
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
-     * \param keywords  
-     * 
-     * \return true 
+     * \param keywords
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1228,18 +1269,18 @@ class pyplot
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         The y-values of the stem heads
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride   
-     * \param keywords  
-     * 
-     * \return true 
+     * \param StrideY   Stride element stride
+     * \param keywords
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1250,15 +1291,15 @@ class pyplot
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
-     * \param nSize     Size of arrays   
-     * \param keywords  
-     * 
-     * \return true 
+     * \param nSize     Size of arrays
+     * \param keywords
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1268,15 +1309,15 @@ class pyplot
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
-     * 
+     *
      * \tparam DataType
-     * 
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1).
      * \param y         The y-values of the stem heads.
      * \param fmt       A format string
      * \param label     object. Set the label to s for auto legend
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1286,19 +1327,19 @@ class pyplot
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param nSizeX    Size of array x
-     * \param StrideX   Stride element stride 
+     * \param StrideX   Stride element stride
      * \param y         The y-values of the stem heads
      * \param nSizeY    Size of array y
-     * \param StrideY   Stride element stride   
+     * \param StrideY   Stride element stride
      * \param fmt       A format string
      * \param label     object. Set the label to s for auto legend
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1309,16 +1350,16 @@ class pyplot
     /*!
      * \brief Create a stem plot
      * A stem plot plots vertical lines at each x location from the baseline to y, and places a marker there.
-     * 
-     * \tparam DataType        Data type 
-     * 
+     *
+     * \tparam DataType        Data type
+     *
      * \param x         The x-positions of the stems. Default: (0, 1, …, len(y) - 1)
      * \param y         The y-values of the stem heads
-     * \param nSize     Size of arrays  
+     * \param nSize     Size of arrays
      * \param fmt       A format string
      * \param label     object. Set the label to s for auto legend
-     * 
-     * \return true 
+     *
+     * \return true
      * \return false If it encounters an unexpected problem
      */
     template <typename DataType>
@@ -1327,36 +1368,36 @@ class pyplot
 
     /*!
      * \brief Return a subplot axes at the given grid position
-     * In the current figure, create and return an Axes, at position index of a (virtual) grid of nDimX by nDimY axes. 
+     * In the current figure, create and return an Axes, at position index of a (virtual) grid of nDimX by nDimY axes.
      * Indexes go from 1 to nDimX * nDimY, incrementing in row-major order.
-     * 
-     * \param nDimX 
-     * \param nDimY 
-     * \param index 
+     *
+     * \param nDimX
+     * \param nDimY
+     * \param index
      */
     bool subplot(long const nDimX, long const nDimY, long const index);
 
     /*!
      * \brief Set a title of the current axes
-     * 
+     *
      * \param label Text to use for the title
      */
     bool title(std::string const &label);
 
     /*!
      * \brief Automatically adjust subplot parameters to give specified padding
-     * 
+     *
      * \todo
      * We should call this automatically for every plot!
-     * 
+     *
      */
     inline bool tight_layout();
 
     /*!
      * \brief Set the x limits of the current axes
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param left  xmin
      * \param right xmax
      */
@@ -1365,9 +1406,9 @@ class pyplot
 
     /*!
      * \brief Get the x limits of the current axes
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param left  xmin
      * \param right xmax
      */
@@ -1376,7 +1417,7 @@ class pyplot
 
     /*!
      * \brief Set the x-axis label of the current axes
-     * 
+     *
      * \param label The label text
      */
     bool xlabel(std::string const &label);
@@ -1384,15 +1425,15 @@ class pyplot
     /*!
      * \brief Turns on xkcd sketch-style drawing mode
      * This will only have effect on things drawn after this function is called
-     * 
+     *
      */
     inline bool xkcd();
 
     /*!
      * \brief Set the y limits of the current axes
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param left  ymin
      * \param right ymax
      */
@@ -1401,9 +1442,9 @@ class pyplot
 
     /*!
      * \brief Get the y limits of the current axes
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param left  ymin
      * \param right ymax
      */
@@ -1412,58 +1453,58 @@ class pyplot
 
     /*!
      * \brief Set the y-axis label of the current axes
-     * 
+     *
      * \param label The label text
      */
     bool ylabel(std::string const &label);
 
-  protected:
+protected:
     /*!
      * \brief Delete a pyplot object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     pyplot &operator=(pyplot const &) = delete;
 
-  private:
+private:
     /*! \class matplotlib
      * \ingroup IO_Module
-     * 
+     *
      * \brief This class sets and initializes python matplotlib for different use cases
-     * 
+     *
      * \verbatim
-     * Matplotlib is a Python 2D plotting library which produces publication quality figures 
-     * in a variety of hardcopy formats and interactive environments across platforms. 
-     * 
-     * To support all of use cases, matplotlib can target different outputs, and each of these 
-     * capabilities is called a backend the “frontend” is the user facing code, i.e., the 
-     * plotting code, whereas the “backend” does all the hard work behind-the-scenes to make 
+     * Matplotlib is a Python 2D plotting library which produces publication quality figures
+     * in a variety of hardcopy formats and interactive environments across platforms.
+     *
+     * To support all of use cases, matplotlib can target different outputs, and each of these
+     * capabilities is called a backend the “frontend” is the user facing code, i.e., the
+     * plotting code, whereas the “backend” does all the hard work behind-the-scenes to make
      * the figure.
      * \endverbatim
-     * 
+     *
      * Reference:<br>
      * https://matplotlib.org
-     * 
+     *
      */
     class matplotlib
     {
-      public:
+    public:
         /*!
          * \brief Construct a new matplotlib object
-         * 
+         *
          */
         matplotlib();
 
         /*!
          * \brief Destroy the matplotlib object
-         * 
+         *
          */
         ~matplotlib()
         {
@@ -1472,37 +1513,53 @@ class pyplot
             Py_Finalize();
         }
 
-      public:
+        /*!
+         * \brief Move constructor, construct a new matplotlib object
+         *
+         * \param other matplotlib object
+         */
+        explicit matplotlib(matplotlib &&other);
+
+        /*!
+         * \brief Move assignment operator
+         *
+         * \param other matplotlib object
+         *
+         * \returns matplotlib& matplotlib object
+         */
+        matplotlib &operator=(matplotlib &&other);
+
+    public:
         /*!
          * \brief Delete a matplotlib object copy construction
-         * 
+         *
          * Avoiding implicit generation of the copy constructor.
          */
         matplotlib(matplotlib const &) = delete;
 
         /*!
          * \brief Delete a matplotlib object assignment
-         * 
+         *
          * Avoiding implicit copy assignment.
-         * 
-         * \returns matplotlib& 
+         *
+         * \returns matplotlib&
          */
         matplotlib &operator=(matplotlib const &) = delete;
 
-      public:
+    public:
         /*!
          * \brief Backend object
-         * 
+         *
          */
         PyObject *pyget_backend;
 
         /*!
          * \brief Tuple object
-         * 
+         *
          */
         PyObject *pyEmpty;
 
-      public:
+    public:
         //! Annotate the point xy with text s
         PyObject *pyannotate;
         //! Convenience method to get or set axis properties
@@ -1569,10 +1626,14 @@ class pyplot
         PyObject *pyylabel;
     };
 
-  public:
+public:
     //! An instance of matplotlib object
     static matplotlib mpl;
 };
+
+pyplot::pyplot() {}
+
+pyplot::~pyplot() {}
 
 pyplot::matplotlib pyplot::mpl;
 
@@ -1586,6 +1647,21 @@ inline std::string pyplot::get_backend()
         return backendName;
     }
     UMUQFAILRETURNSTRING("Couldn't get the name of the current backend!");
+}
+
+inline void pyplot::set_backend(std::string const &WXbackends)
+{
+    if (backend != WXbackends)
+    {
+        setbackend(WXbackends);
+        pyplot::matplotlib newMPL;
+        pyplot::mpl = std::move(newMPL);
+    }
+}
+
+inline void pyplot::set_backend(char const *WXbackends)
+{
+    this->set_backend(std::string(WXbackends));
 }
 
 template <typename DataType>
@@ -2313,11 +2389,12 @@ bool pyplot::hist(std::vector<DataType> const &x, long const bins, bool const de
         if (density)
         {
             /*!
-             * \note 
+             * \note
              * - In some cases density keyword does not work and one has to use normed instead
              */
             PyDict_SetItemString(kwargs, "density", Py_True);
         }
+
         if (Rcolor != 0 || Gcolor != 0 || Bcolor != 0)
         {
             pyColor = PyTuple_New(3);
@@ -2846,7 +2923,7 @@ bool pyplot::plot(DataType const *x, DataType const *y, int const nSize, std::st
 
 /*!
  * \brief Save the current figure
- * 
+ *
  * \param filename A string containing a path to a filename
  */
 bool pyplot::savefig(std::string const &filename)
@@ -4001,7 +4078,7 @@ bool pyplot::ylabel(std::string const &label)
 pyplot::matplotlib::matplotlib()
 {
 // optional but recommended
-#if PY_MAJOR_VERSION >= 3
+#if PYTHON_MAJOR_VERSION >= 3
     wchar_t name[] = L"umuq";
 #else
     char name[] = "umuq";
@@ -4014,7 +4091,11 @@ pyplot::matplotlib::matplotlib()
     Py_Initialize();
 
     // Initialize numpy
+#if PYTHON_MAJOR_VERSION >= 3
+    _import_array();
+#else
     import_array();
+#endif
 
     PyObject *matplotlibModule = NULL;
     PyObject *pyplotModule = NULL;
@@ -4039,6 +4120,14 @@ pyplot::matplotlib::matplotlib()
         Py_DECREF(matplotlibName);
     }
 
+    // matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
+    // or matplotlib.backends is imported for the first time
+    if (!backend.empty())
+    {
+        // Call the method named use of object matplotlib with a variable number of C arguments.
+        PyObject_CallMethod(matplotlibModule, const_cast<char *>("use"), const_cast<char *>("s"), backend.c_str());
+    }
+
     {
         // import matplotlib.pyplot
 
@@ -4056,14 +4145,6 @@ pyplot::matplotlib::matplotlib()
 
         // Decrementing of the reference count
         Py_DECREF(pyplotName);
-    }
-
-    // matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
-    // or matplotlib.backends is imported for the first time
-    if (!backend.empty())
-    {
-        // Call the method named use of object matplotlib with a variable number of C arguments.
-        PyObject_CallMethod(matplotlibModule, const_cast<char *>("use"), const_cast<char *>("s"), backend.c_str());
     }
 
     {
@@ -4096,7 +4177,7 @@ pyplot::matplotlib::matplotlib()
         UMUQFAIL("Python object unexpectedly is not a PyFunction!");
     }
 
-    //Return a new tuple object of size 0
+    // Return a new tuple object of size 0
     pyEmpty = PyTuple_New(0);
 
     // Retrieve an attribute named annotate from object pyplotModule.
@@ -4422,6 +4503,83 @@ pyplot::matplotlib::matplotlib()
     }
 }
 
+pyplot::matplotlib::matplotlib(pyplot::matplotlib &&other)
+{
+    pyget_backend = std::move(other.pyget_backend);
+    pyEmpty = std::move(other.pyEmpty);
+    pyannotate = std::move(other.pyannotate);
+    pyaxis = std::move(other.pyaxis);
+    pycla = std::move(other.pycla);
+    pyclf = std::move(other.pyclf);
+    pyclose = std::move(other.pyclose);
+    pycontour = std::move(other.pycontour);
+    pycontourf = std::move(other.pycontourf);
+    pydraw = std::move(other.pydraw);
+    pyerrorbar = std::move(other.pyerrorbar);
+    pyfigure = std::move(other.pyfigure);
+    pyfill_between = std::move(other.pyfill_between);
+    pygrid = std::move(other.pygrid);
+    pyhist = std::move(other.pyhist);
+    pyion = std::move(other.pyion);
+    pylegend = std::move(other.pylegend);
+    pyloglog = std::move(other.pyloglog);
+    pypause = std::move(other.pypause);
+    pyplot = std::move(other.pyplot);
+    pysavefig = std::move(other.pysavefig);
+    pyscatter = std::move(other.pyscatter);
+    pysemilogx = std::move(other.pysemilogx);
+    pysemilogy = std::move(other.pysemilogy);
+    pyshow = std::move(other.pyshow);
+    pystem = std::move(other.pystem);
+    pysubplot = std::move(other.pysubplot);
+    pytitle = std::move(other.pytitle);
+    pytight_layout = std::move(other.pytight_layout);
+    pyxlim = std::move(other.pyxlim);
+    pyxlabel = std::move(other.pyxlabel);
+    pyxkcd = std::move(other.pyxkcd);
+    pyylim = std::move(other.pyylim);
+    pyylabel = std::move(other.pyylabel);
+}
+
+pyplot::matplotlib &pyplot::matplotlib::operator=(pyplot::matplotlib &&other)
+{
+    pyget_backend = std::move(other.pyget_backend);
+    pyEmpty = std::move(other.pyEmpty);
+    pyannotate = std::move(other.pyannotate);
+    pyaxis = std::move(other.pyaxis);
+    pycla = std::move(other.pycla);
+    pyclf = std::move(other.pyclf);
+    pyclose = std::move(other.pyclose);
+    pycontour = std::move(other.pycontour);
+    pycontourf = std::move(other.pycontourf);
+    pydraw = std::move(other.pydraw);
+    pyerrorbar = std::move(other.pyerrorbar);
+    pyfigure = std::move(other.pyfigure);
+    pyfill_between = std::move(other.pyfill_between);
+    pygrid = std::move(other.pygrid);
+    pyhist = std::move(other.pyhist);
+    pyion = std::move(other.pyion);
+    pylegend = std::move(other.pylegend);
+    pyloglog = std::move(other.pyloglog);
+    pypause = std::move(other.pypause);
+    pyplot = std::move(other.pyplot);
+    pysavefig = std::move(other.pysavefig);
+    pyscatter = std::move(other.pyscatter);
+    pysemilogx = std::move(other.pysemilogx);
+    pysemilogy = std::move(other.pysemilogy);
+    pyshow = std::move(other.pyshow);
+    pystem = std::move(other.pystem);
+    pysubplot = std::move(other.pysubplot);
+    pytitle = std::move(other.pytitle);
+    pytight_layout = std::move(other.pytight_layout);
+    pyxlim = std::move(other.pyxlim);
+    pyxlabel = std::move(other.pyxlabel);
+    pyxkcd = std::move(other.pyxkcd);
+    pyylim = std::move(other.pyylim);
+    pyylabel = std::move(other.pyylabel);
+    return *this;
+}
+
 template <typename DataType>
 PyObject *PyArray(std::vector<DataType> const &idata)
 {
@@ -4717,7 +4875,7 @@ inline namespace matplotlib_223
 {
 class pyplot
 {
-  public:
+public:
     /*!
      * \brief Construct a new pyplot object
      *
@@ -4726,24 +4884,24 @@ class pyplot
 
     /*!
      * \brief Destroy the pyplot object
-     * 
+     *
      */
     ~pyplot() {}
 
-  protected:
+protected:
     /*!
      * \brief Delete a pyplot object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     pyplot(pyplot const &) = delete;
 
     /*!
      * \brief Delete a pyplot object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns pyplot& 
+     *
+     * \returns pyplot&
      */
     pyplot &operator=(pyplot const &) = delete;
 };

@@ -1,6 +1,24 @@
 #ifndef UMUQ_IO_H
 #define UMUQ_IO_H
 
+#include "core/core.hpp"
+
+#include <sys/stat.h> //stat
+#include <cstddef>
+#include <cstring> //strlen
+
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include <ostream>
+#include <iostream> // for outputting debug info
+#include <fstream>
+#include <ios>
+#include <memory>
+#include <limits>
+#include <algorithm>
+
 namespace umuq
 {
 
@@ -10,7 +28,7 @@ namespace umuq
 
 /*! \class ioFormat
  * \ingroup IO_Module
- * 
+ *
  * \brief Stores a set of parameters controlling the way matrices are printed
  *
  * Controlling the way matrices are printed. <br>
@@ -25,7 +43,7 @@ struct ioFormat
 {
     /*!
      * \brief Construct a new ioFormat object
-     * 
+     *
      * \param CoeffSeparator  String printed between two coefficients of the same row
      * \param RowSeparator    String printed between two rows
      * \param RowPrefix       String printed at the beginning of each row
@@ -38,37 +56,37 @@ struct ioFormat
 
     /*!
      * \brief Operator \c == compares the underlying ioFormat object
-     * 
+     *
      * \param rhs ioFormat object
-     * 
-     * \returns true If lhs \c == rhs 
+     *
+     * \returns true If lhs \c == rhs
      */
     inline bool operator==(ioFormat const &rhs);
 
     /*!
      * \brief Operator \c == compares the underlying ioFormat object
-     * 
+     *
      * \param rhs ioFormat object
-     * 
-     * \returns true If lhs \c == rhs 
+     *
+     * \returns true If lhs \c == rhs
      */
     inline bool operator==(ioFormat const &rhs) const;
 
     /*!
      * \brief Operator \c != compares the underlying ioFormat object
-     * 
+     *
      * \param rhs  ioFormat object
-     * 
-     * \returns true  If lhs \c != rhs 
+     *
+     * \returns true  If lhs \c != rhs
      */
     inline bool operator!=(ioFormat const &rhs);
 
     /*!
      * \brief Operator \c != compares the underlying ioFormat object
-     * 
+     *
      * \param rhs  ioFormat object
-     * 
-     * \returns true  If lhs \c != rhs 
+     *
+     * \returns true  If lhs \c != rhs
      */
     inline bool operator!=(ioFormat const &rhs) const;
 
@@ -91,33 +109,33 @@ public:
 
 /*! \class io
  * \ingroup IO_Module
- * 
+ *
  * \brief This class includes IO functionality.
  *
  * List of available functions: <br>
  * - \b isFileOpened  Check if the file is opened
  * - \b isFileExist   Check if the file exists
- * 
+ *
  * - \b openFile      Opens the file with the vailable file open flags:
  *      - \b app      Seeks to the end of stream before each write
  *      - \b binary   Open in binary mode
  *      - \b in       Open for reading
  *      - \b out      Open for writing
  *      - \b trunc    Discard the contents of the stream when opening
- *      - \b ate	  Seeks to the end of stream immediately after open 
- *  
+ *      - \b ate	  Seeks to the end of stream immediately after open
+ *
  * - \b readLine      Get the string from stream file
  * - \b rewindFile    Set the position of stream to the beginning of a file
  * - \b closeFile     Close the file
  * - \b getFstream    Get the stream
- * - \b getLine       Get the Line 
+ * - \b getLine       Get the Line
  * - \b setPrecision  Set the stream Precision
  * - \b setWidth      Set the width parameter of the stream to exactly n.
- * - \b getWidth      Get the width parameter of the input data and stream for the precision 
+ * - \b getWidth      Get the width parameter of the input data and stream for the precision
  * - \b saveMatrix    Helper function to save the matrix into a file
  * - \b loadMatrix    Helper function to load a matrix from a file
  * - \b printMatrix   Helper function to print the matrix to the output stream
- * 
+ *
  */
 class io
 {
@@ -149,44 +167,44 @@ public:
 
     /*!
      * \brief Construct a new io object
-     * 
+     *
      */
     io();
 
     /*!
      * \brief Destroy the io object
-     * 
+     *
      */
     ~io();
 
     /*!
      * \brief Check to see whether the file is opened or not
-     * 
-     * \returns true If the file is already opened 
+     *
+     * \returns true If the file is already opened
      */
     inline bool isFileOpened() const;
 
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
-     *  
-     * \returns true If the file exists 
+     *
+     * \returns true If the file exists
      */
     inline bool isFileExist(const char *fileName);
 
     /*!
      * \brief Check to see whether the file fileName exists and accessible to read or write!
-     *  
-     * \returns true If the file exists 
+     *
+     * \returns true If the file exists
      */
     inline bool isFileExist(std::string const &fileName);
 
     /*!
-     * \brief Opens the file whose name is specified with the parameter filename 
-     *  
+     * \brief Opens the file whose name is specified with the parameter filename
+     *
      * Opens the file whose name is specified in the parameter filename and
-     * associates it with a stream that can be identified in future operations 
-     * by the FILE pointer returned.   
-     * 
+     * associates it with a stream that can be identified in future operations
+     * by the FILE pointer returned.
+     *
      * Available file open flags: <br>
      * - \b std::fstream::app 	  Seeks to the end of stream before each write
      * - \b std::fstream::binary  Open in binary mode
@@ -194,18 +212,18 @@ public:
      * - \b std::fstream::out 	  Open for writing
      * - \b std::fstream::trunc   Discard the contents of the stream when opening
      * - \b std::fstream::ate 	  Seeks to the end of stream immediately after open
-     * 
+     *
      * \returns true If everything goes OK
      */
     bool openFile(const char *fileName, const std::ios_base::openmode mode = in);
 
     /*!
-     * \brief Opens the file whose name is specified with the parameter filename 
-     *  
+     * \brief Opens the file whose name is specified with the parameter filename
+     *
      * Opens the file whose name is specified in the parameter filename and
-     * associates it with a stream that can be identified in future operations 
-     * by the FILE pointer returned.   
-     * 
+     * associates it with a stream that can be identified in future operations
+     * by the FILE pointer returned.
+     *
      * Available file open flags: <br>
      * - \b std::fstream::app 	  Seeks to the end of stream before each write
      * - \b std::fstream::binary  Open in binary mode
@@ -213,52 +231,52 @@ public:
      * - \b std::fstream::out 	  Open for writing
      * - \b std::fstream::trunc   Discard the contents of the stream when opening
      * - \b std::fstream::ate 	  Seeks to the end of stream immediately after open
-     * 
+     *
      * \returns true If everything goes OK
      */
     bool openFile(std::string const &fileName, const std::ios_base::openmode mode = in);
 
     /*!
      * \brief Get string from stream
-     * 
-     * Get a string from stream and stores them into line until 
+     *
+     * Get a string from stream and stores them into line until
      * a newline or the end-of-file is reached, whichever happens first.
-     * 
+     *
      * \returns true If no error occurs on the associated stream
      */
     bool readLine(const char comment = '#');
 
     /*!
      * \brief Set position of stream at the beginning
-     * 
+     *
      * Sets the position indicator associated with stream to the beginning of the file.
      */
     inline void rewindFile();
 
     /*!
      * \brief Close the File
-     * 
+     *
      */
     inline void closeFile();
 
     /*!
      * \brief Get the stream
-     * 
+     *
      */
     inline std::fstream &getFstream();
 
     /*!
      * \brief Get the Line object
-     * 
-     * \returns std::string& 
+     *
+     * \returns std::string&
      */
     inline std::string &getLine();
 
     /*!
-     * \brief Set the stream Precision 
-     * 
+     * \brief Set the stream Precision
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param streamBuffer  Stream buffer to use as output sequence
      */
     template <typename DataType>
@@ -266,79 +284,79 @@ public:
 
     /*!
      * \brief Set the width parameter of the stream to exactly n.
-     * 
-     * If Input streamWidth is \c < 0, the function will set the stream to zero and its setting flag to false 
-     * 
-     * \param streamWidth Value for Width parameter of the stream  
+     *
+     * If Input streamWidth is \c < 0, the function will set the stream to zero and its setting flag to false
+     *
+     * \param streamWidth Value for Width parameter of the stream
      */
     inline void setWidth(int const streamWidth = 0);
 
     /*!
-     * \brief Get the width parameter of the input data and stream for the precision 
-     * 
+     * \brief Get the width parameter of the input data and stream for the precision
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
      * \param nCols         Number of Columns
-     * \param streamBuffer  Stream buffer to use as output sequence 
-     * 
+     * \param streamBuffer  Stream buffer to use as output sequence
+     *
      * \returns The width parameter of the stream
      */
     template <typename DataType>
     int getWidth(DataType const *dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
-     * \brief Get the width parameter of the input data and stream for the precision 
-     * 
+     * \brief Get the width parameter of the input data and stream for the precision
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
      * \param nCols         Number of Columns
-     * \param streamBuffer  Stream buffer to use as output sequence 
-     * 
+     * \param streamBuffer  Stream buffer to use as output sequence
+     *
      * \returns The width parameter of the stream
      */
     template <typename DataType>
     int getWidth(std::unique_ptr<DataType[]> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
-     * \brief Get the width parameter of the input data and stream for the precision 
-     * 
+     * \brief Get the width parameter of the input data and stream for the precision
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
      * \param nCols         Number of Columns
-     * \param streamBuffer  Stream buffer to use as output sequence 
-     * 
+     * \param streamBuffer  Stream buffer to use as output sequence
+     *
      * \returns The width parameter of the stream
      */
     template <typename DataType>
     int getWidth(std::vector<DataType> const &dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
-     * \brief Get the width parameter of the input data and stream for the precision 
-     * 
+     * \brief Get the width parameter of the input data and stream for the precision
+     *
      * \tparam DataType data type
-     * 
+     *
      * \param dataPoints    Input data points
      * \param nRows         Number of Rows
      * \param nCols         Number of Columns
-     * \param streamBuffer  Stream buffer to use as output sequence 
-     * 
+     * \param streamBuffer  Stream buffer to use as output sequence
+     *
      * \returns The width parameter of the stream
      */
     template <typename DataType>
     int getWidth(DataType **dataPoints, int const nRows, int const nCols, std::ostream &streamBuffer);
 
     /*!
-     * \brief Helper function to save the matrix of type EigenMatrixType with IOFormatType format into a file 
-     * 
-     * \tparam EigenMatrixType Eigen matrix type 
+     * \brief Helper function to save the matrix of type EigenMatrixType with IOFormatType format into a file
+     *
+     * \tparam EigenMatrixType Eigen matrix type
      * \tparam IOFormatType IO format type (We can use either of \c ioFormat or \c Eigen::IOFormat)
-     * 
+     *
      * \param dataMatrix   Input data points matrix
      * \param ioformat     IO format for the matrix type
      *
@@ -348,38 +366,38 @@ public:
     bool saveMatrix(EigenMatrixType &dataMatrix, IOFormatType const &ioformat);
 
     /*!
-     * \brief Helper function to save one matrix into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save one matrix into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param   dataPoints  Input data points
      * \param   nRows  Number of rows
      * \param   nCols  Number of columns
-     * \param options  (0 Default) 
-     *                  - \b 0 Save matrix in matrix format and proceed the position indicator to the next line & 
+     * \param options  (0 Default)
+     *                  - \b 0 Save matrix in matrix format and proceed the position indicator to the next line &
      *                  - \b 1 Save matrix in vector format and proceed the position indicator to the next line &
      *                  - \b 2 Save matrix in vector format and keep the position indicator on the same line
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
     bool saveMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options = 0);
 
     /*!
-     * \brief Helper function to save one matrix (or entries number matrices) into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save one matrix (or entries number matrices) into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param   nRows     Number of rows
      * \param   nCols     Number of columns for each row
-     * \param options     (0 Default) 
-     *                      - \b 0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
-     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     * \param options     (0 Default)
+     *                      - \b 0 Saves matrix in matrix format and proceeds the position indicator to the next line &
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
      * \param  entries    Number of data entry (Input data contains pointer to array of data)
-     * \param  ioformat   Print format for each row 
-     * 
+     * \param  ioformat   Print format for each row
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -391,18 +409,18 @@ public:
                     std::vector<ioFormat> const &ioformat = EmptyVector<ioFormat>);
 
     /*!
-     * \brief Helper function to save the matrix or a vector into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save the matrix or a vector into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
-     * \param nRows       Number of rows 
+     * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
-     * \param options     (0 Default) 
-     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
-     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     * \param options     (0 Default)
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -412,18 +430,18 @@ public:
                     int const options = 0);
 
     /*!
-     * \brief Helper function to save the matrix or a vector into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save the matrix or a vector into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
-     * \param nRows       Number of rows 
+     * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
-     * \param options     (0 Default) 
-     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
-     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     * \param options     (0 Default)
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -433,18 +451,18 @@ public:
                     int const options = 0);
 
     /*!
-     * \brief Helper function to save the matrix or a vector into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save the matrix or a vector into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
-     * \param nRows       Number of rows 
+     * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
-     * \param options     (0 Default) 
-     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &  
-     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line & 
+     * \param options     (0 Default)
+     *                      - \b  0 Saves matrix in matrix format and proceeds the position indicator to the next line &
+     *                      - \b 1 Saves matrix in vector format and proceeds the position indicator to the next line &
      *                      - \b 2 Saves matrix in vector format and keep the position indicator on the same line
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -454,16 +472,16 @@ public:
                     int const options = 0);
 
     /*!
-     * \brief Helper function to save two arrays of data into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save two arrays of data into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -474,16 +492,16 @@ public:
                     int const nRows);
 
     /*!
-     * \brief Helper function to save two arrays of data into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save two arrays of data into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -494,16 +512,16 @@ public:
                     int const nRows);
 
     /*!
-     * \brief Helper function to save two arrays of data into a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to save two arrays of data into a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during writing the matrix
      */
     template <typename DataType>
@@ -514,10 +532,10 @@ public:
                     int const nRows);
 
     /*!
-     * \brief Helper function to load the matrix of type EigenMatrixType from a file 
-     * 
+     * \brief Helper function to load the matrix of type EigenMatrixType from a file
+     *
      * \tparam EigenMatrixType Eigen Matrix type
-     * 
+     *
      * \param dataMatrix  Input data points matrix
      *
      * \returns true If no error occurs during reading a matrix
@@ -526,10 +544,10 @@ public:
     bool loadMatrix(EigenMatrixType &dataMatrix);
 
     /*!
-     * \brief Helper function to load the matrix from a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to load the matrix from a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns
@@ -541,10 +559,10 @@ public:
     bool loadMatrix(DataType **dataPoints, int const nRows, int const nCols, int const options = 0);
 
     /*!
-     * \brief Helper function to load one matrix (or entries number of matrices) from a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to load one matrix (or entries number of matrices) from a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns for each row
@@ -557,10 +575,10 @@ public:
     bool loadMatrix(DataType **dataPoints, int const nRows, int const *nCols, int const options = 0, int const entries = 1);
 
     /*!
-     * \brief Helper function to load the matrix from a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to load the matrix from a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
@@ -571,10 +589,10 @@ public:
     bool loadMatrix(DataType *dataPoints, int const nRows, int const nCols = 1);
 
     /*!
-     * \brief Helper function to load the matrix from a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to load the matrix from a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
@@ -585,10 +603,10 @@ public:
     bool loadMatrix(std::unique_ptr<DataType[]> &dataPoints, int const nRows, int const nCols = 1);
 
     /*!
-     * \brief Helper function to load the matrix from a file 
-     * 
-     * \tparam DataType Data type 
-     * 
+     * \brief Helper function to load the matrix from a file
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns for each row (default is 1)
@@ -600,15 +618,15 @@ public:
 
     /*!
      * \brief Helper function to load two vector of data from a file
-     * 
-     * \tparam DataType Data type 
-     * 
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints        Input data points
      * \param dataPointsDim     Number of columns of input array data (data dimension)
      * \param functionValues    Array of input value data
      * \param nFunctionValues   Number of columns of input value data (functionValues at data points)
      * \param nRows             Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during reading data
      */
     template <typename DataType>
@@ -616,15 +634,15 @@ public:
 
     /*!
      * \brief Helper function to load two vector of data from a file
-     * 
-     * \tparam DataType Data type 
-     * 
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during reading data
      */
     template <typename DataType>
@@ -632,15 +650,15 @@ public:
 
     /*!
      * \brief Helper function to load two vector of data from a file
-     * 
-     * \tparam DataType Data type 
-     * 
+     *
+     * \tparam DataType Data type
+     *
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows in each data set
-     * 
+     *
      * \returns true If no error occurs during reading data
      */
     template <typename DataType>
@@ -648,14 +666,14 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title        Title (string) that should be written at the top 
+     *
+     * \param title        Title (string) that should be written at the top
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -666,13 +684,13 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(DataType **dataPoints,
@@ -682,9 +700,9 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns
@@ -698,15 +716,15 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title        Title (string) that should be written at the top 
+     *
+     * \param title        Title (string) that should be written at the top
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns for each row
-     * \param entries      Number of data entry   
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param entries      Number of data entry
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -718,13 +736,13 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns for each row
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(DataType **dataPoints,
@@ -735,14 +753,14 @@ public:
 
     /*!
      * \brief Helper function to print one matrix (or entries number of matrices)
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns for each row
-     * \param entries     Number of data entry   
-     * \param ioformat    Print format for each row 
+     * \param entries     Number of data entry
+     * \param ioformat    Print format for each row
      */
     template <typename DataType>
     void printMatrix(DataType **dataPoints,
@@ -753,14 +771,14 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title        Title (string) that should be written at the top 
+     *
+     * \param title        Title (string) that should be written at the top
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns (default is 1)
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -771,14 +789,14 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title        Title (string) that should be written at the top 
+     *
+     * \param title        Title (string) that should be written at the top
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns (default is 1)
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -789,14 +807,14 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title        Title (string) that should be written at the top 
+     *
+     * \param title        Title (string) that should be written at the top
      * \param dataPoints   Input data points
      * \param nRows        Number of rows
      * \param nCols        Number of columns (default is 1)
-     * \param printPrefix  Prefix and suffix of the print  
+     * \param printPrefix  Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -807,9 +825,9 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
@@ -823,9 +841,9 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
@@ -839,9 +857,9 @@ public:
 
     /*!
      * \brief Helper function to print the matrix
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param nRows       Number of rows
      * \param nCols       Number of columns (default is 1)
@@ -855,9 +873,9 @@ public:
 
     /*!
      * \brief Helper function to print one element of input data
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints  Input data points
      * \param ioformat    Print format
      */
@@ -866,16 +884,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -888,16 +906,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -910,16 +928,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(const char *title,
@@ -932,16 +950,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(DataType const *dataPoints,
@@ -952,16 +970,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
@@ -973,16 +991,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data
-     * 
+     *
      * \tparam DataType Data type
-     * 
-     * \param title            Title (string) that should be written at the top 
+     *
+     * \param title            Title (string) that should be written at the top
      * \param dataPoints       Input data points
      * \param dataPointsDim    Number of columns of input array data (data dimension)
      * \param functionValues   Array of input value data
      * \param nFunctionValues  Number of columns of input value data (functionValues at data points)
      * \param nRows            Number of rows
-     * \param printPrefix      Prefix and suffix of the print  
+     * \param printPrefix      Prefix and suffix of the print
      */
     template <typename DataType>
     void printMatrix(std::vector<DataType> const &dataPoints,
@@ -994,16 +1012,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
      * \param functionValues          Array of input value data
      * \param nFunctionValues         Number of columns of input value data (functionValues at data points)
      * \param nRows                   Number of rows
      * \param dataIOFormat            Print format for input data
-     * \param functionValuesIOFormat  Print format for input function value 
+     * \param functionValuesIOFormat  Print format for input function value
      */
     template <typename DataType>
     void printMatrix(DataType const *dataPoints,
@@ -1016,16 +1034,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
      * \param functionValues          Array of input value data
      * \param nFunctionValues         Number of columns of input value data (functionValues at data points)
      * \param nRows                   Number of rows
      * \param dataIOFormat            Print format for input data
-     * \param functionValuesIOFormat  Print format for input function value 
+     * \param functionValuesIOFormat  Print format for input function value
      */
     template <typename DataType>
     void printMatrix(std::unique_ptr<DataType[]> const &dataPoints,
@@ -1038,16 +1056,16 @@ public:
 
     /*!
      * \brief Helper function to print two vectors of data with stream format for each
-     * 
+     *
      * \tparam DataType Data type
-     * 
+     *
      * \param dataPoints              Input data points
      * \param dataPointsDim           Number of columns of input array data (data dimension)
      * \param functionValues          Array of input value data
      * \param nFunctionValues         Number of columns of input value data (functionValues at data points)
      * \param nRows                   Number of rows
      * \param dataIOFormat            Print format for input data
-     * \param functionValuesIOFormat  Print format for input function value 
+     * \param functionValuesIOFormat  Print format for input function value
      */
     template <typename DataType>
     void printMatrix(std::vector<DataType> const &dataPoints,
