@@ -6,6 +6,11 @@
 #include "misc/parser.hpp"
 #include "numerics/eigenlib.hpp"
 
+#include <cmath>
+#include <cstddef>
+
+#include <vector>
+
 namespace umuq
 {
 

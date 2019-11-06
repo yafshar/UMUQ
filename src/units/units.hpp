@@ -1,7 +1,12 @@
 #ifndef UMUQ_UNITS_H
 #define UMUQ_UNITS_H
 
+#include "core/core.hpp"
 #include "misc/parser.hpp"
+
+#include <string>
+#include <vector>
+#include <algorithm>
 
 namespace umuq
 {
