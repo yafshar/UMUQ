@@ -6,52 +6,57 @@
 #include "numerics/density.hpp"
 #include "numerics/random/psrandom.hpp"
 
+#include <vector>
+#include <utility>
+#include <memory>
+#include <algorithm>
+
 namespace umuq
 {
 
 /*! \class priorDistribution
  * \ingroup Inference_Module
- * 
+ *
  * \brief Prior distribution which is one of the:
- * 
+ *
  * <table>
  * <caption id="multi_row">Prior distribution types</caption>
- * <tr><th> Index number <th> Prior distribution type        
- * <tr><td> 0       <td> UNIFORM  
- * <tr><td> 1       <td> GAUSSIAN    
- * <tr><td> 2       <td> EXPONENTIAL     
- * <tr><td> 3       <td> GAMMA 
+ * <tr><th> Index number <th> Prior distribution type
+ * <tr><td> 0       <td> UNIFORM
+ * <tr><td> 1       <td> GAUSSIAN
+ * <tr><td> 2       <td> EXPONENTIAL
+ * <tr><td> 3       <td> GAMMA
  * <tr><td> 4       <td> COMPOSITE
  * <tr>
  * </table>
- * 
- * \tparam RealType Data type 
- * 
+ *
+ * \tparam RealType Data type
+ *
  * USE: <br>
  * To use the priorDistribution object:
  * - First, construct a new prior Distribution object with problem dimension and the prior type. <br>
  *   \code
  *      int const  problemDimension = 4;
  *      priorTypes problemPriorTypes = priorTypes::UNIFORM;
- * 
+ *
  *      priorDistribution<double> prior(problemDimension, problemPriorTypes);
  *   \endcode <br>
- *   In case, the prior type is not known yet, you should reset the priorDistribution later in the code with the 
+ *   In case, the prior type is not known yet, you should reset the priorDistribution later in the code with the
  *   correct problem dimension and the corresponding prior type. <br>
  *   \code
  *      priorDistribution<double> prior();
  *      \\ ...
  *      int const  problemDimension = 4;
  *      priorTypes problemPriorTypes = priorTypes::UNIFORM;
- *      
+ *
  *      prior.reset(problemDimension, problemPriorTypes);
  *   \endcode <br>
  *   \sa umuq::priorTypes. <br>
  *   \sa reset. <br>
- * 
- * - Second, set the priorDistribution parameters. <br> 
+ *
+ * - Second, set the priorDistribution parameters. <br>
  *   \sa set.
- * 
+ *
  * - Third, call the member function. <br>
  *   You can call the probability density function (pdf). <br>
  *    or <br>
@@ -60,15 +65,15 @@ namespace umuq
  *   \sa logpdf. <br>
  *   You can also sample from the distribution using sample member function (sample). <br>
  *   \sa sample. <br>
- * 
+ *
  * - Forth, call any other member function.
- * 
+ *
  * \note
  * - For multi threaded and multi processors application the Random Number Generator object must be initialized before.
  * \sa umuq::psrandom
  * \sa umuq::psrandom::init
  * \sa umuq::psrandom::setState
- * 
+ *
  */
 template <typename RealType>
 class priorDistribution
@@ -76,13 +81,13 @@ class priorDistribution
   public:
     /*!
      * \brief Construct a new prior Distribution object
-     * 
+     *
      */
     priorDistribution();
 
     /*!
      * \brief Construct a new prior Distribution object
-     * 
+     *
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      */
@@ -90,7 +95,7 @@ class priorDistribution
 
     /*!
      * \brief Construct a new prior Distribution object
-     * 
+     *
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
      */
@@ -98,161 +103,161 @@ class priorDistribution
 
     /*!
      * \brief Move constructor, construct a new priorDistribution object from input priorDistribution object
-     * 
+     *
      * \param other priorDistribution object
      */
     priorDistribution(priorDistribution<RealType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other priorDistribution object
-     * 
-     * \returns priorDistribution<RealType>& 
+     *
+     * \returns priorDistribution<RealType>&
      */
     priorDistribution<RealType> &operator=(priorDistribution<RealType> &&other);
 
     /*!
      * \brief Destroy the prior Distribution object
-     * 
+     *
      */
     ~priorDistribution();
 
     /*!
      * \brief Reset the priorDistribution object size & type
-     * 
+     *
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
-     * 
+     *
      * \returns false  If there is not enough memory or wrong prior type
      */
     bool reset(int const probdim, umuq::priorTypes const prior = umuq::priorTypes::UNIFORM);
 
     /*!
      * \brief Reset the priorDistribution object size & type
-     * 
+     *
      * \param probdim  Problem dimension
      * \param prior    Prior type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite)
-     * 
+     *
      * \returns false  If there is not enough memory or wrong prior type
      */
     bool reset(int const probdim, int const prior);
 
     /*!
      * \brief Set the priorDistribution parameters
-     * 
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     *
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool set(RealType const *Param1, RealType const *Param2, umuq::priorTypes const *compositeprior = nullptr);
 
     /*!
      * \brief Set the priorDistribution parameters
-     * 
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     *
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool set(RealType const *Param1, RealType const *Param2, int const *compositeprior);
 
     /*!
      * \brief Set the priorDistribution parameters
-     * 
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     *
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<umuq::priorTypes> const &compositeprior = EmptyVector<umuq::priorTypes>);
 
     /*!
      * \brief Set the priorDistribution parameters
-     * 
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     *
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
-     * 
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool set(std::vector<RealType> const &Param1, std::vector<RealType> const &Param2, std::vector<int> const &compositeprior);
 
     /*!
      * \brief Get the dimension
-     * 
+     *
      * \returns int Dimension of the problem
      */
     inline int getDim();
 
     /*!
      * \brief Get the prior type
-     * 
+     *
      * \returns umuq::priorTypes prior type
      */
     inline umuq::priorTypes getpriorType();
 
     /*!
      * \brief Get the Prior Types for the composite prior
-     * 
+     *
      * \returns umuq::priorTypes* Prior Types
      */
     inline umuq::priorTypes *getPriorTypes();
 
     /*!
      * \brief Probability density function (pdf)
-     * 
+     *
      * \param x  Input point
-     *  
+     *
      * \returns RealType Returns the probability density function (pdf) evaluated in x
      */
     RealType pdf(RealType const *x);
 
     /*!
      * \brief Probability density function (pdf)
-     * 
+     *
      * \param x  Input point
-     *  
+     *
      * \returns RealType Returns the probability density function (pdf) evaluated in x
      */
     RealType pdf(std::vector<RealType> const &x);
 
     /*!
      * \brief Logarithm of the probability density function
-     * 
+     *
      * \param x  Input point
-     * 
+     *
      * \returns RealType Returns the logarithm probability density function (pdf) evaluated in x
      */
     RealType logpdf(RealType const *x);
 
     /*!
      * \brief Logarithm of the probability density function
-     * 
+     *
      * \param x  Input point
-     * 
+     *
      * \returns RealType Returns the logarithm probability density function (pdf) evaluated in x
      */
     RealType logpdf(std::vector<RealType> const &x);
 
     /*!
      * \brief Create samples based on the prior distribution type
-     * 
-     * \param x Samples 
-     * 
+     *
+     * \param x Samples
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool sample(RealType *x);
 
     /*!
      * \brief Create samples based on the prior distribution type
-     * 
-     * \param x Samples 
-     * 
+     *
+     * \param x Samples
+     *
      * \returns false If it encounters an unexpected problem
      */
     bool sample(std::vector<RealType> &x);
@@ -260,17 +265,17 @@ class priorDistribution
   protected:
     /*!
      * \brief Delete a priorDistribution object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     priorDistribution(priorDistribution<RealType> const &) = delete;
 
     /*!
      * \brief Delete a priorDistribution object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns priorDistribution<RealType>& 
+     *
+     * \returns priorDistribution<RealType>&
      */
     priorDistribution<RealType> &operator=(priorDistribution<RealType> const &) = delete;
 
@@ -281,7 +286,7 @@ class priorDistribution
     /*!
      * Prior type which is one of : <br>
      * 0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite<br>
-     * 
+     *
      * \sa umuq::priorTypes
      */
     umuq::priorTypes priorType;
