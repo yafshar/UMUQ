@@ -11,77 +11,87 @@
 #include "io/io.hpp"
 #include "misc/funcallcounter.hpp"
 
+#include <cstddef>
+#include <cmath>
+
+#include <vector>
+#include <memory>
+#include <utility>
+#include <limits>
+#include <algorithm>
+#include <numeric>
+
 namespace umuq
 {
 
 namespace tmcmc
 {
 
-/*! 
+/*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
- * 
+ *
  * \tparam double Output data type (return output result (default is double))
- * 
+ *
  * \param  FunValues   An array of log value
- * \param  nFunValues  Number of FunValues 
- * \param  Stride      Element stride 
- * \param  PJ1         \f$ p_{j+1} \f$      
+ * \param  nFunValues  Number of FunValues
+ * \param  Stride      Element stride
+ * \param  PJ1         \f$ p_{j+1} \f$
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
- * 
+ *
  * \returns double The square of the coefficient of variation (COV)
  */
 double CoefVar(double const *FunValues, int const nFunValues, int const Stride, double const PJ1, double const PJ, double const Tolerance);
 
-/*! 
+/*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
- * 
+ *
  * \param  FunValues   An array of log value
- * \param  nFunValues  Number of FunValues 
- * \param  PJ1         \f$ p_{j+1} \f$      
+ * \param  nFunValues  Number of FunValues
+ * \param  PJ1         \f$ p_{j+1} \f$
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
- * 
+ *
  * \returns double The square of the coefficient of variation (COV)
  */
 double CoefVar(double const *FunValues, int const nFunValues, double const PJ1, double const PJ, double const Tolerance);
 
-/*! 
+/*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold.
- * 
+ *
  * \param  FunValues   An array of log value
- * \param  PJ1         \f$ p_{j+1} \f$      
+ * \param  PJ1         \f$ p_{j+1} \f$
  * \param  PJ          \f$ p_j \f$
  * \param  Tolerance   A prescribed tolerance
- * 
+ *
  * \returns double The square of the coefficient of variation (COV)
  */
 double CoefVar(std::vector<double> const &FunValues, double const PJ1, double const PJ, double const Tolerance);
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Computes the square of the coefficient of variation (COV) of the plausibility weights to a prescribed threshold
- * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used 
+ * This function is just a wrapper to call CoefVar function but has the proper Function type that can be used
  * in multidimensional minimization \sa umuq::functionMinimizer.
- * 
+ *
  * \param x Input array of plausibility weights
- *  
+ *
  * \returns The square of the coefficient of variation (COV) for the choice of input p
  */
 double CoefVarFun(double const *x);
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Pointer to array of function values
- * 
+ *
  * \tparam double Data type
  */
 static double *functionValues;
@@ -102,21 +112,21 @@ namespace tmcmc
 
 /*! \class tmcmcStats
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Statistic class for TMCMC algorithm
  */
 class tmcmcStats
 {
-  public:
+public:
     /*!
      * \brief Construct a new tmcmcStats object
-     * 
+     *
      */
     tmcmcStats();
 
     /*!
      * \brief Construct a new tmcmc Stats object
-     * 
+     *
      * \param OptParams               Optimization Parameters
      * \param CoefVarPresetThreshold  A preset threshold for coefficient of variation of the plausibility of weights
      */
@@ -124,86 +134,86 @@ class tmcmcStats
 
     /*!
      * \brief Move constructor, construct a new tmcmcStats object from an input object
-     * 
+     *
      * \param other  Input tmcmcStats object
      */
     tmcmcStats(tmcmcStats &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
-     * \param other 
-     * \return tmcmcStats& 
+     *
+     * \param other
+     * \return tmcmcStats&
      */
     tmcmcStats &operator=(tmcmcStats &&other);
 
     /*!
      * \brief Destroy the tmcmc Stats object
-     * 
+     *
      */
     ~tmcmcStats();
 
     /*!
      * \brief Find the optimum value of  \f$ p_j \f$
-     * 
+     *
      * The choice of \f$ p_j : j=1,\cdots,m− 1 \f$ is essential.
-     * It is desirable to increase the p values slowly so that the transition between adjacent PDFs 
-     * is smooth, but if the increase of the p values is too slow, the required number of 
+     * It is desirable to increase the p values slowly so that the transition between adjacent PDFs
+     * is smooth, but if the increase of the p values is too slow, the required number of
      * intermediate stages will be huge. More intermediate stages mean more computational cost.
-     * \f$ p_{j+1} \f$ should be chosen so that the coefficient of variation tolCOV of the plausibility 
-     * weights is equal to a prescribed threshold. 
-     * 
+     * \f$ p_{j+1} \f$ should be chosen so that the coefficient of variation tolCOV of the plausibility
+     * weights is equal to a prescribed threshold.
+     *
      * \param FunValues       Function values
      * \param nFunValues      Number of elements in FunValues
      * \param PJ              \f$ p_j \f$
      * \param OptimumP        Optimum value of p
      * \param OptimumCoefVar  Optimum Coef Var
-     * 
-     * \return false If it encounters any problem 
+     *
+     * \return false If it encounters any problem
      */
     bool findOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
 
     /*!
      * \brief Find the optimum value of  \f$ p_j \f$ through direct search of the \f$ p \in [0, 4] \f$
-     * 
+     *
      * \param FunValues       Function values
      * \param nFunValues      Number of elements in FunValues
      * \param PJ              \f$ p_j \f$
      * \param OptimumP        Optimum value of p
      * \param OptimumCoefVar  Optimum Coef Var
-     * 
-     * \return false If it encounters any problem 
+     *
+     * \return false If it encounters any problem
      */
     bool searchOptimumP(double const *FunValues, int const nFunValues, double const PJ, double *OptimumP, double *OptimumCoefVar);
 
     /*!
      * \brief This function, prepares and set the new generation from current sample points
-     * 
-     * \param StreamData   IO data, which includes general information 
+     *
+     * \param StreamData   IO data, which includes general information
      * \param CurrentData  Current generation of sample points
      * \param RunData      Running information data
      * \param Leaders      Leader generation of sample points
-     * 
+     *
      * \returns false If it encounters any problem
      */
     bool selectNewGeneration(stdata &StreamData, database &CurrentData, runinfo &RunData, database &Leaders);
 
-  protected:
+protected:
     /*!
      * \brief Delete a tmcmcStats object copy construction
-     * 
-     * Avoiding implicit generation of the copy constructor.  
+     *
+     * Avoiding implicit generation of the copy constructor.
      */
     tmcmcStats(tmcmcStats const &) = delete;
 
     /*!
      * \brief Delete a tmcmcStats object assignment
-     * 
-     * Avoiding implicit copy assignment.  
+     *
+     * Avoiding implicit copy assignment.
      */
     tmcmcStats &operator=(tmcmcStats const &) = delete;
 
-  private:
+private:
     /*! Optimizer information */
     optimizationParameters optParams;
 
@@ -288,7 +298,7 @@ bool tmcmcStats::findOptimumP(double const *FunValues, int const nFunValues, dou
     if (optParams.Display)
     {
         double *x = fMinimizer->getX();
-        std::cout << "x =" << x[0] << std::endl;
+        UMUQMSG("x =", x[0]);
     }
 
     // Forth, iterate until we reach the absolute tolerance
@@ -309,8 +319,8 @@ bool tmcmcStats::findOptimumP(double const *FunValues, int const nFunValues, dou
         if (optParams.Display)
         {
             double *x = fMinimizer->getX();
-            std::cout << iter << ": ";
-            std::cout << "CoefVar(p=" << x[0] << ") =" << fMinimizer->getMin() << ", & characteristic size =" << fMinimizer->size() << std::endl;
+            UMUQMSG(iter, ": ");
+            UMUQMSG("CoefVar(p=", x[0], ") =", fMinimizer->getMin(), ", & characteristic size =", fMinimizer->size());
         }
 
         status = fMinimizer->testSize(optParams.Tolerance);
@@ -324,9 +334,9 @@ bool tmcmcStats::findOptimumP(double const *FunValues, int const nFunValues, dou
 
         if (optParams.Display)
         {
-            std::cout << fMinimizer->getName() << ", on CoefVarFun : " << iter << " iters, CoefVar(p)=" << *OptimumCoefVar << std::endl;
-            std::cout << ((status == 0) ? "Converged to minimum at p = " : "Stopped at p = ");
-            std::cout << *OptimumP << std::endl;
+            UMUQMSG(fMinimizer->getName(), ", on CoefVarFun : ", iter, " iters, CoefVar(p)=", *OptimumCoefVar);
+            UMUQMSG(((status == 0) ? "Converged to minimum at p = " : "Stopped at p = "));
+            UMUQMSG(*OptimumP);
         }
         return (status ? (std::abs(fMinimizer->getMin()) <= optParams.Tolerance) : true);
     }
@@ -345,7 +355,7 @@ bool tmcmcStats::searchOptimumP(double const *FunValues, int const nFunValues, d
     {
         if (optParams.Display)
         {
-            std::cout << "Search for optimum p in [" << MinValp << ", " << MaxValp << "] with step size =" << stepSize << std::endl;
+            UMUQMSG("Search for optimum p in [", MinValp, ", ", MaxValp, "] with step size =", stepSize);
         }
 
         // Define some variables to use in the search
@@ -387,8 +397,8 @@ bool tmcmcStats::searchOptimumP(double const *FunValues, int const nFunValues, d
 
             if (optParams.Display)
             {
-                std::cout << "Search on CoefVarFun : CoefVar(p)=" << *OptimumCoefVar << std::endl;
-                std::cout << "Converged to minimum at p = " << *OptimumP << std::endl;
+                UMUQMSG("Search on CoefVarFun : CoefVar(p)=", *OptimumCoefVar);
+                UMUQMSG("Converged to minimum at p = ", *OptimumP);
             }
             return true;
         }

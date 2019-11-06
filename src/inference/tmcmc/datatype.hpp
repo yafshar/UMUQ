@@ -4,9 +4,9 @@
 /*!
  * \file datatype.hpp
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief UMUQ data types for the TMCMC algorithm
- * 
+ *
  * \author Yaser Afshar
  * \date 09-07-2018
  */

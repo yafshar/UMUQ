@@ -6,6 +6,14 @@
 #include "misc/parser.hpp"
 #include "io/io.hpp"
 
+#include <mutex>
+#include <string>
+#include <vector>
+#include <utility>
+#include <limits>
+#include <fstream>
+#include <numeric>
+
 namespace umuq
 {
 
@@ -14,9 +22,9 @@ namespace tmcmc
 
 /*!
  * \ingroup TMCMC_Module
- * 
- * \brief Broadcasts running information to all processes of the group 
- * 
+ *
+ * \brief Broadcasts running information to all processes of the group
+ *
  * \param other runinfo object which is casted to long long
  */
 void broadcastTask(long long const other);
@@ -29,21 +37,21 @@ static std::mutex broadcastTask_m;
 
 /*! \class runinfo
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief This class contains the running information of the TMCMC algorithm
  */
 class runinfo
 {
-  public:
+public:
     /*!
      * \brief constructor for the default variables
-     *    
+     *
      */
     runinfo();
 
     /*!
      * \brief Construct a new runinfo object
-     * 
+     *
      * \param ProbDim          Dimension
      * \param MaxGenerations   Max generations
      */
@@ -51,16 +59,16 @@ class runinfo
 
     /*!
      * \brief Move constructor, construct a new runinfo object from an input runinfo object
-     * 
+     *
      * \param other Input runinfo object
      */
     runinfo(runinfo &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other      Input runinfo object
-     * \return runinfo& 
+     * \return runinfo&
      */
     runinfo &operator=(runinfo &&other);
 
@@ -71,24 +79,24 @@ class runinfo
 
     /*!
      * \brief Initialize the database class register task
-     *  
+     *
      * \returns false if there is not enough memory
      */
     bool init();
 
     /*!
      * \brief Reset the runinfo object with the new dimension and maximum generations
-     * 
+     *
      * \param ProbDim         Dimension
      * \param MaxGenerations  Maximum generations
-     * 
+     *
      * \return false If there is not enough memory
      */
     bool reset(int ProbDim, int MaxGenerations);
 
     /*!
      * \brief Exchanges the given runinfo object
-     * 
+     *
      * \param other Input runinfo object
      */
     void swap(runinfo &other);
@@ -96,7 +104,7 @@ class runinfo
     /*!
      * \brief Save the information in a file fileName
      * Write the runinfo data information to a file fileName
-     * 
+     *
      * \param fileName Name of the file (default name is runinfo.txt) for writing information
      */
     bool save(const char *fileName = "runinfo.txt");
@@ -104,8 +112,8 @@ class runinfo
     /*!
      * \brief Save the information in a file fileName
      * Write the runinfo data information to a file fileName
-     * 
-     * \param fileName Name of the file (default name is runinfo.txt) for writing information 
+     *
+     * \param fileName Name of the file (default name is runinfo.txt) for writing information
      */
     bool save(std::string const &fileName);
 
@@ -117,9 +125,9 @@ class runinfo
     /*!
      * \brief Load information from a file fileName
      * Load the runinfo data information from a file fileName
-     * 
+     *
      * \param fileName  Name of the file (default name is runinfo.txt) for reading information
-     * 
+     *
      * \return false If it encounters any problem
      */
     bool load(const char *fileName = "runinfo.txt");
@@ -127,28 +135,28 @@ class runinfo
     /*!
      * \brief Load information from a file fileName
      * Load the runinfo data information from a file fileName
-     * 
+     *
      * \param fileName  Name of the file (default name is runinfo.txt) for reading information
-     * 
+     *
      * \return false If it encounters any problem
      */
     bool load(std::string const &fileName);
 
     /*!
      * \brief Set the number of uniques for the current generation
-     * 
+     *
      * \param nUniques Number of unique samples
-     * 
-     * \return false If the current generation is greater than the defined maximum number 
+     *
+     * \return false If the current generation is greater than the defined maximum number
      */
     inline bool setUniqueNumber(int const nUniques);
 
     /*!
      * \brief Set the Acceptance rate for the current generation
-     * 
-     * \param acceptanceRate 
-     * 
-     * \return false If the current generation is greater than the defined maximum number 
+     *
+     * \param acceptanceRate
+     *
+     * \return false If the current generation is greater than the defined maximum number
      */
     inline bool setAcceptanceRate(double const acceptanceRate);
 
@@ -158,31 +166,31 @@ class runinfo
     inline void broadcast();
 
     /*!
-     * \brief Printing the running information mean & covariance computed from a collection 
+     * \brief Printing the running information mean & covariance computed from a collection
      * (the sample) of data.
-     * 
+     *
      * Print the sample mean and the sample covariance
      */
     void printSampleStatistics();
 
-  private:
+private:
     /*!
      * \brief Delete a runinfo object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     runinfo(runinfo const &) = delete;
 
     /*!
      * \brief Delete a runinfo object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns runinfo& 
+     *
+     * \returns runinfo&
      */
     runinfo &operator=(runinfo const &) = delete;
 
-  public:
+public:
     //! Number of dimensions
     int nDim;
     //! Maximum number of generations
@@ -198,11 +206,11 @@ class runinfo
     std::vector<int> currentUniques;
 
     /*!
-     * In the Bayesian framework \f$ p(\theta|D)=\frac{p(D|\theta)p(\theta)}{p(D)}, \f$ where 
+     * In the Bayesian framework \f$ p(\theta|D)=\frac{p(D|\theta)p(\theta)}{p(D)}, \f$ where
      * \f$ p(D) \f$ is the evidence and it can be estimated as a by-product in the TMCMC method. <br>
      * logselection at each stage is used to estimate the log-evidence. <br>
-     * The log-evidence is estimated as a by-product of the method from 
-     * \f$ \ln p(D) \approx \ln{\prod_{j=1}^{m-1}\left( \frac{1}{N_j} \sum_{k=1}^{N_j} w_{j,k} \right )}. \f$ 
+     * The log-evidence is estimated as a by-product of the method from
+     * \f$ \ln p(D) \approx \ln{\prod_{j=1}^{m-1}\left( \frac{1}{N_j} \sum_{k=1}^{N_j} w_{j,k} \right )}. \f$
      */
     std::vector<double> logselection;
     //! Each generation acceptance rate
@@ -370,10 +378,9 @@ bool runinfo::save(std::string const &fileName)
 
 void runinfo::print()
 {
-    std::cout << "\n----------------------------\n"
-              << std::endl;
-    std::cout << "Problem Dimension= " << nDim << "\n";
-    std::cout << "Generation= " << currentGeneration << "\n";
+    UMUQMSG("\n----------------------------\n");
+    UMUQMSG("Problem Dimension= ", nDim);
+    UMUQMSG("Generation= ", currentGeneration);
 
     // Create an instance of the IO object
     umuq::io f;
@@ -382,25 +389,25 @@ void runinfo::print()
         // Define the printing format
         umuq::ioFormat umuqFormat = {"\n", "", "[\n", "]\n"};
 
-        std::cout << "\nEach generation coefficient of variation=\n";
+        UMUQMSG("\nEach generation coefficient of variation=\n");
         f.setWidth(-1);
         f.printMatrix(CoefVar, currentGeneration, 1, umuqFormat);
 
-        std::cout << "\nEach generation probabilty=\n";
+        UMUQMSG("\nEach generation probabilty=\n");
         f.setWidth(-1);
         f.printMatrix(generationProbabilty, currentGeneration, 1, umuqFormat);
 
-        std::cout << "\nEach generation number of unique sample points=\n";
+        UMUQMSG("\nEach generation number of unique sample points=\n");
         f.setWidth(-1);
         f.printMatrix(currentUniques, currentGeneration, 1, umuqFormat);
 
-        std::cout << "\nEach generation log selection for computing evidence=\n";
+        UMUQMSG("\nEach generation log selection for computing evidence=\n");
         f.setWidth(-1);
         f.printMatrix(logselection, currentGeneration, 1, umuqFormat);
 
-        std::cout << "\nThe logarithm of evidence is=[" << std::accumulate(logselection.data(), logselection.data() + currentGeneration, double{}) << "]\n";
+        UMUQMSG("\nThe logarithm of evidence is=[", std::accumulate(logselection.data(), logselection.data() + currentGeneration, double{}), "]\n");
 
-        std::cout << "\nEach generation acceptance rate=\n";
+        UMUQMSG("\nEach generation acceptance rate=\n");
         f.setWidth(-1);
         f.printMatrix(acceptance, currentGeneration, 1, umuqFormat);
     }
@@ -409,17 +416,16 @@ void runinfo::print()
         // Define the printing format
         umuq::ioFormat umuqFormat = {" ", "", "[", "]\n"};
 
-        std::cout << "\nEach generation mean of running information=\n";
+        UMUQMSG("\nEach generation mean of running information=\n");
         f.setWidth(-1);
         f.printMatrix(meantheta, currentGeneration, nDim, umuqFormat);
 
-        std::cout << "\nCovariance of running information at generation[" << currentGeneration << "]=\n";
+        UMUQMSG("\nCovariance of running information at generation[", currentGeneration, "]=\n");
         f.setWidth(-1);
         f.printMatrix(covariance, nDim, nDim, umuqFormat);
     }
 
-    std::cout << "\n----------------------------\n"
-              << std::endl;
+    UMUQMSG("\n----------------------------\n");
 }
 
 bool runinfo::load(const char *fileName)
@@ -525,14 +531,14 @@ inline void runinfo::broadcast()
 
 void runinfo::printSampleStatistics()
 {
-    std::cout << "----------------------------" << std::endl;
+    UMUQMSG("----------------------------");
     umuq::io f;
     // Define the printing format
     umuq::ioFormat meanFormat = {" ", "", "Mean=[", "]\nSample covariance matrix=\n"};
     umuq::ioFormat covarianceFormat = {" ", "\n", "[", "]"};
     f.printMatrix(meantheta.data() + currentGeneration * nDim, 1, nDim, meanFormat);
     f.printMatrix(covariance, nDim, nDim, covarianceFormat);
-    std::cout << "----------------------------" << std::endl;
+    UMUQMSG("----------------------------");
 }
 
 void broadcastTask(long long const other)

@@ -6,6 +6,11 @@
 #include "misc/parser.hpp"
 #include "io/io.hpp"
 
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <utility>
+
 namespace umuq
 {
 
@@ -14,8 +19,8 @@ namespace tmcmc
 
 /*! \class optimizationParameters
  * \ingroup TMCMC_Module
- * 
- * \brief This is a class to set the optimization parameters 
+ *
+ * \brief This is a class to set the optimization parameters
  */
 struct optimizationParameters
 {
@@ -26,67 +31,67 @@ struct optimizationParameters
 
     /*!
      * \brief Construct a new optimization Parameters object
-     * 
+     *
      * \param other optimization Parameters object
      */
     explicit optimizationParameters(optimizationParameters const &other);
 
     /*!
      * \brief Move constructor, construct a new optimizationParameters object from an input object
-     * 
+     *
      * \param other  Input optimizationParameters object
      */
     optimizationParameters(optimizationParameters &&other);
 
     /*!
      * \brief Copy constructor, construct a new optimizationParameters object from an input object
-     * 
-     * \param other 
-     * \returns optimizationParameters& 
+     *
+     * \param other
+     * \returns optimizationParameters&
      */
     optimizationParameters &operator=(optimizationParameters const &other);
 
     /*!
      * \brief Move assignment operator
-     * 
-     * \param other 
-     * \returns optimizationParameters& 
+     *
+     * \param other
+     * \returns optimizationParameters&
      */
     optimizationParameters &operator=(optimizationParameters &&other);
 
     /*!
      * \brief Destroy the optimization Parameters object
-     * 
+     *
      */
     ~optimizationParameters();
 
     /*!
      * \brief Reset the optimization parameters which is used in the function optimizer
-     * 
+     *
      * The default values are:<br>
      * - \b maxIter = 100
      * - \b display = 0 (Off)
      * - \b functionMinimizerType = 2 (SIMPLEXNM2, The Simplex method of Nelder and Mead)
      * - \b tolerance = 1e-6
      * - \b step = 1e-5
-     * 
-     * \returns true 
-     * \returns false 
+     *
+     * \returns true
+     * \returns false
      */
     void reset();
 
     /*!
      * \brief Reset the optimization parameters which is used in the function optimizer
-     * 
+     *
      * The default values are:<br>
      * - \b maxIter = 100
      * - \b display = 0 (Off)
      * - \b functionMinimizerType = 2 (SIMPLEXNM2, The Simplex method of Nelder and Mead)
      * - \b tolerance = 1e-6
      * - \b step = 1e-5
-     * 
-     * \returns true 
-     * \returns false 
+     *
+     * \returns true
+     * \returns false
      */
     void reset(int const maxIter, int const display, int const functionMinimizerType, double const tolerance, double const step);
 
@@ -104,7 +109,7 @@ struct optimizationParameters
 
 /*! \class stdata
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief stream data type class
  *
  * - \b nDim                       Problem Dimension
@@ -131,7 +136,7 @@ struct optimizationParameters
  * - \b upperBound                 Sampling domain upper bounds for each dimension
  * - \b compositePriorDistribution Composite distribution as a prior
  * - \b priorMu                    Prior mean, in case of gamma distribution it is alpha
- * - \b priorSigma                 Prior standard deviation 
+ * - \b priorSigma                 Prior standard deviation
  * - \b auxilData                  Auxillary data
  */
 class stdata
@@ -139,44 +144,44 @@ class stdata
   public:
     /*!
      * \brief Default constructor
-     *    
+     *
      */
     stdata();
 
     /*!
      * \brief constructor for the default input variables
-     *    
+     *
      */
     stdata(int probdim, int MaxGenerations, int PopulationSize);
 
     /*!
-     * \brief Default destructor 
-     *    
+     * \brief Default destructor
+     *
      */
     ~stdata();
 
     /*!
      * \brief Move constructor, construct a new stdata object from an input object
-     * 
+     *
      * \param other  Input stdata object
      */
     stdata(stdata &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
-     * \param other 
-     * \returns stdata& 
+     *
+     * \param other
+     * \returns stdata&
      */
     stdata &operator=(stdata &&other);
 
     /*!
      * \brief reset the stream data values to the input values
-     * 
+     *
      * \param probdim          Problem Dimension
      * \param MaxGenerations   Maximum number of generations
      * \param PopulationSize   Sampling population size
-     * 
+     *
      * \returns false If there is not enough memory available for allocating the data
      */
     bool reset(int probdim, int MaxGenerations, int PopulationSize);
@@ -185,7 +190,7 @@ class stdata
      * \brief load the input file fname
      *
      * \param fname  Name of the input file
-     * 
+     *
      * \returns true on success
      */
     bool load(const char *fname = "tmcmc.par");
@@ -194,32 +199,32 @@ class stdata
      * \brief load the input file fname
      *
      * \param fname  Name of the input file
-     * 
+     *
      * \returns true on success
      */
     bool load(std::string const &fname = "tmcmc.par");
 
     /*!
      * \brief Swap the stdata objects
-     * 
-     * \param other 
+     *
+     * \param other
      */
     void swap(stdata &other);
 
   private:
     /*!
      * \brief Delete a stdata object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     stdata(stdata const &) = delete;
 
     /*!
      * \brief Delete a stdata object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns stdata& 
+     *
+     * \returns stdata&
      */
     stdata &operator=(stdata const &) = delete;
 
@@ -276,19 +281,19 @@ class stdata
   public:
     /*!
      * A preset threshold for coefficient of variation of the plausibility of weights.<br>
-     * At each stage \f$ j, \f$ of the MCMC algorithm, \f$ \zeta_{j+1} \f$ is chosen such that 
-     * the coefficient of variation of \f$ w_{j,k} \f$ is smaller than some preset threshold. 
-     * 
+     * At each stage \f$ j, \f$ of the MCMC algorithm, \f$ \zeta_{j+1} \f$ is chosen such that
+     * the coefficient of variation of \f$ w_{j,k} \f$ is smaller than some preset threshold.
+     *
      * Reference: <br>
-     * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version 
+     * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version
      * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
      */
     double coefVarPresetThreshold;
 
     /*!
      * \f$ \beta, \f$ a user-specified scaling factor in the TMCMC algorithm.<br>
-     * The proposal PDF for the MCMC step is a Gaussian distribution centered at the sample with covariance equal to 
-     * \f$ \beta^2 COV(\Theta(j)), \f$ where \f$ \beta, \f$ is a user-specified scaling factor, and  
+     * The proposal PDF for the MCMC step is a Gaussian distribution centered at the sample with covariance equal to
+     * \f$ \beta^2 COV(\Theta(j)), \f$ where \f$ \beta, \f$ is a user-specified scaling factor, and
      * \f$ \Theta(j) \f$ is the collective samples from MCMC step.
      */
     double bbeta;
@@ -548,13 +553,13 @@ bool stdata::reset(int probdim, int MaxGenerations, int PopulationSize)
 
 /*!
  * \brief load the input file fname for setting the input variables
- * 
+ *
  * \tparam double      Data type
- * 
+ *
  * \param fname   Input file name
- *  
- * \returns true 
- * \returns false 
+ *
+ * \returns true
+ * \returns false
  */
 
 bool stdata::load(const char *fname)

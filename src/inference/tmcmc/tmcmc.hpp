@@ -12,39 +12,46 @@
 #include "misc/funcallcounter.hpp"
 #include "tmcmcstats.hpp"
 
+#include <mutex>
+#include <string>
+#include <vector>
+#include <utility>
+#include <functional>
+#include <algorithm>
+
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup Inference_Module Inference module
- * This is the inference module of UMUQ providing all necessary classes of statistical inference in which 
+ * This is the inference module of UMUQ providing all necessary classes of statistical inference in which
  * Bayes' theorem is used to update the probability for a hypothesis as more evidence or information becomes available.
  */
 
-/*! 
+/*!
  * \defgroup TMCMC_Module TMCMC module
  * \ingroup Inference_Module
- * 
+ *
  * This is the Transitional Markov Chain Monte Carlo Method module of UMUQ providing all necessary classes of this approach.<br>
  * The %UMUQ implementation is an implementation of an unbiased version of Transitional Markov Chain Monte Carlo.<br>
- * 
+ *
  * Reference: <br>
  * Wu S, et. al. Bayesian Annealed Sequential Importance Sampling: An Unbiased Version <br>
  * of Transitional Markov Chain Monte Carlo. ASME J. Risk Uncertainty Part B. 2017;4(1)
  *
- * The tmcmc class contains additions, adaptations and modifications to the original c implementation 
+ * The tmcmc class contains additions, adaptations and modifications to the original c implementation
  * of [pi4u](https://github.com/cselab/pi4u) code made available under the [GNU General Public License v2.0](https://www.gnu.org/licenses/gpl-2.0.html) license. <br>
  *
  */
 
 /*! \namespace umuq::tmcmc
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Namespace containing all Transitional Markov Chain Monte Carlo Method symbols from the %UMUQ library.
  *
  * Reference: <br>
  * Wu S, et. al. "Bayesian Annealed Sequential Importance Sampling: An Unbiased Version <br>
- * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1) 
+ * of Transitional Markov Chain Monte Carlo." ASME J. Risk Uncertainty Part B. 2017;4(1)
  */
 namespace tmcmc
 {
@@ -54,28 +61,28 @@ funcallcounter fc;
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Initialization of MCMC sampling task
- * 
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
- * 
+ *
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>)
+ *
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
  * \param nSamplePoints    Dimension of sample points
  * \param Fvalue           Function values
  * \param nFvalue          Number of function values
- * \param WorkInformation  Information regarding this task work 
+ * \param WorkInformation  Information regarding this task work
  */
 template <class FunctionType>
 void tmcmcInitTask(long long const TMCMCObj, double const *SamplePoints, int const *nSamplePoints, double *Fvalue, int const *nFvalue, int const *WorkInformation);
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Main MCMC sampling task
- * 
- * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>) 
- * 
+ *
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>)
+ *
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Sampling points
  * \param nSamplePoints    Dimension of sample points
@@ -97,11 +104,11 @@ void tmcmcMainTask(long long const TMCMCObj, double const *SamplePoints, int con
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief MCMC update sample task
- * 
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
- * 
+ *
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>)
+ *
  * \param TMCMCObj         TMCMC object which is casted to long long
  * \param SamplePoints     Array of sample points
  * \param nSamplePoints    Dimension of sample points
@@ -114,11 +121,11 @@ void tmcmcUpdateTask(long long const TMCMCObj, double const *SamplePoints, int c
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief TMCMC task type (function pointer)
- * 
+ *
  * \tparam double     Real data type
- * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>) 
+ * \tparam FunctionType Function type, which is used in fit function (default \c FITFUN_T<double>)
  */
 template <class FunctionType>
 using TMCMTASKTYPE = void (*)(long long const, double const *, int const *, double *, int const *, int const *);
@@ -134,10 +141,10 @@ namespace tmcmc
 
 /*! \class tmcmc
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief This class performs Transitional Markov Chain Monte Carlo Method
- * 
- * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>) 
+ *
+ * \tparam FunctionType Function type, which is used in fit function (default FITFUN_T<double>)
  */
 template <class FunctionType = FITFUN_T<double>>
 class tmcmc
@@ -145,151 +152,151 @@ class tmcmc
 public:
   /*!
    * \brief Construct a new tmcmc object
-   * 
+   *
    */
   tmcmc();
 
   /*!
    * \brief Destroy the tmcmc object
-   * 
+   *
    */
   ~tmcmc();
 
   /*!
    * \brief Set the Input File Name
-   * 
-   * \param fileName Input file name 
-   * 
+   *
+   * \param fileName Input file name
+   *
    * \return false If the file does not exist
    */
   inline bool setInputFileName(char const *fileName = "");
 
   /*!
    * \brief Get the Input File Name object
-   * 
-   * \return char const* 
+   *
+   * \return char const*
    */
   inline std::string getInputFileName();
 
   /*!
    * \brief Reset the managed object to the correct size, which is read from input file name
-   * 
-   * \param fileName Input file name 
-   * 
+   *
+   * \param fileName Input file name
+   *
    * \return false If it encounters an unexpected problem
    */
   bool reset(char const *fileName = "");
 
   /*!
    * \brief Set the Fitting Function object to be used
-   * 
+   *
    * \note
-   * - std::move is used so that the Fit Function object fitFun may be "moved from", 
-   * i.e. allowing the efficient transfer of resources from fitFun to tmcmc member object. 
+   * - std::move is used so that the Fit Function object fitFun may be "moved from",
+   * i.e. allowing the efficient transfer of resources from fitFun to tmcmc member object.
    * Thus, the fitFun object is not accessible after calling this function!
-   * 
-   * \param fitFun Fitting Function object 
-   * 
+   *
+   * \param fitFun Fitting Function object
+   *
    * \return false If it encounters an unexpected problem
    */
   inline bool setFitFunction(fitFunction<double, FunctionType> &fitFun);
 
   /*!
    * \brief Set the fitting Function to be used
-   * 
+   *
    * \param Fun  Fitting Function of type (class FunctionType)
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   inline bool setFitFunction(FunctionType &Fun);
 
   /*!
    * \brief Set the fitting Function to be used
-   * 
+   *
    * \param Fun  Fitting Function of type (class FunctionType)
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   inline bool setFitFunction(FunctionType const &Fun);
 
   /*!
    * \brief Setting both the Init Function & fitting Function members of Fit Function member
-   * 
+   *
    * \param InitFun  Initialization function which has the fixed bool type
    * \param Fun      Fitting Function of type (class FunctionType)
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   inline bool setFitFunction(std::function<bool()> &InitFun, FunctionType &Fun);
 
   /*!
    * \brief Setting both the Init Function & fitting Function members of Fit Function member
-   * 
+   *
    * \param InitFun  Initialization function which has the fixed bool type
    * \param Fun      Fitting Function of type (class FunctionType)
-   * 
+   *
    * \return false If it encounters an unexpected problem
    */
   inline bool setFitFunction(std::function<bool()> const &InitFun, FunctionType const &Fun);
 
   /*!
    * \brief Initialize the algorithm and set up the TORC environemnt
-   * 
-   * \param fileName Input file name 
-   * 
+   *
+   * \param fileName Input file name
+   *
    * \return false If it encounters an unexpected problem
    */
   bool init(char const *fileName = "");
 
   /*!
    * \brief Check if the restart files are available or not. In case of being available, load, and update the data.
-   * 
+   *
    * \returns true  For restarting from previous generation of sample points
-   * \returns false For a fresh start 
+   * \returns false For a fresh start
    */
   inline bool restart();
 
   /*!
-   * \brief Start of the TMCMC algorithm 
-   * 
-   * The original formulation of TMCMC constructs multiple intermediate target 
+   * \brief Start of the TMCMC algorithm
+   *
+   * The original formulation of TMCMC constructs multiple intermediate target
    * distributions as follows: <br>
-   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots, m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1. \f$ <br> 
-   * Starting from samples drawn from the prior at stage \f$ j = 1. \f$ 
-   *  
+   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots, m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1. \f$ <br>
+   * Starting from samples drawn from the prior at stage \f$ j = 1. \f$
+   *
    * \returns false If it encounters an unexpected problem
    */
   bool iterate0();
 
   /*!
-   * \brief Internal part of the main sampling iteration of the TMCMC algorithm 
-   * 
+   * \brief Internal part of the main sampling iteration of the TMCMC algorithm
+   *
    * \returns false If it encounters an unexpected problem
    */
   bool iterateInternal();
 
   /*!
-   * \brief Iterative part of the TMCMC algorithm 
-   * 
-   * The original formulation of TMCMC constructs multiple intermediate target 
+   * \brief Iterative part of the TMCMC algorithm
+   *
+   * The original formulation of TMCMC constructs multiple intermediate target
    * distributions as follows: <br>
-   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots,m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ <br> 
+   * \f$ f_j \propto p(D|\theta)^{\zeta_j}p(\theta),~\text{for}~j=1, \cdots,m~\text{and}~\zeta_1 <\zeta_2<\cdots<\zeta_m=1.\f$ <br>
    * Starting from samples drawn from the prior at stage \f$ j = 1, \f$ the
-   * posterior samples are obtained by updating the prior samples through 
+   * posterior samples are obtained by updating the prior samples through
    * \f$ m - 2 \f$ intermediate target distributions.<br>
    * When \f$ \zeta_j = 1, \f$ this procedure stops and the last set of samples
-   * is approximately distributed according to the target posterior PDF,  
-   * \f$~p(\theta | D) \f$. Through the m steps, the evidence is obtained. 
-   *  
+   * is approximately distributed according to the target posterior PDF,
+   * \f$~p(\theta | D) \f$. Through the m steps, the evidence is obtained.
+   *
    * \returns false  If it encounters an unexpected problem
    */
   bool iterate();
 
   /*!
-   * \brief Process current data, including, calculating the statistics 
-   * and computing the probabilities based on function values, and draw 
+   * \brief Process current data, including, calculating the statistics
+   * and computing the probabilities based on function values, and draw
    * new samples.
-   * 
+   *
    * Preparing the new data generation includes:<br>
    * - Process the current sampling points data
    * - Find unique sampling points
@@ -298,7 +305,7 @@ public:
    * - Select the new sample points leaders for propagating the chains and update the statistics
    * - Compute number of selections (steps) for each leader chain
    * - Update leaders information from current data information
-   *  
+   *
    * \returns false  If it encounters an unexpected problem
    */
   bool prepareNewGeneration();
@@ -571,9 +578,7 @@ bool tmcmc<FunctionType>::iterate0()
     fc.count();
 
     // Print the summary
-    std::cout << "server: currentGeneration " << runData.currentGeneration << ": total elapsed time = "
-              << "secs, generation elapsed time = "
-              << "secs for function calls = " << fc.getLocalFunctionCallsNumber() << std::endl;
+    UMUQMSG("server: currentGeneration ", runData.currentGeneration, ": total elapsed time = secs, generation elapsed time = secs for function calls = ", fc.getLocalFunctionCallsNumber());
 
     // Reset the local function counter to zero
     fc.reset();
@@ -663,9 +668,7 @@ bool tmcmc<FunctionType>::iterateInternal()
   fc.count();
 
   // Print the summary
-  std::cout << "server: currentGeneration " << runData.currentGeneration << ": total elapsed time = "
-            << "secs, generation elapsed time = "
-            << "secs for function calls = " << fc.getLocalFunctionCallsNumber() << std::endl;
+  UMUQMSG("server: currentGeneration ", runData.currentGeneration, ": total elapsed time = secs, generation elapsed time = secs for function calls = ", fc.getLocalFunctionCallsNumber());
 
   // Reset the local function counter to zero
   fc.reset();
@@ -752,7 +755,7 @@ bool tmcmc<FunctionType>::prepareNewGeneration()
   }
 
   io f;
-  std::cout << "Complete data samples on the current Generation Number = " << runData.currentGeneration << std::endl;
+  UMUQMSG("Complete data samples on the current Generation Number = ", runData.currentGeneration);
   f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
   f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
@@ -781,7 +784,7 @@ bool tmcmc<FunctionType>::prepareNewGeneration()
     stddev[i] = s.stddev(currentDataUniques.data() + i, nSize, nDimSamplePoints, mean[i]);
   }
 
-  std::cout << "Unique data samples on current Generation Number = " << runData.currentGeneration << std::endl;
+  UMUQMSG("Unique data samples on current Generation Number = ", runData.currentGeneration);
   f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
   f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif
@@ -814,7 +817,7 @@ bool tmcmc<FunctionType>::prepareNewGeneration()
           stddev[i] = s.stddev(leadersData.samplePoints.data() + i, nLeadersSize, nDimSamplePoints, mean[i]);
         }
 
-        std::cout << "Leaders samples = " << runData.currentGeneration << std::endl;
+        UMUQMSG("Leaders samples = ", runData.currentGeneration);
         f.printMatrix("Means", mean.data(), 1, nDimSamplePoints);
         f.printMatrix("Stddev", stddev.data(), 1, nDimSamplePoints);
 #endif

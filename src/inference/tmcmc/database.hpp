@@ -6,6 +6,18 @@
 #include "misc/arraywrapper.hpp"
 #include "io/io.hpp"
 
+#include <cstddef>
+#include <cmath>
+
+#include <mutex>
+#include <string>
+#include <vector>
+#include <utility>
+#include <limits>
+#include <memory>
+#include <algorithm>
+#include <iterator>
+
 namespace umuq
 {
 
@@ -14,13 +26,13 @@ namespace tmcmc
 
 /*!
  * \ingroup TMCMC_Module
- * 
- * \brief Updating the data information at each point SamplePoints 
- * 
+ *
+ * \brief Updating the data information at each point SamplePoints
+ *
  * \param other          Database object which is casted to long long
  * \param SamplePoints   Points or sampling points array
- * \param FunValue       Function value at the sampling point 
- * \param DataArray      Array of data SamplePoints 
+ * \param FunValue       Function value at the sampling point
+ * \param DataArray      Array of data SamplePoints
  * \param NDimDataArray  Dimension of G array
  * \param Surrogate      Surrogate
  */
@@ -28,21 +40,21 @@ void updateDataTask(long long const other, double const *SamplePoints, double co
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief A polymorphic function wrapper type for updateTask
  */
 using UPDATETASKTYPE = void (*)(long long const, double const *, double const *, double const *, int const *, int const *);
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief It is True if updateDataTask has been registered, and false otherwise (logical).
  */
 static bool isUpdateTaskRegistered = false;
 
 /*!
  * \ingroup TMCMC_Module
- * 
+ *
  * \brief Mutex object
  */
 static std::mutex updateTask_m;
@@ -56,7 +68,7 @@ namespace tmcmc
  * \ingroup TMCMC_Module
  *
  * \brief basic data base
- * 
+ *
  * \param samplePoints       Array for points in space
  * \param nDimSamplePoints   An integer argument shows the size of samplePoints
  * \param dataArray          Array of data
@@ -67,24 +79,24 @@ namespace tmcmc
  */
 class database
 {
-  public:
+public:
     /*!
      * \brief Construct a new database object
-     * 
+     *
      */
     database();
 
     /*!
      * \brief Construct a new database object
-     * 
+     *
      * \param nDim   Dimension of space (points)
-     * \param nSize  Number of points 
+     * \param nSize  Number of points
      */
     database(int const nDim, int const nSize);
 
     /*!
      * \brief Construct a new database object
-     * 
+     *
      * \param nDim1  Dimension of space (points)
      * \param nDim2  Dimension of the second array which could be prior
      * \param nSize  Number of points
@@ -93,30 +105,30 @@ class database
 
     /*!
      * \brief Move constructor, construct a new database object from input database object
-     * 
+     *
      * \param other  Input database object
      */
     database(database &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
-     * \param other 
-     * \return database& 
+     *
+     * \param other
+     * \return database&
      */
     database &operator=(database &&other);
 
     /*!
      * \brief Destroy the database object
-     * 
+     *
      */
     ~database();
 
     /*!
      * \brief Reset the database class size
-     * 
+     *
      * \param nSize  Number of sampling points (the new size of the database)
-     * 
+     *
      * \return false If there is not enough memory
      */
     bool reset(int const nSize);
@@ -124,15 +136,15 @@ class database
     /*!
      * \brief Register task on the TORC task library
      * Before calling this function one should set the external functor otherwise it would crash!
-     * 
+     *
      * \return false if Task pointer is not correctly assigned
      */
     bool registerTask();
 
     /*!
      * \brief set the Task pointer to an external functor
-     * 
-     * \param func 
+     *
+     * \param func
      */
     inline void setTask(UPDATETASKTYPE const &func);
 
@@ -156,27 +168,27 @@ class database
     inline void resetSize();
 
     /*!
-     * \brief Breaking the long chain length 
-     * 
-     * Here, we break the long chain length assigned to important samples to reduce or 
+     * \brief Breaking the long chain length
+     *
+     * Here, we break the long chain length assigned to important samples to reduce or
      * avoid error coming from the multiple chains mixing (default is 1 for BASIS TMCMC)
-     * 
+     *
      * Reference:<br>
-     * Bayesian Annealed Sequential Importance Sampling: An Unbiased Version of Transitional Markov Chain Monte Carlo, 
+     * Bayesian Annealed Sequential Importance Sampling: An Unbiased Version of Transitional Markov Chain Monte Carlo,
      * ASCE-ASME JRU, 4(1), pp-011008, (2018)
-     * 
-     * \param minLength  Minimum chain length 
+     *
+     * \param minLength  Minimum chain length
      * \param maxLength  Maximum chain length
-     * 
+     *
      * \returns false If it encounters any problem
      */
     bool resetSelection(int const minLength = 1, int const maxLength = 1);
 
     /*!
-     * \brief Updating the data information on the new selections 
-     * 
-     * \param other datbase object 
-     * 
+     * \brief Updating the data information on the new selections
+     *
+     * \param other datbase object
+     *
      * \returns false If it encounters any problem
      */
     bool updateSelection(database const &other);
@@ -184,9 +196,9 @@ class database
     /*!
      * \brief Update the work load on each queue based on the amount of work
      * It uses a greedy partitioning based on the amount of workload
-     * 
+     *
      * \param nChains Number of chains
-     * 
+     *
      * \returns false If it encounters any problem
      */
     bool updateWorkload(int const nChains);
@@ -199,10 +211,10 @@ class database
     /*!
      * \brief helper function for writing the data into a file
      * Written data includes samplePoints, fValue, dataArray (if it exists)
-     * 
+     *
      * \param fname     Output file name
      * \param IdNumber  Index number of the file
-     * 
+     *
      * \returns false  If it encounters any problem
      */
     bool save(const char *fname = "", int const IdNumber = 0);
@@ -210,56 +222,56 @@ class database
     /*!
      * \brief helper function for writing the data into a file
      * Written data includes samplePoints, fValue, dataArray (if it exists)
-     * 
+     *
      * \param fname     Output file name
      * \param IdNumber  Index number of the file
-     * 
+     *
      * \returns false  If it encounters any problem
      */
     bool save(std::string const &fname, int const IdNumber = 0);
 
     /*!
      * \brief Helper function for loading the data from file
-     * 
+     *
      * \param fname     Output file name
      * \param IdNumber  Index number of the file
-     * 
+     *
      * \returns false  If it encounters any problem
      */
     bool load(const char *fname = "", int const IdNumber = 0);
 
     /*!
      * \brief Helper function for loading the data from file
-     * 
+     *
      * \param fname     Output file name
      * \param IdNumber  Index number of the file
-     * 
+     *
      * \returns false If it encounters any problem
      */
     bool load(std::string const &fname, int const IdNumber = 0);
 
     /*!
-     * \brief Updating the data information at each point SamplePoints 
-     * 
+     * \brief Updating the data information at each point SamplePoints
+     *
      * \param SamplePoints   Points or sampling points array
      * \param FunValue       Function value at the sampling point
-     * \param DataArray      Array of data SamplePoints 
+     * \param DataArray      Array of data SamplePoints
      * \param NDimDataArray  Dimension of G array
      * \param Surrogate      Surrogate
      */
     void updateData(double const *SamplePoints, double const *FunValue, double const *DataArray, int const *NDimDataArray, int const *Surrogate);
 
     /*!
-     * \brief Updating the data information at each point SamplePoints 
-     * 
+     * \brief Updating the data information at each point SamplePoints
+     *
      * \param SamplePoints  Points or sampling points array
      * \param FunValue      Function value at the sampling point
-     * \param DataArray     Array of data SamplePoints 
+     * \param DataArray     Array of data SamplePoints
      * \param Surrogate     Surrogate
      */
     void update(double const *SamplePoints, double const FunValue, double const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
 
-  private:
+private:
     /*!
      * \brief Set the List object
      *
@@ -274,24 +286,24 @@ class database
      */
     inline bool sort();
 
-  private:
+private:
     /*!
      * \brief Delete a database object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     database(database const &) = delete;
 
     /*!
      * \brief Delete a database object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns database& 
+     *
+     * \returns database&
      */
     database &operator=(database const &) = delete;
 
-  private:
+private:
     /*! \class sortType
      *
      * \brief structure for sorting entires of database structure
@@ -303,22 +315,22 @@ class database
     {
         /*!
          * \brief Construct a new sort Type object
-         * 
+         *
          */
         sortType();
 
         /*!
          * \brief Copy construct a new sort Type object
-         * 
-         * \param other 
+         *
+         * \param other
          */
         sortType(sortType const &other);
 
         /*!
          * \brief Assignment constructor
-         * 
-         * \param other 
-         * \return sortType& 
+         *
+         * \param other
+         * \return sortType&
          */
         sortType &operator=(sortType const &other);
 
@@ -329,7 +341,7 @@ class database
         int idx;
     };
 
-  public:
+public:
     //! Space dimension (Sampling points dimension)
     int nDimSamplePoints;
 
@@ -363,7 +375,7 @@ class database
     //! Mutex object
     std::mutex m;
 
-  private:
+private:
     //! Function pointer
     UPDATETASKTYPE updateTask;
 
@@ -732,7 +744,7 @@ bool database::print()
 {
     if (idxPosition > 0 && nDimSamplePoints > 0)
     {
-        std::cout << "---- database priniting ----" << std::endl;
+        UMUQMSG("---- database priniting ----");
 
         umuq::io f;
 
@@ -793,7 +805,7 @@ bool database::print()
             }
         }
 
-        std::cout << "----------------------------" << std::endl;
+        UMUQMSG("----------------------------");
 
         return true;
     }
