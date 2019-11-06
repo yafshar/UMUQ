@@ -3,6 +3,11 @@
 
 #include "digits10.hpp"
 
+#include <cmath>
+
+#include <string>
+#include <vector>
+
 namespace umuq
 {
 

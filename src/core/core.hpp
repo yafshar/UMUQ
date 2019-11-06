@@ -27,10 +27,6 @@
 #define UMUQ_VECTORIZE_SSE4_2
 #endif
 
-#if HAVE_MPI == 1
-#include <mpi.h>
-#endif // MPI
-
 // Include this file where all our macros are defined.
 #include "macros.hpp"
 
@@ -53,53 +49,6 @@ extern "C"
 
 #ifdef UMUQ_HAS_OPENMP
 #include <omp.h>
-#endif
-
-#include <sys/stat.h> //stat
-
-#include <cassert>
-#include <cerrno>
-#include <cstddef>
-#include <cstdlib>
-#include <cstdio> //fopen, fgets, sscanf, sprintf
-#include <climits>
-#include <cmath>
-#include <cstring> //strlen, strstr, strtok
-
-#include <chrono>
-#include <typeinfo>
-#include <vector>
-#include <functional>
-#include <iosfwd>
-#include <string>
-#include <limits>
-#include <algorithm>   // for min/max:
-#include <type_traits> // for std::is_nothrow_move_assignable
-#include <iostream>	// for outputting debug info
-#include <fstream>
-#include <sstream>
-#include <ios>
-#include <iomanip>
-#include <system_error>
-#include <memory>
-#include <random>
-#include <map>
-#include <thread>
-#include <mutex>
-
-#if HAVE_PYTHON == 1
-#ifdef _POSIX_C_SOURCE
-#undef _POSIX_C_SOURCE
-#endif
-#ifdef _XOPEN_SOURCE
-#undef _XOPEN_SOURCE
-#endif
-#include <Python.h>
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <numpy/arrayobject.h>
-#if PY_MAJOR_VERSION >= 3
-#define PyString_FromString PyUnicode_FromString
-#endif
 #endif
 
 #ifdef _XOPEN_SOURCE

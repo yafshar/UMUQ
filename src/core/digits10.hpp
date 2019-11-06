@@ -2,6 +2,7 @@
 #define UMUQ_DIGITS10_H
 
 #include <cmath>
+
 #include <limits>
 
 /*!

@@ -1,6 +1,10 @@
 #ifndef UMUQ_MACROS_H
 #define UMUQ_MACROS_H
 
+#if HAVE_MPI == 1
+#include <mpi.h>
+#endif // MPI
+
 /*!
  * \ingroup Core_Module
  *
@@ -274,7 +278,9 @@ bool copy_bool(bool b) { return b; }
 #define UMUQ_assert(x) UMUQ_plain_assert(x)
 #endif
 
+#include <string>
 #include <sstream>
+
 namespace umuq
 {
 
@@ -322,6 +328,8 @@ std::string FormatMessageFileLineFunctionMessage(std::string const &message1,
  * \param errorCode     Error code
  * \returns std::string Error message from input Error code
  */
+std::string MPIErrorMessage(MPI_Comm const &comm, int const errorCode);
+
 std::string MPIErrorMessage(MPI_Comm const &comm, int const errorCode)
 {
     int nrank;
@@ -355,6 +363,8 @@ std::string MPIErrorMessage(MPI_Comm const &comm, int const errorCode)
  * \param errorCode      Error code
  * \returns std::string  Error message from input Error code
  */
+std::string MPIErrorMessage(int const errorCode);
+
 std::string MPIErrorMessage(int const errorCode)
 {
     return MPIErrorMessage(MPI_COMM_WORLD, errorCode);
@@ -363,6 +373,8 @@ std::string MPIErrorMessage(int const errorCode)
 
 } // namespace internal
 } // namespace umuq
+
+#include <stdexcept>
 
 #if HAVE_MPI == 1
 /*!
@@ -658,5 +670,101 @@ std::string MPIErrorMessage(int const errorCode)
     }
 
 #endif // MPI
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing one message
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_1MSG(msg1)     \
+    {                          \
+        std::ostringstream ss; \
+        ss << msg1;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing two combined error messages
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_2MSG(msg1, msg2) \
+    {                            \
+        std::ostringstream ss;   \
+        ss << msg1 << msg2;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing three combined error messages
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_3MSG(msg1, msg2, msg3) \
+    {                                  \
+        std::ostringstream ss;         \
+        ss << msg1 << msg2 << msg3;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing four combined error messages
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_4MSG(msg1, msg2, msg3, msg4) \
+    {                                        \
+        std::ostringstream ss;               \
+        ss << msg1 << msg2 << msg3 << msg4;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing five combined error messages
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_5MSG(msg1, msg2, msg3, msg4, msg5) \
+    {                                              \
+        std::ostringstream ss;                     \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Helper macro for printing six combined error messages
+ *
+ * \warning
+ * - This is not a stand alone macro to use!
+ * - Use \c UMUQMSG \sa UMUQMSG
+ */
+#define UMUQMSG_6MSG(msg1, msg2, msg3, msg4, msg5, msg6) \
+    {                                                    \
+        std::ostringstream ss;                           \
+        ss << msg1 << msg2 << msg3 << msg4 << msg5 << msg6;
+
+/*!
+ * \ingroup Core_Module
+ *
+ * \brief Prints one (or up to 6 combined) message(s) on the output stream
+ *
+ */
+#define UMUQMSG(...)                                                                                               \
+    UMUQ_OVERRIDE(__VA_ARGS__, UMUQMSG_6MSG, UMUQMSG_5MSG, UMUQMSG_4MSG, UMUQMSG_3MSG, UMUQMSG_2MSG, UMUQMSG_1MSG) \
+    (__VA_ARGS__);                                                                                                 \
+    std::cout << ss.str() << std::endl;                                                                            \
+    }
 
 #endif // UMUQ_MACROS
