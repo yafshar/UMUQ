@@ -20,19 +20,19 @@ TEST(units_test, HandlesConstruction)
     EXPECT_TRUE(u.convertToStyle("metal"));
 
     double l = 1.0;
-    u.convertLength(l);
+    u.convert<umuq::UnitType::Length>(l);
 
     // 1 Bohr = 0.529177208 Angstrom
-    EXPECT_EQ(l, 0.529177208);
+    EXPECT_DOUBLE_EQ(l, 0.529177208);
 
     // 1 Hartree = 27.211396 eV
-    std::vector<double> EnergyVector{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<double> EnergyVector{1., 2., 3., 4., 5., 6., 7., 8., 9., 10.};
 
-    u.convertEnergy(EnergyVector);
+    u.convert<umuq::UnitType::Energy>(EnergyVector);
     int n = 1;
     for (auto i : EnergyVector)
     {
-        EXPECT_EQ(i, n * 27.211396);
+        EXPECT_DOUBLE_EQ(i, n * 27.211396);
         n++;
     }
 
@@ -47,7 +47,7 @@ TEST(units_test, HandlesConstruction)
     n = 1;
     for (auto i : LengthVector)
     {
-        EXPECT_EQ(i, n * 0.529177208);
+        EXPECT_DOUBLE_EQ(i, n * 0.529177208);
         n++;
     }
 }
