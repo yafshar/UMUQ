@@ -15,8 +15,8 @@ namespace umuq
 /*!
  * \defgroup Units_Module Units module
  *
- * This is the Units Module of UMUQ providing all necessary classes
- * for physical units and their conversion currently supported in UMUQ.
+ * This is the Units Module of %UMUQ providing all necessary classes
+ * for physical units and their conversion currently supported in %UMUQ.
  */
 
 /*!
@@ -602,13 +602,15 @@ public:
     bool convertToStyle(std::string const &toStyle);
 
     /*!
-     * \brief Convert length
+     * \brief Convert
      *
-     * \param value Input length
+     * \tparam UNIT Unit type to covert to \sa umuq::UnitType
+     *
+     * \param value Input value to convert to the new Style
+     *
      * \note
-     * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will be changed
+     * \c units::convertFromStyle or \c units::convertToStyle should be called before calling this routine otherwise nothing will change
      */
-
     template <UnitType UNIT>
     inline void convert(double &value);
 
@@ -634,6 +636,10 @@ private:
     units &operator=(units const &) = delete;
 
 private:
+    /*!
+     * \brief Initialize all the dictionaries
+     *
+     */
     void init_dictionaries();
 
 private:
@@ -834,7 +840,7 @@ private:
     double const Volt_Micrometer__T__Volt_Meter = 1.0 / Micrometer__T__Meter;
     double const Volt_Nanometer__T__Volt_Meter = 1.0 / Nanometer__T__Meter;
 
-protected:
+public:
     /*! The length scaling factor */
     double massUnitScale;
     /*! The length scaling factor */
@@ -897,6 +903,7 @@ private:
     /*! Density unit of the specified system style */
     DensityUnit densityUnit;
 
+private:
     bool dictionaries_are_initialized;
 
     std::map<UnitStyle, MassUnit> MassUnitDic;
@@ -929,18 +936,6 @@ private:
     std::map<ElectricFieldUnit, std::map<ElectricFieldUnit, double>> ElectricFieldUnitConvertorDic;
     std::map<DensityUnit, std::map<DensityUnit, double>> DensityUnitConvertorDic;
 };
-
-/*!
-     * \brief \b METAL style
-     * <tr><td> pressure          <td> bars
-     * <tr><td> dynamic viscosity <td> Poise
-     * <tr><td> charge            <td> multiple of Electron charge (1.0 is a proton)
-     * <tr><td> dipole            <td> charge*Angstroms
-     * <tr><td> electric field    <td> volts/Angstrom
-     * <tr><td> density           <td> gram/Centimeter^dim
-     * <tr>
-     * </table>
-     */
 
 units::units() : unitStyle(UnitStyle::METAL),
                  massUnit(MassUnit::Gram_Mol),
@@ -1477,7 +1472,7 @@ void units::init_dictionaries()
 
     EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::Joule] = 1.0;
     EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::kCal_mol] = 1.0 / kCal__T__Joule;
-    EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::ElectronVolt] = 1.0 / ElectronVolt__T__Joule;
+    EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::ElectronVolt] = Joule__T__ElectronVolt;
     EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::Erg] = 1.0 / Erg__T__Joule;
     EnergyUnitConvertorDic[EnergyUnit::Joule][EnergyUnit::Hartree] = 1.0 / Hartree__T__Joule;
 
@@ -1561,7 +1556,7 @@ void units::init_dictionaries()
 
     ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::Newton] = Hartree_Bohr__T__Newton;
     ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::kCal_moleAngstrom] = Hartree_Bohr__T__Newton * 1.0 / kCal_moleAngstrom__T__Newton;
-    ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::ElectronVolt_Angstrom] = Hartree_Bohr__T__Newton * 1.0 / ElectronVolt_Angstrom__T__Newton;
+    ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::ElectronVolt_Angstrom] = Hartree_Bohr__T__ElectronVolt_Angstrom;
     ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::Dyne] = Hartree_Bohr__T__Newton * 1.0 / Dyne__T__Newton;
     ForceUnitConvertorDic[ForceUnit::Hartrees_Bohr][ForceUnit::Hartrees_Bohr] = 1.0;
 
@@ -1591,7 +1586,7 @@ void units::init_dictionaries()
 
     TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::Newton_Meter] = Hartree__T__Joule;
     TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::kCal_mol] = Hartree__T__Joule * 1.0 / kCal_mol__T__Joule;
-    TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::ElectronVolt] = Hartree__T__Joule * Joule__T__ElectronVolt;
+    TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::ElectronVolt] = Hartree__T__ElectronVolt;
     TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::DyneCentimeter] = Hartree__T__Joule * 1.0 / DyneCentemeter__T__Joule;
     TorqueUnitConvertorDic[TorqueUnit::Hartree][TorqueUnit::Hartree] = 1.0;
 
@@ -1604,7 +1599,7 @@ void units::init_dictionaries()
 
     PressureUnitConvertorDic[PressureUnit::Atmosphere][PressureUnit::Pascal] = Atmosphere__T__Pascal;
     PressureUnitConvertorDic[PressureUnit::Atmosphere][PressureUnit::Atmosphere] = 1.0;
-    PressureUnitConvertorDic[PressureUnit::Atmosphere][PressureUnit::Bar] = Atmosphere__T__Pascal * 1.0 / Bar__T__Pascal;
+    PressureUnitConvertorDic[PressureUnit::Atmosphere][PressureUnit::Bar] = Atmosphere__T__Bar;
     PressureUnitConvertorDic[PressureUnit::Atmosphere][PressureUnit::Dyne_Centimeter2] = Atmosphere__T__Pascal * 1.0 / Dyne_Centimeter2__T__Pascal;
 
     PressureUnitConvertorDic[PressureUnit::Bar][PressureUnit::Pascal] = Bar__T__Pascal;
