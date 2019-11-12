@@ -730,7 +730,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
                         }
 
                         // Convert from DFT-FE style to the output METAL style
-                        mdUnits.convertLength(boundingVectors);
+                        mdUnits.convert<UnitType::Length>(boundingVectors);
 
                         dumpFlag = 1;
                         Id = 0;
@@ -768,7 +768,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
                             }
 #endif
                             // Convert from DFT-FE style to the output METAL style
-                            mdUnits.convertForce(force);
+                            mdUnits.convert<UnitType::Force>(force);
                             dumpFlag++;
 
                             continue;
@@ -801,7 +801,7 @@ bool dftfe::dump(std::string const &baseCoordinatesFileName, std::string const &
                             }
 #endif
                             // Convert from DFT-FE style to the output style
-                            mdUnits.convertLength(fractionalCoordinates);
+                            mdUnits.convert<UnitType::Length>(fractionalCoordinates);
                             dumpFlag++;
 
                             {
@@ -982,7 +982,7 @@ bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, dou
                             }
 
                             // Convert from DFT-FE style to the output METAL style
-                            mdUnits.convertLength(boundingVectors);
+                            mdUnits.convert<UnitType::Length>(boundingVectors);
 
                             // Get the new lattice instance
                             dftLattice = std::move(umuq::lattice(boundingVectors));
@@ -1044,7 +1044,7 @@ bool dftfe::calculateMeanSquareDisplacement(std::size_t const speciesTypeId, dou
                                     }
                                 }
                                 // Convert from DFT-FE style to the output style
-                                mdUnits.convertLength(toCoordinates);
+                                mdUnits.convert<UnitType::Length>(toCoordinates);
                                 dumpFlag++;
 
                                 // Convert the fractional coordinates to the Cartesian coordinates
