@@ -1,0 +1,26 @@
+var classumuq_1_1surrogate =
+[
+    [ "surrogate", "classumuq_1_1surrogate.html#ae874cfad163c91db057b09b36a203b6f", null ],
+    [ "surrogate", "classumuq_1_1surrogate.html#ae0f8af8537490be0971608b34fb3c131", null ],
+    [ "~surrogate", "classumuq_1_1surrogate.html#ad5e2a828b9bb8d035ecaf1fe22002c23", null ],
+    [ "surrogate", "classumuq_1_1surrogate.html#af641dd53c615e8902c67995942ac5a67", null ],
+    [ "addPoint", "classumuq_1_1surrogate.html#a01e2d3393d851ac17dbc3a80c59fae72", null ],
+    [ "addPoint", "classumuq_1_1surrogate.html#a18bacc55771673c5d25f38bb706dd137", null ],
+    [ "deriv", "classumuq_1_1surrogate.html#a74dc581effdf04fa93f1928cf3864e42", null ],
+    [ "dim", "classumuq_1_1surrogate.html#a88f58c150df5126b67aa2e28cb0642ee", null ],
+    [ "evaluate", "classumuq_1_1surrogate.html#a6a7bc2d31c5998be2cdb5f38d30e89d8", null ],
+    [ "evaluate", "classumuq_1_1surrogate.html#a3025e1a7e8253fb630ed7853b99a93bb", null ],
+    [ "evaluate", "classumuq_1_1surrogate.html#ab8c6064f1dbe2fd8a0ae6c223b188ea4", null ],
+    [ "evaluate", "classumuq_1_1surrogate.html#ac17172f31e5acbd0171286a12dc232a1", null ],
+    [ "fit", "classumuq_1_1surrogate.html#aca8f8ce27ab2503c6df54b7f6ccb1840", null ],
+    [ "getCurrentPoints", "classumuq_1_1surrogate.html#a05f45bc85bfb3fabd8c29cdf22f42fca", null ],
+    [ "getCurrentPoints", "classumuq_1_1surrogate.html#a246a0566fa180d4530094b6064e08350", null ],
+    [ "getFunctionValues", "classumuq_1_1surrogate.html#ab94ad20b996f80a0cab28ceedebe7392", null ],
+    [ "getFunctionValues", "classumuq_1_1surrogate.html#adfb476c04b96c049b4eb18584b4b235d", null ],
+    [ "getNumDimensions", "classumuq_1_1surrogate.html#afb6bbf6dfaf6f80fc128770025d40761", null ],
+    [ "getNumPoints", "classumuq_1_1surrogate.html#ad8b9e098cab19489269cfba7fce6678f", null ],
+    [ "numPoints", "classumuq_1_1surrogate.html#aab6cb75e66c08d2ee528d1af15f72a1b", null ],
+    [ "operator=", "classumuq_1_1surrogate.html#a7dd56cd48af1ecc5374899ea871417ca", null ],
+    [ "operator=", "classumuq_1_1surrogate.html#a70dc94897fe77721ac72da6c7adfcf31", null ],
+    [ "reset", "classumuq_1_1surrogate.html#ac1c8814fe99fe4b10113744e1d9f5904", null ]
+];

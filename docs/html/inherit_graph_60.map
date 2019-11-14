@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classumuq_1_1multimin_1_1differentiableFunctionMinimizer.html" title="The goal is finding minima of arbitrary multidimensional functions." alt="" coords="5,100,215,139"/>
+<area shape="rect" id="node2" href="$classumuq_1_1multimin_1_1bfgs.html" title="Limited memory Broyden&#45;Fletcher&#45;Goldfarb&#45;Shanno method." alt="" coords="279,68,424,107"/>
+<area shape="rect" id="node3" href="$classumuq_1_1multimin_1_1bfgs2.html" title="Limited memory Broyden&#45;Fletcher&#45;Goldfarb&#45;Shanno method." alt="" coords="276,131,427,169"/>
+<area shape="rect" id="node4" href="$classumuq_1_1multimin_1_1conjugateFr.html" title="Conjugate gradient Fletcher&#45;Reeve algorithm." alt="" coords="263,193,440,232"/>
+<area shape="rect" id="node5" href="$classumuq_1_1multimin_1_1conjugatePr.html" title="Conjugate Polak&#45;Ribiere gradient algorithm." alt="" coords="263,256,440,295"/>
+<area shape="rect" id="node6" href="$classumuq_1_1multimin_1_1steepestDescent.html" title="steepestDescent for differentiable function minimizer type" alt="" coords="267,5,436,44"/>
+<area shape="rect" id="node7" href="$classumuq_1_1multimin_1_1differentiableFunctionMinimizer.html" title="The goal is finding minima of arbitrary multidimensional functions." alt="" coords="5,163,215,201"/>
+</map>

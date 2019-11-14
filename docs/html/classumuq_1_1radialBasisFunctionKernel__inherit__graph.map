@@ -1,0 +1,6 @@
+<map id="umuq::radialBasisFunctionKernel" name="umuq::radialBasisFunctionKernel">
+<area shape="rect" id="node1" title="Abstract class for a radial basis function kernel." alt="" coords="138,5,316,44"/>
+<area shape="rect" id="node2" href="$classumuq_1_1cubicKernel.html" title="Cubic kernel for a radial basis function." alt="" coords="5,92,137,117"/>
+<area shape="rect" id="node3" href="$classumuq_1_1linearKernel.html" title="Linear kernel." alt="" coords="161,92,294,117"/>
+<area shape="rect" id="node4" href="$classumuq_1_1thinPlateKernel.html" title="Thin&#45;plate spline kernel." alt="" coords="318,92,470,117"/>
+</map>

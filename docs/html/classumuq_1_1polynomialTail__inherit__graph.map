@@ -1,0 +1,5 @@
+<map id="umuq::polynomialTail" name="umuq::polynomialTail">
+<area shape="rect" id="node1" title="Abstract class for a polynomial tail." alt="" coords="138,5,284,31"/>
+<area shape="rect" id="node2" href="$classumuq_1_1constantPolynomialTail.html" title="Constant polynomial tail." alt="" coords="5,79,203,104"/>
+<area shape="rect" id="node3" href="$classumuq_1_1linearPolynomialTail.html" title="Linear polynomial tail." alt="" coords="228,79,407,104"/>
+</map>

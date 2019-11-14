@@ -1,0 +1,6 @@
+<map id="umuq::multimin::functionMinimizer&lt; DataType &gt;" name="umuq::multimin::functionMinimizer&lt; DataType &gt;">
+<area shape="rect" id="node1" title="The goal is finding minima of arbitrary multidimensional functions. &#160;This is the base class which is ..." alt="" coords="5,68,171,107"/>
+<area shape="rect" id="node2" href="$classumuq_1_1multimin_1_1simplexNM.html" title="The Simplex method of Nelder and Mead, also known as the polytope search algorithm...." alt="" coords="223,5,408,44"/>
+<area shape="rect" id="node3" href="$classumuq_1_1multimin_1_1simplexNM2.html" title="The Simplex method of Nelder and Mead, also known as the polytope search algorithm...." alt="" coords="219,68,412,107"/>
+<area shape="rect" id="node4" href="$classumuq_1_1multimin_1_1simplexNM2Rnd.html" title="The Simplex method of Nelder and Mead, also known as the polytope search algorithm...." alt="" coords="219,131,412,169"/>
+</map>
