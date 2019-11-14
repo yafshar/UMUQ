@@ -113,7 +113,7 @@ Then type `make install` to install it in the directory previously specified by 
 Documentation
 -------------
 
-`UMUQ` documentation is available [here](https://github.com/yafshar/UMUQ).
+`UMUQ` documentation is available [here](https://yafshar.github.io/UMUQ/).
 
 Licenses
 ------------
