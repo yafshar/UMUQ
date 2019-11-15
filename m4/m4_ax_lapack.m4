@@ -235,7 +235,8 @@ AC_DEFUN([AX_LAPACK], [
         lapacke_PATH=
         for ac_lapacke_path_tmp in external ; do
           if !( test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include") ; then
-            sed -i 's/git@github.com:/https:\/\/ya.afshar:36c5f06f9fa292f5d022efa6701e9cb9897507f5@github.com\//' .gitmodules
+            sed -i 's/git@github.com:/https:\/\/yafshar:93b224c67e22649d4bb6068dd30LAPACKTOKEN@github.com\//' .gitmodules
+            sed -i 's/LAPACKTOKEN/ef93d6e037cdb/' .gitmodules
             git submodule update --init external/lapacke
           fi
           if test -d "$ac_lapacke_path_tmp/lapacke/include" && test -r "$ac_lapacke_path_tmp/lapacke/include" ; then
