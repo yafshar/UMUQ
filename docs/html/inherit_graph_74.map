@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classumuq_1_1radialBasisFunctionKernel.html" title="Abstract class for a radial basis function kernel." alt="" coords="5,48,184,87"/>
+<area shape="rect" id="node2" href="$classumuq_1_1cubicKernel.html" title="Cubic kernel for a radial basis function." alt="" coords="242,5,374,31"/>
+<area shape="rect" id="node3" href="$classumuq_1_1linearKernel.html" title="Linear kernel." alt="" coords="241,55,375,80"/>
+<area shape="rect" id="node4" href="$classumuq_1_1thinPlateKernel.html" title="Thin&#45;plate spline kernel." alt="" coords="232,104,384,129"/>
+</map>

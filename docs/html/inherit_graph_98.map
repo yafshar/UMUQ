@@ -1,0 +1,10 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classumuq_1_1umuqFunction.html" title=" " alt="" coords="5,179,193,217"/>
+<area shape="rect" id="node2" href="$classumuq_1_1density_1_1densityFunction.html" title=" " alt="" coords="241,179,447,217"/>
+<area shape="rect" id="node3" href="$classumuq_1_1density_1_1exponentialDistribution.html" title="The exponential distribution." alt="" coords="521,5,700,57"/>
+<area shape="rect" id="node4" href="$classumuq_1_1density_1_1gammaDistribution.html" title="The Gamma distribution." alt="" coords="499,81,722,120"/>
+<area shape="rect" id="node5" href="$classumuq_1_1density_1_1gaussianDistribution.html" title="The Gaussian distribution." alt="" coords="495,144,726,183"/>
+<area shape="rect" id="node6" href="$classumuq_1_1density_1_1multinomialDistribution.html" title="The multinomial distribution." alt="" coords="521,207,700,259"/>
+<area shape="rect" id="node7" href="$classumuq_1_1density_1_1multivariateGaussianDistribution.html" title="The Multivariate Gaussian Distribution." alt="" coords="503,283,718,335"/>
+<area shape="rect" id="node8" href="$classumuq_1_1density_1_1uniformDistribution.html" title="Flat (Uniform) distribution function." alt="" coords="499,359,722,397"/>
+</map>

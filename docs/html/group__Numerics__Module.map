@@ -1,0 +1,11 @@
+<map id="Numerics module" name="Numerics module">
+<area shape="rect" id="node1" href="$group__Random__Module.html" title=" " alt="" coords="222,5,362,43"/>
+<area shape="rect" id="node2" href="$group__HypercubeSampling__Module.html" title=" " alt="" coords="221,67,364,104"/>
+<area shape="rect" id="node3" href="$group__Core__Module.html" title="This is the core module of UMUQ providing internal and core support." alt="" coords="244,128,341,152"/>
+<area shape="rect" id="node4" href="$group__Polynomials__Module.html" title=" " alt="" coords="222,176,363,200"/>
+<area shape="rect" id="node5" href="$group__LinearAlgebra__Module.html" title=" " alt="" coords="215,224,369,248"/>
+<area shape="rect" id="node6" href="$group__DCPSE.html" title=" " alt="" coords="212,272,373,309"/>
+<area shape="rect" id="node7" href="$group__Density__Module.html" title=" " alt="" coords="236,333,349,357"/>
+<area shape="rect" id="node8" href="$group__Multimin__Module.html" title=" " alt="" coords="233,381,352,405"/>
+<area shape="rect" id="node9" title="This is the numerics module of UMUQ providing all necessary classes of numerical computation." alt="" coords="5,200,130,224"/>
+</map>

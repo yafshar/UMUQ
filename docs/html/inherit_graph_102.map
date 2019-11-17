@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,31,128,56"/>
+<area shape="rect" id="node2" href="$structumuq__float.html" title="Checks whether T is a floating&#45;point type. Provides the member constant value which is equal to true,..." alt="" coords="176,5,294,31"/>
+<area shape="rect" id="node3" href="$structumuq__int.html" title="Checks whether T is an integer type. Provides the member constant value which is equal to true,..." alt="" coords="182,55,289,80"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="umuq::tmcmc::tmcmc&lt; FunctionType &gt;" name="umuq::tmcmc::tmcmc&lt; FunctionType &gt;">
+<area shape="rect" id="node1" title="This class performs Transitional Markov Chain Monte Carlo Method." alt="" coords="718,111,866,149"/>
+<area shape="rect" id="node2" href="$classumuq_1_1priorDistribution.html" title=" " alt="" coords="441,5,596,44"/>
+<area shape="rect" id="node3" href="$classumuq_1_1tmcmc_1_1stdata.html" title="stream data type class" alt="" coords="446,68,591,93"/>
+<area shape="rect" id="node4" href="$structumuq_1_1tmcmc_1_1optimizationParameters.html" title="This is a class to set the optimization parameters." alt="" coords="162,61,342,100"/>
+<area shape="rect" id="node5" href="$classumuq_1_1tmcmc_1_1runinfo.html" title="This class contains the running information of the TMCMC algorithm." alt="" coords="444,117,594,143"/>
+<area shape="rect" id="node6" href="$classumuq_1_1fitFunction.html" title=" " alt="" coords="437,167,601,205"/>
+<area shape="rect" id="node7" href="$classumuq_1_1umuqFunction.html" title=" " alt="" coords="166,167,338,205"/>
+<area shape="rect" id="node8" title=" " alt="" coords="5,173,107,199"/>
+<area shape="rect" id="node9" href="$classumuq_1_1tmcmc_1_1database.html" title="basic data base" alt="" coords="437,232,601,257"/>
+</map>

@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['s_2300',['S',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a5dbc98dcc983a70728bd082d1a47546e',1,'umuq']]],
+  ['sb_2301',['Sb',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893ada16f2cb03094a7bacfd9c425df967dc',1,'umuq']]],
+  ['sc_2302',['SC',['../namespaceumuq.html#gae112e38e6ebeb8e8249c47c70728ff3ea6a65edb0cc17d66c677814115b1477f5',1,'umuq::SC()'],['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893acb3f593eee6bf3a8ca2a807055521c5c',1,'umuq::Sc()']]],
+  ['scalederror_2303',['ScaledError',['../namespaceumuq.html#ga3b81d4864d9265cdc5dba918e0109860a90f5bcf1b6b4265e1444a1ed5d7ec6b1',1,'umuq']]],
+  ['se_2304',['Se',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893aa59bd4a85b4f8a13ce1135d82748d70b',1,'umuq']]],
+  ['second_2305',['Second',['../namespaceumuq.html#ga15c0b062721b842be878fa86d45f86d7ac22cf8376b1893dcfcef0649fe1a7d87',1,'umuq']]],
+  ['set_5fgid_2306',['set_gid',['../namespaceumuq.html#aa67eb5e9d19cbd7ba9133ecfb344fdf9aea8f56585bae5bd29a5cb0d29767cccb',1,'umuq']]],
+  ['set_5fuid_2307',['set_uid',['../namespaceumuq.html#aa67eb5e9d19cbd7ba9133ecfb344fdf9a2154ad8380cc7d3b920b3563078a50a8',1,'umuq']]],
+  ['sg_2308',['Sg',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a8183fd6b26ad345241fb0666230f7d89',1,'umuq']]],
+  ['si_2309',['SI',['../namespaceumuq.html#ga52d26d56b0e4846a85f90de1d8cc8990ace774d9cab3ae0bdf522cd0839bed364',1,'umuq::SI()'],['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a29bf7a323f1088692c1ad29f08f4f573',1,'umuq::Si()']]],
+  ['simplexnm_2310',['SIMPLEXNM',['../group__Multimin__Module.html#gga925856b0b90c68e5ba1d1b4744ad7016af18ca12e1b7fe568861eea42c6cd8465',1,'umuq::multimin']]],
+  ['simplexnm2_2311',['SIMPLEXNM2',['../group__Multimin__Module.html#gga925856b0b90c68e5ba1d1b4744ad7016aec944c5cb39d797817e77587cef57c22',1,'umuq::multimin']]],
+  ['simplexnm2rnd_2312',['SIMPLEXNM2RND',['../group__Multimin__Module.html#gga925856b0b90c68e5ba1d1b4744ad7016abdda6e2f75811e8e39ec6f5f63b525d2',1,'umuq::multimin']]],
+  ['sm_2313',['Sm',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a20c4c6104a283ee7383776e722439342',1,'umuq']]],
+  ['sn_2314',['Sn',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a6cb321460d08fef1babca1ef07a2ddec',1,'umuq']]],
+  ['squarederror_2315',['SquaredError',['../namespaceumuq.html#ga3b81d4864d9265cdc5dba918e0109860a98c2af9324d245b95911d2ceb41919a5',1,'umuq']]],
+  ['sr_2316',['Sr',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a8aed7b13501e351db8ecf73c4fa5e65e',1,'umuq']]],
+  ['statcoulomb_2317',['StatCoulomb',['../namespaceumuq.html#ga6e6a11a7ddc7932cd1a196c777b02924ada0b7cd66d27ee3f4798df5772f537ef',1,'umuq']]],
+  ['statcoulombcentimeter_2318',['StatCoulombCentimeter',['../namespaceumuq.html#ga4efa60620f9dd01e2ce09799b7d316c2a21677079dace3de673eea80f5b4f529c',1,'umuq']]],
+  ['statvolt_5fcentimeter_2319',['StatVolt_Centimeter',['../namespaceumuq.html#ga9fc40ef23db278405fc2020d29b8ea12a62f175b3d67aced71e5cd83ade2fb3a7',1,'umuq']]],
+  ['steepestdescent_2320',['STEEPESTDESCENT',['../namespaceumuq_1_1multimin.html#a8fcbf21dba21b7f31a4fd52ba73b1fc8a02a1768142cc0315fd78a9df5eb9f173',1,'umuq::multimin']]]
+];

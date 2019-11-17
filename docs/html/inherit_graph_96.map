@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classumuq_1_1umuqFunction.html" title="umuqFunction is a general&#45;purpose polymorphic function wrapper of n variables" alt="" coords="5,68,194,107"/>
+<area shape="rect" id="node2" href="$classumuq_1_1density_1_1densityFunction.html" title="Density function class." alt="" coords="253,5,458,44"/>
+<area shape="rect" id="node3" href="$classumuq_1_1fitFunction.html" title="The base class for fit function which can be used in the inference process." alt="" coords="265,68,446,107"/>
+<area shape="rect" id="node4" href="$classumuq_1_1umuqDifferentiableFunction.html" title="umuqDifferentiableFunction is a general&#45;purpose polymorphic differentiable function wrapper of n vari..." alt="" coords="242,131,469,196"/>
+</map>

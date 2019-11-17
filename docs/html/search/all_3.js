@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['b_40',['B',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a9d5ed678fe57bcca610140957afab571',1,'umuq']]],
+  ['ba_41',['Ba',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893ab5ca4406a7e0b4f20a0ffa5ffdd8f0a2',1,'umuq']]],
+  ['bar_42',['Bar',['../namespaceumuq.html#ga0d4912c8d1d8063b6f7af9f896976641addc35f88fa71b6ef142ae61f35364653',1,'umuq']]],
+  ['basea_43',['baseA',['../classbaseA.html',1,'']]],
+  ['basisvectorangle_44',['basisVectorAngle',['../classumuq_1_1lattice.html#a679dcbc1ce983611629ce551a55bca06',1,'umuq::lattice']]],
+  ['basisvectorlength_45',['basisVectorLength',['../classumuq_1_1lattice.html#a018984f937b425716cc0a8e86ee83d45',1,'umuq::lattice']]],
+  ['bbeta_46',['bbeta',['../classumuq_1_1tmcmc_1_1stdata.html#a637dfc4ed6227a9d8539e2546b363c6b',1,'umuq::tmcmc::stdata']]],
+  ['bcc_47',['BCC',['../namespaceumuq.html#gae112e38e6ebeb8e8249c47c70728ff3ea1fc5efe020980df2413a97ce9f2f586f',1,'umuq']]],
+  ['be_48',['Be',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a3c9547d2fcb523a7ae5681eedde43fb6',1,'umuq']]],
+  ['begin_49',['begin',['../classumuq_1_1arrayWrapper.html#af518a978c8c4cd904e71b02a3e1ed637',1,'umuq::arrayWrapper::begin()'],['../classumuq_1_1arrayWrapper.html#a69f176b0a334e31d4c0b3a6a5cbcb26c',1,'umuq::arrayWrapper::begin() const']]],
+  ['bfgs_50',['bfgs',['../classumuq_1_1multimin_1_1bfgs.html',1,'umuq::multimin::bfgs&lt; DataType &gt;'],['../classumuq_1_1multimin_1_1bfgs.html',1,'umuq::multimin::bfgs&lt; DataType &gt;'],['../classumuq_1_1multimin_1_1bfgs.html#a8b203eb66a7e9f6b24c4ac04eb53a9a5',1,'umuq::multimin::bfgs::bfgs()'],['../namespaceumuq_1_1multimin.html#a8fcbf21dba21b7f31a4fd52ba73b1fc8a3f37d7bdfabf29c7996e9d2a2ce6cbcb',1,'umuq::multimin::BFGS()']]],
+  ['bfgs2_51',['bfgs2',['../classumuq_1_1multimin_1_1bfgs2.html',1,'umuq::multimin::bfgs2&lt; DataType &gt;'],['../classumuq_1_1multimin_1_1bfgs2.html',1,'umuq::multimin::bfgs2&lt; DataType &gt;'],['../classumuq_1_1multimin_1_1bfgs2.html#aafb421ff49bf950b42fce5c6e1058e1e',1,'umuq::multimin::bfgs2::bfgs2()'],['../namespaceumuq_1_1multimin.html#a8fcbf21dba21b7f31a4fd52ba73b1fc8a710749c0126cd60ff3c0e896839c4961',1,'umuq::multimin::BFGS2()']]],
+  ['bh_52',['Bh',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893aebe99d0169e7d3fc9b1bef0d8efe4979',1,'umuq']]],
+  ['bi_53',['Bi',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a38523a3dcb681b6abd6dd69b73534af7',1,'umuq']]],
+  ['binary_54',['binary',['../classumuq_1_1io.html#aeef86878fdadb380cf0164185d79164a',1,'umuq::io']]],
+  ['binomialcoefficient_55',['binomialCoefficient',['../classumuq_1_1polynomials_1_1polynomialBase.html#a1ed949e54ac38e4fea047b9c19e81b79',1,'umuq::polynomials::polynomialBase']]],
+  ['bk_56',['Bk',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893ac64a5dae48f04e16deab001d4b9dbd80',1,'umuq']]],
+  ['bohr_57',['Bohr',['../namespaceumuq.html#ga0edb0e72aeb7d5c59b56035b1028a795a03a654ad01e3e5f6eb7b2dad2e7e86dc',1,'umuq']]],
+  ['bohr_5fatuelectron_58',['Bohr_AtuElectron',['../namespaceumuq.html#ga1183a9bb3dc077ad9bedd2d331cbd91fa84c8594be1ac302a18bb87508edc8b01',1,'umuq']]],
+  ['br_59',['Br',['../namespaceumuq.html#gacdb4dee0b3b7010850c052dd3c231893a8d37869ebc7af08a31df14fe3f48bee2',1,'umuq']]],
+  ['broadcast_60',['broadcast',['../classumuq_1_1tmcmc_1_1runinfo.html#a538f0bd03eafc852ad3d5fc5d5211856',1,'umuq::tmcmc::runinfo']]],
+  ['broadcasttask_61',['broadcastTask',['../group__TMCMC__Module.html#ga6444a5f484ab3c880866558fc2d4fee6',1,'umuq::tmcmc']]],
+  ['buildindex_62',['buildIndex',['../classumuq_1_1kNearestNeighborBase.html#acffd75524b5137dc8cd02b545945d7a9',1,'umuq::kNearestNeighborBase::buildIndex(DataType *idata)'],['../classumuq_1_1kNearestNeighborBase.html#a0a08fec110ffbc32735edfd50800cfde',1,'umuq::kNearestNeighborBase::buildIndex(DataType *idata, DataType *qdata)'],['../classumuq_1_1kNearestNeighbor_3_01DataType_00_01umuq_1_1DistanceTypes_1_1MAHALANOBIS_01_4.html#a780bd23afdef068d7a6a30411e6464e2',1,'umuq::kNearestNeighbor&lt; DataType, umuq::DistanceTypes::MAHALANOBIS &gt;::buildIndex(DataType *idata)'],['../classumuq_1_1kNearestNeighbor_3_01DataType_00_01umuq_1_1DistanceTypes_1_1MAHALANOBIS_01_4.html#aa111056924382e844e136051b1c29232',1,'umuq::kNearestNeighbor&lt; DataType, umuq::DistanceTypes::MAHALANOBIS &gt;::buildIndex(DataType *idata, DataType *qdata)']]]
+];

@@ -1,0 +1,6 @@
+<map id="Core module" name="Core module">
+<area shape="rect" id="node1" href="$group__Const__Module.html" title=" " alt="" coords="186,5,308,29"/>
+<area shape="rect" id="node2" href="$group__Test__Module.html" title="Default digits10." alt="" coords="200,53,294,77"/>
+<area shape="rect" id="node3" title="This is the core module of UMUQ providing internal and core support." alt="" coords="5,53,103,77"/>
+<area shape="rect" id="node4" href="$group__Numerics__Module.html" title="This is the numerics module of UMUQ providing all necessary classes of numerical computation." alt="" coords="184,101,309,125"/>
+</map>
