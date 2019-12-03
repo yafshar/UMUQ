@@ -51,17 +51,20 @@ extern "C"
 #include <omp.h>
 #endif
 
+#ifdef HAVE_TORC
 #ifdef _XOPEN_SOURCE
 #undef _XOPEN_SOURCE
 #endif
 #ifdef _BSD_SOURCE
 #undef _BSD_SOURCE
 #endif
+
 #define _XOPEN_SOURCE 700
 #define _BSD_SOURCE 1
-#ifdef HAVE_TORC
 #include <torc.h>
-#endif
+#undef _XOPEN_SOURCE
+#undef _BSD_SOURCE
+#endif // HAVE_TORC
 
 /*!
  * \brief Namespace containing all symbols from the %UMUQ library.
@@ -94,17 +97,17 @@ namespace internal
 inline static const char *SimdInstructionSetsInUse(void)
 {
 #if defined(UMUQ_VECTORIZE_SSE4_2)
-	return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
+    return "SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2";
 #elif defined(UMUQ_VECTORIZE_SSE4_1)
-	return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
+    return "SSE, SSE2, SSE3, SSSE3, SSE4.1";
 #elif defined(UMUQ_VECTORIZE_SSSE3)
-	return "SSE, SSE2, SSE3, SSSE3";
+    return "SSE, SSE2, SSE3, SSSE3";
 #elif defined(UMUQ_VECTORIZE_SSE3)
-	return "SSE, SSE2, SSE3";
+    return "SSE, SSE2, SSE3";
 #elif defined(UMUQ_VECTORIZE_SSE2)
-	return "SSE, SSE2";
+    return "SSE, SSE2";
 #else
-	return "None";
+    return "None";
 #endif
 }
 
