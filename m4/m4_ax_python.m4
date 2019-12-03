@@ -70,7 +70,7 @@ AC_DEFUN([AX_PYTHON], [
         for python_version in 2.7; do
           if test x"${enableval}" = x"${python_version}"; then
             PYTHON_VERSION=${python_version}
-            AC_PATH_PROG([PYTHON], [python[$PYTHON_VERSION]])
+            AC_PATH_PROG([PYTHON], [python[${PYTHON_VERSION}]])
             if test -z "${PYTHON}"; then
               PYTHON_VERSION=""
               AC_MSG_ERROR([Cannot find the requested python version ${PYTHON_VERSION} in system path!])
@@ -78,7 +78,7 @@ AC_DEFUN([AX_PYTHON], [
             break;
           elif test x"${enableval}" = x"python${python_version}" ; then
             PYTHON_VERSION=${python_version}
-            AC_PATH_PROG([PYTHON], [python[$PYTHON_VERSION]])
+            AC_PATH_PROG([PYTHON], [python[${PYTHON_VERSION}]])
             if test -z "${PYTHON}"; then
               PYTHON_VERSION=""
               AC_MSG_ERROR([Cannot find the requested python version ${PYTHON_VERSION} in system path!])
@@ -92,12 +92,12 @@ AC_DEFUN([AX_PYTHON], [
             PYTHON_VERSION=""
             AC_MSG_ERROR([Cannot find python in the system path!])
           fi
-          PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+          PYTHON_VERSION=`${PYTHON} -c "import sys; print(sys.version.split()[[0][:3]])"`
         fi
         if test -x "${enableval}"; then
           # $enableval must be the executable path
           AC_SUBST([PYTHON], ["${enableval}"])
-          PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+          PYTHON_VERSION=`${PYTHON} -c "import sys; print(sys.version.split()[[0][:3]])"`
         fi
         if test -n "${PYTHON}"; then
           if test -n "${PYTHON_VERSION}"; then
@@ -116,7 +116,7 @@ AC_DEFUN([AX_PYTHON], [
     ]
   )
 
-  AS_IF([test x"$ax_python_ok" = xyes], [
+  AS_IF([test x"${ax_python_ok}" = xyes], [
     AC_MSG_CHECKING(for python build information)
     AC_MSG_RESULT([])
 
@@ -132,7 +132,7 @@ AC_DEFUN([AX_PYTHON], [
       for python_version in 2.7; do
         AC_PATH_PROG([PYTHON], [python[$python_version]])
         if test -n "${PYTHON}"; then
-          PYTHON_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:3]])"`
+          PYTHON_VERSION=`${PYTHON} -c "import sys; print(sys.version.split()[[0][:3]])"`
           break;
         fi
       done
@@ -142,9 +142,9 @@ AC_DEFUN([AX_PYTHON], [
       AC_MSG_ERROR([Cannot find python in the system path!])
     fi
 
-    PYTHON_MAJOR_VERSION=`$PYTHON -c "import sys; print(sys.version.split()[[0][:1]])"`
+    PYTHON_MAJOR_VERSION=`${PYTHON} -c "import sys; print(sys.version.split()[[0][:1]])"`
 
-    PYTHON_LDVERSION=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LDVERSION'))"`
+    PYTHON_LDVERSION=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LDVERSION'))"`
     if test x"${PYTHON_LDVERSION}" = x"None"; then
       PYTHON_LDVERSION="${PYTHON_VERSION}"
     fi
@@ -154,7 +154,7 @@ AC_DEFUN([AX_PYTHON], [
       AC_MSG_ERROR([Python prefix is not known!])
     fi
 
-    PYTHON_INCLUDE=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CONFINCLUDEPY'))"`
+    PYTHON_INCLUDE=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CONFINCLUDEPY'))"`
     if test -z "${PYTHON_INCLUDE}"; then
       if test -d "${PYTHON_PATH}/include/python${PYTHON_LDVERSION}" && test -r "${PYTHON_PATH}/include/python${PYTHON_LDVERSION}" ; then
         PYTHON_CPPFLAGS="-I${PYTHON_PATH}/include/python${PYTHON_LDVERSION}"
@@ -171,19 +171,19 @@ AC_DEFUN([AX_PYTHON], [
       fi
     fi
 
-    PYTHON_LD_LIBRARY_PATH=`$PYTHON -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LIBDIR'))"`
+    PYTHON_LD_LIBRARY_PATH=`${PYTHON} -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LIBDIR'))"`
     PYTHON_LDFLAGS=" -L${PYTHON_LD_LIBRARY_PATH}"
     PYTHON_LIB='python'"${PYTHON_LDVERSION}"
 
-    CPPFLAGS_SAVED="$CPPFLAGS"
-    LDFLAGS_SAVED="$LDFLAGS"
-    LIBS_SAVED="$LIBS"
+    CPPFLAGS_SAVED="${CPPFLAGS}"
+    LDFLAGS_SAVED="${LDFLAGS}"
+    LIBS_SAVED="${LIBS}"
 
-    CPPFLAGS+=" $PYTHON_CPPFLAGS"
+    CPPFLAGS+=" ${PYTHON_CPPFLAGS}"
     LDFLAGS+="${PYTHON_LDFLAGS}"' -l'"${PYTHON_LIB}"
 
     AC_LANG_PUSH([C++])
-    AC_CHECK_LIB($PYTHON_LIB, PyArg_ParseTuple,
+    AC_CHECK_LIB(${PYTHON_LIB}, PyArg_ParseTuple,
       [
         LDFLAGS+=' -Wl,-rpath,'"$PYTHON_LD_LIBRARY_PATH"
         succeeded=yes
@@ -191,7 +191,7 @@ AC_DEFUN([AX_PYTHON], [
         succeeded=no
       ]
     )
-    AS_IF([test x"$LIBS" = x"$LIBS_SAVED"], [LIBS='-l'"${PYTHON_LIB}"" $LIBS"])
+    AS_IF([test x"${LIBS}" = x"$LIBS_SAVED"], [LIBS='-l'"${PYTHON_LIB}"" ${LIBS}"])
 
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
         @%:@include <Python.h>
@@ -211,9 +211,9 @@ AC_DEFUN([AX_PYTHON], [
     AC_LANG_POP([C++])
 
     if test x"$succeeded" = xyes ; then
-      AC_SUBST([PYTHON_BIN], [$PYTHON])
-      AC_SUBST([PYTHON_LIB], [$PYTHON_LIB])
-      AC_SUBST([PYTHON_INCLUDE_DIR], [$PYTHON_INCLUDE])
+      AC_SUBST([PYTHON_BIN], [${PYTHON}])
+      AC_SUBST([PYTHON_LIB], [${PYTHON_LIB}])
+      AC_SUBST([PYTHON_INCLUDE_DIR], [${PYTHON_INCLUDE}])
       AC_SUBST(PYTHON_LD_LIBRARY_PATH)
       ax_python_ok="yes"
       :
@@ -227,26 +227,27 @@ AC_DEFUN([AX_PYTHON], [
   ])
 
   ax_numpy_ok=no
-  if test x"$ax_python_ok" = xyes; then
+  if test x"${ax_python_ok}" = xyes; then
     AC_MSG_CHECKING(for numpy python module)
-    $PYTHON -c "import numpy" 2>/dev/null
+    ${PYTHON} -c "import numpy" 2>/dev/null
     if test $? == 0; then
       AC_MSG_RESULT(found)
       ax_numpy_ok=yes
-      AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`$PYTHON -c "import numpy; numpypath=numpy.__path__[[0]]; print('%s/core/include' % numpypath)"`])
+      AC_CACHE_CHECK([for numpy include directory], [_cv_numpy_header], [_cv_numpy_header=`${PYTHON} -c "import numpy; numpypath=numpy.__path__[[0]]; print('%s/core/include' % numpypath)"`])
       AC_SUBST([NUMPY_INCLUDE_DIR], [$_cv_numpy_header])
     else
       AC_MSG_WARN([ Unable to find NUMPY !])
     fi
   fi
 
-  AM_CONDITIONAL([HAVE_PYTHON], [test x"$ax_numpy_ok" = xyes])
+  AM_CONDITIONAL([HAVE_PYTHON], [test x"${ax_numpy_ok}" = xyes])
   AM_COND_IF([HAVE_PYTHON], [
       AC_DEFINE(HAVE_PYTHON, 1, [Define if you want to use PYTHON.])
-      AC_DEFINE_UNQUOTED(PYTHON_MAJOR_VERSION, [$PYTHON_MAJOR_VERSION], [PYTHON Major version.])
+      AC_DEFINE_UNQUOTED(PYTHON_BIN, [${PYTHON}], [PYTHON executable.])
+      AC_DEFINE_UNQUOTED(PYTHON_MAJOR_VERSION, [${PYTHON_MAJOR_VERSION}], [PYTHON Major version.])
 
-      if test x$NUMPY_INCLUDE_DIR != x; then
-        CPPFLAGS+=" -I$NUMPY_INCLUDE_DIR"
+      if test x${NUMPY_INCLUDE_DIR} != x; then
+        CPPFLAGS+=" -I${NUMPY_INCLUDE_DIR}"
       fi
 
       AC_SUBST(CPPFLAGS)
