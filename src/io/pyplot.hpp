@@ -2,32 +2,61 @@
 #define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
-#include "core/core.hpp"
-#include "datatype/npydatatype.hpp"
-#include "misc/arraywrapper.hpp"
-
 #if HAVE_PYTHON == 1
 #ifdef _POSIX_C_SOURCE
 #undef _POSIX_C_SOURCE
-#endif
+#endif // _POSIX_C_SOURCE
+#ifndef _AIX
 #ifdef _XOPEN_SOURCE
 #undef _XOPEN_SOURCE
-#endif
+#endif // _XOPEN_SOURCE
+#endif // _AIX
+
+// Include Python.h before any standard headers are included
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 // To avoid the compiler warning
 #ifdef NPY_NO_DEPRECATED_API
 #undef NPY_NO_DEPRECATED_API
-#endif
+#endif // NPY_NO_DEPRECATED_API
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 
+#include "core/core.hpp"
+#include "interface/python.hpp"
+
+// Prevent multiple conflicting definitions of swab from stdlib.h and unistd.h
+#if defined(__sun) || defined(sun)
+#if defined(_XPG4)
+#undef _XPG4
+#endif // _XPG4
+#if defined(_XPG3)
+#undef _XPG3
+#endif // _XPG3
+#endif // __sun
+
 #if PYTHON_MAJOR_VERSION >= 3
+#ifdef PyString_FromString
+#undef PyString_FromString
+#endif // PyString_FromString
+#ifdef PyString_AsString
+#undef PyString_AsString
+#endif // PyString_AsString
+#ifdef PyInt_FromLong
+#undef PyInt_FromLong
+#endif // PyInt_FromLong
+#ifdef PyInt_FromString
+#undef PyInt_FromString
+#endif // PyInt_FromString
 #define PyString_FromString PyUnicode_FromString
 #define PyString_AsString PyUnicode_AsUTF8
 #define PyInt_FromLong PyLong_FromLong
+#define PyInt_FromString PyLong_FromString
 #endif // PYTHON_MAJOR_VERSION >= 3
-#endif // HAVE_PYTHON
+
+#include <complex>
+#endif // HAVE_PYTHON == 1
 
 #include <cstddef>
 
@@ -38,7 +67,6 @@
 
 namespace umuq
 {
-
 /*! \namespace umuq::matplotlib_223
  * \ingroup IO_Module
  *
@@ -138,81 +166,8 @@ namespace umuq
 inline namespace matplotlib_223
 {
 
-/*!
- * \ingroup IO_Module
- *
- * \brief Converts a data array idata to Python array
- *
- * \tparam DataType Data type
- *
- * \param idata Input array of data
- *
- * \return PyObject* Python array
- */
-template <typename DataType>
-PyObject *PyArray(std::vector<DataType> const &idata);
-
-template <typename TIn, typename TOut>
-PyObject *PyArray(std::vector<TIn> const &idata);
-
-/*!
- * \ingroup IO_Module
- *
- * \brief Converts a data idata to Python array of size nSize
- *
- * \tparam DataType Data type
- *
- * \param idata  Input data
- * \param nSize  Size of the requested array
- *
- * \return PyObject* Python array
- */
-template <typename DataType>
-PyObject *PyArray(DataType const idata, int const nSize);
-
-template <typename TIn, typename TOut>
-PyObject *PyArray(TIn const idata, int const nSize);
-
-/*!
- * \ingroup IO_Module
- *
- * \brief Converts a data array idata to Python array
- *
- * \tparam DataType Data type
- *
- * \param idata   Input array of data
- * \param nSize   Size of the array
- * \param Stride  Element stride (default is 1)
- *
- * \return PyObject* Python array
- */
-template <typename DataType>
-PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stride = 1);
-
-template <typename TIn, typename TOut>
-PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1);
-
-/*!
- * \ingroup IO_Module
- *
- * \brief Converts a data array idata to the Python 2D array
- *
- * \tparam DataType Data type
- *
- * \param idata  Input array of data (with size of nDimX*nDimY)
- * \param nDimX  X size in the 2D array
- * \param nDimY  Y size in the 2D array
- *
- * \returns PyObject* Python 2D array
- */
-template <typename DataType>
-PyObject *Py2DArray(std::vector<DataType> const &idata, int const nDimX, int const nDimY);
-
-template <typename TIn, typename TOut>
-PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY);
-
-template <typename DataType>
-PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY);
+using namespace umuq::python;
+using namespace umuq::python::numpy;
 
 /*! \var static std::string backend
  * \ingroup IO_Module
@@ -1505,13 +1460,10 @@ private:
         /*!
          * \brief Destroy the matplotlib object
          *
+         * Undo all initializations made by Py_Initialize() and subsequent use
+         * of Python/C API functions
          */
-        ~matplotlib()
-        {
-            // Undo all initializations made by Py_Initialize() and subsequent use
-            // of Python/C API functions
-            Py_Finalize();
-        }
+        ~matplotlib();
 
         /*!
          * \brief Move constructor, construct a new matplotlib object
@@ -4077,25 +4029,32 @@ bool pyplot::ylabel(std::string const &label)
 
 pyplot::matplotlib::matplotlib()
 {
+    if (!Py_IsInitialized())
+    {
 // optional but recommended
+// The name is used to find Python run-time libraries relative to the interpreter executable
 #if PYTHON_MAJOR_VERSION >= 3
-    wchar_t name[] = L"umuq";
+        wchar_t name[] = L"PYTHON_BIN";
 #else
-    char name[] = "umuq";
+        char name[] = "PYTHON_BIN";
 #endif
 
-    // Pass name to the Python
-    Py_SetProgramName(name);
+        // Pass name to the Python
+        Py_SetProgramName(name);
 
-    // Initialize the Python. Required.
-    Py_Initialize();
+        // Initialize python interpreter. Required.
+        Py_Initialize();
+    }
 
-    // Initialize numpy
+    if (PyArray_API == NULL)
+    {
+        // Initialize numpy
 #if PYTHON_MAJOR_VERSION >= 3
-    _import_array();
+        _import_array();
 #else
-    import_array();
+        import_array();
 #endif
+    }
 
     PyObject *matplotlibModule = NULL;
     PyObject *pyplotModule = NULL;
@@ -4503,6 +4462,8 @@ pyplot::matplotlib::matplotlib()
     }
 }
 
+pyplot::matplotlib::~matplotlib(){}
+
 pyplot::matplotlib::matplotlib(pyplot::matplotlib &&other)
 {
     pyget_backend = std::move(other.pyget_backend);
@@ -4580,294 +4541,10 @@ pyplot::matplotlib &pyplot::matplotlib::operator=(pyplot::matplotlib &&other)
     return *this;
 }
 
-template <typename DataType>
-PyObject *PyArray(std::vector<DataType> const &idata)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(idata.size());
-        if (NPIDatatype<DataType> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(nsize);
-            std::copy(idata.begin(), idata.end(), vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
-}
-
-template <typename TIn, typename TOut>
-PyObject *PyArray(std::vector<TIn> const &idata)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(idata.size());
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(nsize);
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
-}
-
-template <typename DataType>
-PyObject *PyArray(DataType const idata, int const nSize)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<DataType> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(nsize);
-            std::fill(vd.begin(), vd.end(), static_cast<double>(idata));
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            std::vector<DataType> vd(nsize);
-            std::fill(vd.begin(), vd.end(), idata);
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(vd.data()));
-        }
-    }
-    return pArray;
-}
-
-template <>
-PyObject *PyArray<char>(char const idata, int const nSize)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize(1);
-        std::string vd(nSize, idata);
-        pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_STRING, (void *)(vd.c_str()));
-    }
-    return pArray;
-}
-
-template <typename TIn, typename TOut>
-PyObject *PyArray(TIn const idata, int const nSize)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::fill(vd.begin(), vd.end(), static_cast<double>(idata));
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(nsize);
-                std::fill(vd.begin(), vd.end(), static_cast<TOut>(idata));
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            std::vector<TIn> vd(nsize);
-            std::fill(vd.begin(), vd.end(), idata);
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
-}
-
-template <typename DataType>
-PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stride)
-{
-    PyObject *pArray;
-    {
-        npy_intp nsize;
-
-        if (Stride != 1)
-        {
-            arrayWrapper<DataType> iArray(idata, nSize, Stride);
-            nsize = static_cast<npy_intp>(iArray.size());
-            if (NPIDatatype<DataType> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(nsize);
-                std::copy(iArray.begin(), iArray.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<DataType> vd(nsize);
-                std::copy(iArray.begin(), iArray.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(vd.data()));
-            }
-            return pArray;
-        }
-
-        nsize = static_cast<npy_intp>(nSize);
-        if (NPIDatatype<DataType> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(nsize);
-            std::copy(idata, idata + nSize, vd.begin());
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<DataType>, (void *)(idata));
-        }
-    }
-    return pArray;
-}
-
-// template <typename TIn, typename TOut>
-// PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride)
-// {
-//     PyObject *pArray;
-//     {
-//         npy_intp nsize;
-
-//         if (Stride != 1)
-//         {
-//             arrayWrapper<TIn> iArray(idata, nSize, Stride);
-//             nsize = static_cast<npy_intp>(iArray.size());
-//             if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-//             {
-//                 if (NPIDatatype<TOut> == NPY_NOTYPE)
-//                 {
-//                     std::vector<double> vd(nsize);
-//                     std::copy(iArray.begin(), iArray.end(), vd.begin());
-//                     pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-//                     return pArray;
-//                 }
-//             }
-//             std::vector<TOut> vd(nsize);
-//             std::copy(iArray.begin(), iArray.end(), vd.begin());
-//             pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-//             return pArray;
-//         }
-
-//         nsize = static_cast<npy_intp>(nSize);
-//         if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-//         {
-//             if (NPIDatatype<TOut> == NPY_NOTYPE)
-//             {
-//                 std::vector<double> vd(nsize);
-//                 std::copy(idata, idata + nSize, vd.begin());
-//                 pArray = PyArray_SimpleNewFromData(1, &nsize, NPY_DOUBLE, (void *)(vd.data()));
-//             }
-//             else
-//             {
-//                 std::vector<TOut> vd(nsize);
-//                 std::copy(idata, idata + nSize, vd.begin());
-//                 pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TOut>, (void *)(vd.data()));
-//             }
-//         }
-//         else
-//         {
-//             pArray = PyArray_SimpleNewFromData(1, &nsize, NPIDatatype<TIn>, (void *)(idata));
-//         }
-//     }
-//     return pArray;
-// }
-
-template <typename DataType>
-PyObject *Py2DArray(std::vector<DataType> const &idata, int const nDimX, int const nDimY)
-{
-    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
-    {
-        UMUQFAIL("Data size does not match with mesh numbers!");
-    }
-
-    PyObject *pArray;
-    {
-        npy_intp PyArrayDims[] = {nDimY, nDimX};
-        if (NPIDatatype<DataType> == NPY_NOTYPE)
-        {
-            std::vector<double> vd(idata.size());
-            std::copy(idata.begin(), idata.end(), vd.begin());
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<DataType>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
-}
-
-template <typename TIn, typename TOut>
-PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY)
-{
-    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
-    {
-        UMUQFAIL("Data size does not match with mesh numbers!");
-    }
-
-    PyObject *pArray;
-    {
-        npy_intp PyArrayDims[] = {nDimY, nDimX};
-        if (NPIDatatype<TOut> != NPIDatatype<TIn>)
-        {
-            if (NPIDatatype<TOut> == NPY_NOTYPE)
-            {
-                std::vector<double> vd(idata.size());
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
-            }
-            else
-            {
-                std::vector<TOut> vd(idata.size());
-                std::copy(idata.begin(), idata.end(), vd.begin());
-                pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<TOut>, (void *)(vd.data()));
-            }
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<TIn>, (void *)(idata.data()));
-        }
-    }
-    return pArray;
-}
-
-template <typename DataType>
-PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
-{
-    PyObject *pArray;
-    {
-        npy_intp PyArrayDims[] = {nDimY, nDimX};
-        if (NPIDatatype<DataType> == NPY_NOTYPE)
-        {
-            std::vector<double> vd{idata, idata + nDimX * nDimY};
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPY_DOUBLE, (void *)(vd.data()));
-        }
-        else
-        {
-            pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPIDatatype<DataType>, (void *)(idata));
-        }
-    }
-    return pArray;
-}
-
 } // namespace matplotlib_223
 } // namespace umuq
 
-#else
+#else // HAVEPYTHON
 
 namespace umuq
 {
