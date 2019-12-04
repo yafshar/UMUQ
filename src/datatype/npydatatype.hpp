@@ -2,13 +2,15 @@
 #define UMUQ_NPYDATATYPE_H
 #ifdef HAVE_PYTHON
 
-#if HAVE_PYTHON == 1
 #ifdef _POSIX_C_SOURCE
 #undef _POSIX_C_SOURCE
 #endif
 #ifdef _XOPEN_SOURCE
 #undef _XOPEN_SOURCE
 #endif
+
+// Include Python.h before any standard headers are included
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 // To avoid the compiler warning
@@ -17,7 +19,6 @@
 #endif
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
-#endif
 
 namespace umuq
 {
@@ -29,7 +30,7 @@ namespace umuq
  *
  */
 template <typename DataType>
-constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
+constexpr NPY_TYPES NPYDatatype = NPY_NOTYPE; // variable template
 
 /*!
  * Explicit instantiation for the given C++ types of <br>
@@ -55,46 +56,46 @@ constexpr NPY_TYPES NPIDatatype = NPY_NOTYPE; // variable template
  *
  */
 template <>
-constexpr NPY_TYPES NPIDatatype<bool> = NPY_BOOL;
+constexpr NPY_TYPES NPYDatatype<bool> = NPY_BOOL;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<char> = NPY_BYTE;
+constexpr NPY_TYPES NPYDatatype<char> = NPY_BYTE;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<std::string> = NPY_STRING;
+constexpr NPY_TYPES NPYDatatype<std::string> = NPY_STRING;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<int8_t> = NPY_INT8;
+constexpr NPY_TYPES NPYDatatype<int8_t> = NPY_INT8;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<uint8_t> = NPY_UINT8;
+constexpr NPY_TYPES NPYDatatype<uint8_t> = NPY_UINT8;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<int16_t> = NPY_SHORT;
+constexpr NPY_TYPES NPYDatatype<int16_t> = NPY_INT16;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<uint16_t> = NPY_USHORT;
+constexpr NPY_TYPES NPYDatatype<uint16_t> = NPY_UINT16;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<int32_t> = NPY_INT;
+constexpr NPY_TYPES NPYDatatype<int32_t> = NPY_INT32;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<uint32_t> = NPY_ULONG;
+constexpr NPY_TYPES NPYDatatype<uint32_t> = NPY_UINT32;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<int64_t> = NPY_INT64;
+constexpr NPY_TYPES NPYDatatype<int64_t> = NPY_INT64;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<uint64_t> = NPY_UINT64;
+constexpr NPY_TYPES NPYDatatype<uint64_t> = NPY_UINT64;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<float> = NPY_FLOAT;
+constexpr NPY_TYPES NPYDatatype<float> = NPY_FLOAT32;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<double> = NPY_DOUBLE;
+constexpr NPY_TYPES NPYDatatype<double> = NPY_FLOAT64;
 
 template <>
-constexpr NPY_TYPES NPIDatatype<long double> = NPY_LONGDOUBLE;
+constexpr NPY_TYPES NPYDatatype<long double> = NPY_LONGDOUBLE;
 
 } // namespace umuq
 
