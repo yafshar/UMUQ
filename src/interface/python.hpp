@@ -173,19 +173,70 @@ namespace python
 /*!
  * \ingroup Python_Module
  *
- * \brief New type
+ * \brief Type alias. A sorted container that contains key-value pairs of
+ * 'char const *' and 'PyObject *', respectively
  *
  */
 using PyObjectMapChar = std::map<char const *, PyObject *>;
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Type alias. A pair of 'string' and 'PyObject *' object
+ *
+ */
 using PyObjectPairString = std::pair<std::string, PyObject *>;
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Type alias. A pair of 'char const *' and 'PyObject *' object
+ *
+ */
 using PyObjectPairChar = std::pair<char const *, PyObject *>;
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Type alias. Vector of 'PyObject *' objects
+ *
+ */
 using PyObjectVector = std::vector<PyObject *>;
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Type alias. Vector of 'PyObjectPairString' objects
+ *
+ */
 using PyObjectPairStringVector = std::vector<PyObjectPairString>;
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Type alias. Vector of 'PyObjectPairChar' objects
+ *
+ */
 using PyObjectPairCharVector = std::vector<PyObjectPairChar>;
 
 /*!
- * \brief Construct a Python object
+ * \ingroup Python_Module
+ *
+ * \brief A function pointer to a function of 'PyObjectVector', and 'PyObjectMapChar' inputs.
+ *
+ */
+using PyObjectFunctionPointer = PyObject *(*)(PyObjectVector const &pyObjectVector, PyObjectMapChar const &pyObjectMapChar);
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief A function pointer to a function of 'void *', 'PyObjectVector', and 'PyObjectMapChar' inputs.
+ *
+ */
+using PyObjectFunctionPointerP = PyObject *(*)(void *PointerFunction, PyObjectVector const &pyObjectVector, PyObjectMapChar const &pyObjectMapChar);
+
+/*!
+ * \brief Construct a Python object from an 'int' data value
  *
  * \param data Input data
  * \return PyObject*
@@ -195,26 +246,79 @@ inline PyObject *PyObjectConstruct(int const data)
   return PyInt_FromLong(data);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from an 'size_t' data value
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(std::size_t const data)
 {
   return PyLong_FromSize_t(data);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from a 'float' data value
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(float const data)
 {
   return PyFloat_FromDouble(data);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from a 'double' data value
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(double const data)
 {
   return PyFloat_FromDouble(data);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from a 'string' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(std::string const &data)
 {
   return PyString_FromString(data.c_str());
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from 'char const *' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
+inline PyObject *PyObjectConstruct(char const *data)
+{
+  return PyString_FromString(data);
+}
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from 'PyObjectVector' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruc(PyObjectVector const &data)
 {
   Py_ssize_t lSize = static_cast<Py_ssize_t>(data.size());
@@ -225,12 +329,21 @@ inline PyObject *PyObjectConstruc(PyObjectVector const &data)
     PyObject *item = data[index];
     // PyList_SetItem steals a reference
     Py_XINCREF(item);
-    // Set the item at index index in list to item.
+    // Set the item at the index 'index' in the list to the new 'item'.
+    // It “steals” a reference to item
     PyList_SetItem(list, index, item);
   }
   return list;
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from 'PyObject' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(PyObject *data)
 {
   return data;
@@ -239,36 +352,47 @@ inline PyObject *PyObjectConstruct(PyObject *data)
 /*!
  * \ingroup Python_Module
  *
- * \brief A function pointer
- */
-using PyObjectFunctionPointer = PyObject *(*)(PyObjectVector const &pyObjectVector, PyObjectMapChar const &pyObjectMapChar);
-
-/*!
- * \ingroup Python_Module
+ * \brief Get an attribute in module name 'moduleName' from a 'module' object
  *
- * \brief A function pointer
+ * Get an attribute in a module name from 'module' object. For example, to
+ * get an attribute named 'echofilter' from 'module' object,
+ * \code{.cpp}
+ * std::string moduleName = "echofilter";
+ * auto object = PyGetAttribute(module, moduleName);
+ * \endcode
  *
- */
-using PyObjectFunctionPointerP = PyObject *(*)(void *PointerFunction, PyObjectVector const &pyObjectVector, PyObjectMapChar const &pyObjectMapChar);
-
-/*!
- * \brief Evaluate the chain of dot-operators that leads from the module to
- *        the function.
+ * Also, we can evaluate the chain of dot-operators that leads from the
+ * module to the attribute. For example, to get an attribute named
+ * 'echofilter' in a module name of 'sound.effects.echo.echofilter' from a
+ * 'module' object,
+ * \code{.cpp}
+ * std::string moduleName = "sound.effects.echo.echofilter";
+ * auto object = PyGetAttribute(module, moduleName);
+ * \endcode
  *
- * \param module Object to retrive the function attribute from it.
- * \param moduleName Module name
+ * \param module Object to retrive the attribute from it.
+ * \param moduleName Module name.
  *
  * \return PyObject*
+ *
  */
-PyObject *PyGetFunction(PyObject *module, std::string const &moduleName)
+PyObject *PyGetAttribute(PyObject *module, std::string const &moduleName)
 {
   PyObject *object = module;
   std::size_t find_dot = 0;
+  if (moduleName[0] != '.')
+  {
+    std::size_t const next_dot = moduleName.find('.', 0);
+    std::string const attr = moduleName.substr(0, next_dot);
+    // Retrieve an attribute named 'attr' from object 'object'.
+    object = PyObject_GetAttrString(object, attr.c_str()); // Return value: New reference.
+    find_dot = next_dot;
+  }
   while (find_dot != std::string::npos)
   {
     std::size_t const next_dot = moduleName.find('.', find_dot + 1);
     std::string const attr = moduleName.substr(find_dot + 1, next_dot - (find_dot + 1));
-    // Retrieve an attribute named attr from object \c object.
+    // Retrieve an attribute named 'attr' from object 'object'.
     object = PyObject_GetAttrString(object, attr.c_str()); // Return value: New reference.
     find_dot = next_dot;
   }
@@ -276,7 +400,9 @@ PyObject *PyGetFunction(PyObject *module, std::string const &moduleName)
 }
 
 /*!
- * \brief Call a function
+ * \ingroup Python_Module
+ *
+ * \brief Call a callable python function
  *
  * \param function A callable function object
  * \param pyObjectVector Vector of variable-length argument list
@@ -285,7 +411,9 @@ PyObject *PyGetFunction(PyObject *module, std::string const &moduleName)
  * \return PyObject*
  *
  * \note
- * Doesn't perform checks on the return value (input is still checked)
+ * \c function should be a callable python function.
+ * This function doesn't perform checks on the return value, only input is
+ * checked.
  */
 PyObject *PyCallFunctionObject(PyObject *function,
                                PyObjectVector const &pyObjectVector,
@@ -299,23 +427,26 @@ PyObject *PyCallFunctionObject(PyObject *function,
   }
 
   // Build tuple
-  Py_ssize_t const len = static_cast<Py_ssize_t>(pyObjectVector.size());
+  Py_ssize_t const pyObjectVectorSize = static_cast<Py_ssize_t>(pyObjectVector.size());
 
-  // Return a new tuple object of size len, or NULL on failure.
-  PyObject *tuple = PyTuple_New(len); // Return value: New reference.
+  // Return a new tuple object of size 'pyObjectVectorSize',
+  // or NULL on failure.
+  PyObject *tuple = PyTuple_New(pyObjectVectorSize); // Return value: New reference.
   if (tuple)
   {
-    for (Py_ssize_t i = 0; i < len; ++i)
+    for (Py_ssize_t pos = 0; pos < pyObjectVectorSize; ++pos)
     {
-      PyObject *arg = pyObjectVector[i];
-      Py_XINCREF(arg);
-      PyTuple_SetItem(tuple, i, arg); // It steals a reference to arg
+      PyObject *obj = pyObjectVector[pos];
+      // Increment the reference count for object 'obj'
+      Py_XINCREF(obj);
+      // Insert a reference to object 'obj' at position 'pos' of the tuple
+      // pointed to by 'tuple'.
+      PyTuple_SetItem(tuple, pos, obj); // It steals a reference to arg
     }
   }
   else
   {
-    PyErr_Print();
-    UMUQFAILRETURNNULL("Couldn't create python tuple.");
+    UMUQFAILRETURNNULL("Couldn't create a python tuple.");
   }
 
   // Build pyObjectPairStringVector dict
@@ -325,13 +456,14 @@ PyObject *PyCallFunctionObject(PyObject *function,
   {
     for (auto keyval : pyObjectPairStringVector)
     {
+      // Insert 'keyval.second' into the dictionary 'dict' using
+      // 'keyval.first' as a key.
       PyDict_SetItemString(dict, keyval.first.c_str(), keyval.second);
     }
   }
   else
   {
-    PyErr_Print();
-    UMUQFAILRETURNNULL("Couldn't create python dictionary.");
+    UMUQFAILRETURNNULL("Couldn't create a python dictionary.");
   }
 
   // Call a callable Python object, with arguments given by the tuple args,
@@ -342,7 +474,6 @@ PyObject *PyCallFunctionObject(PyObject *function,
   {
     if (PyErr_Occurred())
     {
-      PyErr_Print();
       UMUQFAILRETURNNULL("Exception in calling a python function.");
     }
     UMUQFAILRETURNNULL("Failed to call the function.");
@@ -351,13 +482,24 @@ PyObject *PyCallFunctionObject(PyObject *function,
 }
 
 /*!
+ * \ingroup Python_Module
+ *
  * \brief Call a function using a function name
  *
- * \param functionName A callable function name
+ * Call a function using a function name, for example, to call a function
+ * named 'echofilter' from the submodule 'sound.effects.echo', then the
+ * function name input to this function is
+ * \code{.cpp}
+ * std::string functionName = "sound.effects.echo.echofilter";
+ * \endcode
+ *
+ * \param functionName A callable function name with a full names of
+ * individual submodules.
  * \param pyObjectVector Vector of variable-length argument list
  * \param pyObjectPairStringVector Vector of keyworded, variable-length argument list
  *
  * \return PyObject*
+ *
  */
 PyObject *PyCallFunctionName(std::string const &functionName,
                              PyObjectVector const &pyObjectVector,
@@ -366,20 +508,21 @@ PyObject *PyCallFunctionName(std::string const &functionName,
   // Check the name size
   if (!functionName.size())
   {
+    UMUQWARNING("The input functionName is empty.");
     return NULL;
   }
 
   PyObject *module = NULL;
 
-  // Load the longest prefix of name that is a valid module name.
-  std::string moduleName;
-
   auto nSize = functionName.size();
   while (!module && nSize != std::string::npos)
   {
     nSize = functionName.rfind('.', nSize - 1);
-    moduleName = functionName.substr(0, nSize);
-    module = PyImport_ImportModule(moduleName.c_str()); // Return value: New reference.
+
+    std::string const submodule = functionName.substr(0, nSize);
+
+    // The return value is a new reference to the imported module
+    module = PyImport_ImportModule(submodule.c_str()); // Return value: New reference.
   }
 
   // A function object
@@ -387,23 +530,33 @@ PyObject *PyCallFunctionName(std::string const &functionName,
 
   if (module)
   {
-    moduleName = functionName.substr(nSize);
-    function = PyGetFunction(module, moduleName);
+    // Load the longest prefix of name that is a valid module name.
+    std::string moduleName = functionName.substr(nSize);
+
+    function = PyGetAttribute(module, moduleName);
     if (!function)
     {
-      UMUQFAILRETURNNULL("Importing the ", moduleName, " from ", functionName.substr(0, nSize), " failed.");
+      UMUQFAILRETURNNULL("Importing the '", moduleName, "' from '", functionName.substr(0, nSize), "' submodules failed.");
     }
   }
   else
   {
-    PyObject *builtins = PyEval_GetBuiltins();                       // Return value: Borrowed reference.
+    // Return a dictionary of the builtins in the current execution frame
+    PyObject *builtins = PyEval_GetBuiltins(); // Return value: Borrowed reference.
+
+    // Return the object 'function' from the dictionary 'builtins' which has
+    // a key 'functionName'.
     function = PyDict_GetItemString(builtins, functionName.c_str()); // Return value: Borrowed reference.
+
+    // Increment the reference count for object 'function'
     Py_XINCREF(function);
+
     if (!function)
     {
       UMUQFAILRETURNNULL("Importing the ", functionName, " failed.");
     }
   }
+
   return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
@@ -417,40 +570,95 @@ PyObject *PyCallFunctionName(std::string const &functionName, Args... args)
 }
 
 /*!
- * \brief Call a python function from module from
+ * \ingroup Python_Module
+ *
+ * \brief Call a python function from module 'module'
  *
  * \param functionName A callable function name
- * \param from Module to call the function from it
+ * \param module Module to call the function from it
  * \param pyObjectVector Vector of variable-length argument list
  * \param pyObjectPairStringVector Vector of keyworded, variable-length argument list
  * \return PyObject*
  */
-PyObject *PyCallFunctionNameFrom(std::string const &functionName,
-                                 PyObject *from,
-                                 PyObjectVector const &pyObjectVector,
-                                 PyObjectPairStringVector const &pyObjectPairStringVector)
+PyObject *PyCallFunctionNameFromModule(std::string const &functionName,
+                                       PyObject *module,
+                                       PyObjectVector const &pyObjectVector,
+                                       PyObjectPairStringVector const &pyObjectPairStringVector)
 {
-  std::string name = (functionName[0] == '.') ? functionName : '.' + functionName;
-
-  PyObject *function = PyGetFunction(from, name);
+  PyObject *function = PyGetAttribute(module, functionName);
   if (!function)
   {
-    UMUQFAILRETURNNULL("Lookup of function ", functionName, " failed.");
+    UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
   }
   return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
 template <typename... Args>
-PyObject *PyCallFunctionNameFrom(std::string const &functionName, PyObject *from, Args... args)
+PyObject *PyCallFunctionNameFromModule(std::string const &functionName, PyObject *module, Args... args)
 {
   PyObjectVector pyObjectVector;
   PyObjectPairStringVector pyObjectPairStringVector;
   appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
-  return PyCallFunctionNameFrom(functionName, from, pyObjectVector, pyObjectPairStringVector);
+  return PyCallFunctionNameFromModule(functionName, module, pyObjectVector, pyObjectPairStringVector);
 }
 
 /*!
- * \brief Convert python tuple to the vector
+ * \ingroup Python_Module
+ *
+ * \brief Call a python function from module name 'moduleName'
+ *
+ * \param functionName A callable function name
+ * \param moduleName Module name to call the function from it
+ * \param pyObjectVector Vector of variable-length argument list
+ * \param pyObjectPairStringVector Vector of keyworded, variable-length argument list
+ * \return PyObject*
+ */
+PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName,
+                                           std::string const &moduleName,
+                                           PyObjectVector const &pyObjectVector,
+                                           PyObjectPairStringVector const &pyObjectPairStringVector)
+{
+  // Check the name size
+  if (!functionName.size())
+  {
+    UMUQWARNING("The input functionName is empty.");
+    return NULL;
+  }
+  if (!moduleName.size())
+  {
+    UMUQWARNING("The input moduleName is empty.");
+    return NULL;
+  }
+
+  // The return value is a new reference to the imported module
+  PyObject *module = PyImport_ImportModule(moduleName.c_str()); // Return value: New reference.
+  if (!module)
+  {
+    UMUQFAILRETURNNULL("Failed to import the '", moduleName, "' module.");
+  }
+
+  PyObject *function = PyGetAttribute(module, functionName);
+  if (!function)
+  {
+    UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
+  }
+
+  return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+}
+
+template <typename... Args>
+PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName, std::string const &moduleName, Args... args)
+{
+  PyObjectVector pyObjectVector;
+  PyObjectPairStringVector pyObjectPairStringVector;
+  appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
+  return PyCallFunctionNameFromModuleName(functionName, moduleName, pyObjectVector, pyObjectPairStringVector);
+}
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Convert python tuple to the vector of python objects
  *
  * \param PyTuple Python tuple object
  * \return PyObjectVector
@@ -473,6 +681,8 @@ PyObjectVector PyTupleToVector(PyObject *PyTuple)
 }
 
 /*!
+ * \ingroup Python_Module
+ *
  * \brief Convert python dictionary to the vector of pairs
  *
  * \param PyDict Python dictionary object
@@ -494,6 +704,7 @@ PyObjectMapChar PyDictToMap(PyObject *PyDict)
   {
     char const *str = PyString_AsString(key);
     PyObject *obj = value;
+    // Increment the reference count for object 'function'
     Py_XINCREF(obj);
     Map.emplace(str, obj);
   }
@@ -501,6 +712,8 @@ PyObjectMapChar PyDictToMap(PyObject *PyDict)
 }
 
 /*!
+ * \ingroup Python_Module
+ *
  * \brief Convert a pointer, python tuple, and python dict to a pointer function
  *
  * \param Pointer A pointer to python object (a capsule)
@@ -526,6 +739,8 @@ PyObject *PyPointerTupleDictToPointerFunctionVectorMap(PyObject *Pointer, PyObje
 }
 
 /*!
+ * \ingroup Python_Module
+ *
  * \brief Convert a pointer, python tuple, and python dict to a pointer function
  *
  * \param Pointer A pointer to python object (a capsule)
@@ -582,11 +797,27 @@ PyObject *PyLambdaP(PyObjectFunctionPointerP fun, void *pointer)
   return PyCFunction_New(&PyPointerTupleDictToPointerFunctionVectorMapMethod, capsule);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from 'PyObjectFunctionPointer' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(PyObjectFunctionPointer fun)
 {
   return PyLambda(fun);
 }
 
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from 'PyObjectFunctionPointerP' data
+ *
+ * \param data Input data
+ * \return PyObject*
+ */
 inline PyObject *PyObjectConstruct(PyObjectFunctionPointerP fun, void *pointer)
 {
   return PyLambdaP(fun, pointer);
@@ -626,7 +857,6 @@ void appendArgs(PyObjectVector &pyObjectVector, PyObjectPairStringVector &pyObje
   pyObjectPairStringVector.emplace_back(std::string(head.first), value);
   appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
 }
-
 } // namespace python
 
 namespace python
