@@ -1,15 +1,22 @@
-#include "core/core.hpp"
-#include "environment.hpp"
-#include "global.hpp"
-#include "io/io.hpp"
-#include "numerics/hypercube/hypercubesampling.hpp"
+
 #include "numerics/dcpse.hpp"
+#include "numerics/hypercube/hypercubesampling.hpp"
 #include "numerics/fitness.hpp"
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
 #include "numerics/stats.hpp"
+#include "numerics/random/psrandom.hpp"
+#include "io/io.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 #define WRITE_TO_FILE 0
+
+/*!
+ * \ingroup Test_Module
+ *
+ * \brief Get an instance of a seeded pseudo random object
+ */
+umuq::psrandom prng(12345678);
 
 /*!
  * \ingroup Test_Module
@@ -19,7 +26,7 @@
 TEST(dcpse_1d, HandlesQianFunction)
 {
     // Problem dimension
-    int numDimensions = 1;
+    int const numDimensions = 1;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{10};
@@ -55,7 +62,7 @@ TEST(dcpse_1d, HandlesQianFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed input points
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -162,7 +169,7 @@ TEST(dcpse_1d, HandlesQianFunction)
 TEST(dcpse_1d, HandlesCFDResults)
 {
     // Problem dimension
-    int numDimensions = 1;
+    int const numDimensions = 1;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{9};
@@ -292,7 +299,7 @@ TEST(dcpse_1d, HandlesCFDResults)
 TEST(dcpse_2d, HandlesPeaksFunction)
 {
     // Problem dimension
-    int numDimensions = 2;
+    int const numDimensions = 2;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{25, 25};
@@ -332,7 +339,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -434,7 +441,7 @@ TEST(dcpse_2d, HandlesPeaksFunction)
 TEST(dcpse_2d, HandlesPeaksRndFunction)
 {
     // Problem dimension
-    int numDimensions = 2;
+    int const numDimensions = 2;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{25, 25};
@@ -486,7 +493,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
         umuq::hypercubeSampling<double> Domain(numDataPoints, numDimensions, LowerBounds.data(), UpperBounds.data());
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(dataPoints));
@@ -604,7 +611,7 @@ TEST(dcpse_2d, HandlesPeaksRndFunction)
 TEST(dcpse_2d, HandlesFrankFunction)
 {
     // Problem dimension
-    int numDimensions = 2;
+    int const numDimensions = 2;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{25, 25};
@@ -640,7 +647,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
@@ -742,7 +749,7 @@ TEST(dcpse_2d, HandlesFrankFunction)
 TEST(dcpse_2d, HandlesFrankRndFunction)
 {
     // Problem dimension
-    int numDimensions = 2;
+    int const numDimensions = 2;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{25, 25};
@@ -751,7 +758,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
     int const numDataPoints = std::accumulate(numPointsInEachDirection.begin(), numPointsInEachDirection.end(), 1, std::multiplies<int>());
 
     //  Number of query points
-    int numQueryPoints = 150;
+    int const numQueryPoints = 150;
 
     std::vector<double> dataPoints(numDataPoints * numDimensions);
     std::vector<double> dataFuncationValues(numDataPoints);
@@ -767,7 +774,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
         umuq::hypercubeSampling<double> Domain(numDataPoints, numDimensions);
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(dataPoints));
@@ -880,7 +887,7 @@ TEST(dcpse_2d, HandlesFrankRndFunction)
 TEST(dcpse_2d, HandlesRastriginFunction)
 {
     // Problem dimension
-    int numDimensions = 2;
+    int const numDimensions = 2;
 
     // Number of points in each direction
     std::vector<int> numPointsInEachDirection{100, 100};
@@ -920,7 +927,7 @@ TEST(dcpse_2d, HandlesRastriginFunction)
         }
 
         // Initialize the PRNG or set the state of the PRNG
-        EXPECT_TRUE(umuq::prng.setState());
+        EXPECT_TRUE(prng.setState());
 
         // Create uniformly random distributed points in the hypercube
         EXPECT_TRUE(Domain.sample(queryPoints, numQueryPoints));
