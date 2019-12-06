@@ -1,12 +1,11 @@
-#include "core/core.hpp"
 #include "numerics/polynomials.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests binomial coefficient \f$ C(n, k) \f$ of 0.
- * 
+ *
  */
 TEST(binomialCoefficient_test, HandlesZeroInput)
 {
@@ -21,9 +20,9 @@ TEST(binomialCoefficient_test, HandlesZeroInput)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests binomial coefficient \f$ C(n, k) \f$
- * 
+ *
  */
 TEST(binomialCoefficient_test, HandlesOtherInput)
 {
@@ -36,9 +35,9 @@ TEST(binomialCoefficient_test, HandlesOtherInput)
     EXPECT_EQ(10, p.binomialCoefficient(5, 2));
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Tests binomial coefficient \f$ C(n, k) \f$ of 0.
  *
  * For example:<br>
@@ -59,7 +58,7 @@ TEST(binomialCoefficient_test, HandlesOtherInput)
  *
  *  monomialBasis(3,2) = {1,       x,     y,     z,    x^2,  xy,    xz,   y^2,    yz,    z^2  }
  *               alpha = {0,0,0, 1,0,0, 0,1,0, 0,0,1, 2,0,0 1,1,0, 1,0,1, 0,2,0, 0,1,1, 0,0,2 }
- * 
+ *
  * \endverbatim
  */
 TEST(monomialBasis_test, HandlesInput)
