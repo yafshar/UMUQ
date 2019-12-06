@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "numerics/fitness.hpp"
 #include "gtest/gtest.h"
 
