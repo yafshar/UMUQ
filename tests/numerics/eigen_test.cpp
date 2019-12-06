@@ -1,4 +1,4 @@
-#include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "numerics/eigenlib.hpp"
 #include "gtest/gtest.h"
 

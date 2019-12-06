@@ -1,10 +1,9 @@
-#include "core/core.hpp"
 #include "numerics/stats.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check stats functionality
  */
 TEST(stats_test, HandlesStats)
@@ -61,9 +60,9 @@ TEST(stats_test, HandlesStats)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for data arrays with stride
- * 
+ *
  */
 TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 {
@@ -110,9 +109,9 @@ TEST(stats_arraywithstride, HandlesStatsforArraywithStride)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for testing median
- * 
+ *
  */
 TEST(stats_test, HandlesMedianandMad)
 {
@@ -127,9 +126,9 @@ TEST(stats_test, HandlesMedianandMad)
 	EXPECT_EQ(med, 2);
 
 	/*!
-     * The absolute deviations about 2 in the data set are (1, 1, 0, 0, 2, 4, 7) which 
-     * in turn have a median value of 1 (because the sorted absolute deviations are 
-     * (0, 0, 1, 1, 2, 4, 7)). 
+     * The absolute deviations about 2 in the data set are (1, 1, 0, 0, 2, 4, 7) which
+     * in turn have a median value of 1 (because the sorted absolute deviations are
+     * (0, 0, 1, 1, 2, 4, 7)).
      * So the median absolute deviation for this data is 1.
      */
 	EXPECT_EQ(mad, 1);
@@ -144,9 +143,9 @@ TEST(stats_test, HandlesMedianandMad)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for testing minmaxNormal
- * 
+ *
  */
 TEST(stats_test, HandlesminmaxNormal)
 {
@@ -219,9 +218,9 @@ TEST(stats_test, HandlesminmaxNormal)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for testing zscoreNormal
- * 
+ *
  */
 TEST(stats_test, HandleszscoreNormal)
 {
@@ -259,9 +258,9 @@ TEST(stats_test, HandleszscoreNormal)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for testing robustzscoreNormal
- * 
+ *
  */
 TEST(stats_test, HandlesrobustzscoreNormal)
 {
@@ -299,9 +298,9 @@ TEST(stats_test, HandlesrobustzscoreNormal)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for covariance
- * 
+ *
  */
 TEST(stats_test, HandlesCovariance)
 {
@@ -405,9 +404,9 @@ TEST(stats_test, HandlesCovariance)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new TEST object for correlation
- * 
+ *
  */
 TEST(stats_test, HandlesCorrelation)
 {
@@ -474,9 +473,9 @@ TEST(stats_test, HandlesCorrelation)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Construct a new test for the unique member
- * 
+ *
  */
 TEST(stats_test, HandlesunUniqueMemberFunctionality)
 {
