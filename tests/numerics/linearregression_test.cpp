@@ -1,8 +1,8 @@
-#include "core/core.hpp"
-#include "io/io.hpp"
+
 #include "numerics/linearregression.hpp"
 #include "numerics/fitness.hpp"
 #include "numerics/testfunctions/predictiontestfunctions.hpp"
+#include "io/io.hpp"
 #include "gtest/gtest.h"
 
 #include <random>
