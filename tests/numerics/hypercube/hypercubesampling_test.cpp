@@ -1,9 +1,13 @@
-#include "core/core.hpp"
-#include "environment.hpp"
-#include "global.hpp"
-#include "io/io.hpp"
 #include "numerics/hypercube/hypercubesampling.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
+
+/*!
+ * \ingroup Test_Module
+ *
+ * \brief Get an instance of a seeded pseudo random object
+ */
+umuq::psrandom prng(12345678);
 
 /*!
  * \ingroup Test_Module
@@ -14,7 +18,7 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
 {
     {
         // Problem dimension
-        int numDimensions = 1;
+        int const numDimensions = 1;
 
         // Number of data points
         int const numDataPoints = 10;
@@ -46,7 +50,7 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
 
     {
         // Problem dimension
-        int numDimensions = 2;
+        int const numDimensions = 2;
 
         // Number of data points
         int const numDataPoints = 20;
@@ -93,7 +97,7 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
 
     {
         // Problem dimension
-        int numDimensions = 5;
+        int const numDimensions = 5;
 
         // Number of data points
         int const numDataPoints = 32;
@@ -157,7 +161,7 @@ TEST(hypercubeSamplingTest, HandlesConstruction)
 TEST(hypercubeSamplingTest, HandlesUniformdistribution)
 {
     // Problem dimension
-    int numDimensions = 1;
+    int const numDimensions = 1;
 
     // Number of data points
     int const numDataPoints = 10;
@@ -171,7 +175,7 @@ TEST(hypercubeSamplingTest, HandlesUniformdistribution)
     std::vector<double> dataPoints(numDataPoints * numDimensions);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(umuq::prng.setState());
+    EXPECT_TRUE(prng.setState());
 
     // Create uniformly random distributed points in the hypercube
     Domain.sample(dataPoints);
