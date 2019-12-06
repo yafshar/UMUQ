@@ -1,12 +1,10 @@
-#include "core/core.hpp"
-#include "numerics/function/functionminimizer.hpp"
 #include "numerics/multimin/simplexnm.hpp"
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test to check simplexNM construction
  */
 TEST(simplexNM_test, HandlesMinimizerConstruction)
@@ -20,9 +18,9 @@ TEST(simplexNM_test, HandlesMinimizerConstruction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if simplexNM can handle a Rosenbrock function
- * 
+ *
  */
 TEST(simplexNM_test, HandlesRosenbrockFunction)
 {
@@ -72,9 +70,9 @@ TEST(simplexNM_test, HandlesRosenbrockFunction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if simplexNM can handle a Roth function
- * 
+ *
  */
 TEST(simplexNM_test, HandlesRothFunction)
 {

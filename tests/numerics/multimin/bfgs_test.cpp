@@ -1,27 +1,25 @@
-#include "core/core.hpp"
-#include "numerics/function/differentiablefunctionminimizer.hpp"
 #include "numerics/multimin/bfgs.hpp"
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test to check bfgs construction
  */
 TEST(bfgs_test, HandlesMinimizerConstruction)
 {
     umuq::bfgs<double> fMinimizer;
-    
+
     // First we have to set the minimizer dimension
     EXPECT_TRUE(fMinimizer.reset(2));
 }
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if bfgs can handle a Rosenbrock function
- * 
+ *
  */
 TEST(bfgs_test, HandlesRosenbrockFunction)
 {
@@ -72,9 +70,9 @@ TEST(bfgs_test, HandlesRosenbrockFunction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if bfgs can handle a Roth function
- * 
+ *
  */
 TEST(bfgs_test, HandlesRothFunction)
 {

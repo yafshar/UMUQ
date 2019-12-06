@@ -1,12 +1,10 @@
-#include "core/core.hpp"
-#include "numerics/function/differentiablefunctionminimizer.hpp"
 #include "numerics/multimin/conjugatefr.hpp"
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test to check conjugateFr construction
  */
 TEST(conjugateFr_test, HandlesMinimizerConstruction)
@@ -19,9 +17,9 @@ TEST(conjugateFr_test, HandlesMinimizerConstruction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if conjugateFr can handle a Rosenbrock function
- * 
+ *
  */
 TEST(conjugateFr_test, HandlesRosenbrockFunction)
 {
@@ -72,9 +70,9 @@ TEST(conjugateFr_test, HandlesRosenbrockFunction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if conjugateFr can handle a Roth function
- * 
+ *
  */
 TEST(conjugateFr_test, HandlesRothFunction)
 {

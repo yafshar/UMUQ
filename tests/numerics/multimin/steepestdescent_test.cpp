@@ -1,12 +1,10 @@
-#include "core/core.hpp"
-#include "numerics/function/differentiablefunctionminimizer.hpp"
 #include "numerics/multimin/steepestdescent.hpp"
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test to check steepestDescent construction
  */
 TEST(steepestDescent_test, HandlesMinimizerConstruction)
@@ -19,9 +17,9 @@ TEST(steepestDescent_test, HandlesMinimizerConstruction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if steepestDescent can handle a Rosenbrock function
- * 
+ *
  */
 TEST(steepestDescent_test, HandlesRosenbrockFunction)
 {
@@ -72,9 +70,9 @@ TEST(steepestDescent_test, HandlesRosenbrockFunction)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Test if steepestDescent can handle a Roth function
- * 
+ *
  */
 TEST(steepestDescent_test, HandlesRothFunction)
 {
