@@ -1,10 +1,9 @@
-#include "core/core.hpp"
 #include "numerics/factorial.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check factorial functionality
  */
 TEST(factorial_test, HandlesInput)
