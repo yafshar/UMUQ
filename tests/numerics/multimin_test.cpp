@@ -1,22 +1,21 @@
-#include "core/core.hpp"
 #include "numerics/multimin.hpp"
 #include "numerics/testfunctions/optimizationtestfunctions.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief A helper function for testing the function minimizer 
- * 
+ *
+ * \brief A helper function for testing the function minimizer
+ *
  * \tparam T          Data type
  * \param fMinimizer  Function Minimizer object
- * \param Fun         Function to be minimized 
+ * \param Fun         Function to be minimized
  * \param X           N-Dimensional input data
  * \param nDim        Dimension of the data
  * \param FunName     Function name or description
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 template <typename T>
 bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE<T> const &Fun, T const *X, int const nDim, char const *FunName)
@@ -109,11 +108,11 @@ bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief A helper function for testing the function minimizer 
- * 
+ *
+ * \brief A helper function for testing the function minimizer
+ *
  * \tparam T          Data type
- * 
+ *
  * \param fMinimizer  Function Minimizer object
  * \param Fun         Function to be used in this minimizer \f$ f(x) \f$
  * \param DFun        Function gradient $\nabla f$ to be used in this minimizer
@@ -121,9 +120,9 @@ bool functionMinimizerTest(umuq::functionMinimizer<T> &fMinimizer, umuq::F_MTYPE
  * \param X           N-Dimensional input data
  * \param nDim        Dimension of the data
  * \param FunName     Function name or description
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 template <typename T>
 bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T> &fMinimizer,
@@ -247,20 +246,20 @@ bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief A helper function for testing the function minimizer 
+ *
+ * \brief A helper function for testing the function minimizer
  * This is only using the function f as input and df is computed internally
- * 
+ *
  * \tparam T          Data type
- * 
+ *
  * \param fMinimizer  Function Minimizer object
  * \param Fun         Function to be used in this minimizer \f$ f(x) \f$
  * \param X           N-Dimensional input data
  * \param nDim        Dimension of the data
  * \param FunName     Function name or description
- * 
- * \return true 
- * \return false 
+ *
+ * \return true
+ * \return false
  */
 template <typename T>
 bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T> &fMinimizer,
@@ -384,7 +383,7 @@ bool differentiableFunctionMinimizerTest(umuq::differentiableFunctionMinimizer<T
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if steepestDescent can handle different test functions
  */
 TEST(multimin_steepestDescent_test, Handles_TestFunctions)
@@ -424,7 +423,7 @@ TEST(multimin_steepestDescent_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if conjugatePr can handle different test functions
  */
 TEST(multimin_conjugatePr_test, Handles_TestFunctions)
@@ -464,7 +463,7 @@ TEST(multimin_conjugatePr_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if conjugateFr can handle different test functions
  */
 TEST(multimin_conjugateFr_test, Handles_TestFunctions)
@@ -504,7 +503,7 @@ TEST(multimin_conjugateFr_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if bfgs can handle different test functions
  */
 TEST(multimin_bfgs_test, Handles_TestFunctions)
@@ -544,7 +543,7 @@ TEST(multimin_bfgs_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if bfgs2 can handle different test functions
  */
 TEST(multimin_bfgs2_test, Handles_TestFunctions)
@@ -584,7 +583,7 @@ TEST(multimin_bfgs2_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if simplexNM can handle different test functions
  */
 TEST(multimin_simplexNM_test, Handles_TestFunctions)
@@ -623,7 +622,7 @@ TEST(multimin_simplexNM_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if simplexNM2 can handle different test functions
  */
 TEST(multimin_simplexNM2_test, Handles_TestFunctions)
@@ -662,7 +661,7 @@ TEST(multimin_simplexNM2_test, Handles_TestFunctions)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multimin functionality if simplexNM2Rnd can handle different test functions
  */
 TEST(multimin_simplexNM2Rnd_test, Handles_TestFunctions)
