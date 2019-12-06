@@ -2,6 +2,8 @@
 #define UMUQ_PSRANDOM_MULTINOMIALDISTRIBUTION_H
 
 #include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
+#include "numerics/eigenlib.hpp"
 
 #include <cstddef>
 
