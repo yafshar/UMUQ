@@ -1,41 +1,43 @@
 #ifndef UMUQ_RADIALBASISFUNCTIONKERNEL_H
 #define UMUQ_RADIALBASISFUNCTIONKERNEL_H
 
+#include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "numerics/eigenlib.hpp"
 
 namespace umuq
 {
 
 /*! \file radialbasisfunctionkernel.hpp
- * \ingroup 
- * 
+ * \ingroup
+ *
  * \brief Implementation of the Radial basis function kernel.
  *
  * \author David Eriksson, dme65@cornell.edu
- * 
+ *
  * This file contains minor addition to the original rbf.h
  * source code made available under the following license:
  *
  * \verbatim
  * Copyright (c) 2016 by David Eriksson.
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -52,7 +54,7 @@ namespace umuq
 
 /*! \enum radialBasisFunctionKernelTypes
  * \ingroup Surrogate_Module
- * 
+ *
  * \brief Radial basis function kernel types currently supported in %UMUQ
  */
 enum class radialBasisFunctionKernelTypes
@@ -67,9 +69,9 @@ enum class radialBasisFunctionKernelTypes
 
 /*! \class radialBasisFunctionKernel
  * \ingroup Surrogate_Module
- * 
+ *
  * \brief Abstract class for a radial basis function kernel
- * 
+ *
  * This is the abstract class that should be used as a Base class for all RBF kernels
  */
 class radialBasisFunctionKernel
@@ -77,80 +79,80 @@ class radialBasisFunctionKernel
   public:
     /*!
      * \brief Construct a new radialBasisFunctionKernel object
-     * 
+     *
      */
     radialBasisFunctionKernel();
 
     /*!
      * \brief Destroy the radialBasisFunctionKernel object
-     * 
+     *
      */
     ~radialBasisFunctionKernel();
 
     /*!
      * \brief Method for getting the order of the kernel
-     * 
-     * \returns int  Order of the kernel 
+     *
+     * \returns int  Order of the kernel
      */
     virtual inline int order() const = 0;
 
     /*!
      * \brief Method for getting the value of the kernel at 0
-     * 
+     *
      * \returns double Value of kernel at 0
      */
     virtual inline double phiZero() const = 0;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
-     * 
+     *
      * \param Distance  Distance for which to evaluate the kernel
-     * 
+     *
      * \returns double Value of kernel at Distance
      */
     virtual inline double evaluate(double const Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the kernel for a vector of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EVectorXd Values of kernel at Distance
      */
     virtual inline EVectorXd evaluate(EVectorXd const &Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EMatrixXd Values of kernel at Distance
      */
     virtual inline EMatrixXd evaluate(EMatrixXd const &Distance) const = 0;
 
     /*!
-     * \brief Method for evaluating the derivative of the kernel for a given Distance 
-     * 
+     * \brief Method for evaluating the derivative of the kernel for a given Distance
+     *
      * \param Distance Distance for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns double Derivative of kernel at Distance
      */
     virtual inline double deriv(double const Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a vector of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
     virtual inline EVectorXd deriv(EVectorXd const &Distance) const = 0;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
     virtual inline EMatrixXd deriv(EMatrixXd const &Distance) const = 0;
@@ -164,7 +166,7 @@ radialBasisFunctionKernel::~radialBasisFunctionKernel() {}
  * \ingroup Surrogate_Module
  *
  * \brief Linear kernel
- * 
+ *
  * This is an implementation of the linear kernel \f$\varphi(r)=r\,\log(r)\f$ which is of order 1.
  */
 class linearKernel : public radialBasisFunctionKernel
@@ -172,80 +174,80 @@ class linearKernel : public radialBasisFunctionKernel
   public:
     /*!
      * \brief Construct a new linearKernel object
-     * 
+     *
      */
     linearKernel();
 
     /*!
      * \brief Destroy the linearKernel object
-     * 
+     *
      */
     ~linearKernel();
 
     /*!
      * \brief Method for getting the order of the kernel
-     * 
-     * \returns int  Order of the kernel 
+     *
+     * \returns int  Order of the kernel
      */
     inline int order() const;
 
     /*!
      * \brief Method for getting the value of the kernel at 0
-     * 
+     *
      * \returns double Value of kernel at 0
      */
     inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
-     * 
+     *
      * \param Distance  Distance for which to evaluate the kernel
-     * 
+     *
      * \returns double Value of kernel at Distance
      */
     inline double evaluate(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a vector of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EVectorXd Values of kernel at Distance
      */
     inline EVectorXd evaluate(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EMatrixXd Values of kernel at Distance
      */
     inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
-     * \brief Method for evaluating the derivative of the kernel for a given Distance 
-     * 
+     * \brief Method for evaluating the derivative of the kernel for a given Distance
+     *
      * \param Distance Distance for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns double Derivative of kernel at Distance
      */
     inline double deriv(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a vector of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
     inline EVectorXd deriv(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
     inline EMatrixXd deriv(EMatrixXd const &Distance) const;
@@ -293,80 +295,80 @@ class cubicKernel : public radialBasisFunctionKernel
   public:
     /*!
      * \brief Construct a new cubic Kernel object
-     * 
+     *
      */
     cubicKernel();
 
     /*!
      * \brief Destroy the cubic Kernel object
-     * 
+     *
      */
     ~cubicKernel();
 
     /*!
      * \brief Method for getting the order of the kernel
-     * 
-     * \returns int  Order of the kernel 
+     *
+     * \returns int  Order of the kernel
      */
     inline int order() const;
 
     /*!
      * \brief Method for getting the value of the kernel at 0
-     * 
+     *
      * \returns double Value of kernel at 0
      */
     inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
-     * 
+     *
      * \param Distance  Distance for which to evaluate the kernel
-     * 
+     *
      * \returns double Value of kernel at Distance
      */
     inline double evaluate(double const Distance) const;
-    
+
     /*!
      * \brief Method for evaluating the kernel for a vector of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EVectorXd Values of kernel at Distance
      */
     inline EVectorXd evaluate(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EMatrixXd Values of kernel at Distance
      */
     inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
-     * \brief Method for evaluating the derivative of the kernel for a given Distance 
-     * 
+     * \brief Method for evaluating the derivative of the kernel for a given Distance
+     *
      * \param Distance Distance for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns double Derivative of kernel at Distance
      */
     inline double deriv(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a vector of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
     inline EVectorXd deriv(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
     inline EMatrixXd deriv(EMatrixXd const &Distance) const;
@@ -410,9 +412,9 @@ inline EMatrixXd cubicKernel::deriv(EMatrixXd const &Distance) const
 
 /*! \class thinPlateKernel
  * \ingroup Surrogate_Module
- * 
- * \brief Thin-plate spline kernel 
- * 
+ *
+ * \brief Thin-plate spline kernel
+ *
  * This is an implementation of the popular thin-plate spline kernel \f$\varphi(r)=r^2\,\log(r)\f$ which is of order 2.
  */
 class thinPlateKernel : public radialBasisFunctionKernel
@@ -420,80 +422,80 @@ class thinPlateKernel : public radialBasisFunctionKernel
   public:
     /*!
      * \brief Construct a new thin Plate Kernel object
-     * 
+     *
      */
     thinPlateKernel();
 
     /*!
      * \brief Destroy the thin Plate Kernel object
-     * 
+     *
      */
     ~thinPlateKernel();
 
     /*!
      * \brief Method for getting the order of the kernel
-     * 
-     * \returns int Order of the kernel 
+     *
+     * \returns int Order of the kernel
      */
     inline int order() const;
 
     /*!
      * \brief Method for getting the value of the kernel at 0
-     * 
+     *
      * \returns double Value of kernel at 0
      */
     inline double phiZero() const;
 
     /*!
      * \brief Method for evaluating the kernel for a given Distance
-     * 
+     *
      * \param Distance  Distance for which to evaluate the kernel
-     * 
+     *
      * \returns double Value of kernel at Distance
      */
     inline double evaluate(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EVectorXd Values of kernel at Distance
      */
     inline EVectorXd evaluate(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the kernel for a matrix of distances
-     * 
+     *
      * \param Distance  Distances for which to evaluate the kernel
-     * 
+     *
      * \returns EMatrixXd Values of kernel at Distance
      */
     inline EMatrixXd evaluate(EMatrixXd const &Distance) const;
 
     /*!
-     * \brief Method for evaluating the derivative of the kernel for a given Distance 
-     * 
+     * \brief Method for evaluating the derivative of the kernel for a given Distance
+     *
      * \param Distance Distance for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns double Derivative of kernel at Distance
      */
     inline double deriv(double const Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EVectorXd Values of the derivative of the kernel at Distance
      */
     inline EVectorXd deriv(EVectorXd const &Distance) const;
 
     /*!
      * \brief Method for evaluating the derivative of the kernel for a matrix of distances
-     * 
+     *
      * \param Distance Distances for which to evaluate the derivative of the kernel
-     * 
+     *
      * \returns EMatrixXd Values of the derivative of the kernel at Distance
      */
     inline EMatrixXd deriv(EMatrixXd const &Distance) const;

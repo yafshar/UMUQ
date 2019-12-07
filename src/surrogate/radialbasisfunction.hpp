@@ -1,7 +1,9 @@
 #ifndef UMUQ_RADIALBASISFUNCTION_H
 #define UMUQ_RADIALBASISFUNCTION_H
 
-#include "global.hpp"
+#include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
+#include "numerics/eigenlib.hpp"
 #include "surrogate.hpp"
 #include "radialbasisfunctionkernel.hpp"
 #include "polynomialtail.hpp"
@@ -10,35 +12,35 @@ namespace umuq
 {
 
 /*! \file radialbasisfunction.hpp
- * \ingroup 
- * 
+ * \ingroup
+ *
  * \brief Implementation of the Radial basis function interpolant.
  *
  * \author David Eriksson, dme65@cornell.edu
- * 
+ *
  * This file contains modification and addition to the original rbf.h
  * source code made available under the following license:
  *
  * \verbatim
  * Copyright (c) 2016 by David Eriksson.
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -59,42 +61,42 @@ extern umuqTimer gTimer;
 
 /*! \class radialBasisFunction
  * \ingroup Surrogate_Module
- * 
+ *
  * \brief Radial basis function
- * 
+ *
  * \tparam kernelType         Radial basis function kernel type (Cubic is default)
  * \tparam polynomialTailType Polynomial tail type (Linear is default)
  *
- * A radial basis function (RBF) interpolant is a weighted sum of radial 
+ * A radial basis function (RBF) interpolant is a weighted sum of radial
  * basis functions. It is common to add a polynomial tail as well to
  * assure that the interpolant can exactly reproduce polynomial of that degree.
  * This leads to an interpolant of the form
- * 
- * \f$ 
- * s(y) = \displaystyle\sum_{i=1}^n \lambda_i \varphi(\|y-x_i\|) + 
+ *
+ * \f$
+ * s(y) = \displaystyle\sum_{i=1}^n \lambda_i \varphi(\|y-x_i\|) +
  *        \displaystyle\sum_{i=1}^m c_i \pi_i(y)
  * \f$
- * 
+ *
  * where \f$ y_i\f$ are the n centers and \f$ \{\pi_i\}_{i=1}^m\f$ is a basis
- * of the polynomial space of the tail. Given a set of points 
+ * of the polynomial space of the tail. Given a set of points
  * \f$ X=\{x_1,\ldots,x_n\}\f$ with values \f$ f_X = \{f(x_1),\ldots,f(x_n)\}\f$
  * the interpolation conditions are:<br>
- * 
+ *
  * \f$ s(x_i) = f(x_i)\f$ for \f$ i=1,\ldots,n\f$
- * 
+ *
  * and in order to get a unique interpolant one usually adds the conditions
- * 
+ *
  * \f$ \displaystyle\sum_{i=1}^n \lambda_i \pi_j(x_i) = 0\f$ for \f$ j=1,\ldots,m\f$
- * 
- * which leads to a system of equations of size \f$(m+n) x (m+n)\f$. With the 
+ *
+ * which leads to a system of equations of size \f$(m+n) x (m+n)\f$. With the
  * notation \f$ \Phi_{i,j}=\varphi(\|x_i-x_j\|)\f$ and \f$ P_{ij} = \pi_j(x_i)\f$
  * we can write in a more compact form
- * 
+ *
  * \f$ \left(\begin{array}{cc} 0 & P^T \\ P & \Phi \end{array}\right)
- *     \left(\begin{array}{c} c \\ \lambda \end{array}\right) = 
+ *     \left(\begin{array}{c} c \\ \lambda \end{array}\right) =
  *     \left(\begin{array}{c} 0 \\ f_X \end{array}\right)
  * \f$
- * 
+ *
  * We can see that adding one more point corresponds to adding a column and
  * a row to this matrix which is why this ordering of \f$\Phi\f$ and \f$P\f$
  * is convenient. We store the LU decomposition of this matrix and use the
@@ -104,13 +106,13 @@ extern umuqTimer gTimer;
  * roughly \f$2n^2k\f$ flops under the assumption that \f$n\gg k\f$. Solving
  * for the new coefficients is then a matter of back and forward subsitution
  * which will take roughly \f$2(m+n)^2\f$ flops. This is better than solving
- * the system from scratch which takes roughly \f$(2/3)(m+n)^3\f$ flops. 
- * 
- * In order to compute the initial decomposition we need at least m initial points 
+ * the system from scratch which takes roughly \f$(2/3)(m+n)^3\f$ flops.
+ *
+ * In order to compute the initial decomposition we need at least m initial points
  * that serve as "outer" points that are needed to uniquely fit the polynomial
  * tail and to construct the initial LU-decomposition with pivoting. No pivoting
  * is needed from that point.
- * 
+ *
  * The domain is automatically scaled to the unit box to avoid scaling
  * issues since the kernel and polynomial tail scale differently.
  */
@@ -120,7 +122,7 @@ class radialBasisFunction : public surrogate
   public:
     /*!
      * \brief Construct a new radialBasisFunction object
-     * 
+     *
      * \param NumDimensions       Number of dimensions
      * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param DampingCoefficient  Damping coefficient (non-negative)
@@ -129,7 +131,7 @@ class radialBasisFunction : public surrogate
 
     /*!
      * \brief Construct a new radialBasisFunction object
-     * 
+     *
      * \param NumDimensions       Number of dimensions
      * \param MaxNumPoints        Capacity Maximum number of possible points
      * \param LowerBounds         Lower variable bounds
@@ -140,39 +142,39 @@ class radialBasisFunction : public surrogate
 
     /*!
      * \brief Move constructor, construct a new radialBasisFunction object
-     * 
+     *
      * \param other radialBasisFunction object
      */
     explicit radialBasisFunction(radialBasisFunction<kernelType, polynomialTailType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other radialBasisFunction object
-     * 
+     *
      * \returns radialBasisFunction& radialBasisFunction object
      */
     radialBasisFunction<kernelType, polynomialTailType> &operator=(radialBasisFunction<kernelType, polynomialTailType> &&other);
 
     /*!
      * \brief Destroy the radialBasisFunction object
-     * 
+     *
      */
     ~radialBasisFunction();
 
     /*!
      * \brief Method for resetting the surrogate model
-     * 
+     *
      */
     inline void reset() override;
 
   protected:
     /*!
      * \brief Set the Points object and computes the initial LU decomposition
-     * 
+     *
      * \param Points          Initial points
      * \param FunctionValues  Values at the initial points
-     * 
+     *
      * \throws std::runtime_error if the number of points are less than the dimension of the polynomial space
      */
     bool setPoints(EMatrixXd const &Points, EVectorXd const &FunctionValues);
@@ -180,167 +182,167 @@ class radialBasisFunction : public surrogate
   public:
     /*!
      * \brief Method for getting the current number of points
-     * 
+     *
      * \returns int Current number of points
      */
     inline int numPoints() const override;
 
     /*!
      * \brief Method for getting the current number of points
-     * 
+     *
      * \returns int Current number of points
      */
     inline int getNumPoints() const override;
 
     /*!
-     * \brief Get the Number of Dimensions 
-     * 
+     * \brief Get the Number of Dimensions
+     *
      * \returns int Number of dimensions
      */
     inline int dim() const override;
 
     /*!
-     * \brief Get the Number of Dimensions 
-     * 
+     * \brief Get the Number of Dimensions
+     *
      * \returns int Number of dimensions
      */
     inline int getNumDimensions() const override;
 
     /*!
      * \brief Method for getting the current points
-     * 
+     *
      * \returns EMatrixXd Current points
      */
     inline EMatrixXd getCurrentPoints() const override;
 
     /*!
      * \brief Method for getting current point number i (0 is the first)
-     * 
+     *
      * \param i Index number
-     * 
+     *
      * \returns EVectorXd Point at index number i
      */
     inline EVectorXd getCurrentPoints(int i) const override;
 
     /*!
      * \brief Method for getting the values of the current points
-     * 
-     * \returns EVectorXd Values of current points 
+     *
+     * \returns EVectorXd Values of current points
      */
     inline EVectorXd getFunctionValues() const override;
 
     /*!
      * \brief Method for getting the value of current point number i (0 is the first)
-     * 
+     *
      * \param i Index number
-     * 
-     * \returns double Value of point at index number i 
+     *
+     * \returns double Value of point at index number i
      */
     inline double getFunctionValues(int i) const override;
 
     /*!
      * \brief Get the Interpolation Coefficients object
-     * 
+     *
      * Method for getting the radial basis function interpolation coefficients
-     * 
+     *
      * \returns EVectorXd Interpolation coefficients.
      */
     inline EVectorXd getInterpolationCoefficients();
 
     /*!
      * \brief Method for adding one points with known value
-     * 
+     *
      * \param Point          Point to be added
      * \param FunctionValue  Function value at the point
-     * 
+     *
      * \throws std::runtime_error if capacity is exceeded
      */
     bool addPoint(EVectorXd const &Point, double const FunctionValue) override;
 
     /*!
      * \brief Method for adding multiple points with known values
-     * 
-     * \param Points          Points to be added 
+     *
+     * \param Points          Points to be added
      * \param FunctionValues  Function values at the points
-     * 
+     *
      * \throws std::runtime_error if one point is supplied or if capacity is exceeded
      */
     bool addPoint(EMatrixXd const &Points, EVectorXd const &FunctionValues) override;
 
     /*!
      * \brief Method for evaluating the surrogate model at a point
-     * 
+     *
      * \param Point  Point for which to evaluate the surrogate model
-     * 
+     *
      * \returns double Value of the surrogate model at the point
-     * 
+     *
      * \throws std::runtime_error if coefficients aren't updated
      */
     double evaluate(EVectorXd const &Point) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at a point with known distances
-     * 
+     *
      * \param Point      Point for which to evaluate the surrogate model
      * \param Distances  Distances between the interpolation nodes and the point
-     * 
+     *
      * \returns double Value of the surrogate model at the point
-     * 
+     *
      * \throws std::runtime_error if coefficients aren't updated
      */
     double evaluate(EVectorXd const &Point, EVectorXd const &Distances) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points
-     * 
+     *
      * \param Points Points for which to evaluate the surrogate model
-     * 
+     *
      * \returns EVectorXd Values of the surrogate model at the points
-     * 
+     *
      * \throws std::runtime_error if coefficients aren't updated
      */
     EVectorXd evaluate(EMatrixXd const &Points) const override;
 
     /*!
      * \brief Method for evaluating the surrogate model at multiple points with known distances
-     * 
+     *
      * \param Points     Points for which to evaluate the surrogate model
      * \param Distances  Distances between the interpolation nodes and the points
-     * 
+     *
      * \returns EVectorXd Value of the surrogate model at the point
-     * 
+     *
      * \throws std::runtime_error if coefficients aren't updated
      */
     EVectorXd evaluate(EMatrixXd const &Points, EMatrixXd const &Distances) const override;
 
     /*!
      * \brief Method for evaluating the derivative of the surrogate model at a point
-     * 
+     *
      * \param Point  Point for which to evaluate the derivative of the surrogate model
-     * 
+     *
      * \returns EVectorXd Value of the derivative of the surrogate model at the point
-     * 
+     *
      * \throws std::runtime_error if coefficients aren't updated
      */
     EVectorXd deriv(EVectorXd const &Point) const override;
 
     /*!
      * \brief Method for fitting the surrogate model
-     * 
+     *
      */
     bool fit() override;
 
   protected:
     /*!
      * \brief Delete a radialBasisFunction object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     radialBasisFunction(radialBasisFunction<kernelType, polynomialTailType> const &) = delete;
 
     /*!
      * \brief Delete a radialBasisFunction object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     radialBasisFunction<kernelType, polynomialTailType> &operator=(radialBasisFunction<kernelType, polynomialTailType> const &) = delete;
@@ -373,7 +375,7 @@ class radialBasisFunction : public surrogate
     /*! The polynomial tail */
     polynomialTailType tail;
 
-    /*! 
+    /*!
      * The LU decomposition matrix: <br>
      * The upper-triangular part is U, the unit-lower-triangular part is L.
      */
@@ -876,10 +878,10 @@ bool radialBasisFunction<kernelType, polynomialTailType>::fit()
  * \ingroup Surrogate_Module
  *
  * \brief Capped radial basis function interpolant
- * 
+ *
  * \tparam kernelType         Radial basis function kernel type (Cubic is default)
  * \tparam polynomialTailType Polynomial tail type (Linear is default)
- * 
+ *
  * This is a capped version of the RBF interpolant that is useful in cases
  * where there are large function values. This version replaces all of the
  * function values that are above the median of the function values by
@@ -891,7 +893,7 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
   public:
     /*!
      * \brief Construct a new radialBasisFunctionCap object
-     * 
+     *
      * \param MaxNumPoints        Capacity, maximum number of points
      * \param NumDimensions       Number of dimensions
      * \param DampingCoefficient  Damping coefficient (non-negative)
@@ -902,7 +904,7 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
 
     /*!
      * \brief Construct a new radialBasisFunctionCap object
-     * 
+     *
      * \param MaxNumPoints        Capacity, maximum number of points
      * \param NumDimensions       Number of dimensions
      * \param LowerBounds         Lower variable bounds
@@ -917,43 +919,43 @@ class radialBasisFunctionCap : public radialBasisFunction<kernelType, polynomial
 
     /*!
      * \brief Move constructor, construct a new radialBasisFunctionCap object
-     * 
+     *
      * \param other radialBasisFunctionCap object
      */
     explicit radialBasisFunctionCap(radialBasisFunctionCap<kernelType, polynomialTailType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other radialBasisFunctionCap object
-     * 
+     *
      * \returns radialBasisFunctionCap& radialBasisFunctionCap object
      */
     radialBasisFunctionCap<kernelType, polynomialTailType> &operator=(radialBasisFunctionCap<kernelType, polynomialTailType> &&other);
 
     /*!
      * \brief Destroy the radialBasisFunctionCap object
-     * 
+     *
      */
     ~radialBasisFunctionCap();
 
     /*!
      * \brief Method for fitting the surrogate model
-     * 
+     *
      */
     bool fit();
 
   protected:
     /*!
      * \brief Delete a radialBasisFunctionCap object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     radialBasisFunctionCap(radialBasisFunctionCap<kernelType, polynomialTailType> const &) = delete;
 
     /*!
      * \brief Delete a radialBasisFunctionCap object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
      */
     radialBasisFunctionCap<kernelType, polynomialTailType> &operator=(radialBasisFunctionCap<kernelType, polynomialTailType> const &) = delete;
