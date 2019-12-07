@@ -51,7 +51,7 @@ bool init()
     umuq::io f;
     {
         // open the data file
-        EXPECT_TRUE(f.openFile("./function/data.txt"));
+        EXPECT_TRUE(f.openFile("./data.txt"));
 
         //Count number of data points (lines in the file)
         int ndata = 0;
