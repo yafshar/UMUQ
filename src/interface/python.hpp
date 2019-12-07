@@ -12,8 +12,23 @@
 #endif // _AIX
 
 // Include Python.h before any standard headers are included
+#ifdef PY_SSIZE_T_CLEAN
+#undef PY_SSIZE_T_CLEAN
+#endif // PY_SSIZE_T_CLEAN
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <frameobject.h>
+#include <pythread.h>
+
+#ifdef isalnum
+#undef isalnum
+#undef isalpha
+#undef islower
+#undef isspace
+#undef isupper
+#undef tolower
+#undef toupper
+#endif // isalnum
 
 // To avoid the compiler warning
 #ifdef NPY_NO_DEPRECATED_API
@@ -39,10 +54,56 @@
 #ifdef PyInt_FromString
 #undef PyInt_FromString
 #endif // PyInt_FromString
+#ifdef PyMethod_Check
+#undef PyMethod_Check
+#endif // PyMethod_Check
+#ifdef PyMethod_GET_FUNCTION
+#undef PyMethod_GET_FUNCTION
+#endif // PyMethod_GET_FUNCTION
+#ifdef PyString_Check
+#undef PyString_Check
+#endif // PyString_Check
+#ifdef PyString_FromStringAndSize
+#undef PyString_FromStringAndSize
+#endif // PyString_FromStringAndSize
+#ifdef PyString_AsStringAndSize
+#undef PyString_AsStringAndSize
+#endif // PyString_AsStringAndSize
+#ifdef PyString_Size
+#undef PyString_Size
+#endif // PyString_Size
+#ifdef PyInt_Check
+#undef PyInt_Check
+#endif // PyInt_Check
+#ifdef PyLong_AsLong
+#undef PyLong_AsLong
+#endif // PyLong_AsLong
+#ifdef PyInt_FromSsize_t
+#undef PyInt_FromSsize_t
+#endif // PyInt_FromSsize_t
+#ifdef PyInt_FromSize_t
+#undef PyInt_FromSize_t
+#endif // PyInt_FromSize_t
+#ifdef PySliceObject
+#undef PySliceObject
+#endif // PySliceObject
 #define PyString_FromString PyUnicode_FromString
 #define PyString_AsString PyUnicode_AsUTF8
+// #define PyString_AsString PyBytes_AsString
 #define PyInt_FromLong PyLong_FromLong
 #define PyInt_FromString PyLong_FromString
+#define PyMethod_Check PyInstanceMethod_Check
+#define PyMethod_GET_FUNCTION PyInstanceMethod_GET_FUNCTION
+// #define PyMethod_New(ptr, nullptr, class_) PyInstanceMethod_New(ptr)
+#define PyString_Check PyBytes_Check
+#define PyString_FromStringAndSize PyBytes_FromStringAndSize
+#define PyString_AsStringAndSize PyBytes_AsStringAndSize
+#define PyString_Size PyBytes_Size
+#define PyInt_Check PyLong_Check
+#define PyLong_AsLong PyLong_AsLongLong
+#define PyInt_FromSsize_t PyLong_FromSsize_t
+#define PyInt_FromSize_t PyLong_FromSize_t
+#define PySliceObject PyObject
 #endif // PYTHON_MAJOR_VERSION >= 3
 
 #include <complex>
@@ -202,6 +263,7 @@ using PyObjectPairChar = std::pair<char const *, PyObject *>;
  *
  */
 using PyObjectVector = std::vector<PyObject *>;
+static PyObjectVector const PyObjectVectorEmpty(PyObjectVector{});
 
 /*!
  * \ingroup Python_Module
@@ -210,6 +272,7 @@ using PyObjectVector = std::vector<PyObject *>;
  *
  */
 using PyObjectPairStringVector = std::vector<PyObjectPairString>;
+static PyObjectPairStringVector const PyObjectPairStringVectorEmpty(PyObjectPairStringVector{});
 
 /*!
  * \ingroup Python_Module
@@ -218,6 +281,7 @@ using PyObjectPairStringVector = std::vector<PyObjectPairString>;
  *
  */
 using PyObjectPairCharVector = std::vector<PyObjectPairChar>;
+static PyObjectPairCharVector const PyObjectPairCharVectorEmpty(PyObjectPairCharVector{});
 
 /*!
  * \ingroup Python_Module
@@ -378,22 +442,28 @@ inline PyObject *PyObjectConstruct(PyObject *data)
  */
 PyObject *PyGetAttribute(PyObject *module, std::string const &moduleName)
 {
+  // Check the name size
+  if (!moduleName.size())
+  {
+    UMUQWARNING("The input moduleName is empty.");
+    return NULL;
+  }
   PyObject *object = module;
   std::size_t find_dot = 0;
   if (moduleName[0] != '.')
   {
     std::size_t const next_dot = moduleName.find('.', 0);
-    std::string const attr = moduleName.substr(0, next_dot);
-    // Retrieve an attribute named 'attr' from object 'object'.
-    object = PyObject_GetAttrString(object, attr.c_str()); // Return value: New reference.
+    std::string const attr_name = moduleName.substr(0, next_dot);
+    // Retrieve an attribute named 'attr_name' from object 'object'.
+    object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
     find_dot = next_dot;
   }
   while (find_dot != std::string::npos)
   {
     std::size_t const next_dot = moduleName.find('.', find_dot + 1);
-    std::string const attr = moduleName.substr(find_dot + 1, next_dot - (find_dot + 1));
-    // Retrieve an attribute named 'attr' from object 'object'.
-    object = PyObject_GetAttrString(object, attr.c_str()); // Return value: New reference.
+    std::string const attr_name = moduleName.substr(find_dot + 1, next_dot - (find_dot + 1));
+    // Retrieve an attribute named 'attr_name' from object 'object'.
+    object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
     find_dot = next_dot;
   }
   return object;
@@ -416,8 +486,8 @@ PyObject *PyGetAttribute(PyObject *module, std::string const &moduleName)
  * checked.
  */
 PyObject *PyCallFunctionObject(PyObject *function,
-                               PyObjectVector const &pyObjectVector,
-                               PyObjectPairStringVector const &pyObjectPairStringVector)
+                               PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
+                               PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
   // Determine if the function is callable.
   // Return 1 if the function is callable and 0 otherwise. (always succeeds.)
@@ -426,59 +496,77 @@ PyObject *PyCallFunctionObject(PyObject *function,
     UMUQFAILRETURNNULL("The input function isn't callable.");
   }
 
-  // Build tuple
+  // If there is an extra argument or keywords
   Py_ssize_t const pyObjectVectorSize = static_cast<Py_ssize_t>(pyObjectVector.size());
+  Py_ssize_t const pyObjectPairStringVectorSize = static_cast<Py_ssize_t>(pyObjectPairStringVector.size());
 
-  // Return a new tuple object of size 'pyObjectVectorSize',
-  // or NULL on failure.
-  PyObject *tuple = PyTuple_New(pyObjectVectorSize); // Return value: New reference.
-  if (tuple)
+  if (!pyObjectVectorSize && !pyObjectPairStringVectorSize)
   {
-    for (Py_ssize_t pos = 0; pos < pyObjectVectorSize; ++pos)
+    // Call a callable Python object, with args can be NULL.
+    PyObject *res = PyObject_CallObject(function, NULL);
+    if (!res)
     {
-      PyObject *obj = pyObjectVector[pos];
-      // Increment the reference count for object 'obj'
-      Py_XINCREF(obj);
-      // Insert a reference to object 'obj' at position 'pos' of the tuple
-      // pointed to by 'tuple'.
-      PyTuple_SetItem(tuple, pos, obj); // It steals a reference to arg
+      if (PyErr_Occurred())
+      {
+        UMUQFAILRETURNNULL("Exception in calling a python function.");
+      }
+      UMUQFAILRETURNNULL("Failed to call the function.");
     }
+    return res;
   }
   else
   {
-    UMUQFAILRETURNNULL("Couldn't create a python tuple.");
-  }
-
-  // Build pyObjectPairStringVector dict
-  // Return a new empty dictionary, or NULL on failure.
-  PyObject *dict = PyDict_New();
-  if (dict)
-  {
-    for (auto keyval : pyObjectPairStringVector)
+    // Return a new tuple object of size 'pyObjectVectorSize',
+    // or NULL on failure.
+    PyObject *tuple = PyTuple_New(pyObjectVectorSize); // Return value: New reference.
+    if (tuple)
     {
-      // Insert 'keyval.second' into the dictionary 'dict' using
-      // 'keyval.first' as a key.
-      PyDict_SetItemString(dict, keyval.first.c_str(), keyval.second);
+      for (Py_ssize_t pos = 0; pos < pyObjectVectorSize; ++pos)
+      {
+        PyObject *obj = pyObjectVector[pos];
+        // Increment the reference count for object 'obj'
+        Py_XINCREF(obj);
+        // Insert a reference to object 'obj' at position 'pos' of the tuple
+        // pointed to by 'tuple'.
+        PyTuple_SetItem(tuple, pos, obj); // It steals a reference to arg
+      }
     }
-  }
-  else
-  {
-    UMUQFAILRETURNNULL("Couldn't create a python dictionary.");
-  }
-
-  // Call a callable Python object, with arguments given by the tuple args,
-  // and named arguments given by the dictionary kwargs. Return the result
-  // of the call on success, or raise an exception and return NULL on failure.
-  PyObject *res = PyObject_Call(function, tuple, dict);
-  if (!res)
-  {
-    if (PyErr_Occurred())
+    else
     {
-      UMUQFAILRETURNNULL("Exception in calling a python function.");
+      UMUQFAILRETURNNULL("Couldn't create a python tuple.");
     }
-    UMUQFAILRETURNNULL("Failed to call the function.");
+
+    // Build pyObjectPairStringVector dict
+    // Return a new empty dictionary, or NULL on failure.
+    PyObject *dict = PyDict_New();
+    if (dict)
+    {
+      for (auto keyval : pyObjectPairStringVector)
+      {
+        // Insert 'keyval.second' into the dictionary 'dict' using
+        // 'keyval.first' as a key.
+        PyDict_SetItemString(dict, keyval.first.c_str(), keyval.second);
+      }
+    }
+    else
+    {
+      UMUQFAILRETURNNULL("Couldn't create a python dictionary.");
+    }
+
+    // Call a callable Python object, with arguments given by the tuple args,
+    // and named arguments given by the dictionary kwargs. Return the result
+    // of the call on success, or raise an exception and return NULL on failure.
+    PyObject *res = PyObject_Call(function, tuple, dict);
+    if (!res)
+    {
+      if (PyErr_Occurred())
+      {
+        UMUQFAILRETURNNULL("Exception in calling a python function.");
+      }
+      UMUQFAILRETURNNULL("Failed to call the function.");
+    }
+    return res;
   }
-  return res;
 }
 
 /*!
@@ -502,8 +590,8 @@ PyObject *PyCallFunctionObject(PyObject *function,
  *
  */
 PyObject *PyCallFunctionName(std::string const &functionName,
-                             PyObjectVector const &pyObjectVector,
-                             PyObjectPairStringVector const &pyObjectPairStringVector)
+                             PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
+                             PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
   // Check the name size
   if (!functionName.size())
@@ -582,13 +670,13 @@ PyObject *PyCallFunctionName(std::string const &functionName, Args... args)
  */
 PyObject *PyCallFunctionNameFromModule(std::string const &functionName,
                                        PyObject *module,
-                                       PyObjectVector const &pyObjectVector,
-                                       PyObjectPairStringVector const &pyObjectPairStringVector)
+                                       PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
+                                       PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
   PyObject *function = PyGetAttribute(module, functionName);
   if (!function)
   {
-    UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
+    UMUQFAILRETURNNULL("Failed to retrieve an attribute named '", functionName, "' from the 'module' object.");
   }
   return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
@@ -615,8 +703,8 @@ PyObject *PyCallFunctionNameFromModule(std::string const &functionName, PyObject
  */
 PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName,
                                            std::string const &moduleName,
-                                           PyObjectVector const &pyObjectVector,
-                                           PyObjectPairStringVector const &pyObjectPairStringVector)
+                                           PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
+                                           PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
   // Check the name size
   if (!functionName.size())
