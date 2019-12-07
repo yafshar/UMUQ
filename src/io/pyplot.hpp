@@ -2,61 +2,10 @@
 #define UMUQ_PYPLOT_H
 #ifdef HAVE_PYTHON
 
-#if HAVE_PYTHON == 1
-#ifdef _POSIX_C_SOURCE
-#undef _POSIX_C_SOURCE
-#endif // _POSIX_C_SOURCE
-#ifndef _AIX
-#ifdef _XOPEN_SOURCE
-#undef _XOPEN_SOURCE
-#endif // _XOPEN_SOURCE
-#endif // _AIX
-
-// Include Python.h before any standard headers are included
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-// To avoid the compiler warning
-#ifdef NPY_NO_DEPRECATED_API
-#undef NPY_NO_DEPRECATED_API
-#endif // NPY_NO_DEPRECATED_API
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <numpy/arrayobject.h>
-
-#include "core/core.hpp"
 #include "interface/python.hpp"
-
-// Prevent multiple conflicting definitions of swab from stdlib.h and unistd.h
-#if defined(__sun) || defined(sun)
-#if defined(_XPG4)
-#undef _XPG4
-#endif // _XPG4
-#if defined(_XPG3)
-#undef _XPG3
-#endif // _XPG3
-#endif // __sun
-
-#if PYTHON_MAJOR_VERSION >= 3
-#ifdef PyString_FromString
-#undef PyString_FromString
-#endif // PyString_FromString
-#ifdef PyString_AsString
-#undef PyString_AsString
-#endif // PyString_AsString
-#ifdef PyInt_FromLong
-#undef PyInt_FromLong
-#endif // PyInt_FromLong
-#ifdef PyInt_FromString
-#undef PyInt_FromString
-#endif // PyInt_FromString
-#define PyString_FromString PyUnicode_FromString
-#define PyString_AsString PyUnicode_AsUTF8
-#define PyInt_FromLong PyLong_FromLong
-#define PyInt_FromString PyLong_FromString
-#endif // PYTHON_MAJOR_VERSION >= 3
-
-#include <complex>
-#endif // HAVE_PYTHON == 1
+#include "core/core.hpp"
+#include "datatype/npydatatype.hpp"
+#include "misc/arraywrapper.hpp"
 
 #include <cstddef>
 
