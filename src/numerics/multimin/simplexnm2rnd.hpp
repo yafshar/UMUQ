@@ -34,7 +34,7 @@ inline namespace multimin
 template <typename DataType>
 class simplexNM2Rnd : public functionMinimizer<DataType>
 {
-public:
+  public:
     /*!
      * \brief Construct a new simplex N M2 Rnd object
      *
@@ -140,7 +140,7 @@ public:
      */
     DataType computeSize();
 
-private:
+  private:
     /*!
      * \class submatrix
      *
@@ -182,7 +182,7 @@ private:
         int n2;
     };
 
-private:
+  private:
     /*!
      * \brief Uniform RNG
      *
@@ -197,7 +197,7 @@ private:
      */
     inline DataType *operator[](std::size_t const index) const;
 
-private:
+  private:
     //! Simplex corner points (Matrix of size \f$ (n+1) \times n \f$
     std::vector<DataType> x1;
 

@@ -29,7 +29,7 @@ inline namespace multimin
 template <typename DataType>
 class conjugatePr : public differentiableFunctionMinimizer<DataType>
 {
-public:
+  public:
     /*!
      * \brief Construct a new conjugate Pr object
      *
@@ -78,7 +78,7 @@ public:
      */
     inline bool restart();
 
-private:
+  private:
     //! Iteration
     int iter;
 

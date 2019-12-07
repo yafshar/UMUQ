@@ -30,7 +30,7 @@ inline namespace multimin
 template <typename DataType>
 class bfgs : public differentiableFunctionMinimizer<DataType>
 {
-public:
+  public:
     /*!
      * \brief Construct a new bfgs object
      *
@@ -79,7 +79,7 @@ public:
      */
     inline bool restart();
 
-private:
+  private:
     //! Iteration
     int iter;
 
