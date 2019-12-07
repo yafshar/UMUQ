@@ -2,12 +2,8 @@
 #define UMUQ_DENSITYFUNCTION_H
 
 #include "core/core.hpp"
-#include "misc/arraywrapper.hpp"
-#include "numerics/factorial.hpp"
-#include "numerics/eigenlib.hpp"
-#include "datatype/functiontype.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "umuqfunction.hpp"
-#include "numerics/random/psrandom.hpp"
 
 #include <vector>
 #include <utility>
@@ -46,135 +42,135 @@ inline namespace density
 template <typename DataType, class FunctionType>
 class densityFunction : public umuqFunction<DataType, FunctionType>
 {
-public:
-  /*!
-   * \brief Construct a new density Function object
-   *
-   * \param Name Distribution name
-   */
-  explicit densityFunction(char const *Name = "");
+  public:
+    /*!
+     * \brief Construct a new density Function object
+     *
+     * \param Name Distribution name
+     */
+    explicit densityFunction(char const *Name = "");
 
-  /*!
-   * \brief Construct a new density Function object
-   *
-   * \param Params     Parameters of density Function object
-   * \param NumParams  Number of parameters
-   * \param Name       Distribution name
-   */
-  densityFunction(DataType const *Params, int const NumParams, char const *Name = "");
+    /*!
+     * \brief Construct a new density Function object
+     *
+     * \param Params     Parameters of density Function object
+     * \param NumParams  Number of parameters
+     * \param Name       Distribution name
+     */
+    densityFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
-  /*!
-   * \brief Construct a new density Function object
-   *
-   * \param Params     Parameters of density Function object
-   * \param NumParams  Number of parameters
-   * \param Name       Distribution name
-   */
-  densityFunction(std::vector<DataType> const &Params, char const *Name = "");
+    /*!
+     * \brief Construct a new density Function object
+     *
+     * \param Params     Parameters of density Function object
+     * \param NumParams  Number of parameters
+     * \param Name       Distribution name
+     */
+    densityFunction(std::vector<DataType> const &Params, char const *Name = "");
 
-  /*!
-   * \brief Construct a new density Function object
-   *
-   * \param Params1     Parameters of density Function object
-   * \param Params2     Parameters of density Function object
-   * \param NumParams   Number of parameters
-   * \param Name        Distribution name
-   */
-  densityFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name = "");
+    /*!
+     * \brief Construct a new density Function object
+     *
+     * \param Params1     Parameters of density Function object
+     * \param Params2     Parameters of density Function object
+     * \param NumParams   Number of parameters
+     * \param Name        Distribution name
+     */
+    densityFunction(DataType const *Params1, DataType const *Params2, int const NumParams, char const *Name = "");
 
-  /*!
-   * \brief Construct a new density Function object
-   *
-   * \param Params1     Parameters of density Function object
-   * \param Params2     Parameters of density Function object
-   * \param NumParams   Number of parameters
-   * \param Name        Distribution name
-   */
-  densityFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, char const *Name = "");
+    /*!
+     * \brief Construct a new density Function object
+     *
+     * \param Params1     Parameters of density Function object
+     * \param Params2     Parameters of density Function object
+     * \param NumParams   Number of parameters
+     * \param Name        Distribution name
+     */
+    densityFunction(std::vector<DataType> const &Params1, std::vector<DataType> const &Params2, char const *Name = "");
 
-  /*!
-   * \brief Move constructor, construct a new density Function object
-   *
-   * \param other densityFunction object
-   */
-  densityFunction(densityFunction<DataType, FunctionType> &&other);
+    /*!
+     * \brief Move constructor, construct a new density Function object
+     *
+     * \param other densityFunction object
+     */
+    densityFunction(densityFunction<DataType, FunctionType> &&other);
 
-  /*!
-   * \brief Move assignment operator
-   *
-   * \param other densityFunction object
-   */
-  densityFunction<DataType, FunctionType> &operator=(densityFunction<DataType, FunctionType> &&other);
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other densityFunction object
+     */
+    densityFunction<DataType, FunctionType> &operator=(densityFunction<DataType, FunctionType> &&other);
 
-  /*!
-   * \brief Destroy the density Function object
-   *
-   */
-  ~densityFunction();
+    /*!
+     * \brief Destroy the density Function object
+     *
+     */
+    ~densityFunction();
 
-public:
-  /*!
-   * \brief Log of density function
-   *
-   * \returns the function value (Log of density function)
-   */
-  FunctionType lf;
+  public:
+    /*!
+     * \brief Log of density function
+     *
+     * \returns the function value (Log of density function)
+     */
+    FunctionType lf;
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x Vector of random samples
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(DataType *x);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x Vector of random samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(DataType *x);
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x Vector of random samples
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(std::vector<DataType> &x);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x Vector of random samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(std::vector<DataType> &x);
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x Vector of random samples
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(EVectorX<DataType> &x);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x Vector of random samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(EVectorX<DataType> &x);
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x         Vector of random samples
-   * \param nSamples  Number of sample vectors
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(DataType *x, int const nSamples);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x         Vector of random samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(DataType *x, int const nSamples);
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x Vector of random samples
-   * \param nSamples  Number of sample vectors
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(std::vector<DataType> &x, int const nSamples);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x Vector of random samples
+     * \param nSamples  Number of sample vectors
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(std::vector<DataType> &x, int const nSamples);
 
-  /*!
-   * \brief Create random samples based on the distribution
-   *
-   * \param x Matrix of random samples
-   *
-   * \return false If Random Number Generator object is not assigned
-   */
-  virtual void sample(EMatrixX<DataType> &x);
+    /*!
+     * \brief Create random samples based on the distribution
+     *
+     * \param x Matrix of random samples
+     *
+     * \return false If Random Number Generator object is not assigned
+     */
+    virtual void sample(EMatrixX<DataType> &x);
 };
 
 template <typename DataType, class FunctionType>
@@ -204,45 +200,45 @@ densityFunction<DataType, FunctionType>::densityFunction(densityFunction<DataTyp
 template <typename DataType, class FunctionType>
 densityFunction<DataType, FunctionType> &densityFunction<DataType, FunctionType>::operator=(densityFunction<DataType, FunctionType> &&other)
 {
-  umuqFunction<DataType, FunctionType>::operator=(std::move(other));
-  lf = std::move(other.lf);
-  return *this;
+    umuqFunction<DataType, FunctionType>::operator=(std::move(other));
+    lf = std::move(other.lf);
+    return *this;
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(DataType *x)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(std::vector<DataType> &x)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(EVectorX<DataType> &x)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(DataType *x, int const nSamples)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(std::vector<DataType> &x, int const nSamples)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 template <typename DataType, class FunctionType>
 void densityFunction<DataType, FunctionType>::sample(EMatrixX<DataType> &x)
 {
-  UMUQFAIL("Not implemented!");
+    UMUQFAIL("Not implemented!");
 }
 
 } // namespace density

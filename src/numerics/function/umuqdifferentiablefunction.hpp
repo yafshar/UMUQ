@@ -25,99 +25,99 @@ template <typename DataType,
           class FunctionDerivativeFunctionType = std::function<void(DataType const *, DataType const *, DataType *, DataType *)>>
 class umuqDifferentiableFunction : public umuqFunction<DataType, FunctionType>
 {
-public:
-  /*!
-   * \brief Construct a new umuqDifferentiableFunction object
-   *
-   * \param Name  Function name
-   */
-  explicit umuqDifferentiableFunction(char const *Name = "");
+  public:
+    /*!
+     * \brief Construct a new umuqDifferentiableFunction object
+     *
+     * \param Name  Function name
+     */
+    explicit umuqDifferentiableFunction(char const *Name = "");
 
-  /*!
-   * \brief Construct a new umuqDifferentiableFunction object
-   *
-   * \param nDim  Number of dimensions (Number of parameters)
-   * \param Name  Function name
-   */
-  umuqDifferentiableFunction(int const nDim, char const *Name = "");
+    /*!
+     * \brief Construct a new umuqDifferentiableFunction object
+     *
+     * \param nDim  Number of dimensions (Number of parameters)
+     * \param Name  Function name
+     */
+    umuqDifferentiableFunction(int const nDim, char const *Name = "");
 
-  /*!
-   * \brief Construct a new umuqDifferentiableFunction object
-   *
-   * \param Params    Input parameters of the Function object
-   * \param NumParams Number of dimensions (Number of parameters)
-   * \param Name      Function name
-   */
-  umuqDifferentiableFunction(DataType const *Params, int const NumParams, char const *Name = "");
+    /*!
+     * \brief Construct a new umuqDifferentiableFunction object
+     *
+     * \param Params    Input parameters of the Function object
+     * \param NumParams Number of dimensions (Number of parameters)
+     * \param Name      Function name
+     */
+    umuqDifferentiableFunction(DataType const *Params, int const NumParams, char const *Name = "");
 
-  /*!
-   * \brief Construct a new umuqDifferentiableFunction object
-   *
-   * \param Params  Input parameters of the Function object
-   * \param Name    Function name
-   */
-  umuqDifferentiableFunction(std::vector<DataType> const &Params, char const *Name = "");
+    /*!
+     * \brief Construct a new umuqDifferentiableFunction object
+     *
+     * \param Params  Input parameters of the Function object
+     * \param Name    Function name
+     */
+    umuqDifferentiableFunction(std::vector<DataType> const &Params, char const *Name = "");
 
-  /*!
-   * \brief Destroy the umuq Differentiable Function object
-   *
-   */
-  ~umuqDifferentiableFunction();
+    /*!
+     * \brief Destroy the umuq Differentiable Function object
+     *
+     */
+    ~umuqDifferentiableFunction();
 
-  /*!
-   * \brief Move constructor, Construct a new umuqDifferentiableFunction object
-   *
-   * \param other umuqDifferentiableFunction object
-   */
-  umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
+    /*!
+     * \brief Move constructor, Construct a new umuqDifferentiableFunction object
+     *
+     * \param other umuqDifferentiableFunction object
+     */
+    umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
 
-  /*!
-   * \brief Move assignment operator
-   *
-   */
-  umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
+    /*!
+     * \brief Move assignment operator
+     *
+     */
+    umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other);
 
-  /*!
-   * \brief Checks whether *this stores a callable function target, i.e. is not empty.
-   *
-   * \return true   If it stores a callable function target at f
-   * \return false
-   */
-  explicit operator bool() const noexcept;
+    /*!
+     * \brief Checks whether *this stores a callable function target, i.e. is not empty.
+     *
+     * \return true   If it stores a callable function target at f
+     * \return false
+     */
+    explicit operator bool() const noexcept;
 
-protected:
-  /*!
-   * \brief Delete an umuqDifferentiableFunction object copy construction
-   *
-   * Avoiding implicit generation of the copy constructor.
-   */
-  umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
+  protected:
+    /*!
+     * \brief Delete an umuqDifferentiableFunction object copy construction
+     *
+     * Avoiding implicit generation of the copy constructor.
+     */
+    umuqDifferentiableFunction(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
 
-  /*!
-   * \brief Delete a umuqDifferentiableFunction object assignment
-   *
-   * Avoiding implicit copy assignment.
-   *
-   * \returns umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>&
-   */
-  umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
+    /*!
+     * \brief Delete a umuqDifferentiableFunction object assignment
+     *
+     * Avoiding implicit copy assignment.
+     *
+     * \returns umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>&
+     */
+    umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> const &) = delete;
 
-public:
-  /*!
-   * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function. \sa umuq::umuqFunction::f.
-   *
-   * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla {f} = \frac{\partial f(x)}{\partial x_i} \f$)
-   */
-  DerivativeFunctionType df;
+  public:
+    /*!
+     * \brief A general-purpose polymorphic function wrapper which calculates the gradient of the function. \sa umuq::umuqFunction::f.
+     *
+     * Computes the gradient of the function (it computes the n-dimensional gradient \f$ \nabla {f} = \frac{\partial f(x)}{\partial x_i} \f$)
+     */
+    DerivativeFunctionType df;
 
-  /*!
-   * \brief A general-purpose polymorphic function wrapper which calculates both the function value and it's derivative together.
-   *
-   * It uses a provided parametric function of n variables to operate on and also
-   * a function which calculates the gradient of the function. <br>
-   * It is faster to compute the function and its derivative at the same time.
-   */
-  FunctionDerivativeFunctionType fdf;
+    /*!
+     * \brief A general-purpose polymorphic function wrapper which calculates both the function value and it's derivative together.
+     *
+     * It uses a provided parametric function of n variables to operate on and also
+     * a function which calculates the gradient of the function. <br>
+     * It is faster to compute the function and its derivative at the same time.
+     */
+    FunctionDerivativeFunctionType fdf;
 };
 
 template <typename DataType, class FunctionType, class DerivativeFunctionType, class FunctionDerivativeFunctionType>
@@ -153,16 +153,16 @@ umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, Funct
 template <typename DataType, class FunctionType, class DerivativeFunctionType, class FunctionDerivativeFunctionType>
 umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>::operator=(umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType> &&other)
 {
-  umuqFunction<DataType, FunctionType>::operator=(std::move(other));
-  df = std::move(other.df);
-  fdf = std::move(other.fdf);
-  return *this;
+    umuqFunction<DataType, FunctionType>::operator=(std::move(other));
+    df = std::move(other.df);
+    fdf = std::move(other.fdf);
+    return *this;
 }
 
 template <typename DataType, class FunctionType, class DerivativeFunctionType, class FunctionDerivativeFunctionType>
 umuqDifferentiableFunction<DataType, FunctionType, DerivativeFunctionType, FunctionDerivativeFunctionType>::operator bool() const noexcept
 {
-  return (this->f != nullptr && df != nullptr && fdf != nullptr);
+    return (this->f != nullptr && df != nullptr && fdf != nullptr);
 }
 
 } // namespace umuq
