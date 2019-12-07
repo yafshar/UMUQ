@@ -1,17 +1,16 @@
-#include "core/core.hpp"
 #include "environment.hpp"
 #include "datatype/mpidatatype.hpp"
 #include "gtest/gtest.h"
 
 /*! \class baseA
  * \ingroup Test_Module
- * 
+ *
  * \brief This class is designed to test TORC functionality for virtual function
- * 
+ *
  */
 class baseA
 {
-  public:
+public:
     baseA() : a(10) {}
     int a;
     virtual void fun(int const a1, double const *a2)
@@ -24,13 +23,13 @@ class baseA
 
 /*! \class driveA
  * \ingroup Test_Module
- * 
+ *
  * \brief This class is designed to test TORC functionality for virtual function
- * 
+ *
  */
 class driveA : public baseA
 {
-  public:
+public:
     driveA() : baseA(), aa(100), aaa(-1.) {}
     int aa;
     double aaa;
@@ -44,11 +43,11 @@ class driveA : public baseA
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Function for TORC test
- * 
- * \param other Casted pointer to class baseA 
- * \param a1 Input value 
+ *
+ * \param other Casted pointer to class baseA
+ * \param a1 Input value
  * \param a2 Input value
  */
 void FUN(long long const other, int const a1, double const *a2)
@@ -59,13 +58,13 @@ void FUN(long long const other, int const a1, double const *a2)
 
 /*! \class torcTest
  * \ingroup Test_Module
- * 
+ *
  * \brief This class is designed to test TORC functionality
- * 
+ *
  */
 class torcTest
 {
-  public:
+public:
     void loop()
     {
         baseA obj1;
