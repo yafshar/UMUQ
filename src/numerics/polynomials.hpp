@@ -1,6 +1,8 @@
 #ifndef UMUQ_POLYNOMIALS_H
 #define UMUQ_POLYNOMIALS_H
 
+#include "core/core.hpp"
+
 namespace umuq
 {
 
@@ -24,6 +26,7 @@ inline namespace polynomials
 } // namespace umuq
 
 #include "datatype/polynomialtype.hpp"
+
 #include "polynomials/polynomialbase.hpp"
 #include "polynomials/polynomial.hpp"
 #include "polynomials/legendrepolynomial.hpp"

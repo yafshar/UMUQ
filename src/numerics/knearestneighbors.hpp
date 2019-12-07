@@ -4,6 +4,8 @@
 #include "core/core.hpp"
 #include "datatype/distancetype.hpp"
 #include "knearestneighborbase.hpp"
+#include "datatype/eigendatatype.hpp"
+#include "eigenlib.hpp"
 
 #include <cstddef>
 

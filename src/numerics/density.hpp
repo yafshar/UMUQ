@@ -1,6 +1,8 @@
 #ifndef UMUQ_DENSITY_H
 #define UMUQ_DENSITY_H
 
+#include "core/core.hpp"
+
 /*!
  * \file numerics/density.hpp
  * \brief Implementation of the collections of density functions (probability density (PDF))

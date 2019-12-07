@@ -2,6 +2,7 @@
 #define UMUQ_KNEARESTNEIGHBORBASE_H
 
 #include "core/core.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "eigenlib.hpp"
 
 /*!

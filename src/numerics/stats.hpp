@@ -3,6 +3,7 @@
 
 #include "core/core.hpp"
 #include "misc/arraywrapper.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "eigenlib.hpp"
 
 #include <cmath>

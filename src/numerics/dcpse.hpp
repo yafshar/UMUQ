@@ -4,6 +4,7 @@
 #include "core/core.hpp"
 #include "polynomials.hpp"
 #include "factorial.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "eigenlib.hpp"
 #include "knearestneighbors.hpp"
 #include "primitive.hpp"

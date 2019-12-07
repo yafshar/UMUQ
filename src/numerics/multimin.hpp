@@ -1,6 +1,8 @@
 #ifndef UMUQ_MULTIMIN_H
 #define UMUQ_MULTIMIN_H
 
+#include "core/core.hpp"
+
 /*!
  * \file numerics/multimin.hpp
  * \ingroup Multimin_Module
@@ -30,7 +32,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * \endverbatim
  */
-
 
 #include "datatype/functionminimizertype.hpp"
 #include "datatype/differentiablefunctionminimizertype.hpp"

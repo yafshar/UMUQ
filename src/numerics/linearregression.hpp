@@ -3,6 +3,7 @@
 
 #include "core/core.hpp"
 #include "polynomials.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "eigenlib.hpp"
 
 #include <cstddef>
