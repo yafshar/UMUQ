@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "units/lattice.hpp"
 #include "gtest/gtest.h"
 

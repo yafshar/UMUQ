@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "units/units.hpp"
 #include "gtest/gtest.h"
 
@@ -38,7 +37,7 @@ TEST(units_test, HandlesConstruction)
 
     EXPECT_EQ(umuq::getUnitStyleName(umuq::UnitStyle::METAL), "METAL");
 
-    std::vector<double > LengthVector{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<double> LengthVector{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     EXPECT_TRUE(umuq::convert<umuq::LengthUnit>(LengthVector, umuq::UnitStyle::ELECTRON, umuq::UnitStyle::METAL));
 

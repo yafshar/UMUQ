@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "units/speciesname.hpp"
 #include "gtest/gtest.h"
 
@@ -28,8 +27,8 @@ TEST(species_test, HandlesConstruction)
     EXPECT_EQ(Species.getSpeciesIndex("user18"), static_cast<int>(umuq::SpeciesID::user18));
 
     // If element or species does not exist it's ID is unknown
-    EXPECT_EQ(Species.getSpeciesID("NaCl3") , umuq::SpeciesID::unknown);
-    EXPECT_EQ(Species.getSpeciesIndex("NaCl3") , static_cast<int>(umuq::SpeciesID::unknown));
+    EXPECT_EQ(Species.getSpeciesID("NaCl3"), umuq::SpeciesID::unknown);
+    EXPECT_EQ(Species.getSpeciesIndex("NaCl3"), static_cast<int>(umuq::SpeciesID::unknown));
 
     EXPECT_EQ(Species.getSpeciesName(umuq::SpeciesID::Al), "Al");
     EXPECT_EQ(Species.getSpeciesID("Al"), umuq::SpeciesID::Al);
