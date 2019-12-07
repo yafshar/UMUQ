@@ -4,6 +4,7 @@
 #include "core/core.hpp"
 #include "io/io.hpp"
 #include "misc/parser.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "numerics/eigenlib.hpp"
 
 #include <cmath>
