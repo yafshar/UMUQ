@@ -1,6 +1,5 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "inference/tmcmc/database.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 // Tests database construction

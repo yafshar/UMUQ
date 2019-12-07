@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "inference/tmcmc/stdata.hpp"
 #include "gtest/gtest.h"
 

@@ -1,6 +1,5 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "inference/tmcmc/datatype.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 // Tests datatype which is using database object

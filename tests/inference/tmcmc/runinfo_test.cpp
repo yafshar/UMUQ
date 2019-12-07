@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "inference/tmcmc/runinfo.hpp"
 #include "gtest/gtest.h"
 
@@ -65,7 +64,7 @@ TEST(runinfo_test, HandlesIO)
 
         EXPECT_TRUE(runinfoObj.save());
     }
-    
+
     // Create an instance of runinfo object, initialize it
     // from a file @"runinfo.txt"
     {

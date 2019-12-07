@@ -1,6 +1,5 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "inference/tmcmc/tmcmc.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 // Global vector of data
@@ -9,9 +8,9 @@ std::vector<double> y;
 
 /*!
  * \ingroup Test_Module
- * 
- * \brief Initialization function that we want to use 
- * 
+ *
+ * \brief Initialization function that we want to use
+ *
  */
 bool init()
 {
@@ -42,9 +41,9 @@ bool init()
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief External function to compute the function \f$ y = c_0 \sin(c_1*x+c_2) \f$
- * 
+ *
  * \param x Input x coordinates
  * \param y Output computed y \f$ y = c_0 \sin(c_1*x+c_2) \f$
  * \param c model parameters
@@ -61,16 +60,16 @@ void f2(std::vector<double> const &x, std::vector<double> &y, double const *c)
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Testing fitting function
- * 
+ *
  * \param c      Input parameter
  * \param numc   Number of input parameters
  * \param out    Output
  * \param numout Number of outputs
  * \param info   Task information
- * 
- * \returns log likelihood 
+ *
+ * \returns log likelihood
  */
 double fitfun(double const *c, int const numc, double *out, int const numout, int const *info)
 {
@@ -107,13 +106,13 @@ TEST(tmcmc_test, HandlesConstruction)
     EXPECT_FALSE(t.init());
 
     // reset the TMCMC object based on the read data
-    EXPECT_TRUE(t.reset());  
+    EXPECT_TRUE(t.reset());
 
     // // Set the init and fit function together or individually
     // EXPECT_TRUE(t.setFitFunction(init, fitfun));
 
     // // Initializing the object before setting the fitting function is wrong!
-    // EXPECT_TRUE(t.init());    
+    // EXPECT_TRUE(t.init());
 }
 
 int main(int argc, char **argv)
