@@ -122,6 +122,11 @@ AM_COND_IF([HAVE_GOOGLETEST], [
   AC_CONFIG_FILES([
     tests/Makefile
     tests/numerics/Makefile
+    tests/numerics/polynomials/Makefile
+    tests/numerics/random/Makefile
+    tests/numerics/hypercube/Makefile
+    tests/numerics/function/Makefile
+    tests/numerics/density/Makefile
     tests/numerics/multimin/Makefile
     tests/misc/Makefile
     tests/io/Makefile
