@@ -6,9 +6,9 @@
 using namespace umuq;
 
 /*!
- * \ingroup Global_Module
+ * \ingroup Test_Module
  *
- * \brief Create a global instance of the Pyplot from Pyplot library
+ * \brief Create an instance of the Pyplot object from Pyplot library
  *
  */
 umuq::matplotlib_223::pyplot plt;
