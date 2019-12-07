@@ -79,7 +79,7 @@ namespace tmcmc
  */
 class database
 {
-public:
+  public:
     /*!
      * \brief Construct a new database object
      *
@@ -271,7 +271,7 @@ public:
      */
     void update(double const *SamplePoints, double const FunValue, double const *DataArray = nullptr, int const Surrogate = std::numeric_limits<int>::max());
 
-private:
+  private:
     /*!
      * \brief Set the List object
      *
@@ -286,7 +286,7 @@ private:
      */
     inline bool sort();
 
-private:
+  private:
     /*!
      * \brief Delete a database object copy construction
      *
@@ -303,7 +303,7 @@ private:
      */
     database &operator=(database const &) = delete;
 
-private:
+  private:
     /*! \class sortType
      *
      * \brief structure for sorting entires of database structure
@@ -341,7 +341,7 @@ private:
         int idx;
     };
 
-public:
+  public:
     //! Space dimension (Sampling points dimension)
     int nDimSamplePoints;
 
@@ -375,7 +375,7 @@ public:
     //! Mutex object
     std::mutex m;
 
-private:
+  private:
     //! Function pointer
     UPDATETASKTYPE updateTask;
 

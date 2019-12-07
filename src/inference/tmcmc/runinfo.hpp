@@ -42,7 +42,7 @@ static std::mutex broadcastTask_m;
  */
 class runinfo
 {
-public:
+  public:
     /*!
      * \brief constructor for the default variables
      *
@@ -173,7 +173,7 @@ public:
      */
     void printSampleStatistics();
 
-private:
+  private:
     /*!
      * \brief Delete a runinfo object copy construction
      *
@@ -190,7 +190,7 @@ private:
      */
     runinfo &operator=(runinfo const &) = delete;
 
-public:
+  public:
     //! Number of dimensions
     int nDim;
     //! Maximum number of generations

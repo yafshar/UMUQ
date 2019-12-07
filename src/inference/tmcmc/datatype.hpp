@@ -1,6 +1,8 @@
 #ifndef UMUQ_DATATYPE_H
 #define UMUQ_DATATYPE_H
 
+#include "core/core.hpp"
+
 /*!
  * \file datatype.hpp
  * \ingroup TMCMC_Module

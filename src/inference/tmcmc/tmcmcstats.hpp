@@ -1,10 +1,11 @@
 #ifndef UMUQ_TMCMCSTATS_H
 #define UMUQ_TMCMCSTATS_H
 
+#include "core/core.hpp"
 #include "datatype.hpp"
 #include "numerics/function/fitfunction.hpp"
+#include "datatype/eigendatatype.hpp"
 #include "numerics/eigenlib.hpp"
-#include "numerics/random/psrandom.hpp"
 #include "numerics/stats.hpp"
 #include "numerics/multimin.hpp"
 #include "inference/prior/priordistribution.hpp"
@@ -117,7 +118,7 @@ namespace tmcmc
  */
 class tmcmcStats
 {
-public:
+  public:
     /*!
      * \brief Construct a new tmcmcStats object
      *
@@ -198,7 +199,7 @@ public:
      */
     bool selectNewGeneration(stdata &StreamData, database &CurrentData, runinfo &RunData, database &Leaders);
 
-protected:
+  protected:
     /*!
      * \brief Delete a tmcmcStats object copy construction
      *
@@ -213,7 +214,7 @@ protected:
      */
     tmcmcStats &operator=(tmcmcStats const &) = delete;
 
-private:
+  private:
     /*! Optimizer information */
     optimizationParameters optParams;
 
