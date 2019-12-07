@@ -1,8 +1,7 @@
-#include "core/core.hpp"
 #include "numerics/polynomials.hpp"
 #include "gtest/gtest.h"
 
-/*! 
+/*!
  * \ingroup Test_Module
  */
 TEST(HermiteBasis_test, HandlesInput)
