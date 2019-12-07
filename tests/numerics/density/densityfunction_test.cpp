@@ -61,7 +61,7 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
         EXPECT_TRUE(Y[i] >= 1.0 && Y[i] <= 2.0);
     }
 
-    // Check for sampling matrix
+    // Check for sampling matrix of '1 x 25'
     umuq::EMatrixX<double> Z(1, 25);
     u.sample(Z);
 
@@ -133,7 +133,7 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 
     g.sample(Y, 10);
 
-    // Check for sampling matrix
+    // Check for sampling matrix of '1 x 25'
     umuq::EMatrixX<double> Z(1, 25);
 
     g.sample(Z);
@@ -169,7 +169,7 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 
     gu.sample(Y, 15);
 
-    // Check for sampling matrix
+    // Check for sampling matrix of '1 x 19'
     umuq::EMatrixX<double> Z(1, 19);
 
     gu.sample(Z);
