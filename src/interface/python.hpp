@@ -182,32 +182,32 @@ namespace python
  */
 __attribute__((constructor)) void pythonInitialize()
 {
-  if (!Py_IsInitialized())
-  {
+    if (!Py_IsInitialized())
+    {
 // optional but recommended
 // The name is used to find Python run-time libraries relative to the interpreter executable
 #if PYTHON_MAJOR_VERSION >= 3
-    wchar_t name[] = L"PYTHON_BIN";
+        wchar_t name[] = L"PYTHON_BIN";
 #else
-    char name[] = "PYTHON_BIN";
+        char name[] = "PYTHON_BIN";
 #endif
 
-    // Pass name to the Python
-    Py_SetProgramName(name);
+        // Pass name to the Python
+        Py_SetProgramName(name);
 
-    // Initialize python interpreter. Required.
-    Py_Initialize();
-  }
+        // Initialize python interpreter. Required.
+        Py_Initialize();
+    }
 
-  if (PyArray_API == NULL)
-  {
-    // Initialize numpy
+    if (PyArray_API == NULL)
+    {
+        // Initialize numpy
 #if PYTHON_MAJOR_VERSION >= 3
-    _import_array();
+        _import_array();
 #else
-    import_array();
+        import_array();
 #endif
-  }
+    }
 }
 
 /*!
@@ -218,10 +218,10 @@ __attribute__((constructor)) void pythonInitialize()
  */
 __attribute__((destructor)) void pythonFinalize()
 {
-  if (Py_IsInitialized())
-  {
-    Py_Finalize();
-  }
+    if (Py_IsInitialized())
+    {
+        Py_Finalize();
+    }
 }
 } // namespace python
 } // namespace umuq
@@ -307,7 +307,7 @@ using PyObjectFunctionPointerP = PyObject *(*)(void *PointerFunction, PyObjectVe
  */
 inline PyObject *PyObjectConstruct(int const data)
 {
-  return PyInt_FromLong(data);
+    return PyInt_FromLong(data);
 }
 
 /*!
@@ -320,7 +320,7 @@ inline PyObject *PyObjectConstruct(int const data)
  */
 inline PyObject *PyObjectConstruct(std::size_t const data)
 {
-  return PyLong_FromSize_t(data);
+    return PyLong_FromSize_t(data);
 }
 
 /*!
@@ -333,7 +333,7 @@ inline PyObject *PyObjectConstruct(std::size_t const data)
  */
 inline PyObject *PyObjectConstruct(float const data)
 {
-  return PyFloat_FromDouble(data);
+    return PyFloat_FromDouble(data);
 }
 
 /*!
@@ -346,7 +346,7 @@ inline PyObject *PyObjectConstruct(float const data)
  */
 inline PyObject *PyObjectConstruct(double const data)
 {
-  return PyFloat_FromDouble(data);
+    return PyFloat_FromDouble(data);
 }
 
 /*!
@@ -359,7 +359,7 @@ inline PyObject *PyObjectConstruct(double const data)
  */
 inline PyObject *PyObjectConstruct(std::string const &data)
 {
-  return PyString_FromString(data.c_str());
+    return PyString_FromString(data.c_str());
 }
 
 /*!
@@ -372,7 +372,7 @@ inline PyObject *PyObjectConstruct(std::string const &data)
  */
 inline PyObject *PyObjectConstruct(char const *data)
 {
-  return PyString_FromString(data);
+    return PyString_FromString(data);
 }
 
 /*!
@@ -385,19 +385,19 @@ inline PyObject *PyObjectConstruct(char const *data)
  */
 inline PyObject *PyObjectConstruc(PyObjectVector const &data)
 {
-  Py_ssize_t lSize = static_cast<Py_ssize_t>(data.size());
-  // Return a new list of length len on success, or NULL on failure.
-  PyObject *list = PyList_New(lSize); // Return value: New reference.
-  for (Py_ssize_t index = 0; index < lSize; ++index)
-  {
-    PyObject *item = data[index];
-    // PyList_SetItem steals a reference
-    Py_XINCREF(item);
-    // Set the item at the index 'index' in the list to the new 'item'.
-    // It “steals” a reference to item
-    PyList_SetItem(list, index, item);
-  }
-  return list;
+    Py_ssize_t lSize = static_cast<Py_ssize_t>(data.size());
+    // Return a new list of length len on success, or NULL on failure.
+    PyObject *list = PyList_New(lSize); // Return value: New reference.
+    for (Py_ssize_t index = 0; index < lSize; ++index)
+    {
+        PyObject *item = data[index];
+        // PyList_SetItem steals a reference
+        Py_XINCREF(item);
+        // Set the item at the index 'index' in the list to the new 'item'.
+        // It “steals” a reference to item
+        PyList_SetItem(list, index, item);
+    }
+    return list;
 }
 
 /*!
@@ -410,7 +410,50 @@ inline PyObject *PyObjectConstruc(PyObjectVector const &data)
  */
 inline PyObject *PyObjectConstruct(PyObject *data)
 {
-  return data;
+    return data;
+}
+
+/*!
+ * \ingroup Python_Module
+ *
+ * \brief Construct a Python object from a vector of data
+ *
+ * \param data A vector of input data
+ * \return PyObject*
+ *
+ * \note
+ * It is only specialized for 'int', 'size_t', 'float', 'double', 'string',
+ * and 'char const *' data types.
+ */
+template <typename DataType>
+inline PyObject *PyObjectConstruct(std::vector<DataType> const &data)
+{
+    UMUQFAIL("The input data type isn't implemented!.");
+}
+
+template <>
+inline std::enable_if_t<std::is_same<DataType, int>::value ||
+                            std::is_same<DataType, std::size_t>::value ||
+                            std::is_same<DataType, float>::value ||
+                            std::is_same<DataType, double>::value ||
+                            std::is_same<DataType, std::string>::value ||
+                            std::is_same<DataType, char const *>::value,
+                        PyObject>
+    *PyObjectConstruct<DataType>(std::vector<DataType> const &data)
+{
+    Py_ssize_t lSize = static_cast<Py_ssize_t>(data.size());
+    // Return a new list of length len on success, or NULL on failure.
+    PyObject *list = PyList_New(lSize); // Return value: New reference.
+    for (Py_ssize_t index = 0; index < lSize; ++index)
+    {
+        PyObject *item = PyObjectConstruct(data[index]);
+        // PyList_SetItem steals a reference
+        Py_XINCREF(item);
+        // Set the item at the index 'index' in the list to the new 'item'.
+        // It “steals” a reference to item
+        PyList_SetItem(list, index, item);
+    }
+    return list;
 }
 
 /*!
@@ -442,31 +485,31 @@ inline PyObject *PyObjectConstruct(PyObject *data)
  */
 PyObject *PyGetAttribute(PyObject *module, std::string const &moduleName)
 {
-  // Check the name size
-  if (!moduleName.size())
-  {
-    UMUQWARNING("The input moduleName is empty.");
-    return NULL;
-  }
-  PyObject *object = module;
-  std::size_t find_dot = 0;
-  if (moduleName[0] != '.')
-  {
-    std::size_t const next_dot = moduleName.find('.', 0);
-    std::string const attr_name = moduleName.substr(0, next_dot);
-    // Retrieve an attribute named 'attr_name' from object 'object'.
-    object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
-    find_dot = next_dot;
-  }
-  while (find_dot != std::string::npos)
-  {
-    std::size_t const next_dot = moduleName.find('.', find_dot + 1);
-    std::string const attr_name = moduleName.substr(find_dot + 1, next_dot - (find_dot + 1));
-    // Retrieve an attribute named 'attr_name' from object 'object'.
-    object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
-    find_dot = next_dot;
-  }
-  return object;
+    // Check the name size
+    if (!moduleName.size())
+    {
+        UMUQWARNING("The input moduleName is empty.");
+        return NULL;
+    }
+    PyObject *object = module;
+    std::size_t find_dot = 0;
+    if (moduleName[0] != '.')
+    {
+        std::size_t const next_dot = moduleName.find('.', 0);
+        std::string const attr_name = moduleName.substr(0, next_dot);
+        // Retrieve an attribute named 'attr_name' from object 'object'.
+        object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
+        find_dot = next_dot;
+    }
+    while (find_dot != std::string::npos)
+    {
+        std::size_t const next_dot = moduleName.find('.', find_dot + 1);
+        std::string const attr_name = moduleName.substr(find_dot + 1, next_dot - (find_dot + 1));
+        // Retrieve an attribute named 'attr_name' from object 'object'.
+        object = PyObject_GetAttrString(object, attr_name.c_str()); // Return value: New reference.
+        find_dot = next_dot;
+    }
+    return object;
 }
 
 /*!
@@ -489,84 +532,84 @@ PyObject *PyCallFunctionObject(PyObject *function,
                                PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
                                PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
-  // Determine if the function is callable.
-  // Return 1 if the function is callable and 0 otherwise. (always succeeds.)
-  if (!PyCallable_Check(function))
-  {
-    UMUQFAILRETURNNULL("The input function isn't callable.");
-  }
-
-  // If there is an extra argument or keywords
-  Py_ssize_t const pyObjectVectorSize = static_cast<Py_ssize_t>(pyObjectVector.size());
-  Py_ssize_t const pyObjectPairStringVectorSize = static_cast<Py_ssize_t>(pyObjectPairStringVector.size());
-
-  if (!pyObjectVectorSize && !pyObjectPairStringVectorSize)
-  {
-    // Call a callable Python object, with args can be NULL.
-    PyObject *res = PyObject_CallObject(function, NULL);
-    if (!res)
+    // Determine if the function is callable.
+    // Return 1 if the function is callable and 0 otherwise. (always succeeds.)
+    if (!PyCallable_Check(function))
     {
-      if (PyErr_Occurred())
-      {
-        UMUQFAILRETURNNULL("Exception in calling a python function.");
-      }
-      UMUQFAILRETURNNULL("Failed to call the function.");
+        UMUQFAILRETURNNULL("The input function isn't callable.");
     }
-    return res;
-  }
-  else
-  {
-    // Return a new tuple object of size 'pyObjectVectorSize',
-    // or NULL on failure.
-    PyObject *tuple = PyTuple_New(pyObjectVectorSize); // Return value: New reference.
-    if (tuple)
+
+    // If there is an extra argument or keywords
+    Py_ssize_t const pyObjectVectorSize = static_cast<Py_ssize_t>(pyObjectVector.size());
+    Py_ssize_t const pyObjectPairStringVectorSize = static_cast<Py_ssize_t>(pyObjectPairStringVector.size());
+
+    if (!pyObjectVectorSize && !pyObjectPairStringVectorSize)
     {
-      for (Py_ssize_t pos = 0; pos < pyObjectVectorSize; ++pos)
-      {
-        PyObject *obj = pyObjectVector[pos];
-        // Increment the reference count for object 'obj'
-        Py_XINCREF(obj);
-        // Insert a reference to object 'obj' at position 'pos' of the tuple
-        // pointed to by 'tuple'.
-        PyTuple_SetItem(tuple, pos, obj); // It steals a reference to arg
-      }
+        // Call a callable Python object, with args can be NULL.
+        PyObject *res = PyObject_CallObject(function, NULL);
+        if (!res)
+        {
+            if (PyErr_Occurred())
+            {
+                UMUQFAILRETURNNULL("Exception in calling a python function.");
+            }
+            UMUQFAILRETURNNULL("Failed to call the function.");
+        }
+        return res;
     }
     else
     {
-      UMUQFAILRETURNNULL("Couldn't create a python tuple.");
-    }
+        // Return a new tuple object of size 'pyObjectVectorSize',
+        // or NULL on failure.
+        PyObject *tuple = PyTuple_New(pyObjectVectorSize); // Return value: New reference.
+        if (tuple)
+        {
+            for (Py_ssize_t pos = 0; pos < pyObjectVectorSize; ++pos)
+            {
+                PyObject *obj = pyObjectVector[pos];
+                // Increment the reference count for object 'obj'
+                Py_XINCREF(obj);
+                // Insert a reference to object 'obj' at position 'pos' of the tuple
+                // pointed to by 'tuple'.
+                PyTuple_SetItem(tuple, pos, obj); // It steals a reference to arg
+            }
+        }
+        else
+        {
+            UMUQFAILRETURNNULL("Couldn't create a python tuple.");
+        }
 
-    // Build pyObjectPairStringVector dict
-    // Return a new empty dictionary, or NULL on failure.
-    PyObject *dict = PyDict_New();
-    if (dict)
-    {
-      for (auto keyval : pyObjectPairStringVector)
-      {
-        // Insert 'keyval.second' into the dictionary 'dict' using
-        // 'keyval.first' as a key.
-        PyDict_SetItemString(dict, keyval.first.c_str(), keyval.second);
-      }
-    }
-    else
-    {
-      UMUQFAILRETURNNULL("Couldn't create a python dictionary.");
-    }
+        // Build pyObjectPairStringVector dict
+        // Return a new empty dictionary, or NULL on failure.
+        PyObject *dict = PyDict_New();
+        if (dict)
+        {
+            for (auto keyval : pyObjectPairStringVector)
+            {
+                // Insert 'keyval.second' into the dictionary 'dict' using
+                // 'keyval.first' as a key.
+                PyDict_SetItemString(dict, keyval.first.c_str(), keyval.second);
+            }
+        }
+        else
+        {
+            UMUQFAILRETURNNULL("Couldn't create a python dictionary.");
+        }
 
-    // Call a callable Python object, with arguments given by the tuple args,
-    // and named arguments given by the dictionary kwargs. Return the result
-    // of the call on success, or raise an exception and return NULL on failure.
-    PyObject *res = PyObject_Call(function, tuple, dict);
-    if (!res)
-    {
-      if (PyErr_Occurred())
-      {
-        UMUQFAILRETURNNULL("Exception in calling a python function.");
-      }
-      UMUQFAILRETURNNULL("Failed to call the function.");
+        // Call a callable Python object, with arguments given by the tuple args,
+        // and named arguments given by the dictionary kwargs. Return the result
+        // of the call on success, or raise an exception and return NULL on failure.
+        PyObject *res = PyObject_Call(function, tuple, dict);
+        if (!res)
+        {
+            if (PyErr_Occurred())
+            {
+                UMUQFAILRETURNNULL("Exception in calling a python function.");
+            }
+            UMUQFAILRETURNNULL("Failed to call the function.");
+        }
+        return res;
     }
-    return res;
-  }
 }
 
 /*!
@@ -593,68 +636,68 @@ PyObject *PyCallFunctionName(std::string const &functionName,
                              PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
                              PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
-  // Check the name size
-  if (!functionName.size())
-  {
-    UMUQWARNING("The input functionName is empty.");
-    return NULL;
-  }
-
-  PyObject *module = NULL;
-
-  auto nSize = functionName.size();
-  while (!module && nSize != std::string::npos)
-  {
-    nSize = functionName.rfind('.', nSize - 1);
-
-    std::string const submodule = functionName.substr(0, nSize);
-
-    // The return value is a new reference to the imported module
-    module = PyImport_ImportModule(submodule.c_str()); // Return value: New reference.
-  }
-
-  // A function object
-  PyObject *function = NULL;
-
-  if (module)
-  {
-    // Load the longest prefix of name that is a valid module name.
-    std::string moduleName = functionName.substr(nSize);
-
-    function = PyGetAttribute(module, moduleName);
-    if (!function)
+    // Check the name size
+    if (!functionName.size())
     {
-      UMUQFAILRETURNNULL("Importing the '", moduleName, "' from '", functionName.substr(0, nSize), "' submodules failed.");
+        UMUQWARNING("The input functionName is empty.");
+        return NULL;
     }
-  }
-  else
-  {
-    // Return a dictionary of the builtins in the current execution frame
-    PyObject *builtins = PyEval_GetBuiltins(); // Return value: Borrowed reference.
 
-    // Return the object 'function' from the dictionary 'builtins' which has
-    // a key 'functionName'.
-    function = PyDict_GetItemString(builtins, functionName.c_str()); // Return value: Borrowed reference.
+    PyObject *module = NULL;
 
-    // Increment the reference count for object 'function'
-    Py_XINCREF(function);
-
-    if (!function)
+    auto nSize = functionName.size();
+    while (!module && nSize != std::string::npos)
     {
-      UMUQFAILRETURNNULL("Importing the ", functionName, " failed.");
-    }
-  }
+        nSize = functionName.rfind('.', nSize - 1);
 
-  return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+        std::string const submodule = functionName.substr(0, nSize);
+
+        // The return value is a new reference to the imported module
+        module = PyImport_ImportModule(submodule.c_str()); // Return value: New reference.
+    }
+
+    // A function object
+    PyObject *function = NULL;
+
+    if (module)
+    {
+        // Load the longest prefix of name that is a valid module name.
+        std::string moduleName = functionName.substr(nSize);
+
+        function = PyGetAttribute(module, moduleName);
+        if (!function)
+        {
+            UMUQFAILRETURNNULL("Importing the '", moduleName, "' from '", functionName.substr(0, nSize), "' submodules failed.");
+        }
+    }
+    else
+    {
+        // Return a dictionary of the builtins in the current execution frame
+        PyObject *builtins = PyEval_GetBuiltins(); // Return value: Borrowed reference.
+
+        // Return the object 'function' from the dictionary 'builtins' which has
+        // a key 'functionName'.
+        function = PyDict_GetItemString(builtins, functionName.c_str()); // Return value: Borrowed reference.
+
+        // Increment the reference count for object 'function'
+        Py_XINCREF(function);
+
+        if (!function)
+        {
+            UMUQFAILRETURNNULL("Importing the ", functionName, " failed.");
+        }
+    }
+
+    return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
 template <typename... Args>
 PyObject *PyCallFunctionName(std::string const &functionName, Args... args)
 {
-  PyObjectVector pyObjectVector;
-  PyObjectPairStringVector pyObjectPairStringVector;
-  appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
-  return PyCallFunctionName(functionName, pyObjectVector, pyObjectPairStringVector);
+    PyObjectVector pyObjectVector;
+    PyObjectPairStringVector pyObjectPairStringVector;
+    appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
+    return PyCallFunctionName(functionName, pyObjectVector, pyObjectPairStringVector);
 }
 
 /*!
@@ -673,21 +716,21 @@ PyObject *PyCallFunctionNameFromModule(std::string const &functionName,
                                        PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
                                        PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
-  PyObject *function = PyGetAttribute(module, functionName);
-  if (!function)
-  {
-    UMUQFAILRETURNNULL("Failed to retrieve an attribute named '", functionName, "' from the 'module' object.");
-  }
-  return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+    PyObject *function = PyGetAttribute(module, functionName);
+    if (!function)
+    {
+        UMUQFAILRETURNNULL("Failed to retrieve an attribute named '", functionName, "' from the 'module' object.");
+    }
+    return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
 template <typename... Args>
 PyObject *PyCallFunctionNameFromModule(std::string const &functionName, PyObject *module, Args... args)
 {
-  PyObjectVector pyObjectVector;
-  PyObjectPairStringVector pyObjectPairStringVector;
-  appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
-  return PyCallFunctionNameFromModule(functionName, module, pyObjectVector, pyObjectPairStringVector);
+    PyObjectVector pyObjectVector;
+    PyObjectPairStringVector pyObjectPairStringVector;
+    appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
+    return PyCallFunctionNameFromModule(functionName, module, pyObjectVector, pyObjectPairStringVector);
 }
 
 /*!
@@ -706,41 +749,41 @@ PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName,
                                            PyObjectVector const &pyObjectVector = PyObjectVectorEmpty,
                                            PyObjectPairStringVector const &pyObjectPairStringVector = PyObjectPairStringVectorEmpty)
 {
-  // Check the name size
-  if (!functionName.size())
-  {
-    UMUQWARNING("The input functionName is empty.");
-    return NULL;
-  }
-  if (!moduleName.size())
-  {
-    UMUQWARNING("The input moduleName is empty.");
-    return NULL;
-  }
+    // Check the name size
+    if (!functionName.size())
+    {
+        UMUQWARNING("The input functionName is empty.");
+        return NULL;
+    }
+    if (!moduleName.size())
+    {
+        UMUQWARNING("The input moduleName is empty.");
+        return NULL;
+    }
 
-  // The return value is a new reference to the imported module
-  PyObject *module = PyImport_ImportModule(moduleName.c_str()); // Return value: New reference.
-  if (!module)
-  {
-    UMUQFAILRETURNNULL("Failed to import the '", moduleName, "' module.");
-  }
+    // The return value is a new reference to the imported module
+    PyObject *module = PyImport_ImportModule(moduleName.c_str()); // Return value: New reference.
+    if (!module)
+    {
+        UMUQFAILRETURNNULL("Failed to import the '", moduleName, "' module.");
+    }
 
-  PyObject *function = PyGetAttribute(module, functionName);
-  if (!function)
-  {
-    UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
-  }
+    PyObject *function = PyGetAttribute(module, functionName);
+    if (!function)
+    {
+        UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
+    }
 
-  return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+    return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
 template <typename... Args>
 PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName, std::string const &moduleName, Args... args)
 {
-  PyObjectVector pyObjectVector;
-  PyObjectPairStringVector pyObjectPairStringVector;
-  appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
-  return PyCallFunctionNameFromModuleName(functionName, moduleName, pyObjectVector, pyObjectPairStringVector);
+    PyObjectVector pyObjectVector;
+    PyObjectPairStringVector pyObjectPairStringVector;
+    appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
+    return PyCallFunctionNameFromModuleName(functionName, moduleName, pyObjectVector, pyObjectPairStringVector);
 }
 
 /*!
@@ -753,19 +796,19 @@ PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName, std:
  */
 PyObjectVector PyTupleToVector(PyObject *PyTuple)
 {
-  // Return true if p is a tuple object or an instance of a subtype of the tuple type.
-  if (!PyTuple_Check(PyTuple))
-  {
-    UMUQFAIL("Input argument is not a python tuple.");
-  }
+    // Return true if p is a tuple object or an instance of a subtype of the tuple type.
+    if (!PyTuple_Check(PyTuple))
+    {
+        UMUQFAIL("Input argument is not a python tuple.");
+    }
 
-  Py_ssize_t const tSize = PyTuple_Size(PyTuple);
-  PyObjectVector Vector(tSize);
-  for (Py_ssize_t i = 0; i < tSize; ++i)
-  {
-    Vector[i] = PyTuple_GetItem(PyTuple, i); // Return value: Borrowed reference.
-  }
-  return Vector;
+    Py_ssize_t const tSize = PyTuple_Size(PyTuple);
+    PyObjectVector Vector(tSize);
+    for (Py_ssize_t i = 0; i < tSize; ++i)
+    {
+        Vector[i] = PyTuple_GetItem(PyTuple, i); // Return value: Borrowed reference.
+    }
+    return Vector;
 }
 
 /*!
@@ -778,25 +821,25 @@ PyObjectVector PyTupleToVector(PyObject *PyTuple)
  */
 PyObjectMapChar PyDictToMap(PyObject *PyDict)
 {
-  // Return true if p is a dict object or an instance of a subtype of the dict type.
-  if (!PyDict_Check(PyDict))
-  {
-    UMUQFAIL("Input argument is not a python dict.");
-  }
+    // Return true if p is a dict object or an instance of a subtype of the dict type.
+    if (!PyDict_Check(PyDict))
+    {
+        UMUQFAIL("Input argument is not a python dict.");
+    }
 
-  PyObjectMapChar Map;
-  PyObject *key;
-  PyObject *value;
-  Py_ssize_t pos = 0;
-  while (PyDict_Next(PyDict, &pos, &key, &value))
-  {
-    char const *str = PyString_AsString(key);
-    PyObject *obj = value;
-    // Increment the reference count for object 'function'
-    Py_XINCREF(obj);
-    Map.emplace(str, obj);
-  }
-  return Map;
+    PyObjectMapChar Map;
+    PyObject *key;
+    PyObject *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(PyDict, &pos, &key, &value))
+    {
+        char const *str = PyString_AsString(key);
+        PyObject *obj = value;
+        // Increment the reference count for object 'function'
+        Py_XINCREF(obj);
+        Map.emplace(str, obj);
+    }
+    return Map;
 }
 
 /*!
@@ -811,19 +854,19 @@ PyObjectMapChar PyDictToMap(PyObject *PyDict)
  */
 PyObject *PyPointerTupleDictToPointerFunctionVectorMap(PyObject *Pointer, PyObject *PyTuple, PyObject *PyDict)
 {
-  // Return true if its argument is a PyCapsule.
-  if (!PyCapsule_CheckExact(Pointer))
-  {
-    UMUQFAIL("Pointer object is corrupted.");
-  }
+    // Return true if its argument is a PyCapsule.
+    if (!PyCapsule_CheckExact(Pointer))
+    {
+        UMUQFAIL("Pointer object is corrupted.");
+    }
 
-  // Retrieve the pointer stored in the capsule.
-  PyObjectFunctionPointerP fun = reinterpret_cast<PyObjectFunctionPointerP>(PyCapsule_GetPointer(Pointer, NULL));
-  // Return the current context stored in the capsule.
-  void *PointerFunction = PyCapsule_GetContext(Pointer);
-  auto Vec = PyTupleToVector(PyTuple);
-  auto Map = PyDictToMap(PyDict);
-  return fun(PointerFunction, Vec, Map);
+    // Retrieve the pointer stored in the capsule.
+    PyObjectFunctionPointerP fun = reinterpret_cast<PyObjectFunctionPointerP>(PyCapsule_GetPointer(Pointer, NULL));
+    // Return the current context stored in the capsule.
+    void *PointerFunction = PyCapsule_GetContext(Pointer);
+    auto Vec = PyTupleToVector(PyTuple);
+    auto Map = PyDictToMap(PyDict);
+    return fun(PointerFunction, Vec, Map);
 }
 
 /*!
@@ -838,17 +881,17 @@ PyObject *PyPointerTupleDictToPointerFunctionVectorMap(PyObject *Pointer, PyObje
  */
 PyObject *PyPointerTupleDictToVectorMap(PyObject *Pointer, PyObject *PyTuple, PyObject *PyDict)
 {
-  // Return true if its argument is a PyCapsule.
-  if (!PyCapsule_CheckExact(Pointer))
-  {
-    UMUQFAIL("Pointer object is corrupted.");
-  }
+    // Return true if its argument is a PyCapsule.
+    if (!PyCapsule_CheckExact(Pointer))
+    {
+        UMUQFAIL("Pointer object is corrupted.");
+    }
 
-  // Retrieve the pointer stored in the capsule.
-  PyObjectFunctionPointer fun = reinterpret_cast<PyObjectFunctionPointer>(PyCapsule_GetPointer(Pointer, NULL));
-  auto Vec = PyTupleToVector(PyTuple);
-  auto Map = PyDictToMap(PyDict);
-  return fun(Vec, Map);
+    // Retrieve the pointer stored in the capsule.
+    PyObjectFunctionPointer fun = reinterpret_cast<PyObjectFunctionPointer>(PyCapsule_GetPointer(Pointer, NULL));
+    auto Vec = PyTupleToVector(PyTuple);
+    auto Map = PyDictToMap(PyDict);
+    return fun(Vec, Map);
 }
 
 // PyMethodDef: Structure used to describe a method of an extension type.
@@ -871,18 +914,18 @@ PyMethodDef PyPointerTupleDictToVectorMapMethod{
 
 PyObject *PyLambda(PyObjectFunctionPointer fun)
 {
-  // Create a PyCapsule encapsulating the pointer. The pointer argument may not be NULL.
-  PyObject *capsule = PyCapsule_New(reinterpret_cast<void *>(fun), NULL, NULL); // Return value: New reference.
+    // Create a PyCapsule encapsulating the pointer. The pointer argument may not be NULL.
+    PyObject *capsule = PyCapsule_New(reinterpret_cast<void *>(fun), NULL, NULL); // Return value: New reference.
 
-  return PyCFunction_New(&PyPointerTupleDictToVectorMapMethod, capsule);
+    return PyCFunction_New(&PyPointerTupleDictToVectorMapMethod, capsule);
 }
 
 PyObject *PyLambdaP(PyObjectFunctionPointerP fun, void *pointer)
 {
-  // Create a PyCapsule encapsulating the pointer. The pointer argument may not be NULL.
-  PyObject *capsule = PyCapsule_New(reinterpret_cast<void *>(fun), pointer ? reinterpret_cast<char *>(pointer) : NULL, NULL);
+    // Create a PyCapsule encapsulating the pointer. The pointer argument may not be NULL.
+    PyObject *capsule = PyCapsule_New(reinterpret_cast<void *>(fun), pointer ? reinterpret_cast<char *>(pointer) : NULL, NULL);
 
-  return PyCFunction_New(&PyPointerTupleDictToPointerFunctionVectorMapMethod, capsule);
+    return PyCFunction_New(&PyPointerTupleDictToPointerFunctionVectorMapMethod, capsule);
 }
 
 /*!
@@ -895,7 +938,7 @@ PyObject *PyLambdaP(PyObjectFunctionPointerP fun, void *pointer)
  */
 inline PyObject *PyObjectConstruct(PyObjectFunctionPointer fun)
 {
-  return PyLambda(fun);
+    return PyLambda(fun);
 }
 
 /*!
@@ -908,7 +951,7 @@ inline PyObject *PyObjectConstruct(PyObjectFunctionPointer fun)
  */
 inline PyObject *PyObjectConstruct(PyObjectFunctionPointerP fun, void *pointer)
 {
-  return PyLambdaP(fun, pointer);
+    return PyLambdaP(fun, pointer);
 }
 
 template <typename... Args>
@@ -923,27 +966,27 @@ inline void appendArgs(PyObjectVector & /* pyObjectVector */, PyObjectPairString
 template <typename Head, typename... Tail>
 void appendArgs(PyObjectVector &pyObjectVector, PyObjectPairStringVector &pyObjectPairStringVector, Head head, Tail... tail)
 {
-  PyObject *arg = PyObjectConstruct(head);
-  pyObjectVector.push_back(arg);
-  appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
+    PyObject *arg = PyObjectConstruct(head);
+    pyObjectVector.push_back(arg);
+    appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
 }
 
 // Keyword argument from string
 template <typename Head, typename... Tail>
 void appendArgs(PyObjectVector &pyObjectVector, PyObjectPairStringVector &pyObjectPairStringVector, std::pair<std::string, Head> head, Tail... tail)
 {
-  PyObject *value = PyObjectConstruct(head.second);
-  pyObjectPairStringVector.emplace_back(head.first, value);
-  appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
+    PyObject *value = PyObjectConstruct(head.second);
+    pyObjectPairStringVector.emplace_back(head.first, value);
+    appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
 }
 
 // Keyword argument from const char*
 template <typename Head, typename... Tail>
 void appendArgs(PyObjectVector &pyObjectVector, PyObjectPairStringVector &pyObjectPairStringVector, std::pair<char const *, Head> head, Tail... tail)
 {
-  PyObject *value = PyObjectConstruct(head.second);
-  pyObjectPairStringVector.emplace_back(std::string(head.first), value);
-  appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
+    PyObject *value = PyObjectConstruct(head.second);
+    pyObjectPairStringVector.emplace_back(std::string(head.first), value);
+    appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
 }
 } // namespace python
 
@@ -972,65 +1015,65 @@ inline namespace numpy
 template <typename DataType>
 PyObject *PyArray(std::vector<DataType> const &idata)
 {
-  PyObject *pArray;
-  npy_intp nsize = static_cast<npy_intp>(idata.size());
-  npy_intp PyArrayDims[] = {nsize};
-  if (NPYDatatype<DataType> == NPY_NOTYPE)
-  {
-    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-    if (!pArray)
+    PyObject *pArray;
+    npy_intp nsize = static_cast<npy_intp>(idata.size());
+    npy_intp PyArrayDims[] = {nsize};
+    if (NPYDatatype<DataType> == NPY_NOTYPE)
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        std::copy(idata.begin(), idata.end(), static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
     }
-    std::copy(idata.begin(), idata.end(), static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
-  }
-  else
-  {
-    pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, (void *)(idata.data()));
-    if (!pArray)
+    else
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, (void *)(idata.data()));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
     }
-  }
-  return pArray;
+    return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(std::vector<TIn> const &idata)
 {
-  PyObject *pArray;
-  npy_intp nsize = static_cast<npy_intp>(idata.size());
-  npy_intp PyArrayDims[] = {nsize};
-  if (NPYDatatype<TOut> != NPYDatatype<TIn>)
-  {
-    if (NPYDatatype<TOut> == NPY_NOTYPE)
+    PyObject *pArray;
+    npy_intp nsize = static_cast<npy_intp>(idata.size());
+    npy_intp PyArrayDims[] = {nsize};
+    if (NPYDatatype<TOut> != NPYDatatype<TIn>)
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      std::copy(idata.begin(), idata.end(), static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
+        if (NPYDatatype<TOut> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            std::copy(idata.begin(), idata.end(), static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
+        }
+        else
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            std::copy(idata.begin(), idata.end(), static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
+        }
     }
     else
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      std::copy(idata.begin(), idata.end(), static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray))));
+        pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, (void *)(idata.data()));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
     }
-  }
-  else
-  {
-    pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, (void *)(idata.data()));
-    if (!pArray)
-    {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
-    }
-  }
-  return pArray;
+    return pArray;
 }
 
 /*!
@@ -1048,78 +1091,78 @@ PyObject *PyArray(std::vector<TIn> const &idata)
 template <typename DataType>
 PyObject *PyArray(DataType const idata, int const nSize)
 {
-  PyObject *pArray;
-  npy_intp nsize = static_cast<npy_intp>(nSize);
-  npy_intp PyArrayDims[] = {nsize};
-  if (NPYDatatype<DataType> == NPY_NOTYPE)
-  {
-    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-    if (!pArray)
+    PyObject *pArray;
+    npy_intp nsize = static_cast<npy_intp>(nSize);
+    npy_intp PyArrayDims[] = {nsize};
+    if (NPYDatatype<DataType> == NPY_NOTYPE)
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        double const iData = static_cast<double>(idata);
+        std::fill(vd, vd + nsize, iData);
     }
-    double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    double const iData = static_cast<double>(idata);
-    std::fill(vd, vd + nsize, iData);
-  }
-  else
-  {
-    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<DataType>);
-    if (!pArray)
+    else
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<DataType>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        DataType *vd = static_cast<DataType *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        std::fill(vd, vd + nsize, idata);
     }
-    DataType *vd = static_cast<DataType *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    std::fill(vd, vd + nsize, idata);
-  }
-  return pArray;
+    return pArray;
 }
 
 template <>
 PyObject *PyArray<char>(char const idata, int const nSize)
 {
-  PyObject *pArray;
-  npy_intp nsize = static_cast<npy_intp>(nSize);
-  npy_intp PyArrayDims[] = {nsize};
-  pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<char>);
-  if (!pArray)
-  {
-    UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-  }
-  char *vd = static_cast<char *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-  std::fill(vd, vd + nsize, idata);
-  return pArray;
+    PyObject *pArray;
+    npy_intp nsize = static_cast<npy_intp>(nSize);
+    npy_intp PyArrayDims[] = {nsize};
+    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<char>);
+    if (!pArray)
+    {
+        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+    }
+    char *vd = static_cast<char *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+    std::fill(vd, vd + nsize, idata);
+    return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const idata, int const nSize)
 {
-  PyObject *pArray;
-  npy_intp nsize = static_cast<npy_intp>(nSize);
-  npy_intp PyArrayDims[] = {nsize};
-  if (NPYDatatype<TOut> == NPY_NOTYPE)
-  {
-    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-    if (!pArray)
+    PyObject *pArray;
+    npy_intp nsize = static_cast<npy_intp>(nSize);
+    npy_intp PyArrayDims[] = {nsize};
+    if (NPYDatatype<TOut> == NPY_NOTYPE)
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        double const iData = static_cast<double>(idata);
+        std::fill(vd, vd + nsize, iData);
     }
-    double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    double const iData = static_cast<double>(idata);
-    std::fill(vd, vd + nsize, iData);
-  }
-  else
-  {
-    pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
-    if (!pArray)
+    else
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        TOut const iData = static_cast<TOut>(idata);
+        std::fill(vd, vd + nsize, iData);
     }
-    TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    TOut const iData = static_cast<TOut>(idata);
-    std::fill(vd, vd + nsize, iData);
-  }
-  return pArray;
+    return pArray;
 }
 
 /*!
@@ -1138,126 +1181,126 @@ PyObject *PyArray(TIn const idata, int const nSize)
 template <typename DataType>
 PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stride = 1)
 {
-  PyObject *pArray;
-  if (Stride != 1)
-  {
-    arrayWrapper<DataType> iArray(idata, nSize, Stride);
-    npy_intp nsize = static_cast<npy_intp>(iArray.size());
-    npy_intp PyArrayDims[] = {nsize};
-    if (NPYDatatype<DataType> == NPY_NOTYPE)
+    PyObject *pArray;
+    if (Stride != 1)
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(iArray.begin(), iArray.end(), vd);
+        arrayWrapper<DataType> iArray(idata, nSize, Stride);
+        npy_intp nsize = static_cast<npy_intp>(iArray.size());
+        npy_intp PyArrayDims[] = {nsize};
+        if (NPYDatatype<DataType> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(iArray.begin(), iArray.end(), vd);
+        }
+        else
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<DataType>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            DataType *vd = static_cast<DataType *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(iArray.begin(), iArray.end(), vd);
+        }
     }
     else
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<DataType>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      DataType *vd = static_cast<DataType *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(iArray.begin(), iArray.end(), vd);
+        npy_intp nsize = static_cast<npy_intp>(nSize);
+        npy_intp PyArrayDims[] = {nsize};
+        if (NPYDatatype<DataType> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(idata, idata + nsize, vd);
+        }
+        else
+        {
+            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+            }
+        }
     }
-  }
-  else
-  {
-    npy_intp nsize = static_cast<npy_intp>(nSize);
-    npy_intp PyArrayDims[] = {nsize};
-    if (NPYDatatype<DataType> == NPY_NOTYPE)
-    {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(idata, idata + nsize, vd);
-    }
-    else
-    {
-      pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
-      }
-    }
-  }
-  return pArray;
+    return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 1)
 {
-  PyObject *pArray;
-  if (Stride != 1)
-  {
-    arrayWrapper<TIn> iArray(idata, nSize, Stride);
-    npy_intp nsize = static_cast<npy_intp>(iArray.size());
-    npy_intp PyArrayDims[] = {nsize};
-    if (NPYDatatype<TOut> == NPY_NOTYPE)
+    PyObject *pArray;
+    if (Stride != 1)
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(iArray.begin(), iArray.end(), vd);
+        arrayWrapper<TIn> iArray(idata, nSize, Stride);
+        npy_intp nsize = static_cast<npy_intp>(iArray.size());
+        npy_intp PyArrayDims[] = {nsize};
+        if (NPYDatatype<TOut> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(iArray.begin(), iArray.end(), vd);
+        }
+        else
+        {
+            pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(iArray.begin(), iArray.end(), vd);
+        }
     }
     else
     {
-      pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(iArray.begin(), iArray.end(), vd);
-    }
-  }
-  else
-  {
-    npy_intp nsize = static_cast<npy_intp>(nSize);
-    npy_intp PyArrayDims[] = {nsize};
-    if (NPYDatatype<TOut> != NPYDatatype<TIn>)
-    {
-      if (NPYDatatype<TOut> == NPY_NOTYPE)
-      {
-        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
-        if (!pArray)
+        npy_intp nsize = static_cast<npy_intp>(nSize);
+        npy_intp PyArrayDims[] = {nsize};
+        if (NPYDatatype<TOut> != NPYDatatype<TIn>)
         {
-          UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            if (NPYDatatype<TOut> == NPY_NOTYPE)
+            {
+                pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<double>);
+                if (!pArray)
+                {
+                    UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+                }
+                double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+                std::copy(idata, idata + nsize, vd);
+            }
+            else
+            {
+                pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
+                if (!pArray)
+                {
+                    UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+                }
+                TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+                std::copy(idata, idata + nsize, vd);
+            }
         }
-        double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-        std::copy(idata, idata + nsize, vd);
-      }
-      else
-      {
-        pArray = PyArray_SimpleNew(1, PyArrayDims, NPYDatatype<TOut>);
-        if (!pArray)
+        else
         {
-          UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, static_cast<void *>(idata));
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+            }
         }
-        TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-        std::copy(idata, idata + nsize, vd);
-      }
     }
-    else
-    {
-      pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, static_cast<void *>(idata));
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
-      }
-    }
-  }
-  return pArray;
+    return pArray;
 }
 
 /*!
@@ -1276,102 +1319,102 @@ PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 
 template <typename DataType>
 PyObject *Py2DArray(std::vector<DataType> const &idata, int const nDimX, int const nDimY)
 {
-  if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
-  {
-    UMUQFAIL("Data size does not match with mesh numbers!");
-  }
+    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
+    {
+        UMUQFAIL("Data size does not match with mesh numbers!");
+    }
 
-  PyObject *pArray;
-  npy_intp PyArrayDims[] = {nDimY, nDimX};
-  if (NPYDatatype<DataType> == NPY_NOTYPE)
-  {
-    pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
-    if (!pArray)
+    PyObject *pArray;
+    npy_intp PyArrayDims[] = {nDimY, nDimX};
+    if (NPYDatatype<DataType> == NPY_NOTYPE)
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        std::copy(idata.begin(), idata.end(), vd);
     }
-    double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    std::copy(idata.begin(), idata.end(), vd);
-  }
-  else
-  {
-    pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, (void *)(idata.data()));
-    if (!pArray)
+    else
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, (void *)(idata.data()));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
     }
-  }
-  return pArray;
+    return pArray;
 }
 
 template <typename TIn, typename TOut>
 PyObject *Py2DArray(std::vector<TIn> const &idata, int const nDimX, int const nDimY)
 {
-  if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
-  {
-    UMUQFAIL("Data size does not match with mesh numbers!");
-  }
-
-  PyObject *pArray;
-  npy_intp PyArrayDims[] = {nDimY, nDimX};
-  if (NPYDatatype<TOut> != NPYDatatype<TIn>)
-  {
-    if (NPYDatatype<TOut> == NPY_NOTYPE)
+    if (idata.size() != static_cast<decltype(idata.size())>(nDimX) * nDimY)
     {
-      pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(idata.begin(), idata.end(), vd);
+        UMUQFAIL("Data size does not match with mesh numbers!");
+    }
+
+    PyObject *pArray;
+    npy_intp PyArrayDims[] = {nDimY, nDimX};
+    if (NPYDatatype<TOut> != NPYDatatype<TIn>)
+    {
+        if (NPYDatatype<TOut> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(idata.begin(), idata.end(), vd);
+        }
+        else
+        {
+            pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<TOut>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(idata.begin(), idata.end(), vd);
+        }
     }
     else
     {
-      pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<TOut>);
-      if (!pArray)
-      {
-        UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
-      }
-      TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-      std::copy(idata.begin(), idata.end(), vd);
+        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<TOut>, (void *)(idata.data()));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
     }
-  }
-  else
-  {
-    pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<TOut>, (void *)(idata.data()));
-    if (!pArray)
-    {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
-    }
-  }
-  return pArray;
+    return pArray;
 }
 
 template <typename DataType>
 PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
 {
-  PyObject *pArray;
-  npy_intp PyArrayDims[] = {nDimY, nDimX};
-  if (NPYDatatype<DataType> == NPY_NOTYPE)
-  {
-    pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
-    if (!pArray)
+    PyObject *pArray;
+    npy_intp PyArrayDims[] = {nDimY, nDimX};
+    if (NPYDatatype<DataType> == NPY_NOTYPE)
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+        }
+        double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+        std::copy(idata, idata + nDimX * nDimY, vd);
     }
-    double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
-    std::copy(idata, idata + nDimX * nDimY, vd);
-  }
-  else
-  {
-    pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
-    if (!pArray)
+    else
     {
-      UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
     }
-  }
-  return pArray;
+    return pArray;
 }
 
 } // namespace numpy
