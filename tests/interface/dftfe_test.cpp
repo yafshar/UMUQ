@@ -1,6 +1,5 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "interface/dftfe.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 // Tests dftfe
