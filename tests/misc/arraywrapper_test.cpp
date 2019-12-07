@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "misc/arraywrapper.hpp"
 #include "gtest/gtest.h"
 

@@ -1,6 +1,5 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "misc/utility.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 // Test ExecuteCommand utility function

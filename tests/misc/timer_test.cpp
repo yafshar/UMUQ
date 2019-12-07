@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "misc/timer.hpp"
 #include "gtest/gtest.h"
 

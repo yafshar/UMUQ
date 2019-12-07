@@ -1,37 +1,36 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "misc/funcallcounter.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief In this test, it is important to register the task before calling the torcEnvironment
- * 
+ *
  */
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Create an instance of funcallcounter object
- * 
+ *
  */
 umuq::funcallcounter fc;
 
 /*!
  * \ingroup Test_Module
- * 
+ *
  * \brief Global task
- * 
+ *
  */
 void taskf()
 {
     fc.increment();
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check Function call counters functionality
  */
 TEST(funcallcounter_test, HandlesFunctioncounter)
