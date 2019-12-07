@@ -1,10 +1,17 @@
-#include "core/core.hpp"
-#include "global.hpp"
+#include "io/pyplot.hpp"
 #include "gtest/gtest.h"
 
 #ifdef HAVE_PYTHON
 
 using namespace umuq;
+
+/*!
+ * \ingroup Global_Module
+ *
+ * \brief Create a global instance of the Pyplot from Pyplot library
+ *
+ */
+umuq::matplotlib_223::pyplot plt;
 
 // TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)

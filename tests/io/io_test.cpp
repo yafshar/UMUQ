@@ -1,4 +1,3 @@
-#include "core/core.hpp"
 #include "io/io.hpp"
 #include "misc/parser.hpp"
 #include "gtest/gtest.h"
@@ -22,18 +21,18 @@ TEST(openFile_test, HandlesFiles)
     EXPECT_TRUE(f.openFile("../inference/tmcmc/test.txt"));
 
     EXPECT_TRUE(f.isFileOpened());
-    
+
     int n = 0;
     while (f.readLine())
     {
         // count the number of non empty and not commented line with "#" as default comment
         n++;
     }
-    
+
     EXPECT_EQ(n, 26);
-    
+
     f.closeFile();
-    
+
     EXPECT_FALSE(f.isFileOpened());
 }
 
@@ -60,7 +59,7 @@ TEST(openFilestream_test, HandlesFiles)
     std::remove(fileName);
 }
 
-/*! 
+/*!
  * Load and Save of an array with a matrix format
  */
 TEST(io_test, HandlesLoadandSaveArray)
@@ -139,8 +138,8 @@ TEST(io_test, HandlesLoadandSaveArray)
     delete[] F;
 }
 
-/*! 
- * Load and Save array of pointers in a matrix format from and to a file 
+/*!
+ * Load and Save array of pointers in a matrix format from and to a file
  */
 TEST(io_test, HandlesLoadandSaveArrayofPointers)
 {
@@ -199,7 +198,7 @@ TEST(io_test, HandlesLoadandSaveArrayofPointers)
     delete[] G;
 }
 
-/*! 
+/*!
  * Load and Save of two different data types
  */
 TEST(io_test, HandlesLoadandSaveDifferentData)
@@ -273,8 +272,8 @@ TEST(io_test, HandlesLoadandSaveDifferentData)
     delete[] L;
 }
 
-/*! 
- * Load and Save of an array of pointers from and to a file 
+/*!
+ * Load and Save of an array of pointers from and to a file
  */
 TEST(io_test, HandlesLoadandSaveDoubleArrays)
 {
@@ -338,8 +337,8 @@ TEST(io_test, HandlesLoadandSaveDoubleArrays)
     delete[] M;
 }
 
-/*! 
- * Load and Save of DataStructure from and to a file 
+/*!
+ * Load and Save of DataStructure from and to a file
  */
 TEST(io_test, HandlesLoadandSaveDataStructure)
 {
@@ -375,7 +374,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
 
     class edatabase
     {
-      public:
+    public:
         ebasic *entry;
         int entries;
         edatabase() : entry(NULL),
@@ -385,7 +384,7 @@ TEST(io_test, HandlesLoadandSaveDataStructure)
             destroy();
         }
 
-      private:
+    private:
         void destroy()
         {
             for (int i = 0; i < entries; i++)
