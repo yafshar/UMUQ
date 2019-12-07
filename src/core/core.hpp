@@ -6,6 +6,24 @@
 #include <UMUQ_config.h>
 #endif // HAVE_CONFIG
 
+#ifdef HAVE_PYTHON
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif // _POSIX_C_SOURCE
+#ifndef _AIX
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif // _XOPEN_SOURCE
+#endif // _AIX
+
+// Include Python.h before any standard headers are included
+#ifdef PY_SSIZE_T_CLEAN
+#undef PY_SSIZE_T_CLEAN
+#endif // PY_SSIZE_T_CLEAN
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#endif // HAVE_PYTHON
+
 // Defines symbols for compile-time detection of which instructions are used.
 // UMUQ_VECTORIZE_YY is defined if and only if the instruction set YY is used
 #define UMUQ_VECTORIZE
