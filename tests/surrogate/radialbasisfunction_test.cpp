@@ -1,13 +1,11 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "surrogate/radialbasisfunction.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
-#include "io/io.hpp"
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check radialBasisFunction 
+ *
+ * Test to check radialBasisFunction
  * \sa umuq::radialBasisFunction
  */
 TEST(radialBasisFunction_test, HandlesConstruction)
@@ -36,11 +34,11 @@ TEST(radialBasisFunction_test, HandlesConstruction)
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check radialBasisFunction 
+ *
+ * Test to check radialBasisFunction
  * \sa umuq::radialBasisFunction
- * 
- * The test function is \f$ f(x,y) = y\sin (x) + x\cos (y) \f$ 
+ *
+ * The test function is \f$ f(x,y) = y\sin (x) + x\cos (y) \f$
  */
 TEST(radialBasisFunction_test, HandlesFunctions)
 {
@@ -104,8 +102,8 @@ TEST(radialBasisFunction_test, HandlesFunctions)
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check radialBasisFunctionCap 
+ *
+ * Test to check radialBasisFunctionCap
  * \sa umuq::radialBasisFunctionCap
  */
 TEST(radialBasisFunctionCap_test, HandlesCapFunctions)

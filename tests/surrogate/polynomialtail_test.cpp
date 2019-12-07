@@ -1,12 +1,11 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "surrogate/polynomialtail.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check linearPolynomialTail 
+ *
+ * Test to check linearPolynomialTail
  */
 TEST(linearPolynomialTail_test, HandlesConstruction)
 {
@@ -27,8 +26,8 @@ TEST(linearPolynomialTail_test, HandlesConstruction)
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check constantPolynomialTail 
+ *
+ * Test to check constantPolynomialTail
  */
 TEST(constantPolynomialTail_test, HandlesConstruction)
 {

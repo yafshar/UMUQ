@@ -1,11 +1,10 @@
-#include "core/core.hpp"
-#include "environment.hpp"
 #include "surrogate/radialbasisfunctionkernel.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- *  
+ *
  * Test to check linearKernel
  * \sa umuq::linearKernel
  */
