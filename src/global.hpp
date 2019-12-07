@@ -1,11 +1,7 @@
 #ifndef UMUQ_GLOBAL_H
 #define UMUQ_GLOBAL_H
 
-#include "core/core.hpp"
 #include "misc/timer.hpp"
-#include "io/pyplot.hpp"
-#include "numerics/eigenlib.hpp"
-#include "numerics/random/psrandom.hpp"
 
 namespace umuq
 {
@@ -26,23 +22,6 @@ namespace umuq
 extern umuq::umuqTimer gTimer;
 #endif
 umuq::umuqTimer gTimer(false);
-
-/*!
- * \ingroup Global_Module
- *
- * \brief Create a global instance of the Pyplot from Pyplot library
- *
- */
-extern umuq::matplotlib_223::pyplot plt;
-umuq::matplotlib_223::pyplot plt;
-
-/*!
- * \ingroup Global_Module
- *
- * \brief Get an instance of a seeded pseudo random object
- */
-extern umuq::psrandom prng;
-umuq::psrandom prng(12345678);
 
 } // namespace umuq
 

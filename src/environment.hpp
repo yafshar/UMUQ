@@ -2,15 +2,10 @@
 #define UMUQ_ENVIRONMENT_H
 
 #include "core/core.hpp"
-#include "misc/funcallcounter.hpp"
-#include "inference/tmcmc/database.hpp"
-#include "inference/tmcmc/runinfo.hpp"
-#include "numerics/eigenlib.hpp"
-#include "numerics/random/psrandom.hpp"
 #include "global.hpp"
 
 #if HAVE_GOOGLETEST == 1 && defined(UMUQ_UNITTEST)
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #endif // HAVE_GOOGLETEST
 
 #include <cstddef>
@@ -123,31 +118,6 @@ void torcEnvironment::register_task(FunctionType f)
 
 void torcEnvironment::SetUp()
 {
-    if (!umuq::isPrngTaskRegistered)
-    {
-        torc_register_task((void *)psrandom::initTask);
-        umuq::isPrngTaskRegistered = true;
-    }
-
-    if (!umuq::isFuncallcounterTaskRegistered)
-    {
-        torc_register_task((void *)funcallcounter::resetTask);
-        torc_register_task((void *)funcallcounter::countTask);
-        umuq::isFuncallcounterTaskRegistered = true;
-    }
-
-    if (!umuq::tmcmc::isUpdateTaskRegistered)
-    {
-        torc_register_task((void *)umuq::tmcmc::updateDataTask);
-        umuq::tmcmc::isUpdateTaskRegistered = true;
-    }
-
-    if (!umuq::tmcmc::isBroadcastTaskRegistered)
-    {
-        torc_register_task((void *)umuq::tmcmc::broadcastTask);
-        umuq::tmcmc::isBroadcastTaskRegistered = true;
-    }
-
     char **argv = NULL;
     int argc = 0;
 
@@ -156,31 +126,6 @@ void torcEnvironment::SetUp()
 
 void torcEnvironment::SetUp(int argc, char **argv)
 {
-    if (!umuq::isPrngTaskRegistered)
-    {
-        torc_register_task((void *)psrandom::initTask);
-        umuq::isPrngTaskRegistered = true;
-    }
-
-    if (!umuq::isFuncallcounterTaskRegistered)
-    {
-        torc_register_task((void *)funcallcounter::resetTask);
-        torc_register_task((void *)funcallcounter::countTask);
-        umuq::isFuncallcounterTaskRegistered = true;
-    }
-
-    if (!umuq::tmcmc::isUpdateTaskRegistered)
-    {
-        torc_register_task((void *)umuq::tmcmc::updateDataTask);
-        umuq::tmcmc::isUpdateTaskRegistered = true;
-    }
-
-    if (!umuq::tmcmc::isBroadcastTaskRegistered)
-    {
-        torc_register_task((void *)umuq::tmcmc::broadcastTask);
-        umuq::tmcmc::isBroadcastTaskRegistered = true;
-    }
-
     torc_init(argc, argv);
 }
 
