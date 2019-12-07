@@ -1,30 +1,31 @@
 #ifndef UMUQ_HYPERCUBESAMPLING_H
 #define UMUQ_HYPERCUBESAMPLING_H
 
+#include "core/core.hpp"
 #include "inference/prior/priordistribution.hpp"
 #include "numerics/stats.hpp"
 
 namespace umuq
 {
 
-/*! 
+/*!
  * \defgroup HypercubeSampling_Module Hypercube sampling module
- * \ingroup Numerics_Module 
- * 
- * This is the Hypercube sampling module of %UMUQ providing all necessary classes for generating a 
- * deterministic, near-random samples or random samples of points over the interior of a hypercube 
+ * \ingroup Numerics_Module
+ *
+ * This is the Hypercube sampling module of %UMUQ providing all necessary classes for generating a
+ * deterministic, near-random samples or random samples of points over the interior of a hypercube
  * in N dimensions.
  */
 
 /*! \class hypercubeSampling
- * \ingroup HypercubeSampling_Module 
- * 
- * \brief This class generates sample points over the interior of a hypercube in N dimensions 
- * 
+ * \ingroup HypercubeSampling_Module
+ *
+ * \brief This class generates sample points over the interior of a hypercube in N dimensions
+ *
  * The N-dimensional hypercube is the set of M points \f$ {\mathbf X}_1, {\mathbf X}_2, \cdots, {\mathbf X}_M \f$ such that: <br>
- * \f$ {\mathbf X}_{ij} \in [lowerBound(j), upperBound(j)], \f$ for each dimension j, where the \f$ lowerBound(j) \f$ is the 
+ * \f$ {\mathbf X}_{ij} \in [lowerBound(j), upperBound(j)], \f$ for each dimension j, where the \f$ lowerBound(j) \f$ is the
  * lower bound and \f$ upperBound(j) \f$ is the upperbound of the j-th coordinate.
- * 
+ *
  * \tparam DataType Data type
  */
 template <typename DataType>
@@ -34,10 +35,10 @@ class hypercubeSampling
     /*!
      * \brief Construct a new hypercubeSampling object. <br>
      * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
-     * 
+     *
      * \param TotalNumPoints  Total number of points to generate in the hypercube
      * \param NumDimensions   Number of dimensions
-     * \param LowerBound      \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0) 
+     * \param LowerBound      \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0)
      * \param UpperBound      \c NumDimensions size vector containing upper bound in each dimension of the hypercube (default is 1)
      */
     hypercubeSampling(int const TotalNumPoints, int const NumDimensions, double const *LowerBound = nullptr, double const *UpperBound = nullptr);
@@ -45,7 +46,7 @@ class hypercubeSampling
     /*!
      * \brief Construct a new hypercubeSampling object. <br>
      * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
-     * 
+     *
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
      * \param NumDimensions             Number of dimensions
      * \param LowerBound                \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0)
@@ -56,9 +57,9 @@ class hypercubeSampling
     /*!
      * \brief Construct a new hypercubeSampling object. <br>
      * By default, when no lower and upper bounds are provided, it creates a unit hypercube in \f$ [0,~1]^N \f$.
-     * 
+     *
      * \param NumPointsInEachDirection  \c NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param LowerBound                \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0) 
+     * \param LowerBound                \c NumDimensions size vector containing lower bound in each dimension of the hypercube (default is 0)
      * \param UpperBound                \c NumDimensions size vector containing upper bound in each dimension of the hypercube (default is 1)
      */
     hypercubeSampling(std::vector<int> const &NumPointsInEachDirection,
@@ -66,34 +67,34 @@ class hypercubeSampling
 
     /*!
      * \brief Move constructor, construct a new hypercubeSampling object
-     * 
+     *
      * \param other hypercubeSampling object
      */
     explicit hypercubeSampling(hypercubeSampling<DataType> &&other);
 
     /*!
      * \brief Move assignment operator
-     * 
+     *
      * \param other hypercubeSampling object
-     * 
+     *
      * \returns hypercubeSampling<DataType>& hypercubeSampling object
      */
     hypercubeSampling<DataType> &operator=(hypercubeSampling<DataType> &&other);
 
     /*!
      * \brief Destroy the hypercubeSampling object
-     * 
+     *
      */
     ~hypercubeSampling();
 
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the cube between \f$ [lowerBound \cdots upperBound] \f$.
      * Create conventional grid in a hypercube.
-     * 
+     *
      * \param gridPoints   Full factorial sampling plan
-     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                     otherwise they will be in the centres of 
-     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                     otherwise they will be in the centres of
+     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                     bins filling the cube.
      */
     bool grid(DataType *&gridPoints, int const Edges = 1);
@@ -101,11 +102,11 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the cube between \f$ [lowerBound \cdots upperBound] \f$.
      * Create conventional grid in a hypercube.
-     * 
+     *
      * \param gridPoints   Full factorial sampling plan
-     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                     otherwise they will be in the centres of 
-     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                     otherwise they will be in the centres of
+     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                     bins filling the cube.
      */
     bool grid(std::vector<DataType> &gridPoints, int const Edges = 1);
@@ -113,12 +114,12 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the cube between \f$ [lowerBound \cdots upperBound] \f$.
      * Create conventional grid in a hypercube.
-     * 
+     *
      * \param gridPoints                Full factorial sampling plan
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                                  otherwise they will be in the centres of 
-     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                                  otherwise they will be in the centres of
+     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                                  bins filling the cube.
      */
     bool grid(DataType *&gridPoints, int const *NumPointsInEachDirection, int const Edges = 1);
@@ -126,12 +127,12 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the cube between \f$ [lowerBound \cdots upperBound] \f$.
      * Create conventional grid in a hypercube.
-     * 
+     *
      * \param gridPoints                Full factorial sampling plan
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                                  otherwise they will be in the centres of 
-     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                                  otherwise they will be in the centres of
+     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                                  bins filling the cube.
      */
     bool grid(std::vector<DataType> &gridPoints, std::vector<int> const &NumPointsInEachDirection, int const Edges = 1);
@@ -139,11 +140,11 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the unit cube of \f$ [0 \cdots 1]^N \f$.
      * Create conventional grid in unit hypercube.
-     * 
+     *
      * \param gridPoints   Full factorial sampling plan in a unit cube
-     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                     otherwise they will be in the centres of 
-     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                     otherwise they will be in the centres of
+     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                     bins filling the unit cube.
      */
     bool gridInUnitCube(DataType *&gridPoints, int const Edges = 1);
@@ -151,11 +152,11 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the unit cube of \f$ [0 \cdots 1]^N \f$.
      * Create conventional grid in unit hypercube.
-     * 
+     *
      * \param gridPoints   Full factorial sampling plan in a unit cube
-     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                     otherwise they will be in the centres of 
-     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges        If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                     otherwise they will be in the centres of
+     *                     \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                     bins filling the unit cube.
      */
     bool gridInUnitCube(std::vector<DataType> &gridPoints, int const Edges = 1);
@@ -163,12 +164,12 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the unit cube of \f$ [0 \cdots 1]^N \f$.
      * Create conventional grid in unit hypercube.
-     * 
+     *
      * \param gridPoints                Full factorial sampling plan in a unit cube
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                                  otherwise they will be in the centres of 
-     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                                  otherwise they will be in the centres of
+     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                                  bins filling the unit cube.
      */
     bool gridInUnitCube(DataType *&gridPoints, int const *NumPointsInEachDirection, int const Edges = 1);
@@ -176,12 +177,12 @@ class hypercubeSampling
     /*!
      * \brief Generates a full factorial sampling plan in N dimensions of the unit cube of \f$ [0 \cdots 1]^N \f$.
      * Create conventional grid in unit hypercube.
-     * 
+     *
      * \param gridPoints                Full factorial sampling plan in a unit cube
      * \param NumPointsInEachDirection  NumDimensions size vector containing the number of points along each dimension of the hypercube
-     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default), 
-     *                                  otherwise they will be in the centres of 
-     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$ 
+     * \param Edges                     If \c Edges=1 the points will be equally spaced from edge to edge (default),
+     *                                  otherwise they will be in the centres of
+     *                                  \f$ N = numPointsInEachDirection(1) \times numPointsInEachDirection(2) \times \cdots \times numPointsInEachDirection(numDimensions) \f$
      *                                  bins filling the unit cube.
      */
     bool gridInUnitCube(std::vector<DataType> &gridPoints, std::vector<int> const &NumPointsInEachDirection, int const Edges = 1);
@@ -189,11 +190,11 @@ class hypercubeSampling
     /*!
      * \brief Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
      * (Default is the uniform distribution).
-     * 
+     *
      * \param points          Points generated in the hypercube (sampled totalNumPoints in the hypercube) according to the distributionTypes.
      * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
      */
     bool sample(DataType *&points, priorTypes const PriorType = priorTypes::UNIFORM, DataType const *Param1 = nullptr, DataType const *Param2 = nullptr, priorTypes const *compositeprior = nullptr);
@@ -201,12 +202,12 @@ class hypercubeSampling
     /*!
      * \brief  Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
      * (Default is the uniform distribution).
-     * 
+     *
      * \param points          Points generated in the hypercube (sampled nPoints in the hypercube) according to the distributionTypes.
      * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
      * \param nPoints         Number of sampling points in the hypercube.
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
      */
     bool sample(DataType *&points, int const nPoints, priorTypes const PriorType = priorTypes::UNIFORM, DataType const *Param1 = nullptr, DataType const *Param2 = nullptr, priorTypes const *compositeprior = nullptr);
@@ -214,11 +215,11 @@ class hypercubeSampling
     /*!
      * \brief Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
      * (Default is the uniform distribution).
-     * 
+     *
      * \param points          Points generated in the hypercube (sampled totalNumPoints in the hypercube) according to the distributionTypes.
      * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
      */
     bool sample(std::vector<DataType> &points, priorTypes const PriorType = priorTypes::UNIFORM,
@@ -227,12 +228,12 @@ class hypercubeSampling
     /*!
      * \brief  Generates points in N-dimensional hypercube of \f$ [lowerBound \cdots upperBound] \f$ according to the requested distribution,
      * (Default is the uniform distribution).
-     * 
+     *
      * \param points          Points generated in the hypercube (sampled nPoints in the hypercube) according to the distributionTypes.
      * \param Prior           Prior distribution type (0: uniform, 1: gaussian, 2: exponential, 3: gamma, 4:composite) \sa umuq::priorTypes.
      * \param nPoints         Number of sampling points in the hypercube.
-     * \param Param1          First parameter for a prior distribution  
-     * \param Param2          Second parameter for a prior distribution  
+     * \param Param1          First parameter for a prior distribution
+     * \param Param2          Second parameter for a prior distribution
      * \param compositeprior  Composite priors type
      */
     bool sample(std::vector<DataType> &points, int const nPoints, priorTypes const PriorType = priorTypes::UNIFORM,
@@ -247,17 +248,17 @@ class hypercubeSampling
 
     /*!
      * \brief Delete a hypercubeSampling object copy construction
-     * 
+     *
      * Avoiding implicit generation of the copy constructor.
      */
     hypercubeSampling(hypercubeSampling<DataType> const &) = delete;
 
     /*!
      * \brief Delete a hypercubeSampling object assignment
-     * 
+     *
      * Avoiding implicit copy assignment.
-     * 
-     * \returns hypercubeSampling<DataType>& 
+     *
+     * \returns hypercubeSampling<DataType>&
      */
     hypercubeSampling<DataType> &operator=(hypercubeSampling<DataType> const &) = delete;
 
