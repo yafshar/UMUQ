@@ -1,13 +1,29 @@
-#include "core/core.hpp"
-#include "environment.hpp"
-#include "global.hpp"
 #include "numerics/density.hpp"
+#include "datatype/eigendatatype.hpp"
+#include "numerics/random/psrandom.hpp"
+#include "io/pyplot.hpp"
+#include "environment.hpp"
 #include "gtest/gtest.h"
 
 /*!
  * \ingroup Test_Module
- *  
- * Test to check uniformDistribution 
+ *
+ * \brief Create an instance of the Pyplot from Pyplot library
+ *
+ */
+umuq::matplotlib_223::pyplot plt;
+
+/*!
+ * \ingroup Test_Module
+ *
+ * \brief Get an instance of a seeded pseudo random object
+ */
+umuq::psrandom prng(12345678);
+
+/*!
+ * \ingroup Test_Module
+ *
+ * Test to check uniformDistribution
  */
 TEST(densityFunction_test, HandlesUniformDistributionConstruction)
 {
@@ -23,7 +39,7 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     EXPECT_DOUBLE_EQ(u.lf(&X1), 0.);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(umuq::prng.setState());
+    EXPECT_TRUE(prng.setState());
 
     // Produce samples with uniform distribution density
     u.sample(&X1);
@@ -55,10 +71,10 @@ TEST(densityFunction_test, HandlesUniformDistributionConstruction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
- * Test to check exponentialDistribution 
+ *
+ * Test to check exponentialDistribution
  */
 TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
 {
@@ -72,7 +88,7 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
     EXPECT_FLOAT_EQ(e.lf(&X2), -X2);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(umuq::prng.setState());
+    EXPECT_TRUE(prng.setState());
 
     // Produce samples with Exponential distribution density
     e.sample(&X1);
@@ -88,10 +104,10 @@ TEST(densityFunction_test, HandlesExponentialDistributionConstruction)
     e.sample(Z);
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
- * Test to check gammaDistribution 
+ *
+ * Test to check gammaDistribution
  */
 TEST(densityFunction_test, HandlesGammaDistributionConstruction)
 {
@@ -107,7 +123,7 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     EXPECT_DOUBLE_EQ(g.lf(&X2), std::log(g.f(&X2)));
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(umuq::prng.setState());
+    EXPECT_TRUE(prng.setState());
 
     // Produce samples with Exponential distribution density
     g.sample(&X1);
@@ -123,10 +139,10 @@ TEST(densityFunction_test, HandlesGammaDistributionConstruction)
     g.sample(Z);
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
- * Test to check gaussianDistribution 
+ *
+ * Test to check gaussianDistribution
  */
 TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
 {
@@ -143,7 +159,7 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     EXPECT_DOUBLE_EQ(gu.lf(&X1), -2.5333764456387726);
 
     // Initialize the PRNG or set the state of the PRNG
-    EXPECT_TRUE(umuq::prng.setState());
+    EXPECT_TRUE(prng.setState());
 
     // Produce samples with Exponential distribution density
     gu.sample(&X1);
@@ -159,10 +175,10 @@ TEST(densityFunction_test, HandlesGaussianDistributionConstruction)
     gu.sample(Z);
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
- * Test to check multivariateGaussianDistribution 
+ *
+ * Test to check multivariateGaussianDistribution
  */
 TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
 {
@@ -181,7 +197,7 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     umuq::multivariateGaussianDistribution<double> mvn(M2d, 2);
 
     // Prepare data.
-    int n = 11;
+    int const n = 11;
 
     // Coordinates
     std::vector<double> x(n * n);
@@ -241,73 +257,73 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     std::vector<int> s(n * n, 1000);
 
     // Clear previous plot
-    EXPECT_TRUE(umuq::plt.clf());
+    EXPECT_TRUE(plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(umuq::plt.scatter<double>(x, y, s, pdf, keywords));
+    EXPECT_TRUE(plt.scatter<double>(x, y, s, pdf, keywords));
 
     // Add graph title
-    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution PDF"));
+    EXPECT_TRUE(plt.title("multivariate normal distribution PDF"));
 
     // save figure
-    EXPECT_TRUE(umuq::plt.savefig(fileName));
+    EXPECT_TRUE(plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(umuq::plt.close());
+    EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatecontourpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(umuq::plt.clf());
+    EXPECT_TRUE(plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(umuq::plt.contourf<double>(x2, y2, pdf));
+    EXPECT_TRUE(plt.contourf<double>(x2, y2, pdf));
 
     // Add graph title
-    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution PDF contour"));
+    EXPECT_TRUE(plt.title("multivariate normal distribution PDF contour"));
 
     // save figure
-    EXPECT_TRUE(umuq::plt.savefig(fileName));
+    EXPECT_TRUE(plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(umuq::plt.close());
+    EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatescatterlogpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(umuq::plt.clf());
+    EXPECT_TRUE(plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(umuq::plt.scatter<double>(x, y, s, lpdf, keywords));
+    EXPECT_TRUE(plt.scatter<double>(x, y, s, lpdf, keywords));
 
     // Add graph title
-    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution Log of PDF"));
+    EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF"));
 
     // save figure
-    EXPECT_TRUE(umuq::plt.savefig(fileName));
+    EXPECT_TRUE(plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(umuq::plt.close());
+    EXPECT_TRUE(plt.close());
 
     fileName = "./multivariatecontourlogpdf.svg";
     std::remove(fileName.c_str());
 
     // Clear previous plot
-    EXPECT_TRUE(umuq::plt.clf());
+    EXPECT_TRUE(plt.clf());
 
     // Create scatter plot
-    EXPECT_TRUE(umuq::plt.contourf<double>(x2, y2, lpdf));
+    EXPECT_TRUE(plt.contourf<double>(x2, y2, lpdf));
 
     // Add graph title
-    EXPECT_TRUE(umuq::plt.title("multivariate normal distribution Log of PDF contour"));
+    EXPECT_TRUE(plt.title("multivariate normal distribution Log of PDF contour"));
 
     // save figure
-    EXPECT_TRUE(umuq::plt.savefig(fileName));
+    EXPECT_TRUE(plt.savefig(fileName));
 
     // close figure
-    EXPECT_TRUE(umuq::plt.close());
+    EXPECT_TRUE(plt.close());
 #endif
 
     {
@@ -329,11 +345,11 @@ TEST(densityFunction_test, HandlesMultivariateGaussianDistributionConstruction)
     }
 }
 
-/*! 
+/*!
  * \ingroup Test_Module
- * 
+ *
  * Test to check multinomialDistribution
- * 
+ *
  * Example reference: <br>
  * http://www.probabilityformula.org/multinomial-probability.html
  */
@@ -341,7 +357,7 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
 {
     /*!
      * \brief First example
-     *  
+     *
      * This is an experiment of drawing a random card from an ordinary playing cards deck is done with replacing it back.
      * This was done ten times. Find the probability of getting 2 spades, 3 diamond, 3 club and 2 hearts.
      */
@@ -361,11 +377,11 @@ TEST(densityFunction_test, HandlesMultinomialDistributionConstruction)
 
     /*!
      * \brief Second example
-     *  
-     * In case of 10 bits, what is the probability that 5 are excellent, 2 are good and 2 are fair and 1 is poor? 
-     * Classification of individual bits are independent events and that the probabilities of A, B, C and D are 
-     * 40%, 20%, 5% and 1% respectively. 
-     * 
+     *
+     * In case of 10 bits, what is the probability that 5 are excellent, 2 are good and 2 are fair and 1 is poor?
+     * Classification of individual bits are independent events and that the probabilities of A, B, C and D are
+     * 40%, 20%, 5% and 1% respectively.
+     *
      * \note
      * The multinomialDistribution would normalize the probabilities of A, B, C and D to {40/66, 20/66, 5/66, 1/66}.
      */
