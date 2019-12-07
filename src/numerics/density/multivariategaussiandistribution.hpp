@@ -3,6 +3,7 @@
 
 #include "core/core.hpp"
 #include "numerics/function/densityfunction.hpp"
+#include "numerics/random/psrandom.hpp"
 
 #include <cmath>
 

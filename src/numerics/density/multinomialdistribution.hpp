@@ -5,6 +5,7 @@
 #include "numerics/function/densityfunction.hpp"
 #include "datatype/eigendatatype.hpp"
 #include "numerics/eigenlib.hpp"
+#include "numerics/random/psrandom.hpp"
 
 #include <cmath>
 
