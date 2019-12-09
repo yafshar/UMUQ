@@ -3,7 +3,7 @@
 
 #ifdef HAVE_PYTHON
 
-using namespace umuq;
+#include <random>
 
 /*!
  * \ingroup Test_Module
@@ -12,6 +12,8 @@ using namespace umuq;
  *
  */
 umuq::matplotlib_223::pyplot plt;
+
+using namespace umuq;
 
 // TEST for Basic functionality
 TEST(Pyplot_test, HandlesBasic)
