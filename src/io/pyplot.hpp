@@ -1,9 +1,10 @@
 #ifndef UMUQ_PYPLOT_H
 #define UMUQ_PYPLOT_H
-#ifdef HAVE_PYTHON
 
-#include "interface/python.hpp"
 #include "core/core.hpp"
+
+#ifdef HAVE_PYTHON
+#include "interface/python.hpp"
 #include "datatype/npydatatype.hpp"
 #include "misc/arraywrapper.hpp"
 
@@ -4493,7 +4494,7 @@ pyplot::matplotlib &pyplot::matplotlib::operator=(pyplot::matplotlib &&other)
 } // namespace matplotlib_223
 } // namespace umuq
 
-#else // HAVEPYTHON
+#else // HAVE_PYTHON
 
 namespace umuq
 {
@@ -4534,5 +4535,5 @@ protected:
 } // namespace matplotlib_223
 } // namespace umuq
 
-#endif // HAVEPYTHON
+#endif // HAVE_PYTHON
 #endif // UMUQ_PYPLOT
