@@ -22,6 +22,15 @@
 #endif // PY_SSIZE_T_CLEAN
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <frameobject.h>
+#include <pythread.h>
+
+// To avoid the compiler warning
+#ifdef NPY_NO_DEPRECATED_API
+#undef NPY_NO_DEPRECATED_API
+#endif
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
 #endif // HAVE_PYTHON
 
 // Defines symbols for compile-time detection of which instructions are used.
