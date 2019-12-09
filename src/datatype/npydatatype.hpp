@@ -1,25 +1,9 @@
 #ifndef UMUQ_NPYDATATYPE_H
 #define UMUQ_NPYDATATYPE_H
+
+#include "core/core.hpp"
+
 #ifdef HAVE_PYTHON
-
-#ifdef _POSIX_C_SOURCE
-#undef _POSIX_C_SOURCE
-#endif
-#ifdef _XOPEN_SOURCE
-#undef _XOPEN_SOURCE
-#endif
-
-// Include Python.h before any standard headers are included
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-// To avoid the compiler warning
-#ifdef NPY_NO_DEPRECATED_API
-#undef NPY_NO_DEPRECATED_API
-#endif
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <numpy/arrayobject.h>
-
 namespace umuq
 {
 
