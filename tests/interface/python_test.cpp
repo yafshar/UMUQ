@@ -5,6 +5,8 @@
 #ifdef HAVE_PYTHON
 
 #include <cstring>
+#include <vector>
+#include <numeric>
 
 // Tests python
 TEST(python_test, HandlesConstruction)
@@ -56,6 +58,109 @@ TEST(python_test, HandlesConstruction)
         EXPECT_FALSE((Obj2));
     }
 }
+
+// Tests python
+TEST(numpy_test, HandlesConstruction)
+{
+    using namespace umuq::python;
+    using namespace umuq::python::numpy;
+
+    {
+        std::vector<int> a(10);
+        std::iota(a.begin(), a.end(), 0);
+        auto Obj1 = PyArray<int>(a);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = PyArray<int, double>(a);
+        EXPECT_TRUE((Obj2));
+    }
+
+    {
+        std::vector<double> a(10);
+        std::iota(a.begin(), a.end(), 0.0);
+        auto Obj1 = PyArray<double>(a);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = PyArray<double, int>(a);
+        EXPECT_TRUE((Obj2));
+    }
+
+    {
+        auto Obj1 = PyArray<double>(1., 100);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = PyArray<int>(0, 10);
+        EXPECT_TRUE((Obj2));
+
+        auto Obj3 = PyArray<char>('r', 10);
+        EXPECT_TRUE((Obj3));
+    }
+
+    {
+        std::vector<int> a(100);
+        std::iota(a.begin(), a.end(), 0);
+
+        auto Obj1 = PyArray<int>(a.data(), 100, 10);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = PyArray<int, double>(a.data(), 100, 10);
+        EXPECT_TRUE((Obj2));
+    }
+
+    {
+        std::vector<int> a(12);
+        std::iota(a.begin(), a.end(), 0);
+        auto Obj1 = Py2DArray<int>(a, 3, 4);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = Py2DArray<int, double>(a, 3, 4);
+        EXPECT_TRUE((Obj2));
+    }
+
+    {
+        std::vector<int> a(12);
+        std::iota(a.begin(), a.end(), 0);
+        auto Obj1 = Py2DArray<int>(a.data(), 3, 4);
+        EXPECT_TRUE((Obj1));
+
+        auto Obj2 = Py2DArray<int, double>(a.data(), 3, 4);
+        EXPECT_TRUE((Obj2));
+    }
+}
+
+// Tests python calling function name (statistics function)
+TEST(python_test, HandlesCallFunctionName)
+{
+    using namespace umuq::python;
+
+    {
+        std::vector<int> a(10);
+        std::iota(a.begin(), a.end(), 0);
+        auto Obj1 = PyArray<int>(a);
+        EXPECT_TRUE((Obj1));
+
+        std::string functionName = "statistics.mean";
+        auto Obj2 = PyCallFunctionName(functionName, Obj1);
+        EXPECT_TRUE((Obj2));
+
+        EXPECT_DOUBLE_EQ(PyFloat_AS_DOUBLE(Obj2), 4.5);
+    }
+
+    {
+        std::vector<int> a(10);
+        std::iota(a.begin(), a.end(), 0);
+        auto Obj1 = PyArray<int>(a);
+        EXPECT_TRUE((Obj1));
+
+        std::string functionName = "statistics.mean";
+        auto Obj2 = PyCallFunctionName(functionName, PyObjectVector{Obj1});
+        EXPECT_TRUE((Obj2));
+
+        EXPECT_DOUBLE_EQ(PyFloat_AS_DOUBLE(Obj2), 4.5);
+    }
+
+}
+
 #else
 // Tests python
 TEST(python_test, HandlesConstruction)
