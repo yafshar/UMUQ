@@ -124,6 +124,8 @@ AM_COND_IF([HAVE_GOOGLETEST], [
     tests/numerics/Makefile
     tests/numerics/polynomials/Makefile
     tests/numerics/random/Makefile
+    tests/numerics/knn/Makefile
+    tests/numerics/dcpse/Makefile
     tests/numerics/hypercube/Makefile
     tests/numerics/function/Makefile
     tests/numerics/density/Makefile
