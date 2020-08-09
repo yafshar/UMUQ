@@ -323,6 +323,7 @@ void appendArgs(PyObjectVector &pyObjectVector, PyObjectPairStringVector &pyObje
     pyObjectPairStringVector.emplace_back(std::string(head.first), value);
     appendArgs(pyObjectVector, pyObjectPairStringVector, tail...);
 }
+
 } // namespace detail
 
 /*!
@@ -649,6 +650,37 @@ PyObject *PyCallFunctionObject(PyObject *function,
     }
 }
 
+PyObject *PyCallFunctionObject(PyObject *function, PyObject *pyObject)
+{
+    // Determine if the function is callable.
+    // Return 1 if the function is callable and 0 otherwise. (always succeeds.)
+    if (!PyCallable_Check(function))
+    {
+        UMUQFAILRETURNNULL("The input function isn't callable.");
+    }
+
+    // Call a callable Python object callable, with one PyObject* argument.
+    PyObject *res = PyObject_CallFunctionObjArgs(function, pyObject, NULL);
+    if (!res)
+    {
+        if (PyErr_Occurred())
+        {
+            UMUQFAILRETURNNULL("Exception in calling a python function.");
+        }
+        UMUQFAILRETURNNULL("Failed to call the function.");
+    }
+    return res;
+}
+
+template <typename... Args>
+PyObject *PyCallFunctionObject(PyObject *function, Args... args)
+{
+    PyObjectVector pyObjectVector;
+    PyObjectPairStringVector pyObjectPairStringVector;
+    detail::appendArgs(pyObjectVector, pyObjectPairStringVector, args...);
+    return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+}
+
 /*!
  * \ingroup Python_Module
  *
@@ -728,6 +760,62 @@ PyObject *PyCallFunctionName(std::string const &functionName,
     return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
 }
 
+PyObject *PyCallFunctionName(std::string const &functionName, PyObject *pyObject)
+{
+    // Check the name size
+    if (!functionName.size())
+    {
+        UMUQWARNING("The input functionName is empty.");
+        return NULL;
+    }
+
+    PyObject *module = NULL;
+
+    auto nSize = functionName.size();
+    while (!module && nSize != std::string::npos)
+    {
+        nSize = functionName.rfind('.', nSize - 1);
+
+        std::string const submodule = functionName.substr(0, nSize);
+
+        // The return value is a new reference to the imported module
+        module = PyImport_ImportModule(submodule.c_str()); // Return value: New reference.
+    }
+
+    // A function object
+    PyObject *function = NULL;
+
+    if (module)
+    {
+        // Load the longest prefix of name that is a valid module name.
+        std::string moduleName = functionName.substr(nSize);
+
+        function = PyGetAttribute(module, moduleName);
+        if (!function)
+        {
+            UMUQFAILRETURNNULL("Importing the '", moduleName, "' from '", functionName.substr(0, nSize), "' submodules failed.");
+        }
+    }
+    else
+    {
+        // Return a dictionary of the builtins in the current execution frame
+        PyObject *builtins = PyEval_GetBuiltins(); // Return value: Borrowed reference.
+
+        // Return the object 'function' from the dictionary 'builtins' which has
+        // a key 'functionName'.
+        function = PyDict_GetItemString(builtins, functionName.c_str()); // Return value: Borrowed reference.
+        if (!function)
+        {
+            UMUQFAILRETURNNULL("Importing the ", functionName, " failed.");
+        }
+
+        // Increment the reference count for object 'function'
+        Py_XINCREF(function);
+    }
+
+    return PyCallFunctionObject(function, pyObject);
+}
+
 template <typename... Args>
 PyObject *PyCallFunctionName(std::string const &functionName, Args... args)
 {
@@ -759,6 +847,18 @@ PyObject *PyCallFunctionNameFromModule(std::string const &functionName,
         UMUQFAILRETURNNULL("Failed to retrieve an attribute named '", functionName, "' from the 'module' object.");
     }
     return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+}
+
+PyObject *PyCallFunctionNameFromModule(std::string const &functionName,
+                                       PyObject *module,
+                                       PyObject *pyObject)
+{
+    PyObject *function = PyGetAttribute(module, functionName);
+    if (!function)
+    {
+        UMUQFAILRETURNNULL("Failed to retrieve an attribute named '", functionName, "' from the 'module' object.");
+    }
+    return PyCallFunctionObject(function, pyObject);
 }
 
 template <typename... Args>
@@ -812,6 +912,38 @@ PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName,
     }
 
     return PyCallFunctionObject(function, pyObjectVector, pyObjectPairStringVector);
+}
+
+PyObject *PyCallFunctionNameFromModuleName(std::string const &functionName,
+                                           std::string const &moduleName,
+                                           PyObject *pyObject)
+{
+    // Check the name size
+    if (!functionName.size())
+    {
+        UMUQWARNING("The input functionName is empty.");
+        return NULL;
+    }
+    if (!moduleName.size())
+    {
+        UMUQWARNING("The input moduleName is empty.");
+        return NULL;
+    }
+
+    // The return value is a new reference to the imported module
+    PyObject *module = PyImport_ImportModule(moduleName.c_str()); // Return value: New reference.
+    if (!module)
+    {
+        UMUQFAILRETURNNULL("Failed to import the '", moduleName, "' module.");
+    }
+
+    PyObject *function = PyGetAttribute(module, functionName);
+    if (!function)
+    {
+        UMUQFAILRETURNNULL("Lookup of function '", functionName, "' failed.");
+    }
+
+    return PyCallFunctionObject(function, pyObject);
 }
 
 template <typename... Args>
@@ -1044,6 +1176,99 @@ inline PyObject *PyObjectConstruct(PyObjectPointerFunP pointer, char const *name
     return PyLambdaP(pointer, name);
 }
 } // namespace python
+
+// namespace python
+// {
+// struct PyModule
+// {
+//     explicit PyModule(std::string const &moduleName) : ModuleName(moduleName)
+//     {
+//         if (!ModuleName.size())
+//         {
+//             UMUQFAIL("The input module name string is empty.");
+//         }
+
+//         PyObject *_module = NULL;
+
+//         auto nSize = ModuleName.size();
+//         while (!_module && nSize != std::string::npos)
+//         {
+//             nSize = ModuleName.rfind('.', nSize - 1);
+
+//             std::string const submodule = ModuleName.substr(0, nSize);
+
+//             // The return value is a new reference to the imported module
+//             _module = PyImport_ImportModule(submodule.c_str()); // Return value: New reference.
+//         }
+
+//         // A function object
+//         PyObject *_function = NULL;
+
+//         if (_module)
+//         {
+//             // Load the longest prefix of name that is a valid module name.
+//             std::string _moduleName = ModuleName.substr(nSize);
+
+//             _function = PyGetAttribute(_module, _moduleName);
+//             if (!_function)
+//             {
+//                 UMUQFAIL("Importing the '", _moduleName, "' from '", ModuleName.substr(0, nSize), "' submodules failed.");
+//             }
+//         }
+//         else
+//         {
+//             // Return a dictionary of the builtins in the current execution frame
+//             PyObject *builtins = PyEval_GetBuiltins(); // Return value: Borrowed reference.
+
+//             // Return the object 'function' from the dictionary 'builtins' which has
+//             // a key 'functionName'.
+//             function = PyDict_GetItemString(builtins, functionName.c_str()); // Return value: Borrowed reference.
+
+//             // Increment the reference count for object 'function'
+//             Py_XINCREF(function);
+
+//             if (!function)
+//             {
+//                 UMUQFAILRETURNNULL("Importing the ", functionName, " failed.");
+//             }
+//         }
+
+//         // The return value is a new reference to the imported module
+//         std::unique_ptr<PyObject> module(PyImport_ImportModule(moduleName.c_str())); // Return value: New reference.
+//         if (!module)
+//         {
+//             UMUQFAIL("Failed to import the '", moduleName, "' module.");
+//         }
+
+//         Module = std::move(module);
+//     }
+
+//     explicit PyModule(char const *moduleName) : ModuleName(moduleName)
+//     {
+//         if (!ModuleName.size())
+//         {
+//             UMUQFAIL("The input moduleName is empty.");
+//         }
+
+//         // The return value is a new reference to the imported module
+//         std::unique_ptr<PyObject> module(PyImport_ImportModule(ModuleName.c_str())); // Return value: New reference.
+
+//         if (!module)
+//         {
+//             UMUQFAIL("Failed to import the '", ModuleName, "' module.");
+//         }
+//         Module = std::move(module);
+//     }
+
+//     PyObject *import(std::string const &functionName)
+//     {
+//     }
+
+//     std::string ModuleName;
+//     std::unique_ptr<PyObject> Module;
+//     PyObjectPairStringVector functions;
+// };
+// } // namespace python
 
 namespace python
 {
@@ -1279,7 +1504,7 @@ PyObject *PyArray(DataType const *idata, int const nSize, std::size_t const Stri
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
+            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<DataType>, (void *)(idata));
             if (!pArray)
             {
                 UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
@@ -1348,7 +1573,7 @@ PyObject *PyArray(TIn const *idata, int const nSize, std::size_t const Stride = 
         }
         else
         {
-            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, static_cast<void *>(idata));
+            pArray = PyArray_SimpleNewFromData(1, PyArrayDims, NPYDatatype<TIn>, (void *)(idata));
             if (!pArray)
             {
                 UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
@@ -1463,7 +1688,46 @@ PyObject *Py2DArray(DataType const *idata, int const nDimX, int const nDimY)
     }
     else
     {
-        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, static_cast<void *>(idata));
+        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<DataType>, (void *)(idata));
+        if (!pArray)
+        {
+            UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
+        }
+    }
+    return pArray;
+}
+
+template <typename TIn, typename TOut>
+PyObject *Py2DArray(TIn const *idata, int const nDimX, int const nDimY)
+{
+    PyObject *pArray;
+    npy_intp PyArrayDims[] = {nDimY, nDimX};
+    if (NPYDatatype<TOut> != NPYDatatype<TIn>)
+    {
+        if (NPYDatatype<TOut> == NPY_NOTYPE)
+        {
+            pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<double>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            double *vd = static_cast<double *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(idata, idata + nDimX * nDimY, vd);
+        }
+        else
+        {
+            pArray = PyArray_SimpleNew(2, PyArrayDims, NPYDatatype<TOut>);
+            if (!pArray)
+            {
+                UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNew()' function failed");
+            }
+            TOut *vd = static_cast<TOut *>(PyArray_DATA(reinterpret_cast<PyArrayObject *>(pArray)));
+            std::copy(idata, idata + nDimX * nDimY, vd);
+        }
+    }
+    else
+    {
+        pArray = PyArray_SimpleNewFromData(2, PyArrayDims, NPYDatatype<TOut>, (void *)(idata));
         if (!pArray)
         {
             UMUQFAILRETURNNULL("couldn't create a NumPy array: the 'PyArray_SimpleNewFromData(...)' function failed");
