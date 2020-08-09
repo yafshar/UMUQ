@@ -1,23 +1,61 @@
-*~
-*.o
-*.trs
-*.log
-*.dSYM
-*.so
-*.lo
+# Prerequisites
 *.d
-*.x
-*.dll
-*.pyc
-__pycache__
-Obj_*
-.*.swp
-.DS_Store
-.DS_Store?
-.clang-format
 
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+Obj_*
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Built doc
 docs/html
 docs/latex
 docs/man
 
-README.md
+# macOS
+.DS_Store
+.DS_Store?
+
+# IDE & format
+.clang-format
+.vscode
+
+# 
+.*.swp
+*~
+*.trs
+*.log
+*.dSYM
+*.lo
+*.x
+
+# Python
+*.pyc
+__pycache__
+
+
