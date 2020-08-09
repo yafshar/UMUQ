@@ -1,4 +1,4 @@
-SUBDIRS = polynomials random hypercube function density multimin
+SUBDIRS = polynomials random knn dcpse hypercube function density multimin
 
 TESTS=
 check_PROGRAMS=
@@ -51,18 +51,20 @@ TESTS += multimin_test
 check_PROGRAMS += multimin_test
 multimin_test_SOURCES = multimin_test.cpp
 
-TESTS += knearestneighbors_test
-check_PROGRAMS += knearestneighbors_test
-knearestneighbors_test_SOURCES = knearestneighbors_test.cpp
+# #numerics/knn
+# TESTS += knearestneighbors_test
+# check_PROGRAMS += knearestneighbors_test
+# knearestneighbors_test_SOURCES = knearestneighbors_test.cpp
 
 # #numerics/hypercube
 # TESTS += hypercubesampling_test
 # check_PROGRAMS += hypercubesampling_test
 # hypercubesampling_test_SOURCES = hypercube/hypercubesampling_test.cpp
 
-TESTS += dcpse_test
-check_PROGRAMS += dcpse_test
-dcpse_test_SOURCES = dcpse_test.cpp
+# #numerics/dcpse
+# TESTS += dcpse_test
+# check_PROGRAMS += dcpse_test
+# dcpse_test_SOURCES = dcpse_test.cpp
 
 TESTS += fitness_test
 check_PROGRAMS += fitness_test
