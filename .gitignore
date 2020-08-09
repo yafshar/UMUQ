@@ -33,9 +33,9 @@ Obj_*
 *.app
 
 # Built doc
-docs/html
-docs/latex
-docs/man
+docs/html/*
+docs/latex/*
+docs/man/*
 
 # macOS
 .DS_Store
@@ -48,6 +48,8 @@ docs/man
 # 
 .*.swp
 *~
+
+# Test files
 *.trs
 *.log
 *.dSYM
@@ -57,5 +59,17 @@ docs/man
 # Python
 *.pyc
 __pycache__
+
+# autom4te
+autom4te.cache/*
+
+# Makefile
+Makefile.in
+Makefile
+
+# config
+config.log
+config.status
+atconfig
 
 
