@@ -102,7 +102,7 @@ public:
      *                     \f$  D^\beta = \frac{\partial^{|\beta|}}{\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order        Order of accuracy (default is 2nd order accurate)
      * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default value is one
      *
      */
     bool computeWeights(RealType *dataPoints, int const nDataPoints,
@@ -125,7 +125,7 @@ public:
      *                          \f$ D^\beta = \frac{\partial^{|\beta|}} {\partial x_1^{\beta_1} \partial x_2^{\beta_2}\cdots\partial x_d^{\beta_d}}. \f$
      * \param order             Order of accuracy (default is 2nd order accurate)
      * \param nENN              Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default value is one
      */
     bool computeWeights(RealType *dataPoints, int const nDataPoints, RealType *queryDataPoints, int const nQueryDataPoints,
                         int *beta, int order = 2, int nENN = 2, RealType ratio = static_cast<RealType>(1));
@@ -140,7 +140,7 @@ public:
      * \param nDataPoints  Number of data points
      * \param order        Order of accuracy (default is 2nd order accurate)
      * \param nENN         Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param ratio        The \f$ \frac{h}{\epsilon} \f$ the default value is one
      */
     bool computeInterpolatorWeights(RealType *dataPoints, int const nDataPoints,
                                     int order = 2, int nENN = 2, RealType ratio = static_cast<RealType>(1));
@@ -157,7 +157,7 @@ public:
      * \param nQueryDataPoints  Number of query data points
      * \param order             Order of accuracy (default is 2nd order accurate)
      * \param nENN              Number of extra nearest neighbors to aid in case of singularity of the Vandermonde matrix (default is 2)
-     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default vale is one
+     * \param ratio             The \f$ \frac{h}{\epsilon} \f$ the default value is one
      */
     bool computeInterpolatorWeights(RealType *dataPoints, int const nDataPoints, RealType *queryDataPoints, int const nQueryDataPoints,
                                     int order = 2, int nENN = 2, RealType ratio = static_cast<RealType>(1));
