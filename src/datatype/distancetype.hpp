@@ -6,9 +6,9 @@ namespace umuq
 
 /*! \enum DistanceTypes
  * \ingroup Numerics_Module
- * 
+ *
  * \brief Distance types which can be used in %UMUQ
- * 
+ *
  */
 enum class DistanceTypes
 {
@@ -41,7 +41,9 @@ enum class DistanceTypes
     /*! Hamming distance functor (pop count between two binary vectors, i.e. xor them and count the number of bits set). */
     HAMMING_POPCNT,
     /*! The Mahalanobis distance is a measure of the distance between a point and a distribution. */
-    MAHALANOBIS
+    MAHALANOBIS,
+    /*! */
+    VANDERMONDE
 };
 
 } // namespace umuq
