@@ -70,7 +70,7 @@ public:
      *
      * \param other dcpse object
      */
-    explicit dcpse(dcpse<RealType, DistanceType, PolynomialType> &&other);
+    explicit dcpse(dcpse<RealType, DistanceType, PolynomialType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -79,13 +79,13 @@ public:
      *
      * \returns dcpse<RealType, DistanceType, PolynomialType>& dcpse object
      */
-    dcpse<RealType, DistanceType, PolynomialType> &operator=(dcpse<RealType, DistanceType, PolynomialType> &&other);
+    dcpse<RealType, DistanceType, PolynomialType> &operator=(dcpse<RealType, DistanceType, PolynomialType> &&other) = default;
 
     /*!
      * \brief Destroy the dcpse object
      *
      */
-    ~dcpse();
+    ~dcpse() = default;
 
     /*!
      * \brief Computes generalized DC-PSE differential operators on set of input points
@@ -310,39 +310,6 @@ dcpse<RealType, DistanceType, PolynomialType>::dcpse(int ndim, int nterms) : nDi
         UMUQFAIL("This data type is not supported in this class!");
     }
 }
-
-template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
-dcpse<RealType, DistanceType, PolynomialType>::dcpse(dcpse<RealType, DistanceType, PolynomialType> &&other)
-{
-    nDim = other.nDim;
-    nTerms = other.nTerms;
-    dcMonomialSize = other.dcMonomialSize;
-    dcKernelSize = other.dcKernelSize;
-    Order = std::move(other.Order);
-    dcKernel = std::move(other.dcKernel);
-    KNN = std::move(other.KNN);
-    h_average = std::move(other.h_average);
-    rhscoeff = other.rhscoeff;
-}
-
-template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
-dcpse<RealType, DistanceType, PolynomialType> &dcpse<RealType, DistanceType, PolynomialType>::operator=(dcpse<RealType, DistanceType, PolynomialType> &&other)
-{
-    nDim = other.nDim;
-    nTerms = other.nTerms;
-    dcMonomialSize = other.dcMonomialSize;
-    dcKernelSize = other.dcKernelSize;
-    Order = std::move(other.Order);
-    dcKernel = std::move(other.dcKernel);
-    KNN = std::move(other.KNN);
-    h_average = std::move(other.h_average);
-    rhscoeff = other.rhscoeff;
-
-    return *this;
-}
-
-template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
-dcpse<RealType, DistanceType, PolynomialType>::~dcpse() {}
 
 template <typename RealType, umuq::DistanceTypes DistanceType, class PolynomialType>
 bool dcpse<RealType, DistanceType, PolynomialType>::computeWeights(RealType *dataPoints, int const nDataPoints, int *beta, int order, int nENN, RealType ratio)
