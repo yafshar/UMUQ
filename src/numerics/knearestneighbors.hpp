@@ -3,9 +3,9 @@
 
 #include "core/core.hpp"
 #include "datatype/distancetype.hpp"
-#include "knearestneighborbase.hpp"
 #include "datatype/eigendatatype.hpp"
 #include "eigenlib.hpp"
+#include "knearestneighborbase.hpp"
 
 #include <cstddef>
 
@@ -175,6 +175,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> : public kNear
   private:
     kNearestNeighbor() = delete;
 };
+
 template <typename DataType>
 class kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> : public kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>
 {
@@ -188,6 +189,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> : public
   private:
     kNearestNeighbor() = delete;
 };
+
 template <typename DataType>
 class kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> : public kNearestNeighborBase<DataType, flann::Hamming<DataType>>
 {
@@ -422,6 +424,7 @@ template <typename DataType, umuq::DistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType, umuq::DistanceTypes DistanceType>
 kNearestNeighbor<DataType, DistanceType>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -456,6 +459,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L2_Simple<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -490,6 +494,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::L1<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -524,6 +529,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MinkowskiDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -558,6 +564,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MAX>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::MAX>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::MaxDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -592,6 +599,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HistIntersectionDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -626,6 +634,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::HellingerDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -660,6 +669,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::ChiSquareDistance<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -694,6 +704,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::KL_Divergence<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
@@ -728,6 +739,7 @@ template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nDim, kNeighbors)
 {
 }
+
 template <typename DataType>
 kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING>::kNearestNeighbor(int const ndataPoints, int const nqueryPoints, int const nDim, int const kNeighbors) : kNearestNeighborBase<DataType, flann::Hamming<DataType>>(ndataPoints, nqueryPoints, nDim, kNeighbors) {}
 
