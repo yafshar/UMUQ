@@ -173,6 +173,14 @@ TEST(knearestneighbors_test, HandlesKNN)
 
     delete[] dataPoints;
     delete[] dists;
+
+    // Create an instance of a KNN object after move assignment
+    auto K = std::move(KNN);
+
+    // Check number of neighbors
+    EXPECT_EQ(K.numNearestNeighbors(), nNearestNeighbors);
+
+    EXPECT_TRUE(K.checkNearestNeighbors());
 }
 
 /*!
@@ -265,6 +273,11 @@ TEST(knearestneighbors_test, HandlesMahalanobisNearestNeighbor)
         }
         f.closeFile();
     }
+
+    // Create an instance of a KNN object after move assignment
+    auto K = std::move(KNN);
+
+    EXPECT_TRUE(M2d.isApprox(K.Covariance()));    
 }
 
 int main(int argc, char **argv)
