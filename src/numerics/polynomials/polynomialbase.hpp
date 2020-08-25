@@ -221,14 +221,16 @@ class polynomialBase
     int Order;
 
     //! The size of the monomial array
-    int monomialSize;
+    int monomialSize = 0;
 
     //! Array of monomial sequence
-    std::unique_ptr<int[]> alpha;
+    std::unique_ptr<int[]> alpha = nullptr;
 };
 
 template <typename DataType>
-polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrder) : nDim(dim), Order(PolynomialOrder)
+polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrder) : nDim(dim), 
+                                                                                     Order(PolynomialOrder),
+                                                                                     monomialSize(binomialCoefficient(nDim + Order, Order))
 {
     if (nDim <= 0)
     {
@@ -240,7 +242,6 @@ polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrde
         UMUQFAIL("Maximum accuracy order ", Order, " < 0!");
     }
 
-    monomialSize = binomialCoefficient(nDim + Order, Order);
     if (monomialSize == 0)
     {
         UMUQFAIL("Monomial size of zero degree is requested!");
