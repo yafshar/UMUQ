@@ -110,7 +110,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      * \brief Destroy the ChebyshevPolynomial object
      *
      */
-    ~ChebyshevPolynomial();
+    ~ChebyshevPolynomial() = default;
 
     /*!
      * \brief Here, \f$\alpha=\f$ all of the Chebyshev monomials in a d dimensional space, with total degree \b r.
@@ -257,11 +257,8 @@ ChebyshevPolynomial<RealType> &ChebyshevPolynomial<RealType>::operator=(Chebyshe
     this->monomialSize = other.monomialSize;
     this->alpha = std::move(other.alpha);
 
-    return *this;
+    return static_cast<ChebyshevPolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
-
-template <typename RealType>
-ChebyshevPolynomial<RealType>::~ChebyshevPolynomial() {}
 
 template <typename RealType>
 int *ChebyshevPolynomial<RealType>::monomialBasis()

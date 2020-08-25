@@ -65,7 +65,7 @@ class polynomial : public polynomialBase<DataType>
      * \brief Destroy the polynomial object
      *
      */
-    ~polynomial();
+    ~polynomial() = default;
 
     /*!
      * \brief Here, \f$\alpha=\f$ all the monomials in a \b d dimensional space, with total degree \b r.
@@ -169,11 +169,8 @@ polynomial<DataType> &polynomial<DataType>::operator=(polynomial<DataType> &&oth
     this->monomialSize = other.monomialSize;
     this->alpha = std::move(other.alpha);
 
-    return *this;
+    return static_cast<polynomial<DataType> &>(polynomialBase<DataType>::operator=(std::move(other)));
 }
-
-template <typename DataType>
-polynomial<DataType>::~polynomial() {}
 
 template <typename DataType>
 int *polynomial<DataType>::monomialBasis()

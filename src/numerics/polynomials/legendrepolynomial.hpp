@@ -136,7 +136,7 @@ class LegendrePolynomial : public polynomialBase<RealType>
      * \brief Destroy the LegendrePolynomial object
      *
      */
-    ~LegendrePolynomial();
+    ~LegendrePolynomial() = default;
 
     /*!
      * \brief Here, \f$\alpha=\f$ all of the Legendre monomials in a d dimensional space, with total degree \b r.
@@ -286,11 +286,8 @@ LegendrePolynomial<RealType> &LegendrePolynomial<RealType>::operator=(LegendrePo
     this->monomialSize = other.monomialSize;
     this->alpha = std::move(other.alpha);
 
-    return *this;
+    return static_cast<LegendrePolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
-
-template <typename RealType>
-LegendrePolynomial<RealType>::~LegendrePolynomial() {}
 
 template <typename RealType>
 int *LegendrePolynomial<RealType>::monomialBasis()

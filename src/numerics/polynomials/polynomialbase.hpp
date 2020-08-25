@@ -84,7 +84,7 @@ class polynomialBase
      * \brief Destroy the polynomialBase object
      *
      */
-    ~polynomialBase();
+    ~polynomialBase() = default;
 
     /*!
      * \brief Reset the dimension of the problem and rhe desired order
@@ -266,9 +266,6 @@ polynomialBase<DataType> &polynomialBase<DataType>::operator=(polynomialBase<Dat
 
     return *this;
 }
-
-template <typename DataType>
-polynomialBase<DataType>::~polynomialBase() {}
 
 template <typename DataType>
 void polynomialBase<DataType>::reset(int const dim, int const PolynomialOrder)

@@ -84,7 +84,7 @@ class HermitePolynomial : public polynomialBase<RealType>
      * \brief Destroy the HermitePolynomial object
      *
      */
-    ~HermitePolynomial();
+    ~HermitePolynomial() = default;
 
     /*!
      * \brief Here, \f$\alpha=\f$ all of the Hermite monomials in a d dimensional space, with total degree \b r.
@@ -232,11 +232,8 @@ HermitePolynomial<RealType> &HermitePolynomial<RealType>::operator=(HermitePolyn
     this->monomialSize = other.monomialSize;
     this->alpha = std::move(other.alpha);
 
-    return *this;
+    return static_cast<HermitePolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
-
-template <typename RealType>
-HermitePolynomial<RealType>::~HermitePolynomial() {}
 
 template <typename RealType>
 int *HermitePolynomial<RealType>::monomialBasis()
