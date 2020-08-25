@@ -46,6 +46,28 @@ class polynomial : public polynomialBase<DataType>
     polynomial(int const dim, int const PolynomialOrder = 2);
 
     /*!
+     * \brief Move constructor, construct a new polynomial object
+     *
+     * \param other polynomial object
+     */
+    polynomial(polynomial<DataType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other polynomial object
+     *
+     * \returns polynomial<DataType>& polynomial object
+     */
+    polynomial<DataType> &operator=(polynomial<DataType> &&other);
+
+    /*!
+     * \brief Destroy the polynomial object
+     *
+     */
+    ~polynomial();
+
+    /*!
      * \brief Here, \f$\alpha=\f$ all the monomials in a \b d dimensional space, with total degree \b r.
      *
      * For example: <br>
@@ -135,6 +157,23 @@ class polynomial : public polynomialBase<DataType>
 
 template <typename DataType>
 polynomial<DataType>::polynomial(int const dim, int const PolynomialOrder) : polynomialBase<DataType>(dim, PolynomialOrder) {}
+
+template <typename DataType>
+polynomial<DataType>::polynomial(polynomial<DataType> &&other) : polynomialBase<DataType>(std::move(other)) {}
+
+template <typename DataType>
+polynomial<DataType> &polynomial<DataType>::operator=(polynomial<DataType> &&other)
+{
+    this->nDim = other.nDim;
+    this->Order = other.Order;
+    this->monomialSize = other.monomialSize;
+    this->alpha = std::move(other.alpha);
+
+    return *this;
+}
+
+template <typename DataType>
+polynomial<DataType>::~polynomial() {}
 
 template <typename DataType>
 int *polynomial<DataType>::monomialBasis()

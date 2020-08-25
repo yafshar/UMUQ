@@ -91,6 +91,28 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
     ChebyshevPolynomial(int const dim, int const PolynomialOrder = 2);
 
     /*!
+     * \brief Move constructor, construct a new ChebyshevPolynomial object
+     *
+     * \param other ChebyshevPolynomial object
+     */
+    ChebyshevPolynomial(ChebyshevPolynomial<RealType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other ChebyshevPolynomial object
+     *
+     * \returns ChebyshevPolynomial<RealType>& ChebyshevPolynomial object
+     */
+    ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> &&other);
+
+    /*!
+     * \brief Destroy the ChebyshevPolynomial object
+     *
+     */
+    ~ChebyshevPolynomial();
+
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Chebyshev monomials in a d dimensional space, with total degree \b r.
      *
      * For example: <br>
@@ -223,6 +245,23 @@ ChebyshevPolynomial<RealType>::ChebyshevPolynomial(int const dim, int const Poly
         UMUQFAIL("This type is not supported in this class!");
     }
 }
+
+template <typename RealType>
+ChebyshevPolynomial<RealType>::ChebyshevPolynomial(ChebyshevPolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
+
+template <typename RealType>
+ChebyshevPolynomial<RealType> &ChebyshevPolynomial<RealType>::operator=(ChebyshevPolynomial<RealType> &&other)
+{
+    this->nDim = other.nDim;
+    this->Order = other.Order;
+    this->monomialSize = other.monomialSize;
+    this->alpha = std::move(other.alpha);
+
+    return *this;
+}
+
+template <typename RealType>
+ChebyshevPolynomial<RealType>::~ChebyshevPolynomial() {}
 
 template <typename RealType>
 int *ChebyshevPolynomial<RealType>::monomialBasis()

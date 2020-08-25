@@ -65,6 +65,28 @@ class polynomialBase
     polynomialBase(int const dim, int const PolynomialOrder = 2);
 
     /*!
+     * \brief Move constructor, construct a new polynomialBase object
+     *
+     * \param other polynomialBase object
+     */
+    polynomialBase(polynomialBase<DataType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other polynomialBase object
+     *
+     * \returns polynomialBase<DataType>& polynomialBase object
+     */
+    polynomialBase<DataType> &operator=(polynomialBase<DataType> &&other);
+
+    /*!
+     * \brief Destroy the polynomialBase object
+     *
+     */
+    ~polynomialBase();
+
+    /*!
      * \brief Reset the dimension of the problem and rhe desired order
      *
      * Reset the dimension and order values to the new ones
@@ -224,6 +246,29 @@ polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrde
         UMUQFAIL("Monomial size of zero degree is requested!");
     }
 }
+
+template <typename DataType>
+polynomialBase<DataType>::polynomialBase(polynomialBase<DataType> &&other)
+{
+    nDim = other.nDim;
+    Order = other.Order;
+    monomialSize = other.monomialSize;
+    alpha = std::move(other.alpha);
+}
+
+template <typename DataType>
+polynomialBase<DataType> &polynomialBase<DataType>::operator=(polynomialBase<DataType> &&other)
+{
+    nDim = other.nDim;
+    Order = other.Order;
+    monomialSize = other.monomialSize;
+    alpha = std::move(other.alpha);
+
+    return *this;
+}
+
+template <typename DataType>
+polynomialBase<DataType>::~polynomialBase() {}
 
 template <typename DataType>
 void polynomialBase<DataType>::reset(int const dim, int const PolynomialOrder)

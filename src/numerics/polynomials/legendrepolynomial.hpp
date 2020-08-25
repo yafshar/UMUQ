@@ -117,6 +117,28 @@ class LegendrePolynomial : public polynomialBase<RealType>
     LegendrePolynomial(int const dim, int const PolynomialOrder = 2);
 
     /*!
+     * \brief Move constructor, construct a new LegendrePolynomial object
+     *
+     * \param other LegendrePolynomial object
+     */
+    LegendrePolynomial(LegendrePolynomial<RealType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other LegendrePolynomial object
+     *
+     * \returns LegendrePolynomial<RealType>& LegendrePolynomial object
+     */
+    LegendrePolynomial<RealType> &operator=(LegendrePolynomial<RealType> &&other);
+
+    /*!
+     * \brief Destroy the LegendrePolynomial object
+     *
+     */
+    ~LegendrePolynomial();
+
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Legendre monomials in a d dimensional space, with total degree \b r.
      *
      * For example: <br>
@@ -252,6 +274,23 @@ LegendrePolynomial<RealType>::LegendrePolynomial(int const dim, int const Polyno
         UMUQFAIL("This type is not supported in this class!");
     }
 }
+
+template <typename RealType>
+LegendrePolynomial<RealType>::LegendrePolynomial(LegendrePolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
+
+template <typename RealType>
+LegendrePolynomial<RealType> &LegendrePolynomial<RealType>::operator=(LegendrePolynomial<RealType> &&other)
+{
+    this->nDim = other.nDim;
+    this->Order = other.Order;
+    this->monomialSize = other.monomialSize;
+    this->alpha = std::move(other.alpha);
+
+    return *this;
+}
+
+template <typename RealType>
+LegendrePolynomial<RealType>::~LegendrePolynomial() {}
 
 template <typename RealType>
 int *LegendrePolynomial<RealType>::monomialBasis()

@@ -65,6 +65,28 @@ class HermitePolynomial : public polynomialBase<RealType>
     HermitePolynomial(int const dim, int const PolynomialOrder = 2);
 
     /*!
+     * \brief Move constructor, construct a new HermitePolynomial object
+     *
+     * \param other HermitePolynomial object
+     */
+    HermitePolynomial(HermitePolynomial<RealType> &&other);
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * \param other HermitePolynomial object
+     *
+     * \returns HermitePolynomial<RealType>& HermitePolynomial object
+     */
+    HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> &&other);
+
+    /*!
+     * \brief Destroy the HermitePolynomial object
+     *
+     */
+    ~HermitePolynomial();
+
+    /*!
      * \brief Here, \f$\alpha=\f$ all of the Hermite monomials in a d dimensional space, with total degree \b r.
      *
      * For example: <br>
@@ -198,6 +220,23 @@ HermitePolynomial<RealType>::HermitePolynomial(int const dim, int const Polynomi
         UMUQFAIL("This type is not supported in this class!");
     }
 }
+
+template <typename RealType>
+HermitePolynomial<RealType>::HermitePolynomial(HermitePolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
+
+template <typename RealType>
+HermitePolynomial<RealType> &HermitePolynomial<RealType>::operator=(HermitePolynomial<RealType> &&other)
+{
+    this->nDim = other.nDim;
+    this->Order = other.Order;
+    this->monomialSize = other.monomialSize;
+    this->alpha = std::move(other.alpha);
+
+    return *this;
+}
+
+template <typename RealType>
+HermitePolynomial<RealType>::~HermitePolynomial() {}
 
 template <typename RealType>
 int *HermitePolynomial<RealType>::monomialBasis()
