@@ -77,19 +77,19 @@ class kNearestNeighborBase
      * \brief Move constructor
      * \param other kNearestNeighborBase to be moved
      */
-    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> &&other);
+    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> &&other) = default;
 
     /*!
      * \brief Copy constructor
      * \param other kNearestNeighborBase to be copied
      */
-    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> const &other);
+    kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> const &other) = default;
 
     /*!
      * \brief Move assignment operator
      * \param other kNearestNeighborBase to be assigned
      */
-    kNearestNeighborBase<DataType, FlannDistanceType> &operator=(kNearestNeighborBase<DataType, FlannDistanceType> &&other);
+    kNearestNeighborBase<DataType, FlannDistanceType> &operator=(kNearestNeighborBase<DataType, FlannDistanceType> &&other) = default;
 
     /*!
      * \brief Default destructor
@@ -249,6 +249,13 @@ class kNearestNeighborBase
      */
     kNearestNeighborBase() = delete;
 
+    /*!
+     * \brief Explicitly prevent the copy assignment
+     * 
+     * \return kNearestNeighborBase<DataType, FlannDistanceType>& 
+     */
+    kNearestNeighborBase<DataType, FlannDistanceType> &operator=(kNearestNeighborBase<DataType, FlannDistanceType> const &) = delete;
+
   protected:
     //! Number of data points
     std::size_t nDataPoints;
@@ -315,60 +322,6 @@ kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(int cons
     {
         UMUQFAIL("Not enough points to create K nearest neighbors for each point !");
     }
-}
-
-template <typename DataType, class FlannDistanceType>
-kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> &&other) : nDataPoints(other.nDataPoints),
-                                                                                                                                     nQueryDataPoints(other.nQueryDataPoints),
-                                                                                                                                     dataDimension(other.dataDimension),
-                                                                                                                                     nNearestNeighborsToFind(other.nNearestNeighborsToFind),
-                                                                                                                                     indices_ptr(std::move(other.indices_ptr)),
-                                                                                                                                     dists_ptr(std::move(other.dists_ptr)),
-                                                                                                                                     indices(std::move(other.indices)),
-                                                                                                                                     dists(std::move(other.dists)),
-                                                                                                                                     the_same(other.the_same),
-                                                                                                                                     withCovariance(other.withCovariance)
-{
-}
-
-template <typename DataType, class FlannDistanceType>
-kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(kNearestNeighborBase<DataType, FlannDistanceType> const &other) : nDataPoints(other.nDataPoints),
-                                                                                                                                          nQueryDataPoints(other.nQueryDataPoints),
-                                                                                                                                          dataDimension(other.dataDimension),
-                                                                                                                                          nNearestNeighborsToFind(other.nNearestNeighborsToFind),
-                                                                                                                                          indices_ptr(new int[nQueryDataPoints * nNearestNeighborsToFind]),
-                                                                                                                                          dists_ptr(new DataType[nQueryDataPoints * nNearestNeighborsToFind]),
-                                                                                                                                          indices(indices_ptr.get(), nQueryDataPoints, nNearestNeighborsToFind),
-                                                                                                                                          dists(dists_ptr.get(), nQueryDataPoints, nNearestNeighborsToFind),
-                                                                                                                                          the_same(other.the_same),
-                                                                                                                                          withCovariance(other.withCovariance)
-{
-    {
-        int *From = other.indices_ptr.get();
-        int *To = indices_ptr.get();
-        std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
-    }
-    {
-        DataType *From = other.dists_ptr.get();
-        DataType *To = dists_ptr.get();
-        std::copy(From, From + nQueryDataPoints * nNearestNeighborsToFind, To);
-    }
-}
-
-template <typename DataType, class FlannDistanceType>
-kNearestNeighborBase<DataType, FlannDistanceType> &kNearestNeighborBase<DataType, FlannDistanceType>::operator=(kNearestNeighborBase<DataType, FlannDistanceType> &&other)
-{
-    nDataPoints = std::move(other.nDataPoints);
-    nQueryDataPoints = std::move(other.nQueryDataPoints);
-    dataDimension = std::move(other.dataDimension);
-    nNearestNeighborsToFind = std::move(other.nNearestNeighborsToFind);
-    indices_ptr = std::move(other.indices_ptr);
-    dists_ptr = std::move(other.dists_ptr);
-    indices = std::move(other.indices);
-    dists = std::move(other.dists);
-    the_same = std::move(other.the_same);
-    withCovariance = std::move(other.withCovariance);
-    return *this;
 }
 
 template <typename DataType, class FlannDistanceType>
