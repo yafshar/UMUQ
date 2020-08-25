@@ -70,6 +70,12 @@ class kNearestNeighbor : public kNearestNeighborBase<DataType, flann::L2<DataTyp
      */
     kNearestNeighbor<DataType, DistanceType> &operator=(kNearestNeighbor<DataType, DistanceType> &&other);
 
+    /*!
+     * \brief Destroy the k Nearest Neighbor object
+     * 
+     */
+    ~kNearestNeighbor() = default;
+
   private:
     /*!
      * \brief Explicitly prevent the default construct a new k Nearest Neighbor object
@@ -87,6 +93,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE> : public kNeare
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::L2_SIMPLE> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -101,6 +108,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN> : public kNeare
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::MANHATTAN> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -115,6 +123,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI> : public kNeare
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::MINKOWSKI> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -129,6 +138,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::MAX> : public kNearestNeig
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MAX> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::MAX> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::MAX> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::MAX> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -143,6 +153,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT> : public k
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::HIST_INTERSECT> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -157,6 +168,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER> : public kNeare
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::HELLINGER> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -171,6 +183,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> : public kNear
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::CHI_SQUARE> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -185,6 +198,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> : public
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::KULLBACK_LEIBLER> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -199,6 +213,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> : public kNearest
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -213,6 +228,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_LUT> : public kNea
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_LUT> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_LUT> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_LUT> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_LUT> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -227,6 +243,7 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_POPCNT> : public k
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_POPCNT> &&other);
     kNearestNeighbor(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_POPCNT> const &other);
     kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_POPCNT> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::HAMMING_POPCNT> &&other);
+    ~kNearestNeighbor() = default;
 
   private:
     kNearestNeighbor() = delete;
@@ -334,6 +351,12 @@ class kNearestNeighbor<DataType, umuq::DistanceTypes::MAHALANOBIS> : public kNea
      * \returns kNearestNeighbor<DataType, umuq::DistanceTypes::MAHALANOBIS>&
      */
     kNearestNeighbor<DataType, umuq::DistanceTypes::MAHALANOBIS> &operator=(kNearestNeighbor<DataType, umuq::DistanceTypes::MAHALANOBIS> &&other);
+
+    /*!
+     * \brief Destroy the k Nearest Neighbor object
+     * 
+     */
+    ~kNearestNeighbor() = default;
 
     /*!
      * \brief Construct a kd-tree index & do a knn search

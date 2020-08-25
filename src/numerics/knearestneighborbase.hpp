@@ -95,7 +95,7 @@ class kNearestNeighborBase
      * \brief Default destructor
      *
      */
-    ~kNearestNeighborBase();
+    ~kNearestNeighborBase() = default;
 
     /*!
      * \brief Construct a kd-tree index & do a knn search
@@ -286,10 +286,10 @@ kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(int cons
                                                                                                                                        nQueryDataPoints(ndataPoints),
                                                                                                                                        dataDimension(nDim),
                                                                                                                                        nNearestNeighborsToFind(kNeighbors + 1),
-                                                                                                                                       indices_ptr(new int[ndataPoints * (kNeighbors + 1)]),
-                                                                                                                                       dists_ptr(new DataType[ndataPoints * (kNeighbors + 1)]),
-                                                                                                                                       indices(indices_ptr.get(), ndataPoints, (kNeighbors + 1)),
-                                                                                                                                       dists(dists_ptr.get(), ndataPoints, (kNeighbors + 1)),
+                                                                                                                                       indices_ptr(new int[ndataPoints * nNearestNeighborsToFind]),
+                                                                                                                                       dists_ptr(new DataType[ndataPoints * nNearestNeighborsToFind]),
+                                                                                                                                       indices(indices_ptr.get(), ndataPoints, nNearestNeighborsToFind),
+                                                                                                                                       dists(dists_ptr.get(), ndataPoints, nNearestNeighborsToFind),
                                                                                                                                        the_same(true),
                                                                                                                                        withCovariance(false)
 {
@@ -336,10 +336,10 @@ kNearestNeighborBase<DataType, FlannDistanceType>::kNearestNeighborBase(kNearest
                                                                                                                                           nQueryDataPoints(other.nQueryDataPoints),
                                                                                                                                           dataDimension(other.dataDimension),
                                                                                                                                           nNearestNeighborsToFind(other.nNearestNeighborsToFind),
-                                                                                                                                          indices_ptr(new int[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
-                                                                                                                                          dists_ptr(new DataType[other.nQueryDataPoints * other.nNearestNeighborsToFind]),
-                                                                                                                                          indices(indices_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
-                                                                                                                                          dists(dists_ptr.get(), other.nQueryDataPoints, other.nNearestNeighborsToFind),
+                                                                                                                                          indices_ptr(new int[nQueryDataPoints * nNearestNeighborsToFind]),
+                                                                                                                                          dists_ptr(new DataType[nQueryDataPoints * nNearestNeighborsToFind]),
+                                                                                                                                          indices(indices_ptr.get(), nQueryDataPoints, nNearestNeighborsToFind),
+                                                                                                                                          dists(dists_ptr.get(), nQueryDataPoints, nNearestNeighborsToFind),
                                                                                                                                           the_same(other.the_same),
                                                                                                                                           withCovariance(other.withCovariance)
 {
@@ -370,9 +370,6 @@ kNearestNeighborBase<DataType, FlannDistanceType> &kNearestNeighborBase<DataType
     withCovariance = std::move(other.withCovariance);
     return *this;
 }
-
-template <typename DataType, class FlannDistanceType>
-kNearestNeighborBase<DataType, FlannDistanceType>::~kNearestNeighborBase() {}
 
 template <typename DataType, class FlannDistanceType>
 void kNearestNeighborBase<DataType, FlannDistanceType>::buildIndex(DataType *idata)
