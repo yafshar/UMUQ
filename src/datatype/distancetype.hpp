@@ -41,9 +41,7 @@ enum class DistanceTypes
     /*! Hamming distance functor (pop count between two binary vectors, i.e. xor them and count the number of bits set). */
     HAMMING_POPCNT,
     /*! The Mahalanobis distance is a measure of the distance between a point and a distribution. */
-    MAHALANOBIS,
-    /*! */
-    VANDERMONDE
+    MAHALANOBIS
 };
 
 } // namespace umuq
