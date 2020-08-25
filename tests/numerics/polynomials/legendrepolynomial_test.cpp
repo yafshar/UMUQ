@@ -45,7 +45,35 @@ TEST(LegendreBasis_test, HandlesInput)
     EXPECT_DOUBLE_EQ(PolynomialArray[100], -0.06051802596186118687);
 
     delete[] PolynomialArray;
+
+
+    // Create an instance of a Hermite polynomial object after move assignment
+    auto pp = std::move(LPolynomial);
+    
+    EXPECT_DOUBLE_EQ(pp.legendre(0, 0.5), 1.);
+    EXPECT_DOUBLE_EQ(pp.legendre(0, -0.5), 1.);
+    EXPECT_DOUBLE_EQ(pp.legendre(1, 1.0e-8), 1.0e-08);
+    EXPECT_DOUBLE_EQ(pp.legendre(1, 0.5), 0.5);
+    EXPECT_DOUBLE_EQ(pp.legendre(1, -0.5), -0.5);
+    EXPECT_DOUBLE_EQ(pp.legendre(2, 0.0), -0.5);
+    EXPECT_DOUBLE_EQ(pp.legendre(2, 0.5), -0.125);
+    EXPECT_DOUBLE_EQ(pp.legendre(2, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(pp.legendre(3, -0.5), 0.4375);
+    EXPECT_DOUBLE_EQ(pp.legendre(3, 0.5), -0.4375);
+    EXPECT_DOUBLE_EQ(pp.legendre(3, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(pp.legendre(10, -0.5), -0.18822860717773438);
+    EXPECT_DOUBLE_EQ(pp.legendre(10, 1.0e-8), -0.24609374999999864648);
+    EXPECT_DOUBLE_EQ(pp.legendre(10, 0.5), -0.18822860717773437500);
+    EXPECT_DOUBLE_EQ(pp.legendre(10, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(pp.legendre(99, -0.5), 0.08300778172138770477);
+    EXPECT_DOUBLE_EQ(pp.legendre(99, 1.0e-8), -7.958923738716563193e-08);
+    EXPECT_DOUBLE_EQ(pp.legendre(99, 0.5), -0.08300778172138770477);
+    EXPECT_NEAR(pp.legendre(99, 0.999), -0.3317727359254778874, 1e-14);
+    EXPECT_DOUBLE_EQ(pp.legendre(99, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(pp.legendre(1000, 1.0), 1.0);
+    EXPECT_NEAR(pp.legendre(1000, -0.5), -0.019168251091650277878, 1e-15);
 }
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

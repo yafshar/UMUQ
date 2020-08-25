@@ -48,7 +48,26 @@ TEST(ChebyshevBasis_test, HandlesInput)
     EXPECT_DOUBLE_EQ(PolynomialArray[100], -0.999858988315193);
 
     delete[] PolynomialArray;
+
+    // Create an instance of a Chebyshev polynomial object after move assignment
+    auto pp = std::move(CPolynomial);
+
+    EXPECT_DOUBLE_EQ(pp.chebyshev(0, 0.75), 1.);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(1, 0.75), 0.75);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(1, -0.25), -0.25);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(4, 0.999), 0.984039968008000);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(4, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(10, 0.75), 0.586425781250000);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(10, -0.1), -0.538892748800000);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(10, 1.75), 5.3903809082031315e+04);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(25, 0.0), 0.0);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(25, 0.75), 0.710069283843040);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(25, -0.5), -0.5);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(28, 0.75), 0.18276030011475086);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(28, -0.1), -0.943782337026093);
+    EXPECT_DOUBLE_EQ(pp.chebyshev(500, 1.0/3.0), 0.96311412681708752);    
 }
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

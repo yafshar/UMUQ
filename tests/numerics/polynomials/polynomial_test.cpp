@@ -9,13 +9,21 @@
  */
 TEST(binomialCoefficient_test, HandlesZeroInput)
 {
-    //Create an instance of a polynomial object
+    // Create an instance of a polynomial object
     umuq::polynomial<double> p(1);
 
     EXPECT_EQ(1, p.binomialCoefficient(1, 0));
     EXPECT_EQ(0, p.binomialCoefficient(0, 1));
     EXPECT_EQ(1, p.binomialCoefficient(0, 0));
     EXPECT_EQ(1, p.binomialCoefficient(10, 0));
+
+    // Create an instance of a polynomial object after move assignment
+    auto pp = std::move(p);
+
+    EXPECT_EQ(1, pp.binomialCoefficient(1, 0));
+    EXPECT_EQ(0, pp.binomialCoefficient(0, 1));
+    EXPECT_EQ(1, pp.binomialCoefficient(0, 0));
+    EXPECT_EQ(1, pp.binomialCoefficient(10, 0));    
 }
 
 /*!
@@ -112,6 +120,19 @@ TEST(monomialBasis_test, HandlesInput)
                     0, 2, 0,
                     0, 1, 1,
                     0, 0, 2};
+
+    for (int i = 0; i < num; i++)
+    {
+        EXPECT_EQ(beta[i], coeff[i]);
+    };
+
+    // Create an instance of a polynomial object after move assignment
+    auto pp = std::move(p);
+
+    EXPECT_EQ(pp.monomialsize(), pp.binomialCoefficient(dim + degree, degree));
+
+    coeff = pp.monomialBasis();
+    EXPECT_TRUE(coeff != nullptr);   
 
     for (int i = 0; i < num; i++)
     {
