@@ -69,7 +69,7 @@ class HermitePolynomial : public polynomialBase<RealType>
      *
      * \param other HermitePolynomial object
      */
-    HermitePolynomial(HermitePolynomial<RealType> &&other);
+    HermitePolynomial(HermitePolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -78,7 +78,7 @@ class HermitePolynomial : public polynomialBase<RealType>
      *
      * \returns HermitePolynomial<RealType>& HermitePolynomial object
      */
-    HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> &&other);
+    HermitePolynomial<RealType> &operator=(HermitePolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Destroy the HermitePolynomial object
@@ -219,20 +219,6 @@ HermitePolynomial<RealType>::HermitePolynomial(int const dim, int const Polynomi
     {
         UMUQFAIL("This type is not supported in this class!");
     }
-}
-
-template <typename RealType>
-HermitePolynomial<RealType>::HermitePolynomial(HermitePolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
-
-template <typename RealType>
-HermitePolynomial<RealType> &HermitePolynomial<RealType>::operator=(HermitePolynomial<RealType> &&other)
-{
-    this->nDim = other.nDim;
-    this->Order = other.Order;
-    this->monomialSize = other.monomialSize;
-    this->alpha = std::move(other.alpha);
-
-    return static_cast<HermitePolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
 
 template <typename RealType>

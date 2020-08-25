@@ -121,7 +121,7 @@ class LegendrePolynomial : public polynomialBase<RealType>
      *
      * \param other LegendrePolynomial object
      */
-    LegendrePolynomial(LegendrePolynomial<RealType> &&other);
+    LegendrePolynomial(LegendrePolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -130,7 +130,7 @@ class LegendrePolynomial : public polynomialBase<RealType>
      *
      * \returns LegendrePolynomial<RealType>& LegendrePolynomial object
      */
-    LegendrePolynomial<RealType> &operator=(LegendrePolynomial<RealType> &&other);
+    LegendrePolynomial<RealType> &operator=(LegendrePolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Destroy the LegendrePolynomial object
@@ -273,20 +273,6 @@ LegendrePolynomial<RealType>::LegendrePolynomial(int const dim, int const Polyno
     {
         UMUQFAIL("This type is not supported in this class!");
     }
-}
-
-template <typename RealType>
-LegendrePolynomial<RealType>::LegendrePolynomial(LegendrePolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
-
-template <typename RealType>
-LegendrePolynomial<RealType> &LegendrePolynomial<RealType>::operator=(LegendrePolynomial<RealType> &&other)
-{
-    this->nDim = other.nDim;
-    this->Order = other.Order;
-    this->monomialSize = other.monomialSize;
-    this->alpha = std::move(other.alpha);
-
-    return static_cast<LegendrePolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
 
 template <typename RealType>

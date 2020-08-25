@@ -69,7 +69,7 @@ class polynomialBase
      *
      * \param other polynomialBase object
      */
-    polynomialBase(polynomialBase<DataType> &&other);
+    polynomialBase(polynomialBase<DataType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -78,7 +78,7 @@ class polynomialBase
      *
      * \returns polynomialBase<DataType>& polynomialBase object
      */
-    polynomialBase<DataType> &operator=(polynomialBase<DataType> &&other);
+    polynomialBase<DataType> &operator=(polynomialBase<DataType> &&other) = default;
 
     /*!
      * \brief Destroy the polynomialBase object
@@ -245,26 +245,6 @@ polynomialBase<DataType>::polynomialBase(int const dim, int const PolynomialOrde
     {
         UMUQFAIL("Monomial size of zero degree is requested!");
     }
-}
-
-template <typename DataType>
-polynomialBase<DataType>::polynomialBase(polynomialBase<DataType> &&other)
-{
-    nDim = other.nDim;
-    Order = other.Order;
-    monomialSize = other.monomialSize;
-    alpha = std::move(other.alpha);
-}
-
-template <typename DataType>
-polynomialBase<DataType> &polynomialBase<DataType>::operator=(polynomialBase<DataType> &&other)
-{
-    nDim = other.nDim;
-    Order = other.Order;
-    monomialSize = other.monomialSize;
-    alpha = std::move(other.alpha);
-
-    return *this;
 }
 
 template <typename DataType>

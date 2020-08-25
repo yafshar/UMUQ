@@ -50,7 +50,7 @@ class polynomial : public polynomialBase<DataType>
      *
      * \param other polynomial object
      */
-    polynomial(polynomial<DataType> &&other);
+    polynomial(polynomial<DataType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -59,7 +59,7 @@ class polynomial : public polynomialBase<DataType>
      *
      * \returns polynomial<DataType>& polynomial object
      */
-    polynomial<DataType> &operator=(polynomial<DataType> &&other);
+    polynomial<DataType> &operator=(polynomial<DataType> &&other) = default;
 
     /*!
      * \brief Destroy the polynomial object
@@ -157,20 +157,6 @@ class polynomial : public polynomialBase<DataType>
 
 template <typename DataType>
 polynomial<DataType>::polynomial(int const dim, int const PolynomialOrder) : polynomialBase<DataType>(dim, PolynomialOrder) {}
-
-template <typename DataType>
-polynomial<DataType>::polynomial(polynomial<DataType> &&other) : polynomialBase<DataType>(std::move(other)) {}
-
-template <typename DataType>
-polynomial<DataType> &polynomial<DataType>::operator=(polynomial<DataType> &&other)
-{
-    this->nDim = other.nDim;
-    this->Order = other.Order;
-    this->monomialSize = other.monomialSize;
-    this->alpha = std::move(other.alpha);
-
-    return static_cast<polynomial<DataType> &>(polynomialBase<DataType>::operator=(std::move(other)));
-}
 
 template <typename DataType>
 int *polynomial<DataType>::monomialBasis()

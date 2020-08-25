@@ -95,7 +95,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      *
      * \param other ChebyshevPolynomial object
      */
-    ChebyshevPolynomial(ChebyshevPolynomial<RealType> &&other);
+    ChebyshevPolynomial(ChebyshevPolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Move assignment operator
@@ -104,7 +104,7 @@ class ChebyshevPolynomial : public polynomialBase<RealType>
      *
      * \returns ChebyshevPolynomial<RealType>& ChebyshevPolynomial object
      */
-    ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> &&other);
+    ChebyshevPolynomial<RealType> &operator=(ChebyshevPolynomial<RealType> &&other) = default;
 
     /*!
      * \brief Destroy the ChebyshevPolynomial object
@@ -244,20 +244,6 @@ ChebyshevPolynomial<RealType>::ChebyshevPolynomial(int const dim, int const Poly
     {
         UMUQFAIL("This type is not supported in this class!");
     }
-}
-
-template <typename RealType>
-ChebyshevPolynomial<RealType>::ChebyshevPolynomial(ChebyshevPolynomial<RealType> &&other) : polynomialBase<RealType>(std::move(other)) {}
-
-template <typename RealType>
-ChebyshevPolynomial<RealType> &ChebyshevPolynomial<RealType>::operator=(ChebyshevPolynomial<RealType> &&other)
-{
-    this->nDim = other.nDim;
-    this->Order = other.Order;
-    this->monomialSize = other.monomialSize;
-    this->alpha = std::move(other.alpha);
-
-    return static_cast<ChebyshevPolynomial<RealType> &>(polynomialBase<RealType>::operator=(std::move(other)));
 }
 
 template <typename RealType>
