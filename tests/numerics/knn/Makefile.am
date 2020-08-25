@@ -10,3 +10,7 @@ LIBS = $(GTEST_LIBS)
 TESTS += knearestneighbors_test
 check_PROGRAMS += knearestneighbors_test
 knearestneighbors_test_SOURCES = knearestneighbors_test.cpp
+
+TESTS += vnearestneighbors_test
+check_PROGRAMS += vnearestneighbors_test
+vnearestneighbors_test_SOURCES = vnearestneighbors_test.cpp
